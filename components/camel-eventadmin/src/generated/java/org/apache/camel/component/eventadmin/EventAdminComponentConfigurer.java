@@ -46,13 +46,13 @@ public class EventAdminComponentConfigurer extends PropertyConfigurerSupport imp
         EventAdminComponent target = (EventAdminComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "bundlecontext":
-        case "bundleContext": target.getBundleContext(); return true;
+        case "bundleContext": return target.getBundleContext();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

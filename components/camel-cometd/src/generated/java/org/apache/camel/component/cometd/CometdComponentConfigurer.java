@@ -63,24 +63,24 @@ public class CometdComponentConfigurer extends PropertyConfigurerSupport impleme
         CometdComponent target = (CometdComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "extensions": target.getExtensions(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "extensions": return target.getExtensions();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "securitypolicy":
-        case "securityPolicy": target.getSecurityPolicy(); return true;
+        case "securityPolicy": return target.getSecurityPolicy();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
         case "sslkeypassword":
-        case "sslKeyPassword": target.getSslKeyPassword(); return true;
+        case "sslKeyPassword": return target.getSslKeyPassword();
         case "sslkeystore":
-        case "sslKeystore": target.getSslKeystore(); return true;
+        case "sslKeystore": return target.getSslKeystore();
         case "sslpassword":
-        case "sslPassword": target.getSslPassword(); return true;
+        case "sslPassword": return target.getSslPassword();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

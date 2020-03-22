@@ -39,7 +39,7 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
     @Test
     public void testSetSecurityPolicies3() {
         final MiloServerComponent component = new MiloServerComponent();
-        component.setSecurityPoliciesById("None", "http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
+        component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
     }
 
     @Test(expected = IllegalArgumentException.class)

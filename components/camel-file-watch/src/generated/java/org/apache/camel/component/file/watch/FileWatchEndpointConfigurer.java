@@ -73,30 +73,30 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         FileWatchEndpoint target = (FileWatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "antinclude":
-        case "antInclude": target.getAntInclude(); return true;
+        case "antInclude": return target.getAntInclude();
         case "autocreate":
-        case "autoCreate": target.isAutoCreate(); return true;
+        case "autoCreate": return target.isAutoCreate();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConcurrentConsumers(); return true;
-        case "events": target.getEvents(); return true;
+        case "concurrentConsumers": return target.getConcurrentConsumers();
+        case "events": return target.getEvents();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filehasher":
-        case "fileHasher": target.getFileHasher(); return true;
+        case "fileHasher": return target.getFileHasher();
         case "pollthreads":
-        case "pollThreads": target.getPollThreads(); return true;
+        case "pollThreads": return target.getPollThreads();
         case "queuesize":
-        case "queueSize": target.getQueueSize(); return true;
-        case "recursive": target.isRecursive(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "queueSize": return target.getQueueSize();
+        case "recursive": return target.isRecursive();
+        case "synchronous": return target.isSynchronous();
         case "usefilehashing":
-        case "useFileHashing": target.isUseFileHashing(); return true;
+        case "useFileHashing": return target.isUseFileHashing();
         default: return null;
         }
     }

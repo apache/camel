@@ -73,30 +73,30 @@ public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implement
         AtmosEndpoint target = (AtmosEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "fulltokenid":
-        case "fullTokenId": target.getConfiguration().getFullTokenId(); return true;
+        case "fullTokenId": return target.getConfiguration().getFullTokenId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "localpath":
-        case "localPath": target.getConfiguration().getLocalPath(); return true;
+        case "localPath": return target.getConfiguration().getLocalPath();
         case "newremotepath":
-        case "newRemotePath": target.getConfiguration().getNewRemotePath(); return true;
-        case "query": target.getConfiguration().getQuery(); return true;
+        case "newRemotePath": return target.getConfiguration().getNewRemotePath();
+        case "query": return target.getConfiguration().getQuery();
         case "remotepath":
-        case "remotePath": target.getConfiguration().getRemotePath(); return true;
+        case "remotePath": return target.getConfiguration().getRemotePath();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "sslvalidation":
-        case "sslValidation": target.getConfiguration().isSslValidation(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "uri": target.getConfiguration().getUri(); return true;
+        case "sslValidation": return target.getConfiguration().isSslValidation();
+        case "synchronous": return target.isSynchronous();
+        case "uri": return target.getConfiguration().getUri();
         default: return null;
         }
     }

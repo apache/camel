@@ -61,23 +61,23 @@ public class DisruptorComponentConfigurer extends PropertyConfigurerSupport impl
         DisruptorComponent target = (DisruptorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":
-        case "bufferSize": target.getBufferSize(); return true;
+        case "bufferSize": return target.getBufferSize();
         case "defaultblockwhenfull":
-        case "defaultBlockWhenFull": target.isDefaultBlockWhenFull(); return true;
+        case "defaultBlockWhenFull": return target.isDefaultBlockWhenFull();
         case "defaultconcurrentconsumers":
-        case "defaultConcurrentConsumers": target.getDefaultConcurrentConsumers(); return true;
+        case "defaultConcurrentConsumers": return target.getDefaultConcurrentConsumers();
         case "defaultmultipleconsumers":
-        case "defaultMultipleConsumers": target.isDefaultMultipleConsumers(); return true;
+        case "defaultMultipleConsumers": return target.isDefaultMultipleConsumers();
         case "defaultproducertype":
-        case "defaultProducerType": target.getDefaultProducerType(); return true;
+        case "defaultProducerType": return target.getDefaultProducerType();
         case "defaultwaitstrategy":
-        case "defaultWaitStrategy": target.getDefaultWaitStrategy(); return true;
+        case "defaultWaitStrategy": return target.getDefaultWaitStrategy();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

@@ -77,28 +77,28 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         GoogleMailStreamComponent target = (GoogleMailStreamComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": getOrCreateConfiguration(target).getAccessToken(); return true;
+        case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
-        case "applicationName": getOrCreateConfiguration(target).getApplicationName(); return true;
+        case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfactory":
-        case "clientFactory": target.getClientFactory(); return true;
+        case "clientFactory": return target.getClientFactory();
         case "clientid":
-        case "clientId": getOrCreateConfiguration(target).getClientId(); return true;
+        case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
-        case "clientSecret": getOrCreateConfiguration(target).getClientSecret(); return true;
-        case "configuration": target.getConfiguration(); return true;
-        case "labels": getOrCreateConfiguration(target).getLabels(); return true;
+        case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
+        case "configuration": return target.getConfiguration();
+        case "labels": return getOrCreateConfiguration(target).getLabels();
         case "markasread":
-        case "markAsRead": getOrCreateConfiguration(target).isMarkAsRead(); return true;
+        case "markAsRead": return getOrCreateConfiguration(target).isMarkAsRead();
         case "maxresults":
-        case "maxResults": getOrCreateConfiguration(target).getMaxResults(); return true;
-        case "query": getOrCreateConfiguration(target).getQuery(); return true;
+        case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
+        case "query": return getOrCreateConfiguration(target).getQuery();
         case "refreshtoken":
-        case "refreshToken": getOrCreateConfiguration(target).getRefreshToken(); return true;
+        case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         default: return null;
         }
     }

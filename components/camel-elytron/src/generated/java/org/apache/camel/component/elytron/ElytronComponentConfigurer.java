@@ -43,11 +43,11 @@ public class ElytronComponentConfigurer extends UndertowComponentConfigurer impl
         ElytronComponent target = (ElytronComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "elytronprovider":
-        case "elytronProvider": target.getElytronProvider(); return true;
+        case "elytronProvider": return target.getElytronProvider();
         case "mechanismname":
-        case "mechanismName": target.getMechanismName(); return true;
+        case "mechanismName": return target.getMechanismName();
         case "securitydomainbuilder":
-        case "securityDomainBuilder": target.getSecurityDomainBuilder(); return true;
+        case "securityDomainBuilder": return target.getSecurityDomainBuilder();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

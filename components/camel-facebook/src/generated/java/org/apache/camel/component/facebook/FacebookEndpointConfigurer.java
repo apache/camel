@@ -328,195 +328,195 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         FacebookEndpoint target = (FacebookEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "achievementurl":
-        case "achievementURL": target.getConfiguration().getAchievementURL(); return true;
+        case "achievementURL": return target.getConfiguration().getAchievementURL();
         case "albumid":
-        case "albumId": target.getConfiguration().getAlbumId(); return true;
+        case "albumId": return target.getConfiguration().getAlbumId();
         case "albumupdate":
-        case "albumUpdate": target.getConfiguration().getAlbumUpdate(); return true;
+        case "albumUpdate": return target.getConfiguration().getAlbumUpdate();
         case "appid":
-        case "appId": target.getConfiguration().getAppId(); return true;
+        case "appId": return target.getConfiguration().getAppId();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "center": target.getConfiguration().getCenter(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "center": return target.getConfiguration().getCenter();
         case "checkinid":
-        case "checkinId": target.getConfiguration().getCheckinId(); return true;
+        case "checkinId": return target.getConfiguration().getCheckinId();
         case "checkinupdate":
-        case "checkinUpdate": target.getConfiguration().getCheckinUpdate(); return true;
+        case "checkinUpdate": return target.getConfiguration().getCheckinUpdate();
         case "clienturl":
-        case "clientURL": target.getConfiguration().getClientURL(); return true;
+        case "clientURL": return target.getConfiguration().getClientURL();
         case "clientversion":
-        case "clientVersion": target.getConfiguration().getClientVersion(); return true;
+        case "clientVersion": return target.getConfiguration().getClientVersion();
         case "commentid":
-        case "commentId": target.getConfiguration().getCommentId(); return true;
+        case "commentId": return target.getConfiguration().getCommentId();
         case "commentupdate":
-        case "commentUpdate": target.getConfiguration().getCommentUpdate(); return true;
+        case "commentUpdate": return target.getConfiguration().getCommentUpdate();
         case "debugenabled":
-        case "debugEnabled": target.getConfiguration().getDebugEnabled(); return true;
-        case "description": target.getConfiguration().getDescription(); return true;
-        case "distance": target.getConfiguration().getDistance(); return true;
+        case "debugEnabled": return target.getConfiguration().getDebugEnabled();
+        case "description": return target.getConfiguration().getDescription();
+        case "distance": return target.getConfiguration().getDistance();
         case "domainid":
-        case "domainId": target.getConfiguration().getDomainId(); return true;
+        case "domainId": return target.getConfiguration().getDomainId();
         case "domainname":
-        case "domainName": target.getConfiguration().getDomainName(); return true;
+        case "domainName": return target.getConfiguration().getDomainName();
         case "domainnames":
-        case "domainNames": target.getConfiguration().getDomainNames(); return true;
+        case "domainNames": return target.getConfiguration().getDomainNames();
         case "eventid":
-        case "eventId": target.getConfiguration().getEventId(); return true;
+        case "eventId": return target.getConfiguration().getEventId();
         case "eventupdate":
-        case "eventUpdate": target.getConfiguration().getEventUpdate(); return true;
+        case "eventUpdate": return target.getConfiguration().getEventUpdate();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "friendid":
-        case "friendId": target.getConfiguration().getFriendId(); return true;
+        case "friendId": return target.getConfiguration().getFriendId();
         case "frienduserid":
-        case "friendUserId": target.getConfiguration().getFriendUserId(); return true;
+        case "friendUserId": return target.getConfiguration().getFriendUserId();
         case "friendlistid":
-        case "friendlistId": target.getConfiguration().getFriendlistId(); return true;
+        case "friendlistId": return target.getConfiguration().getFriendlistId();
         case "friendlistname":
-        case "friendlistName": target.getConfiguration().getFriendlistName(); return true;
+        case "friendlistName": return target.getConfiguration().getFriendlistName();
         case "groupid":
-        case "groupId": target.getConfiguration().getGroupId(); return true;
+        case "groupId": return target.getConfiguration().getGroupId();
         case "gzipenabled":
-        case "gzipEnabled": target.getConfiguration().getGzipEnabled(); return true;
+        case "gzipEnabled": return target.getConfiguration().getGzipEnabled();
         case "httpconnectiontimeout":
-        case "httpConnectionTimeout": target.getConfiguration().getHttpConnectionTimeout(); return true;
+        case "httpConnectionTimeout": return target.getConfiguration().getHttpConnectionTimeout();
         case "httpdefaultmaxperroute":
-        case "httpDefaultMaxPerRoute": target.getConfiguration().getHttpDefaultMaxPerRoute(); return true;
+        case "httpDefaultMaxPerRoute": return target.getConfiguration().getHttpDefaultMaxPerRoute();
         case "httpmaxtotalconnections":
-        case "httpMaxTotalConnections": target.getConfiguration().getHttpMaxTotalConnections(); return true;
+        case "httpMaxTotalConnections": return target.getConfiguration().getHttpMaxTotalConnections();
         case "httpproxyhost":
-        case "httpProxyHost": target.getConfiguration().getHttpProxyHost(); return true;
+        case "httpProxyHost": return target.getConfiguration().getHttpProxyHost();
         case "httpproxypassword":
-        case "httpProxyPassword": target.getConfiguration().getHttpProxyPassword(); return true;
+        case "httpProxyPassword": return target.getConfiguration().getHttpProxyPassword();
         case "httpproxyport":
-        case "httpProxyPort": target.getConfiguration().getHttpProxyPort(); return true;
+        case "httpProxyPort": return target.getConfiguration().getHttpProxyPort();
         case "httpproxyuser":
-        case "httpProxyUser": target.getConfiguration().getHttpProxyUser(); return true;
+        case "httpProxyUser": return target.getConfiguration().getHttpProxyUser();
         case "httpreadtimeout":
-        case "httpReadTimeout": target.getConfiguration().getHttpReadTimeout(); return true;
+        case "httpReadTimeout": return target.getConfiguration().getHttpReadTimeout();
         case "httpretrycount":
-        case "httpRetryCount": target.getConfiguration().getHttpRetryCount(); return true;
+        case "httpRetryCount": return target.getConfiguration().getHttpRetryCount();
         case "httpretryintervalseconds":
-        case "httpRetryIntervalSeconds": target.getConfiguration().getHttpRetryIntervalSeconds(); return true;
+        case "httpRetryIntervalSeconds": return target.getConfiguration().getHttpRetryIntervalSeconds();
         case "httpstreamingreadtimeout":
-        case "httpStreamingReadTimeout": target.getConfiguration().getHttpStreamingReadTimeout(); return true;
-        case "ids": target.getConfiguration().getIds(); return true;
+        case "httpStreamingReadTimeout": return target.getConfiguration().getHttpStreamingReadTimeout();
+        case "ids": return target.getConfiguration().getIds();
         case "inbody":
-        case "inBody": target.getInBody(); return true;
+        case "inBody": return target.getInBody();
         case "includeread":
-        case "includeRead": target.getConfiguration().getIncludeRead(); return true;
+        case "includeRead": return target.getConfiguration().getIncludeRead();
         case "ishidden":
-        case "isHidden": target.getConfiguration().getIsHidden(); return true;
+        case "isHidden": return target.getConfiguration().getIsHidden();
         case "jsonstoreenabled":
-        case "jsonStoreEnabled": target.getConfiguration().getJsonStoreEnabled(); return true;
+        case "jsonStoreEnabled": return target.getConfiguration().getJsonStoreEnabled();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "link": target.getConfiguration().getLink(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "link": return target.getConfiguration().getLink();
         case "linkid":
-        case "linkId": target.getConfiguration().getLinkId(); return true;
-        case "locale": target.getConfiguration().getLocale(); return true;
+        case "linkId": return target.getConfiguration().getLinkId();
+        case "locale": return target.getConfiguration().getLocale();
         case "mbeanenabled":
-        case "mbeanEnabled": target.getConfiguration().getMbeanEnabled(); return true;
-        case "message": target.getConfiguration().getMessage(); return true;
+        case "mbeanEnabled": return target.getConfiguration().getMbeanEnabled();
+        case "message": return target.getConfiguration().getMessage();
         case "messageid":
-        case "messageId": target.getConfiguration().getMessageId(); return true;
-        case "metric": target.getConfiguration().getMetric(); return true;
+        case "messageId": return target.getConfiguration().getMessageId();
+        case "metric": return target.getConfiguration().getMetric();
         case "milestoneid":
-        case "milestoneId": target.getConfiguration().getMilestoneId(); return true;
-        case "name": target.getConfiguration().getName(); return true;
+        case "milestoneId": return target.getConfiguration().getMilestoneId();
+        case "name": return target.getConfiguration().getName();
         case "noteid":
-        case "noteId": target.getConfiguration().getNoteId(); return true;
+        case "noteId": return target.getConfiguration().getNoteId();
         case "notificationid":
-        case "notificationId": target.getConfiguration().getNotificationId(); return true;
+        case "notificationId": return target.getConfiguration().getNotificationId();
         case "oauthaccesstoken":
-        case "oAuthAccessToken": target.getConfiguration().getOAuthAccessToken(); return true;
+        case "oAuthAccessToken": return target.getConfiguration().getOAuthAccessToken();
         case "oauthaccesstokenurl":
-        case "oAuthAccessTokenURL": target.getConfiguration().getOAuthAccessTokenURL(); return true;
+        case "oAuthAccessTokenURL": return target.getConfiguration().getOAuthAccessTokenURL();
         case "oauthappid":
-        case "oAuthAppId": target.getConfiguration().getOAuthAppId(); return true;
+        case "oAuthAppId": return target.getConfiguration().getOAuthAppId();
         case "oauthappsecret":
-        case "oAuthAppSecret": target.getConfiguration().getOAuthAppSecret(); return true;
+        case "oAuthAppSecret": return target.getConfiguration().getOAuthAppSecret();
         case "oauthauthorizationurl":
-        case "oAuthAuthorizationURL": target.getConfiguration().getOAuthAuthorizationURL(); return true;
+        case "oAuthAuthorizationURL": return target.getConfiguration().getOAuthAuthorizationURL();
         case "oauthpermissions":
-        case "oAuthPermissions": target.getConfiguration().getOAuthPermissions(); return true;
+        case "oAuthPermissions": return target.getConfiguration().getOAuthPermissions();
         case "objectid":
-        case "objectId": target.getConfiguration().getObjectId(); return true;
+        case "objectId": return target.getConfiguration().getObjectId();
         case "offerid":
-        case "offerId": target.getConfiguration().getOfferId(); return true;
+        case "offerId": return target.getConfiguration().getOfferId();
         case "optiondescription":
-        case "optionDescription": target.getConfiguration().getOptionDescription(); return true;
+        case "optionDescription": return target.getConfiguration().getOptionDescription();
         case "pageid":
-        case "pageId": target.getConfiguration().getPageId(); return true;
+        case "pageId": return target.getConfiguration().getPageId();
         case "permissionname":
-        case "permissionName": target.getConfiguration().getPermissionName(); return true;
-        case "permissions": target.getConfiguration().getPermissions(); return true;
+        case "permissionName": return target.getConfiguration().getPermissionName();
+        case "permissions": return target.getConfiguration().getPermissions();
         case "photoid":
-        case "photoId": target.getConfiguration().getPhotoId(); return true;
+        case "photoId": return target.getConfiguration().getPhotoId();
         case "pictureid":
-        case "pictureId": target.getConfiguration().getPictureId(); return true;
+        case "pictureId": return target.getConfiguration().getPictureId();
         case "pictureid2":
-        case "pictureId2": target.getConfiguration().getPictureId2(); return true;
+        case "pictureId2": return target.getConfiguration().getPictureId2();
         case "picturesize":
-        case "pictureSize": target.getConfiguration().getPictureSize(); return true;
+        case "pictureSize": return target.getConfiguration().getPictureSize();
         case "placeid":
-        case "placeId": target.getConfiguration().getPlaceId(); return true;
+        case "placeId": return target.getConfiguration().getPlaceId();
         case "postid":
-        case "postId": target.getConfiguration().getPostId(); return true;
+        case "postId": return target.getConfiguration().getPostId();
         case "postupdate":
-        case "postUpdate": target.getConfiguration().getPostUpdate(); return true;
+        case "postUpdate": return target.getConfiguration().getPostUpdate();
         case "prettydebugenabled":
-        case "prettyDebugEnabled": target.getConfiguration().getPrettyDebugEnabled(); return true;
-        case "queries": target.getConfiguration().getQueries(); return true;
-        case "query": target.getConfiguration().getQuery(); return true;
+        case "prettyDebugEnabled": return target.getConfiguration().getPrettyDebugEnabled();
+        case "queries": return target.getConfiguration().getQueries();
+        case "query": return target.getConfiguration().getQuery();
         case "questionid":
-        case "questionId": target.getConfiguration().getQuestionId(); return true;
-        case "reading": target.getConfiguration().getReading(); return true;
+        case "questionId": return target.getConfiguration().getQuestionId();
+        case "reading": return target.getConfiguration().getReading();
         case "readingoptions":
-        case "readingOptions": target.getConfiguration().getReadingOptions(); return true;
+        case "readingOptions": return target.getConfiguration().getReadingOptions();
         case "restbaseurl":
-        case "restBaseURL": target.getConfiguration().getRestBaseURL(); return true;
+        case "restBaseURL": return target.getConfiguration().getRestBaseURL();
         case "scorevalue":
-        case "scoreValue": target.getConfiguration().getScoreValue(); return true;
-        case "size": target.getConfiguration().getSize(); return true;
-        case "source": target.getConfiguration().getSource(); return true;
-        case "subject": target.getConfiguration().getSubject(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "scoreValue": return target.getConfiguration().getScoreValue();
+        case "size": return target.getConfiguration().getSize();
+        case "source": return target.getConfiguration().getSource();
+        case "subject": return target.getConfiguration().getSubject();
+        case "synchronous": return target.isSynchronous();
         case "tabid":
-        case "tabId": target.getConfiguration().getTabId(); return true;
+        case "tabId": return target.getConfiguration().getTabId();
         case "tagupdate":
-        case "tagUpdate": target.getConfiguration().getTagUpdate(); return true;
+        case "tagUpdate": return target.getConfiguration().getTagUpdate();
         case "testuser1":
-        case "testUser1": target.getConfiguration().getTestUser1(); return true;
+        case "testUser1": return target.getConfiguration().getTestUser1();
         case "testuser2":
-        case "testUser2": target.getConfiguration().getTestUser2(); return true;
+        case "testUser2": return target.getConfiguration().getTestUser2();
         case "testuserid":
-        case "testUserId": target.getConfiguration().getTestUserId(); return true;
-        case "title": target.getConfiguration().getTitle(); return true;
+        case "testUserId": return target.getConfiguration().getTestUserId();
+        case "title": return target.getConfiguration().getTitle();
         case "touserid":
-        case "toUserId": target.getConfiguration().getToUserId(); return true;
+        case "toUserId": return target.getConfiguration().getToUserId();
         case "touserids":
-        case "toUserIds": target.getConfiguration().getToUserIds(); return true;
+        case "toUserIds": return target.getConfiguration().getToUserIds();
         case "usessl":
-        case "useSSL": target.getConfiguration().getUseSSL(); return true;
+        case "useSSL": return target.getConfiguration().getUseSSL();
         case "userid":
-        case "userId": target.getConfiguration().getUserId(); return true;
+        case "userId": return target.getConfiguration().getUserId();
         case "userid1":
-        case "userId1": target.getConfiguration().getUserId1(); return true;
+        case "userId1": return target.getConfiguration().getUserId1();
         case "userid2":
-        case "userId2": target.getConfiguration().getUserId2(); return true;
+        case "userId2": return target.getConfiguration().getUserId2();
         case "userids":
-        case "userIds": target.getConfiguration().getUserIds(); return true;
+        case "userIds": return target.getConfiguration().getUserIds();
         case "userlocale":
-        case "userLocale": target.getConfiguration().getUserLocale(); return true;
+        case "userLocale": return target.getConfiguration().getUserLocale();
         case "videobaseurl":
-        case "videoBaseURL": target.getConfiguration().getVideoBaseURL(); return true;
+        case "videoBaseURL": return target.getConfiguration().getVideoBaseURL();
         case "videoid":
-        case "videoId": target.getConfiguration().getVideoId(); return true;
+        case "videoId": return target.getConfiguration().getVideoId();
         default: return null;
         }
     }

@@ -97,42 +97,42 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         BoxComponent target = (BoxComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstokencache":
-        case "accessTokenCache": getOrCreateConfiguration(target).getAccessTokenCache(); return true;
+        case "accessTokenCache": return getOrCreateConfiguration(target).getAccessTokenCache();
         case "authenticationtype":
-        case "authenticationType": getOrCreateConfiguration(target).getAuthenticationType(); return true;
+        case "authenticationType": return getOrCreateConfiguration(target).getAuthenticationType();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":
-        case "clientId": getOrCreateConfiguration(target).getClientId(); return true;
+        case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
-        case "clientSecret": getOrCreateConfiguration(target).getClientSecret(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
+        case "configuration": return target.getConfiguration();
         case "encryptionalgorithm":
-        case "encryptionAlgorithm": getOrCreateConfiguration(target).getEncryptionAlgorithm(); return true;
+        case "encryptionAlgorithm": return getOrCreateConfiguration(target).getEncryptionAlgorithm();
         case "enterpriseid":
-        case "enterpriseId": getOrCreateConfiguration(target).getEnterpriseId(); return true;
+        case "enterpriseId": return getOrCreateConfiguration(target).getEnterpriseId();
         case "httpparams":
-        case "httpParams": getOrCreateConfiguration(target).getHttpParams(); return true;
+        case "httpParams": return getOrCreateConfiguration(target).getHttpParams();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxcacheentries":
-        case "maxCacheEntries": getOrCreateConfiguration(target).getMaxCacheEntries(); return true;
+        case "maxCacheEntries": return getOrCreateConfiguration(target).getMaxCacheEntries();
         case "privatekeyfile":
-        case "privateKeyFile": getOrCreateConfiguration(target).getPrivateKeyFile(); return true;
+        case "privateKeyFile": return getOrCreateConfiguration(target).getPrivateKeyFile();
         case "privatekeypassword":
-        case "privateKeyPassword": getOrCreateConfiguration(target).getPrivateKeyPassword(); return true;
+        case "privateKeyPassword": return getOrCreateConfiguration(target).getPrivateKeyPassword();
         case "publickeyid":
-        case "publicKeyId": getOrCreateConfiguration(target).getPublicKeyId(); return true;
+        case "publicKeyId": return getOrCreateConfiguration(target).getPublicKeyId();
         case "sslcontextparameters":
-        case "sslContextParameters": getOrCreateConfiguration(target).getSslContextParameters(); return true;
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
         case "userid":
-        case "userId": getOrCreateConfiguration(target).getUserId(); return true;
+        case "userId": return getOrCreateConfiguration(target).getUserId();
         case "username":
-        case "userName": getOrCreateConfiguration(target).getUserName(); return true;
+        case "userName": return getOrCreateConfiguration(target).getUserName();
         case "userpassword":
-        case "userPassword": getOrCreateConfiguration(target).getUserPassword(); return true;
+        case "userPassword": return getOrCreateConfiguration(target).getUserPassword();
         default: return null;
         }
     }

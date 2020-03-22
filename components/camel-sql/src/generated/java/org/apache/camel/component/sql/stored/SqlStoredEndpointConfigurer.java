@@ -57,19 +57,19 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         SqlStoredEndpoint target = (SqlStoredEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "batch": target.isBatch(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "batch": return target.isBatch();
         case "datasource":
-        case "dataSource": target.getDataSource(); return true;
-        case "function": target.isFunction(); return true;
+        case "dataSource": return target.getDataSource();
+        case "function": return target.isFunction();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "noop": target.isNoop(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "noop": return target.isNoop();
         case "outputheader":
-        case "outputHeader": target.getOutputHeader(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "outputHeader": return target.getOutputHeader();
+        case "synchronous": return target.isSynchronous();
         case "usemessagebodyfortemplate":
-        case "useMessageBodyForTemplate": target.isUseMessageBodyForTemplate(); return true;
+        case "useMessageBodyForTemplate": return target.isUseMessageBodyForTemplate();
         default: return null;
         }
     }

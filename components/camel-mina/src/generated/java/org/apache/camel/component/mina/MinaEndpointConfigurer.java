@@ -113,55 +113,55 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         MinaEndpoint target = (MinaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
-        case "allowDefaultCodec": target.getConfiguration().isAllowDefaultCodec(); return true;
+        case "allowDefaultCodec": return target.getConfiguration().isAllowDefaultCodec();
         case "autostarttls":
-        case "autoStartTls": target.getConfiguration().isAutoStartTls(); return true;
+        case "autoStartTls": return target.getConfiguration().isAutoStartTls();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachedaddress":
-        case "cachedAddress": target.getConfiguration().isCachedAddress(); return true;
+        case "cachedAddress": return target.getConfiguration().isCachedAddress();
         case "clientmode":
-        case "clientMode": target.getConfiguration().isClientMode(); return true;
-        case "codec": target.getConfiguration().getCodec(); return true;
+        case "clientMode": return target.getConfiguration().isClientMode();
+        case "codec": return target.getConfiguration().getCodec();
         case "decodermaxlinelength":
-        case "decoderMaxLineLength": target.getConfiguration().getDecoderMaxLineLength(); return true;
-        case "disconnect": target.getConfiguration().isDisconnect(); return true;
+        case "decoderMaxLineLength": return target.getConfiguration().getDecoderMaxLineLength();
+        case "disconnect": return target.getConfiguration().isDisconnect();
         case "disconnectonnoreply":
-        case "disconnectOnNoReply": target.getConfiguration().isDisconnectOnNoReply(); return true;
+        case "disconnectOnNoReply": return target.getConfiguration().isDisconnectOnNoReply();
         case "encodermaxlinelength":
-        case "encoderMaxLineLength": target.getConfiguration().getEncoderMaxLineLength(); return true;
-        case "encoding": target.getConfiguration().getEncoding(); return true;
+        case "encoderMaxLineLength": return target.getConfiguration().getEncoderMaxLineLength();
+        case "encoding": return target.getConfiguration().getEncoding();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "filters": target.getConfiguration().getFilters(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "filters": return target.getConfiguration().getFilters();
         case "lazysessioncreation":
-        case "lazySessionCreation": target.getConfiguration().isLazySessionCreation(); return true;
+        case "lazySessionCreation": return target.getConfiguration().isLazySessionCreation();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumpoolsize":
-        case "maximumPoolSize": target.getConfiguration().getMaximumPoolSize(); return true;
+        case "maximumPoolSize": return target.getConfiguration().getMaximumPoolSize();
         case "minalogger":
-        case "minaLogger": target.getConfiguration().isMinaLogger(); return true;
+        case "minaLogger": return target.getConfiguration().isMinaLogger();
         case "noreplyloglevel":
-        case "noReplyLogLevel": target.getConfiguration().getNoReplyLogLevel(); return true;
+        case "noReplyLogLevel": return target.getConfiguration().getNoReplyLogLevel();
         case "orderedthreadpoolexecutor":
-        case "orderedThreadPoolExecutor": target.getConfiguration().isOrderedThreadPoolExecutor(); return true;
+        case "orderedThreadPoolExecutor": return target.getConfiguration().isOrderedThreadPoolExecutor();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().getSslContextParameters(); return true;
-        case "sync": target.getConfiguration().isSync(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "textline": target.getConfiguration().isTextline(); return true;
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "sync": return target.getConfiguration().isSync();
+        case "synchronous": return target.isSynchronous();
+        case "textline": return target.getConfiguration().isTextline();
         case "textlinedelimiter":
-        case "textlineDelimiter": target.getConfiguration().getTextlineDelimiter(); return true;
-        case "timeout": target.getConfiguration().getTimeout(); return true;
+        case "textlineDelimiter": return target.getConfiguration().getTextlineDelimiter();
+        case "timeout": return target.getConfiguration().getTimeout();
         case "transferexchange":
-        case "transferExchange": target.getConfiguration().isTransferExchange(); return true;
+        case "transferExchange": return target.getConfiguration().isTransferExchange();
         case "writetimeout":
-        case "writeTimeout": target.getConfiguration().getWriteTimeout(); return true;
+        case "writeTimeout": return target.getConfiguration().getWriteTimeout();
         default: return null;
         }
     }

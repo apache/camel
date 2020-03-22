@@ -150,76 +150,76 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         SqsComponent target = (SqsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonawshost":
-        case "amazonAWSHost": getOrCreateConfiguration(target).getAmazonAWSHost(); return true;
+        case "amazonAWSHost": return getOrCreateConfiguration(target).getAmazonAWSHost();
         case "amazonsqsclient":
-        case "amazonSQSClient": getOrCreateConfiguration(target).getAmazonSQSClient(); return true;
+        case "amazonSQSClient": return getOrCreateConfiguration(target).getAmazonSQSClient();
         case "attributenames":
-        case "attributeNames": getOrCreateConfiguration(target).getAttributeNames(); return true;
+        case "attributeNames": return getOrCreateConfiguration(target).getAttributeNames();
         case "autocreatequeue":
-        case "autoCreateQueue": getOrCreateConfiguration(target).isAutoCreateQueue(); return true;
+        case "autoCreateQueue": return getOrCreateConfiguration(target).isAutoCreateQueue();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": getOrCreateConfiguration(target).getConcurrentConsumers(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "concurrentConsumers": return getOrCreateConfiguration(target).getConcurrentConsumers();
+        case "configuration": return target.getConfiguration();
         case "defaultvisibilitytimeout":
-        case "defaultVisibilityTimeout": getOrCreateConfiguration(target).getDefaultVisibilityTimeout(); return true;
+        case "defaultVisibilityTimeout": return getOrCreateConfiguration(target).getDefaultVisibilityTimeout();
         case "delayqueue":
-        case "delayQueue": getOrCreateConfiguration(target).isDelayQueue(); return true;
+        case "delayQueue": return getOrCreateConfiguration(target).isDelayQueue();
         case "delayseconds":
-        case "delaySeconds": getOrCreateConfiguration(target).getDelaySeconds(); return true;
+        case "delaySeconds": return getOrCreateConfiguration(target).getDelaySeconds();
         case "deleteafterread":
-        case "deleteAfterRead": getOrCreateConfiguration(target).isDeleteAfterRead(); return true;
+        case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
         case "deleteiffiltered":
-        case "deleteIfFiltered": getOrCreateConfiguration(target).isDeleteIfFiltered(); return true;
+        case "deleteIfFiltered": return getOrCreateConfiguration(target).isDeleteIfFiltered();
         case "extendmessagevisibility":
-        case "extendMessageVisibility": getOrCreateConfiguration(target).isExtendMessageVisibility(); return true;
+        case "extendMessageVisibility": return getOrCreateConfiguration(target).isExtendMessageVisibility();
         case "kmsdatakeyreuseperiodseconds":
-        case "kmsDataKeyReusePeriodSeconds": getOrCreateConfiguration(target).getKmsDataKeyReusePeriodSeconds(); return true;
+        case "kmsDataKeyReusePeriodSeconds": return getOrCreateConfiguration(target).getKmsDataKeyReusePeriodSeconds();
         case "kmsmasterkeyid":
-        case "kmsMasterKeyId": getOrCreateConfiguration(target).getKmsMasterKeyId(); return true;
+        case "kmsMasterKeyId": return getOrCreateConfiguration(target).getKmsMasterKeyId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximummessagesize":
-        case "maximumMessageSize": getOrCreateConfiguration(target).getMaximumMessageSize(); return true;
+        case "maximumMessageSize": return getOrCreateConfiguration(target).getMaximumMessageSize();
         case "messageattributenames":
-        case "messageAttributeNames": getOrCreateConfiguration(target).getMessageAttributeNames(); return true;
+        case "messageAttributeNames": return getOrCreateConfiguration(target).getMessageAttributeNames();
         case "messagededuplicationidstrategy":
-        case "messageDeduplicationIdStrategy": getOrCreateConfiguration(target).getMessageDeduplicationIdStrategy(); return true;
+        case "messageDeduplicationIdStrategy": return getOrCreateConfiguration(target).getMessageDeduplicationIdStrategy();
         case "messagegroupidstrategy":
-        case "messageGroupIdStrategy": getOrCreateConfiguration(target).getMessageGroupIdStrategy(); return true;
+        case "messageGroupIdStrategy": return getOrCreateConfiguration(target).getMessageGroupIdStrategy();
         case "messageretentionperiod":
-        case "messageRetentionPeriod": getOrCreateConfiguration(target).getMessageRetentionPeriod(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
-        case "policy": getOrCreateConfiguration(target).getPolicy(); return true;
-        case "protocol": getOrCreateConfiguration(target).getProtocol(); return true;
+        case "messageRetentionPeriod": return getOrCreateConfiguration(target).getMessageRetentionPeriod();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "policy": return getOrCreateConfiguration(target).getPolicy();
+        case "protocol": return getOrCreateConfiguration(target).getProtocol();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
         case "queueownerawsaccountid":
-        case "queueOwnerAWSAccountId": getOrCreateConfiguration(target).getQueueOwnerAWSAccountId(); return true;
+        case "queueOwnerAWSAccountId": return getOrCreateConfiguration(target).getQueueOwnerAWSAccountId();
         case "queueurl":
-        case "queueUrl": getOrCreateConfiguration(target).getQueueUrl(); return true;
+        case "queueUrl": return getOrCreateConfiguration(target).getQueueUrl();
         case "receivemessagewaittimeseconds":
-        case "receiveMessageWaitTimeSeconds": getOrCreateConfiguration(target).getReceiveMessageWaitTimeSeconds(); return true;
+        case "receiveMessageWaitTimeSeconds": return getOrCreateConfiguration(target).getReceiveMessageWaitTimeSeconds();
         case "redrivepolicy":
-        case "redrivePolicy": getOrCreateConfiguration(target).getRedrivePolicy(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "redrivePolicy": return getOrCreateConfiguration(target).getRedrivePolicy();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "serversideencryptionenabled":
-        case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).isServerSideEncryptionEnabled(); return true;
+        case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
         case "visibilitytimeout":
-        case "visibilityTimeout": getOrCreateConfiguration(target).getVisibilityTimeout(); return true;
+        case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         case "waittimeseconds":
-        case "waitTimeSeconds": getOrCreateConfiguration(target).getWaitTimeSeconds(); return true;
+        case "waitTimeSeconds": return getOrCreateConfiguration(target).getWaitTimeSeconds();
         default: return null;
         }
     }

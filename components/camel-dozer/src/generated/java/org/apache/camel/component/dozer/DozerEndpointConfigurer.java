@@ -60,22 +60,22 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         DozerEndpoint target = (DozerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "mappingconfiguration":
-        case "mappingConfiguration": target.getConfiguration().getMappingConfiguration(); return true;
+        case "mappingConfiguration": return target.getConfiguration().getMappingConfiguration();
         case "mappingfile":
-        case "mappingFile": target.getConfiguration().getMappingFile(); return true;
+        case "mappingFile": return target.getConfiguration().getMappingFile();
         case "marshalid":
-        case "marshalId": target.getConfiguration().getMarshalId(); return true;
+        case "marshalId": return target.getConfiguration().getMarshalId();
         case "sourcemodel":
-        case "sourceModel": target.getConfiguration().getSourceModel(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sourceModel": return target.getConfiguration().getSourceModel();
+        case "synchronous": return target.isSynchronous();
         case "targetmodel":
-        case "targetModel": target.getConfiguration().getTargetModel(); return true;
+        case "targetModel": return target.getConfiguration().getTargetModel();
         case "unmarshalid":
-        case "unmarshalId": target.getConfiguration().getUnmarshalId(); return true;
+        case "unmarshalId": return target.getConfiguration().getUnmarshalId();
         default: return null;
         }
     }

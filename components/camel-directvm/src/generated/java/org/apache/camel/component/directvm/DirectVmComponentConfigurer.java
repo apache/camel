@@ -53,17 +53,17 @@ public class DirectVmComponentConfigurer extends PropertyConfigurerSupport imple
         DirectVmComponent target = (DirectVmComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "block": target.isBlock(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "block": return target.isBlock();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "propagateproperties":
-        case "propagateProperties": target.isPropagateProperties(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "propagateProperties": return target.isPropagateProperties();
+        case "timeout": return target.getTimeout();
         default: return null;
         }
     }

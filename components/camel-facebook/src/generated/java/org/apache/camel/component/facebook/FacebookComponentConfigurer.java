@@ -133,66 +133,66 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
         FacebookComponent target = (FacebookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clienturl":
-        case "clientURL": getOrCreateConfiguration(target).getClientURL(); return true;
+        case "clientURL": return getOrCreateConfiguration(target).getClientURL();
         case "clientversion":
-        case "clientVersion": getOrCreateConfiguration(target).getClientVersion(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientVersion": return getOrCreateConfiguration(target).getClientVersion();
+        case "configuration": return target.getConfiguration();
         case "debugenabled":
-        case "debugEnabled": getOrCreateConfiguration(target).getDebugEnabled(); return true;
+        case "debugEnabled": return getOrCreateConfiguration(target).getDebugEnabled();
         case "gzipenabled":
-        case "gzipEnabled": getOrCreateConfiguration(target).getGzipEnabled(); return true;
+        case "gzipEnabled": return getOrCreateConfiguration(target).getGzipEnabled();
         case "httpconnectiontimeout":
-        case "httpConnectionTimeout": getOrCreateConfiguration(target).getHttpConnectionTimeout(); return true;
+        case "httpConnectionTimeout": return getOrCreateConfiguration(target).getHttpConnectionTimeout();
         case "httpdefaultmaxperroute":
-        case "httpDefaultMaxPerRoute": getOrCreateConfiguration(target).getHttpDefaultMaxPerRoute(); return true;
+        case "httpDefaultMaxPerRoute": return getOrCreateConfiguration(target).getHttpDefaultMaxPerRoute();
         case "httpmaxtotalconnections":
-        case "httpMaxTotalConnections": getOrCreateConfiguration(target).getHttpMaxTotalConnections(); return true;
+        case "httpMaxTotalConnections": return getOrCreateConfiguration(target).getHttpMaxTotalConnections();
         case "httpproxyhost":
-        case "httpProxyHost": getOrCreateConfiguration(target).getHttpProxyHost(); return true;
+        case "httpProxyHost": return getOrCreateConfiguration(target).getHttpProxyHost();
         case "httpproxypassword":
-        case "httpProxyPassword": getOrCreateConfiguration(target).getHttpProxyPassword(); return true;
+        case "httpProxyPassword": return getOrCreateConfiguration(target).getHttpProxyPassword();
         case "httpproxyport":
-        case "httpProxyPort": getOrCreateConfiguration(target).getHttpProxyPort(); return true;
+        case "httpProxyPort": return getOrCreateConfiguration(target).getHttpProxyPort();
         case "httpproxyuser":
-        case "httpProxyUser": getOrCreateConfiguration(target).getHttpProxyUser(); return true;
+        case "httpProxyUser": return getOrCreateConfiguration(target).getHttpProxyUser();
         case "httpreadtimeout":
-        case "httpReadTimeout": getOrCreateConfiguration(target).getHttpReadTimeout(); return true;
+        case "httpReadTimeout": return getOrCreateConfiguration(target).getHttpReadTimeout();
         case "httpretrycount":
-        case "httpRetryCount": getOrCreateConfiguration(target).getHttpRetryCount(); return true;
+        case "httpRetryCount": return getOrCreateConfiguration(target).getHttpRetryCount();
         case "httpretryintervalseconds":
-        case "httpRetryIntervalSeconds": getOrCreateConfiguration(target).getHttpRetryIntervalSeconds(); return true;
+        case "httpRetryIntervalSeconds": return getOrCreateConfiguration(target).getHttpRetryIntervalSeconds();
         case "httpstreamingreadtimeout":
-        case "httpStreamingReadTimeout": getOrCreateConfiguration(target).getHttpStreamingReadTimeout(); return true;
+        case "httpStreamingReadTimeout": return getOrCreateConfiguration(target).getHttpStreamingReadTimeout();
         case "jsonstoreenabled":
-        case "jsonStoreEnabled": getOrCreateConfiguration(target).getJsonStoreEnabled(); return true;
+        case "jsonStoreEnabled": return getOrCreateConfiguration(target).getJsonStoreEnabled();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "mbeanenabled":
-        case "mbeanEnabled": getOrCreateConfiguration(target).getMbeanEnabled(); return true;
+        case "mbeanEnabled": return getOrCreateConfiguration(target).getMbeanEnabled();
         case "oauthaccesstoken":
-        case "oAuthAccessToken": getOrCreateConfiguration(target).getOAuthAccessToken(); return true;
+        case "oAuthAccessToken": return getOrCreateConfiguration(target).getOAuthAccessToken();
         case "oauthaccesstokenurl":
-        case "oAuthAccessTokenURL": getOrCreateConfiguration(target).getOAuthAccessTokenURL(); return true;
+        case "oAuthAccessTokenURL": return getOrCreateConfiguration(target).getOAuthAccessTokenURL();
         case "oauthappid":
-        case "oAuthAppId": getOrCreateConfiguration(target).getOAuthAppId(); return true;
+        case "oAuthAppId": return getOrCreateConfiguration(target).getOAuthAppId();
         case "oauthappsecret":
-        case "oAuthAppSecret": getOrCreateConfiguration(target).getOAuthAppSecret(); return true;
+        case "oAuthAppSecret": return getOrCreateConfiguration(target).getOAuthAppSecret();
         case "oauthauthorizationurl":
-        case "oAuthAuthorizationURL": getOrCreateConfiguration(target).getOAuthAuthorizationURL(); return true;
+        case "oAuthAuthorizationURL": return getOrCreateConfiguration(target).getOAuthAuthorizationURL();
         case "oauthpermissions":
-        case "oAuthPermissions": getOrCreateConfiguration(target).getOAuthPermissions(); return true;
+        case "oAuthPermissions": return getOrCreateConfiguration(target).getOAuthPermissions();
         case "prettydebugenabled":
-        case "prettyDebugEnabled": getOrCreateConfiguration(target).getPrettyDebugEnabled(); return true;
+        case "prettyDebugEnabled": return getOrCreateConfiguration(target).getPrettyDebugEnabled();
         case "restbaseurl":
-        case "restBaseURL": getOrCreateConfiguration(target).getRestBaseURL(); return true;
+        case "restBaseURL": return getOrCreateConfiguration(target).getRestBaseURL();
         case "usessl":
-        case "useSSL": getOrCreateConfiguration(target).getUseSSL(); return true;
+        case "useSSL": return getOrCreateConfiguration(target).getUseSSL();
         case "videobaseurl":
-        case "videoBaseURL": getOrCreateConfiguration(target).getVideoBaseURL(); return true;
+        case "videoBaseURL": return getOrCreateConfiguration(target).getVideoBaseURL();
         default: return null;
         }
     }

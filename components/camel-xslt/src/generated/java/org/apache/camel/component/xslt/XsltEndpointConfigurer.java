@@ -77,33 +77,33 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         XsltEndpoint target = (XsltEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
-        case "contentCache": target.isContentCache(); return true;
+        case "contentCache": return target.isContentCache();
         case "deleteoutputfile":
-        case "deleteOutputFile": target.isDeleteOutputFile(); return true;
+        case "deleteOutputFile": return target.isDeleteOutputFile();
         case "entityresolver":
-        case "entityResolver": target.getEntityResolver(); return true;
+        case "entityResolver": return target.getEntityResolver();
         case "errorlistener":
-        case "errorListener": target.getErrorListener(); return true;
+        case "errorListener": return target.getErrorListener();
         case "failonnullbody":
-        case "failOnNullBody": target.isFailOnNullBody(); return true;
+        case "failOnNullBody": return target.isFailOnNullBody();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "output": target.getOutput(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "output": return target.getOutput();
         case "resulthandlerfactory":
-        case "resultHandlerFactory": target.getResultHandlerFactory(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "resultHandlerFactory": return target.getResultHandlerFactory();
+        case "synchronous": return target.isSynchronous();
         case "transformercachesize":
-        case "transformerCacheSize": target.getTransformerCacheSize(); return true;
+        case "transformerCacheSize": return target.getTransformerCacheSize();
         case "transformerfactory":
-        case "transformerFactory": target.getTransformerFactory(); return true;
+        case "transformerFactory": return target.getTransformerFactory();
         case "transformerfactoryclass":
-        case "transformerFactoryClass": target.getTransformerFactoryClass(); return true;
+        case "transformerFactoryClass": return target.getTransformerFactoryClass();
         case "transformerfactoryconfigurationstrategy":
-        case "transformerFactoryConfigurationStrategy": target.getTransformerFactoryConfigurationStrategy(); return true;
+        case "transformerFactoryConfigurationStrategy": return target.getTransformerFactoryConfigurationStrategy();
         case "uriresolver":
-        case "uriResolver": target.getUriResolver(); return true;
+        case "uriResolver": return target.getUriResolver();
         default: return null;
         }
     }

@@ -37,7 +37,7 @@ public class WebsocketComponentConfigurer extends ServletComponentConfigurer imp
         WebsocketComponent target = (WebsocketComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

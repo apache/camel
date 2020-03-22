@@ -79,36 +79,36 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CoAPEndpoint target = (CoAPEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "alias": target.getAlias(); return true;
+        case "alias": return target.getAlias();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "ciphersuites":
-        case "cipherSuites": target.getCipherSuites(); return true;
+        case "cipherSuites": return target.getCipherSuites();
         case "clientauthentication":
-        case "clientAuthentication": target.getClientAuthentication(); return true;
+        case "clientAuthentication": return target.getClientAuthentication();
         case "coapmethodrestrict":
-        case "coapMethodRestrict": target.getCoapMethodRestrict(); return true;
+        case "coapMethodRestrict": return target.getCoapMethodRestrict();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "privatekey":
-        case "privateKey": target.getPrivateKey(); return true;
+        case "privateKey": return target.getPrivateKey();
         case "pskstore":
-        case "pskStore": target.getPskStore(); return true;
+        case "pskStore": return target.getPskStore();
         case "publickey":
-        case "publicKey": target.getPublicKey(); return true;
+        case "publicKey": return target.getPublicKey();
         case "recommendedciphersuitesonly":
-        case "recommendedCipherSuitesOnly": target.isRecommendedCipherSuitesOnly(); return true;
+        case "recommendedCipherSuitesOnly": return target.isRecommendedCipherSuitesOnly();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "trustedrpkstore":
-        case "trustedRpkStore": target.getTrustedRpkStore(); return true;
+        case "trustedRpkStore": return target.getTrustedRpkStore();
         default: return null;
         }
     }

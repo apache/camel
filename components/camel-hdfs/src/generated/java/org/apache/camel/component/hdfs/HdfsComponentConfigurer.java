@@ -49,15 +49,15 @@ public class HdfsComponentConfigurer extends PropertyConfigurerSupport implement
         HdfsComponent target = (HdfsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "jaasconfiguration":
-        case "jAASConfiguration": target.getJAASConfiguration(); return true;
+        case "jAASConfiguration": return target.getJAASConfiguration();
         case "kerberosconfigfile":
-        case "kerberosConfigFile": target.getKerberosConfigFile(); return true;
+        case "kerberosConfigFile": return target.getKerberosConfigFile();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

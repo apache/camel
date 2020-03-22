@@ -64,25 +64,25 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         ServletComponent target = (ServletComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
-        case "allowJavaSerializedObject": target.isAllowJavaSerializedObject(); return true;
+        case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
         case "attachmentmultipartbinding":
-        case "attachmentMultipartBinding": target.isAttachmentMultipartBinding(); return true;
+        case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "filenameextwhitelist":
-        case "fileNameExtWhitelist": target.getFileNameExtWhitelist(); return true;
+        case "fileNameExtWhitelist": return target.getFileNameExtWhitelist();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
-        case "httpBinding": target.getHttpBinding(); return true;
+        case "httpBinding": return target.getHttpBinding();
         case "httpconfiguration":
-        case "httpConfiguration": target.getHttpConfiguration(); return true;
+        case "httpConfiguration": return target.getHttpConfiguration();
         case "httpregistry":
-        case "httpRegistry": target.getHttpRegistry(); return true;
+        case "httpRegistry": return target.getHttpRegistry();
         case "servletname":
-        case "servletName": target.getServletName(); return true;
+        case "servletName": return target.getServletName();
         default: return null;
         }
     }

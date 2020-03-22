@@ -43,10 +43,10 @@ public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implem
         DataSetTestEndpoint target = (DataSetTestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "anyorder":
-        case "anyOrder": target.isAnyOrder(); return true;
-        case "delimiter": target.getDelimiter(); return true;
-        case "split": target.isSplit(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "anyOrder": return target.isAnyOrder();
+        case "delimiter": return target.getDelimiter();
+        case "split": return target.isSplit();
+        case "timeout": return target.getTimeout();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

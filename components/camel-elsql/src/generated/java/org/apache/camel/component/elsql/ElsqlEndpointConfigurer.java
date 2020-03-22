@@ -175,96 +175,96 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         ElsqlEndpoint target = (ElsqlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
-        case "allowNamedParameters": target.isAllowNamedParameters(); return true;
+        case "allowNamedParameters": return target.isAllowNamedParameters();
         case "alwayspopulatestatement":
-        case "alwaysPopulateStatement": target.isAlwaysPopulateStatement(); return true;
+        case "alwaysPopulateStatement": return target.isAlwaysPopulateStatement();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "batch": target.isBatch(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "batch": return target.isBatch();
         case "breakbatchonconsumefail":
-        case "breakBatchOnConsumeFail": target.isBreakBatchOnConsumeFail(); return true;
+        case "breakBatchOnConsumeFail": return target.isBreakBatchOnConsumeFail();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
-        case "dataSource": target.getDataSource(); return true;
+        case "dataSource": return target.getDataSource();
         case "datasourceref":
-        case "dataSourceRef": target.getDataSourceRef(); return true;
+        case "dataSourceRef": return target.getDataSourceRef();
         case "databasevendor":
-        case "databaseVendor": target.getDatabaseVendor(); return true;
-        case "delay": target.getDelay(); return true;
+        case "databaseVendor": return target.getDatabaseVendor();
+        case "delay": return target.getDelay();
         case "elsqlconfig":
-        case "elSqlConfig": target.getElSqlConfig(); return true;
+        case "elSqlConfig": return target.getElSqlConfig();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "expectedupdatecount":
-        case "expectedUpdateCount": target.getExpectedUpdateCount(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "expectedUpdateCount": return target.getExpectedUpdateCount();
+        case "greedy": return target.isGreedy();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getMaxMessagesPerPoll(); return true;
-        case "noop": target.isNoop(); return true;
+        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "noop": return target.isNoop();
         case "onconsume":
-        case "onConsume": target.getOnConsume(); return true;
+        case "onConsume": return target.getOnConsume();
         case "onconsumebatchcomplete":
-        case "onConsumeBatchComplete": target.getOnConsumeBatchComplete(); return true;
+        case "onConsumeBatchComplete": return target.getOnConsumeBatchComplete();
         case "onconsumefailed":
-        case "onConsumeFailed": target.getOnConsumeFailed(); return true;
+        case "onConsumeFailed": return target.getOnConsumeFailed();
         case "outputclass":
-        case "outputClass": target.getOutputClass(); return true;
+        case "outputClass": return target.getOutputClass();
         case "outputheader":
-        case "outputHeader": target.getOutputHeader(); return true;
+        case "outputHeader": return target.getOutputHeader();
         case "outputtype":
-        case "outputType": target.getOutputType(); return true;
+        case "outputType": return target.getOutputType();
         case "parameterscount":
-        case "parametersCount": target.getParametersCount(); return true;
-        case "placeholder": target.getPlaceholder(); return true;
+        case "parametersCount": return target.getParametersCount();
+        case "placeholder": return target.getPlaceholder();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "preparestatementstrategy":
-        case "prepareStatementStrategy": target.getPrepareStatementStrategy(); return true;
+        case "prepareStatementStrategy": return target.getPrepareStatementStrategy();
         case "processingstrategy":
-        case "processingStrategy": target.getProcessingStrategy(); return true;
+        case "processingStrategy": return target.getProcessingStrategy();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "routeemptyresultset":
-        case "routeEmptyResultSet": target.isRouteEmptyResultSet(); return true;
+        case "routeEmptyResultSet": return target.isRouteEmptyResultSet();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
-        case "separator": target.getSeparator(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "separator": return target.getSeparator();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "synchronous": return target.isSynchronous();
         case "templateoptions":
-        case "templateOptions": target.getTemplateOptions(); return true;
+        case "templateOptions": return target.getTemplateOptions();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
-        case "transacted": target.isTransacted(); return true;
+        case "timeUnit": return target.getTimeUnit();
+        case "transacted": return target.isTransacted();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "useiterator":
-        case "useIterator": target.isUseIterator(); return true;
+        case "useIterator": return target.isUseIterator();
         case "usemessagebodyforsql":
-        case "useMessageBodyForSql": target.isUseMessageBodyForSql(); return true;
+        case "useMessageBodyForSql": return target.isUseMessageBodyForSql();
         case "useplaceholder":
-        case "usePlaceholder": target.isUsePlaceholder(); return true;
+        case "usePlaceholder": return target.isUsePlaceholder();
         default: return null;
         }
     }

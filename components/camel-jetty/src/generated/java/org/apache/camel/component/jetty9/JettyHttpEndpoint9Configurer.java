@@ -130,69 +130,69 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JettyHttpEndpoint9 target = (JettyHttpEndpoint9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "async": target.isAsync(); return true;
+        case "async": return target.isAsync();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "chunked": target.isChunked(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "chunked": return target.isChunked();
         case "continuationtimeout":
-        case "continuationTimeout": target.getContinuationTimeout(); return true;
+        case "continuationTimeout": return target.getContinuationTimeout();
         case "disablestreamcache":
-        case "disableStreamCache": target.isDisableStreamCache(); return true;
+        case "disableStreamCache": return target.isDisableStreamCache();
         case "eagercheckcontentavailable":
-        case "eagerCheckContentAvailable": target.isEagerCheckContentAvailable(); return true;
+        case "eagerCheckContentAvailable": return target.isEagerCheckContentAvailable();
         case "enablecors":
-        case "enableCORS": target.isEnableCORS(); return true;
+        case "enableCORS": return target.isEnableCORS();
         case "enablejmx":
-        case "enableJmx": target.isEnableJmx(); return true;
+        case "enableJmx": return target.isEnableJmx();
         case "enablemultipartfilter":
-        case "enableMultipartFilter": target.isEnableMultipartFilter(); return true;
+        case "enableMultipartFilter": return target.isEnableMultipartFilter();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filterinitparameters":
-        case "filterInitParameters": target.getFilterInitParameters(); return true;
-        case "filters": target.getFilters(); return true;
-        case "handlers": target.getHandlers(); return true;
+        case "filterInitParameters": return target.getFilterInitParameters();
+        case "filters": return target.getFilters();
+        case "handlers": return target.getHandlers();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
-        case "httpBinding": target.getHttpBinding(); return true;
+        case "httpBinding": return target.getHttpBinding();
         case "httpmethodrestrict":
-        case "httpMethodRestrict": target.getHttpMethodRestrict(); return true;
+        case "httpMethodRestrict": return target.getHttpMethodRestrict();
         case "maphttpmessagebody":
-        case "mapHttpMessageBody": target.isMapHttpMessageBody(); return true;
+        case "mapHttpMessageBody": return target.isMapHttpMessageBody();
         case "maphttpmessageformurlencodedbody":
-        case "mapHttpMessageFormUrlEncodedBody": target.isMapHttpMessageFormUrlEncodedBody(); return true;
+        case "mapHttpMessageFormUrlEncodedBody": return target.isMapHttpMessageFormUrlEncodedBody();
         case "maphttpmessageheaders":
-        case "mapHttpMessageHeaders": target.isMapHttpMessageHeaders(); return true;
+        case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
         case "matchonuriprefix":
-        case "matchOnUriPrefix": target.isMatchOnUriPrefix(); return true;
+        case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
         case "multipartfilter":
-        case "multipartFilter": target.getMultipartFilter(); return true;
+        case "multipartFilter": return target.getMultipartFilter();
         case "muteexception":
-        case "muteException": target.isMuteException(); return true;
+        case "muteException": return target.isMuteException();
         case "optionsenabled":
-        case "optionsEnabled": target.isOptionsEnabled(); return true;
+        case "optionsEnabled": return target.isOptionsEnabled();
         case "responsebuffersize":
-        case "responseBufferSize": target.getResponseBufferSize(); return true;
+        case "responseBufferSize": return target.getResponseBufferSize();
         case "senddateheader":
-        case "sendDateHeader": target.isSendDateHeader(); return true;
+        case "sendDateHeader": return target.isSendDateHeader();
         case "sendserverversion":
-        case "sendServerVersion": target.isSendServerVersion(); return true;
+        case "sendServerVersion": return target.isSendServerVersion();
         case "sessionsupport":
-        case "sessionSupport": target.isSessionSupport(); return true;
+        case "sessionSupport": return target.isSessionSupport();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "traceenabled":
-        case "traceEnabled": target.isTraceEnabled(); return true;
+        case "traceEnabled": return target.isTraceEnabled();
         case "transferexception":
-        case "transferException": target.isTransferException(); return true;
+        case "transferException": return target.isTransferException();
         case "usecontinuation":
-        case "useContinuation": target.getUseContinuation(); return true;
+        case "useContinuation": return target.getUseContinuation();
         default: return null;
         }
     }

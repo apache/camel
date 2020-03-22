@@ -73,30 +73,30 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         DropboxEndpoint target = (DropboxEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": target.getConfiguration().getAccessToken(); return true;
+        case "accessToken": return target.getConfiguration().getAccessToken();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "client": target.getConfiguration().getClient(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "client": return target.getConfiguration().getClient();
         case "clientidentifier":
-        case "clientIdentifier": target.getConfiguration().getClientIdentifier(); return true;
+        case "clientIdentifier": return target.getConfiguration().getClientIdentifier();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "localpath":
-        case "localPath": target.getConfiguration().getLocalPath(); return true;
+        case "localPath": return target.getConfiguration().getLocalPath();
         case "newremotepath":
-        case "newRemotePath": target.getConfiguration().getNewRemotePath(); return true;
-        case "query": target.getConfiguration().getQuery(); return true;
+        case "newRemotePath": return target.getConfiguration().getNewRemotePath();
+        case "query": return target.getConfiguration().getQuery();
         case "remotepath":
-        case "remotePath": target.getConfiguration().getRemotePath(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "remotePath": return target.getConfiguration().getRemotePath();
+        case "synchronous": return target.isSynchronous();
         case "uploadmode":
-        case "uploadMode": target.getConfiguration().getUploadMode(); return true;
+        case "uploadMode": return target.getConfiguration().getUploadMode();
         default: return null;
         }
     }

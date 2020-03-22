@@ -129,68 +129,68 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         JettyHttpComponent9 target = (JettyHttpComponent9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
-        case "allowJavaSerializedObject": target.isAllowJavaSerializedObject(); return true;
+        case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "continuationtimeout":
-        case "continuationTimeout": target.getContinuationTimeout(); return true;
+        case "continuationTimeout": return target.getContinuationTimeout();
         case "enablejmx":
-        case "enableJmx": target.isEnableJmx(); return true;
+        case "enableJmx": return target.isEnableJmx();
         case "errorhandler":
-        case "errorHandler": target.getErrorHandler(); return true;
+        case "errorHandler": return target.getErrorHandler();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
-        case "httpBinding": target.getHttpBinding(); return true;
+        case "httpBinding": return target.getHttpBinding();
         case "httpconfiguration":
-        case "httpConfiguration": target.getHttpConfiguration(); return true;
+        case "httpConfiguration": return target.getHttpConfiguration();
         case "jettyhttpbinding":
-        case "jettyHttpBinding": target.getJettyHttpBinding(); return true;
-        case "keystore": target.getKeystore(); return true;
+        case "jettyHttpBinding": return target.getJettyHttpBinding();
+        case "keystore": return target.getKeystore();
         case "maxthreads":
-        case "maxThreads": target.getMaxThreads(); return true;
+        case "maxThreads": return target.getMaxThreads();
         case "mbcontainer":
-        case "mbContainer": target.getMbContainer(); return true;
+        case "mbContainer": return target.getMbContainer();
         case "minthreads":
-        case "minThreads": target.getMinThreads(); return true;
+        case "minThreads": return target.getMinThreads();
         case "proxyhost":
-        case "proxyHost": target.getProxyHost(); return true;
+        case "proxyHost": return target.getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getProxyPort(); return true;
+        case "proxyPort": return target.getProxyPort();
         case "requestbuffersize":
-        case "requestBufferSize": target.getRequestBufferSize(); return true;
+        case "requestBufferSize": return target.getRequestBufferSize();
         case "requestheadersize":
-        case "requestHeaderSize": target.getRequestHeaderSize(); return true;
+        case "requestHeaderSize": return target.getRequestHeaderSize();
         case "responsebuffersize":
-        case "responseBufferSize": target.getResponseBufferSize(); return true;
+        case "responseBufferSize": return target.getResponseBufferSize();
         case "responseheadersize":
-        case "responseHeaderSize": target.getResponseHeaderSize(); return true;
+        case "responseHeaderSize": return target.getResponseHeaderSize();
         case "sendserverversion":
-        case "sendServerVersion": target.isSendServerVersion(); return true;
+        case "sendServerVersion": return target.isSendServerVersion();
         case "socketconnectorproperties":
-        case "socketConnectorProperties": target.getSocketConnectorProperties(); return true;
+        case "socketConnectorProperties": return target.getSocketConnectorProperties();
         case "socketconnectors":
-        case "socketConnectors": target.getSocketConnectors(); return true;
+        case "socketConnectors": return target.getSocketConnectors();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
         case "sslkeypassword":
-        case "sslKeyPassword": target.getSslKeyPassword(); return true;
+        case "sslKeyPassword": return target.getSslKeyPassword();
         case "sslpassword":
-        case "sslPassword": target.getSslPassword(); return true;
+        case "sslPassword": return target.getSslPassword();
         case "sslsocketconnectorproperties":
-        case "sslSocketConnectorProperties": target.getSslSocketConnectorProperties(); return true;
+        case "sslSocketConnectorProperties": return target.getSslSocketConnectorProperties();
         case "sslsocketconnectors":
-        case "sslSocketConnectors": target.getSslSocketConnectors(); return true;
+        case "sslSocketConnectors": return target.getSslSocketConnectors();
         case "threadpool":
-        case "threadPool": target.getThreadPool(); return true;
+        case "threadPool": return target.getThreadPool();
         case "usecontinuation":
-        case "useContinuation": target.isUseContinuation(); return true;
+        case "useContinuation": return target.isUseContinuation();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "usexforwardedforheader":
-        case "useXForwardedForHeader": target.isUseXForwardedForHeader(); return true;
+        case "useXForwardedForHeader": return target.isUseXForwardedForHeader();
         default: return null;
         }
     }

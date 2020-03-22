@@ -131,68 +131,68 @@ public class KinesisEndpointConfigurer extends PropertyConfigurerSupport impleme
         KinesisEndpoint target = (KinesisEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonkinesisclient":
-        case "amazonKinesisClient": target.getConfiguration().getAmazonKinesisClient(); return true;
+        case "amazonKinesisClient": return target.getConfiguration().getAmazonKinesisClient();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "delay": target.getDelay(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "delay": return target.getDelay();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "greedy": return target.isGreedy();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "iteratortype":
-        case "iteratorType": target.getConfiguration().getIteratorType(); return true;
+        case "iteratorType": return target.getConfiguration().getIteratorType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":
-        case "maxResultsPerRequest": target.getConfiguration().getMaxResultsPerRequest(); return true;
+        case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
+        case "region": return target.getConfiguration().getRegion();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sequencenumber":
-        case "sequenceNumber": target.getConfiguration().getSequenceNumber(); return true;
+        case "sequenceNumber": return target.getConfiguration().getSequenceNumber();
         case "shardclosed":
-        case "shardClosed": target.getConfiguration().getShardClosed(); return true;
+        case "shardClosed": return target.getConfiguration().getShardClosed();
         case "shardid":
-        case "shardId": target.getConfiguration().getShardId(); return true;
+        case "shardId": return target.getConfiguration().getShardId();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;
         }
     }

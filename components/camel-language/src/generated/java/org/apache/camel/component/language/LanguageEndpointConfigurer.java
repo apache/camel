@@ -54,17 +54,17 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         LanguageEndpoint target = (LanguageEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "binary": target.isBinary(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binary": return target.isBinary();
         case "cachescript":
-        case "cacheScript": target.isCacheScript(); return true;
+        case "cacheScript": return target.isCacheScript();
         case "contentcache":
-        case "contentCache": target.isContentCache(); return true;
+        case "contentCache": return target.isContentCache();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "script": target.getScript(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "transform": target.isTransform(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "script": return target.getScript();
+        case "synchronous": return target.isSynchronous();
+        case "transform": return target.isTransform();
         default: return null;
         }
     }

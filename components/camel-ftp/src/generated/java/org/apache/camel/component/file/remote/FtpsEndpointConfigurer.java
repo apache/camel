@@ -57,20 +57,20 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
         FtpsEndpoint target = (FtpsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "disablesecuredatachanneldefaults":
-        case "disableSecureDataChannelDefaults": target.getConfiguration().isDisableSecureDataChannelDefaults(); return true;
+        case "disableSecureDataChannelDefaults": return target.getConfiguration().isDisableSecureDataChannelDefaults();
         case "execpbsz":
-        case "execPbsz": target.getConfiguration().getExecPbsz(); return true;
+        case "execPbsz": return target.getConfiguration().getExecPbsz();
         case "execprot":
-        case "execProt": target.getConfiguration().getExecProt(); return true;
+        case "execProt": return target.getConfiguration().getExecProt();
         case "ftpclientkeystoreparameters":
-        case "ftpClientKeyStoreParameters": target.getFtpClientKeyStoreParameters(); return true;
+        case "ftpClientKeyStoreParameters": return target.getFtpClientKeyStoreParameters();
         case "ftpclienttruststoreparameters":
-        case "ftpClientTrustStoreParameters": target.getFtpClientTrustStoreParameters(); return true;
-        case "implicit": target.getConfiguration().isImplicit(); return true;
+        case "ftpClientTrustStoreParameters": return target.getFtpClientTrustStoreParameters();
+        case "implicit": return target.getConfiguration().isImplicit();
         case "securityprotocol":
-        case "securityProtocol": target.getConfiguration().getSecurityProtocol(); return true;
+        case "securityProtocol": return target.getConfiguration().getSecurityProtocol();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

@@ -89,36 +89,36 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         GoogleSheetsStreamComponent target = (GoogleSheetsStreamComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": getOrCreateConfiguration(target).getAccessToken(); return true;
+        case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
-        case "applicationName": getOrCreateConfiguration(target).getApplicationName(); return true;
+        case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfactory":
-        case "clientFactory": target.getClientFactory(); return true;
+        case "clientFactory": return target.getClientFactory();
         case "clientid":
-        case "clientId": getOrCreateConfiguration(target).getClientId(); return true;
+        case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
-        case "clientSecret": getOrCreateConfiguration(target).getClientSecret(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
+        case "configuration": return target.getConfiguration();
         case "includegriddata":
-        case "includeGridData": getOrCreateConfiguration(target).isIncludeGridData(); return true;
+        case "includeGridData": return getOrCreateConfiguration(target).isIncludeGridData();
         case "majordimension":
-        case "majorDimension": getOrCreateConfiguration(target).getMajorDimension(); return true;
+        case "majorDimension": return getOrCreateConfiguration(target).getMajorDimension();
         case "maxresults":
-        case "maxResults": getOrCreateConfiguration(target).getMaxResults(); return true;
-        case "range": getOrCreateConfiguration(target).getRange(); return true;
+        case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
+        case "range": return getOrCreateConfiguration(target).getRange();
         case "refreshtoken":
-        case "refreshToken": getOrCreateConfiguration(target).getRefreshToken(); return true;
-        case "scopes": getOrCreateConfiguration(target).getScopes(); return true;
+        case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
+        case "scopes": return getOrCreateConfiguration(target).getScopes();
         case "splitresults":
-        case "splitResults": getOrCreateConfiguration(target).isSplitResults(); return true;
+        case "splitResults": return getOrCreateConfiguration(target).isSplitResults();
         case "spreadsheetid":
-        case "spreadsheetId": getOrCreateConfiguration(target).getSpreadsheetId(); return true;
+        case "spreadsheetId": return getOrCreateConfiguration(target).getSpreadsheetId();
         case "valuerenderoption":
-        case "valueRenderOption": getOrCreateConfiguration(target).getValueRenderOption(); return true;
+        case "valueRenderOption": return getOrCreateConfiguration(target).getValueRenderOption();
         default: return null;
         }
     }

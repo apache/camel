@@ -114,51 +114,51 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
         FhirComponent target = (FhirComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": getOrCreateConfiguration(target).getAccessToken(); return true;
+        case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "client": getOrCreateConfiguration(target).getClient(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "client": return getOrCreateConfiguration(target).getClient();
         case "clientfactory":
-        case "clientFactory": getOrCreateConfiguration(target).getClientFactory(); return true;
-        case "compress": getOrCreateConfiguration(target).isCompress(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientFactory": return getOrCreateConfiguration(target).getClientFactory();
+        case "compress": return getOrCreateConfiguration(target).isCompress();
+        case "configuration": return target.getConfiguration();
         case "connectiontimeout":
-        case "connectionTimeout": getOrCreateConfiguration(target).getConnectionTimeout(); return true;
+        case "connectionTimeout": return getOrCreateConfiguration(target).getConnectionTimeout();
         case "defermodelscanning":
-        case "deferModelScanning": getOrCreateConfiguration(target).isDeferModelScanning(); return true;
-        case "encoding": getOrCreateConfiguration(target).getEncoding(); return true;
+        case "deferModelScanning": return getOrCreateConfiguration(target).isDeferModelScanning();
+        case "encoding": return getOrCreateConfiguration(target).getEncoding();
         case "fhircontext":
-        case "fhirContext": getOrCreateConfiguration(target).getFhirContext(); return true;
+        case "fhirContext": return getOrCreateConfiguration(target).getFhirContext();
         case "fhirversion":
-        case "fhirVersion": getOrCreateConfiguration(target).getFhirVersion(); return true;
+        case "fhirVersion": return getOrCreateConfiguration(target).getFhirVersion();
         case "forceconformancecheck":
-        case "forceConformanceCheck": getOrCreateConfiguration(target).isForceConformanceCheck(); return true;
+        case "forceConformanceCheck": return getOrCreateConfiguration(target).isForceConformanceCheck();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "log": getOrCreateConfiguration(target).isLog(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "log": return getOrCreateConfiguration(target).isLog();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "prettyprint":
-        case "prettyPrint": getOrCreateConfiguration(target).isPrettyPrint(); return true;
+        case "prettyPrint": return getOrCreateConfiguration(target).isPrettyPrint();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxypassword":
-        case "proxyPassword": getOrCreateConfiguration(target).getProxyPassword(); return true;
+        case "proxyPassword": return getOrCreateConfiguration(target).getProxyPassword();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyuser":
-        case "proxyUser": getOrCreateConfiguration(target).getProxyUser(); return true;
+        case "proxyUser": return getOrCreateConfiguration(target).getProxyUser();
         case "serverurl":
-        case "serverUrl": getOrCreateConfiguration(target).getServerUrl(); return true;
+        case "serverUrl": return getOrCreateConfiguration(target).getServerUrl();
         case "sessioncookie":
-        case "sessionCookie": getOrCreateConfiguration(target).getSessionCookie(); return true;
+        case "sessionCookie": return getOrCreateConfiguration(target).getSessionCookie();
         case "sockettimeout":
-        case "socketTimeout": getOrCreateConfiguration(target).getSocketTimeout(); return true;
-        case "summary": getOrCreateConfiguration(target).getSummary(); return true;
-        case "username": getOrCreateConfiguration(target).getUsername(); return true;
+        case "socketTimeout": return getOrCreateConfiguration(target).getSocketTimeout();
+        case "summary": return getOrCreateConfiguration(target).getSummary();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         case "validationmode":
-        case "validationMode": getOrCreateConfiguration(target).getValidationMode(); return true;
+        case "validationMode": return getOrCreateConfiguration(target).getValidationMode();
         default: return null;
         }
     }

@@ -81,30 +81,30 @@ public class EtcdStatsComponentConfigurer extends PropertyConfigurerSupport impl
         EtcdStatsComponent target = (EtcdStatsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
         case "fromindex":
-        case "fromIndex": getOrCreateConfiguration(target).getFromIndex(); return true;
+        case "fromIndex": return getOrCreateConfiguration(target).getFromIndex();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
-        case "recursive": getOrCreateConfiguration(target).isRecursive(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return getOrCreateConfiguration(target).getPassword();
+        case "recursive": return getOrCreateConfiguration(target).isRecursive();
         case "sendemptyexchangeontimeout":
-        case "sendEmptyExchangeOnTimeout": getOrCreateConfiguration(target).isSendEmptyExchangeOnTimeout(); return true;
+        case "sendEmptyExchangeOnTimeout": return getOrCreateConfiguration(target).isSendEmptyExchangeOnTimeout();
         case "servicepath":
-        case "servicePath": getOrCreateConfiguration(target).getServicePath(); return true;
+        case "servicePath": return getOrCreateConfiguration(target).getServicePath();
         case "sslcontextparameters":
-        case "sslContextParameters": getOrCreateConfiguration(target).getSslContextParameters(); return true;
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
         case "timetolive":
-        case "timeToLive": getOrCreateConfiguration(target).getTimeToLive(); return true;
-        case "timeout": getOrCreateConfiguration(target).getTimeout(); return true;
-        case "uris": getOrCreateConfiguration(target).getUris(); return true;
+        case "timeToLive": return getOrCreateConfiguration(target).getTimeToLive();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
+        case "uris": return getOrCreateConfiguration(target).getUris();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username":
-        case "userName": getOrCreateConfiguration(target).getUserName(); return true;
+        case "userName": return getOrCreateConfiguration(target).getUserName();
         default: return null;
         }
     }

@@ -62,22 +62,22 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         GraphqlEndpoint target = (GraphqlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": target.getAccessToken(); return true;
+        case "accessToken": return target.getAccessToken();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "operationname":
-        case "operationName": target.getOperationName(); return true;
-        case "password": target.getPassword(); return true;
+        case "operationName": return target.getOperationName();
+        case "password": return target.getPassword();
         case "proxyhost":
-        case "proxyHost": target.getProxyHost(); return true;
-        case "query": target.getQuery(); return true;
+        case "proxyHost": return target.getProxyHost();
+        case "query": return target.getQuery();
         case "queryfile":
-        case "queryFile": target.getQueryFile(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "username": target.getUsername(); return true;
-        case "variables": target.getVariables(); return true;
+        case "queryFile": return target.getQueryFile();
+        case "synchronous": return target.isSynchronous();
+        case "username": return target.getUsername();
+        case "variables": return target.getVariables();
         default: return null;
         }
     }

@@ -256,148 +256,148 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         DebeziumMySqlComponent target = (DebeziumMySqlComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
-        case "additionalProperties": getOrCreateConfiguration(target).getAdditionalProperties(); return true;
+        case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bigintunsignedhandlingmode":
-        case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).getBigintUnsignedHandlingMode(); return true;
+        case "bigintUnsignedHandlingMode": return getOrCreateConfiguration(target).getBigintUnsignedHandlingMode();
         case "binlogbuffersize":
-        case "binlogBufferSize": getOrCreateConfiguration(target).getBinlogBufferSize(); return true;
+        case "binlogBufferSize": return getOrCreateConfiguration(target).getBinlogBufferSize();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
-        case "columnBlacklist": getOrCreateConfiguration(target).getColumnBlacklist(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "columnBlacklist": return getOrCreateConfiguration(target).getColumnBlacklist();
+        case "configuration": return target.getConfiguration();
         case "connectkeepalive":
-        case "connectKeepAlive": getOrCreateConfiguration(target).isConnectKeepAlive(); return true;
+        case "connectKeepAlive": return getOrCreateConfiguration(target).isConnectKeepAlive();
         case "connectkeepaliveintervalms":
-        case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).getConnectKeepAliveIntervalMs(); return true;
+        case "connectKeepAliveIntervalMs": return getOrCreateConfiguration(target).getConnectKeepAliveIntervalMs();
         case "connecttimeoutms":
-        case "connectTimeoutMs": getOrCreateConfiguration(target).getConnectTimeoutMs(); return true;
+        case "connectTimeoutMs": return getOrCreateConfiguration(target).getConnectTimeoutMs();
         case "databaseblacklist":
-        case "databaseBlacklist": getOrCreateConfiguration(target).getDatabaseBlacklist(); return true;
+        case "databaseBlacklist": return getOrCreateConfiguration(target).getDatabaseBlacklist();
         case "databasehistory":
-        case "databaseHistory": getOrCreateConfiguration(target).getDatabaseHistory(); return true;
+        case "databaseHistory": return getOrCreateConfiguration(target).getDatabaseHistory();
         case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": getOrCreateConfiguration(target).getDatabaseHistoryFileFilename(); return true;
+        case "databaseHistoryFileFilename": return getOrCreateConfiguration(target).getDatabaseHistoryFileFilename();
         case "databasehistorykafkabootstrapservers":
-        case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration(target).getDatabaseHistoryKafkaBootstrapServers(); return true;
+        case "databaseHistoryKafkaBootstrapServers": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaBootstrapServers();
         case "databasehistorykafkarecoveryattempts":
-        case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryAttempts(); return true;
+        case "databaseHistoryKafkaRecoveryAttempts": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryAttempts();
         case "databasehistorykafkarecoverypollintervalms":
-        case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryPollIntervalMs(); return true;
+        case "databaseHistoryKafkaRecoveryPollIntervalMs": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryPollIntervalMs();
         case "databasehistorykafkatopic":
-        case "databaseHistoryKafkaTopic": getOrCreateConfiguration(target).getDatabaseHistoryKafkaTopic(); return true;
+        case "databaseHistoryKafkaTopic": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaTopic();
         case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration(target).isDatabaseHistorySkipUnparseableDdl(); return true;
+        case "databaseHistorySkipUnparseableDdl": return getOrCreateConfiguration(target).isDatabaseHistorySkipUnparseableDdl();
         case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration(target).isDatabaseHistoryStoreOnlyMonitoredTablesDdl(); return true;
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return getOrCreateConfiguration(target).isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
-        case "databaseHostname": getOrCreateConfiguration(target).getDatabaseHostname(); return true;
+        case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseinitialstatements":
-        case "databaseInitialStatements": getOrCreateConfiguration(target).getDatabaseInitialStatements(); return true;
+        case "databaseInitialStatements": return getOrCreateConfiguration(target).getDatabaseInitialStatements();
         case "databasejdbcdriver":
-        case "databaseJdbcDriver": getOrCreateConfiguration(target).getDatabaseJdbcDriver(); return true;
+        case "databaseJdbcDriver": return getOrCreateConfiguration(target).getDatabaseJdbcDriver();
         case "databasepassword":
-        case "databasePassword": getOrCreateConfiguration(target).getDatabasePassword(); return true;
+        case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
-        case "databasePort": getOrCreateConfiguration(target).getDatabasePort(); return true;
+        case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
         case "databaseserverid":
-        case "databaseServerId": getOrCreateConfiguration(target).getDatabaseServerId(); return true;
+        case "databaseServerId": return getOrCreateConfiguration(target).getDatabaseServerId();
         case "databaseserveridoffset":
-        case "databaseServerIdOffset": getOrCreateConfiguration(target).getDatabaseServerIdOffset(); return true;
+        case "databaseServerIdOffset": return getOrCreateConfiguration(target).getDatabaseServerIdOffset();
         case "databaseservername":
-        case "databaseServerName": getOrCreateConfiguration(target).getDatabaseServerName(); return true;
+        case "databaseServerName": return getOrCreateConfiguration(target).getDatabaseServerName();
         case "databasesslkeystore":
-        case "databaseSslKeystore": getOrCreateConfiguration(target).getDatabaseSslKeystore(); return true;
+        case "databaseSslKeystore": return getOrCreateConfiguration(target).getDatabaseSslKeystore();
         case "databasesslkeystorepassword":
-        case "databaseSslKeystorePassword": getOrCreateConfiguration(target).getDatabaseSslKeystorePassword(); return true;
+        case "databaseSslKeystorePassword": return getOrCreateConfiguration(target).getDatabaseSslKeystorePassword();
         case "databasesslmode":
-        case "databaseSslMode": getOrCreateConfiguration(target).getDatabaseSslMode(); return true;
+        case "databaseSslMode": return getOrCreateConfiguration(target).getDatabaseSslMode();
         case "databasessltruststore":
-        case "databaseSslTruststore": getOrCreateConfiguration(target).getDatabaseSslTruststore(); return true;
+        case "databaseSslTruststore": return getOrCreateConfiguration(target).getDatabaseSslTruststore();
         case "databasessltruststorepassword":
-        case "databaseSslTruststorePassword": getOrCreateConfiguration(target).getDatabaseSslTruststorePassword(); return true;
+        case "databaseSslTruststorePassword": return getOrCreateConfiguration(target).getDatabaseSslTruststorePassword();
         case "databaseuser":
-        case "databaseUser": getOrCreateConfiguration(target).getDatabaseUser(); return true;
+        case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "databasewhitelist":
-        case "databaseWhitelist": getOrCreateConfiguration(target).getDatabaseWhitelist(); return true;
+        case "databaseWhitelist": return getOrCreateConfiguration(target).getDatabaseWhitelist();
         case "decimalhandlingmode":
-        case "decimalHandlingMode": getOrCreateConfiguration(target).getDecimalHandlingMode(); return true;
+        case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "enabletimeadjuster":
-        case "enableTimeAdjuster": getOrCreateConfiguration(target).isEnableTimeAdjuster(); return true;
+        case "enableTimeAdjuster": return getOrCreateConfiguration(target).isEnableTimeAdjuster();
         case "eventdeserializationfailurehandlingmode":
-        case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration(target).getEventDeserializationFailureHandlingMode(); return true;
+        case "eventDeserializationFailureHandlingMode": return getOrCreateConfiguration(target).getEventDeserializationFailureHandlingMode();
         case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": getOrCreateConfiguration(target).getGtidNewChannelPosition(); return true;
+        case "gtidNewChannelPosition": return getOrCreateConfiguration(target).getGtidNewChannelPosition();
         case "gtidsourceexcludes":
-        case "gtidSourceExcludes": getOrCreateConfiguration(target).getGtidSourceExcludes(); return true;
+        case "gtidSourceExcludes": return getOrCreateConfiguration(target).getGtidSourceExcludes();
         case "gtidsourcefilterdmlevents":
-        case "gtidSourceFilterDmlEvents": getOrCreateConfiguration(target).isGtidSourceFilterDmlEvents(); return true;
+        case "gtidSourceFilterDmlEvents": return getOrCreateConfiguration(target).isGtidSourceFilterDmlEvents();
         case "gtidsourceincludes":
-        case "gtidSourceIncludes": getOrCreateConfiguration(target).getGtidSourceIncludes(); return true;
+        case "gtidSourceIncludes": return getOrCreateConfiguration(target).getGtidSourceIncludes();
         case "heartbeatintervalms":
-        case "heartbeatIntervalMs": getOrCreateConfiguration(target).getHeartbeatIntervalMs(); return true;
+        case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
-        case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).getHeartbeatTopicsPrefix(); return true;
+        case "heartbeatTopicsPrefix": return getOrCreateConfiguration(target).getHeartbeatTopicsPrefix();
         case "includequery":
-        case "includeQuery": getOrCreateConfiguration(target).isIncludeQuery(); return true;
+        case "includeQuery": return getOrCreateConfiguration(target).isIncludeQuery();
         case "includeschemachanges":
-        case "includeSchemaChanges": getOrCreateConfiguration(target).isIncludeSchemaChanges(); return true;
+        case "includeSchemaChanges": return getOrCreateConfiguration(target).isIncludeSchemaChanges();
         case "inconsistentschemahandlingmode":
-        case "inconsistentSchemaHandlingMode": getOrCreateConfiguration(target).getInconsistentSchemaHandlingMode(); return true;
+        case "inconsistentSchemaHandlingMode": return getOrCreateConfiguration(target).getInconsistentSchemaHandlingMode();
         case "internalkeyconverter":
-        case "internalKeyConverter": getOrCreateConfiguration(target).getInternalKeyConverter(); return true;
+        case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
-        case "internalValueConverter": getOrCreateConfiguration(target).getInternalValueConverter(); return true;
+        case "internalValueConverter": return getOrCreateConfiguration(target).getInternalValueConverter();
         case "maxbatchsize":
-        case "maxBatchSize": getOrCreateConfiguration(target).getMaxBatchSize(); return true;
+        case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxqueuesize":
-        case "maxQueueSize": getOrCreateConfiguration(target).getMaxQueueSize(); return true;
+        case "maxQueueSize": return getOrCreateConfiguration(target).getMaxQueueSize();
         case "messagekeycolumns":
-        case "messageKeyColumns": getOrCreateConfiguration(target).getMessageKeyColumns(); return true;
+        case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
         case "offsetcommitpolicy":
-        case "offsetCommitPolicy": getOrCreateConfiguration(target).getOffsetCommitPolicy(); return true;
+        case "offsetCommitPolicy": return getOrCreateConfiguration(target).getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": getOrCreateConfiguration(target).getOffsetCommitTimeoutMs(); return true;
+        case "offsetCommitTimeoutMs": return getOrCreateConfiguration(target).getOffsetCommitTimeoutMs();
         case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": getOrCreateConfiguration(target).getOffsetFlushIntervalMs(); return true;
+        case "offsetFlushIntervalMs": return getOrCreateConfiguration(target).getOffsetFlushIntervalMs();
         case "offsetstorage":
-        case "offsetStorage": getOrCreateConfiguration(target).getOffsetStorage(); return true;
+        case "offsetStorage": return getOrCreateConfiguration(target).getOffsetStorage();
         case "offsetstoragefilename":
-        case "offsetStorageFileName": getOrCreateConfiguration(target).getOffsetStorageFileName(); return true;
+        case "offsetStorageFileName": return getOrCreateConfiguration(target).getOffsetStorageFileName();
         case "offsetstoragepartitions":
-        case "offsetStoragePartitions": getOrCreateConfiguration(target).getOffsetStoragePartitions(); return true;
+        case "offsetStoragePartitions": return getOrCreateConfiguration(target).getOffsetStoragePartitions();
         case "offsetstoragereplicationfactor":
-        case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).getOffsetStorageReplicationFactor(); return true;
+        case "offsetStorageReplicationFactor": return getOrCreateConfiguration(target).getOffsetStorageReplicationFactor();
         case "offsetstoragetopic":
-        case "offsetStorageTopic": getOrCreateConfiguration(target).getOffsetStorageTopic(); return true;
+        case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
         case "pollintervalms":
-        case "pollIntervalMs": getOrCreateConfiguration(target).getPollIntervalMs(); return true;
+        case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
         case "snapshotdelayms":
-        case "snapshotDelayMs": getOrCreateConfiguration(target).getSnapshotDelayMs(); return true;
+        case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":
-        case "snapshotFetchSize": getOrCreateConfiguration(target).getSnapshotFetchSize(); return true;
+        case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
         case "snapshotlockingmode":
-        case "snapshotLockingMode": getOrCreateConfiguration(target).getSnapshotLockingMode(); return true;
+        case "snapshotLockingMode": return getOrCreateConfiguration(target).getSnapshotLockingMode();
         case "snapshotmode":
-        case "snapshotMode": getOrCreateConfiguration(target).getSnapshotMode(); return true;
+        case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotnewtables":
-        case "snapshotNewTables": getOrCreateConfiguration(target).getSnapshotNewTables(); return true;
+        case "snapshotNewTables": return getOrCreateConfiguration(target).getSnapshotNewTables();
         case "snapshotselectstatementoverrides":
-        case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides(); return true;
+        case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
         case "sourcestructversion":
-        case "sourceStructVersion": getOrCreateConfiguration(target).getSourceStructVersion(); return true;
+        case "sourceStructVersion": return getOrCreateConfiguration(target).getSourceStructVersion();
         case "tableblacklist":
-        case "tableBlacklist": getOrCreateConfiguration(target).getTableBlacklist(); return true;
+        case "tableBlacklist": return getOrCreateConfiguration(target).getTableBlacklist();
         case "tableignorebuiltin":
-        case "tableIgnoreBuiltin": getOrCreateConfiguration(target).isTableIgnoreBuiltin(); return true;
+        case "tableIgnoreBuiltin": return getOrCreateConfiguration(target).isTableIgnoreBuiltin();
         case "tablewhitelist":
-        case "tableWhitelist": getOrCreateConfiguration(target).getTableWhitelist(); return true;
+        case "tableWhitelist": return getOrCreateConfiguration(target).getTableWhitelist();
         case "timeprecisionmode":
-        case "timePrecisionMode": getOrCreateConfiguration(target).getTimePrecisionMode(); return true;
+        case "timePrecisionMode": return getOrCreateConfiguration(target).getTimePrecisionMode();
         case "tombstonesondelete":
-        case "tombstonesOnDelete": getOrCreateConfiguration(target).isTombstonesOnDelete(); return true;
+        case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
         default: return null;
         }
     }

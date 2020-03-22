@@ -54,19 +54,19 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ControlBusEndpoint target = (ControlBusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action": target.getAction(); return true;
-        case "async": target.isAsync(); return true;
+        case "action": return target.getAction();
+        case "async": return target.isAsync();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "logginglevel":
-        case "loggingLevel": target.getLoggingLevel(); return true;
+        case "loggingLevel": return target.getLoggingLevel();
         case "restartdelay":
-        case "restartDelay": target.getRestartDelay(); return true;
+        case "restartDelay": return target.getRestartDelay();
         case "routeid":
-        case "routeId": target.getRouteId(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "routeId": return target.getRouteId();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

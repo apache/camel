@@ -74,26 +74,26 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
         QueueServiceComponent target = (QueueServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azurequeueclient":
-        case "azureQueueClient": getOrCreateConfiguration(target).getAzureQueueClient(); return true;
+        case "azureQueueClient": return getOrCreateConfiguration(target).getAzureQueueClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
-        case "credentials": getOrCreateConfiguration(target).getCredentials(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
+        case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "credentialsaccountkey":
-        case "credentialsAccountKey": getOrCreateConfiguration(target).getCredentialsAccountKey(); return true;
+        case "credentialsAccountKey": return getOrCreateConfiguration(target).getCredentialsAccountKey();
         case "credentialsaccountname":
-        case "credentialsAccountName": getOrCreateConfiguration(target).getCredentialsAccountName(); return true;
+        case "credentialsAccountName": return getOrCreateConfiguration(target).getCredentialsAccountName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagetimetolive":
-        case "messageTimeToLive": getOrCreateConfiguration(target).getMessageTimeToLive(); return true;
+        case "messageTimeToLive": return getOrCreateConfiguration(target).getMessageTimeToLive();
         case "messagevisibilitydelay":
-        case "messageVisibilityDelay": getOrCreateConfiguration(target).getMessageVisibilityDelay(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
+        case "messageVisibilityDelay": return getOrCreateConfiguration(target).getMessageVisibilityDelay();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "queueprefix":
-        case "queuePrefix": getOrCreateConfiguration(target).getQueuePrefix(); return true;
+        case "queuePrefix": return getOrCreateConfiguration(target).getQueuePrefix();
         default: return null;
         }
     }

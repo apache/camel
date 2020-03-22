@@ -46,13 +46,13 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
         CryptoCmsComponent target = (CryptoCmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "envelopeddatadecryptorconfiguration":
-        case "envelopedDataDecryptorConfiguration": target.getEnvelopedDataDecryptorConfiguration(); return true;
+        case "envelopedDataDecryptorConfiguration": return target.getEnvelopedDataDecryptorConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "signeddataverifierconfiguration":
-        case "signedDataVerifierConfiguration": target.getSignedDataVerifierConfiguration(); return true;
+        case "signedDataVerifierConfiguration": return target.getSignedDataVerifierConfiguration();
         default: return null;
         }
     }

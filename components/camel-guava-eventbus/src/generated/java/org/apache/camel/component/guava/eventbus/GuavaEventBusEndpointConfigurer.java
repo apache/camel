@@ -57,20 +57,20 @@ public class GuavaEventBusEndpointConfigurer extends PropertyConfigurerSupport i
         GuavaEventBusEndpoint target = (GuavaEventBusEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "eventclass":
-        case "eventClass": target.getEventClass(); return true;
+        case "eventClass": return target.getEventClass();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "listenerinterface":
-        case "listenerInterface": target.getListenerInterface(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "listenerInterface": return target.getListenerInterface();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

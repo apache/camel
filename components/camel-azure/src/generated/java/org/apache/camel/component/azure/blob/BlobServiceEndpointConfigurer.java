@@ -100,48 +100,48 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         BlobServiceEndpoint target = (BlobServiceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azureblobclient":
-        case "azureBlobClient": target.getConfiguration().getAzureBlobClient(); return true;
+        case "azureBlobClient": return target.getConfiguration().getAzureBlobClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobmetadata":
-        case "blobMetadata": target.getConfiguration().getBlobMetadata(); return true;
+        case "blobMetadata": return target.getConfiguration().getBlobMetadata();
         case "bloboffset":
-        case "blobOffset": target.getConfiguration().getBlobOffset(); return true;
+        case "blobOffset": return target.getConfiguration().getBlobOffset();
         case "blobprefix":
-        case "blobPrefix": target.getConfiguration().getBlobPrefix(); return true;
+        case "blobPrefix": return target.getConfiguration().getBlobPrefix();
         case "blobtype":
-        case "blobType": target.getConfiguration().getBlobType(); return true;
+        case "blobType": return target.getConfiguration().getBlobType();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "closestreamafterread":
-        case "closeStreamAfterRead": target.getConfiguration().isCloseStreamAfterRead(); return true;
+        case "closeStreamAfterRead": return target.getConfiguration().isCloseStreamAfterRead();
         case "closestreamafterwrite":
-        case "closeStreamAfterWrite": target.getConfiguration().isCloseStreamAfterWrite(); return true;
-        case "credentials": target.getConfiguration().getCredentials(); return true;
+        case "closeStreamAfterWrite": return target.getConfiguration().isCloseStreamAfterWrite();
+        case "credentials": return target.getConfiguration().getCredentials();
         case "credentialsaccountkey":
-        case "credentialsAccountKey": target.getConfiguration().getCredentialsAccountKey(); return true;
+        case "credentialsAccountKey": return target.getConfiguration().getCredentialsAccountKey();
         case "credentialsaccountname":
-        case "credentialsAccountName": target.getConfiguration().getCredentialsAccountName(); return true;
+        case "credentialsAccountName": return target.getConfiguration().getCredentialsAccountName();
         case "datalength":
-        case "dataLength": target.getConfiguration().getDataLength(); return true;
+        case "dataLength": return target.getConfiguration().getDataLength();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filedir":
-        case "fileDir": target.getConfiguration().getFileDir(); return true;
+        case "fileDir": return target.getConfiguration().getFileDir();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return target.getConfiguration().getOperation();
         case "publicforread":
-        case "publicForRead": target.getConfiguration().isPublicForRead(); return true;
+        case "publicForRead": return target.getConfiguration().isPublicForRead();
         case "streamreadsize":
-        case "streamReadSize": target.getConfiguration().getStreamReadSize(); return true;
+        case "streamReadSize": return target.getConfiguration().getStreamReadSize();
         case "streamwritesize":
-        case "streamWriteSize": target.getConfiguration().getStreamWriteSize(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "streamWriteSize": return target.getConfiguration().getStreamWriteSize();
+        case "synchronous": return target.isSynchronous();
         case "useflatlisting":
-        case "useFlatListing": target.getConfiguration().isUseFlatListing(); return true;
+        case "useFlatListing": return target.getConfiguration().isUseFlatListing();
         default: return null;
         }
     }

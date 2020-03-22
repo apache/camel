@@ -71,28 +71,28 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         GitHubEndpoint target = (GitHubEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "encoding": target.getEncoding(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "encoding": return target.getEncoding();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "oauthtoken":
-        case "oauthToken": target.getOauthToken(); return true;
-        case "password": target.getPassword(); return true;
+        case "oauthToken": return target.getOauthToken();
+        case "password": return target.getPassword();
         case "reponame":
-        case "repoName": target.getRepoName(); return true;
+        case "repoName": return target.getRepoName();
         case "repoowner":
-        case "repoOwner": target.getRepoOwner(); return true;
-        case "state": target.getState(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "repoOwner": return target.getRepoOwner();
+        case "state": return target.getState();
+        case "synchronous": return target.isSynchronous();
         case "targeturl":
-        case "targetUrl": target.getTargetUrl(); return true;
-        case "username": target.getUsername(); return true;
+        case "targetUrl": return target.getTargetUrl();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

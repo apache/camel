@@ -94,42 +94,42 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
         DockerEndpoint target = (DockerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "certpath":
-        case "certPath": target.getConfiguration().getCertPath(); return true;
+        case "certPath": return target.getConfiguration().getCertPath();
         case "cmdexecfactory":
-        case "cmdExecFactory": target.getConfiguration().getCmdExecFactory(); return true;
-        case "email": target.getConfiguration().getEmail(); return true;
+        case "cmdExecFactory": return target.getConfiguration().getCmdExecFactory();
+        case "email": return target.getConfiguration().getEmail();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "followredirectfilter":
-        case "followRedirectFilter": target.getConfiguration().isFollowRedirectFilter(); return true;
-        case "host": target.getConfiguration().getHost(); return true;
+        case "followRedirectFilter": return target.getConfiguration().isFollowRedirectFilter();
+        case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loggingfilter":
-        case "loggingFilter": target.getConfiguration().isLoggingFilter(); return true;
+        case "loggingFilter": return target.getConfiguration().isLoggingFilter();
         case "maxperrouteconnections":
-        case "maxPerRouteConnections": target.getConfiguration().getMaxPerRouteConnections(); return true;
+        case "maxPerRouteConnections": return target.getConfiguration().getMaxPerRouteConnections();
         case "maxtotalconnections":
-        case "maxTotalConnections": target.getConfiguration().getMaxTotalConnections(); return true;
-        case "parameters": target.getConfiguration().getParameters(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
-        case "port": target.getConfiguration().getPort(); return true;
+        case "maxTotalConnections": return target.getConfiguration().getMaxTotalConnections();
+        case "parameters": return target.getConfiguration().getParameters();
+        case "password": return target.getConfiguration().getPassword();
+        case "port": return target.getConfiguration().getPort();
         case "requesttimeout":
-        case "requestTimeout": target.getConfiguration().getRequestTimeout(); return true;
-        case "secure": target.getConfiguration().isSecure(); return true;
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
+        case "secure": return target.getConfiguration().isSecure();
         case "serveraddress":
-        case "serverAddress": target.getConfiguration().getServerAddress(); return true;
-        case "socket": target.getConfiguration().isSocket(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "serverAddress": return target.getConfiguration().getServerAddress();
+        case "socket": return target.getConfiguration().isSocket();
+        case "synchronous": return target.isSynchronous();
         case "tlsverify":
-        case "tlsVerify": target.getConfiguration().isTlsVerify(); return true;
-        case "username": target.getConfiguration().getUsername(); return true;
+        case "tlsVerify": return target.getConfiguration().isTlsVerify();
+        case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
     }

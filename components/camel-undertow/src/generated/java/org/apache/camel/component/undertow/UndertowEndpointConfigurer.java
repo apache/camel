@@ -121,62 +121,62 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         UndertowEndpoint target = (UndertowEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesslog":
-        case "accessLog": target.getAccessLog(); return true;
+        case "accessLog": return target.getAccessLog();
         case "accesslogreceiver":
-        case "accessLogReceiver": target.getAccessLogReceiver(); return true;
+        case "accessLogReceiver": return target.getAccessLogReceiver();
         case "allowedroles":
-        case "allowedRoles": target.getAllowedRoles(); return true;
+        case "allowedRoles": return target.getAllowedRoles();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cookiehandler":
-        case "cookieHandler": target.getCookieHandler(); return true;
+        case "cookieHandler": return target.getCookieHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "firewebsocketchannelevents":
-        case "fireWebSocketChannelEvents": target.isFireWebSocketChannelEvents(); return true;
-        case "handlers": target.getHandlers(); return true;
+        case "fireWebSocketChannelEvents": return target.isFireWebSocketChannelEvents();
+        case "handlers": return target.getHandlers();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpmethodrestrict":
-        case "httpMethodRestrict": target.getHttpMethodRestrict(); return true;
+        case "httpMethodRestrict": return target.getHttpMethodRestrict();
         case "keepalive":
-        case "keepAlive": target.getKeepAlive(); return true;
+        case "keepAlive": return target.getKeepAlive();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "matchonuriprefix":
-        case "matchOnUriPrefix": target.getMatchOnUriPrefix(); return true;
+        case "matchOnUriPrefix": return target.getMatchOnUriPrefix();
         case "muteexception":
-        case "muteException": target.getMuteException(); return true;
-        case "options": target.getOptions(); return true;
+        case "muteException": return target.getMuteException();
+        case "options": return target.getOptions();
         case "optionsenabled":
-        case "optionsEnabled": target.isOptionsEnabled(); return true;
+        case "optionsEnabled": return target.isOptionsEnabled();
         case "preservehostheader":
-        case "preserveHostHeader": target.isPreserveHostHeader(); return true;
+        case "preserveHostHeader": return target.isPreserveHostHeader();
         case "reuseaddresses":
-        case "reuseAddresses": target.getReuseAddresses(); return true;
+        case "reuseAddresses": return target.getReuseAddresses();
         case "securityconfiguration":
-        case "securityConfiguration": target.getSecurityConfiguration(); return true;
+        case "securityConfiguration": return target.getSecurityConfiguration();
         case "sendtimeout":
-        case "sendTimeout": target.getSendTimeout(); return true;
+        case "sendTimeout": return target.getSendTimeout();
         case "sendtoall":
-        case "sendToAll": target.getSendToAll(); return true;
+        case "sendToAll": return target.getSendToAll();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "tcpnodelay":
-        case "tcpNoDelay": target.getTcpNoDelay(); return true;
+        case "tcpNoDelay": return target.getTcpNoDelay();
         case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.getThrowExceptionOnFailure(); return true;
+        case "throwExceptionOnFailure": return target.getThrowExceptionOnFailure();
         case "transferexception":
-        case "transferException": target.getTransferException(); return true;
+        case "transferException": return target.getTransferException();
         case "undertowhttpbinding":
-        case "undertowHttpBinding": target.getUndertowHttpBinding(); return true;
+        case "undertowHttpBinding": return target.getUndertowHttpBinding();
         case "usestreaming":
-        case "useStreaming": target.isUseStreaming(); return true;
+        case "useStreaming": return target.isUseStreaming();
         default: return null;
         }
     }

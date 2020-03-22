@@ -46,13 +46,13 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
         ActiveMQComponent target = (ActiveMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "brokerurl":
-        case "brokerURL": target.getBrokerURL(); return true;
+        case "brokerURL": return target.getBrokerURL();
         case "trustallpackages":
-        case "trustAllPackages": target.isTrustAllPackages(); return true;
+        case "trustAllPackages": return target.isTrustAllPackages();
         case "usepooledconnection":
-        case "usePooledConnection": target.isUsePooledConnection(); return true;
+        case "usePooledConnection": return target.isUsePooledConnection();
         case "usesingleconnection":
-        case "useSingleConnection": target.isUseSingleConnection(); return true;
+        case "useSingleConnection": return target.isUseSingleConnection();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

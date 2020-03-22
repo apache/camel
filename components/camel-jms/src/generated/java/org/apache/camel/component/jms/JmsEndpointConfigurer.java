@@ -310,187 +310,187 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         JmsEndpoint target = (JmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acceptmessageswhilestopping":
-        case "acceptMessagesWhileStopping": target.getConfiguration().isAcceptMessagesWhileStopping(); return true;
+        case "acceptMessagesWhileStopping": return target.getConfiguration().isAcceptMessagesWhileStopping();
         case "acknowledgementmodename":
-        case "acknowledgementModeName": target.getConfiguration().getAcknowledgementModeName(); return true;
+        case "acknowledgementModeName": return target.getConfiguration().getAcknowledgementModeName();
         case "allowadditionalheaders":
-        case "allowAdditionalHeaders": target.getConfiguration().getAllowAdditionalHeaders(); return true;
+        case "allowAdditionalHeaders": return target.getConfiguration().getAllowAdditionalHeaders();
         case "allownullbody":
-        case "allowNullBody": target.getConfiguration().isAllowNullBody(); return true;
+        case "allowNullBody": return target.getConfiguration().isAllowNullBody();
         case "allowreplymanagerquickstop":
-        case "allowReplyManagerQuickStop": target.getConfiguration().isAllowReplyManagerQuickStop(); return true;
+        case "allowReplyManagerQuickStop": return target.getConfiguration().isAllowReplyManagerQuickStop();
         case "allowserializedheaders":
-        case "allowSerializedHeaders": target.getConfiguration().isAllowSerializedHeaders(); return true;
+        case "allowSerializedHeaders": return target.getConfiguration().isAllowSerializedHeaders();
         case "alwayscopymessage":
-        case "alwaysCopyMessage": target.getConfiguration().isAlwaysCopyMessage(); return true;
+        case "alwaysCopyMessage": return target.getConfiguration().isAlwaysCopyMessage();
         case "artemisstreamingenabled":
-        case "artemisStreamingEnabled": target.getConfiguration().isArtemisStreamingEnabled(); return true;
+        case "artemisStreamingEnabled": return target.getConfiguration().isArtemisStreamingEnabled();
         case "asyncconsumer":
-        case "asyncConsumer": target.getConfiguration().isAsyncConsumer(); return true;
+        case "asyncConsumer": return target.getConfiguration().isAsyncConsumer();
         case "asyncstartlistener":
-        case "asyncStartListener": target.getConfiguration().isAsyncStartListener(); return true;
+        case "asyncStartListener": return target.getConfiguration().isAsyncStartListener();
         case "asyncstoplistener":
-        case "asyncStopListener": target.getConfiguration().isAsyncStopListener(); return true;
+        case "asyncStopListener": return target.getConfiguration().isAsyncStopListener();
         case "autostartup":
-        case "autoStartup": target.getConfiguration().isAutoStartup(); return true;
+        case "autoStartup": return target.getConfiguration().isAutoStartup();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cachelevel":
-        case "cacheLevel": target.getConfiguration().getCacheLevel(); return true;
+        case "cacheLevel": return target.getConfiguration().getCacheLevel();
         case "cachelevelname":
-        case "cacheLevelName": target.getConfiguration().getCacheLevelName(); return true;
+        case "cacheLevelName": return target.getConfiguration().getCacheLevelName();
         case "clientid":
-        case "clientId": target.getConfiguration().getClientId(); return true;
+        case "clientId": return target.getConfiguration().getClientId();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConfiguration().getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConfiguration().getConcurrentConsumers();
         case "connectionfactory":
-        case "connectionFactory": target.getConfiguration().getConnectionFactory(); return true;
+        case "connectionFactory": return target.getConfiguration().getConnectionFactory();
         case "consumertype":
-        case "consumerType": target.getConfiguration().getConsumerType(); return true;
+        case "consumerType": return target.getConfiguration().getConsumerType();
         case "correlationproperty":
-        case "correlationProperty": target.getConfiguration().getCorrelationProperty(); return true;
+        case "correlationProperty": return target.getConfiguration().getCorrelationProperty();
         case "defaulttaskexecutortype":
-        case "defaultTaskExecutorType": target.getConfiguration().getDefaultTaskExecutorType(); return true;
+        case "defaultTaskExecutorType": return target.getConfiguration().getDefaultTaskExecutorType();
         case "deliverydelay":
-        case "deliveryDelay": target.getConfiguration().getDeliveryDelay(); return true;
+        case "deliveryDelay": return target.getConfiguration().getDeliveryDelay();
         case "deliverymode":
-        case "deliveryMode": target.getConfiguration().getDeliveryMode(); return true;
+        case "deliveryMode": return target.getConfiguration().getDeliveryMode();
         case "deliverypersistent":
-        case "deliveryPersistent": target.getConfiguration().isDeliveryPersistent(); return true;
+        case "deliveryPersistent": return target.getConfiguration().isDeliveryPersistent();
         case "destinationresolver":
-        case "destinationResolver": target.getConfiguration().getDestinationResolver(); return true;
+        case "destinationResolver": return target.getConfiguration().getDestinationResolver();
         case "disablereplyto":
-        case "disableReplyTo": target.getConfiguration().isDisableReplyTo(); return true;
+        case "disableReplyTo": return target.getConfiguration().isDisableReplyTo();
         case "disabletimetolive":
-        case "disableTimeToLive": target.getConfiguration().isDisableTimeToLive(); return true;
+        case "disableTimeToLive": return target.getConfiguration().isDisableTimeToLive();
         case "durablesubscriptionname":
-        case "durableSubscriptionName": target.getConfiguration().getDurableSubscriptionName(); return true;
+        case "durableSubscriptionName": return target.getConfiguration().getDurableSubscriptionName();
         case "eagerloadingofproperties":
-        case "eagerLoadingOfProperties": target.getConfiguration().isEagerLoadingOfProperties(); return true;
+        case "eagerLoadingOfProperties": return target.getConfiguration().isEagerLoadingOfProperties();
         case "eagerpoisonbody":
-        case "eagerPoisonBody": target.getConfiguration().getEagerPoisonBody(); return true;
+        case "eagerPoisonBody": return target.getConfiguration().getEagerPoisonBody();
         case "errorhandler":
-        case "errorHandler": target.getConfiguration().getErrorHandler(); return true;
+        case "errorHandler": return target.getConfiguration().getErrorHandler();
         case "errorhandlerlogstacktrace":
-        case "errorHandlerLogStackTrace": target.getConfiguration().isErrorHandlerLogStackTrace(); return true;
+        case "errorHandlerLogStackTrace": return target.getConfiguration().isErrorHandlerLogStackTrace();
         case "errorhandlerlogginglevel":
-        case "errorHandlerLoggingLevel": target.getConfiguration().getErrorHandlerLoggingLevel(); return true;
+        case "errorHandlerLoggingLevel": return target.getConfiguration().getErrorHandlerLoggingLevel();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exceptionlistener":
-        case "exceptionListener": target.getConfiguration().getExceptionListener(); return true;
+        case "exceptionListener": return target.getConfiguration().getExceptionListener();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "explicitqosenabled":
-        case "explicitQosEnabled": target.getConfiguration().getExplicitQosEnabled(); return true;
+        case "explicitQosEnabled": return target.getConfiguration().getExplicitQosEnabled();
         case "exposelistenersession":
-        case "exposeListenerSession": target.getConfiguration().isExposeListenerSession(); return true;
+        case "exposeListenerSession": return target.getConfiguration().isExposeListenerSession();
         case "forcesendoriginalmessage":
-        case "forceSendOriginalMessage": target.getConfiguration().isForceSendOriginalMessage(); return true;
+        case "forceSendOriginalMessage": return target.getConfiguration().isForceSendOriginalMessage();
         case "formatdateheaderstoiso8601":
-        case "formatDateHeadersToIso8601": target.getConfiguration().isFormatDateHeadersToIso8601(); return true;
+        case "formatDateHeadersToIso8601": return target.getConfiguration().isFormatDateHeadersToIso8601();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "idleconsumerlimit":
-        case "idleConsumerLimit": target.getConfiguration().getIdleConsumerLimit(); return true;
+        case "idleConsumerLimit": return target.getConfiguration().getIdleConsumerLimit();
         case "idletaskexecutionlimit":
-        case "idleTaskExecutionLimit": target.getConfiguration().getIdleTaskExecutionLimit(); return true;
+        case "idleTaskExecutionLimit": return target.getConfiguration().getIdleTaskExecutionLimit();
         case "includealljmsxproperties":
-        case "includeAllJMSXProperties": target.getConfiguration().isIncludeAllJMSXProperties(); return true;
+        case "includeAllJMSXProperties": return target.getConfiguration().isIncludeAllJMSXProperties();
         case "includesentjmsmessageid":
-        case "includeSentJMSMessageID": target.getConfiguration().isIncludeSentJMSMessageID(); return true;
+        case "includeSentJMSMessageID": return target.getConfiguration().isIncludeSentJMSMessageID();
         case "jmskeyformatstrategy":
-        case "jmsKeyFormatStrategy": target.getConfiguration().getJmsKeyFormatStrategy(); return true;
+        case "jmsKeyFormatStrategy": return target.getConfiguration().getJmsKeyFormatStrategy();
         case "jmsmessagetype":
-        case "jmsMessageType": target.getConfiguration().getJmsMessageType(); return true;
+        case "jmsMessageType": return target.getConfiguration().getJmsMessageType();
         case "lazycreatetransactionmanager":
-        case "lazyCreateTransactionManager": target.getConfiguration().isLazyCreateTransactionManager(); return true;
+        case "lazyCreateTransactionManager": return target.getConfiguration().isLazyCreateTransactionManager();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "mapjmsmessage":
-        case "mapJmsMessage": target.getConfiguration().isMapJmsMessage(); return true;
+        case "mapJmsMessage": return target.getConfiguration().isMapJmsMessage();
         case "maxconcurrentconsumers":
-        case "maxConcurrentConsumers": target.getConfiguration().getMaxConcurrentConsumers(); return true;
+        case "maxConcurrentConsumers": return target.getConfiguration().getMaxConcurrentConsumers();
         case "maxmessagespertask":
-        case "maxMessagesPerTask": target.getConfiguration().getMaxMessagesPerTask(); return true;
+        case "maxMessagesPerTask": return target.getConfiguration().getMaxMessagesPerTask();
         case "messageconverter":
-        case "messageConverter": target.getConfiguration().getMessageConverter(); return true;
+        case "messageConverter": return target.getConfiguration().getMessageConverter();
         case "messagecreatedstrategy":
-        case "messageCreatedStrategy": target.getConfiguration().getMessageCreatedStrategy(); return true;
+        case "messageCreatedStrategy": return target.getConfiguration().getMessageCreatedStrategy();
         case "messageidenabled":
-        case "messageIdEnabled": target.getConfiguration().isMessageIdEnabled(); return true;
+        case "messageIdEnabled": return target.getConfiguration().isMessageIdEnabled();
         case "messagelistenercontainerfactory":
-        case "messageListenerContainerFactory": target.getConfiguration().getMessageListenerContainerFactory(); return true;
+        case "messageListenerContainerFactory": return target.getConfiguration().getMessageListenerContainerFactory();
         case "messagetimestampenabled":
-        case "messageTimestampEnabled": target.getConfiguration().isMessageTimestampEnabled(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
+        case "messageTimestampEnabled": return target.getConfiguration().isMessageTimestampEnabled();
+        case "password": return target.getConfiguration().getPassword();
         case "preservemessageqos":
-        case "preserveMessageQos": target.getConfiguration().isPreserveMessageQos(); return true;
-        case "priority": target.getConfiguration().getPriority(); return true;
+        case "preserveMessageQos": return target.getConfiguration().isPreserveMessageQos();
+        case "priority": return target.getConfiguration().getPriority();
         case "pubsubnolocal":
-        case "pubSubNoLocal": target.getConfiguration().isPubSubNoLocal(); return true;
+        case "pubSubNoLocal": return target.getConfiguration().isPubSubNoLocal();
         case "receivetimeout":
-        case "receiveTimeout": target.getConfiguration().getReceiveTimeout(); return true;
+        case "receiveTimeout": return target.getConfiguration().getReceiveTimeout();
         case "recoveryinterval":
-        case "recoveryInterval": target.getConfiguration().getRecoveryInterval(); return true;
+        case "recoveryInterval": return target.getConfiguration().getRecoveryInterval();
         case "replyto":
-        case "replyTo": target.getConfiguration().getReplyTo(); return true;
+        case "replyTo": return target.getConfiguration().getReplyTo();
         case "replytocachelevelname":
-        case "replyToCacheLevelName": target.getConfiguration().getReplyToCacheLevelName(); return true;
+        case "replyToCacheLevelName": return target.getConfiguration().getReplyToCacheLevelName();
         case "replytoconcurrentconsumers":
-        case "replyToConcurrentConsumers": target.getConfiguration().getReplyToConcurrentConsumers(); return true;
+        case "replyToConcurrentConsumers": return target.getConfiguration().getReplyToConcurrentConsumers();
         case "replytodeliverypersistent":
-        case "replyToDeliveryPersistent": target.getConfiguration().isReplyToDeliveryPersistent(); return true;
+        case "replyToDeliveryPersistent": return target.getConfiguration().isReplyToDeliveryPersistent();
         case "replytodestinationselectorname":
-        case "replyToDestinationSelectorName": target.getConfiguration().getReplyToDestinationSelectorName(); return true;
+        case "replyToDestinationSelectorName": return target.getConfiguration().getReplyToDestinationSelectorName();
         case "replytomaxconcurrentconsumers":
-        case "replyToMaxConcurrentConsumers": target.getConfiguration().getReplyToMaxConcurrentConsumers(); return true;
+        case "replyToMaxConcurrentConsumers": return target.getConfiguration().getReplyToMaxConcurrentConsumers();
         case "replytoontimeoutmaxconcurrentconsumers":
-        case "replyToOnTimeoutMaxConcurrentConsumers": target.getConfiguration().getReplyToOnTimeoutMaxConcurrentConsumers(); return true;
+        case "replyToOnTimeoutMaxConcurrentConsumers": return target.getConfiguration().getReplyToOnTimeoutMaxConcurrentConsumers();
         case "replytooverride":
-        case "replyToOverride": target.getConfiguration().getReplyToOverride(); return true;
+        case "replyToOverride": return target.getConfiguration().getReplyToOverride();
         case "replytosamedestinationallowed":
-        case "replyToSameDestinationAllowed": target.getConfiguration().isReplyToSameDestinationAllowed(); return true;
+        case "replyToSameDestinationAllowed": return target.getConfiguration().isReplyToSameDestinationAllowed();
         case "replytotype":
-        case "replyToType": target.getConfiguration().getReplyToType(); return true;
+        case "replyToType": return target.getConfiguration().getReplyToType();
         case "requesttimeout":
-        case "requestTimeout": target.getConfiguration().getRequestTimeout(); return true;
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "requesttimeoutcheckerinterval":
-        case "requestTimeoutCheckerInterval": target.getConfiguration().getRequestTimeoutCheckerInterval(); return true;
-        case "selector": target.getConfiguration().getSelector(); return true;
+        case "requestTimeoutCheckerInterval": return target.getConfiguration().getRequestTimeoutCheckerInterval();
+        case "selector": return target.getConfiguration().getSelector();
         case "streammessagetypeenabled":
-        case "streamMessageTypeEnabled": target.getConfiguration().isStreamMessageTypeEnabled(); return true;
+        case "streamMessageTypeEnabled": return target.getConfiguration().isStreamMessageTypeEnabled();
         case "subscriptiondurable":
-        case "subscriptionDurable": target.getConfiguration().isSubscriptionDurable(); return true;
+        case "subscriptionDurable": return target.getConfiguration().isSubscriptionDurable();
         case "subscriptionname":
-        case "subscriptionName": target.getConfiguration().getSubscriptionName(); return true;
+        case "subscriptionName": return target.getConfiguration().getSubscriptionName();
         case "subscriptionshared":
-        case "subscriptionShared": target.getConfiguration().isSubscriptionShared(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "subscriptionShared": return target.getConfiguration().isSubscriptionShared();
+        case "synchronous": return target.isSynchronous();
         case "taskexecutor":
-        case "taskExecutor": target.getConfiguration().getTaskExecutor(); return true;
+        case "taskExecutor": return target.getConfiguration().getTaskExecutor();
         case "testconnectiononstartup":
-        case "testConnectionOnStartup": target.getConfiguration().isTestConnectionOnStartup(); return true;
+        case "testConnectionOnStartup": return target.getConfiguration().isTestConnectionOnStartup();
         case "timetolive":
-        case "timeToLive": target.getConfiguration().getTimeToLive(); return true;
-        case "transacted": target.getConfiguration().isTransacted(); return true;
+        case "timeToLive": return target.getConfiguration().getTimeToLive();
+        case "transacted": return target.getConfiguration().isTransacted();
         case "transactionmanager":
-        case "transactionManager": target.getConfiguration().getTransactionManager(); return true;
+        case "transactionManager": return target.getConfiguration().getTransactionManager();
         case "transactionname":
-        case "transactionName": target.getConfiguration().getTransactionName(); return true;
+        case "transactionName": return target.getConfiguration().getTransactionName();
         case "transactiontimeout":
-        case "transactionTimeout": target.getConfiguration().getTransactionTimeout(); return true;
+        case "transactionTimeout": return target.getConfiguration().getTransactionTimeout();
         case "transferexception":
-        case "transferException": target.getConfiguration().isTransferException(); return true;
+        case "transferException": return target.getConfiguration().isTransferException();
         case "transferexchange":
-        case "transferExchange": target.getConfiguration().isTransferExchange(); return true;
+        case "transferExchange": return target.getConfiguration().isTransferExchange();
         case "usemessageidascorrelationid":
-        case "useMessageIDAsCorrelationID": target.getConfiguration().isUseMessageIDAsCorrelationID(); return true;
-        case "username": target.getConfiguration().getUsername(); return true;
+        case "useMessageIDAsCorrelationID": return target.getConfiguration().isUseMessageIDAsCorrelationID();
+        case "username": return target.getConfiguration().getUsername();
         case "waitforprovisioncorrelationtobeupdatedcounter":
-        case "waitForProvisionCorrelationToBeUpdatedCounter": target.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter(); return true;
+        case "waitForProvisionCorrelationToBeUpdatedCounter": return target.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter();
         case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
-        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": target.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(); return true;
+        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": return target.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
         default: return null;
         }
     }

@@ -46,13 +46,13 @@ public class ApnsComponentConfigurer extends PropertyConfigurerSupport implement
         ApnsComponent target = (ApnsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apnsservice":
-        case "apnsService": target.getApnsService(); return true;
+        case "apnsService": return target.getApnsService();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

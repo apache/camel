@@ -85,39 +85,39 @@ public class AtomixValueEndpointConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AtomixValueEndpoint target = (AtomixValueEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "atomix": target.getConfiguration().getAtomix(); return true;
+        case "atomix": return target.getConfiguration().getAtomix();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configurationuri":
-        case "configurationUri": target.getConfiguration().getConfigurationUri(); return true;
+        case "configurationUri": return target.getConfiguration().getConfigurationUri();
         case "defaultaction":
-        case "defaultAction": target.getConfiguration().getDefaultAction(); return true;
+        case "defaultAction": return target.getConfiguration().getDefaultAction();
         case "defaultresourceconfig":
-        case "defaultResourceConfig": target.getConfiguration().getDefaultResourceConfig(); return true;
+        case "defaultResourceConfig": return target.getConfiguration().getDefaultResourceConfig();
         case "defaultresourceoptions":
-        case "defaultResourceOptions": target.getConfiguration().getDefaultResourceOptions(); return true;
-        case "ephemeral": target.getConfiguration().isEphemeral(); return true;
+        case "defaultResourceOptions": return target.getConfiguration().getDefaultResourceOptions();
+        case "ephemeral": return target.getConfiguration().isEphemeral();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "nodes": target.getConfiguration().getNodes(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "nodes": return target.getConfiguration().getNodes();
         case "readconsistency":
-        case "readConsistency": target.getConfiguration().getReadConsistency(); return true;
+        case "readConsistency": return target.getConfiguration().getReadConsistency();
         case "resourceconfigs":
-        case "resourceConfigs": target.getConfiguration().getResourceConfigs(); return true;
+        case "resourceConfigs": return target.getConfiguration().getResourceConfigs();
         case "resourceoptions":
-        case "resourceOptions": target.getConfiguration().getResourceOptions(); return true;
+        case "resourceOptions": return target.getConfiguration().getResourceOptions();
         case "resultheader":
-        case "resultHeader": target.getConfiguration().getResultHeader(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "resultHeader": return target.getConfiguration().getResultHeader();
+        case "synchronous": return target.isSynchronous();
         case "transportclassname":
-        case "transportClassName": target.getConfiguration().getTransportClassName(); return true;
-        case "ttl": target.getConfiguration().getTtl(); return true;
+        case "transportClassName": return target.getConfiguration().getTransportClassName();
+        case "ttl": return target.getConfiguration().getTtl();
         default: return null;
         }
     }

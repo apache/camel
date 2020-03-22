@@ -74,30 +74,30 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         GitEndpoint target = (GitEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowempty":
-        case "allowEmpty": target.isAllowEmpty(); return true;
+        case "allowEmpty": return target.isAllowEmpty();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "branchname":
-        case "branchName": target.getBranchName(); return true;
+        case "branchName": return target.getBranchName();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": target.getOperation(); return true;
-        case "password": target.getPassword(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return target.getOperation();
+        case "password": return target.getPassword();
         case "remotename":
-        case "remoteName": target.getRemoteName(); return true;
+        case "remoteName": return target.getRemoteName();
         case "remotepath":
-        case "remotePath": target.getRemotePath(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "remotePath": return target.getRemotePath();
+        case "synchronous": return target.isSynchronous();
         case "tagname":
-        case "tagName": target.getTagName(); return true;
-        case "type": target.getType(); return true;
-        case "username": target.getUsername(); return true;
+        case "tagName": return target.getTagName();
+        case "type": return target.getType();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

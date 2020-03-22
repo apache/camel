@@ -40,8 +40,8 @@ public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
         Files.createDirectories(trusted);
         Files.copy(Paths.get("src/test/resources/ca/cacert.pem"), trusted.resolve("cacert.pem"), REPLACE_EXISTING);
 
-        server.setServerCertificate(loadDefaultTestKey());
-        server.setDefaultCertificateValidator(baseDir.toFile());
+        server.loadServerCertificate(loadDefaultTestKey());
+        server.setDefaultCertificateValidator(baseDir.toFile().toString());
     }
 
     @Test

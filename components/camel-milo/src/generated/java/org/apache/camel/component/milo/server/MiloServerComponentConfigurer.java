@@ -31,10 +31,11 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buildinfo":
         case "buildInfo": target.setBuildInfo(property(camelContext, org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class, value)); return true;
+        case "certificate": target.setCertificate(property(camelContext, java.security.cert.X509Certificate.class, value)); return true;
         case "certificatemanager":
         case "certificateManager": target.setCertificateManager(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateManager.class, value)); return true;
         case "certificatevalidator":
-        case "certificateValidator": target.setCertificateValidator(property(camelContext, java.util.function.Supplier.class, value)); return true;
+        case "certificateValidator": target.setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class, value)); return true;
         case "defaultcertificatevalidator":
         case "defaultCertificateValidator": target.setDefaultCertificateValidator(property(camelContext, java.lang.String.class, value)); return true;
         case "enableanonymousauthentication":
@@ -50,9 +51,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "securitypolicies":
         case "securityPolicies": target.setSecurityPolicies(property(camelContext, java.util.Set.class, value)); return true;
         case "securitypoliciesbyid":
-        case "securityPoliciesById": target.setSecurityPoliciesById(property(camelContext, java.util.Collection.class, value)); return true;
-        case "servercertificate":
-        case "serverCertificate": target.setServerCertificate(property(camelContext, org.apache.camel.component.milo.KeyStoreLoader.Result.class, value)); return true;
+        case "securityPoliciesById": target.setSecurityPoliciesById(property(camelContext, java.lang.String.class, value)); return true;
         case "userauthenticationcredentials":
         case "userAuthenticationCredentials": target.setUserAuthenticationCredentials(property(camelContext, java.lang.String.class, value)); return true;
         case "usernamesecuritypolicyuri":
@@ -70,8 +69,9 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         answer.put("bindAddresses", java.lang.String.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("buildInfo", org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class);
+        answer.put("certificate", java.security.cert.X509Certificate.class);
         answer.put("certificateManager", org.eclipse.milo.opcua.stack.core.security.CertificateManager.class);
-        answer.put("certificateValidator", java.util.function.Supplier.class);
+        answer.put("certificateValidator", org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class);
         answer.put("defaultCertificateValidator", java.lang.String.class);
         answer.put("enableAnonymousAuthentication", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -80,8 +80,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         answer.put("port", int.class);
         answer.put("productUri", java.lang.String.class);
         answer.put("securityPolicies", java.util.Set.class);
-        answer.put("securityPoliciesById", java.util.Collection.class);
-        answer.put("serverCertificate", org.apache.camel.component.milo.KeyStoreLoader.Result.class);
+        answer.put("securityPoliciesById", java.lang.String.class);
         answer.put("userAuthenticationCredentials", java.lang.String.class);
         answer.put("usernameSecurityPolicyUri", org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class);
         return answer;
@@ -103,6 +102,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buildinfo":
         case "buildInfo": return target.getBuildInfo();
+        case "certificate": return target.getCertificate();
         case "certificatemanager":
         case "certificateManager": return target.getCertificateManager();
         case "certificatevalidator":
@@ -123,8 +123,6 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "securityPolicies": return target.getSecurityPolicies();
         case "securitypoliciesbyid":
         case "securityPoliciesById": return target.getSecurityPoliciesById();
-        case "servercertificate":
-        case "serverCertificate": return target.getServerCertificate();
         case "userauthenticationcredentials":
         case "userAuthenticationCredentials": return target.getUserAuthenticationCredentials();
         case "usernamesecuritypolicyuri":

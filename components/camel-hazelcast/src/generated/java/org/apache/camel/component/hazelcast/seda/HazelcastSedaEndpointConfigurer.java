@@ -74,31 +74,31 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         HazelcastSedaEndpoint target = (HazelcastSedaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConfiguration().getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConfiguration().getConcurrentConsumers();
         case "defaultoperation":
-        case "defaultOperation": target.getDefaultOperation(); return true;
+        case "defaultOperation": return target.getDefaultOperation();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "hazelcastinstance":
-        case "hazelcastInstance": target.getHazelcastInstance(); return true;
+        case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastinstancename":
-        case "hazelcastInstanceName": target.getHazelcastInstanceName(); return true;
+        case "hazelcastInstanceName": return target.getHazelcastInstanceName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "onerrordelay":
-        case "onErrorDelay": target.getConfiguration().getOnErrorDelay(); return true;
+        case "onErrorDelay": return target.getConfiguration().getOnErrorDelay();
         case "polltimeout":
-        case "pollTimeout": target.getConfiguration().getPollTimeout(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "transacted": target.getConfiguration().isTransacted(); return true;
+        case "pollTimeout": return target.getConfiguration().getPollTimeout();
+        case "synchronous": return target.isSynchronous();
+        case "transacted": return target.getConfiguration().isTransacted();
         case "transferexchange":
-        case "transferExchange": target.getConfiguration().isTransferExchange(); return true;
+        case "transferExchange": return target.getConfiguration().isTransferExchange();
         default: return null;
         }
     }

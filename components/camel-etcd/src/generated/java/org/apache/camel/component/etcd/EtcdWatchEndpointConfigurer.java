@@ -71,28 +71,28 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         EtcdWatchEndpoint target = (EtcdWatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "fromindex":
-        case "fromIndex": target.getConfiguration().getFromIndex(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
-        case "recursive": target.getConfiguration().isRecursive(); return true;
+        case "fromIndex": return target.getConfiguration().getFromIndex();
+        case "password": return target.getConfiguration().getPassword();
+        case "recursive": return target.getConfiguration().isRecursive();
         case "sendemptyexchangeontimeout":
-        case "sendEmptyExchangeOnTimeout": target.getConfiguration().isSendEmptyExchangeOnTimeout(); return true;
+        case "sendEmptyExchangeOnTimeout": return target.getConfiguration().isSendEmptyExchangeOnTimeout();
         case "servicepath":
-        case "servicePath": target.getConfiguration().getServicePath(); return true;
+        case "servicePath": return target.getConfiguration().getServicePath();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getConfiguration().getTimeout(); return true;
-        case "uris": target.getConfiguration().getUris(); return true;
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getConfiguration().getTimeout();
+        case "uris": return target.getConfiguration().getUris();
         case "username":
-        case "userName": target.getConfiguration().getUserName(); return true;
+        case "userName": return target.getConfiguration().getUserName();
         default: return null;
         }
     }

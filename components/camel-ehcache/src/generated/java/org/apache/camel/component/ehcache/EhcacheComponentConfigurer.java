@@ -84,34 +84,34 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action": getOrCreateConfiguration(target).getAction(); return true;
+        case "action": return getOrCreateConfiguration(target).getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachemanager":
-        case "cacheManager": getOrCreateConfiguration(target).getCacheManager(); return true;
+        case "cacheManager": return getOrCreateConfiguration(target).getCacheManager();
         case "cachemanagerconfiguration":
-        case "cacheManagerConfiguration": getOrCreateConfiguration(target).getCacheManagerConfiguration(); return true;
-        case "configuration": getOrCreateConfiguration(target).getConfiguration(); return true;
+        case "cacheManagerConfiguration": return getOrCreateConfiguration(target).getCacheManagerConfiguration();
+        case "configuration": return getOrCreateConfiguration(target).getConfiguration();
         case "configurationuri":
-        case "configurationUri": getOrCreateConfiguration(target).getConfigurationUri(); return true;
-        case "configurations": getOrCreateConfiguration(target).getConfigurations(); return true;
+        case "configurationUri": return getOrCreateConfiguration(target).getConfigurationUri();
+        case "configurations": return getOrCreateConfiguration(target).getConfigurations();
         case "createcacheifnotexist":
-        case "createCacheIfNotExist": getOrCreateConfiguration(target).isCreateCacheIfNotExist(); return true;
+        case "createCacheIfNotExist": return getOrCreateConfiguration(target).isCreateCacheIfNotExist();
         case "eventfiring":
-        case "eventFiring": getOrCreateConfiguration(target).getEventFiring(); return true;
+        case "eventFiring": return getOrCreateConfiguration(target).getEventFiring();
         case "eventordering":
-        case "eventOrdering": getOrCreateConfiguration(target).getEventOrdering(); return true;
+        case "eventOrdering": return getOrCreateConfiguration(target).getEventOrdering();
         case "eventtypes":
-        case "eventTypes": getOrCreateConfiguration(target).getEventTypes(); return true;
-        case "key": getOrCreateConfiguration(target).getKey(); return true;
+        case "eventTypes": return getOrCreateConfiguration(target).getEventTypes();
+        case "key": return getOrCreateConfiguration(target).getKey();
         case "keytype":
-        case "keyType": getOrCreateConfiguration(target).getKeyType(); return true;
+        case "keyType": return getOrCreateConfiguration(target).getKeyType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "valuetype":
-        case "valueType": getOrCreateConfiguration(target).getValueType(); return true;
+        case "valueType": return getOrCreateConfiguration(target).getValueType();
         default: return null;
         }
     }

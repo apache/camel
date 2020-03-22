@@ -64,24 +64,24 @@ public class DirectVmEndpointConfigurer extends PropertyConfigurerSupport implem
         DirectVmEndpoint target = (DirectVmEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "block": target.isBlock(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "block": return target.isBlock();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "failifnoconsumers":
-        case "failIfNoConsumers": target.isFailIfNoConsumers(); return true;
+        case "failIfNoConsumers": return target.isFailIfNoConsumers();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "propagateproperties":
-        case "propagateProperties": target.isPropagateProperties(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "propagateProperties": return target.isPropagateProperties();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getTimeout();
         default: return null;
         }
     }

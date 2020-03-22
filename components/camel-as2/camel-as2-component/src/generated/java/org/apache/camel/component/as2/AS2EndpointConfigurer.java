@@ -174,96 +174,96 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         AS2Endpoint target = (AS2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "as2from":
-        case "as2From": target.getConfiguration().getAs2From(); return true;
+        case "as2From": return target.getConfiguration().getAs2From();
         case "as2messagestructure":
-        case "as2MessageStructure": target.getConfiguration().getAs2MessageStructure(); return true;
+        case "as2MessageStructure": return target.getConfiguration().getAs2MessageStructure();
         case "as2to":
-        case "as2To": target.getConfiguration().getAs2To(); return true;
+        case "as2To": return target.getConfiguration().getAs2To();
         case "as2version":
-        case "as2Version": target.getConfiguration().getAs2Version(); return true;
+        case "as2Version": return target.getConfiguration().getAs2Version();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfqdn":
-        case "clientFqdn": target.getConfiguration().getClientFqdn(); return true;
+        case "clientFqdn": return target.getConfiguration().getClientFqdn();
         case "compressionalgorithm":
-        case "compressionAlgorithm": target.getConfiguration().getCompressionAlgorithm(); return true;
+        case "compressionAlgorithm": return target.getConfiguration().getCompressionAlgorithm();
         case "decryptingprivatekey":
-        case "decryptingPrivateKey": target.getConfiguration().getDecryptingPrivateKey(); return true;
-        case "delay": target.getDelay(); return true;
+        case "decryptingPrivateKey": return target.getConfiguration().getDecryptingPrivateKey();
+        case "delay": return target.getDelay();
         case "dispositionnotificationto":
-        case "dispositionNotificationTo": target.getConfiguration().getDispositionNotificationTo(); return true;
+        case "dispositionNotificationTo": return target.getConfiguration().getDispositionNotificationTo();
         case "edimessagetransferencoding":
-        case "ediMessageTransferEncoding": target.getConfiguration().getEdiMessageTransferEncoding(); return true;
+        case "ediMessageTransferEncoding": return target.getConfiguration().getEdiMessageTransferEncoding();
         case "edimessagetype":
-        case "ediMessageType": target.getConfiguration().getEdiMessageType(); return true;
+        case "ediMessageType": return target.getConfiguration().getEdiMessageType();
         case "encryptingalgorithm":
-        case "encryptingAlgorithm": target.getConfiguration().getEncryptingAlgorithm(); return true;
+        case "encryptingAlgorithm": return target.getConfiguration().getEncryptingAlgorithm();
         case "encryptingcertificatechain":
-        case "encryptingCertificateChain": target.getConfiguration().getEncryptingCertificateChain(); return true;
+        case "encryptingCertificateChain": return target.getConfiguration().getEncryptingCertificateChain();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "from": target.getConfiguration().getFrom(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "from": return target.getConfiguration().getFrom();
+        case "greedy": return target.isGreedy();
         case "inbody":
-        case "inBody": target.getInBody(); return true;
+        case "inBody": return target.getInBody();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "mdnmessagetemplate":
-        case "mdnMessageTemplate": target.getConfiguration().getMdnMessageTemplate(); return true;
+        case "mdnMessageTemplate": return target.getConfiguration().getMdnMessageTemplate();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "requesturi":
-        case "requestUri": target.getConfiguration().getRequestUri(); return true;
+        case "requestUri": return target.getConfiguration().getRequestUri();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
-        case "server": target.getConfiguration().getServer(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "server": return target.getConfiguration().getServer();
         case "serverfqdn":
-        case "serverFqdn": target.getConfiguration().getServerFqdn(); return true;
+        case "serverFqdn": return target.getConfiguration().getServerFqdn();
         case "serverportnumber":
-        case "serverPortNumber": target.getConfiguration().getServerPortNumber(); return true;
+        case "serverPortNumber": return target.getConfiguration().getServerPortNumber();
         case "signedreceiptmicalgorithms":
-        case "signedReceiptMicAlgorithms": target.getConfiguration().getSignedReceiptMicAlgorithms(); return true;
+        case "signedReceiptMicAlgorithms": return target.getConfiguration().getSignedReceiptMicAlgorithms();
         case "signingalgorithm":
-        case "signingAlgorithm": target.getConfiguration().getSigningAlgorithm(); return true;
+        case "signingAlgorithm": return target.getConfiguration().getSigningAlgorithm();
         case "signingcertificatechain":
-        case "signingCertificateChain": target.getConfiguration().getSigningCertificateChain(); return true;
+        case "signingCertificateChain": return target.getConfiguration().getSigningCertificateChain();
         case "signingprivatekey":
-        case "signingPrivateKey": target.getConfiguration().getSigningPrivateKey(); return true;
+        case "signingPrivateKey": return target.getConfiguration().getSigningPrivateKey();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "subject": target.getConfiguration().getSubject(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "subject": return target.getConfiguration().getSubject();
+        case "synchronous": return target.isSynchronous();
         case "targethostname":
-        case "targetHostname": target.getConfiguration().getTargetHostname(); return true;
+        case "targetHostname": return target.getConfiguration().getTargetHostname();
         case "targetportnumber":
-        case "targetPortNumber": target.getConfiguration().getTargetPortNumber(); return true;
+        case "targetPortNumber": return target.getConfiguration().getTargetPortNumber();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "useragent":
-        case "userAgent": target.getConfiguration().getUserAgent(); return true;
+        case "userAgent": return target.getConfiguration().getUserAgent();
         default: return null;
         }
     }

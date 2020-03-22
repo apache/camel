@@ -77,26 +77,26 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
         GangliaComponent target = (GangliaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
-        case "dmax": getOrCreateConfiguration(target).getDmax(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
+        case "dmax": return getOrCreateConfiguration(target).getDmax();
         case "groupname":
-        case "groupName": getOrCreateConfiguration(target).getGroupName(); return true;
+        case "groupName": return getOrCreateConfiguration(target).getGroupName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "metricname":
-        case "metricName": getOrCreateConfiguration(target).getMetricName(); return true;
-        case "mode": getOrCreateConfiguration(target).getMode(); return true;
-        case "prefix": getOrCreateConfiguration(target).getPrefix(); return true;
-        case "slope": getOrCreateConfiguration(target).getSlope(); return true;
+        case "metricName": return getOrCreateConfiguration(target).getMetricName();
+        case "mode": return getOrCreateConfiguration(target).getMode();
+        case "prefix": return getOrCreateConfiguration(target).getPrefix();
+        case "slope": return getOrCreateConfiguration(target).getSlope();
         case "spoofhostname":
-        case "spoofHostname": getOrCreateConfiguration(target).getSpoofHostname(); return true;
-        case "tmax": getOrCreateConfiguration(target).getTmax(); return true;
-        case "ttl": getOrCreateConfiguration(target).getTtl(); return true;
-        case "type": getOrCreateConfiguration(target).getType(); return true;
-        case "units": getOrCreateConfiguration(target).getUnits(); return true;
+        case "spoofHostname": return getOrCreateConfiguration(target).getSpoofHostname();
+        case "tmax": return getOrCreateConfiguration(target).getTmax();
+        case "ttl": return getOrCreateConfiguration(target).getTtl();
+        case "type": return getOrCreateConfiguration(target).getType();
+        case "units": return getOrCreateConfiguration(target).getUnits();
         case "wireformat31x":
-        case "wireFormat31x": getOrCreateConfiguration(target).isWireFormat31x(); return true;
+        case "wireFormat31x": return getOrCreateConfiguration(target).isWireFormat31x();
         default: return null;
         }
     }

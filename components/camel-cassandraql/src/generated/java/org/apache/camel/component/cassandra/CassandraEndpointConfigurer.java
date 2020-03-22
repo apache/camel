@@ -121,60 +121,60 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         CassandraEndpoint target = (CassandraEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "cluster": target.getCluster(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "cluster": return target.getCluster();
         case "clustername":
-        case "clusterName": target.getClusterName(); return true;
+        case "clusterName": return target.getClusterName();
         case "consistencylevel":
-        case "consistencyLevel": target.getConsistencyLevel(); return true;
-        case "cql": target.getCql(); return true;
-        case "delay": target.getDelay(); return true;
+        case "consistencyLevel": return target.getConsistencyLevel();
+        case "cql": return target.getCql();
+        case "delay": return target.getDelay();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "greedy": return target.isGreedy();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loadbalancingpolicy":
-        case "loadBalancingPolicy": target.getLoadBalancingPolicy(); return true;
-        case "password": target.getPassword(); return true;
+        case "loadBalancingPolicy": return target.getLoadBalancingPolicy();
+        case "password": return target.getPassword();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "preparestatements":
-        case "prepareStatements": target.isPrepareStatements(); return true;
+        case "prepareStatements": return target.isPrepareStatements();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "resultsetconversionstrategy":
-        case "resultSetConversionStrategy": target.getResultSetConversionStrategy(); return true;
+        case "resultSetConversionStrategy": return target.getResultSetConversionStrategy();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
-        case "session": target.getSession(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "session": return target.getSession();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
-        case "username": target.getUsername(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

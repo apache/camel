@@ -117,53 +117,53 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         MinaComponent target = (MinaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
-        case "allowDefaultCodec": getOrCreateConfiguration(target).isAllowDefaultCodec(); return true;
+        case "allowDefaultCodec": return getOrCreateConfiguration(target).isAllowDefaultCodec();
         case "autostarttls":
-        case "autoStartTls": getOrCreateConfiguration(target).isAutoStartTls(); return true;
+        case "autoStartTls": return getOrCreateConfiguration(target).isAutoStartTls();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachedaddress":
-        case "cachedAddress": getOrCreateConfiguration(target).isCachedAddress(); return true;
+        case "cachedAddress": return getOrCreateConfiguration(target).isCachedAddress();
         case "clientmode":
-        case "clientMode": getOrCreateConfiguration(target).isClientMode(); return true;
-        case "codec": getOrCreateConfiguration(target).getCodec(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientMode": return getOrCreateConfiguration(target).isClientMode();
+        case "codec": return getOrCreateConfiguration(target).getCodec();
+        case "configuration": return target.getConfiguration();
         case "decodermaxlinelength":
-        case "decoderMaxLineLength": getOrCreateConfiguration(target).getDecoderMaxLineLength(); return true;
-        case "disconnect": getOrCreateConfiguration(target).isDisconnect(); return true;
+        case "decoderMaxLineLength": return getOrCreateConfiguration(target).getDecoderMaxLineLength();
+        case "disconnect": return getOrCreateConfiguration(target).isDisconnect();
         case "disconnectonnoreply":
-        case "disconnectOnNoReply": getOrCreateConfiguration(target).isDisconnectOnNoReply(); return true;
+        case "disconnectOnNoReply": return getOrCreateConfiguration(target).isDisconnectOnNoReply();
         case "encodermaxlinelength":
-        case "encoderMaxLineLength": getOrCreateConfiguration(target).getEncoderMaxLineLength(); return true;
-        case "encoding": getOrCreateConfiguration(target).getEncoding(); return true;
-        case "filters": getOrCreateConfiguration(target).getFilters(); return true;
+        case "encoderMaxLineLength": return getOrCreateConfiguration(target).getEncoderMaxLineLength();
+        case "encoding": return getOrCreateConfiguration(target).getEncoding();
+        case "filters": return getOrCreateConfiguration(target).getFilters();
         case "lazysessioncreation":
-        case "lazySessionCreation": getOrCreateConfiguration(target).isLazySessionCreation(); return true;
+        case "lazySessionCreation": return getOrCreateConfiguration(target).isLazySessionCreation();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumpoolsize":
-        case "maximumPoolSize": getOrCreateConfiguration(target).getMaximumPoolSize(); return true;
+        case "maximumPoolSize": return getOrCreateConfiguration(target).getMaximumPoolSize();
         case "minalogger":
-        case "minaLogger": getOrCreateConfiguration(target).isMinaLogger(); return true;
+        case "minaLogger": return getOrCreateConfiguration(target).isMinaLogger();
         case "noreplyloglevel":
-        case "noReplyLogLevel": getOrCreateConfiguration(target).getNoReplyLogLevel(); return true;
+        case "noReplyLogLevel": return getOrCreateConfiguration(target).getNoReplyLogLevel();
         case "orderedthreadpoolexecutor":
-        case "orderedThreadPoolExecutor": getOrCreateConfiguration(target).isOrderedThreadPoolExecutor(); return true;
+        case "orderedThreadPoolExecutor": return getOrCreateConfiguration(target).isOrderedThreadPoolExecutor();
         case "sslcontextparameters":
-        case "sslContextParameters": getOrCreateConfiguration(target).getSslContextParameters(); return true;
-        case "sync": getOrCreateConfiguration(target).isSync(); return true;
-        case "textline": getOrCreateConfiguration(target).isTextline(); return true;
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
+        case "sync": return getOrCreateConfiguration(target).isSync();
+        case "textline": return getOrCreateConfiguration(target).isTextline();
         case "textlinedelimiter":
-        case "textlineDelimiter": getOrCreateConfiguration(target).getTextlineDelimiter(); return true;
-        case "timeout": getOrCreateConfiguration(target).getTimeout(); return true;
+        case "textlineDelimiter": return getOrCreateConfiguration(target).getTextlineDelimiter();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "transferexchange":
-        case "transferExchange": getOrCreateConfiguration(target).isTransferExchange(); return true;
+        case "transferExchange": return getOrCreateConfiguration(target).isTransferExchange();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "writetimeout":
-        case "writeTimeout": getOrCreateConfiguration(target).getWriteTimeout(); return true;
+        case "writeTimeout": return getOrCreateConfiguration(target).getWriteTimeout();
         default: return null;
         }
     }

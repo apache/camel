@@ -73,30 +73,30 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         Translate2Endpoint target = (Translate2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodetectsourcelanguage":
-        case "autodetectSourceLanguage": target.getConfiguration().isAutodetectSourceLanguage(); return true;
+        case "autodetectSourceLanguage": return target.getConfiguration().isAutodetectSourceLanguage();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return target.getConfiguration().getOperation();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
+        case "region": return target.getConfiguration().getRegion();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "sourcelanguage":
-        case "sourceLanguage": target.getConfiguration().getSourceLanguage(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sourceLanguage": return target.getConfiguration().getSourceLanguage();
+        case "synchronous": return target.isSynchronous();
         case "targetlanguage":
-        case "targetLanguage": target.getConfiguration().getTargetLanguage(); return true;
+        case "targetLanguage": return target.getConfiguration().getTargetLanguage();
         case "translateclient":
-        case "translateClient": target.getConfiguration().getTranslateClient(); return true;
+        case "translateClient": return target.getConfiguration().getTranslateClient();
         default: return null;
         }
     }

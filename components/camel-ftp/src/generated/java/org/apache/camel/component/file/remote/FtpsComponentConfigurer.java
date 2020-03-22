@@ -37,7 +37,7 @@ public class FtpsComponentConfigurer extends FtpComponentConfigurer implements G
         FtpsComponent target = (FtpsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

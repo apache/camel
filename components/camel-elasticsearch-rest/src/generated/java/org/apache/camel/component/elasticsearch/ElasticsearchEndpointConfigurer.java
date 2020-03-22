@@ -86,38 +86,38 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         ElasticsearchEndpoint target = (ElasticsearchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "connectiontimeout":
-        case "connectionTimeout": target.getConfiguration().getConnectionTimeout(); return true;
-        case "disconnect": target.getConfiguration().isDisconnect(); return true;
+        case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
+        case "disconnect": return target.getConfiguration().isDisconnect();
         case "enablessl":
-        case "enableSSL": target.getConfiguration().isEnableSSL(); return true;
+        case "enableSSL": return target.getConfiguration().isEnableSSL();
         case "enablesniffer":
-        case "enableSniffer": target.getConfiguration().isEnableSniffer(); return true;
-        case "from": target.getConfiguration().getFrom(); return true;
+        case "enableSniffer": return target.getConfiguration().isEnableSniffer();
+        case "from": return target.getConfiguration().getFrom();
         case "hostaddresses":
-        case "hostAddresses": target.getConfiguration().getHostAddresses(); return true;
+        case "hostAddresses": return target.getConfiguration().getHostAddresses();
         case "indexname":
-        case "indexName": target.getConfiguration().getIndexName(); return true;
+        case "indexName": return target.getConfiguration().getIndexName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretrytimeout":
-        case "maxRetryTimeout": target.getConfiguration().getMaxRetryTimeout(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
+        case "maxRetryTimeout": return target.getConfiguration().getMaxRetryTimeout();
+        case "operation": return target.getConfiguration().getOperation();
         case "scrollkeepalivems":
-        case "scrollKeepAliveMs": target.getConfiguration().getScrollKeepAliveMs(); return true;
-        case "size": target.getConfiguration().getSize(); return true;
+        case "scrollKeepAliveMs": return target.getConfiguration().getScrollKeepAliveMs();
+        case "size": return target.getConfiguration().getSize();
         case "sniffafterfailuredelay":
-        case "sniffAfterFailureDelay": target.getConfiguration().getSniffAfterFailureDelay(); return true;
+        case "sniffAfterFailureDelay": return target.getConfiguration().getSniffAfterFailureDelay();
         case "snifferinterval":
-        case "snifferInterval": target.getConfiguration().getSnifferInterval(); return true;
+        case "snifferInterval": return target.getConfiguration().getSnifferInterval();
         case "sockettimeout":
-        case "socketTimeout": target.getConfiguration().getSocketTimeout(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "socketTimeout": return target.getConfiguration().getSocketTimeout();
+        case "synchronous": return target.isSynchronous();
         case "usescroll":
-        case "useScroll": target.getConfiguration().isUseScroll(); return true;
+        case "useScroll": return target.getConfiguration().isUseScroll();
         case "waitforactiveshards":
-        case "waitForActiveShards": target.getConfiguration().getWaitForActiveShards(); return true;
+        case "waitForActiveShards": return target.getConfiguration().getWaitForActiveShards();
         default: return null;
         }
     }

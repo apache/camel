@@ -99,47 +99,47 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
         GoraEndpoint target = (GoraEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConfiguration().getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConfiguration().getConcurrentConsumers();
         case "datastoreclass":
-        case "dataStoreClass": target.getConfiguration().getDataStoreClass(); return true;
+        case "dataStoreClass": return target.getConfiguration().getDataStoreClass();
         case "endkey":
-        case "endKey": target.getConfiguration().getEndKey(); return true;
+        case "endKey": return target.getConfiguration().getEndKey();
         case "endtime":
-        case "endTime": target.getConfiguration().getEndTime(); return true;
+        case "endTime": return target.getConfiguration().getEndTime();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "fields": target.getConfiguration().getFields(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "fields": return target.getConfiguration().getFields();
         case "flushoneveryoperation":
-        case "flushOnEveryOperation": target.getConfiguration().isFlushOnEveryOperation(); return true;
+        case "flushOnEveryOperation": return target.getConfiguration().isFlushOnEveryOperation();
         case "hadoopconfiguration":
-        case "hadoopConfiguration": target.getConfiguration().getHadoopConfiguration(); return true;
+        case "hadoopConfiguration": return target.getConfiguration().getHadoopConfiguration();
         case "keyclass":
-        case "keyClass": target.getConfiguration().getKeyClass(); return true;
+        case "keyClass": return target.getConfiguration().getKeyClass();
         case "keyrangefrom":
-        case "keyRangeFrom": target.getConfiguration().getKeyRangeFrom(); return true;
+        case "keyRangeFrom": return target.getConfiguration().getKeyRangeFrom();
         case "keyrangeto":
-        case "keyRangeTo": target.getConfiguration().getKeyRangeTo(); return true;
+        case "keyRangeTo": return target.getConfiguration().getKeyRangeTo();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "limit": target.getConfiguration().getLimit(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "limit": return target.getConfiguration().getLimit();
         case "startkey":
-        case "startKey": target.getConfiguration().getStartKey(); return true;
+        case "startKey": return target.getConfiguration().getStartKey();
         case "starttime":
-        case "startTime": target.getConfiguration().getStartTime(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startTime": return target.getConfiguration().getStartTime();
+        case "synchronous": return target.isSynchronous();
         case "timerangefrom":
-        case "timeRangeFrom": target.getConfiguration().getTimeRangeFrom(); return true;
+        case "timeRangeFrom": return target.getConfiguration().getTimeRangeFrom();
         case "timerangeto":
-        case "timeRangeTo": target.getConfiguration().getTimeRangeTo(); return true;
-        case "timestamp": target.getConfiguration().getTimestamp(); return true;
+        case "timeRangeTo": return target.getConfiguration().getTimeRangeTo();
+        case "timestamp": return target.getConfiguration().getTimestamp();
         case "valueclass":
-        case "valueClass": target.getConfiguration().getValueClass(); return true;
+        case "valueClass": return target.getConfiguration().getValueClass();
         default: return null;
         }
     }

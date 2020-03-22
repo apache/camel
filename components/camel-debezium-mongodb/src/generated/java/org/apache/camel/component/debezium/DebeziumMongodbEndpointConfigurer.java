@@ -165,92 +165,92 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         DebeziumMongodbEndpoint target = (DebeziumMongodbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
-        case "additionalProperties": target.getConfiguration().getAdditionalProperties(); return true;
+        case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "collectionblacklist":
-        case "collectionBlacklist": target.getConfiguration().getCollectionBlacklist(); return true;
+        case "collectionBlacklist": return target.getConfiguration().getCollectionBlacklist();
         case "collectionwhitelist":
-        case "collectionWhitelist": target.getConfiguration().getCollectionWhitelist(); return true;
+        case "collectionWhitelist": return target.getConfiguration().getCollectionWhitelist();
         case "connectbackoffinitialdelayms":
-        case "connectBackoffInitialDelayMs": target.getConfiguration().getConnectBackoffInitialDelayMs(); return true;
+        case "connectBackoffInitialDelayMs": return target.getConfiguration().getConnectBackoffInitialDelayMs();
         case "connectbackoffmaxdelayms":
-        case "connectBackoffMaxDelayMs": target.getConfiguration().getConnectBackoffMaxDelayMs(); return true;
+        case "connectBackoffMaxDelayMs": return target.getConfiguration().getConnectBackoffMaxDelayMs();
         case "connectmaxattempts":
-        case "connectMaxAttempts": target.getConfiguration().getConnectMaxAttempts(); return true;
+        case "connectMaxAttempts": return target.getConfiguration().getConnectMaxAttempts();
         case "databaseblacklist":
-        case "databaseBlacklist": target.getConfiguration().getDatabaseBlacklist(); return true;
+        case "databaseBlacklist": return target.getConfiguration().getDatabaseBlacklist();
         case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": target.getConfiguration().getDatabaseHistoryFileFilename(); return true;
+        case "databaseHistoryFileFilename": return target.getConfiguration().getDatabaseHistoryFileFilename();
         case "databasewhitelist":
-        case "databaseWhitelist": target.getConfiguration().getDatabaseWhitelist(); return true;
+        case "databaseWhitelist": return target.getConfiguration().getDatabaseWhitelist();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "fieldblacklist":
-        case "fieldBlacklist": target.getConfiguration().getFieldBlacklist(); return true;
+        case "fieldBlacklist": return target.getConfiguration().getFieldBlacklist();
         case "fieldrenames":
-        case "fieldRenames": target.getConfiguration().getFieldRenames(); return true;
+        case "fieldRenames": return target.getConfiguration().getFieldRenames();
         case "heartbeatintervalms":
-        case "heartbeatIntervalMs": target.getConfiguration().getHeartbeatIntervalMs(); return true;
+        case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
-        case "heartbeatTopicsPrefix": target.getConfiguration().getHeartbeatTopicsPrefix(); return true;
+        case "heartbeatTopicsPrefix": return target.getConfiguration().getHeartbeatTopicsPrefix();
         case "initialsyncmaxthreads":
-        case "initialSyncMaxThreads": target.getConfiguration().getInitialSyncMaxThreads(); return true;
+        case "initialSyncMaxThreads": return target.getConfiguration().getInitialSyncMaxThreads();
         case "internalkeyconverter":
-        case "internalKeyConverter": target.getConfiguration().getInternalKeyConverter(); return true;
+        case "internalKeyConverter": return target.getConfiguration().getInternalKeyConverter();
         case "internalvalueconverter":
-        case "internalValueConverter": target.getConfiguration().getInternalValueConverter(); return true;
+        case "internalValueConverter": return target.getConfiguration().getInternalValueConverter();
         case "maxbatchsize":
-        case "maxBatchSize": target.getConfiguration().getMaxBatchSize(); return true;
+        case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":
-        case "maxQueueSize": target.getConfiguration().getMaxQueueSize(); return true;
+        case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
         case "mongodbhosts":
-        case "mongodbHosts": target.getConfiguration().getMongodbHosts(); return true;
+        case "mongodbHosts": return target.getConfiguration().getMongodbHosts();
         case "mongodbmembersautodiscover":
-        case "mongodbMembersAutoDiscover": target.getConfiguration().isMongodbMembersAutoDiscover(); return true;
+        case "mongodbMembersAutoDiscover": return target.getConfiguration().isMongodbMembersAutoDiscover();
         case "mongodbname":
-        case "mongodbName": target.getConfiguration().getMongodbName(); return true;
+        case "mongodbName": return target.getConfiguration().getMongodbName();
         case "mongodbpassword":
-        case "mongodbPassword": target.getConfiguration().getMongodbPassword(); return true;
+        case "mongodbPassword": return target.getConfiguration().getMongodbPassword();
         case "mongodbsslenabled":
-        case "mongodbSslEnabled": target.getConfiguration().isMongodbSslEnabled(); return true;
+        case "mongodbSslEnabled": return target.getConfiguration().isMongodbSslEnabled();
         case "mongodbsslinvalidhostnameallowed":
-        case "mongodbSslInvalidHostnameAllowed": target.getConfiguration().isMongodbSslInvalidHostnameAllowed(); return true;
+        case "mongodbSslInvalidHostnameAllowed": return target.getConfiguration().isMongodbSslInvalidHostnameAllowed();
         case "mongodbuser":
-        case "mongodbUser": target.getConfiguration().getMongodbUser(); return true;
+        case "mongodbUser": return target.getConfiguration().getMongodbUser();
         case "offsetcommitpolicy":
-        case "offsetCommitPolicy": target.getConfiguration().getOffsetCommitPolicy(); return true;
+        case "offsetCommitPolicy": return target.getConfiguration().getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": target.getConfiguration().getOffsetCommitTimeoutMs(); return true;
+        case "offsetCommitTimeoutMs": return target.getConfiguration().getOffsetCommitTimeoutMs();
         case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": target.getConfiguration().getOffsetFlushIntervalMs(); return true;
+        case "offsetFlushIntervalMs": return target.getConfiguration().getOffsetFlushIntervalMs();
         case "offsetstorage":
-        case "offsetStorage": target.getConfiguration().getOffsetStorage(); return true;
+        case "offsetStorage": return target.getConfiguration().getOffsetStorage();
         case "offsetstoragefilename":
-        case "offsetStorageFileName": target.getConfiguration().getOffsetStorageFileName(); return true;
+        case "offsetStorageFileName": return target.getConfiguration().getOffsetStorageFileName();
         case "offsetstoragepartitions":
-        case "offsetStoragePartitions": target.getConfiguration().getOffsetStoragePartitions(); return true;
+        case "offsetStoragePartitions": return target.getConfiguration().getOffsetStoragePartitions();
         case "offsetstoragereplicationfactor":
-        case "offsetStorageReplicationFactor": target.getConfiguration().getOffsetStorageReplicationFactor(); return true;
+        case "offsetStorageReplicationFactor": return target.getConfiguration().getOffsetStorageReplicationFactor();
         case "offsetstoragetopic":
-        case "offsetStorageTopic": target.getConfiguration().getOffsetStorageTopic(); return true;
+        case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "pollintervalms":
-        case "pollIntervalMs": target.getConfiguration().getPollIntervalMs(); return true;
+        case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
         case "snapshotdelayms":
-        case "snapshotDelayMs": target.getConfiguration().getSnapshotDelayMs(); return true;
+        case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
         case "snapshotfetchsize":
-        case "snapshotFetchSize": target.getConfiguration().getSnapshotFetchSize(); return true;
+        case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
         case "snapshotmode":
-        case "snapshotMode": target.getConfiguration().getSnapshotMode(); return true;
+        case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "sourcestructversion":
-        case "sourceStructVersion": target.getConfiguration().getSourceStructVersion(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
+        case "synchronous": return target.isSynchronous();
         case "tombstonesondelete":
-        case "tombstonesOnDelete": target.getConfiguration().isTombstonesOnDelete(); return true;
+        case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
         default: return null;
         }
     }

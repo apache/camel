@@ -337,200 +337,200 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FtpEndpoint target = (FtpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "account": target.getConfiguration().getAccount(); return true;
+        case "account": return target.getConfiguration().getAccount();
         case "activeportrange":
-        case "activePortRange": target.getConfiguration().getActivePortRange(); return true;
+        case "activePortRange": return target.getConfiguration().getActivePortRange();
         case "allownullbody":
-        case "allowNullBody": target.isAllowNullBody(); return true;
+        case "allowNullBody": return target.isAllowNullBody();
         case "antexclude":
-        case "antExclude": target.getAntExclude(); return true;
+        case "antExclude": return target.getAntExclude();
         case "antfiltercasesensitive":
-        case "antFilterCaseSensitive": target.isAntFilterCaseSensitive(); return true;
+        case "antFilterCaseSensitive": return target.isAntFilterCaseSensitive();
         case "antinclude":
-        case "antInclude": target.getAntInclude(); return true;
+        case "antInclude": return target.getAntInclude();
         case "autocreate":
-        case "autoCreate": target.isAutoCreate(); return true;
+        case "autoCreate": return target.isAutoCreate();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "binary": target.getConfiguration().isBinary(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binary": return target.getConfiguration().isBinary();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":
-        case "bufferSize": target.getBufferSize(); return true;
-        case "charset": target.getCharset(); return true;
-        case "chmod": target.getConfiguration().getChmod(); return true;
+        case "bufferSize": return target.getBufferSize();
+        case "charset": return target.getCharset();
+        case "chmod": return target.getConfiguration().getChmod();
         case "connecttimeout":
-        case "connectTimeout": target.getConfiguration().getConnectTimeout(); return true;
-        case "delay": target.getDelay(); return true;
-        case "delete": target.isDelete(); return true;
-        case "disconnect": target.isDisconnect(); return true;
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
+        case "delay": return target.getDelay();
+        case "delete": return target.isDelete();
+        case "disconnect": return target.isDisconnect();
         case "disconnectonbatchcomplete":
-        case "disconnectOnBatchComplete": target.isDisconnectOnBatchComplete(); return true;
+        case "disconnectOnBatchComplete": return target.isDisconnectOnBatchComplete();
         case "donefilename":
-        case "doneFileName": target.getDoneFileName(); return true;
-        case "download": target.isDownload(); return true;
+        case "doneFileName": return target.getDoneFileName();
+        case "download": return target.isDownload();
         case "eagerdeletetargetfile":
-        case "eagerDeleteTargetFile": target.isEagerDeleteTargetFile(); return true;
+        case "eagerDeleteTargetFile": return target.isEagerDeleteTargetFile();
         case "eagermaxmessagesperpoll":
-        case "eagerMaxMessagesPerPoll": target.isEagerMaxMessagesPerPoll(); return true;
+        case "eagerMaxMessagesPerPoll": return target.isEagerMaxMessagesPerPoll();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "exclude": target.getExclude(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "exclude": return target.getExclude();
         case "exclusivereadlockstrategy":
-        case "exclusiveReadLockStrategy": target.getExclusiveReadLockStrategy(); return true;
+        case "exclusiveReadLockStrategy": return target.getExclusiveReadLockStrategy();
         case "fastexistscheck":
-        case "fastExistsCheck": target.isFastExistsCheck(); return true;
+        case "fastExistsCheck": return target.isFastExistsCheck();
         case "fileexist":
-        case "fileExist": target.getFileExist(); return true;
+        case "fileExist": return target.getFileExist();
         case "filename":
-        case "fileName": target.getFileName(); return true;
-        case "filter": target.getFilter(); return true;
+        case "fileName": return target.getFileName();
+        case "filter": return target.getFilter();
         case "filterdirectory":
-        case "filterDirectory": target.getFilterDirectory(); return true;
+        case "filterDirectory": return target.getFilterDirectory();
         case "filterfile":
-        case "filterFile": target.getFilterFile(); return true;
-        case "flatten": target.isFlatten(); return true;
+        case "filterFile": return target.getFilterFile();
+        case "flatten": return target.isFlatten();
         case "ftpclient":
-        case "ftpClient": target.getFtpClient(); return true;
+        case "ftpClient": return target.getFtpClient();
         case "ftpclientconfig":
-        case "ftpClientConfig": target.getFtpClientConfig(); return true;
+        case "ftpClientConfig": return target.getFtpClientConfig();
         case "ftpclientconfigparameters":
-        case "ftpClientConfigParameters": target.getFtpClientConfigParameters(); return true;
+        case "ftpClientConfigParameters": return target.getFtpClientConfigParameters();
         case "ftpclientparameters":
-        case "ftpClientParameters": target.getFtpClientParameters(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "ftpClientParameters": return target.getFtpClientParameters();
+        case "greedy": return target.isGreedy();
         case "handledirectoryparserabsoluteresult":
-        case "handleDirectoryParserAbsoluteResult": target.getConfiguration().isHandleDirectoryParserAbsoluteResult(); return true;
-        case "idempotent": target.getIdempotent(); return true;
+        case "handleDirectoryParserAbsoluteResult": return target.getConfiguration().isHandleDirectoryParserAbsoluteResult();
+        case "idempotent": return target.getIdempotent();
         case "idempotentkey":
-        case "idempotentKey": target.getIdempotentKey(); return true;
+        case "idempotentKey": return target.getIdempotentKey();
         case "idempotentrepository":
-        case "idempotentRepository": target.getIdempotentRepository(); return true;
+        case "idempotentRepository": return target.getIdempotentRepository();
         case "ignorefilenotfoundorpermissionerror":
-        case "ignoreFileNotFoundOrPermissionError": target.getConfiguration().isIgnoreFileNotFoundOrPermissionError(); return true;
+        case "ignoreFileNotFoundOrPermissionError": return target.getConfiguration().isIgnoreFileNotFoundOrPermissionError();
         case "inprogressrepository":
-        case "inProgressRepository": target.getInProgressRepository(); return true;
-        case "include": target.getInclude(); return true;
+        case "inProgressRepository": return target.getInProgressRepository();
+        case "include": return target.getInclude();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "jailstartingdirectory":
-        case "jailStartingDirectory": target.isJailStartingDirectory(); return true;
+        case "jailStartingDirectory": return target.isJailStartingDirectory();
         case "keeplastmodified":
-        case "keepLastModified": target.isKeepLastModified(); return true;
+        case "keepLastModified": return target.isKeepLastModified();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "localworkdirectory":
-        case "localWorkDirectory": target.getLocalWorkDirectory(); return true;
+        case "localWorkDirectory": return target.getLocalWorkDirectory();
         case "maxdepth":
-        case "maxDepth": target.getMaxDepth(); return true;
+        case "maxDepth": return target.getMaxDepth();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getMaxMessagesPerPoll(); return true;
+        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "maximumreconnectattempts":
-        case "maximumReconnectAttempts": target.getMaximumReconnectAttempts(); return true;
+        case "maximumReconnectAttempts": return target.getMaximumReconnectAttempts();
         case "mindepth":
-        case "minDepth": target.getMinDepth(); return true;
-        case "move": target.getMove(); return true;
+        case "minDepth": return target.getMinDepth();
+        case "move": return target.getMove();
         case "moveexisting":
-        case "moveExisting": target.getMoveExisting(); return true;
+        case "moveExisting": return target.getMoveExisting();
         case "moveexistingfilestrategy":
-        case "moveExistingFileStrategy": target.getMoveExistingFileStrategy(); return true;
+        case "moveExistingFileStrategy": return target.getMoveExistingFileStrategy();
         case "movefailed":
-        case "moveFailed": target.getMoveFailed(); return true;
-        case "noop": target.isNoop(); return true;
+        case "moveFailed": return target.getMoveFailed();
+        case "noop": return target.isNoop();
         case "oncompletionexceptionhandler":
-        case "onCompletionExceptionHandler": target.getOnCompletionExceptionHandler(); return true;
+        case "onCompletionExceptionHandler": return target.getOnCompletionExceptionHandler();
         case "passivemode":
-        case "passiveMode": target.getConfiguration().isPassiveMode(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
+        case "passiveMode": return target.getConfiguration().isPassiveMode();
+        case "password": return target.getConfiguration().getPassword();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "premove":
-        case "preMove": target.getPreMove(); return true;
+        case "preMove": return target.getPreMove();
         case "presort":
-        case "preSort": target.isPreSort(); return true;
+        case "preSort": return target.isPreSort();
         case "processstrategy":
-        case "processStrategy": target.getProcessStrategy(); return true;
+        case "processStrategy": return target.getProcessStrategy();
         case "readlock":
-        case "readLock": target.getReadLock(); return true;
+        case "readLock": return target.getReadLock();
         case "readlockcheckinterval":
-        case "readLockCheckInterval": target.getReadLockCheckInterval(); return true;
+        case "readLockCheckInterval": return target.getReadLockCheckInterval();
         case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": target.isReadLockDeleteOrphanLockFiles(); return true;
+        case "readLockDeleteOrphanLockFiles": return target.isReadLockDeleteOrphanLockFiles();
         case "readlocklogginglevel":
-        case "readLockLoggingLevel": target.getReadLockLoggingLevel(); return true;
+        case "readLockLoggingLevel": return target.getReadLockLoggingLevel();
         case "readlockmarkerfile":
-        case "readLockMarkerFile": target.isReadLockMarkerFile(); return true;
+        case "readLockMarkerFile": return target.isReadLockMarkerFile();
         case "readlockminage":
-        case "readLockMinAge": target.getReadLockMinAge(); return true;
+        case "readLockMinAge": return target.getReadLockMinAge();
         case "readlockminlength":
-        case "readLockMinLength": target.getReadLockMinLength(); return true;
+        case "readLockMinLength": return target.getReadLockMinLength();
         case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": target.isReadLockRemoveOnCommit(); return true;
+        case "readLockRemoveOnCommit": return target.isReadLockRemoveOnCommit();
         case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": target.isReadLockRemoveOnRollback(); return true;
+        case "readLockRemoveOnRollback": return target.isReadLockRemoveOnRollback();
         case "readlocktimeout":
-        case "readLockTimeout": target.getReadLockTimeout(); return true;
+        case "readLockTimeout": return target.getReadLockTimeout();
         case "reconnectdelay":
-        case "reconnectDelay": target.getReconnectDelay(); return true;
-        case "recursive": target.isRecursive(); return true;
+        case "reconnectDelay": return target.getReconnectDelay();
+        case "recursive": return target.isRecursive();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "resumedownload":
-        case "resumeDownload": target.isResumeDownload(); return true;
+        case "resumeDownload": return target.isResumeDownload();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sendnoop":
-        case "sendNoop": target.getConfiguration().isSendNoop(); return true;
-        case "separator": target.getConfiguration().getSeparator(); return true;
-        case "shuffle": target.isShuffle(); return true;
+        case "sendNoop": return target.getConfiguration().isSendNoop();
+        case "separator": return target.getConfiguration().getSeparator();
+        case "shuffle": return target.isShuffle();
         case "sitecommand":
-        case "siteCommand": target.getConfiguration().getSiteCommand(); return true;
+        case "siteCommand": return target.getConfiguration().getSiteCommand();
         case "sotimeout":
-        case "soTimeout": target.getConfiguration().getSoTimeout(); return true;
+        case "soTimeout": return target.getConfiguration().getSoTimeout();
         case "sortby":
-        case "sortBy": target.getSortBy(); return true;
-        case "sorter": target.getSorter(); return true;
+        case "sortBy": return target.getSortBy();
+        case "sorter": return target.getSorter();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "stepwise": target.getConfiguration().isStepwise(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "stepwise": return target.getConfiguration().isStepwise();
         case "streamdownload":
-        case "streamDownload": target.getConfiguration().isStreamDownload(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "streamDownload": return target.getConfiguration().isStreamDownload();
+        case "synchronous": return target.isSynchronous();
         case "tempfilename":
-        case "tempFileName": target.getTempFileName(); return true;
+        case "tempFileName": return target.getTempFileName();
         case "tempprefix":
-        case "tempPrefix": target.getTempPrefix(); return true;
+        case "tempPrefix": return target.getTempPrefix();
         case "throwexceptiononconnectfailed":
-        case "throwExceptionOnConnectFailed": target.getConfiguration().isThrowExceptionOnConnectFailed(); return true;
+        case "throwExceptionOnConnectFailed": return target.getConfiguration().isThrowExceptionOnConnectFailed();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
-        case "timeout": target.getConfiguration().getTimeout(); return true;
+        case "timeUnit": return target.getTimeUnit();
+        case "timeout": return target.getConfiguration().getTimeout();
         case "transferloggingintervalseconds":
-        case "transferLoggingIntervalSeconds": target.getTransferLoggingIntervalSeconds(); return true;
+        case "transferLoggingIntervalSeconds": return target.getTransferLoggingIntervalSeconds();
         case "transferlogginglevel":
-        case "transferLoggingLevel": target.getTransferLoggingLevel(); return true;
+        case "transferLoggingLevel": return target.getTransferLoggingLevel();
         case "transferloggingverbose":
-        case "transferLoggingVerbose": target.isTransferLoggingVerbose(); return true;
+        case "transferLoggingVerbose": return target.isTransferLoggingVerbose();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "uselist":
-        case "useList": target.getConfiguration().isUseList(); return true;
-        case "username": target.getConfiguration().getUsername(); return true;
+        case "useList": return target.getConfiguration().isUseList();
+        case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
     }

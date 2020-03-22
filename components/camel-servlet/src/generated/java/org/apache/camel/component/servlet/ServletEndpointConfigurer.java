@@ -102,51 +102,51 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ServletEndpoint target = (ServletEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "async": target.isAsync(); return true;
+        case "async": return target.isAsync();
         case "attachmentmultipartbinding":
-        case "attachmentMultipartBinding": target.isAttachmentMultipartBinding(); return true;
+        case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "chunked": target.isChunked(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "chunked": return target.isChunked();
         case "disablestreamcache":
-        case "disableStreamCache": target.isDisableStreamCache(); return true;
+        case "disableStreamCache": return target.isDisableStreamCache();
         case "eagercheckcontentavailable":
-        case "eagerCheckContentAvailable": target.isEagerCheckContentAvailable(); return true;
+        case "eagerCheckContentAvailable": return target.isEagerCheckContentAvailable();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filenameextwhitelist":
-        case "fileNameExtWhitelist": target.getFileNameExtWhitelist(); return true;
+        case "fileNameExtWhitelist": return target.getFileNameExtWhitelist();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
-        case "httpBinding": target.getHttpBinding(); return true;
+        case "httpBinding": return target.getHttpBinding();
         case "httpmethodrestrict":
-        case "httpMethodRestrict": target.getHttpMethodRestrict(); return true;
+        case "httpMethodRestrict": return target.getHttpMethodRestrict();
         case "maphttpmessagebody":
-        case "mapHttpMessageBody": target.isMapHttpMessageBody(); return true;
+        case "mapHttpMessageBody": return target.isMapHttpMessageBody();
         case "maphttpmessageformurlencodedbody":
-        case "mapHttpMessageFormUrlEncodedBody": target.isMapHttpMessageFormUrlEncodedBody(); return true;
+        case "mapHttpMessageFormUrlEncodedBody": return target.isMapHttpMessageFormUrlEncodedBody();
         case "maphttpmessageheaders":
-        case "mapHttpMessageHeaders": target.isMapHttpMessageHeaders(); return true;
+        case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
         case "matchonuriprefix":
-        case "matchOnUriPrefix": target.isMatchOnUriPrefix(); return true;
+        case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
         case "muteexception":
-        case "muteException": target.isMuteException(); return true;
+        case "muteException": return target.isMuteException();
         case "optionsenabled":
-        case "optionsEnabled": target.isOptionsEnabled(); return true;
+        case "optionsEnabled": return target.isOptionsEnabled();
         case "responsebuffersize":
-        case "responseBufferSize": target.getResponseBufferSize(); return true;
+        case "responseBufferSize": return target.getResponseBufferSize();
         case "servletname":
-        case "servletName": target.getServletName(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "servletName": return target.getServletName();
+        case "synchronous": return target.isSynchronous();
         case "traceenabled":
-        case "traceEnabled": target.isTraceEnabled(); return true;
+        case "traceEnabled": return target.isTraceEnabled();
         case "transferexception":
-        case "transferException": target.isTransferException(); return true;
+        case "transferException": return target.isTransferException();
         default: return null;
         }
     }

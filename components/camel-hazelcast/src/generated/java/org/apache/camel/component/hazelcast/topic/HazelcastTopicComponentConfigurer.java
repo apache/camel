@@ -49,15 +49,15 @@ public class HazelcastTopicComponentConfigurer extends PropertyConfigurerSupport
         HazelcastTopicComponent target = (HazelcastTopicComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "hazelcastinstance":
-        case "hazelcastInstance": target.getHazelcastInstance(); return true;
+        case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastmode":
-        case "hazelcastMode": target.getHazelcastMode(); return true;
+        case "hazelcastMode": return target.getHazelcastMode();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

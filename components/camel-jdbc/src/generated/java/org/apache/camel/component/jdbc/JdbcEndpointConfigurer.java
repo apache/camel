@@ -76,32 +76,32 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         JdbcEndpoint target = (JdbcEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
-        case "allowNamedParameters": target.isAllowNamedParameters(); return true;
+        case "allowNamedParameters": return target.isAllowNamedParameters();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "beanrowmapper":
-        case "beanRowMapper": target.getBeanRowMapper(); return true;
+        case "beanRowMapper": return target.getBeanRowMapper();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputclass":
-        case "outputClass": target.getOutputClass(); return true;
+        case "outputClass": return target.getOutputClass();
         case "outputtype":
-        case "outputType": target.getOutputType(); return true;
-        case "parameters": target.getParameters(); return true;
+        case "outputType": return target.getOutputType();
+        case "parameters": return target.getParameters();
         case "preparestatementstrategy":
-        case "prepareStatementStrategy": target.getPrepareStatementStrategy(); return true;
+        case "prepareStatementStrategy": return target.getPrepareStatementStrategy();
         case "readsize":
-        case "readSize": target.getReadSize(); return true;
+        case "readSize": return target.getReadSize();
         case "resetautocommit":
-        case "resetAutoCommit": target.isResetAutoCommit(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "transacted": target.isTransacted(); return true;
+        case "resetAutoCommit": return target.isResetAutoCommit();
+        case "synchronous": return target.isSynchronous();
+        case "transacted": return target.isTransacted();
         case "usegetbytesforblob":
-        case "useGetBytesForBlob": target.isUseGetBytesForBlob(); return true;
+        case "useGetBytesForBlob": return target.isUseGetBytesForBlob();
         case "useheadersasparameters":
-        case "useHeadersAsParameters": target.isUseHeadersAsParameters(); return true;
+        case "useHeadersAsParameters": return target.isUseHeadersAsParameters();
         case "usejdbc4columnnameandlabelsemantics":
-        case "useJDBC4ColumnNameAndLabelSemantics": target.isUseJDBC4ColumnNameAndLabelSemantics(); return true;
+        case "useJDBC4ColumnNameAndLabelSemantics": return target.isUseJDBC4ColumnNameAndLabelSemantics();
         default: return null;
         }
     }

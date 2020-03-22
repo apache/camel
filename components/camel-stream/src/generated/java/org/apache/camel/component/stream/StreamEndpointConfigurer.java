@@ -93,43 +93,43 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         StreamEndpoint target = (StreamEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autoclosecount":
-        case "autoCloseCount": target.getAutoCloseCount(); return true;
+        case "autoCloseCount": return target.getAutoCloseCount();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "closeondone":
-        case "closeOnDone": target.isCloseOnDone(); return true;
-        case "delay": target.getDelay(); return true;
-        case "encoding": target.getEncoding(); return true;
+        case "closeOnDone": return target.isCloseOnDone();
+        case "delay": return target.getDelay();
+        case "encoding": return target.getEncoding();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filename":
-        case "fileName": target.getFileName(); return true;
+        case "fileName": return target.getFileName();
         case "filewatcher":
-        case "fileWatcher": target.isFileWatcher(); return true;
+        case "fileWatcher": return target.isFileWatcher();
         case "grouplines":
-        case "groupLines": target.getGroupLines(); return true;
+        case "groupLines": return target.getGroupLines();
         case "groupstrategy":
-        case "groupStrategy": target.getGroupStrategy(); return true;
+        case "groupStrategy": return target.getGroupStrategy();
         case "initialpromptdelay":
-        case "initialPromptDelay": target.getInitialPromptDelay(); return true;
+        case "initialPromptDelay": return target.getInitialPromptDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "promptdelay":
-        case "promptDelay": target.getPromptDelay(); return true;
+        case "promptDelay": return target.getPromptDelay();
         case "promptmessage":
-        case "promptMessage": target.getPromptMessage(); return true;
+        case "promptMessage": return target.getPromptMessage();
         case "readtimeout":
-        case "readTimeout": target.getReadTimeout(); return true;
-        case "retry": target.isRetry(); return true;
+        case "readTimeout": return target.getReadTimeout();
+        case "retry": return target.isRetry();
         case "scanstream":
-        case "scanStream": target.isScanStream(); return true;
+        case "scanStream": return target.isScanStream();
         case "scanstreamdelay":
-        case "scanStreamDelay": target.getScanStreamDelay(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "scanStreamDelay": return target.getScanStreamDelay();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

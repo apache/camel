@@ -96,41 +96,41 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DigitalSignatureComponent target = (DigitalSignatureComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "algorithm": getOrCreateConfiguration(target).getAlgorithm(); return true;
-        case "alias": getOrCreateConfiguration(target).getAlias(); return true;
+        case "algorithm": return getOrCreateConfiguration(target).getAlgorithm();
+        case "alias": return getOrCreateConfiguration(target).getAlias();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "buffersize":
-        case "bufferSize": getOrCreateConfiguration(target).getBufferSize(); return true;
-        case "certificate": getOrCreateConfiguration(target).getCertificate(); return true;
+        case "bufferSize": return getOrCreateConfiguration(target).getBufferSize();
+        case "certificate": return getOrCreateConfiguration(target).getCertificate();
         case "certificatename":
-        case "certificateName": getOrCreateConfiguration(target).getCertificateName(); return true;
+        case "certificateName": return getOrCreateConfiguration(target).getCertificateName();
         case "clearheaders":
-        case "clearHeaders": getOrCreateConfiguration(target).isClearHeaders(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clearHeaders": return getOrCreateConfiguration(target).isClearHeaders();
+        case "configuration": return target.getConfiguration();
         case "keystoreparameters":
-        case "keyStoreParameters": getOrCreateConfiguration(target).getKeyStoreParameters(); return true;
-        case "keystore": getOrCreateConfiguration(target).getKeystore(); return true;
+        case "keyStoreParameters": return getOrCreateConfiguration(target).getKeyStoreParameters();
+        case "keystore": return getOrCreateConfiguration(target).getKeystore();
         case "keystorename":
-        case "keystoreName": getOrCreateConfiguration(target).getKeystoreName(); return true;
+        case "keystoreName": return getOrCreateConfiguration(target).getKeystoreName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "privatekey":
-        case "privateKey": getOrCreateConfiguration(target).getPrivateKey(); return true;
+        case "privateKey": return getOrCreateConfiguration(target).getPrivateKey();
         case "privatekeyname":
-        case "privateKeyName": getOrCreateConfiguration(target).getPrivateKeyName(); return true;
-        case "provider": getOrCreateConfiguration(target).getProvider(); return true;
+        case "privateKeyName": return getOrCreateConfiguration(target).getPrivateKeyName();
+        case "provider": return getOrCreateConfiguration(target).getProvider();
         case "publickey":
-        case "publicKey": getOrCreateConfiguration(target).getPublicKey(); return true;
+        case "publicKey": return getOrCreateConfiguration(target).getPublicKey();
         case "publickeyname":
-        case "publicKeyName": getOrCreateConfiguration(target).getPublicKeyName(); return true;
+        case "publicKeyName": return getOrCreateConfiguration(target).getPublicKeyName();
         case "securerandom":
-        case "secureRandom": getOrCreateConfiguration(target).getSecureRandom(); return true;
+        case "secureRandom": return getOrCreateConfiguration(target).getSecureRandom();
         case "securerandomname":
-        case "secureRandomName": getOrCreateConfiguration(target).getSecureRandomName(); return true;
+        case "secureRandomName": return getOrCreateConfiguration(target).getSecureRandomName();
         case "signatureheadername":
-        case "signatureHeaderName": getOrCreateConfiguration(target).getSignatureHeaderName(); return true;
+        case "signatureHeaderName": return getOrCreateConfiguration(target).getSignatureHeaderName();
         default: return null;
         }
     }

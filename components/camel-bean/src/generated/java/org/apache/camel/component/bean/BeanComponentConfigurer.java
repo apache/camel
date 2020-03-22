@@ -44,11 +44,11 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
         BeanComponent target = (BeanComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "cache": target.getCache(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "cache": return target.getCache();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "scope": target.getScope(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "scope": return target.getScope();
         default: return null;
         }
     }

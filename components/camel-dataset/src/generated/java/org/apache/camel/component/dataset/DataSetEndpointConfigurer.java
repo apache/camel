@@ -61,23 +61,23 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
         DataSetEndpoint target = (DataSetEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumedelay":
-        case "consumeDelay": target.getConsumeDelay(); return true;
+        case "consumeDelay": return target.getConsumeDelay();
         case "datasetindex":
-        case "dataSetIndex": target.getDataSetIndex(); return true;
+        case "dataSetIndex": return target.getDataSetIndex();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "minrate":
-        case "minRate": target.getMinRate(); return true;
+        case "minRate": return target.getMinRate();
         case "preloadsize":
-        case "preloadSize": target.getPreloadSize(); return true;
+        case "preloadSize": return target.getPreloadSize();
         case "producedelay":
-        case "produceDelay": target.getProduceDelay(); return true;
+        case "produceDelay": return target.getProduceDelay();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

@@ -77,33 +77,33 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         GeoCoderEndpoint target = (GeoCoderEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
-        case "apiKey": target.getApiKey(); return true;
+        case "apiKey": return target.getApiKey();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientid":
-        case "clientId": target.getClientId(); return true;
+        case "clientId": return target.getClientId();
         case "clientkey":
-        case "clientKey": target.getClientKey(); return true;
+        case "clientKey": return target.getClientKey();
         case "headersonly":
-        case "headersOnly": target.isHeadersOnly(); return true;
-        case "language": target.getLanguage(); return true;
+        case "headersOnly": return target.isHeadersOnly();
+        case "language": return target.getLanguage();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "proxyauthdomain":
-        case "proxyAuthDomain": target.getProxyAuthDomain(); return true;
+        case "proxyAuthDomain": return target.getProxyAuthDomain();
         case "proxyauthhost":
-        case "proxyAuthHost": target.getProxyAuthHost(); return true;
+        case "proxyAuthHost": return target.getProxyAuthHost();
         case "proxyauthmethod":
-        case "proxyAuthMethod": target.getProxyAuthMethod(); return true;
+        case "proxyAuthMethod": return target.getProxyAuthMethod();
         case "proxyauthpassword":
-        case "proxyAuthPassword": target.getProxyAuthPassword(); return true;
+        case "proxyAuthPassword": return target.getProxyAuthPassword();
         case "proxyauthusername":
-        case "proxyAuthUsername": target.getProxyAuthUsername(); return true;
+        case "proxyAuthUsername": return target.getProxyAuthUsername();
         case "proxyhost":
-        case "proxyHost": target.getProxyHost(); return true;
+        case "proxyHost": return target.getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getProxyPort(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "proxyPort": return target.getProxyPort();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -45,12 +45,12 @@ public class GoogleBigQuerySQLEndpointConfigurer extends PropertyConfigurerSuppo
         GoogleBigQuerySQLEndpoint target = (GoogleBigQuerySQLEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "connectionfactory":
-        case "connectionFactory": target.getConfiguration().getConnectionFactory(); return true;
+        case "connectionFactory": return target.getConfiguration().getConnectionFactory();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

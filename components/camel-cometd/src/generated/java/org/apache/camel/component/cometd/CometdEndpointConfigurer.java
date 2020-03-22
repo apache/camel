@@ -85,38 +85,38 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         CometdEndpoint target = (CometdEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedorigins":
-        case "allowedOrigins": target.getAllowedOrigins(); return true;
+        case "allowedOrigins": return target.getAllowedOrigins();
         case "baseresource":
-        case "baseResource": target.getBaseResource(); return true;
+        case "baseResource": return target.getBaseResource();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "crossoriginfilteron":
-        case "crossOriginFilterOn": target.isCrossOriginFilterOn(); return true;
+        case "crossOriginFilterOn": return target.isCrossOriginFilterOn();
         case "disconnectlocalsession":
-        case "disconnectLocalSession": target.isDisconnectLocalSession(); return true;
+        case "disconnectLocalSession": return target.isDisconnectLocalSession();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filterpath":
-        case "filterPath": target.getFilterPath(); return true;
-        case "interval": target.getInterval(); return true;
+        case "filterPath": return target.getFilterPath();
+        case "interval": return target.getInterval();
         case "jsoncommented":
-        case "jsonCommented": target.isJsonCommented(); return true;
+        case "jsonCommented": return target.isJsonCommented();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loglevel":
-        case "logLevel": target.getLogLevel(); return true;
+        case "logLevel": return target.getLogLevel();
         case "maxinterval":
-        case "maxInterval": target.getMaxInterval(); return true;
+        case "maxInterval": return target.getMaxInterval();
         case "multiframeinterval":
-        case "multiFrameInterval": target.getMultiFrameInterval(); return true;
+        case "multiFrameInterval": return target.getMultiFrameInterval();
         case "sessionheadersenabled":
-        case "sessionHeadersEnabled": target.isSessionHeadersEnabled(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "sessionHeadersEnabled": return target.isSessionHeadersEnabled();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getTimeout();
         default: return null;
         }
     }

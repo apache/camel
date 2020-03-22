@@ -126,65 +126,65 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         SWFEndpoint target = (SWFEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "activitylist":
-        case "activityList": target.getConfiguration().getActivityList(); return true;
+        case "activityList": return target.getConfiguration().getActivityList();
         case "activityschedulingoptions":
-        case "activitySchedulingOptions": target.getConfiguration().getActivitySchedulingOptions(); return true;
+        case "activitySchedulingOptions": return target.getConfiguration().getActivitySchedulingOptions();
         case "activitythreadpoolsize":
-        case "activityThreadPoolSize": target.getConfiguration().getActivityThreadPoolSize(); return true;
+        case "activityThreadPoolSize": return target.getConfiguration().getActivityThreadPoolSize();
         case "activitytypeexecutionoptions":
-        case "activityTypeExecutionOptions": target.getConfiguration().getActivityTypeExecutionOptions(); return true;
+        case "activityTypeExecutionOptions": return target.getConfiguration().getActivityTypeExecutionOptions();
         case "activitytyperegistrationoptions":
-        case "activityTypeRegistrationOptions": target.getConfiguration().getActivityTypeRegistrationOptions(); return true;
+        case "activityTypeRegistrationOptions": return target.getConfiguration().getActivityTypeRegistrationOptions();
         case "amazonswclient":
-        case "amazonSWClient": target.getConfiguration().getAmazonSWClient(); return true;
+        case "amazonSWClient": return target.getConfiguration().getAmazonSWClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "childpolicy":
-        case "childPolicy": target.getConfiguration().getChildPolicy(); return true;
+        case "childPolicy": return target.getConfiguration().getChildPolicy();
         case "clientconfigurationparameters":
-        case "clientConfigurationParameters": target.getConfiguration().getClientConfigurationParameters(); return true;
+        case "clientConfigurationParameters": return target.getConfiguration().getClientConfigurationParameters();
         case "dataconverter":
-        case "dataConverter": target.getConfiguration().getDataConverter(); return true;
+        case "dataConverter": return target.getConfiguration().getDataConverter();
         case "domainname":
-        case "domainName": target.getConfiguration().getDomainName(); return true;
+        case "domainName": return target.getConfiguration().getDomainName();
         case "eventname":
-        case "eventName": target.getConfiguration().getEventName(); return true;
+        case "eventName": return target.getConfiguration().getEventName();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "executionstarttoclosetimeout":
-        case "executionStartToCloseTimeout": target.getConfiguration().getExecutionStartToCloseTimeout(); return true;
+        case "executionStartToCloseTimeout": return target.getConfiguration().getExecutionStartToCloseTimeout();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return target.getConfiguration().getOperation();
+        case "region": return target.getConfiguration().getRegion();
         case "swclientparameters":
-        case "sWClientParameters": target.getConfiguration().getSWClientParameters(); return true;
+        case "sWClientParameters": return target.getConfiguration().getSWClientParameters();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "signalname":
-        case "signalName": target.getConfiguration().getSignalName(); return true;
+        case "signalName": return target.getConfiguration().getSignalName();
         case "startworkflowoptionsparameters":
-        case "startWorkflowOptionsParameters": target.getConfiguration().getStartWorkflowOptionsParameters(); return true;
+        case "startWorkflowOptionsParameters": return target.getConfiguration().getStartWorkflowOptionsParameters();
         case "stateresulttype":
-        case "stateResultType": target.getConfiguration().getStateResultType(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "stateResultType": return target.getConfiguration().getStateResultType();
+        case "synchronous": return target.isSynchronous();
         case "taskstarttoclosetimeout":
-        case "taskStartToCloseTimeout": target.getConfiguration().getTaskStartToCloseTimeout(); return true;
+        case "taskStartToCloseTimeout": return target.getConfiguration().getTaskStartToCloseTimeout();
         case "terminationdetails":
-        case "terminationDetails": target.getConfiguration().getTerminationDetails(); return true;
+        case "terminationDetails": return target.getConfiguration().getTerminationDetails();
         case "terminationreason":
-        case "terminationReason": target.getConfiguration().getTerminationReason(); return true;
-        case "version": target.getConfiguration().getVersion(); return true;
+        case "terminationReason": return target.getConfiguration().getTerminationReason();
+        case "version": return target.getConfiguration().getVersion();
         case "workflowlist":
-        case "workflowList": target.getConfiguration().getWorkflowList(); return true;
+        case "workflowList": return target.getConfiguration().getWorkflowList();
         case "workflowtyperegistrationoptions":
-        case "workflowTypeRegistrationOptions": target.getConfiguration().getWorkflowTypeRegistrationOptions(); return true;
+        case "workflowTypeRegistrationOptions": return target.getConfiguration().getWorkflowTypeRegistrationOptions();
         default: return null;
         }
     }

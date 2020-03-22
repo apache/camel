@@ -255,152 +255,152 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         DebeziumMySqlEndpoint target = (DebeziumMySqlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
-        case "additionalProperties": target.getConfiguration().getAdditionalProperties(); return true;
+        case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bigintunsignedhandlingmode":
-        case "bigintUnsignedHandlingMode": target.getConfiguration().getBigintUnsignedHandlingMode(); return true;
+        case "bigintUnsignedHandlingMode": return target.getConfiguration().getBigintUnsignedHandlingMode();
         case "binlogbuffersize":
-        case "binlogBufferSize": target.getConfiguration().getBinlogBufferSize(); return true;
+        case "binlogBufferSize": return target.getConfiguration().getBinlogBufferSize();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
-        case "columnBlacklist": target.getConfiguration().getColumnBlacklist(); return true;
+        case "columnBlacklist": return target.getConfiguration().getColumnBlacklist();
         case "connectkeepalive":
-        case "connectKeepAlive": target.getConfiguration().isConnectKeepAlive(); return true;
+        case "connectKeepAlive": return target.getConfiguration().isConnectKeepAlive();
         case "connectkeepaliveintervalms":
-        case "connectKeepAliveIntervalMs": target.getConfiguration().getConnectKeepAliveIntervalMs(); return true;
+        case "connectKeepAliveIntervalMs": return target.getConfiguration().getConnectKeepAliveIntervalMs();
         case "connecttimeoutms":
-        case "connectTimeoutMs": target.getConfiguration().getConnectTimeoutMs(); return true;
+        case "connectTimeoutMs": return target.getConfiguration().getConnectTimeoutMs();
         case "databaseblacklist":
-        case "databaseBlacklist": target.getConfiguration().getDatabaseBlacklist(); return true;
+        case "databaseBlacklist": return target.getConfiguration().getDatabaseBlacklist();
         case "databasehistory":
-        case "databaseHistory": target.getConfiguration().getDatabaseHistory(); return true;
+        case "databaseHistory": return target.getConfiguration().getDatabaseHistory();
         case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": target.getConfiguration().getDatabaseHistoryFileFilename(); return true;
+        case "databaseHistoryFileFilename": return target.getConfiguration().getDatabaseHistoryFileFilename();
         case "databasehistorykafkabootstrapservers":
-        case "databaseHistoryKafkaBootstrapServers": target.getConfiguration().getDatabaseHistoryKafkaBootstrapServers(); return true;
+        case "databaseHistoryKafkaBootstrapServers": return target.getConfiguration().getDatabaseHistoryKafkaBootstrapServers();
         case "databasehistorykafkarecoveryattempts":
-        case "databaseHistoryKafkaRecoveryAttempts": target.getConfiguration().getDatabaseHistoryKafkaRecoveryAttempts(); return true;
+        case "databaseHistoryKafkaRecoveryAttempts": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryAttempts();
         case "databasehistorykafkarecoverypollintervalms":
-        case "databaseHistoryKafkaRecoveryPollIntervalMs": target.getConfiguration().getDatabaseHistoryKafkaRecoveryPollIntervalMs(); return true;
+        case "databaseHistoryKafkaRecoveryPollIntervalMs": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryPollIntervalMs();
         case "databasehistorykafkatopic":
-        case "databaseHistoryKafkaTopic": target.getConfiguration().getDatabaseHistoryKafkaTopic(); return true;
+        case "databaseHistoryKafkaTopic": return target.getConfiguration().getDatabaseHistoryKafkaTopic();
         case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": target.getConfiguration().isDatabaseHistorySkipUnparseableDdl(); return true;
+        case "databaseHistorySkipUnparseableDdl": return target.getConfiguration().isDatabaseHistorySkipUnparseableDdl();
         case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": target.getConfiguration().isDatabaseHistoryStoreOnlyMonitoredTablesDdl(); return true;
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return target.getConfiguration().isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
-        case "databaseHostname": target.getConfiguration().getDatabaseHostname(); return true;
+        case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
         case "databaseinitialstatements":
-        case "databaseInitialStatements": target.getConfiguration().getDatabaseInitialStatements(); return true;
+        case "databaseInitialStatements": return target.getConfiguration().getDatabaseInitialStatements();
         case "databasejdbcdriver":
-        case "databaseJdbcDriver": target.getConfiguration().getDatabaseJdbcDriver(); return true;
+        case "databaseJdbcDriver": return target.getConfiguration().getDatabaseJdbcDriver();
         case "databasepassword":
-        case "databasePassword": target.getConfiguration().getDatabasePassword(); return true;
+        case "databasePassword": return target.getConfiguration().getDatabasePassword();
         case "databaseport":
-        case "databasePort": target.getConfiguration().getDatabasePort(); return true;
+        case "databasePort": return target.getConfiguration().getDatabasePort();
         case "databaseserverid":
-        case "databaseServerId": target.getConfiguration().getDatabaseServerId(); return true;
+        case "databaseServerId": return target.getConfiguration().getDatabaseServerId();
         case "databaseserveridoffset":
-        case "databaseServerIdOffset": target.getConfiguration().getDatabaseServerIdOffset(); return true;
+        case "databaseServerIdOffset": return target.getConfiguration().getDatabaseServerIdOffset();
         case "databaseservername":
-        case "databaseServerName": target.getConfiguration().getDatabaseServerName(); return true;
+        case "databaseServerName": return target.getConfiguration().getDatabaseServerName();
         case "databasesslkeystore":
-        case "databaseSslKeystore": target.getConfiguration().getDatabaseSslKeystore(); return true;
+        case "databaseSslKeystore": return target.getConfiguration().getDatabaseSslKeystore();
         case "databasesslkeystorepassword":
-        case "databaseSslKeystorePassword": target.getConfiguration().getDatabaseSslKeystorePassword(); return true;
+        case "databaseSslKeystorePassword": return target.getConfiguration().getDatabaseSslKeystorePassword();
         case "databasesslmode":
-        case "databaseSslMode": target.getConfiguration().getDatabaseSslMode(); return true;
+        case "databaseSslMode": return target.getConfiguration().getDatabaseSslMode();
         case "databasessltruststore":
-        case "databaseSslTruststore": target.getConfiguration().getDatabaseSslTruststore(); return true;
+        case "databaseSslTruststore": return target.getConfiguration().getDatabaseSslTruststore();
         case "databasessltruststorepassword":
-        case "databaseSslTruststorePassword": target.getConfiguration().getDatabaseSslTruststorePassword(); return true;
+        case "databaseSslTruststorePassword": return target.getConfiguration().getDatabaseSslTruststorePassword();
         case "databaseuser":
-        case "databaseUser": target.getConfiguration().getDatabaseUser(); return true;
+        case "databaseUser": return target.getConfiguration().getDatabaseUser();
         case "databasewhitelist":
-        case "databaseWhitelist": target.getConfiguration().getDatabaseWhitelist(); return true;
+        case "databaseWhitelist": return target.getConfiguration().getDatabaseWhitelist();
         case "decimalhandlingmode":
-        case "decimalHandlingMode": target.getConfiguration().getDecimalHandlingMode(); return true;
+        case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "enabletimeadjuster":
-        case "enableTimeAdjuster": target.getConfiguration().isEnableTimeAdjuster(); return true;
+        case "enableTimeAdjuster": return target.getConfiguration().isEnableTimeAdjuster();
         case "eventdeserializationfailurehandlingmode":
-        case "eventDeserializationFailureHandlingMode": target.getConfiguration().getEventDeserializationFailureHandlingMode(); return true;
+        case "eventDeserializationFailureHandlingMode": return target.getConfiguration().getEventDeserializationFailureHandlingMode();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "gtidnewchannelposition":
-        case "gtidNewChannelPosition": target.getConfiguration().getGtidNewChannelPosition(); return true;
+        case "gtidNewChannelPosition": return target.getConfiguration().getGtidNewChannelPosition();
         case "gtidsourceexcludes":
-        case "gtidSourceExcludes": target.getConfiguration().getGtidSourceExcludes(); return true;
+        case "gtidSourceExcludes": return target.getConfiguration().getGtidSourceExcludes();
         case "gtidsourcefilterdmlevents":
-        case "gtidSourceFilterDmlEvents": target.getConfiguration().isGtidSourceFilterDmlEvents(); return true;
+        case "gtidSourceFilterDmlEvents": return target.getConfiguration().isGtidSourceFilterDmlEvents();
         case "gtidsourceincludes":
-        case "gtidSourceIncludes": target.getConfiguration().getGtidSourceIncludes(); return true;
+        case "gtidSourceIncludes": return target.getConfiguration().getGtidSourceIncludes();
         case "heartbeatintervalms":
-        case "heartbeatIntervalMs": target.getConfiguration().getHeartbeatIntervalMs(); return true;
+        case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
-        case "heartbeatTopicsPrefix": target.getConfiguration().getHeartbeatTopicsPrefix(); return true;
+        case "heartbeatTopicsPrefix": return target.getConfiguration().getHeartbeatTopicsPrefix();
         case "includequery":
-        case "includeQuery": target.getConfiguration().isIncludeQuery(); return true;
+        case "includeQuery": return target.getConfiguration().isIncludeQuery();
         case "includeschemachanges":
-        case "includeSchemaChanges": target.getConfiguration().isIncludeSchemaChanges(); return true;
+        case "includeSchemaChanges": return target.getConfiguration().isIncludeSchemaChanges();
         case "inconsistentschemahandlingmode":
-        case "inconsistentSchemaHandlingMode": target.getConfiguration().getInconsistentSchemaHandlingMode(); return true;
+        case "inconsistentSchemaHandlingMode": return target.getConfiguration().getInconsistentSchemaHandlingMode();
         case "internalkeyconverter":
-        case "internalKeyConverter": target.getConfiguration().getInternalKeyConverter(); return true;
+        case "internalKeyConverter": return target.getConfiguration().getInternalKeyConverter();
         case "internalvalueconverter":
-        case "internalValueConverter": target.getConfiguration().getInternalValueConverter(); return true;
+        case "internalValueConverter": return target.getConfiguration().getInternalValueConverter();
         case "maxbatchsize":
-        case "maxBatchSize": target.getConfiguration().getMaxBatchSize(); return true;
+        case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":
-        case "maxQueueSize": target.getConfiguration().getMaxQueueSize(); return true;
+        case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
         case "messagekeycolumns":
-        case "messageKeyColumns": target.getConfiguration().getMessageKeyColumns(); return true;
+        case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "offsetcommitpolicy":
-        case "offsetCommitPolicy": target.getConfiguration().getOffsetCommitPolicy(); return true;
+        case "offsetCommitPolicy": return target.getConfiguration().getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": target.getConfiguration().getOffsetCommitTimeoutMs(); return true;
+        case "offsetCommitTimeoutMs": return target.getConfiguration().getOffsetCommitTimeoutMs();
         case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": target.getConfiguration().getOffsetFlushIntervalMs(); return true;
+        case "offsetFlushIntervalMs": return target.getConfiguration().getOffsetFlushIntervalMs();
         case "offsetstorage":
-        case "offsetStorage": target.getConfiguration().getOffsetStorage(); return true;
+        case "offsetStorage": return target.getConfiguration().getOffsetStorage();
         case "offsetstoragefilename":
-        case "offsetStorageFileName": target.getConfiguration().getOffsetStorageFileName(); return true;
+        case "offsetStorageFileName": return target.getConfiguration().getOffsetStorageFileName();
         case "offsetstoragepartitions":
-        case "offsetStoragePartitions": target.getConfiguration().getOffsetStoragePartitions(); return true;
+        case "offsetStoragePartitions": return target.getConfiguration().getOffsetStoragePartitions();
         case "offsetstoragereplicationfactor":
-        case "offsetStorageReplicationFactor": target.getConfiguration().getOffsetStorageReplicationFactor(); return true;
+        case "offsetStorageReplicationFactor": return target.getConfiguration().getOffsetStorageReplicationFactor();
         case "offsetstoragetopic":
-        case "offsetStorageTopic": target.getConfiguration().getOffsetStorageTopic(); return true;
+        case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "pollintervalms":
-        case "pollIntervalMs": target.getConfiguration().getPollIntervalMs(); return true;
+        case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
         case "snapshotdelayms":
-        case "snapshotDelayMs": target.getConfiguration().getSnapshotDelayMs(); return true;
+        case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
         case "snapshotfetchsize":
-        case "snapshotFetchSize": target.getConfiguration().getSnapshotFetchSize(); return true;
+        case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
         case "snapshotlockingmode":
-        case "snapshotLockingMode": target.getConfiguration().getSnapshotLockingMode(); return true;
+        case "snapshotLockingMode": return target.getConfiguration().getSnapshotLockingMode();
         case "snapshotmode":
-        case "snapshotMode": target.getConfiguration().getSnapshotMode(); return true;
+        case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotnewtables":
-        case "snapshotNewTables": target.getConfiguration().getSnapshotNewTables(); return true;
+        case "snapshotNewTables": return target.getConfiguration().getSnapshotNewTables();
         case "snapshotselectstatementoverrides":
-        case "snapshotSelectStatementOverrides": target.getConfiguration().getSnapshotSelectStatementOverrides(); return true;
+        case "snapshotSelectStatementOverrides": return target.getConfiguration().getSnapshotSelectStatementOverrides();
         case "sourcestructversion":
-        case "sourceStructVersion": target.getConfiguration().getSourceStructVersion(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
+        case "synchronous": return target.isSynchronous();
         case "tableblacklist":
-        case "tableBlacklist": target.getConfiguration().getTableBlacklist(); return true;
+        case "tableBlacklist": return target.getConfiguration().getTableBlacklist();
         case "tableignorebuiltin":
-        case "tableIgnoreBuiltin": target.getConfiguration().isTableIgnoreBuiltin(); return true;
+        case "tableIgnoreBuiltin": return target.getConfiguration().isTableIgnoreBuiltin();
         case "tablewhitelist":
-        case "tableWhitelist": target.getConfiguration().getTableWhitelist(); return true;
+        case "tableWhitelist": return target.getConfiguration().getTableWhitelist();
         case "timeprecisionmode":
-        case "timePrecisionMode": target.getConfiguration().getTimePrecisionMode(); return true;
+        case "timePrecisionMode": return target.getConfiguration().getTimePrecisionMode();
         case "tombstonesondelete":
-        case "tombstonesOnDelete": target.getConfiguration().isTombstonesOnDelete(); return true;
+        case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
         default: return null;
         }
     }

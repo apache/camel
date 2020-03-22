@@ -144,77 +144,77 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         BoxEndpoint target = (BoxEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstokencache":
-        case "accessTokenCache": target.getConfiguration().getAccessTokenCache(); return true;
+        case "accessTokenCache": return target.getConfiguration().getAccessTokenCache();
         case "authenticationtype":
-        case "authenticationType": target.getConfiguration().getAuthenticationType(); return true;
+        case "authenticationType": return target.getConfiguration().getAuthenticationType();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":
-        case "clientId": target.getConfiguration().getClientId(); return true;
+        case "clientId": return target.getConfiguration().getClientId();
         case "clientsecret":
-        case "clientSecret": target.getConfiguration().getClientSecret(); return true;
-        case "delay": target.getDelay(); return true;
+        case "clientSecret": return target.getConfiguration().getClientSecret();
+        case "delay": return target.getDelay();
         case "encryptionalgorithm":
-        case "encryptionAlgorithm": target.getConfiguration().getEncryptionAlgorithm(); return true;
+        case "encryptionAlgorithm": return target.getConfiguration().getEncryptionAlgorithm();
         case "enterpriseid":
-        case "enterpriseId": target.getConfiguration().getEnterpriseId(); return true;
+        case "enterpriseId": return target.getConfiguration().getEnterpriseId();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "greedy": return target.isGreedy();
         case "httpparams":
-        case "httpParams": target.getConfiguration().getHttpParams(); return true;
+        case "httpParams": return target.getConfiguration().getHttpParams();
         case "inbody":
-        case "inBody": target.getInBody(); return true;
+        case "inBody": return target.getInBody();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxcacheentries":
-        case "maxCacheEntries": target.getConfiguration().getMaxCacheEntries(); return true;
+        case "maxCacheEntries": return target.getConfiguration().getMaxCacheEntries();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "privatekeyfile":
-        case "privateKeyFile": target.getConfiguration().getPrivateKeyFile(); return true;
+        case "privateKeyFile": return target.getConfiguration().getPrivateKeyFile();
         case "privatekeypassword":
-        case "privateKeyPassword": target.getConfiguration().getPrivateKeyPassword(); return true;
+        case "privateKeyPassword": return target.getConfiguration().getPrivateKeyPassword();
         case "publickeyid":
-        case "publicKeyId": target.getConfiguration().getPublicKeyId(); return true;
+        case "publicKeyId": return target.getConfiguration().getPublicKeyId();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "userid":
-        case "userId": target.getConfiguration().getUserId(); return true;
+        case "userId": return target.getConfiguration().getUserId();
         case "username":
-        case "userName": target.getConfiguration().getUserName(); return true;
+        case "userName": return target.getConfiguration().getUserName();
         case "userpassword":
-        case "userPassword": target.getConfiguration().getUserPassword(); return true;
+        case "userPassword": return target.getConfiguration().getUserPassword();
         default: return null;
         }
     }

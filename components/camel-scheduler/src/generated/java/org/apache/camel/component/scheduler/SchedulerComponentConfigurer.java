@@ -43,11 +43,11 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         SchedulerComponent target = (SchedulerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrenttasks":
-        case "concurrentTasks": target.getConcurrentTasks(); return true;
+        case "concurrentTasks": return target.getConcurrentTasks();
         default: return null;
         }
     }

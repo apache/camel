@@ -88,35 +88,35 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "certresource":
-        case "certResource": getOrCreateConfiguration(target).getCertResource(); return true;
+        case "certResource": return getOrCreateConfiguration(target).getCertResource();
         case "certresourcepassword":
-        case "certResourcePassword": getOrCreateConfiguration(target).getCertResourcePassword(); return true;
+        case "certResourcePassword": return getOrCreateConfiguration(target).getCertResourcePassword();
         case "channeltype":
-        case "channelType": getOrCreateConfiguration(target).getChannelType(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "channelType": return getOrCreateConfiguration(target).getChannelType();
+        case "configuration": return target.getConfiguration();
         case "failonunknownhost":
-        case "failOnUnknownHost": getOrCreateConfiguration(target).isFailOnUnknownHost(); return true;
+        case "failOnUnknownHost": return getOrCreateConfiguration(target).isFailOnUnknownHost();
         case "keypairprovider":
-        case "keyPairProvider": getOrCreateConfiguration(target).getKeyPairProvider(); return true;
+        case "keyPairProvider": return getOrCreateConfiguration(target).getKeyPairProvider();
         case "keytype":
-        case "keyType": getOrCreateConfiguration(target).getKeyType(); return true;
+        case "keyType": return getOrCreateConfiguration(target).getKeyType();
         case "knownhostsresource":
-        case "knownHostsResource": getOrCreateConfiguration(target).getKnownHostsResource(); return true;
+        case "knownHostsResource": return getOrCreateConfiguration(target).getKnownHostsResource();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "pollcommand":
-        case "pollCommand": getOrCreateConfiguration(target).getPollCommand(); return true;
+        case "pollCommand": return getOrCreateConfiguration(target).getPollCommand();
         case "shellprompt":
-        case "shellPrompt": getOrCreateConfiguration(target).getShellPrompt(); return true;
+        case "shellPrompt": return getOrCreateConfiguration(target).getShellPrompt();
         case "sleepforshellprompt":
-        case "sleepForShellPrompt": getOrCreateConfiguration(target).getSleepForShellPrompt(); return true;
-        case "timeout": getOrCreateConfiguration(target).getTimeout(); return true;
-        case "username": getOrCreateConfiguration(target).getUsername(); return true;
+        case "sleepForShellPrompt": return getOrCreateConfiguration(target).getSleepForShellPrompt();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }
     }

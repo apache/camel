@@ -86,34 +86,34 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
         DdbComponent target = (DdbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonddbclient":
-        case "amazonDDBClient": getOrCreateConfiguration(target).getAmazonDDBClient(); return true;
+        case "amazonDDBClient": return getOrCreateConfiguration(target).getAmazonDDBClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "consistentread":
-        case "consistentRead": getOrCreateConfiguration(target).isConsistentRead(); return true;
+        case "consistentRead": return getOrCreateConfiguration(target).isConsistentRead();
         case "keyattributename":
-        case "keyAttributeName": getOrCreateConfiguration(target).getKeyAttributeName(); return true;
+        case "keyAttributeName": return getOrCreateConfiguration(target).getKeyAttributeName();
         case "keyattributetype":
-        case "keyAttributeType": getOrCreateConfiguration(target).getKeyAttributeType(); return true;
+        case "keyAttributeType": return getOrCreateConfiguration(target).getKeyAttributeType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
         case "readcapacity":
-        case "readCapacity": getOrCreateConfiguration(target).getReadCapacity(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "readCapacity": return getOrCreateConfiguration(target).getReadCapacity();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "writecapacity":
-        case "writeCapacity": getOrCreateConfiguration(target).getWriteCapacity(); return true;
+        case "writeCapacity": return getOrCreateConfiguration(target).getWriteCapacity();
         default: return null;
         }
     }

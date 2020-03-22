@@ -64,25 +64,25 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         UndertowComponent target = (UndertowComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedroles":
-        case "allowedRoles": target.getAllowedRoles(); return true;
+        case "allowedRoles": return target.getAllowedRoles();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "hostoptions":
-        case "hostOptions": target.getHostOptions(); return true;
+        case "hostOptions": return target.getHostOptions();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "muteexception":
-        case "muteException": target.isMuteException(); return true;
+        case "muteException": return target.isMuteException();
         case "securityconfiguration":
-        case "securityConfiguration": target.getSecurityConfiguration(); return true;
+        case "securityConfiguration": return target.getSecurityConfiguration();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
         case "undertowhttpbinding":
-        case "undertowHttpBinding": target.getUndertowHttpBinding(); return true;
+        case "undertowHttpBinding": return target.getUndertowHttpBinding();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

@@ -53,16 +53,16 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         BonitaEndpoint target = (BonitaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "hostname": target.getConfiguration().getHostname(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "hostname": return target.getConfiguration().getHostname();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
-        case "port": target.getConfiguration().getPort(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getConfiguration().getPassword();
+        case "port": return target.getConfiguration().getPort();
         case "processname":
-        case "processName": target.getConfiguration().getProcessName(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "username": target.getConfiguration().getUsername(); return true;
+        case "processName": return target.getConfiguration().getProcessName();
+        case "synchronous": return target.isSynchronous();
+        case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
     }

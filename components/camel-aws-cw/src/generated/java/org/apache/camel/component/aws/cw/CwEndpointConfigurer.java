@@ -70,27 +70,27 @@ public class CwEndpointConfigurer extends PropertyConfigurerSupport implements G
         CwEndpoint target = (CwEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazoncwclient":
-        case "amazonCwClient": target.getConfiguration().getAmazonCwClient(); return true;
+        case "amazonCwClient": return target.getConfiguration().getAmazonCwClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "name": target.getConfiguration().getName(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "name": return target.getConfiguration().getName();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
+        case "region": return target.getConfiguration().getRegion();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timestamp": target.getConfiguration().getTimestamp(); return true;
-        case "unit": target.getConfiguration().getUnit(); return true;
-        case "value": target.getConfiguration().getValue(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
+        case "synchronous": return target.isSynchronous();
+        case "timestamp": return target.getConfiguration().getTimestamp();
+        case "unit": return target.getConfiguration().getUnit();
+        case "value": return target.getConfiguration().getValue();
         default: return null;
         }
     }

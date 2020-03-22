@@ -54,18 +54,18 @@ public class AtmosComponentConfigurer extends PropertyConfigurerSupport implemen
         AtmosComponent target = (AtmosComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "fulltokenid":
-        case "fullTokenId": target.getFullTokenId(); return true;
+        case "fullTokenId": return target.getFullTokenId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "secretkey":
-        case "secretKey": target.getSecretKey(); return true;
+        case "secretKey": return target.getSecretKey();
         case "sslvalidation":
-        case "sslValidation": target.isSslValidation(); return true;
-        case "uri": target.getUri(); return true;
+        case "sslValidation": return target.isSslValidation();
+        case "uri": return target.getUri();
         default: return null;
         }
     }
