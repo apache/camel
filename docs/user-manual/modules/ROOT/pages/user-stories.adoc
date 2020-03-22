@@ -9,7 +9,7 @@ entry or comment; or post to the mailing list.
 |=======================================================================
 |Company, Product, or Project |Description
 |http://activemq.apache.org/[Apache ActiveMQ] |Uses Camel to add
-xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 support into the
 http://activemq.apache.org/enterprise-integration-patterns.html[ActiveMQ
 broker]. If you run an out of the box ActiveMQ broker, look in

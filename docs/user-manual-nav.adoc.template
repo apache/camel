@@ -51,9 +51,7 @@
  ** xref:spring.adoc[Spring support]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * Supported expression languages -- see Components documentation
-* xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
-<!-- eips:adoc -->
-<!-- endinject -->
+* xref:(eips-vc}:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * Frequently asked questions
  ** xref:faq/can-i-get-commercial-support.adoc[Can I get commercial support?]
  ** xref:support.adoc[How can I get help?]

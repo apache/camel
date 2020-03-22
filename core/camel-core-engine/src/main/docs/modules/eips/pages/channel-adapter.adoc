@@ -1,0 +1,54 @@
+[[Channel-Adapter]]
+= Channel Adapter
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/ChannelAdapter.html[Channel Adapter]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How can you connect an application to the messaging system so that it can send and receive messages?
+
+image::eip/ChannelAdapterSolution.gif[image]
+
+Use a Channel Adapter that can access the application's API or data and publish messages on a
+channel based on this data, and that likewise can receive messages and invoke functionality
+inside the application.
+
+The Channel Adapter is implemented in Camel by components.
+Each component adapters between the systems and Camel where all details are hidden in the implementation
+of the component, which allows applications to easily send and receive data.
+
+== Samples
+
+An application must receive messages from a Kafka topic, which can be done by using the
+xref:components::kafka-component.adoc[Kafka] component.
+
+One solution is to use a Camel route which consumes from the Kafka topic which calls a bean with the data.
+
+[source,java]
+----
+from("kafka:cheese?brokers={{kafka.host}}:{{kafka.port}}"
+    .to("bean:cheeseBean");
+----
+
+And the bean has method which accepts the message payload as a byte array.
+
+[source,java]
+----
+public class CheeseBean {
+  public void receiveCheeseData(byte[] data) {
+    // do something
+  }
+}
+----
+
+You can also use xref:latest@manual:ROOT:pojo-consuming.adoc[POJO consuming] with `@Consume` annotation.
+
+[source,java]
+----
+public class CheeseBean {
+  @Consume("kafka:cheese?brokers={{kafka.host}}:{{kafka.port}}")
+  public void receiveCheeseData(byte[] data) {
+    // do something
+  }
+}
+----

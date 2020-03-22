@@ -10,7 +10,7 @@ routing/mediation engines. The main differences are as follows:
 
 * Camel uses a Java xref:dsl.adoc[Domain Specific Language] in addition
   to Spring XML for configuring the routing rules and providing
-  xref:enterprise-integration-patterns.adoc[Enterprise Integration
+  xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
   Patterns]
 * Camel's API is smaller & cleaner (IMHO) and is closely aligned with
   the APIs of JBI, xref:components::cxf-component.adoc[CXF] and

@@ -83,10 +83,22 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
     protected File othersDir;
 
     /**
-     * The website doc for components
+     * The website index page for components
      */
     @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/ROOT/pages/index.adoc")
-    protected File websiteDocFile;
+    protected File websiteComponentsIndex;
+
+    /**
+     * The website index page for data formats
+     */
+    @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/dataformats/pages/index.adoc")
+    protected File websiteDataFormatsIndex;
+
+    /**
+     * The website index page for expression languages
+     */
+    @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/languages/pages/index.adoc")
+    protected File websiteLanguagesIndex;
 
     /**
      * Maven ProjectHelper.
@@ -155,7 +167,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
-            File file = websiteDocFile;
+            File file = websiteComponentsIndex;
             boolean exists = file.exists();
             String changed = templateComponents(models, count, deprecated);
             boolean updated = updateComponents(file, changed);
@@ -199,7 +211,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
-            File file = websiteDocFile;
+            File file = websiteComponentsIndex;
             boolean exists = file.exists();
             String changed = templateOthers(models, count, deprecated);
             boolean updated = updateOthers(file, changed);
@@ -250,7 +262,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
-            File file = websiteDocFile;
+            File file = websiteDataFormatsIndex;
             boolean exists = file.exists();
             String changed = templateDataFormats(models, count, deprecated);
             boolean updated = updateDataFormats(file, changed);
@@ -295,7 +307,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
-            File file = websiteDocFile;
+            File file = websiteLanguagesIndex;
             boolean exists = file.exists();
             String changed = templateLanguages(models, count, deprecated);
             boolean updated = updateLanguages(file, changed);

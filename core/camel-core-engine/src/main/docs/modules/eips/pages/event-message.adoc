@@ -1,0 +1,70 @@
+[[eventMessage-eip]]
+= Event Message
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event
+Message] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns] by supporting the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern]
+on a xref:message.adoc[Message] which can be set to *InOnly* to indicate
+a oneway event message. Camel xref:components::index.adoc[Components] then
+implement this pattern using the underlying transport or protocols.
+
+image::eip/EventMessageSolution.gif[image]
+
+The default behaviour of many xref:components::index.adoc[Components] is InOnly
+such as for xref:components::jms-component.adoc[JMS], xref:components::jms-component.adoc[File] or
+xref:components::seda-component.adoc[SEDA]
+
+TIP: See the related xref:request-reply.adoc[Request Reply] message.
+
+[[eventMessage-ExplicitlyspecifyingInOnly]]
+== Explicitly specifying InOnly
+
+If you are using a component which defaults to InOut you can override
+the xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] for an endpoint using
+the pattern property.
+
+[source]
+----
+foo:bar?exchangePattern=InOnly
+----
+
+
+== Samples
+
+From 2.0 onwards on Camel you can specify the
+xref:latest@manual:ROOT:exchange-pattern.adoc[Exchange Pattern] using the DSL.
+
+[source,java]
+----
+from("mq:someQueue").
+  setExchangePattern(ExchangePattern.InOnly).
+  bean(Foo.class);
+----
+
+or you can invoke an endpoint with an explicit pattern
+
+[source,java]
+----
+from("mq:someQueue").
+  inOnly("mq:anotherQueue");
+----
+
+And with XML:
+
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue"/>
+    <inOnly uri="bean:foo"/>
+</route>
+----
+
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue"/>
+    <inOnly uri="mq:anotherQueue"/>
+</route>
+----
+

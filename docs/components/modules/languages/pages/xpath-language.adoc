@@ -8,7 +8,7 @@ Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
 Expression or Predicate to be
 used in the DSL or xref:manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use XPath to create an
-Predicate in a xref:manual:eips:filter-eip.adoc[Message
+Predicate in a xref:{eip-vc}:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.
 

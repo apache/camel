@@ -2,13 +2,13 @@
 = Bean Binding
 
 Bean Binding in Camel defines both which methods are invoked and also
-how the xref:message.adoc[Message] is converted into the parameters of
+how the xref:{eip-vc}:eips:message.adoc[Message] is converted into the parameters of
 the method when it is invoked.
 
 [[BeanBinding-Choosingthemethodtoinvoke]]
 == Choosing the method to invoke
 
-The binding of a Camel xref:message.adoc[Message] to a bean method call
+The binding of a Camel xref:{eip-vc}:eips:message.adoc[Message] to a bean method call
 can occur in different ways, in the following order of importance:
 
 * if the message contains the header *CamelBeanMethodName* then that
@@ -169,12 +169,12 @@ See the following sections for more detail.
 
 You can use the xref:parameter-binding-annotations.adoc[Parameter
 Binding Annotations] to customize how parameter values are created from
-the xref:message.adoc[Message]
+the xref:{eip-vc}:eips:message.adoc[Message]
 
 [[BeanBinding-Examples]]
 === Examples
 
-For example, a xref:eips:bean-eip.adoc[Bean] such as:
+For example, a xref:{eip-vc}:eips:bean-eip.adoc[Bean] such as:
 
 [source,syntaxhighlighter-pre]
 ----
@@ -239,7 +239,7 @@ $\{ }.
 Any other value is consider to be a type declaration instead - see the
 next section about specifying types for overloaded methods.
 
-When invoking a xref:eips:bean-eip.adoc[Bean] you can instruct Camel to invoke a
+When invoking a xref:{eip-vc}:eips:bean-eip.adoc[Bean] you can instruct Camel to invoke a
 specific method by providing the method name:
 
 [source,syntaxhighlighter-pre]
@@ -343,7 +343,7 @@ use `.to` instead as shown:
 
 *Since Camel 2.8*
 
-If you have a xref:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
+If you have a xref:{eip-vc}:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
 specify parameter types in the method name so Camel can match the method
 you intend to use.
 
