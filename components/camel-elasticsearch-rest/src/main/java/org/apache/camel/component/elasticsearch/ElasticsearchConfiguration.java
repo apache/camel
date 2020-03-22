@@ -232,11 +232,11 @@ public class ElasticsearchConfiguration {
     /**
      * Enable automatically discover nodes from a running Elasticsearch cluster
      */
-    public Boolean getEnableSniffer() {
+    public boolean isEnableSniffer() {
         return enableSniffer;
     }
 
-    public void setEnableSniffer(Boolean enableSniffer) {
+    public void setEnableSniffer(boolean enableSniffer) {
         this.enableSniffer = enableSniffer;
     }
 

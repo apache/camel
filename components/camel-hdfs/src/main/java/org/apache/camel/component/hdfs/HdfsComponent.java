@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.hdfs;
 
+import javax.security.auth.login.Configuration;
 import java.net.URL;
 import java.util.Map;
-
-import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hdfs.kerberos.KerberosConfigurationBuilder;
@@ -33,6 +32,8 @@ import org.slf4j.LoggerFactory;
 public class HdfsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsComponent.class);
+
+    private static String kerberosConfigFileLocation;
 
     public HdfsComponent() {
         initHdfs();
@@ -88,7 +89,12 @@ public class HdfsComponent extends DefaultComponent {
      * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
+        HdfsComponent.kerberosConfigFileLocation = kerberosConfigFileLocation;
         KerberosConfigurationBuilder.setKerberosConfigFile(kerberosConfigFileLocation);
+    }
+
+    public static String getKerberosConfigFile() {
+        return kerberosConfigFileLocation;
     }
 
 }

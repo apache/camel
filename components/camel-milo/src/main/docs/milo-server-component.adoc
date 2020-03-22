@@ -40,14 +40,14 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *applicationName* (common) | The application name |  | String
 | *applicationUri* (common) | The application URI |  | String
 | *bindAddresses* (common) | Set the addresses of the local addresses the server should bind to |  | String
-| *bindPort* (common) | The TCP port the server binds to |  | int
 | *buildInfo* (common) | Server build info |  | BuildInfo
 | *certificateManager* (common) | Server certificate manager |  | CertificateManager
 | *certificateValidator* (common) | Validator for client certificates |  | Supplier
-| *defaultCertificateValidator* (common) | Validator for client certificates using default file based approach |  | File
+| *defaultCertificateValidator* (common) | Validator for client certificates using default file based approach |  | String
 | *enableAnonymousAuthentication* (common) | Enable anonymous authentication, disabled by default | false | boolean
 | *namespaceUri* (common) | The URI of the namespace, defaults to urn:org:apache:camel |  | String
 | *path* (common) | The path to be appended to the end of the endpoint url. (doesn't need to start with '/') |  | String
+| *port* (common) | The TCP port the server binds to |  | int
 | *productUri* (common) | The product URI |  | String
 | *securityPolicies* (common) | Security policies |  | Set
 | *securityPoliciesById* (common) | Security policies by URI or name |  | Collection

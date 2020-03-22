@@ -82,6 +82,13 @@ public class ActiveMQComponent extends JmsComponent {
         return answer;
     }
 
+    public String getBrokerURL() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration) getConfiguration()).getBrokerURL();
+        }
+        return null;
+    }
+
     /**
      * Sets the broker URL to use to connect to ActiveMQ
      */
@@ -102,6 +109,13 @@ public class ActiveMQComponent extends JmsComponent {
         }
     }
 
+    public boolean isTrustAllPackages() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration)getConfiguration()).isTrustAllPackages();
+        }
+        return false;
+    }
+
     /**
      * Enables or disables whether a PooledConnectionFactory will be used so
      * that when messages are sent to ActiveMQ from outside of a message
@@ -117,6 +131,13 @@ public class ActiveMQComponent extends JmsComponent {
         }
     }
 
+    public boolean isUsePooledConnection() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration)getConfiguration()).isUsePooledConnection();
+        }
+        return true;
+    }
+
     /**
      * Enables or disables whether a Spring {@link SingleConnectionFactory} will
      * be used so that when messages are sent to ActiveMQ from outside of a
@@ -130,6 +151,13 @@ public class ActiveMQComponent extends JmsComponent {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setUseSingleConnection(useSingleConnection);
         }
+    }
+
+    public boolean isUseSingleConnection() {
+        if (getConfiguration() instanceof ActiveMQConfiguration) {
+            return ((ActiveMQConfiguration)getConfiguration()).isUseSingleConnection();
+        }
+        return false;
     }
 
     @Override

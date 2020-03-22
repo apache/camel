@@ -710,17 +710,17 @@ The Salesforce component supports 72 options, which are listed below.
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | *httpProxyIncludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
 | *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
-| *isHttpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
+| *httpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
 | *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. The value can be one of: USERNAME_PASSWORD, REFRESH_TOKEN, JWT |  | AuthenticationType
 | *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
 | *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
 | *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
 | *httpProxyPassword* (security) | Password to use to authenticate against the HTTP proxy server. |  | String
 | *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
+| *httpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
 | *httpProxyUseDigestAuth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy, otherwise Basic authorization method will be used | false | boolean
 | *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
 | *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
-| *isHttpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
 | *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
 | *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
 | *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig

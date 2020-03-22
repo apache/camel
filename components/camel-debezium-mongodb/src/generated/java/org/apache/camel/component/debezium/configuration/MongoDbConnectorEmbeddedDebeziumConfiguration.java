@@ -148,7 +148,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         this.mongodbSslEnabled = mongodbSslEnabled;
     }
 
-    public boolean getMongodbSslEnabled() {
+    public boolean isMongodbSslEnabled() {
         return mongodbSslEnabled;
     }
 
@@ -163,7 +163,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         this.tombstonesOnDelete = tombstonesOnDelete;
     }
 
-    public boolean getTombstonesOnDelete() {
+    public boolean isTombstonesOnDelete() {
         return tombstonesOnDelete;
     }
 
@@ -177,7 +177,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         this.mongodbMembersAutoDiscover = mongodbMembersAutoDiscover;
     }
 
-    public boolean getMongodbMembersAutoDiscover() {
+    public boolean isMongodbMembersAutoDiscover() {
         return mongodbMembersAutoDiscover;
     }
 
@@ -377,7 +377,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         this.mongodbSslInvalidHostnameAllowed = mongodbSslInvalidHostnameAllowed;
     }
 
-    public boolean getMongodbSslInvalidHostnameAllowed() {
+    public boolean isMongodbSslInvalidHostnameAllowed() {
         return mongodbSslInvalidHostnameAllowed;
     }
 

@@ -265,7 +265,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             IOHelper.close(client);
             IOHelper.close(restHighLevelClient);
             client = null;
-            if (configuration.getEnableSniffer()) {
+            if (configuration.isEnableSniffer()) {
                 IOHelper.close(sniffer);
                 sniffer = null;
             }
@@ -308,7 +308,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             });
         }
         final RestClient restClient = builder.build();
-        if (configuration.getEnableSniffer()) {
+        if (configuration.isEnableSniffer()) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
             snifferBuilder.setSniffAfterFailureDelayMillis(configuration.getSniffAfterFailureDelay());

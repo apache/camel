@@ -84,6 +84,10 @@ public class JdbcComponent extends DefaultComponent {
         this.dataSource = dataSource;
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
     private static boolean isDefaultDataSourceName(String remaining) {
         return "dataSource".equalsIgnoreCase(remaining) || "default".equalsIgnoreCase(remaining);
     }

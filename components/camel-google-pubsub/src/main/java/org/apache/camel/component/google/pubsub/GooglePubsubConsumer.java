@@ -103,7 +103,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
             }
 
 
-            if (endpoint.getSynchronousPull()) {
+            if (endpoint.isSynchronousPull()) {
                 synchronousPull(subscriptionName);
             } else {
                 asynchronousPull(subscriptionName);

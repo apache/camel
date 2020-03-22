@@ -105,7 +105,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
         this.platformHttpEngine = platformHttpEngine;
     }
 
-    public boolean getMatchOnUriPrefix() {
+    public boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
 

@@ -127,7 +127,7 @@ public class GraphqlEndpoint extends DefaultEndpoint {
         this.httpUri = httpUri;
     }
 
-    public String getProxyHostname() {
+    public String getProxyHost() {
         return proxyHost;
     }
 

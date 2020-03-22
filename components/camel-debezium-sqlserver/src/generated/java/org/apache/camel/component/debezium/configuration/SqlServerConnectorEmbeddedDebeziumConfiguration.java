@@ -205,7 +205,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         this.tombstonesOnDelete = tombstonesOnDelete;
     }
 
-    public boolean getTombstonesOnDelete() {
+    public boolean isTombstonesOnDelete() {
         return tombstonesOnDelete;
     }
 
@@ -270,7 +270,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         this.tableIgnoreBuiltin = tableIgnoreBuiltin;
     }
 
-    public boolean getTableIgnoreBuiltin() {
+    public boolean isTableIgnoreBuiltin() {
         return tableIgnoreBuiltin;
     }
 

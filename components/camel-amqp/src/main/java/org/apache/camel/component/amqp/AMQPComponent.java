@@ -117,6 +117,13 @@ public class AMQPComponent extends JmsComponent {
         }
     }
 
+    public boolean isIncludeAmqpAnnotations() {
+        if (getConfiguration() instanceof AMQPConfiguration) {
+            return ((AMQPConfiguration) getConfiguration()).isIncludeAmqpAnnotations();
+        }
+        return false;
+    }
+
     @Override
     protected void setProperties(Endpoint bean, Map<String, Object> parameters) throws Exception {
         Object includeAmqpAnnotations = parameters.remove("includeAmqpAnnotations");

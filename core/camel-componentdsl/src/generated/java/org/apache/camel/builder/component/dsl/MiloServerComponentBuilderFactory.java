@@ -85,17 +85,6 @@ public interface MiloServerComponentBuilderFactory {
             return this;
         }
         /**
-         * The TCP port the server binds to.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MiloServerComponentBuilder bindPort(int bindPort) {
-            doSetProperty("bindPort", bindPort);
-            return this;
-        }
-        /**
          * Server build info.
          * 
          * The option is a:
@@ -137,12 +126,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * Validator for client certificates using default file based approach.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default MiloServerComponentBuilder defaultCertificateValidator(
-                java.io.File defaultCertificateValidator) {
+                java.lang.String defaultCertificateValidator) {
             doSetProperty("defaultCertificateValidator", defaultCertificateValidator);
             return this;
         }
@@ -181,6 +170,17 @@ public interface MiloServerComponentBuilderFactory {
          */
         default MiloServerComponentBuilder path(java.lang.String path) {
             doSetProperty("path", path);
+            return this;
+        }
+        /**
+         * The TCP port the server binds to.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         */
+        default MiloServerComponentBuilder port(int port) {
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -335,14 +335,14 @@ public interface MiloServerComponentBuilderFactory {
             case "applicationName": ((MiloServerComponent) component).setApplicationName((java.lang.String) value); return true;
             case "applicationUri": ((MiloServerComponent) component).setApplicationUri((java.lang.String) value); return true;
             case "bindAddresses": ((MiloServerComponent) component).setBindAddresses((java.lang.String) value); return true;
-            case "bindPort": ((MiloServerComponent) component).setBindPort((int) value); return true;
             case "buildInfo": ((MiloServerComponent) component).setBuildInfo((org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo) value); return true;
             case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.security.CertificateManager) value); return true;
             case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier) value); return true;
-            case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.io.File) value); return true;
+            case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.lang.String) value); return true;
             case "enableAnonymousAuthentication": ((MiloServerComponent) component).setEnableAnonymousAuthentication((boolean) value); return true;
             case "namespaceUri": ((MiloServerComponent) component).setNamespaceUri((java.lang.String) value); return true;
             case "path": ((MiloServerComponent) component).setPath((java.lang.String) value); return true;
+            case "port": ((MiloServerComponent) component).setPort((int) value); return true;
             case "productUri": ((MiloServerComponent) component).setProductUri((java.lang.String) value); return true;
             case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set) value); return true;
             case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.util.Collection) value); return true;
