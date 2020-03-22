@@ -366,14 +366,18 @@ public final class PropertyBindingSupport {
         }
 
         // use configurer to get all the current options and its values
+        Map<String, Object> getterAllOption = null;
         if (configurer instanceof PropertyConfigurerGetter) {
             getter = (PropertyConfigurerGetter) configurer;
             final PropertyConfigurerGetter lambdaGetter = getter;
             final Object lambdaTarget = target;
-            // TODO: optimize to only load complex values as these are the only ones we
-            getter.getAllOptions(target).forEach((key, type) -> {
-                Object value = lambdaGetter.getOptionValue(lambdaTarget, key, true);
-                properties.put(key, value);
+            getterAllOption = getter.getAllOptions(target);
+            getterAllOption.forEach((key, type) -> {
+                // we only need the complex types
+                if (isComplexUserType((Class) type)) {
+                    Object value = lambdaGetter.getOptionValue(lambdaTarget, key, true);
+                    properties.put(key, value);
+                }
             });
         } else {
             // okay use reflection based
@@ -399,9 +403,9 @@ public final class PropertyBindingSupport {
             }
 
             Class<?> type;
-            if (getter != null) {
+            if (getterAllOption != null) {
                 // use getter configurer to know the property class type
-                type = (Class<?>) getter.getAllOptions(target).get(key);
+                type = (Class<?>) getterAllOption.get(key);
             } else {
                 // okay fallback to use reflection based
                 type = getGetterType(camelContext, target, key, false);
