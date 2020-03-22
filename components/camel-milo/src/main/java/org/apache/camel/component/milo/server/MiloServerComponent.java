@@ -81,44 +81,28 @@ public class MiloServerComponent extends DefaultComponent {
 
     private static final String URL_CHARSET = "UTF-8";
 
+    // TODO: Fix this mess with getter/setter not aligned
+
     private int port;
-
     private String namespaceUri = DEFAULT_NAMESPACE_URI;
-
     private OpcUaServerConfigBuilder opcServerConfig;
-
     private OpcUaServer server;
-
     private CamelNamespace namespace;
-
     private final Map<String, MiloServerEndpoint> endpoints = new HashMap<>();
-
     private Boolean enableAnonymousAuthentication;
-
     private CertificateManager certificateManager;
-
     private Set<SecurityPolicy> securityPolicies;
-
     private Map<String, String> userMap;
-
     private String usernameSecurityPolicyUri = OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME.getSecurityPolicyUri();
-
     private List<String> bindAddresses;
-
-    private Supplier<CertificateValidator> certificateValidator;
-
+    private String defaultCertificateValidator;
+    private transient Supplier<CertificateValidator> certificateValidator;
     private final List<Runnable> runOnStop = new LinkedList<>();
-
     private X509Certificate certificate;
-
     private String productUri;
-
     private String applicationUri;
-
     private String applicationName;
-
     private String path;
-
     private BuildInfo buildInfo;
 
     public MiloServerComponent() {
@@ -430,7 +414,7 @@ public class MiloServerComponent extends DefaultComponent {
     /**
      * The TCP port the server binds to
      */
-    public void setBindPort(final int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
@@ -577,12 +561,97 @@ public class MiloServerComponent extends DefaultComponent {
     /**
      * Validator for client certificates using default file based approach
      */
-    public void setDefaultCertificateValidator(final File certificatesBaseDir) {
+    public void setDefaultCertificateValidator(final String defaultCertificateValidator) {
+        this.defaultCertificateValidator = defaultCertificateValidator;
         try {
-            DefaultTrustListManager trustListManager = new DefaultTrustListManager(certificatesBaseDir);
+            DefaultTrustListManager trustListManager = new DefaultTrustListManager(new File(defaultCertificateValidator));
             this.certificateValidator = () -> new DefaultCertificateValidator(trustListManager);
         } catch (IOException e) {
             LOG.error("Failed to construct certificateValidator.", e);
         }
+    }
+
+    public String getDefaultCertificateValidator() {
+        return defaultCertificateValidator;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getNamespaceUri() {
+        return namespaceUri;
+    }
+
+    public OpcUaServerConfigBuilder getOpcServerConfig() {
+        return opcServerConfig;
+    }
+
+    public OpcUaServer getServer() {
+        return server;
+    }
+
+    public CamelNamespace getNamespace() {
+        return namespace;
+    }
+
+    public Map<String, MiloServerEndpoint> getEndpoints() {
+        return endpoints;
+    }
+
+    public Boolean getEnableAnonymousAuthentication() {
+        return enableAnonymousAuthentication;
+    }
+
+    public CertificateManager getCertificateManager() {
+        return certificateManager;
+    }
+
+    public Set<SecurityPolicy> getSecurityPolicies() {
+        return securityPolicies;
+    }
+
+    public Map<String, String> getUserMap() {
+        return userMap;
+    }
+
+    public String getUsernameSecurityPolicyUri() {
+        return usernameSecurityPolicyUri;
+    }
+
+    public List<String> getBindAddresses() {
+        return bindAddresses;
+    }
+
+    public Supplier<CertificateValidator> getCertificateValidator() {
+        return certificateValidator;
+    }
+
+    public List<Runnable> getRunOnStop() {
+        return runOnStop;
+    }
+
+    public X509Certificate getCertificate() {
+        return certificate;
+    }
+
+    public String getProductUri() {
+        return productUri;
+    }
+
+    public String getApplicationUri() {
+        return applicationUri;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public BuildInfo getBuildInfo() {
+        return buildInfo;
     }
 }

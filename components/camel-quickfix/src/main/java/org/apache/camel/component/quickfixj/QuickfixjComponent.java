@@ -164,6 +164,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         this.messageFactory = messageFactory;
     }
 
+    public MessageFactory getMessageFactory() {
+        return messageFactory;
+    }
+
     /**
      * To use the given LogFactory
      */
@@ -171,11 +175,19 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         this.logFactory = logFactory;
     }
 
+    public LogFactory getLogFactory() {
+        return logFactory;
+    }
+
     /**
      * To use the given MessageStoreFactory
      */
     public void setMessageStoreFactory(MessageStoreFactory messageStoreFactory) {
         this.messageStoreFactory = messageStoreFactory;
+    }
+
+    public MessageStoreFactory getMessageStoreFactory() {
+        return messageStoreFactory;
     }
 
     public Map<String, QuickfixjConfiguration> getConfigurations() {

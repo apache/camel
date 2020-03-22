@@ -58,7 +58,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         this.allowStreaming = allowStreaming;
     }
 
-    public Boolean isAllowStreaming() {
+    public Boolean getAllowStreaming() {
         return allowStreaming;
     }
 

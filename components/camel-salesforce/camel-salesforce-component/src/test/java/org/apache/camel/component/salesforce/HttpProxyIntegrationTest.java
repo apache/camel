@@ -173,7 +173,7 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
     private static void configureProxyViaComponentProperties(final SalesforceComponent salesforce) {
         salesforce.setHttpProxyHost(HTTP_PROXY_HOST);
         salesforce.setHttpProxyPort(httpProxyPort);
-        salesforce.setIsHttpProxySecure(false);
+        salesforce.setHttpProxySecure(false);
         salesforce.setHttpProxyUsername(HTTP_PROXY_USER_NAME);
         salesforce.setHttpProxyPassword(HTTP_PROXY_PASSWORD);
         salesforce.setHttpProxyAuthUri(String.format("http://%s:%s", HTTP_PROXY_HOST, httpProxyPort));

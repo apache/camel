@@ -192,9 +192,13 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         this.interruptJobsOnShutdown = interruptJobsOnShutdown;
     }
 
-    public SchedulerFactory getSchedulerFactory() throws SchedulerException {
+    public SchedulerFactory getSchedulerFactory() {
         if (schedulerFactory == null) {
-            schedulerFactory = createSchedulerFactory();
+            try {
+                schedulerFactory = createSchedulerFactory();
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
         }
         return schedulerFactory;
     }

@@ -157,7 +157,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public Boolean getSynchronousPull() {
+    public boolean isSynchronousPull() {
         return synchronousPull;
     }
 
