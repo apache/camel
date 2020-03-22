@@ -32,6 +32,11 @@
     <name>Camel :: Platform HTTP :: Vert.x</name>
     <description>Implementation of the Platform HTTP Engine based on Vert.x Web</description>
 
+    <properties>
+        <firstVersion>3.2.0</firstVersion>
+        <label>http</label>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
