@@ -33,6 +33,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,22 +100,30 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
         PackageScanResourceResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
 
+        StopWatch watch = new StopWatch();
+        int count = 0;
         String[] parts = directory.split(",");
         for (String part : parts) {
-            log.info("Loading additional Camel XML routes from: {}", part);
+            log.debug("Loading additional Camel XML routes from: {}", part);
             try {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
-                    log.debug("Found XML route: {}", is);
+                    log.debug("Found XML routes from location: {}", part);
                     ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                     RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                     answer.add(routes);
                     IOHelper.close(is);
+                    count += routes.getRoutes().size();
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML routes found in {}. Skipping XML routes detection.", part);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+            if (count > 0) {
+                log.info("Loaded {} ({} millis) additional Camel XML routes from: {}", count, watch.taken(), directory);
+            } else {
+                log.info("No additional Camel XML routes discovered from: {}", directory);
             }
         }
 
@@ -127,22 +136,30 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
         PackageScanResourceResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
 
+        StopWatch watch = new StopWatch();
+        int count = 0;
         String[] parts = directory.split(",");
         for (String part : parts) {
-            log.info("Loading additional Camel XML rests from: {}", part);
+            log.debug("Loading additional Camel XML rests from: {}", part);
             try {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
-                    log.debug("Found XML rest: {}", is);
+                    log.debug("Found XML rest from location: {}", part);
                     ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                     RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                     answer.add(rests);
                     IOHelper.close(is);
+                    count += rests.getRests().size();
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML rests found in {}. Skipping XML rests detection.", part);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+            if (count > 0) {
+                log.info("Loaded {} ({} millis) additional Camel XML rests from: {}", count, watch.taken(), directory);
+            } else {
+                log.info("No additional Camel XML rests discovered from: {}", directory);
             }
         }
 
