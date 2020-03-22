@@ -903,7 +903,7 @@ public abstract class AbstractCamelCatalog {
                 model.getOptions().forEach(o -> rows.put(o.getName(), o));
 
                 // lower case option and remove dash
-                String nOption = option.replace("-", "").toLowerCase(Locale.US);
+                String nOption = option.replace("-", "").toLowerCase(Locale.ENGLISH);
                 String suffix = null;
                 int posDot = nOption.indexOf('.');
                 int posBracket = nOption.indexOf('[');
@@ -937,7 +937,7 @@ public abstract class AbstractCamelCatalog {
                 model.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
 
                 // lower case option and remove dash
-                String nOption = longKey.replace("-", "").toLowerCase(Locale.US);
+                String nOption = longKey.replace("-", "").toLowerCase(Locale.ENGLISH);
 
                 // look for suffix or array index after 2nd dot
                 int secondDot = nOption.indexOf('.', nOption.indexOf('.') + 1) + 1;
@@ -971,7 +971,7 @@ public abstract class AbstractCamelCatalog {
 
         // find option
         String rowKey = rows.keySet().stream()
-                .filter(n -> n.toLowerCase(Locale.US).equals(lookupKey)).findFirst().orElse(null);
+                .filter(n -> n.toLowerCase(Locale.ENGLISH).equals(lookupKey)).findFirst().orElse(null);
         if (rowKey == null) {
             // unknown option
             result.addUnknown(longKey);
