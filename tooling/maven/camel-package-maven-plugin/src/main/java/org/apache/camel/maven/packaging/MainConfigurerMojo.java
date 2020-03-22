@@ -39,6 +39,13 @@ import org.springframework.util.ReflectionUtils;
 @Mojo(name = "generate-main-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class MainConfigurerMojo extends AbstractGeneratorMojo {
 
+    private static final String[] CLASS_NAMES = new String[]{
+        "org.apache.camel.main.MainConfigurationProperties",
+        "org.apache.camel.main.HystrixConfigurationProperties",
+        "org.apache.camel.main.Resilience4jConfigurationProperties",
+        "org.apache.camel.main.RestConfigurationProperties",
+        "org.apache.camel.ExtendedCamelContext"};
+
     /**
      * The output directory for generated java source code
      */
@@ -50,18 +57,10 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
 
     private DynamicClassLoader projectClassLoader;
 
-    private static final String[] CLASS_NAMES = new String[]{
-            "org.apache.camel.main.MainConfigurationProperties",
-            "org.apache.camel.main.HystrixConfigurationProperties",
-            "org.apache.camel.main.Resilience4jConfigurationProperties",
-            "org.apache.camel.main.RestConfigurationProperties",
-            "org.apache.camel.ExtendedCamelContext"};
-
     private static class Option extends BaseOptionModel {
-        // we just use name, type
-
 
         public Option(String name, Class type) {
+            // we just use name, type
             setName(name);
             setJavaType(type.getName());
         }
@@ -139,11 +138,11 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected void generateMetaInfConfigurer(String fqn) {
+    private void generateMetaInfConfigurer(String fqn) {
         String name = fqn.substring(fqn.lastIndexOf('.') + 1);
         try (Writer w = new StringWriter()) {
             w.append("# " + GENERATED_MSG + "\n");
-            w.append("class=").append(fqn + "Configurer").append("\n");
+            w.append("class=").append(fqn).append("Configurer").append("\n");
             updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
