@@ -282,8 +282,8 @@ as disabling JMX.
 This component uses either JNDI or Simple as the
 Registry.
 
- This allows you to lookup xref:latest@manual:eips:bean-eip.adoc[Bean]s and other services in
-JNDI, and as well to bind and unbind your own xref:latest@manual:eips:bean-eip.adoc[Bean]s.
+ This allows you to lookup xref:{eip-vc}:eips:bean-eip.adoc[Bean]s and other services in
+JNDI, and as well to bind and unbind your own xref:{eip-vc}:eips:bean-eip.adoc[Bean]s.
 
 This is done from Java code by implementing the
 `org.apache.camel.component.servletlistener.CamelContextLifecycle`.
@@ -309,8 +309,8 @@ interface.
   </context-param>
 -------------------------------------------------------------------------------------
 
-As we enlisted our HelloBean xref:latest@manual:eips:bean-eip.adoc[Bean] using the name
-"myBean" we can refer to this xref:latest@manual:eips:bean-eip.adoc[Bean] in the Camel routes
+As we enlisted our HelloBean xref:{eip-vc}:eips:bean-eip.adoc[Bean] using the name
+"myBean" we can refer to this xref:{eip-vc}:eips:bean-eip.adoc[Bean] in the Camel routes
 as shown below:
 
 [source,java]

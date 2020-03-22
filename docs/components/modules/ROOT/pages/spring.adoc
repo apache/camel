@@ -21,7 +21,7 @@ instances or the CamelContext instance itself
 and auto-expose Spring beans as components and endpoints.
 * Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
-xref:latest@manual::enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful Mock and
 xref:test.adoc[Test] endpoints
 Camel supports Spring Boot using the `camel-spring-boot` component.
