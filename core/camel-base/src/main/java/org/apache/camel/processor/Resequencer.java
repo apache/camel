@@ -266,7 +266,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         this.routeId = routeId;
     }
 
-// Implementation methods
+    // Implementation methods
     //-------------------------------------------------------------------------
 
     protected static Set<Exchange> createSet(Expression expression, boolean allowDuplicates, boolean reverse) {
@@ -382,7 +382,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         try {
             result = expression.evaluate(exchange, Object.class);
         } catch (Exception e) {
-            // ignore
+            LOG.debug("Error evaluating expression: " + expression + ". This exception is ignored.", e);
         }
         return result != null;
     }

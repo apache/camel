@@ -51,7 +51,9 @@ public class JmsResequencerTest extends CamelSpringTestSupport {
         }
 
         for (int i = 100; i > 0; i--) {
-            template.sendBodyAndHeader(endpoint, i, "num", (long) i);
+            // send as text messages (not java objects - as they are not serializable and allowed by JMS brokers like ActiveMQ)
+            String text = "" + i;
+            template.sendBodyAndHeader(endpoint, text, "num", (long) i);
         }
 
         assertMockEndpointsSatisfied();
