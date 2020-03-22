@@ -5,9 +5,9 @@ Camel is a routing and mediation engine which works great inside JBI.
 
 So if you are already using http://servicemix.apache.org/[ServiceMix]
 then you can use Camel implement the
-xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 inside JBI such as
-xref:eips:content-based-router-eip.adoc[Content Based Router], routing messages
+xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router], routing messages
 between your existing JBI endpoints.
 
 You can also reuse any of the Camel xref:component.adoc[Components]

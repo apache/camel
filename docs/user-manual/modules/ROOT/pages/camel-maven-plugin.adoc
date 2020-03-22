@@ -3,7 +3,7 @@
 The
 https://github.com/apache/camel/tree/master/tooling/maven/camel-maven-plugin[Camel
 Maven Plugin] allows you to run your
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] using xref:spring.adoc[Spring] for
 xref:dependency-injection.adoc[Dependency Injection] inside Maven.
 

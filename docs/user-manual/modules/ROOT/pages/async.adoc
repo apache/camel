@@ -121,7 +121,7 @@ application is still waiting.
  3. The message is processed completely and the control is returned to
 the client.
 
-So why do you want to use synchronous xref:event-message.adoc[Request Only]?
+So why do you want to use synchronous xref:{eip-vc}:eips:event-message.adoc[Request Only]?
 Well if you want to know whether the message was processed
 successfully or not before continuing. With synchronous it allows you to
 wait while the message is being processed. In case the processing was

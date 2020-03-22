@@ -2,7 +2,7 @@
 = Expressions
 
 Expressions and Predicates can then be used to
-create the various xref:enterprise-integration-patterns.adoc[Enterprise
+create the various xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in the DSL or
 XML Configuration like the
 Recipient List. +

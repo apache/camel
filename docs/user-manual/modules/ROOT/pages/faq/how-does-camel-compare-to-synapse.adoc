@@ -20,7 +20,7 @@ middleware with EIP and http://servicemix.apache.org/[Apache ServiceMix]
 the ESB based around OSGi and JBI at Apache - both of which are
 http://www.nabble.com/Apache-f90.html[very popular too].
 * Camel is designed from the ground up around
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] -- having an EIP pattern language implemented in
 xref:dsl.adoc[Java] and xref:components::spring.adoc[Spring XML].
 * Camel is designed to work with pretty much all kinds of
