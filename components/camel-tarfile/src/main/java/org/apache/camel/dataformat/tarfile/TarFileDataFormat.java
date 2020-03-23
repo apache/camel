@@ -90,7 +90,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
         }
 
         String newFilename = filename + ".tar";
-        exchange.getOut().setHeader(FILE_NAME, newFilename);
+        exchange.getMessage().setHeader(FILE_NAME, newFilename);
     }
 
     @Override
@@ -107,8 +107,10 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
             try {
                 TarArchiveEntry entry = tis.getNextTarEntry();
                 if (entry != null) {
-                    exchange.getOut().setHeader(FILE_NAME, entry.getName());
+                    exchange.getMessage().setHeader(FILE_NAME, entry.getName());
                     IOHelper.copy(tis, osb);
+                } else {
+                    throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
                 }
 
                 entry = tis.getNextTarEntry();
