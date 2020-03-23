@@ -44,7 +44,7 @@ public class ServerLocalTest extends CamelTestSupport {
     @Before
     public void pickFreePort() throws IOException {
         final MiloServerComponent component = context().getComponent("milo-server", MiloServerComponent.class);
-        component.setBindPort(AvailablePortFinder.getNextAvailable());
+        component.setPort(AvailablePortFinder.getNextAvailable());
     }
 
     @Override

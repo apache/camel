@@ -625,7 +625,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         this.tombstonesOnDelete = tombstonesOnDelete;
     }
 
-    public boolean getTombstonesOnDelete() {
+    public boolean isTombstonesOnDelete() {
         return tombstonesOnDelete;
     }
 
@@ -665,7 +665,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         this.databaseTcpkeepalive = databaseTcpkeepalive;
     }
 
-    public boolean getDatabaseTcpkeepalive() {
+    public boolean isDatabaseTcpkeepalive() {
         return databaseTcpkeepalive;
     }
 
@@ -690,7 +690,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         this.slotDropOnStop = slotDropOnStop;
     }
 
-    public boolean getSlotDropOnStop() {
+    public boolean isSlotDropOnStop() {
         return slotDropOnStop;
     }
 
@@ -763,7 +763,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         this.includeUnknownDatatypes = includeUnknownDatatypes;
     }
 
-    public boolean getIncludeUnknownDatatypes() {
+    public boolean isIncludeUnknownDatatypes() {
         return includeUnknownDatatypes;
     }
 

@@ -712,6 +712,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         this.socketConnectors = socketConnectors;
     }
 
+    public Map<Integer, Connector> getSocketConnectors() {
+        return socketConnectors;
+    }
+
     public Integer getMinThreads() {
         return minThreads;
     }

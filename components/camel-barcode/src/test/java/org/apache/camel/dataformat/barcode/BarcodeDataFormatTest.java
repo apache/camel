@@ -16,21 +16,22 @@
  */
 package org.apache.camel.dataformat.barcode;
 
+import java.io.IOException;
 import java.util.Map;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This class tests all Camel independend test cases 
- * for {@link BarcodeDataFormat}.
+ * This class tests all Camel independent test cases for
+ * {@link BarcodeDataFormat}.
  */
 public class BarcodeDataFormatTest {
 
@@ -38,173 +39,174 @@ public class BarcodeDataFormatTest {
      * Test default constructor.
      */
     @Test
-    public final void testDefaultConstructor() {
-        BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat();
-        this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+    final void testDefaultConstructor() throws IOException {
+        try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat()) {
+            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+        }
     }
 
     /**
      * Test constructor with barcode format.
      */
     @Test
-    public final void testConstructorWithBarcodeFormat() {
-        BarcodeDataFormat barcodeDataFormat =
-                new BarcodeDataFormat(BarcodeFormat.AZTEC);
-        this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+    final void testConstructorWithBarcodeFormat() throws IOException {
+        try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeFormat.AZTEC)) {
+            this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+        }
     }
 
     /**
      * Test constructor with size.
      */
     @Test
-    public final void testConstructorWithSize() {
-        BarcodeDataFormat barcodeDataFormat =
-                new BarcodeDataFormat(200, 250);
-        this.checkParams(BarcodeParameters.IMAGE_TYPE, 200, 250, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+    final void testConstructorWithSize() throws IOException {
+        try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(200, 250)) {
+            this.checkParams(BarcodeParameters.IMAGE_TYPE, 200, 250, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+        }
     }
 
     /**
      * Test constructor with image type.
      */
     @Test
-    public final void testConstructorWithImageType() {
-        BarcodeDataFormat barcodeDataFormat =
-                new BarcodeDataFormat(BarcodeImageType.JPG);
-        this.checkParams(BarcodeImageType.JPG, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+    final void testConstructorWithImageType() throws IOException {
+        try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeImageType.JPG)) {
+            this.checkParams(BarcodeImageType.JPG, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+        }
     }
 
     /**
      * Test constructor with all.
      */
     @Test
-    public final void testConstructorWithAll() {
-        BarcodeDataFormat barcodeDataFormat =
-                new BarcodeDataFormat(200, 250, BarcodeImageType.JPG, BarcodeFormat.AZTEC);
-        this.checkParams(BarcodeImageType.JPG, 200, 250, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+    final void testConstructorWithAll() throws IOException {
+        try (BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(200, 250, BarcodeImageType.JPG, BarcodeFormat.AZTEC)) {
+            this.checkParams(BarcodeImageType.JPG, 200, 250, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+        }
     }
 
     /**
      * Test of optimizeHints method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testOptimizeHints() {
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        assertTrue(instance.getWriterHintMap()
-                .containsKey(EncodeHintType.ERROR_CORRECTION));
-        assertTrue(instance.getReaderHintMap()
-                .containsKey(DecodeHintType.TRY_HARDER));
+    final void testOptimizeHints() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.ERROR_CORRECTION));
+            assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER));
+        }
     }
 
     /**
      * Test optimized hints for data matrix.
      */
     @Test
-    public final void testOptimizieHintsForDataMatrix() {
-        BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX);
-        assertTrue("data matrix shape hint incorrect.",
-                instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
-        assertTrue("try harder hint incorrect.",
-                instance.getReaderHintMap()
-                        .containsKey(DecodeHintType.TRY_HARDER));
+    final void testOptimizieHintsForDataMatrix() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX)) {
+            assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE), "data matrix shape hint incorrect.");
+            assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER), "try harder hint incorrect.");
+        }
     }
 
     /**
      * Test re-optimize hints.
      */
     @Test
-    public final void testReOptimizeHints() {
+    final void testReOptimizeHints() throws IOException {
         // DATA-MATRIX
-        BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX);
-        assertTrue(instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
-        assertTrue(instance.getReaderHintMap()
-                        .containsKey(DecodeHintType.TRY_HARDER));
+        try (BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX)) {
+            assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
+            assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER));
 
-        // -> QR-CODE
-        instance.setBarcodeFormat(BarcodeFormat.QR_CODE);
-        assertFalse(instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
-        assertTrue(instance.getReaderHintMap()
-                        .containsKey(DecodeHintType.TRY_HARDER));
+            // -> QR-CODE
+            instance.setBarcodeFormat(BarcodeFormat.QR_CODE);
+            assertFalse(instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
+            assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER));
+        }
     }
 
     /**
      * Test of addToHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testAddToHintMapEncodeHintTypeObject() {
+    final void testAddToHintMapEncodeHintTypeObject() throws IOException {
         EncodeHintType hintType = EncodeHintType.MARGIN;
         Object value = 10;
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        instance.addToHintMap(hintType, value);
-        assertTrue(instance.getWriterHintMap().containsKey(hintType));
-        assertEquals(instance.getWriterHintMap().get(hintType), value);
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            instance.addToHintMap(hintType, value);
+            assertTrue(instance.getWriterHintMap().containsKey(hintType));
+            assertEquals(instance.getWriterHintMap().get(hintType), value);
+        }
     }
 
     /**
      * Test of addToHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testAddToHintMapDecodeHintTypeObject() {
+    final void testAddToHintMapDecodeHintTypeObject() throws IOException {
         DecodeHintType hintType = DecodeHintType.CHARACTER_SET;
         Object value = "UTF-8";
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        instance.addToHintMap(hintType, value);
-        assertTrue(instance.getReaderHintMap().containsKey(hintType));
-        assertEquals(instance.getReaderHintMap().get(hintType), value);
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            instance.addToHintMap(hintType, value);
+            assertTrue(instance.getReaderHintMap().containsKey(hintType));
+            assertEquals(instance.getReaderHintMap().get(hintType), value);
+        }
     }
 
     /**
      * Test of removeFromHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testRemoveFromHintMapEncodeHintType() {
+    final void testRemoveFromHintMapEncodeHintType() throws IOException {
         EncodeHintType hintType = EncodeHintType.ERROR_CORRECTION;
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        instance.removeFromHintMap(hintType);
-        assertFalse(instance.getWriterHintMap().containsKey(hintType));
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            instance.removeFromHintMap(hintType);
+            assertFalse(instance.getWriterHintMap().containsKey(hintType));
+        }
     }
 
     /**
      * Test of removeFromHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testRemoveFromHintMapDecodeHintType() {
+    final void testRemoveFromHintMapDecodeHintType() throws IOException {
         DecodeHintType hintType = DecodeHintType.TRY_HARDER;
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        instance.removeFromHintMap(hintType);
-        assertFalse(instance.getReaderHintMap().containsKey(hintType));
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            instance.removeFromHintMap(hintType);
+            assertFalse(instance.getReaderHintMap().containsKey(hintType));
+        }
     }
 
     /**
      * Test of getParams method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testGetParams() {
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        BarcodeParameters result = instance.getParams();
-        assertNotNull(result);
+    final void testGetParams() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            BarcodeParameters result = instance.getParams();
+            assertNotNull(result);
+        }
     }
 
     /**
      * Test of getWriterHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testGetWriterHintMap() {
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        Map<EncodeHintType, Object> result = instance.getWriterHintMap();
-        assertNotNull(result);
+    final void testGetWriterHintMap() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            Map<EncodeHintType, Object> result = instance.getWriterHintMap();
+            assertNotNull(result);
+        }
     }
 
     /**
      * Test of getReaderHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public final void testGetReaderHintMap() {
-        BarcodeDataFormat instance = new BarcodeDataFormat();
-        Map<DecodeHintType, Object> result = instance.getReaderHintMap();
-        assertNotNull(result);
+    final void testGetReaderHintMap() throws IOException {
+        try (BarcodeDataFormat instance = new BarcodeDataFormat()) {
+            Map<DecodeHintType, Object> result = instance.getReaderHintMap();
+            assertNotNull(result);
+        }
     }
 
     /**

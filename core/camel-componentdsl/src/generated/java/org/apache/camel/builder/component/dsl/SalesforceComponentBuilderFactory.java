@@ -732,9 +732,9 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: proxy
          */
-        default SalesforceComponentBuilder isHttpProxySocks4(
-                boolean isHttpProxySocks4) {
-            doSetProperty("isHttpProxySocks4", isHttpProxySocks4);
+        default SalesforceComponentBuilder httpProxySocks4(
+                boolean httpProxySocks4) {
+            doSetProperty("httpProxySocks4", httpProxySocks4);
             return this;
         }
         /**
@@ -820,6 +820,20 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * If set to false disables the use of TLS when accessing the HTTP
+         * proxy.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default SalesforceComponentBuilder httpProxySecure(
+                boolean httpProxySecure) {
+            doSetProperty("httpProxySecure", httpProxySecure);
+            return this;
+        }
+        /**
          * If set to true Digest authentication will be used when authenticating
          * to the HTTP proxy, otherwise Basic authorization method will be used.
          * 
@@ -856,20 +870,6 @@ public interface SalesforceComponentBuilderFactory {
         default SalesforceComponentBuilder instanceUrl(
                 java.lang.String instanceUrl) {
             doSetProperty("instanceUrl", instanceUrl);
-            return this;
-        }
-        /**
-         * If set to false disables the use of TLS when accessing the HTTP
-         * proxy.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: security
-         */
-        default SalesforceComponentBuilder isHttpProxySecure(
-                boolean isHttpProxySecure) {
-            doSetProperty("isHttpProxySecure", isHttpProxySecure);
             return this;
         }
         /**
@@ -1080,17 +1080,17 @@ public interface SalesforceComponentBuilderFactory {
             case "httpProxyHost": ((SalesforceComponent) component).setHttpProxyHost((java.lang.String) value); return true;
             case "httpProxyIncludedAddresses": ((SalesforceComponent) component).setHttpProxyIncludedAddresses((java.util.Set) value); return true;
             case "httpProxyPort": ((SalesforceComponent) component).setHttpProxyPort((java.lang.Integer) value); return true;
-            case "isHttpProxySocks4": ((SalesforceComponent) component).setIsHttpProxySocks4((boolean) value); return true;
+            case "httpProxySocks4": ((SalesforceComponent) component).setHttpProxySocks4((boolean) value); return true;
             case "authenticationType": ((SalesforceComponent) component).setAuthenticationType((org.apache.camel.component.salesforce.AuthenticationType) value); return true;
             case "clientId": ((SalesforceComponent) component).setClientId((java.lang.String) value); return true;
             case "clientSecret": ((SalesforceComponent) component).setClientSecret((java.lang.String) value); return true;
             case "httpProxyAuthUri": ((SalesforceComponent) component).setHttpProxyAuthUri((java.lang.String) value); return true;
             case "httpProxyPassword": ((SalesforceComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
             case "httpProxyRealm": ((SalesforceComponent) component).setHttpProxyRealm((java.lang.String) value); return true;
+            case "httpProxySecure": ((SalesforceComponent) component).setHttpProxySecure((boolean) value); return true;
             case "httpProxyUseDigestAuth": ((SalesforceComponent) component).setHttpProxyUseDigestAuth((boolean) value); return true;
             case "httpProxyUsername": ((SalesforceComponent) component).setHttpProxyUsername((java.lang.String) value); return true;
             case "instanceUrl": ((SalesforceComponent) component).setInstanceUrl((java.lang.String) value); return true;
-            case "isHttpProxySecure": ((SalesforceComponent) component).setIsHttpProxySecure((boolean) value); return true;
             case "keystore": ((SalesforceComponent) component).setKeystore((org.apache.camel.support.jsse.KeyStoreParameters) value); return true;
             case "lazyLogin": ((SalesforceComponent) component).setLazyLogin((boolean) value); return true;
             case "loginConfig": ((SalesforceComponent) component).setLoginConfig((org.apache.camel.component.salesforce.SalesforceLoginConfig) value); return true;

@@ -88,12 +88,18 @@ public class S3ClientStandardImpl implements S3Client {
                     clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                if (ObjectHelper.isNotEmpty(configuration.getEndpointConfiguration())) {
+                    clientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
+                }
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                     encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                if (ObjectHelper.isNotEmpty(configuration.getEndpointConfiguration())) {
+                    encClientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
+                }
                 client = encClientBuilder.build();
             }
         } else {
@@ -111,12 +117,18 @@ public class S3ClientStandardImpl implements S3Client {
                     clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                if (ObjectHelper.isNotEmpty(configuration.getEndpointConfiguration())) {
+                    clientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
+                }
                 client = clientBuilder.build();
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                     encClientBuilder = encClientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
                 }
                 encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
+                if (ObjectHelper.isNotEmpty(configuration.getEndpointConfiguration())) {
+                    encClientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
+                }
                 client = encClientBuilder.build();
             }
         }

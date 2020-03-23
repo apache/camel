@@ -2,7 +2,7 @@
 = Languages
 
 To support flexible and powerful
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns], Camel supports various Languages to create an
 xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate]
 within either the xref:dsl.adoc[Routing Domain Specific Language] or the

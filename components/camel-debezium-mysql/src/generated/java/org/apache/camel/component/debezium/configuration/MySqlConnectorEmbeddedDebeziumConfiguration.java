@@ -210,7 +210,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.includeSchemaChanges = includeSchemaChanges;
     }
 
-    public boolean getIncludeSchemaChanges() {
+    public boolean isIncludeSchemaChanges() {
         return includeSchemaChanges;
     }
 
@@ -458,7 +458,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.enableTimeAdjuster = enableTimeAdjuster;
     }
 
-    public boolean getEnableTimeAdjuster() {
+    public boolean isEnableTimeAdjuster() {
         return enableTimeAdjuster;
     }
 
@@ -498,7 +498,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.databaseHistoryStoreOnlyMonitoredTablesDdl = databaseHistoryStoreOnlyMonitoredTablesDdl;
     }
 
-    public boolean getDatabaseHistoryStoreOnlyMonitoredTablesDdl() {
+    public boolean isDatabaseHistoryStoreOnlyMonitoredTablesDdl() {
         return databaseHistoryStoreOnlyMonitoredTablesDdl;
     }
 
@@ -512,7 +512,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.gtidSourceFilterDmlEvents = gtidSourceFilterDmlEvents;
     }
 
-    public boolean getGtidSourceFilterDmlEvents() {
+    public boolean isGtidSourceFilterDmlEvents() {
         return gtidSourceFilterDmlEvents;
     }
 
@@ -547,7 +547,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.connectKeepAlive = connectKeepAlive;
     }
 
-    public boolean getConnectKeepAlive() {
+    public boolean isConnectKeepAlive() {
         return connectKeepAlive;
     }
 
@@ -668,7 +668,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.tombstonesOnDelete = tombstonesOnDelete;
     }
 
-    public boolean getTombstonesOnDelete() {
+    public boolean isTombstonesOnDelete() {
         return tombstonesOnDelete;
     }
 
@@ -721,7 +721,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.databaseHistorySkipUnparseableDdl = databaseHistorySkipUnparseableDdl;
     }
 
-    public boolean getDatabaseHistorySkipUnparseableDdl() {
+    public boolean isDatabaseHistorySkipUnparseableDdl() {
         return databaseHistorySkipUnparseableDdl;
     }
 
@@ -732,7 +732,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.tableIgnoreBuiltin = tableIgnoreBuiltin;
     }
 
-    public boolean getTableIgnoreBuiltin() {
+    public boolean isTableIgnoreBuiltin() {
         return tableIgnoreBuiltin;
     }
 
@@ -949,7 +949,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         this.includeQuery = includeQuery;
     }
 
-    public boolean getIncludeQuery() {
+    public boolean isIncludeQuery() {
         return includeQuery;
     }
 

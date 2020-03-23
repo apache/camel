@@ -19,10 +19,8 @@ package org.apache.camel.component.aws2.s3;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Encryption;
 
 @UriParams
 public class AWS2S3Configuration implements Cloneable {
@@ -77,6 +75,10 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean useIAMCredentials;
     @UriParam(label = "producer")
     private String keyName;
+    @UriParam(defaultValue = "false")
+    private boolean overrideEndpoint;
+    @UriParam
+    private String uriEndpointOverride;
 
     public long getPartSize() {
         return partSize;
@@ -189,10 +191,9 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which S3 client needs to work. When using this parameter,
+     * the configuration will expect the lowercase name of the region (for
+     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -384,6 +385,30 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setKeyName(String keyName) {
         this.keyName = keyName;
+    }
+
+    public boolean isOverrideEndpoint() {
+        return overrideEndpoint;
+    }
+
+    /**
+     * Set the need for overidding the endpoint. This option needs to be used in
+     * combination with uriEndpointOverride option
+     */
+    public void setOverrideEndpoint(boolean overrideEndpoint) {
+        this.overrideEndpoint = overrideEndpoint;
+    }
+
+    public String getUriEndpointOverride() {
+        return uriEndpointOverride;
+    }
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in
+     * combination with overrideEndpoint option
+     */
+    public void setUriEndpointOverride(String uriEndpointOverride) {
+        this.uriEndpointOverride = uriEndpointOverride;
     }
 
     // *************************************************

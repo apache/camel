@@ -175,10 +175,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private Integer httpProxyPort;
 
     @Metadata(description = "If set to true the configures the HTTP proxy to use as a SOCKS4 proxy.", defaultValue = "false", label = "common,proxy")
-    private boolean isHttpProxySocks4;
+    private boolean httpProxySocks4;
 
     @Metadata(description = "If set to false disables the use of TLS when accessing the HTTP proxy.", defaultValue = "true", label = "common,proxy,security")
-    private boolean isHttpProxySecure = true;
+    private boolean httpProxySecure = true;
 
     @Metadata(description = "A list of addresses for which HTTP proxy server should be used.", label = "common,proxy")
     private Set<String> httpProxyIncludedAddresses;
@@ -430,6 +430,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.instanceUrl = instanceUrl;
     }
 
+    public String getInstanceUrl() {
+        return instanceUrl;
+    }
+
     public String getLoginUrl() {
         return loginUrl;
     }
@@ -594,19 +598,19 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     public boolean isHttpProxySocks4() {
-        return isHttpProxySocks4;
+        return httpProxySocks4;
     }
 
-    public void setIsHttpProxySocks4(boolean isHttpProxySocks4) {
-        this.isHttpProxySocks4 = isHttpProxySocks4;
+    public void setHttpProxySocks4(boolean isHttpProxySocks4) {
+        this.httpProxySocks4 = isHttpProxySocks4;
     }
 
     public boolean isHttpProxySecure() {
-        return isHttpProxySecure;
+        return httpProxySecure;
     }
 
-    public void setIsHttpProxySecure(boolean isHttpProxySecure) {
-        this.isHttpProxySecure = isHttpProxySecure;
+    public void setHttpProxySecure(boolean isHttpProxySecure) {
+        this.httpProxySecure = isHttpProxySecure;
     }
 
     public Set<String> getHttpProxyIncludedAddresses() {

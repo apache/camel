@@ -18,7 +18,6 @@ package org.apache.camel.component.atomix.client.messaging;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.camel.Component;
 import org.apache.camel.EndpointInject;
@@ -28,10 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AtomixMessagingTest extends AtomixClientTestSupport {
-    private static final String NODE_NAME = UUID.randomUUID().toString();
 
     @EndpointInject("direct:start")
     private FluentProducerTemplate template;
@@ -53,7 +51,7 @@ public class AtomixMessagingTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void testMessaging() throws Exception {
+    void testMessaging() {
         MockEndpoint mock1 = getMockEndpoint("mock:member-1");
         mock1.expectedMessageCount(2);
         mock1.expectedBodiesReceived("direct-message", "broadcast-message");
@@ -81,7 +79,7 @@ public class AtomixMessagingTest extends AtomixClientTestSupport {
     // ************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

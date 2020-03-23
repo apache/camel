@@ -24,17 +24,16 @@ import java.net.URLDecoder;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
@@ -81,44 +80,28 @@ public class MiloServerComponent extends DefaultComponent {
 
     private static final String URL_CHARSET = "UTF-8";
 
-    private int port;
-
-    private String namespaceUri = DEFAULT_NAMESPACE_URI;
-
-    private OpcUaServerConfigBuilder opcServerConfig;
-
-    private OpcUaServer server;
-
-    private CamelNamespace namespace;
-
+    private final List<Runnable> runOnStop = new LinkedList<>();
     private final Map<String, MiloServerEndpoint> endpoints = new HashMap<>();
 
+    private int port;
+    private String namespaceUri = DEFAULT_NAMESPACE_URI;
+    private OpcUaServerConfigBuilder opcServerConfig;
+    private OpcUaServer server;
+    private CamelNamespace namespace;
     private Boolean enableAnonymousAuthentication;
-
     private CertificateManager certificateManager;
-
+    private String securityPoliciesById;
     private Set<SecurityPolicy> securityPolicies;
-
-    private Map<String, String> userMap;
-
+    private String userAuthenticationCredentials;
     private String usernameSecurityPolicyUri = OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME.getSecurityPolicyUri();
-
     private List<String> bindAddresses;
-
-    private Supplier<CertificateValidator> certificateValidator;
-
-    private final List<Runnable> runOnStop = new LinkedList<>();
-
+    private String defaultCertificateValidator;
+    private CertificateValidator certificateValidator;
     private X509Certificate certificate;
-
     private String productUri;
-
     private String applicationUri;
-
     private String applicationName;
-
     private String path;
-
     private BuildInfo buildInfo;
 
     public MiloServerComponent() {
@@ -148,10 +131,11 @@ public class MiloServerComponent extends DefaultComponent {
     private OpcUaServerConfig buildServerConfig() {
         OpcUaServerConfigBuilder serverConfig = this.opcServerConfig  != null ? this.opcServerConfig : createDefaultConfiguration();
 
-        if (this.userMap != null || this.enableAnonymousAuthentication != null) {
-            // set identity validator
+        this.securityPolicies = createSecurityPolicies();
 
-            final Map<String, String> userMap = this.userMap != null ? new HashMap<>(this.userMap) : Collections.emptyMap();
+        Map<String, String> userMap = createUserMap();
+        if (!userMap.isEmpty() || enableAnonymousAuthentication != null) {
+            // set identity validator
             final boolean allowAnonymous = Boolean.TRUE.equals(this.enableAnonymousAuthentication);
             final IdentityValidator identityValidator = new UsernameIdentityValidator(allowAnonymous, challenge -> {
                 final String pwd = userMap.get(challenge.getUsername());
@@ -163,12 +147,11 @@ public class MiloServerComponent extends DefaultComponent {
             serverConfig.setIdentityValidator(identityValidator);
 
             // add token policies
-
             final List<UserTokenPolicy> tokenPolicies = new LinkedList<>();
             if (allowAnonymous) {
                 tokenPolicies.add(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS);
             }
-            if (userMap != null) {
+            if (!userMap.isEmpty()) {
                 tokenPolicies.add(getUsernamePolicy());
             }
             serverConfig.setEndpoints(createEndpointConfigurations(tokenPolicies));
@@ -176,20 +159,19 @@ public class MiloServerComponent extends DefaultComponent {
             serverConfig.setEndpoints(createEndpointConfigurations(null, securityPolicies));
         }
 
-        if (this.certificateValidator != null) {
-            final CertificateValidator validator = this.certificateValidator.get();
-            LOG.debug("Using validator: {}", validator);
-            if (validator instanceof Closeable) {
+        if (certificateValidator != null) {
+            LOG.debug("Using validator: {}", certificateValidator);
+            if (certificateValidator instanceof Closeable) {
                 runOnStop(() -> {
                     try {
-                        LOG.debug("Closing: {}", validator);
-                        ((Closeable)validator).close();
-                    } catch (final IOException e) {
-                        LOG.warn("Failed to close", e);
+                        LOG.debug("Closing: {}", certificateValidator);
+                        ((Closeable)certificateValidator).close();
+                    } catch (IOException e) {
+                        LOG.debug("Failed to close. This exception is ignored.", e);
                     }
                 });
             }
-            serverConfig.setCertificateValidator(validator);
+            serverConfig.setCertificateValidator(certificateValidator);
         }
 
         // build final configuration
@@ -224,7 +206,7 @@ public class MiloServerComponent extends DefaultComponent {
     }
 
     private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies) {
-        return createEndpointConfigurations(userTokenPolicies, this.securityPolicies);
+        return createEndpointConfigurations(userTokenPolicies, securityPolicies);
     }
 
     private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
@@ -352,6 +334,25 @@ public class MiloServerComponent extends DefaultComponent {
         this.runOnStop.add(runnable);
     }
 
+    private Map createUserMap() {
+        Map<String, String> userMap = null;
+        if (userAuthenticationCredentials != null) {
+            userMap = new HashMap<>();
+
+            for (final String creds : userAuthenticationCredentials.split(",")) {
+                final String[] toks = creds.split(":", 2);
+                if (toks.length == 2) {
+                    try {
+                        userMap.put(URLDecoder.decode(toks[0], URL_CHARSET), URLDecoder.decode(toks[1], URL_CHARSET));
+                    } catch (final UnsupportedEncodingException e) {
+                        LOG.warn("Failed to decode user map entry", e);
+                    }
+                }
+            }
+        }
+        return userMap != null ? userMap : Collections.emptyMap();
+    }
+
     @Override
     protected void doStop() throws Exception {
         if (this.server != null) {
@@ -386,6 +387,55 @@ public class MiloServerComponent extends DefaultComponent {
 
             return endpoint;
         }
+    }
+
+    /**
+     * Server certificate
+     */
+    public void loadServerCertificate(final KeyStoreLoader.Result result) {
+        /*
+         * We are not implicitly deactivating the server certificate manager. If
+         * the key could not be found by the KeyStoreLoader, it will return
+         * "null" from the load() method. So if someone calls
+         * setServerCertificate ( loader.load () ); he may, by accident, disable
+         * the server certificate. If disabling the server certificate is
+         * desired, do it explicitly.
+         */
+        Objects.requireNonNull(result, "Setting a null is not supported. call setCertificateManager(null) instead.)");
+        loadServerCertificate(result.getKeyPair(), result.getCertificate());
+    }
+
+    /**
+     * Server certificate
+     */
+    public void loadServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
+        this.certificate = certificate;
+        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
+    }
+
+    /**
+     * Server certificate
+     */
+    public void setCertificate(X509Certificate certificate) {
+        this.certificate = certificate;
+    }
+
+    private Set<SecurityPolicy> createSecurityPolicies() {
+        if (securityPoliciesById != null) {
+            String[] ids = securityPoliciesById.split(",");
+            final EnumSet<SecurityPolicy> policies = EnumSet.noneOf(SecurityPolicy.class);
+
+            for (final String policyName : ids) {
+                final SecurityPolicy policy = SecurityPolicy.fromUriSafe(policyName).orElseGet(() -> SecurityPolicy.valueOf(policyName));
+                policies.add(policy);
+            }
+
+            if (this.securityPolicies == null) {
+                this.securityPolicies = new HashSet<>();
+            }
+            this.securityPolicies.addAll(policies);
+        }
+        return this.securityPolicies;
     }
 
     /**
@@ -430,7 +480,7 @@ public class MiloServerComponent extends DefaultComponent {
     /**
      * The TCP port the server binds to
      */
-    public void setBindPort(final int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
@@ -443,33 +493,19 @@ public class MiloServerComponent extends DefaultComponent {
         } else {
             this.securityPolicies = EnumSet.copyOf(securityPolicies);
         }
+        // clear id as we set explicit these policies
+        this.securityPoliciesById = null;
     }
 
     /**
-     * Security policies by URI or name
+     * Security policies by URI or name. Multiple policies can be separated by comma.
      */
-    public void setSecurityPoliciesById(final Collection<String> securityPolicies) {
-        final EnumSet<SecurityPolicy> policies = EnumSet.noneOf(SecurityPolicy.class);
-
-        if (securityPolicies != null) {
-            for (final String policyName : securityPolicies) {
-                final SecurityPolicy policy = SecurityPolicy.fromUriSafe(policyName).orElseGet(() -> SecurityPolicy.valueOf(policyName));
-                policies.add(policy);
-            }
-        }
-
-        this.securityPolicies = policies;
+    public void setSecurityPoliciesById(String securityPoliciesById) {
+        this.securityPoliciesById = securityPoliciesById;
     }
 
-    /**
-     * Security policies by URI or name
-     */
-    public void setSecurityPoliciesById(final String... ids) {
-        if (ids != null) {
-            setSecurityPoliciesById(Arrays.asList(ids));
-        } else {
-            setSecurityPoliciesById((Collection<String>)null);
-        }
+    public String getSecurityPoliciesById() {
+        return securityPoliciesById;
     }
 
     /**
@@ -479,22 +515,11 @@ public class MiloServerComponent extends DefaultComponent {
      * </p>
      */
     public void setUserAuthenticationCredentials(final String userAuthenticationCredentials) {
-        if (userAuthenticationCredentials != null) {
-            this.userMap = new HashMap<>();
+        this.userAuthenticationCredentials = userAuthenticationCredentials;
+    }
 
-            for (final String creds : userAuthenticationCredentials.split(",")) {
-                final String[] toks = creds.split(":", 2);
-                if (toks.length == 2) {
-                    try {
-                        this.userMap.put(URLDecoder.decode(toks[0], URL_CHARSET), URLDecoder.decode(toks[1], URL_CHARSET));
-                    } catch (final UnsupportedEncodingException e) {
-                        LOG.warn("Failed to decode user map entry", e);
-                    }
-                }
-            }
-        } else {
-            this.userMap = null;
-        }
+    public String getUserAuthenticationCredentials() {
+        return userAuthenticationCredentials;
     }
 
     /**
@@ -537,30 +562,6 @@ public class MiloServerComponent extends DefaultComponent {
     }
 
     /**
-     * Server certificate
-     */
-    public void setServerCertificate(final KeyStoreLoader.Result result) {
-        /*
-         * We are not implicitly deactivating the server certificate manager. If
-         * the key could not be found by the KeyStoreLoader, it will return
-         * "null" from the load() method. So if someone calls
-         * setServerCertificate ( loader.load () ); he may, by accident, disable
-         * the server certificate. If disabling the server certificate is
-         * desired, do it explicitly.
-         */
-        Objects.requireNonNull(result, "Setting a null is not supported. call setCertificateManager(null) instead.)");
-        setServerCertificate(result.getKeyPair(), result.getCertificate());
-    }
-
-    /**
-     * Server certificate
-     */
-    public void setServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
-        this.certificate = certificate;
-        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
-    }
-
-    /**
      * Server certificate manager
      */
     public void setCertificateManager(final CertificateManager certificateManager) {
@@ -570,19 +571,84 @@ public class MiloServerComponent extends DefaultComponent {
     /**
      * Validator for client certificates
      */
-    public void setCertificateValidator(final Supplier<CertificateValidator> certificateValidator) {
+    public void setCertificateValidator(final CertificateValidator certificateValidator) {
         this.certificateValidator = certificateValidator;
     }
 
     /**
      * Validator for client certificates using default file based approach
      */
-    public void setDefaultCertificateValidator(final File certificatesBaseDir) {
+    public void setDefaultCertificateValidator(final String defaultCertificateValidator) {
+        this.defaultCertificateValidator = defaultCertificateValidator;
         try {
-            DefaultTrustListManager trustListManager = new DefaultTrustListManager(certificatesBaseDir);
-            this.certificateValidator = () -> new DefaultCertificateValidator(trustListManager);
+            DefaultTrustListManager trustListManager = new DefaultTrustListManager(new File(defaultCertificateValidator));
+            this.certificateValidator = new DefaultCertificateValidator(trustListManager);
         } catch (IOException e) {
-            LOG.error("Failed to construct certificateValidator.", e);
+            throw new RuntimeException(e);
         }
+    }
+
+    public String getDefaultCertificateValidator() {
+        return defaultCertificateValidator;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getNamespaceUri() {
+        return namespaceUri;
+    }
+
+    public OpcUaServer getServer() {
+        return server;
+    }
+
+    public Boolean isEnableAnonymousAuthentication() {
+        return enableAnonymousAuthentication;
+    }
+
+    public CertificateManager getCertificateManager() {
+        return certificateManager;
+    }
+
+    public Set<SecurityPolicy> getSecurityPolicies() {
+        return securityPolicies;
+    }
+
+    public String getUsernameSecurityPolicyUri() {
+        return usernameSecurityPolicyUri;
+    }
+
+    public List<String> getBindAddresses() {
+        return bindAddresses;
+    }
+
+    public CertificateValidator getCertificateValidator() {
+        return certificateValidator;
+    }
+
+    public X509Certificate getCertificate() {
+        return certificate;
+    }
+
+    public String getProductUri() {
+        return productUri;
+    }
+
+    public String getApplicationUri() {
+        return applicationUri;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public BuildInfo getBuildInfo() {
+        return buildInfo;
     }
 }

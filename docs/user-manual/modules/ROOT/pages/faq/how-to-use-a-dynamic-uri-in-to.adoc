@@ -24,7 +24,7 @@ This snippet is not valid code. Read on.
 In this case, you must use an EIP (Enterprise Integration Pattern) that
 is capable of computing a dynamic URI using
 an xref:expression.adoc[Expression], such as
-the xref:eips:toD-eip.adoc[ToD] or xref:eips:recipientList-eip.adoc[Recipient List] EIP pattern.
+the xref:{eip-vc}:eips:toD-eip.adoc[ToD] or xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] EIP pattern.
 
 [TIP]
 ====

@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.Protocol;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 import org.apache.camel.RuntimeCamelException;
@@ -34,6 +35,8 @@ public class S3Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam
+    private EndpointConfiguration endpointConfiguration;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam(label = "consumer")
@@ -140,6 +143,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public EndpointConfiguration getEndpointConfiguration() {
+        return endpointConfiguration;
+    }
+
+    /**
+     * Amazon AWS Endpoint Configuration
+     */
+    public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
+        this.endpointConfiguration = endpointConfiguration;
     }
 
     public AmazonS3 getAmazonS3Client() {

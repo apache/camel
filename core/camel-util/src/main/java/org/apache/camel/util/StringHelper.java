@@ -861,7 +861,7 @@ public final class StringHelper {
             prev = ch;
         }
         
-        return answer.toString().toLowerCase(Locale.US);
+        return answer.toString().toLowerCase(Locale.ENGLISH);
     }
 
 }

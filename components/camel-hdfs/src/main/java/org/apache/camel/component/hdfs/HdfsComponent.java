@@ -34,6 +34,8 @@ public class HdfsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsComponent.class);
 
+    private static String kerberosConfigFileLocation;
+
     public HdfsComponent() {
         initHdfs();
     }
@@ -88,7 +90,12 @@ public class HdfsComponent extends DefaultComponent {
      * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
+        HdfsComponent.kerberosConfigFileLocation = kerberosConfigFileLocation;
         KerberosConfigurationBuilder.setKerberosConfigFile(kerberosConfigFileLocation);
+    }
+
+    public static String getKerberosConfigFile() {
+        return kerberosConfigFileLocation;
     }
 
 }

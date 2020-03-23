@@ -1,7 +1,7 @@
 // this file is auto generated and changes to it will be overwritten
 // make edits in docs/*nav.adoc.template files instead
 
-* Data Formats
+* xref:dataformats:index.adoc[Data Formats]
 ** xref:dataformats:any23-dataformat.adoc[Any23 DataFormat]
 ** xref:dataformats:asn1-dataformat.adoc[ASN.1 File DataFormat]
 ** xref:dataformats:avro-dataformat.adoc[Avro DataFormat]

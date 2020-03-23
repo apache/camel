@@ -88,7 +88,7 @@
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.714_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.10.90</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.10.91</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -104,7 +104,7 @@
         <bouncycastle-version>1.64</bouncycastle-version>
         <box-java-sdk-version>2.44.1</box-java-sdk-version>
         <braintree-gateway-version>2.107.0</braintree-gateway-version>
-        <brave-zipkin-version>5.10.1</brave-zipkin-version>
+        <brave-zipkin-version>5.10.2</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <c3p0-bundle-version>0.9.5.5_1</c3p0-bundle-version>
@@ -412,7 +412,7 @@
         <junit-bundle-version>4.11_1</junit-bundle-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
         <junit-version>4.12</junit-version>
-        <junit-jupiter-version>5.6.0</junit-jupiter-version>
+        <junit-jupiter-version>5.6.1</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>

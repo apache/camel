@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -238,5 +239,19 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonS3Client", clientMock);
         S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3://MyTopic?amazonS3Client=#amazonS3Client");
+    }
+
+    @Test
+    public void createEndpointWithEndpointConfiguration() throws Exception {
+
+        EndpointConfiguration endpointConfiguration = new EndpointConfiguration("localhost", Regions.US_EAST_1.toString());
+        context.getRegistry().bind("endpointConfiguration", endpointConfiguration);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
+        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?endpointConfiguration=#endpointConfiguration&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNotNull(endpoint.getConfiguration().getEndpointConfiguration());
     }
 }
