@@ -273,9 +273,13 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
-                String json = PackageHelper.loadText(file);
-                LanguageModel model = JsonMapper.generateLanguageModel(json);
-                models.add(model);
+                try {
+                    String json = PackageHelper.loadText(file);
+                    LanguageModel model = JsonMapper.generateLanguageModel(json);
+                    models.add(model);
+                } catch (java.lang.RuntimeException e) {
+                    throw new RuntimeException("Error on file: " + file, e);
+                }
             }
 
             // sort the models

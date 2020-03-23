@@ -47,6 +47,10 @@ public final class JsonMapper {
             return generateModel(json);
         } catch (IOException e) {
             throw new RuntimeException("Error reading json file: " + file, e);
+        } catch (IllegalArgumentException iae) {
+            throw new IllegalArgumentException("IAE on file " + file, iae);
+        } catch (RuntimeException re) {
+            throw new RuntimeException("Bad json in file: " + file, re);
         }
     }
 
@@ -67,7 +71,7 @@ public final class JsonMapper {
         } else if (obj.containsKey("model")) {
             return generateEipModel(obj);
         } else {
-            throw new IllegalArgumentException("Unsupported JSON");
+            throw new IllegalArgumentException("Unsupported JSON: " + obj);
         }
     }
 
