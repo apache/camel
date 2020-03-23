@@ -106,10 +106,18 @@ public abstract class ContextTestSupport extends TestSupport {
             throw new Exception("Context must be a ModelCamelContext");
         }
         assertValidContext(context);
-        context.init();
 
-        // reduce default shutdown timeout to avoid waiting for 300 seconds
-        context.getShutdownStrategy().setTimeout(10);
+        if (isUseRouteBuilder()) {
+            RouteBuilder[] builders = createRouteBuilders();
+            for (RouteBuilder builder : builders) {
+                log.debug("Using created route builder: {}", builder);
+                context.addRoutes(builder);
+            }
+            context.init();
+        } else {
+            log.debug("isUseRouteBuilder() is false");
+        }
+
 
         template = context.createProducerTemplate();
         template.start();
@@ -121,16 +129,11 @@ public abstract class ContextTestSupport extends TestSupport {
         oneExchangeDone = event().whenDone(1).create();
 
         if (isUseRouteBuilder()) {
-            RouteBuilder[] builders = createRouteBuilders();
-            for (RouteBuilder builder : builders) {
-                log.debug("Using created route builder: {}", builder);
-                context.addRoutes(builder);
-            }
             startCamelContext();
-        } else {
-            log.debug("isUseRouteBuilder() is false");
         }
 
+        // reduce default shutdown timeout to avoid waiting for 300 seconds
+        context.getShutdownStrategy().setTimeout(10);
     }
 
     @Override
@@ -202,7 +205,7 @@ public abstract class ContextTestSupport extends TestSupport {
             ctx.setRegistry(createRegistry());
             context = ctx;
         } else {
-            DefaultCamelContext ctx = new DefaultCamelContext(false);
+            DefaultCamelContext ctx = new DefaultCamelContext(true);
             ctx.setRegistry(createRegistry());
             context = ctx;
         }

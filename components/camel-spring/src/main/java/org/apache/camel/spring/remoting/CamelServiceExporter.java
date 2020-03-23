@@ -114,12 +114,12 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
 
         try {
             // need to start endpoint before we create consumer
-            ServiceHelper.startService(endpoint);
+            ServiceHelper.initService(endpoint);
             BeanProcessor processor = new BeanProcessor(proxy, camelContext);
             processor.setMethod(method);
             consumer = endpoint.createConsumer(processor);
             // add and start consumer
-            camelContext.addService(consumer, true, true);
+            camelContext.addService(consumer, true, false);
         } catch (Exception e) {
             throw new FailedToCreateConsumerException(endpoint, e);
         }

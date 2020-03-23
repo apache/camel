@@ -28,7 +28,6 @@ public class ManagedNamePatternTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         context.getManagementNameStrategy().setNamePattern("cool-#name#");
         return context;
     }

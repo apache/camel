@@ -89,7 +89,7 @@ public class BuilderWithScopesTest extends TestSupport {
         order.clear();
         DefaultCamelContext container = new DefaultCamelContext(false);
         container.disableJMX();
-        container.init();
+        container.build();
 
         container.addRoutes(builder);
         container.start();

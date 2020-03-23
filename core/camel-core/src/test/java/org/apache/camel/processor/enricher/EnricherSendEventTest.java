@@ -53,7 +53,6 @@ public class EnricherSendEventTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.init();
         ShutdownStrategy shutdownStrategy = camelContext.getShutdownStrategy();
         camelContext.addComponent("async", new MyAsyncComponent());
 

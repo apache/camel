@@ -47,7 +47,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 return;
             }
             try {
-                initService(childServices);
+                ServiceHelper.initService(childServices);
             } catch (Exception e) {
                 status = FAILED;
                 LOG.trace("Error while initializing service: " + this, e);
@@ -124,25 +124,24 @@ public abstract class ChildServiceSupport extends ServiceSupport {
 
     protected void addChildService(Object childService) {
         if (childService instanceof Service) {
-            if (childServices == null) {
-                synchronized (lock) {
-                    if (childServices == null) {
-                        childServices = new ArrayList<>();
-                    }
+            synchronized (lock) {
+                if (childServices == null) {
+                    childServices = new ArrayList<>();
                 }
+                childServices.add((Service) childService);
             }
-            childServices.add((Service) childService);
         }
     }
 
     protected boolean removeChildService(Object childService) {
-        return childServices != null && childServices.remove(childService);
-    }
-
-    private void initService(List<Service> services) {
-        if (services != null) {
-            services.forEach(Service::init);
+        if (childService instanceof Service) {
+            synchronized (lock) {
+                if (childServices != null) {
+                    return childServices.remove(childService);
+                }
+            }
         }
+        return false;
     }
 
 }

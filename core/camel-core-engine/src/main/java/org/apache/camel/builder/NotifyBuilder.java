@@ -96,7 +96,8 @@ public class NotifyBuilder {
         this.context = context;
         eventNotifier = new ExchangeNotifier();
         try {
-            ServiceHelper.startService(eventNotifier);
+            context.addService(eventNotifier, false);
+            eventNotifier.start();
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

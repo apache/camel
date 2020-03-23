@@ -272,15 +272,25 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (consumerCache == null) {
             consumerCache = new DefaultConsumerCache(this, camelContext, maximumCacheSize);
         }
+        ServiceHelper.initService(consumerCache);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(consumerCache);
     }
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumerCache);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         // we should shutdown the services as this is our intention, to not re-use the services anymore
         ServiceHelper.stopAndShutdownService(consumerCache);
         consumerCache = null;

@@ -267,6 +267,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void build() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void init() {
         throw new UnsupportedOperationException();
     }
@@ -287,6 +292,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
         for (Route route : routes) {
             route.getConsumer().start();
+        }
+        if (LOG.isInfoEnabled()) {
+            long l = System.currentTimeMillis() - startDate.getTime();
+            LOG.info("Apache Camel {} (CamelContext: {}) {} routes started in {}",
+                    getVersion(), getName(), routes.size(), TimeUtils.printDuration(l));
         }
     }
 

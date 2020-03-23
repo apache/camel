@@ -60,7 +60,7 @@ public class CronComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         initCamelCronService();
     }
 
