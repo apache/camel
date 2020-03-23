@@ -23,6 +23,8 @@ import java.util.UUID;
 import javax.cache.Cache;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
