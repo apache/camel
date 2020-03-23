@@ -86,11 +86,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Stopping DefaultReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",

@@ -212,8 +212,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     protected void doShutdown() throws Exception {
-        // and clear start date
-        startDate = null;
         // clear services when shutting down
         services.clear();
     }

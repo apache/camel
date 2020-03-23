@@ -331,7 +331,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // must have message history enabled when using this debugger
@@ -340,8 +340,14 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         }
 
         // register our event notifier
-        ServiceHelper.startService(debugEventNotifier);
         camelContext.getManagementStrategy().addEventNotifier(debugEventNotifier);
+
+        ServiceHelper.initService(debugEventNotifier);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(debugEventNotifier);
     }
 
     @Override

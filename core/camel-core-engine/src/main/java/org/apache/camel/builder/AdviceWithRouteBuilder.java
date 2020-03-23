@@ -26,6 +26,7 @@ import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;

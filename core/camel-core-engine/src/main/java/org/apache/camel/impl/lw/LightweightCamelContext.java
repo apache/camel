@@ -147,12 +147,14 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
      * Use one of the other constructors to force use an explicit registry.
      */
     public LightweightCamelContext() {
-        delegate = new DefaultCamelContext(false) {
+        DefaultCamelContext d = new DefaultCamelContext(false) {
             @Override
             public CamelContext getCamelContextReference() {
                 return LightweightCamelContext.this;
             }
         };
+        delegate = d;
+        d.build();
     }
 
     /**
@@ -214,6 +216,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public boolean isSuspending() {
         return delegate.isSuspending();
+    }
+
+    @Override
+    public void build() {
+        delegate.build();
     }
 
     @Override
