@@ -221,15 +221,6 @@
                     <exclude>**/*.class</exclude>
                 </excludes>
             </resource>
-            <!--
-            <resource>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <filtering>true</filtering>
-            </resource>
-            -->
         </resources>
         <pluginManagement>
             <plugins>
@@ -361,6 +352,65 @@
                 </configuration>
             </plugin>
 
+            <!-- unpack sources which are needed for the scheme generator -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>process-sources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-api</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-api</outputDirectory>
+                                    <includes>**/*.java</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-engine</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-core-engine</outputDirectory>
+                                    <includes>**/*.java</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-core-xml</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-core-xml</outputDirectory>
+                                    <includes>**/*.java</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.camel</groupId>
+                                    <artifactId>camel-util</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/sources/camel-util</outputDirectory>
+                                    <includes>**/*.java</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -403,11 +453,11 @@
                                         <include name="org/apache/camel/spring/package-info.java" />
                                         <include name="org/apache/camel/util/spring/**/*.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-core-xml">
                                         <include name="org/apache/camel/core/xml/*.java" />
                                         <include name="org/apache/camel/core/xml/util/**/*.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-api/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-api">
                                         <include name="org/apache/camel/ExchangePattern.java" />
                                         <include name="org/apache/camel/LoggingLevel.java" />
                                         <include name="org/apache/camel/ManagementStatisticsLevel.java" />
@@ -415,11 +465,11 @@
                                         <include name="org/apache/camel/ShutdownRunningTask.java" />
                                         <include name="org/apache/camel/WaitForTaskToComplete.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-core-engine/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-core-engine">
                                         <include name="org/apache/camel/model/**/*.java" />
                                         <include name="org/apache/camel/package-info.java" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../../core/camel-util/src/main/java">
+                                    <fileset dir="${project.build.directory}/sources/camel-util">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
                                     </fileset>
                                 </copy>
