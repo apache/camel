@@ -129,6 +129,11 @@ function titleFrom(file) {
     return maybeName[1];
 }
 
+function compare (file1, file2) {
+    if (file1 === file2) return 0
+    return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
+}
+
 function insertGeneratedNotice() {
     return inject(src('./generated.txt'), {
         name: 'generated',
@@ -148,7 +153,8 @@ function insertSourceAttribute() {
 function createComponentNav() {
     return src('component-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['components/modules/ROOT/pages/**/*.adoc', '!components/modules/ROOT/pages/index.adoc']).pipe(sort()), {
+        .pipe(inject(src(['components/modules/ROOT/pages/**/*.adoc', '!components/modules/ROOT/pages/index.adoc'])
+            .pipe(sort(compare)), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
@@ -163,7 +169,8 @@ function createComponentNav() {
 function createComponentDataFormatsNav() {
     return src('component-dataformats-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['components/modules/dataformats/pages/**/*.adoc', '!components/modules/dataformats/pages/index.adoc']).pipe(sort()), {
+        .pipe(inject(src(['components/modules/dataformats/pages/**/*.adoc', '!components/modules/dataformats/pages/index.adoc'])
+            .pipe(sort(compare)), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
@@ -178,7 +185,11 @@ function createComponentDataFormatsNav() {
 function createComponentLanguagesNav() {
     return src('component-languages-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['components/modules/languages/pages/**/*.adoc', '../core/camel-core-languages/src/main/docs/modules/languages/pages/*.adoc', '!components/modules/languages/pages/index.adoc']).pipe(sort()), {
+        .pipe(inject(src(['components/modules/languages/pages/**/*.adoc',
+			  '../core/camel-core-languages/src/main/docs/modules/languages/pages/*.adoc',
+			  '../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/*.adoc',
+			  '!components/modules/languages/pages/index.adoc'])
+            .pipe(sort(compare)), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
@@ -194,7 +205,8 @@ function createEIPNav() {
     const f = filter(['**','!**/enterprise-integration-patterns.adoc'])
     return src('eip-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src('../core/camel-core-engine/src/main/docs/modules/eips/pages/*.adoc').pipe(f).pipe(sort()), {
+        .pipe(inject(src('../core/camel-core-engine/src/main/docs/modules/eips/pages/*.adoc')
+            .pipe(f).pipe(sort(compare)), {
             removeTags: true,
             name: 'eips',
             transform: (filename, file) => {
