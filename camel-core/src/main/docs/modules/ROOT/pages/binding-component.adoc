@@ -17,7 +17,7 @@ provide a way of wrapping Camel endpoints with contracts inside the
 Camel framework itself; so you can use them easily inside any Camel
 route.
 
-=== Options
+== Options
 
 
 // component options: START
@@ -35,7 +35,7 @@ binding:bindingName:delegateUri
 
 with the following path and query parameters:
 
-=== Path Parameters (2 parameters):
+== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -46,7 +46,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (4 parameters):
+== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Using Bindings
+== Using Bindings
 
 A Binding is currently a bean which defines the contract (though we'll
 hopefully add bindings to the Camel DSL).
@@ -68,7 +68,7 @@ hopefully add bindings to the Camel DSL).
 There are a few approaches to defining a bound endpoint (i.e. an
 endpoint bound with a Binding).
 
-=== Using the binding URI
+== Using the binding URI
 
 You can prefix any endpoint URI with *binding:nameOfBinding:* where
 _nameOfBinding_ is the name of the Binding bean in your registry.
@@ -82,7 +82,7 @@ Here we are using the "jaxb" binding which may, for example, use the
 JAXB Data Format to marshal and unmarshal
 messages.
 
-=== Using a BindingComponent
+== Using a BindingComponent
 
 There is a Component called BindingComponent which
 can be configured in your Registry by dependency
@@ -109,7 +109,7 @@ which would be using the queueus "foo.myQueue" and "foo.anotherQueue"
 and would use the given Jackson Data Format to
 marshal on and off the queue.
 
-=== When to use Bindings
+== When to use Bindings
 
 If you only use an endpoint once in a single route; a binding may
 actually be more complex and more work than just using the 'raw'

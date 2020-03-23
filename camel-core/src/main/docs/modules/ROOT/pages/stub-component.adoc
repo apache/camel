@@ -17,7 +17,7 @@ usually fail. Stub won't though, as it basically ignores all query
 parameters to let you quickly stub out one or more endpoints in your
 route temporarily.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -26,7 +26,7 @@ stub:someUri
 
 Where *`someUri`* can be any URI with any query parameters.
 
-=== Options
+== Options
 
 // component options: START
 The Stub component supports 6 options, which are listed below.
@@ -55,7 +55,7 @@ stub:name
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (17 parameters):
+== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Examples
+== Examples
 
 Here are a few samples of stubbing endpoint uris
 

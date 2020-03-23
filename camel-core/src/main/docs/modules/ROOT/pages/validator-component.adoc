@@ -18,7 +18,7 @@ Syntax]
 The <<msv-component,MSV>> component also supports
 http://relaxng.org/[RelaxNG XML Syntax].
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -50,7 +50,7 @@ for this component when using *Camel 2.8* or older:
 From Camel 2.9 onwards the Validation component is
 provided directly in the camel-core.
 
-=== Options
+== Options
 
 // component options: START
 The Validator component supports 2 options, which are listed below.
@@ -75,7 +75,7 @@ validator:resourceUri
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,7 +106,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Example
+== Example
 
 The following
 https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
@@ -115,7 +115,7 @@ goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given schema (which is
 supplied on the classpath).
 
-=== Advanced: JMX method clearCachedSchema
+== Advanced: JMX method clearCachedSchema
 
 Since *Camel 2.17*, you can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with

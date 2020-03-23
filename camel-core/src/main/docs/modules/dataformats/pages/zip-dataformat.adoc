@@ -17,7 +17,7 @@ Which means that when using big files, the entire file content is loaded
 into memory. This is subject to change in the future, to allow a streaming based
 solution to have a low memory footprint.
 
-=== Options
+== Options
 
 // dataformat options: START
 The Zip Deflate Compression dataformat supports 2 options, which are listed below.
@@ -32,7 +32,7 @@ The Zip Deflate Compression dataformat supports 2 options, which are listed belo
 |===
 // dataformat options: END
 
-=== Marshal
+== Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload employing zip compression `Deflater.BEST_COMPRESSION` and send
@@ -51,7 +51,7 @@ send it as
 from("direct:start").marshal().zip().to("activemq:queue:MY_QUEUE");
 ----
 
-=== Unmarshal
+== Unmarshal
 
 In this example we unmarshal a zipped payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -64,7 +64,7 @@ unmarshalling to avoid errors.
 from("activemq:queue:MY_QUEUE").unmarshal().zip().process(new UnZippedMessageProcessor()); 
 ----
 
-=== Dependencies
+== Dependencies
 
 This data format is provided in *camel-core* so no additional
 dependencies are needed.

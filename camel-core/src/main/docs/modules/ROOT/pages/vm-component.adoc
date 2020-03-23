@@ -16,7 +16,7 @@ this mechanism to communicate across web applications (provided that
 
 VM is an extension to the <<seda-component,Seda>> component.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -56,7 +56,7 @@ from("direct:foo").to("vm:bar");
 from("vm:bar?concurrentConsumers=5").to("file://output");
 ----
 
-=== Options
+== Options
 
 // component options: START
 The VM component supports 6 options, which are listed below.
@@ -85,7 +85,7 @@ vm:name
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (17 parameters):
+== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -125,7 +125,7 @@ with the following path and query parameters:
 See the <<seda-component,Seda>> component for options and other important
 usage details as the same rules apply to the <<vm-component,Vm>> component.
 
-=== Samples
+== Samples
 
 In the route below we send exchanges across CamelContext instances to a
 VM queue named `order.email`:
@@ -143,6 +143,6 @@ deployed in another `.war` application):
 from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
-=== See Also
+== See Also
 
 * <<seda-component,Seda>>

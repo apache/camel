@@ -7,7 +7,7 @@ The File component provides access to file systems, allowing files to be
 processed by any other Camel Components or
 messages from other components to be saved to disk.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -46,7 +46,7 @@ your environment. To help with this Camel provides different `readLock`
 options and `doneFileName` option that you can use. See also the section
 _Consuming files from folders where others drop files directly_.
 
-=== URI Options
+== URI Options
 
 // component options: START
 The File component has no options.
@@ -62,7 +62,7 @@ file:directoryName
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (87 parameters):
+== Query Parameters (87 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -171,7 +171,7 @@ with the following path and query parameters:
 
 TIP: *Default behavior for file producer* By default it will override any existing file, if one exist with the same name.
 
-=== Move and Delete operations
+== Move and Delete operations
 
 Any move or delete operations is executed after (post command) the
 routing has completed; so during processing of the `Exchange` the file
@@ -234,7 +234,7 @@ from("file://inbox?preMove=inprogress&move=.done").to("bean:handleOrder");
 So in this situation, the file is in the `inprogress` folder when being
 processed and after it's processed, it's moved to the `.done` folder.
 
-=== Fine grained control over Move and PreMove option
+== Fine grained control over Move and PreMove option
 
 The *move* and *preMove* options
 are Expression-based, so we have the full power of
@@ -256,7 +256,7 @@ the pattern, we can do:
 move=backup/${date:now:yyyyMMdd}/${file:name}
 ----
 
-=== About moveFailed
+== About moveFailed
 
 The `moveFailed` option allows you to move files that *could not* be
 processed succesfully to another location such as a error folder of your
@@ -266,11 +266,11 @@ timestamp you can use
 
 See more examples at <<file-language,File Language>>
 
-=== Message Headers
+== Message Headers
 
 The following headers are supported by this component:
 
-==== File producer only
+=== File producer only
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -294,7 +294,7 @@ if the option `fileName` has been configured, then this is still being
 evaluated.
 |===
 
-==== File consumer only
+=== File consumer only
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -327,11 +327,11 @@ relative filename. For absolute files this is the absolute path.
 *Camel 2.10.3 and older* the type is `Date`.
 |===
 
-=== Batch Consumer
+== Batch Consumer
 
 This component implements the Batch Consumer.
 
-=== Exchange Properties, file consumer only
+== Exchange Properties, file consumer only
 
 As the file consumer implements the `BatchConsumer` it supports batching
 the files it polls. By batching we mean that Camel will add the
@@ -355,7 +355,7 @@ This allows you for instance to know how many files exist in this batch
 and for instance let the Aggregator2 aggregate
 this number of files.
 
-=== Using charset
+== Using charset
 
 *Available as of Camel 2.9.3*
 
@@ -444,7 +444,7 @@ DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/came
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-=== Common gotchas with folder and filenames
+== Common gotchas with folder and filenames
 
 When Camel is producing files (writing files) there are a few gotchas
 affecting how to set a filename of your choice. By default, Camel will
@@ -484,14 +484,14 @@ And a syntax where we set the filename on the endpoint with the
 from("direct:report").to("file:target/reports/?fileName=report.txt");
 ----
 
-=== Filename Expression
+== Filename Expression
 
 Filename can be set either using the *expression* option or as a
 string-based <<file-language,File Language>> expression in the
 `CamelFileName` header. See the <<file-language,File Language>>
 for syntax and samples.
 
-=== Consuming files from folders where others drop files directly
+== Consuming files from folders where others drop files directly
 
 Beware if you consume files from a folder where other applications write
 files to directly. Take a look at the different readLock options to see
@@ -506,7 +506,7 @@ good at detecting this. You may also want to look at the doneFileName
 option, which uses a marker file (done file) to signal when a file is
 done and ready to be consumed.
 
-=== Using done files
+== Using done files
 
 *Available as of Camel 2.6*
 
@@ -554,7 +554,7 @@ from("file:bar?doneFileName=ready-${file:name}");
 * `hello.txt` - is the file to be consumed
 * `ready-hello.txt` - is the associated done file
 
-=== Writing done files
+== Writing done files
 
 *Available as of Camel 2.6*
 
@@ -601,16 +601,16 @@ was `foo.txt` in the same directory as the target file.
 Will for example create a file named `foo.done` if the target file was
 `foo.txt` in the same directory as the target file.
 
-=== Samples
+== Samples
 
-#=== Read from a directory and write to another directory
+=== Read from a directory and write to another directory
 
 [source,java]
 ----
 from("file://inputdir/?delete=true").to("file://outputdir")
 ----
 
-==== Read from a directory and write to another directory using a overrule dynamic name
+=== Read from a directory and write to another directory using a overrule dynamic name
 
 [source,java]
 ----
@@ -621,7 +621,7 @@ Listen on a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
 `inputdir`.
 
-==== Reading recursively from a directory and writing to another
+=== Reading recursively from a directory and writing to another
 
 [source,java]
 ----
@@ -649,7 +649,7 @@ outputdir/sub/bar.txt
 ----
 
 [[File2-Usingflatten]]
-=== Using flatten
+== Using flatten
 
 If you want to store the files in the outputdir directory in the same
 directory, disregarding the source directory layout (e.g. to flatten out
@@ -669,7 +669,7 @@ outputdir/foo.txt
 outputdir/bar.txt
 ----
 
-=== Reading from a directory and the default move operation
+== Reading from a directory and the default move operation
 
 Camel will by default move any processed file into a `.camel`
 subdirectory in the directory the file was consumed from.
@@ -698,7 +698,7 @@ outputdir/foo.txt
 outputdir/sub/bar.txt
 ----
 
-=== Read from a directory and process the message in java
+== Read from a directory and process the message in java
 
 [source,java]
 ----
@@ -713,13 +713,13 @@ from("file://inputdir/").process(new Processor() {
 The body will be a `File` object that points to the file that was just
 dropped into the `inputdir` directory.
 
-=== Writing to files
+== Writing to files
 
 Camel is of course also able to write files, i.e. produce files. In the
 sample below we receive some reports on the SEDA queue that we process
 before they are being written to a directory.
 
-==== Write to subdirectory using `Exchange.FILE_NAME`
+=== Write to subdirectory using `Exchange.FILE_NAME`
 
 Using a single route, it is possible to write a file to any number of
 subdirectories. If you have a route setup as such:
@@ -744,7 +744,7 @@ Exchange.FILE_NAME = foo/bye.txt => /rootDirectory/foo/bye.txt
 This allows you to have a single route to write files to multiple
 destinations.
 
-==== Writing file through the temporary directory relative to the final destination
+=== Writing file through the temporary directory relative to the final destination
 
 Sometime you need to temporarily write the files to some directory
 relative to the destination directory. Such situation usually happens
@@ -760,7 +760,7 @@ from("direct:start").
   to("file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/");
 ----
 
-=== Using expression for filenames
+== Using expression for filenames
 
 In this sample we want to move consumed files to a backup folder using
 today's date as a sub-folder name:
@@ -772,7 +772,7 @@ from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 
 See <<file-language,File Language>> for more samples.
 
-=== Avoiding reading the same file more than once (idempotent consumer)
+== Avoiding reading the same file more than once (idempotent consumer)
 
 Camel supports Idempotent Consumer
 directly within the component so it will skip already processed files.
@@ -822,7 +822,7 @@ consumed before:
 DEBUG FileConsumer is idempotent and the file has been consumed before. Will skip this file: target\idempotent\report.txt
 ----
 
-=== Using a file based idempotent repository
+== Using a file based idempotent repository
 
 In this section we will use the file based idempotent repository
 `org.apache.camel.processor.idempotent.FileIdempotentRepository` instead
@@ -842,7 +842,7 @@ idempotent repository and define our file consumer to use our repository
 with the `idempotentRepository` using `#` sign to indicate
 Registry lookup:
 
-=== Using a JPA based idempotent repository
+== Using a JPA based idempotent repository
 
 In this section we will use the JPA based idempotent repository instead
 of the in-memory based that is used as default.
@@ -893,7 +893,7 @@ option:
 </route>
 ----
 
-=== Filter using org.apache.camel.component.file.GenericFileFilter
+== Filter using org.apache.camel.component.file.GenericFileFilter
 
 Camel supports pluggable filtering strategies. You can then configure
 the endpoint with such a filter to skip certain files being processed.
@@ -916,7 +916,7 @@ spring XML file:
 </route>
 ----
 
-=== Filtering using ANT path matcher
+== Filtering using ANT path matcher
 
 The ANT path matcher is shipped out-of-the-box in the *camel-spring*
 jar. So you need to depend on *camel-spring* if you are using Maven. +
@@ -937,7 +937,7 @@ See the URI options above for more information.
 
 The sample below demonstrates how to use it:
 
-==== Sorting using Comparator
+=== Sorting using Comparator
 
 Camel supports pluggable sorting strategies. This strategy it to use the
 build in `java.util.Comparator` in Java. You can then configure the
@@ -968,7 +968,7 @@ Registry by prefixing the id with `#`. So writing
 `sorter=#mySorter`, will instruct Camel to go look in the
 Registry for a bean with the ID, `mySorter`.
 
-==== Sorting using sortBy
+=== Sorting using sortBy
 
 Camel supports pluggable sorting strategies. This strategy it to use the
 <<file-language,File Language>> to configure the sorting. The
@@ -1055,7 +1055,7 @@ per group, so we could reverse the file names:
 sortBy=date:file:yyyyMMdd;reverse:file:name
 ----
 
-=== Using GenericFileProcessStrategy
+== Using GenericFileProcessStrategy
 
 The option `processStrategy` can be used to use a custom
 `GenericFileProcessStrategy` that allows you to implement your own
@@ -1076,7 +1076,7 @@ resources etc.
 * in the `commit()` method we can move the actual file and also delete
 the _ready_ file.
 
-=== Using filter
+== Using filter
 
 The `filter` option allows you to implement a custom filter in Java code
 by implementing the `org.apache.camel.component.file.GenericFileFilter`
@@ -1089,7 +1089,7 @@ directories, to avoid traversing down unwanted directories.
 For example to skip any directories which starts with `"skip"` in the
 name, can be implemented as follows:
 
-=== Using consumer.bridgeErrorHandler
+== Using consumer.bridgeErrorHandler
 
 *Available as of Camel 2.10*
 
@@ -1123,12 +1123,12 @@ does *not* apply. The Exchange is processed directly
 by the Camel Error Handler, and does not allow
 prior actions such as interceptors, onCompletion to take action.
 
-=== Debug logging
+== Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-=== See Also
+== See Also
 
 * <<file-language,File Language>>
 * FTP

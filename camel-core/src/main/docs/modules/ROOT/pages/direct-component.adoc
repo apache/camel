@@ -16,7 +16,7 @@ TIP: *Connection to other camel contexts*
 The <<vm-component,VM>> component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -25,7 +25,7 @@ direct:someName[?options]
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-=== Options
+== Options
 
 
 
@@ -55,7 +55,7 @@ direct:name
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +82,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Samples
+== Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -118,7 +118,7 @@ And the sample using spring DSL:
 See also samples from the <<seda-component,SEDA>> component, how they can
 be used together.
 
-=== See Also
+== See Also
 
 * <<seda-component,SEDA>>
 * <<vm-component,VM>>

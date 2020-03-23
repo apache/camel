@@ -10,14 +10,14 @@ with completionMode set to *MANUAL*.
 
 Refer to the Saga EIP documentation for help on using sagas in common scenarios.
 
-=== URI format
+== URI format
 
 [source]
 ----
 saga:action
 ----
 
-=== Options
+== Options
 
 // component options: START
 The Saga component has no options.
@@ -33,7 +33,7 @@ saga:action
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -43,7 +43,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (1 parameters):
+== Query Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

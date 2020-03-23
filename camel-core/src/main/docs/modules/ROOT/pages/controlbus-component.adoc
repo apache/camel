@@ -26,13 +26,13 @@ From Camel 2.11 onwards we have introduced a new
 send messages to a control bus Endpoint that reacts
 accordingly.
 
-=== ControlBus Component
+== ControlBus Component
 
 *Available as of Camel 2.11*
 
 The *controlbus:* component provides easy management of Camel
 applications based on the <<controlbus-component,Control Bus>> EIP
-pattern. 
+pattern.
 For example, by sending a message to an Endpoint
 you can control the lifecycle of routes, or gather performance
 statistics.
@@ -45,7 +45,7 @@ controlbus:command[?options]
 Where *command* can be any string to identify which type of command to
 use.
 
-=== Commands
+== Commands
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -58,7 +58,7 @@ evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |===
 
-=== Options
+== Options
 
 
 // component options: START
@@ -76,7 +76,7 @@ controlbus:command:language
 
 with the following path and query parameters:
 
-=== Path Parameters (2 parameters):
+== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +87,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (6 parameters):
+== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -107,7 +107,7 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 
-=== Using route command
+== Using route command
 
 The route command allows you to do common tasks on a given route very
 easily, for example to start a route, you can send an empty message to
@@ -126,7 +126,7 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 ----
 
 [[ControlBus-Gettingperformancestatistics]]
-=== Getting performance statistics
+== Getting performance statistics
 
 *Available as of Camel 2.11.1*
 
@@ -152,7 +152,7 @@ just omit the routeId parameter as shown below:
 String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
 ----
 
-=== Using Simple language
+== Using Simple language
 
 You can use the <<simple-language,Simple>> language with the control bus,
 for example to stop a specific route, you can send a message to the

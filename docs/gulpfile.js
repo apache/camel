@@ -264,7 +264,8 @@ function createUserManualLanguageExamples() {
 }
 
 function createComponentExamples() {
-    return src('../components/{*,*/*}/src/main/docs/*.adoc')
+    return src(['../components/{*,*/*}/src/main/docs/*.adoc',
+    '../camel-core/src/main/docs/modules/ROOT/pages/*.adoc'])
         .pipe(through2.obj(extractExamples))
         .pipe(dest('components/modules/ROOT/examples/'));
 }

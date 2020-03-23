@@ -40,7 +40,7 @@ for this component when using *Camel 2.8* or older:
 From Camel 2.9 onwards the <<test-component,Test>> component is provided
 directly in the camel-core.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -51,7 +51,7 @@ Where *expectedMessagesEndpointUri* refers to some other
 Component URI that the expected message bodies are
 pulled from before starting the test.
 
-=== URI Options
+== URI Options
 
 // component options: START
 The Test component has no options.
@@ -67,7 +67,7 @@ test:name
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,7 +101,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Example
+== Example
 
 For example, you could write a test case as follows:
 
@@ -118,6 +118,6 @@ method], your test case will perform the necessary assertions.
 To see how you can set other expectations on the test endpoint, see the
 <<mock-component,Mock>> component.
 
-=== See Also
+== See Also
 
 * Spring Testing

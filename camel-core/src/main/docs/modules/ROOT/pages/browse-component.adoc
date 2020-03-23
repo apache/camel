@@ -8,7 +8,7 @@ BrowsableEndpoint which can be useful for
 testing, visualisation tools or debugging. The exchanges sent to the
 endpoint are all available to be browsed.
 
-=== URI format
+== URI format
 
 [source]
 -------------------------
@@ -18,7 +18,7 @@ browse:someName[?options]
 Where *someName* can be any string to uniquely identify the endpoint.
 
 
-=== Options
+== Options
 
 
 // component options: START
@@ -36,7 +36,7 @@ browse:name
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -46,7 +46,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (4 parameters):
+== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Sample
+== Sample
 
 In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:
@@ -88,7 +88,7 @@ public void inspectRecievedOrders() {
 }
 ----
 
-=== See Also
+== See Also
 
 * Configuring Camel
 * Component
