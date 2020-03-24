@@ -44,7 +44,6 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
         // Verify the cacheManager "hzsecond" registered in the CamelContext was used
         assertNull(lookupCache("contextCacheManager"));
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null);
-
         Cache cache = cacheManager.getCache("contextCacheManager");
 
         assertEquals(generateValue(key), cache.get(key));
