@@ -324,6 +324,7 @@
 ** xref:spring-integration-component.adoc[Spring Integration Component]
 ** xref:spring-javaconfig.adoc[Spring Java Config]
 ** xref:spring-ldap-component.adoc[Spring LDAP Component]
+** xref:spring-main.adoc[Spring Main]
 ** xref:spring-redis-component.adoc[Spring Redis Component]
 ** xref:spring-security.adoc[Spring Security]
 ** xref:spring.adoc[Spring Support]
