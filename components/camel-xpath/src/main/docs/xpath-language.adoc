@@ -159,7 +159,7 @@ exchange:
 |out:header |the header name |Object |Will return the *out* message header.
 
 |function:properties |key for property |String |To lookup a property using the
-xref:properties-component.adoc[Properties] component (property placeholders).
+xref:ROOT:properties-component.adoc[Properties] component (property placeholders).
 
 |function:simple |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] expression.
 |===
