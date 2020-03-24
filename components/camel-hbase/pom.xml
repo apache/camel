@@ -32,6 +32,7 @@
     <description>Camel HBase component</description>
     <properties>
         <camel.osgi.import.before.defaults>
+            javax.xml.bind*;version="[2.2,3.0)",
             org.apache.hadoop.conf;version="[2,3)",
             org.apache.hadoop.hbase.*;version="[1,2)"
         </camel.osgi.import.before.defaults>

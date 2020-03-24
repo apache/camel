@@ -44,6 +44,10 @@
             org.apache.camel.component.caffeine;${camel.osgi.import.strict.version},
             net.sf.saxon
         </camel.osgi.dynamic>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
     </properties>
 
     <dependencies>

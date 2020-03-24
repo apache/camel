@@ -31,8 +31,14 @@
     <name>Camel :: Core XML</name>
     <description>Camel Core XML support</description>
 
-    <dependencies>
+    <properties>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
+    </properties>
 
+    <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>

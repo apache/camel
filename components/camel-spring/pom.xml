@@ -32,6 +32,13 @@
     <name>Camel :: Spring</name>
     <description>Camel Spring with XML DSL</description>
 
+    <properties>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -374,7 +381,6 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/sources/camel-api</outputDirectory>
-                                    <includes>**/*.java</includes>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -384,7 +390,6 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/sources/camel-core-engine</outputDirectory>
-                                    <includes>**/*.java</includes>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -394,7 +399,6 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/sources/camel-core-xml</outputDirectory>
-                                    <includes>**/*.java</includes>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.camel</groupId>
@@ -404,7 +408,6 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/sources/camel-util</outputDirectory>
-                                    <includes>**/*.java</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -576,7 +579,6 @@
                 </executions>
             </plugin>
 
-            <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -595,6 +597,21 @@
                                 </artifact>
                             </artifacts>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- generate sources JAR by default as this is needed by camel-blueprint -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

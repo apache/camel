@@ -140,8 +140,11 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     schemaOutDir, buildContext).prepareOthers();
         }
 
+        // whether to sync pom
+        Object val = project.getContextValue("syncPomFile");
+
         // Update all component pom sync point
-        if (count > 0) {
+        if (count > 0 && (val == null || val.equals("true"))) {
             syncPomFile();
         }
     }

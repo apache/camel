@@ -753,14 +753,32 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * If set to 'latest', when connector sees new GTID, it will start
-         * consuming gtid channel from the server latest executed gtid position.
-         * If 'earliest' connector starts reading channel from first available
-         * (not purged) gtid position on the server.
+         * Specify how failures during processing of events (i.e. when
+         * encountering a corrupted event) should be handled, including:'fail'
+         * (the default) an exception indicating the problematic event and its
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its position will be logged and the event will
+         * be skipped;'ignore' the problematic event will be skipped.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: latest
+         * Default: fail
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder eventProcessingFailureHandlingMode(
+                java.lang.String eventProcessingFailureHandlingMode) {
+            doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
+         * If set to 'latest', when connector sees new GTID, it will start
+         * consuming gtid channel from the server latest executed gtid position.
+         * If 'earliest' (the default) connector starts reading channel from
+         * first available (not purged) gtid position on the server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: earliest
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder gtidNewChannelPosition(
@@ -882,7 +900,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * default) an exception indicating the problematic event and its binlog
          * position is raised, causing the connector to be stopped; 'warn' the
          * problematic event and its binlog position will be logged and the
-         * event will be skipped;'ignore' the problematic event will be skipped.
+         * event will be skipped;'skip' the problematic event will be skipped.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1236,6 +1254,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "enableTimeAdjuster": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEnableTimeAdjuster((boolean) value); return true;
             case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventDeserializationFailureHandlingMode((java.lang.String) value); return true;
+            case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "gtidNewChannelPosition": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidNewChannelPosition((java.lang.String) value); return true;
             case "gtidSourceExcludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceExcludes((java.lang.String) value); return true;
             case "gtidSourceFilterDmlEvents": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceFilterDmlEvents((boolean) value); return true;

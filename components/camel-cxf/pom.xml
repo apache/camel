@@ -53,6 +53,8 @@
             javax.xml.stream*;version="[0.0,2)",
             javax.xml.ws*;version="[0.0,3.0)",
             org.apache.camel.*;${camel.osgi.import.camel.version},
+            org.apache.camel.component.cxf.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
+            org.apache.camel.component.cxf.jaxrs.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
             org.springframework*;version="${spring-version-range}";resolution:=optional,
             org.apache.cxf.*;version="${cxf-version-range}",
             ${camel.osgi.import.defaults},
@@ -122,29 +124,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <!-- OSGi, Blueprint -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-blueprint</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint.core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!--  Test Dependencies -->
@@ -380,11 +359,6 @@
                                 <artifact>
                                     <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
                                     <classifier>spring</classifier>
-                                    <type>xsd</type>
-                                </artifact>
-                                <artifact>
-                                    <file>./src/main/resources/schema/blueprint/camel-cxf.xsd</file>
-                                    <classifier>blueprint</classifier>
                                     <type>xsd</type>
                                 </artifact>
                             </artifacts>

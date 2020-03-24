@@ -31,6 +31,10 @@
     <description>Camel Syslog support</description>
 
     <properties>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
     </properties>
 
     <dependencies>
