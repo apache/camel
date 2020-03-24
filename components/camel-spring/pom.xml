@@ -32,6 +32,13 @@
     <name>Camel :: Spring</name>
     <description>Camel Spring with XML DSL</description>
 
+    <properties>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
