@@ -16,43 +16,31 @@
  */
 package org.apache.camel.spring;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.example.MyProcessor;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class MainTest extends Assert {
-    private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
+public class MainIoCTest extends Assert {
 
     @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRouteBuilder(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("mock:results");
-            }
-        });
+        // add as class so we get IoC from its packages
+        main.addRouteBuilder(MyMainIoCRouteBuilder.class);
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        // in case we add more files in src/test/data
-        endpoint.expectedMinimumMessageCount(2);
-        endpoint.assertIsSatisfied();
-        List<Exchange> list = endpoint.getReceivedExchanges();
+        endpoint.expectedBodiesReceived("I am hello bean");
 
-        LOG.debug("Received: " + list);
+        camelContext.createProducerTemplate().sendBody("direct:start", "Hello World");
+
+        endpoint.assertIsSatisfied();
 
         main.stop();
     }
+
 }

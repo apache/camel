@@ -1,0 +1,4 @@
+[[SpringMain-SpringMain]]
+= Spring Main
+
+This module is used for running Spring standalone via a main class extended from `camel-main`.
