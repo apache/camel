@@ -14,29 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.issues;
+package org.apache.camel.spring;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spring.Main;
-import org.junit.Assert;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.TestSupport.assertIsInstanceOf;
-
-public class MisspelledRouteRefTest extends Assert {
+public class SpringMainStartFailedIssueTest extends CamelTestSupport {
 
     @Test
-    public void testApplicationContextFailed() throws Exception {
+    public void testStartupFailed() throws Exception {
+        Main main = new Main();
+
+        String[] args = new String[]{"-ac", "org/apache/camel/spring/SpringMainStartFailedIssueTest.xml"};
         try {
-            Main main = new Main(); 
-            main.setApplicationContextUri("org/apache/camel/spring/issues/MisspelledRouteRefTest.xml");
-            main.start();
+            main.run(args);
             fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            CamelException ce = assertIsInstanceOf(CamelException.class, e.getCause());
-            assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", ce.getMessage());
+        } catch (Exception e) {
+            assertIsInstanceOf(FailedToCreateRouteException.class, e);
         }
+
+        assertNull("Spring application context should NOT be created", main.getApplicationContext());
     }
 }
-

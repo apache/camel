@@ -14,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.main;
+package org.apache.camel.spring;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class MyMainIoCRouteBuilder extends RouteBuilder {
-
-    // use spring IoC annotations
-    @Autowired
-    private MyHelloBean bean;
+public class MyRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start").transform().constant(bean).to("mock:results");
+        from("direct:start").to("mock:result");
     }
+
 }

@@ -14,27 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.issues;
+package org.apache.camel.spring;
 
-import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.TestSupport;
-import org.apache.camel.spring.Main;
-import org.junit.Test;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SpringMainStartFailedIssueTest extends TestSupport {
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
-    @Test
-    public void testStartupFailed() throws Exception {
-        Main main = new Main();
+public class MyProcessor implements Processor {
+    private List<Exchange> exchanges = new CopyOnWriteArrayList<>();
+    private String name = "James";
 
-        String[] args = new String[]{"-ac", "org/apache/camel/spring/issues/SpringMainStartFailedIssueTest.xml"};
-        try {
-            main.run(args);
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(FailedToCreateRouteException.class, e);
-        }
+    public List<Exchange> getExchanges() {
+        return exchanges;
+    }
 
-        assertNull("Spring application context should NOT be created", main.getApplicationContext());
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void process(Exchange exchange) {
+        exchange.getIn().setHeader("name", getName());
+        exchanges.add(exchange);
     }
 }

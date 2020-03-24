@@ -14,34 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.main;
+package org.apache.camel.spring;
+
+import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.Main;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MainIoCTest extends Assert {
+public class MainTest extends Assert {
+    private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
     @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        // add as class so we get IoC from its packages
-        main.addRouteBuilder(MyMainIoCRouteBuilder.class);
+        main.addRouteBuilder(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("mock:results");
+            }
+        });
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        endpoint.expectedBodiesReceived("I am hello bean");
-
-        camelContext.createProducerTemplate().sendBody("direct:start", "Hello World");
-
+        // in case we add more files in src/test/data
+        endpoint.expectedMinimumMessageCount(2);
         endpoint.assertIsSatisfied();
+        List<Exchange> list = endpoint.getReceivedExchanges();
+
+        LOG.debug("Received: " + list);
 
         main.stop();
     }
-
 }
