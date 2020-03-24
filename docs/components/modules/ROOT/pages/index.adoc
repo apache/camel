@@ -688,7 +688,7 @@ Number of Components: 332 in 265 JAR artifacts (1 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -739,6 +739,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 | xref:shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 
 | xref:spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
+
+| xref:spring-main.adoc[Spring Main] (camel-spring-main) | 3.2 | Camel Spring Main support
 
 | xref:spring-security.adoc[Spring Security] (camel-spring-security) | 2.3 | Security using Spring Security
 
