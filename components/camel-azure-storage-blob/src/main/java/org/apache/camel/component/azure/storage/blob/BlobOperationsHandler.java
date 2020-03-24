@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.azure.core.http.HttpHeader;
+import com.azure.core.http.rest.Response;
+import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -29,9 +34,12 @@ public class BlobOperationsHandler {
         this.configuration = configuration;
     }
 
-    public List<BlobContainerItem> handleListBlobContainers(final BlobServiceClient client) {
-        return client.listBlobContainers().stream()
-                .collect(Collectors.toList());
+    public BlobExchangeResponse handleListBlobContainers(final BlobServiceClient client) {
+        final BlobExchangeResponse blobExchangeResponse = new BlobExchangeResponse();
+        blobExchangeResponse.setBody(client.listBlobContainers().stream()
+                .collect(Collectors.toList()));
+
+        return blobExchangeResponse;
     }
 
     public BlobExchangeResponse handleDownloadBlob(final BlobClient client) {
@@ -59,27 +67,37 @@ public class BlobOperationsHandler {
         return !ObjectHelper.isEmpty(configuration.getFileDir());
     }
 
-    public List<BlobItem> handleListBlobs(final BlobContainerClient client) {
+    public BlobExchangeResponse handleListBlobs(final BlobContainerClient client) {
+        final BlobExchangeResponse blobExchangeResponse = new BlobExchangeResponse();
+
         // we need to have a container to list blobs
         if (ObjectHelper.isEmpty(configuration.getContainerName())) {
             throw new IllegalArgumentException("No container name was specified while on ListBlobs operations.");
         }
-        return client.listBlobs().stream()
-                .collect(Collectors.toList());
+
+        blobExchangeResponse.setBody(client.listBlobs().stream()
+                .collect(Collectors.toList()));
+
+        return blobExchangeResponse;
+    }
+
+    public BlobExchangeResponse handleDeleteBlob(final BlobClient client) {
+        checkIfContainerOrBlobIsEmpty(configuration);
+
+        final BlobExchangeResponse blobExchangeResponse = new BlobExchangeResponse();
+
+        final Response<Void> azureResponse = client.deleteWithResponse(null, null, null, Context.NONE);
+
+        final Map<String, Object> headers = azureResponse.getHeaders().stream()
+                .collect(Collectors.toMap(HttpHeader::getName, HttpHeader::getValue));
+        blobExchangeResponse.setHeaders(headers);
+
+        return blobExchangeResponse;
     }
 
     private void checkIfContainerOrBlobIsEmpty(final BlobConfiguration configuration) {
         if (ObjectHelper.isEmpty(configuration.getContainerName()) || ObjectHelper.isEmpty(configuration.getBlobName())) {
             throw new IllegalArgumentException("No blob or container name was specified.");
         }
-    }
-
-    private static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getMessage();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
     }
 }
