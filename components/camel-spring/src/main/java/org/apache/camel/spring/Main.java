@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -47,7 +48,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
  * which by default gets loaded from classpath.
  */
-public class Main extends org.apache.camel.main.MainCommandLineSupport {
+public class Main extends MainCommandLineSupport {
 
     public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;
