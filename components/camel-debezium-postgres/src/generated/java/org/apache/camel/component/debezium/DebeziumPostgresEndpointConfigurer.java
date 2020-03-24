@@ -59,10 +59,14 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": target.getConfiguration().setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -103,6 +107,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "pluginName": target.getConfiguration().setPluginName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "publicationname":
         case "publicationName": target.getConfiguration().setPublicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "schemablacklist":
@@ -177,8 +183,10 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         answer.put("databaseTcpkeepalive", boolean.class);
         answer.put("databaseUser", java.lang.String.class);
         answer.put("decimalHandlingMode", java.lang.String.class);
+        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        answer.put("heartbeatActionQuery", java.lang.String.class);
         answer.put("heartbeatIntervalMs", int.class);
         answer.put("heartbeatTopicsPrefix", java.lang.String.class);
         answer.put("hstoreHandlingMode", java.lang.String.class);
@@ -199,6 +207,7 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pluginName", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
+        answer.put("provideTransactionMetadata", boolean.class);
         answer.put("publicationName", java.lang.String.class);
         answer.put("schemaBlacklist", java.lang.String.class);
         answer.put("schemaRefreshMode", java.lang.String.class);
@@ -270,10 +279,14 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return target.getConfiguration().getHeartbeatActionQuery();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
@@ -314,6 +327,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "pluginName": return target.getConfiguration().getPluginName();
         case "pollintervalms":
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
         case "publicationname":
         case "publicationName": return target.getConfiguration().getPublicationName();
         case "schemablacklist":

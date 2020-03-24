@@ -499,6 +499,36 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how failures during processing of events (i.e. when
+         * encountering a corrupted event) should be handled, including:'fail'
+         * (the default) an exception indicating the problematic event and its
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its position will be logged and the event will
+         * be skipped;'ignore' the problematic event will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: fail
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder eventProcessingFailureHandlingMode(
+                java.lang.String eventProcessingFailureHandlingMode) {
+            doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
+         * The query executed with every heartbeat. Defaults to an empty string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder heartbeatActionQuery(
+                java.lang.String heartbeatActionQuery) {
+            doSetProperty("heartbeatActionQuery", heartbeatActionQuery);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -529,8 +559,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * Specify how HSTORE columns should be represented in change events,
-         * including:'json' represents values as json string'map' (default)
-         * represents values using java.util.Map.
+         * including:'json' represents values as string-ified JSON
+         * (default)'map' represents values as a key/value map.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -647,6 +677,19 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder pollIntervalMs(
                 long pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder provideTransactionMetadata(
+                boolean provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
             return this;
         }
         /**
@@ -1068,6 +1111,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "databaseTcpkeepalive": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseTcpkeepalive((boolean) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseUser((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
+            case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
+            case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "hstoreHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHstoreHandlingMode((java.lang.String) value); return true;
@@ -1078,6 +1123,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "pluginName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPluginName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPollIntervalMs((long) value); return true;
+            case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumPostgresComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "publicationName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationName((java.lang.String) value); return true;
             case "schemaBlacklist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaBlacklist((java.lang.String) value); return true;
             case "schemaRefreshMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaRefreshMode((java.lang.String) value); return true;

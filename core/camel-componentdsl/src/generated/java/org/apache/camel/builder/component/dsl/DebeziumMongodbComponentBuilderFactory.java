@@ -422,7 +422,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of threads used to perform an intial sync of the
+         * Maximum number of threads used to perform an initial sync of the
          * collections in a replica set. Defaults to 1.
          * 
          * The option is a: <code>int</code> type.
@@ -571,6 +571,20 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * The comma-separated list of operations to skip during streaming,
+         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
+         * default, no operations will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbComponentBuilder skippedOperations(
+                java.lang.String skippedOperations) {
+            doSetProperty("skippedOperations", skippedOperations);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
          * The option is a: <code>long</code> type.
@@ -704,6 +718,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "mongodbSslInvalidHostnameAllowed": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbSslInvalidHostnameAllowed((boolean) value); return true;
             case "mongodbUser": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbUser((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setPollIntervalMs((long) value); return true;
+            case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotFetchSize((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMode((java.lang.String) value); return true;
