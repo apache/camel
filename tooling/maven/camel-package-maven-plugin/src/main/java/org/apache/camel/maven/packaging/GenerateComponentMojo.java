@@ -30,6 +30,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 public class GenerateComponentMojo extends AbstractGenerateMojo {
 
     protected void doExecute() throws MojoFailureException, MojoExecutionException {
+
+        // do not sync pom file for this goal as we are standalone
+        project.setContextValue("syncPomFile", "false");
+
         // jandex
         invoke(PackageJandexMojo.class);
         // generate-type-converter-loader
