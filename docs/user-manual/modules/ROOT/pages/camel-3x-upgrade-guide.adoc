@@ -813,7 +813,16 @@ from("timer:foo?period=5000")
 
 === Main in camel-spring
 
-The `org.apache.camel.spring.Main` class has been moved out of `camel-spring` JAR into its own JAR named `camel-spring-main`.
+The `org.apache.camel.spring.Main` class has been moved out of `camel-spring` JAR into its own
+JAR named `camel-spring-main`.
+
+=== Main in camel-test-blueprint
+
+The `org.apache.camel.test.blueprint.Main` class has been renamed to `org.apache.camel.test.blueprint.Main`
+and moved into its own `camel-test-blueprint` JAR.
+
+To use the camel-maven-plugin goal `camel:run` with OSGi plugin, you now need to add the following dependency
+to the classpath `org.apache.camel.karaf:camel-blueprint-main`.
 
 === API changes
 
