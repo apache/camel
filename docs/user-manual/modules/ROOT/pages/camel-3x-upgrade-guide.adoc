@@ -811,6 +811,9 @@ Should now be specified as numeric only:
 from("timer:foo?period=5000")
 ----
 
+=== Main in camel-spring
+
+The `org.apache.camel.spring.Main` class has been moved out of `camel-spring` JAR into its own JAR named `camel-spring-main`.
 
 === API changes
 
