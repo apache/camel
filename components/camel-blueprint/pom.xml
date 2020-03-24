@@ -375,7 +375,6 @@
                                             <classifier>sources</classifier>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>target/sources/camel-api</outputDirectory>
-                                            <includes>**/*.java</includes>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>org.apache.camel</groupId>
@@ -385,7 +384,6 @@
                                             <classifier>sources</classifier>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>target/sources/camel-core-engine</outputDirectory>
-                                            <includes>**/*.java</includes>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>org.apache.camel</groupId>
@@ -395,7 +393,6 @@
                                             <classifier>sources</classifier>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>target/sources/camel-core-xml</outputDirectory>
-                                            <includes>**/*.java</includes>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>org.apache.camel</groupId>
@@ -405,7 +402,15 @@
                                             <classifier>sources</classifier>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>target/sources/camel-util</outputDirectory>
-                                            <includes>**/*.java</includes>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.apache.camel</groupId>
+                                            <artifactId>camel-spring</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+                                            <classifier>sources</classifier>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>target/sources/camel-spring</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>

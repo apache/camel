@@ -17,7 +17,6 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.maven.project.MavenProject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -57,6 +57,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 public class EipDocumentationEnricherMojo extends AbstractMojo {
 
     /**
+     * The maven project.
+     */
+    @Parameter(property = "project", required = true, readonly = true)
+    protected MavenProject project;
+
+    /**
      * Path to camel EIP schema.
      */
     @Parameter(required = true)
@@ -71,37 +77,43 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Path to camel core-engine project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
+    @Parameter(defaultValue = "${project.build.directory}/sources/camel-core-engine")
     public File camelCoreDir;
 
     /**
      * Path to camel core xml project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-xml")
+    @Parameter(defaultValue = "${project.build.directory}/sources/camel-core-xml")
     public File camelCoreXmlDir;
 
     /**
      * Path to camel spring project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring")
+    @Parameter(defaultValue = "${project.build.directory}/sources/camel-spring")
     public File camelSpringDir;
+
+    /**
+     * Sub path to itself
+     */
+    @Parameter(defaultValue = "${project.build.directory}/classes")
+    public String targetDir;
 
     /**
      * Sub path from camel core directory to model directory with generated json files for components.
      */
-    @Parameter(defaultValue = "target/classes/org/apache/camel/model")
+    @Parameter(defaultValue = "org/apache/camel/model")
     public String pathToModelDir;
 
     /**
      * Sub path from camel core xml directory to model directory with generated json files for components.
      */
-    @Parameter(defaultValue = "target/classes/org/apache/camel/core/xml")
+    @Parameter(defaultValue = "org/apache/camel/core/xml")
     public String pathToCoreXmlModelDir;
 
     /**
      * Sub path from camel spring directory to model directory with generated json files for components.
      */
-    @Parameter(defaultValue = "target/classes/org/apache/camel/spring")
+    @Parameter(defaultValue = "org/apache/camel/spring")
     public String pathToSpringModelDir;
 
     /**
@@ -122,16 +134,21 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
             return;
         }
 
+        // is current dir blueprint
+        boolean blueprint = targetDir != null && targetDir.contains("camel-blueprint");
+
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreDir, "camelCoreDir");
         validateExists(camelCoreXmlDir, "camelCoreXmlDir");
-        validateExists(camelSpringDir, "camelSpringDir");
         validateIsDirectory(camelCoreDir, "camelCoreDir");
         validateIsDirectory(camelCoreXmlDir, "camelCoreXmlDir");
-        validateIsDirectory(camelSpringDir, "camelSpringDir");
+        if (blueprint) {
+            validateExists(camelSpringDir, "camelSpringDir");
+            validateIsDirectory(camelSpringDir, "camelSpringDir");
+        }
         try {
-            runPlugin();
+            runPlugin(blueprint);
         } catch (Exception e) {
             throw new MojoExecutionException("Error during plugin execution", e);
         }
@@ -140,7 +157,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         }
     }
 
-    private void runPlugin() throws Exception {
+    private void runPlugin(boolean blueprint) throws Exception {
         Document document = XmlHelper.buildNamespaceAwareDocument(inputCamelSchemaFile);
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         DomFinder domFinder = new DomFinder(document, xPath);
@@ -150,7 +167,11 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         Set<File> files = new HashSet<>();
         PackageHelper.findJsonFiles(new File(camelCoreDir, pathToModelDir), files);
         PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
-        PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);
+        if (blueprint) {
+            PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);
+        } else {
+            PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files);
+        }
         Map<String, File> jsonFiles = new HashMap<>();
         files.forEach(f -> jsonFiles.put(PackageHelper.asName(f.toPath()), f));
 
@@ -202,7 +223,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
                                                DocumentationEnricher documentationEnricher,
                                                File jsonFile,
                                                String type,
-                                               Set<String> injectedTypes) throws XPathExpressionException, IOException {
+                                               Set<String> injectedTypes) throws XPathExpressionException {
         if (injectedTypes.contains(type)) {
             return;
         }
@@ -241,7 +262,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return baseType.replace("tns:", "");
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, IOException, TransformerException {
+    private void saveToFile(Document document, File outputFile, Transformer transformer) throws IOException, TransformerException {
         try (FileOutputStream os = new FileOutputStream(outputFile)) {
             StreamResult result = new StreamResult(os);
             DOMSource source = new DOMSource(document);
