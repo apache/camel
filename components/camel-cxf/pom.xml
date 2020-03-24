@@ -53,6 +53,8 @@
             javax.xml.stream*;version="[0.0,2)",
             javax.xml.ws*;version="[0.0,3.0)",
             org.apache.camel.*;${camel.osgi.import.camel.version},
+            org.apache.camel.component.cxf.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
+            org.apache.camel.component.cxf.jaxrs.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
             org.springframework*;version="${spring-version-range}";resolution:=optional,
             org.apache.cxf.*;version="${cxf-version-range}",
             ${camel.osgi.import.defaults},
