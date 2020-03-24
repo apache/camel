@@ -126,29 +126,6 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
-        <!-- OSGi, Blueprint -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-blueprint</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!--  Test Dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -382,11 +359,6 @@
                                 <artifact>
                                     <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
                                     <classifier>spring</classifier>
-                                    <type>xsd</type>
-                                </artifact>
-                                <artifact>
-                                    <file>./src/main/resources/schema/blueprint/camel-cxf.xsd</file>
-                                    <classifier>blueprint</classifier>
                                     <type>xsd</type>
                                 </artifact>
                             </artifacts>
