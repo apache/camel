@@ -584,6 +584,36 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how failures during processing of events (i.e. when
+         * encountering a corrupted event) should be handled, including:'fail'
+         * (the default) an exception indicating the problematic event and its
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its position will be logged and the event will
+         * be skipped;'ignore' the problematic event will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: fail
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder eventProcessingFailureHandlingMode(
+                String eventProcessingFailureHandlingMode) {
+            doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
+         * The query executed with every heartbeat. Defaults to an empty string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder heartbeatActionQuery(
+                String heartbeatActionQuery) {
+            doSetProperty("heartbeatActionQuery", heartbeatActionQuery);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -629,8 +659,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how HSTORE columns should be represented in change events,
-         * including:'json' represents values as json string'map' (default)
-         * represents values using java.util.Map.
+         * including:'json' represents values as string-ified JSON
+         * (default)'map' represents values as a key/value map.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -802,6 +832,32 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder provideTransactionMetadata(
+                boolean provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder provideTransactionMetadata(
+                String provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
             return this;
         }
         /**

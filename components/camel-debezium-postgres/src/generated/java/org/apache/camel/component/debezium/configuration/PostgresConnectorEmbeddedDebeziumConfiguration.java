@@ -29,6 +29,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "disable")
     private String databaseSslmode = "disable";
     @UriParam(label = LABEL_NAME)
+    private String heartbeatActionQuery;
+    @UriParam(label = LABEL_NAME)
     private String databaseSslcert;
     @UriParam(label = LABEL_NAME, defaultValue = "500")
     private long pollIntervalMs = 500;
@@ -85,6 +87,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String hstoreHandlingMode = "json";
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME)
     private String tableWhitelist;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -106,6 +110,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databaseServerName;
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "5432")
     private int databasePort = 5432;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -230,6 +236,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseSslmode() {
         return databaseSslmode;
+    }
+
+    /**
+     * The query executed with every heartbeat. Defaults to an empty string.
+     */
+    public void setHeartbeatActionQuery(String heartbeatActionQuery) {
+        this.heartbeatActionQuery = heartbeatActionQuery;
+    }
+
+    public String getHeartbeatActionQuery() {
+        return heartbeatActionQuery;
     }
 
     /**
@@ -581,8 +598,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Specify how HSTORE columns should be represented in change events,
-     * including:'json' represents values as json string'map' (default)
-     * represents values using java.util.Map
+     * including:'json' represents values as string-ified JSON (default)'map'
+     * represents values as a key/value map
      */
     public void setHstoreHandlingMode(String hstoreHandlingMode) {
         this.hstoreHandlingMode = hstoreHandlingMode;
@@ -601,6 +618,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotDelayMs() {
         return snapshotDelayMs;
+    }
+
+    /**
+     * Enables transaction metadata extraction together with event counting
+     */
+    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
+        this.provideTransactionMetadata = provideTransactionMetadata;
+    }
+
+    public boolean isProvideTransactionMetadata() {
+        return provideTransactionMetadata;
     }
 
     /**
@@ -744,6 +772,23 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including:'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped;'ignore' the
+     * problematic event will be skipped.
+     */
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
+    }
+
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
+    }
+
+    /**
      * Port of the Postgres database server.
      */
     public void setDatabasePort(int databasePort) {
@@ -802,6 +847,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.max.retries", slotMaxRetries);
         addPropertyIfNotNull(configBuilder, "schema.refresh.mode", schemaRefreshMode);
         addPropertyIfNotNull(configBuilder, "database.sslmode", databaseSslmode);
+        addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "database.sslcert", databaseSslcert);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "database.initial.statements", databaseInitialStatements);
@@ -830,6 +876,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.name", slotName);
         addPropertyIfNotNull(configBuilder, "hstore.handling.mode", hstoreHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "table.whitelist", tableWhitelist);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "slot.retry.delay.ms", slotRetryDelayMs);
@@ -840,6 +887,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
+        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "include.unknown.datatypes", includeUnknownDatatypes);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);

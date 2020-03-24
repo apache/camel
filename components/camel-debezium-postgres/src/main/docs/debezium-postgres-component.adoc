@@ -40,7 +40,7 @@ debezium-postgres:name[?options]
 
 
 // component options: START
-The Debezium PostgresSQL Connector component supports 64 options, which are listed below.
+The Debezium PostgresSQL Connector component supports 67 options, which are listed below.
 
 
 
@@ -78,9 +78,11 @@ The Debezium PostgresSQL Connector component supports 64 options, which are list
 | *databaseTcpkeepalive* (postgres) | Enable or disable TCP keep-alive probe to avoid dropping TCP connection | true | boolean
 | *databaseUser* (postgres) | Name of the Postgres database user to be used when connecting to the database. |  | String
 | *decimalHandlingMode* (postgres) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
+| *eventProcessingFailureHandling Mode* (postgres) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
+| *heartbeatActionQuery* (postgres) | The query executed with every heartbeat. Defaults to an empty string. |  | String
 | *heartbeatIntervalMs* (postgres) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0 | int
 | *heartbeatTopicsPrefix* (postgres) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
-| *hstoreHandlingMode* (postgres) | Specify how HSTORE columns should be represented in change events, including:'json' represents values as json string'map' (default) represents values using java.util.Map | json | String
+| *hstoreHandlingMode* (postgres) | Specify how HSTORE columns should be represented in change events, including:'json' represents values as string-ified JSON (default)'map' represents values as a key/value map | json | String
 | *includeUnknownDatatypes* (postgres) | Specify whether the fields of data type not supported by Debezium should be processed:'false' (the default) omits the fields; 'true' converts the field into an implementation dependent binary representation. | false | boolean
 | *intervalHandlingMode* (postgres) | Specify how INTERVAL columns should be represented in change events, including:'string' represents values as an exact ISO formatted string'numeric' (default) represents values using the inexact conversion into microseconds | numeric | String
 | *maxBatchSize* (postgres) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
@@ -88,6 +90,7 @@ The Debezium PostgresSQL Connector component supports 64 options, which are list
 | *messageKeyColumns* (postgres) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
 | *pluginName* (postgres) | The name of the Postgres logical decoding plugin installed on the server. Supported values are 'decoderbufs' and 'wal2json'. Defaults to 'decoderbufs'. | decoderbufs | String
 | *pollIntervalMs* (postgres) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500 | long
+| *provideTransactionMetadata* (postgres) | Enables transaction metadata extraction together with event counting | false | boolean
 | *publicationName* (postgres) | The name of the Postgres 10 publication used for streaming changes from a plugin.Defaults to 'dbz_publication' | dbz_publication | String
 | *schemaBlacklist* (postgres) | The schemas for which events must not be captured |  | String
 | *schemaRefreshMode* (postgres) | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
@@ -134,7 +137,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (66 parameters):
+=== Query Parameters (69 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -173,9 +176,11 @@ with the following path and query parameters:
 | *databaseTcpkeepalive* (postgres) | Enable or disable TCP keep-alive probe to avoid dropping TCP connection | true | boolean
 | *databaseUser* (postgres) | Name of the Postgres database user to be used when connecting to the database. |  | String
 | *decimalHandlingMode* (postgres) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
+| *eventProcessingFailureHandling Mode* (postgres) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
+| *heartbeatActionQuery* (postgres) | The query executed with every heartbeat. Defaults to an empty string. |  | String
 | *heartbeatIntervalMs* (postgres) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0 | int
 | *heartbeatTopicsPrefix* (postgres) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
-| *hstoreHandlingMode* (postgres) | Specify how HSTORE columns should be represented in change events, including:'json' represents values as json string'map' (default) represents values using java.util.Map | json | String
+| *hstoreHandlingMode* (postgres) | Specify how HSTORE columns should be represented in change events, including:'json' represents values as string-ified JSON (default)'map' represents values as a key/value map | json | String
 | *includeUnknownDatatypes* (postgres) | Specify whether the fields of data type not supported by Debezium should be processed:'false' (the default) omits the fields; 'true' converts the field into an implementation dependent binary representation. | false | boolean
 | *intervalHandlingMode* (postgres) | Specify how INTERVAL columns should be represented in change events, including:'string' represents values as an exact ISO formatted string'numeric' (default) represents values using the inexact conversion into microseconds | numeric | String
 | *maxBatchSize* (postgres) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
@@ -183,6 +188,7 @@ with the following path and query parameters:
 | *messageKeyColumns* (postgres) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
 | *pluginName* (postgres) | The name of the Postgres logical decoding plugin installed on the server. Supported values are 'decoderbufs' and 'wal2json'. Defaults to 'decoderbufs'. | decoderbufs | String
 | *pollIntervalMs* (postgres) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500 | long
+| *provideTransactionMetadata* (postgres) | Enables transaction metadata extraction together with event counting | false | boolean
 | *publicationName* (postgres) | The name of the Postgres 10 publication used for streaming changes from a plugin.Defaults to 'dbz_publication' | dbz_publication | String
 | *schemaBlacklist* (postgres) | The schemas for which events must not be captured |  | String
 | *schemaRefreshMode* (postgres) | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String

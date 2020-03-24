@@ -55,6 +55,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -91,6 +93,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
         case "snapshotfetchsize":
@@ -139,6 +143,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         answer.put("databaseServerTimezone", java.lang.String.class);
         answer.put("databaseUser", java.lang.String.class);
         answer.put("decimalHandlingMode", java.lang.String.class);
+        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("heartbeatIntervalMs", int.class);
@@ -157,6 +162,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         answer.put("offsetStorageReplicationFactor", int.class);
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
+        answer.put("provideTransactionMetadata", boolean.class);
         answer.put("snapshotDelayMs", long.class);
         answer.put("snapshotFetchSize", int.class);
         answer.put("snapshotLockTimeoutMs", long.class);
@@ -212,6 +218,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -248,6 +256,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
         case "snapshotfetchsize":

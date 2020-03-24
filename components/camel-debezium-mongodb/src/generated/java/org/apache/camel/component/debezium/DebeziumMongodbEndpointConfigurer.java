@@ -95,6 +95,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "skippedoperations":
+        case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
         case "snapshotfetchsize":
@@ -151,6 +153,7 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         answer.put("offsetStorageReplicationFactor", int.class);
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
+        answer.put("skippedOperations", java.lang.String.class);
         answer.put("snapshotDelayMs", long.class);
         answer.put("snapshotFetchSize", int.class);
         answer.put("snapshotMode", java.lang.String.class);
@@ -240,6 +243,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
+        case "skippedoperations":
+        case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
         case "snapshotfetchsize":
