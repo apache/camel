@@ -63,6 +63,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -95,6 +97,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
         case "snapshotfetchsize":
@@ -143,6 +147,7 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         answer.put("databaseServerTimezone", java.lang.String.class);
         answer.put("databaseUser", java.lang.String.class);
         answer.put("decimalHandlingMode", java.lang.String.class);
+        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         answer.put("heartbeatIntervalMs", int.class);
         answer.put("heartbeatTopicsPrefix", java.lang.String.class);
         answer.put("internalKeyConverter", java.lang.String.class);
@@ -159,6 +164,7 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         answer.put("offsetStorageReplicationFactor", int.class);
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
+        answer.put("provideTransactionMetadata", boolean.class);
         answer.put("snapshotDelayMs", long.class);
         answer.put("snapshotFetchSize", int.class);
         answer.put("snapshotLockTimeoutMs", long.class);
@@ -214,6 +220,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
@@ -246,6 +254,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":

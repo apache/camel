@@ -91,6 +91,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "enableTimeAdjuster": target.getConfiguration().setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": target.getConfiguration().setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -209,6 +211,7 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         answer.put("decimalHandlingMode", java.lang.String.class);
         answer.put("enableTimeAdjuster", boolean.class);
         answer.put("eventDeserializationFailureHandlingMode", java.lang.String.class);
+        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("gtidNewChannelPosition", java.lang.String.class);
@@ -326,6 +329,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "enableTimeAdjuster": return target.getConfiguration().isEnableTimeAdjuster();
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return target.getConfiguration().getEventDeserializationFailureHandlingMode();
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

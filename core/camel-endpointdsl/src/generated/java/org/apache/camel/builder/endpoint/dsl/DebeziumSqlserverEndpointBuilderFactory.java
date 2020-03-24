@@ -572,6 +572,24 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how failures during processing of events (i.e. when
+         * encountering a corrupted event) should be handled, including:'fail'
+         * (the default) an exception indicating the problematic event and its
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its position will be logged and the event will
+         * be skipped;'ignore' the problematic event will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: fail
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder eventProcessingFailureHandlingMode(
+                String eventProcessingFailureHandlingMode) {
+            doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -715,6 +733,32 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder provideTransactionMetadata(
+                boolean provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * Enables transaction metadata extraction together with event counting.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder provideTransactionMetadata(
+                String provideTransactionMetadata) {
+            doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
             return this;
         }
         /**

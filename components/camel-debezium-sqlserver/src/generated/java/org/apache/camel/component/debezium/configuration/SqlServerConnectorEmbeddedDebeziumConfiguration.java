@@ -26,6 +26,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private int databaseHistoryKafkaRecoveryAttempts = 100;
     @UriParam(label = LABEL_NAME)
     private String tableBlacklist;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME)
     private String tableWhitelist;
     @UriParam(label = LABEL_NAME)
@@ -65,6 +67,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "1433")
     private int databasePort = 1433;
     @UriParam(label = LABEL_NAME)
@@ -169,6 +173,17 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getTableBlacklist() {
         return tableBlacklist;
+    }
+
+    /**
+     * Enables transaction metadata extraction together with event counting
+     */
+    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
+        this.provideTransactionMetadata = provideTransactionMetadata;
+    }
+
+    public boolean isProvideTransactionMetadata() {
+        return provideTransactionMetadata;
     }
 
     /**
@@ -431,6 +446,23 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including:'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped;'ignore' the
+     * problematic event will be skipped.
+     */
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
+    }
+
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
+    }
+
+    /**
      * Port of the SQL Server database server.
      */
     public void setDatabasePort(int databasePort) {
@@ -514,6 +546,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "database.history.kafka.recovery.attempts", databaseHistoryKafkaRecoveryAttempts);
         addPropertyIfNotNull(configBuilder, "table.blacklist", tableBlacklist);
+        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "table.whitelist", tableWhitelist);
         addPropertyIfNotNull(configBuilder, "database.server.timezone", databaseServerTimezone);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
@@ -533,6 +566,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
+        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);

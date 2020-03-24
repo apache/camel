@@ -99,6 +99,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "enableTimeAdjuster": getOrCreateConfiguration(target).setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration(target).setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidnewchannelposition":
         case "gtidNewChannelPosition": getOrCreateConfiguration(target).setGtidNewChannelPosition(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourceexcludes":
@@ -213,6 +215,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         answer.put("decimalHandlingMode", java.lang.String.class);
         answer.put("enableTimeAdjuster", boolean.class);
         answer.put("eventDeserializationFailureHandlingMode", java.lang.String.class);
+        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         answer.put("gtidNewChannelPosition", java.lang.String.class);
         answer.put("gtidSourceExcludes", java.lang.String.class);
         answer.put("gtidSourceFilterDmlEvents", boolean.class);
@@ -328,6 +331,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "enableTimeAdjuster": return getOrCreateConfiguration(target).isEnableTimeAdjuster();
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return getOrCreateConfiguration(target).getEventDeserializationFailureHandlingMode();
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "gtidnewchannelposition":
         case "gtidNewChannelPosition": return getOrCreateConfiguration(target).getGtidNewChannelPosition();
         case "gtidsourceexcludes":
