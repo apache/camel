@@ -541,7 +541,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of threads used to perform an intial sync of the
+         * Maximum number of threads used to perform an initial sync of the
          * collections in a replica set. Defaults to 1.
          * 
          * The option is a: <code>int</code> type.
@@ -555,7 +555,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of threads used to perform an intial sync of the
+         * Maximum number of threads used to perform an initial sync of the
          * collections in a replica set. Defaults to 1.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -783,6 +783,20 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * The comma-separated list of operations to skip during streaming,
+         * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
+         * default, no operations will be skipped.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder skippedOperations(
+                String skippedOperations) {
+            doSetProperty("skippedOperations", skippedOperations);
             return this;
         }
         /**

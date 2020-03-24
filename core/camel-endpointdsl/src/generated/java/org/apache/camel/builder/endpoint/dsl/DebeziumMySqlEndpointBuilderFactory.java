@@ -991,14 +991,32 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to 'latest', when connector sees new GTID, it will start
-         * consuming gtid channel from the server latest executed gtid position.
-         * If 'earliest' connector starts reading channel from first available
-         * (not purged) gtid position on the server.
+         * Specify how failures during processing of events (i.e. when
+         * encountering a corrupted event) should be handled, including:'fail'
+         * (the default) an exception indicating the problematic event and its
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its position will be logged and the event will
+         * be skipped;'ignore' the problematic event will be skipped.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: latest
+         * Default: fail
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder eventProcessingFailureHandlingMode(
+                String eventProcessingFailureHandlingMode) {
+            doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
+         * If set to 'latest', when connector sees new GTID, it will start
+         * consuming gtid channel from the server latest executed gtid position.
+         * If 'earliest' (the default) connector starts reading channel from
+         * first available (not purged) gtid position on the server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: earliest
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder gtidNewChannelPosition(
@@ -1187,7 +1205,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * default) an exception indicating the problematic event and its binlog
          * position is raised, causing the connector to be stopped; 'warn' the
          * problematic event and its binlog position will be logged and the
-         * event will be skipped;'ignore' the problematic event will be skipped.
+         * event will be skipped;'skip' the problematic event will be skipped.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

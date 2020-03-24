@@ -67,6 +67,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -107,6 +111,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "pluginName": getOrCreateConfiguration(target).setPluginName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "publicationname":
         case "publicationName": getOrCreateConfiguration(target).setPublicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "schemablacklist":
@@ -181,6 +187,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         answer.put("databaseTcpkeepalive", boolean.class);
         answer.put("databaseUser", java.lang.String.class);
         answer.put("decimalHandlingMode", java.lang.String.class);
+        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
+        answer.put("heartbeatActionQuery", java.lang.String.class);
         answer.put("heartbeatIntervalMs", int.class);
         answer.put("heartbeatTopicsPrefix", java.lang.String.class);
         answer.put("hstoreHandlingMode", java.lang.String.class);
@@ -201,6 +209,7 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         answer.put("offsetStorageTopic", java.lang.String.class);
         answer.put("pluginName", java.lang.String.class);
         answer.put("pollIntervalMs", long.class);
+        answer.put("provideTransactionMetadata", boolean.class);
         answer.put("publicationName", java.lang.String.class);
         answer.put("schemaBlacklist", java.lang.String.class);
         answer.put("schemaRefreshMode", java.lang.String.class);
@@ -272,6 +281,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
+        case "heartbeatactionquery":
+        case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
@@ -312,6 +325,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "pluginName": return getOrCreateConfiguration(target).getPluginName();
         case "pollintervalms":
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
         case "publicationname":
         case "publicationName": return getOrCreateConfiguration(target).getPublicationName();
         case "schemablacklist":

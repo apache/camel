@@ -58,8 +58,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String inconsistentSchemaHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean enableTimeAdjuster = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "latest")
-    private String gtidNewChannelPosition = "latest";
+    @UriParam(label = LABEL_NAME, defaultValue = "earliest")
+    private String gtidNewChannelPosition = "earliest";
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databasePassword;
@@ -114,6 +114,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databaseServerName;
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "3306")
     private int databasePort = 3306;
     @UriParam(label = LABEL_NAME)
@@ -437,7 +439,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
      * exception indicating the problematic event and its binlog position is
      * raised, causing the connector to be stopped; 'warn' the problematic event
      * and its binlog position will be logged and the event will be
-     * skipped;'ignore' the problematic event will be skipped.
+     * skipped;'skip' the problematic event will be skipped.
      */
     public void setInconsistentSchemaHandlingMode(
             String inconsistentSchemaHandlingMode) {
@@ -465,8 +467,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     /**
      * If set to 'latest', when connector sees new GTID, it will start consuming
      * gtid channel from the server latest executed gtid position. If 'earliest'
-     * connector starts reading channel from first available (not purged) gtid
-     * position on the server.
+     * (the default) connector starts reading channel from first available (not
+     * purged) gtid position on the server.
      */
     public void setGtidNewChannelPosition(String gtidNewChannelPosition) {
         this.gtidNewChannelPosition = gtidNewChannelPosition;
@@ -840,6 +842,23 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how failures during processing of events (i.e. when encountering
+     * a corrupted event) should be handled, including:'fail' (the default) an
+     * exception indicating the problematic event and its position is raised,
+     * causing the connector to be stopped; 'warn' the problematic event and its
+     * position will be logged and the event will be skipped;'ignore' the
+     * problematic event will be skipped.
+     */
+    public void setEventProcessingFailureHandlingMode(
+            String eventProcessingFailureHandlingMode) {
+        this.eventProcessingFailureHandlingMode = eventProcessingFailureHandlingMode;
+    }
+
+    public String getEventProcessingFailureHandlingMode() {
+        return eventProcessingFailureHandlingMode;
+    }
+
+    /**
      * Port of the MySQL database server.
      */
     public void setDatabasePort(int databasePort) {
@@ -1007,6 +1026,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
+        addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "database.ssl.truststore", databaseSslTruststore);
         addPropertyIfNotNull(configBuilder, "database.ssl.mode", databaseSslMode);
