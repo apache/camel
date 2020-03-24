@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.blueprint;
 
 import org.apache.camel.blueprint.BlueprintCamelContext;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.component.cxf.CxfComponent;
+import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.BusFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CxfBlueprintEndpoint extends CxfEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CxfBlueprintEndpoint.class);
 
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
@@ -52,14 +49,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     
     // Package private methods
     // -------------------------------------------------------------------------
-
-
-    @Override
-    protected void checkName(Object value, String name) {
-        if (ObjectHelper.isEmpty(value)) {
-            LOG.warn("The " + name + " of " + this.getEndpointUri() + " is empty, cxf will try to load the first one in wsdl for you.");
-        }
-    }
 
     public BlueprintContainer getBlueprintContainer() {
         return blueprintContainer;
