@@ -81,28 +81,6 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-        <!-- OSGi, Blueprint -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-blueprint</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
