@@ -77,9 +77,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
+        <!-- camel-spring-main has Main class for running Spring -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
+            <artifactId>camel-spring-main</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
