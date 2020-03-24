@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.blueprint;
+package org.apache.camel.component.cxf.jaxrs;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.apache.camel.Component;
+import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 
-public interface BlueprintSupport {
-    
-    void setBlueprintContainer(BlueprintContainer blueprintContainer);
-    
-    BlueprintContainer getBlueprintContainer();
-    
-    BundleContext getBundleContext();
-    
-    void setBundleContext(BundleContext bundleContext);
+/**
+ * SPI factory bean for creating {@link CxfRsEndpoint}.
+ */
+public interface CxfRsEndpointFactoryBean {
+
+    CxfRsEndpoint createEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) throws Exception;
 
 }
