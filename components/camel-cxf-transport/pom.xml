@@ -42,6 +42,7 @@
             !META-INF.cxf.camel,
             javax.servlet.*;version="${servlet-version-range}",
             org.apache.camel.*;${camel.osgi.import.camel.version},
+            org.apache.camel.component.cxf.transport.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
             org.springframework*;version="${spring-version-range}";resolution:=optional,
             org.apache.cxf.*;version="${cxf-version-range}",
             ${camel.osgi.import.defaults},
