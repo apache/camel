@@ -33,7 +33,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.maven.project.MavenProject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,6 +47,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Injects EIP documentation to camel schema.
@@ -55,12 +55,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class EipDocumentationEnricherMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     */
-    @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
 
     /**
      * Path to camel EIP schema.
@@ -121,6 +115,12 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
      */
     @Parameter
     public String deleteFilesAfterRun;
+
+    /**
+     * The maven project.
+     */
+    @Parameter(property = "project", required = true, readonly = true)
+    protected MavenProject project;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
