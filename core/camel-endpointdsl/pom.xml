@@ -35,6 +35,10 @@
 
     <properties>
         <camel-generate-endpoint-dsl>true</camel-generate-endpoint-dsl>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
     </properties>
 
     <dependencies>

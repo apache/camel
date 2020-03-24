@@ -37,6 +37,10 @@
     <properties>
         <camel.osgi.export.pkg>$${replace;{local-packages};;;\;},org.apache.camel.spi.annotations
         </camel.osgi.export.pkg>
+        <camel.osgi.import>
+            javax.xml.bind*;version="[2.2,3.0)",
+            *
+        </camel.osgi.import>
     </properties>
 
     <dependencies>
