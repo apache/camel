@@ -49,6 +49,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultUnitOfWork implements UnitOfWork, Service {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
+    final InflightRepository inflightRepository;
+    final boolean allowUseOriginalMessage;
+    final boolean useBreadcrumb;
 
     // TODO: This implementation seems to have transformed itself into a to broad concern
     //   where unit of work is doing a bit more work than the transactional aspect that ties
@@ -57,9 +60,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for future Camel work
     private final Deque<Route> routes = new ArrayDeque<>(8);
-    final InflightRepository inflightRepository;
-    final boolean allowUseOriginalMessage;
-    final boolean useBreadcrumb;
     private final Exchange exchange;
     private final ExtendedCamelContext context;
     private Logger log;
