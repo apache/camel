@@ -46,8 +46,11 @@ import org.apache.camel.component.azure.common.ExchangeUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.azure.blob.BlobHeadersConstants.OVERRIDE_BLOB_NAME;
 
 /**
  * A Producer which sends messages to the Azure Storage Blob Service
@@ -62,6 +65,9 @@ public class BlobServiceProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
+
+        overrideBlobName(exchange);
+
         BlobServiceOperations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
             operation = BlobServiceOperations.listBlobs;
@@ -125,10 +131,10 @@ public class BlobServiceProducer extends DefaultProducer {
         Object detailsObject = exchange.getIn().getHeader(BlobServiceConstants.BLOB_LISTING_DETAILS);
         if (detailsObject instanceof EnumSet) {
             @SuppressWarnings("unchecked")
-            EnumSet<BlobListingDetails> theDetails = (EnumSet<BlobListingDetails>)detailsObject;
+            EnumSet<BlobListingDetails> theDetails = (EnumSet<BlobListingDetails>) detailsObject;
             details = theDetails;
         } else if (detailsObject instanceof BlobListingDetails) {
-            details = EnumSet.of((BlobListingDetails)detailsObject);
+            details = EnumSet.of((BlobListingDetails) detailsObject);
         }
         Iterable<ListBlobItem> items =
                 client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(),
@@ -159,7 +165,7 @@ public class BlobServiceProducer extends DefaultProducer {
         if (object instanceof List) {
             blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
-            blobBlocks = Collections.singletonList((BlobBlock)object);
+            blobBlocks = Collections.singletonList((BlobBlock) object);
         }
         if (blobBlocks == null || blobBlocks.isEmpty()) {
             throw new IllegalArgumentException("Illegal storageBlocks payload");
@@ -191,7 +197,7 @@ public class BlobServiceProducer extends DefaultProducer {
         if (object instanceof List) {
             blockEntries = (List<BlockEntry>) object;
         } else if (object instanceof BlockEntry) {
-            blockEntries = Collections.singletonList((BlockEntry)object);
+            blockEntries = Collections.singletonList((BlockEntry) object);
         }
         if (blockEntries == null || blockEntries.isEmpty()) {
             throw new IllegalArgumentException("Illegal commit block list payload");
@@ -385,7 +391,7 @@ public class BlobServiceProducer extends DefaultProducer {
             blobDataLength = range.getEndOffset() - range.getStartOffset();
         }
         if (blobDataLength == null) {
-            blobDataLength = (long)is.available();
+            blobDataLength = (long) is.available();
         }
         try {
             client.uploadPages(is, blobOffset, blobDataLength,
@@ -473,7 +479,7 @@ public class BlobServiceProducer extends DefaultProducer {
         if (body instanceof InputStream) {
             is = (InputStream) body;
         } else if (body instanceof File) {
-            is = new FileInputStream((File)body);
+            is = new FileInputStream((File) body);
         } else if (body instanceof byte[]) {
             is = new ByteArrayInputStream((byte[]) body);
         } else {
@@ -492,6 +498,15 @@ public class BlobServiceProducer extends DefaultProducer {
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {
         if (getConfiguration().isCloseStreamAfterWrite()) {
             inputStream.close();
+        }
+    }
+
+
+    private void overrideBlobName(Exchange exchange) {
+        String blobName = exchange.getIn().getHeader(OVERRIDE_BLOB_NAME, String.class);
+
+        if (StringUtils.isNotEmpty(blobName)) {
+            getEndpoint().getConfiguration().setBlobName(blobName);
         }
     }
 

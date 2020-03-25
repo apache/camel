@@ -66,8 +66,7 @@ public final class AzureServiceCommonTestUtil {
 
     public static CloudBlockBlob createBlockBlobClient(String accountName, String accountKey) throws Exception {
         URI uri = new URI("https://camelazure.blob.core.windows.net/container1/blobBlock");
-        CloudBlockBlob client = new CloudBlockBlob(uri, newAccountKeyCredentials(accountName, accountKey));
-        return client;
+        return new CloudBlockBlob(uri, newAccountKeyCredentials(accountName, accountKey));
     }
 
     public static CloudBlockBlob createBlockBlobClient() throws Exception {
@@ -86,8 +85,7 @@ public final class AzureServiceCommonTestUtil {
 
     public static CloudQueue createQueueClient(String accountName, String accountKey) throws Exception {
         URI uri = new URI("https://camelazure.queue.core.windows.net/testqueue/");
-        CloudQueue client = new CloudQueue(uri, newAccountKeyCredentials(accountName, accountKey));
-        return client;
+        return new CloudQueue(uri, newAccountKeyCredentials(accountName, accountKey));
     }
 
     public static CloudQueue createQueueClient() throws Exception {
