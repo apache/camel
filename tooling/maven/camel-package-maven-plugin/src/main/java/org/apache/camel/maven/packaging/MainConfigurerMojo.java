@@ -120,7 +120,7 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
     }
 
     private void generateConfigurer(String name, List<Option> options) throws IOException {
-        String pn = name.substring(0, name.lastIndexOf('.'));
+        String pn = "org.apache.camel.main";
         String cn = name.substring(name.lastIndexOf('.') + 1) + "Configurer";
         String en = name;
         String pfqn = name;
@@ -138,12 +138,13 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void generateMetaInfConfigurer(String fqn) {
-        String name = fqn.substring(fqn.lastIndexOf('.') + 1);
+    private void generateMetaInfConfigurer(String name) {
+        String pn = "org.apache.camel.main";
+        String en = name.substring(name.lastIndexOf('.') + 1);
         try (Writer w = new StringWriter()) {
             w.append("# " + GENERATED_MSG + "\n");
-            w.append("class=").append(fqn).append("Configurer").append("\n");
-            updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
+            w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
+            updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + en, w.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
