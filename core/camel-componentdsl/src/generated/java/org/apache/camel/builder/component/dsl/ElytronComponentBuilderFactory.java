@@ -219,6 +219,21 @@ public interface ElytronComponentBuilderFactory {
             return this;
         }
         /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (component then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronComponentBuilder securityProvider(
+                org.apache.camel.component.undertow.spi.UndertowSecurityProvider securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -272,6 +287,7 @@ public interface ElytronComponentBuilderFactory {
             case "undertowHttpBinding": ((ElytronComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
             case "allowedRoles": ((ElytronComponent) component).setAllowedRoles((java.lang.String) value); return true;
             case "securityConfiguration": ((ElytronComponent) component).setSecurityConfiguration((java.lang.Object) value); return true;
+            case "securityProvider": ((ElytronComponent) component).setSecurityProvider((org.apache.camel.component.undertow.spi.UndertowSecurityProvider) value); return true;
             case "sslContextParameters": ((ElytronComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ElytronComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

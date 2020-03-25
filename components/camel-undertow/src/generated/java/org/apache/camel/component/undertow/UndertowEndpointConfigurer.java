@@ -59,6 +59,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "reuseAddresses": target.setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "securityconfiguration":
         case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, java.lang.Object.class, value)); return true;
+        case "securityprovider":
+        case "securityProvider": target.setSecurityProvider(property(camelContext, org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class, value)); return true;
         case "sendtimeout":
         case "sendTimeout": target.setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "sendtoall":
@@ -104,6 +106,7 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         answer.put("preserveHostHeader", boolean.class);
         answer.put("reuseAddresses", java.lang.Boolean.class);
         answer.put("securityConfiguration", java.lang.Object.class);
+        answer.put("securityProvider", org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class);
         answer.put("sendTimeout", java.lang.Integer.class);
         answer.put("sendToAll", java.lang.Boolean.class);
         answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
@@ -160,6 +163,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "reuseAddresses": return target.getReuseAddresses();
         case "securityconfiguration":
         case "securityConfiguration": return target.getSecurityConfiguration();
+        case "securityprovider":
+        case "securityProvider": return target.getSecurityProvider();
         case "sendtimeout":
         case "sendTimeout": return target.getSendTimeout();
         case "sendtoall":

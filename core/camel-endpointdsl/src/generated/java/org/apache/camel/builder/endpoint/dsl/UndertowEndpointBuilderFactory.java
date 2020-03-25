@@ -287,6 +287,36 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointConsumerBuilder securityProvider(
+                Object securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointConsumerBuilder securityProvider(
+                String securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -967,6 +997,36 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointProducerBuilder securityProvider(
+                Object securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointProducerBuilder securityProvider(
+                String securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -1289,6 +1349,34 @@ public interface UndertowEndpointBuilderFactory {
         default UndertowEndpointBuilder securityConfiguration(
                 String securityConfiguration) {
             doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointBuilder securityProvider(Object securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointBuilder securityProvider(String securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**

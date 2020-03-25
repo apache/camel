@@ -23,7 +23,9 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
+import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.StatusCodes;
@@ -38,7 +40,7 @@ import org.junit.BeforeClass;
  */
 public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
 
-    private static final String PRINCIPAL_PARAMETER = "principal_parameter";
+    static final String PRINCIPAL_PARAMETER = "principal_parameter";
 
     MockSecurityConfiguration securityConfiguration;
 
@@ -73,6 +75,14 @@ public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
             }
             return false;
         }
+
+        @Override
+        public HttpHandler wrapHttpHandler(HttpHandler httpHandler) throws Exception {
+            if (configuration.getWrapHttpHandler() != null) {
+                return configuration.getWrapHttpHandler().apply(httpHandler);
+            }
+            return httpHandler;
+        }
     }
 
     public static final class MockSecurityConfiguration {
@@ -80,6 +90,8 @@ public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
         private String roleToAssign;
 
         private boolean accept = true;
+
+        private Function<HttpHandler, HttpHandler> wrapHttpHandler;
 
         public String getRoleToAssign() {
             return roleToAssign;
@@ -95,6 +107,14 @@ public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
 
         public void setAccept(boolean accept) {
             this.accept = accept;
+        }
+
+        public Function<HttpHandler, HttpHandler> getWrapHttpHandler() {
+            return wrapHttpHandler;
+        }
+
+        public void setWrapHttpHandler(Function<HttpHandler, HttpHandler> wrapHttpHandler) {
+            this.wrapHttpHandler = wrapHttpHandler;
         }
     }
 

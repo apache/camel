@@ -17,36 +17,26 @@
 package org.apache.camel.component.undertow.spi;
 
 import io.undertow.util.StatusCodes;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Basic tests with securityProvider, tests whether securityProvider allows or denies access.
  */
-public class SecurityProviderTest extends AbstractSecurityProviderTest {
+public class SecurityProviderHttpHandlerTest extends AbstractSecurityProviderTest {
 
-
-    @Test
-    public void testSecuredAllowed() throws Exception {
-        securityConfiguration.setRoleToAssign("user");
-
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-
-        String out = template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
-
-        Assert.assertEquals("user", out);
-
-        assertMockEndpointsSatisfied();
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext =  super.createCamelContext();
+        securityConfiguration.setWrapHttpHandler(f -> null);
+        return camelContext;
     }
 
     @Test
-    public void testSecuredNotAllowed() throws Exception {
-        securityConfiguration.setRoleToAssign("admin");
-
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+    public void testNullHttpHandler() throws Exception {
+        securityConfiguration.setRoleToAssign("user");
 
         try {
             template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
@@ -55,8 +45,7 @@ public class SecurityProviderTest extends AbstractSecurityProviderTest {
 
         } catch (CamelExecutionException e) {
             HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(StatusCodes.FORBIDDEN, he.getStatusCode());
+            assertEquals(StatusCodes.METHOD_NOT_ALLOWED, he.getStatusCode());
         }
     }
-
 }
