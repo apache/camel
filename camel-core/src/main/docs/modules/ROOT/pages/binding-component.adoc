@@ -5,7 +5,7 @@
 
 In Camel terms a _binding_ is a way of wrapping an
 Endpoint in a contract; such as a
-Data Format, a link:content-enricher.html[Content
+Data Format, a xref:{eip-vc}:eips:content-enricher.adoc[Content
 Enricher] or validation step. Bindings are completely optional and you
 can choose to use them on any camel endpoint.
 

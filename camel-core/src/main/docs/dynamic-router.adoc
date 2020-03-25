@@ -60,7 +60,7 @@ from("direct:start")
     .dynamicRouter(method(DynamicRouterTest.class, "slip"));
 ----
 
-Which will leverage a <<bean-component,Bean>> to compute the slip
+Which will leverage a xref:bean-component.adoc[Bean] to compute the slip
 _on-the-fly_, which could be implemented as follows:
 
 [source,java]
@@ -139,7 +139,7 @@ Exchange are. Although there was a bug in the method
 call expression, see the warning below.
 
 WARNING:*Using beans to store state*
-Mind that in Camel 2.9.2 or older, when using a <<bean-component,Bean>> the
+Mind that in Camel 2.9.2 or older, when using a xref:bean-component.adoc[Bean] the
 state is not propagated, so you will have to use a
 Processor instead. This is fixed in Camel 2.9.3
 onwards.
@@ -198,12 +198,12 @@ In the above we can use the
 Parameter Binding Annotations
 to bind different parts of the Message to method
 parameters or use an Expression such as using
-<<xpath-language,XPath>> or <<xpath-language,XQuery>>.
+xref:languages:xpath-language.adoc[XPath] or xref:languages:xpath-language.adoc[XQuery].
 
 The method can be invoked in a number of ways as described in the
 Bean Integration such as
 
 * POJO Producing
 * Spring Remoting
-* <<bean-component,Bean>> component
+* xref:bean-component.adoc[Bean] component
 

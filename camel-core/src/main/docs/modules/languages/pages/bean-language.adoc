@@ -19,7 +19,7 @@ the message body and using any annotations on the bean methods.
 The Bean Binding rules are used to bind the
 Message Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
-<<xpath-language,XPath>> or <<xpath-language,XQuery>> from the message.
+xref:languages:xpath-language.adoc[XPath] or xref:languages:xpath-language.adoc[XQuery] from the message.
 
 == Bean Options
 
@@ -107,7 +107,7 @@ or other expressions.
 
 == Non registry beans
 
-The <<bean-language,Bean Language>> also supports invoking beans
+The xref:bean-language.adoc[Bean Language] also supports invoking beans
 that isn't registered in the Registry. This is
 usable for quickly to invoke a bean from Java DSL where you don't need
 to register the bean in the Registry such as the
