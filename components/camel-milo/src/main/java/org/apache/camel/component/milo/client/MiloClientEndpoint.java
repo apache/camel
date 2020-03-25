@@ -57,8 +57,8 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     /**
      * The sampling interval in milliseconds
      */
-    @UriParam
-    private Double samplingInterval;
+    @UriParam(defaultValue = "0.0")
+    private Double samplingInterval = 0.0;
 
     /**
      * The client configuration

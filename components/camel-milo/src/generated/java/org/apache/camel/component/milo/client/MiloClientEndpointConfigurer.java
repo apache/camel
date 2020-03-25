@@ -67,6 +67,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "requestedpublishinginterval":
+        case "requestedPublishingInterval": target.getConfiguration().setRequestedPublishingInterval(property(camelContext, java.lang.Double.class, value)); return true;
         case "samplinginterval":
         case "samplingInterval": target.setSamplingInterval(property(camelContext, java.lang.Double.class, value)); return true;
         case "sessionname":
@@ -106,6 +108,7 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         answer.put("overrideHost", boolean.class);
         answer.put("productUri", java.lang.String.class);
         answer.put("requestTimeout", java.lang.Long.class);
+        answer.put("requestedPublishingInterval", java.lang.Double.class);
         answer.put("samplingInterval", java.lang.Double.class);
         answer.put("sessionName", java.lang.String.class);
         answer.put("sessionTimeout", java.lang.Long.class);
@@ -165,6 +168,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "productUri": return target.getConfiguration().getProductUri();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
+        case "requestedpublishinginterval":
+        case "requestedPublishingInterval": return target.getConfiguration().getRequestedPublishingInterval();
         case "samplinginterval":
         case "samplingInterval": return target.getSamplingInterval();
         case "sessionname":

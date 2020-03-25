@@ -171,10 +171,6 @@ public class SubscriptionManager {
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     Double samplingInterval = s.getSamplingInterval();
-                    if (samplingInterval == null) {
-                        // work around a bug (NPE) in Eclipse Milo 0.1.3
-                        samplingInterval = 0.0;
-                    }
                     final MonitoringParameters parameters = new MonitoringParameters(entry.getKey(), samplingInterval, null, null, null);
                     items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
                 }
@@ -337,7 +333,6 @@ public class SubscriptionManager {
 
             });
         }
-
     }
 
     private final MiloClientConfiguration configuration;
@@ -478,7 +473,7 @@ public class SubscriptionManager {
         client.connect().get();
 
         try {
-            final UaSubscription manager = client.getSubscriptionManager().createSubscription(1_000.0).get();
+            final UaSubscription manager = client.getSubscriptionManager().createSubscription(this.configuration.getRequestedPublishingInterval()).get();
             client.getSubscriptionManager().addSubscriptionListener(new SubscriptionListenerImpl());
 
             return new Connected(client, manager);
