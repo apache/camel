@@ -2189,26 +2189,6 @@
     "artifactId": "camel-elsql",
     "version": "3.2.0-SNAPSHOT"
   },
-  "ElytronComponentBuilderFactory": {
-    "kind": "component",
-    "scheme": "elytron",
-    "extendsScheme": "undertow",
-    "syntax": "elytron:httpURI",
-    "title": "Elytron",
-    "description": "The elytron component is allows you to work with the Elytron Security Framework",
-    "label": "http",
-    "deprecated": false,
-    "deprecationNote": "http",
-    "async": true,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": true,
-    "javaType": "org.apache.camel.component.elytron.ElytronComponent",
-    "firstVersion": "3.1.0",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-elytron",
-    "version": "3.2.0-SNAPSHOT"
-  },
   "EtcdKeysComponentBuilderFactory": {
     "kind": "component",
     "scheme": "etcd-keys",

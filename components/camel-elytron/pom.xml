@@ -30,6 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Elytron</name>
+    <description>Elytron Security Provider for camel-undertow</description>
 
     <dependencies>
         <dependency>
@@ -156,6 +157,21 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>
