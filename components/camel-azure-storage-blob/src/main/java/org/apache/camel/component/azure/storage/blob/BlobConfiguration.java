@@ -15,7 +15,7 @@ public class BlobConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "producer", enums = "listContainers")
-    private BlobOperations operation;
+    private BlobOperationsDefinition operation;
     @UriParam(label = "common")
     private String blobName;
     @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
@@ -64,11 +64,11 @@ public class BlobConfiguration implements Cloneable {
      * dd
      * @return
      */
-    public BlobOperations getOperation() {
+    public BlobOperationsDefinition getOperation() {
         return operation;
     }
 
-    public void setOperation(BlobOperations operation) {
+    public void setOperation(BlobOperationsDefinition operation) {
         this.operation = operation;
     }
 

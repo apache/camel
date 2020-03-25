@@ -1,6 +1,6 @@
 package org.apache.camel.component.azure.storage.blob;
 
-public enum BlobOperations {
+public enum BlobOperationsDefinition {
     /**
      * Returns a list of containers in the storage account.
      */

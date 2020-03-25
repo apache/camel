@@ -31,7 +31,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperations.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, BlobOperationsDefinition.class, value)); return true;
         default: return false;
         }
     }

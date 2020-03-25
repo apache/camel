@@ -27,7 +27,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperations.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, BlobOperationsDefinition.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

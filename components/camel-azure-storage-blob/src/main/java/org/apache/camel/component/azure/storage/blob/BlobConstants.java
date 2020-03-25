@@ -36,6 +36,7 @@ public final class BlobConstants {
     public static final String ACCESS_TIER_CHANGE_TIME = HEADER_PREFIX + "accessTierChangeTime";
     public static final String METADATA = HEADER_PREFIX + "Metadata";
     public static final String COMMITTED_BLOCK_COUNT = HEADER_PREFIX + "CommittedBlockCount";
+    public static final String HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
 
     private BlobConstants() {
     }

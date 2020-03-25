@@ -4,22 +4,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 
 import com.azure.storage.blob.models.BlobContainerItem;
 import com.azure.storage.blob.models.BlobItem;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
+import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
+import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
+import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
+import org.apache.camel.component.azure.storage.blob.operations.BlobServiceOperations;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BlobOperationsHandlerTest {
@@ -42,25 +41,24 @@ class BlobOperationsHandlerTest {
     @Test
     public void testHandleListBlobContainers() {
         final BlobServiceClient client = BlobClientFactory.createBlobServiceClient(configuration);
-        final BlobOperationsHandler handler = new BlobOperationsHandler(configuration);
+        final BlobServiceOperations blobServiceOperations = new BlobServiceOperations(configuration, client);
 
-        final List<BlobContainerItem> blobContainerItems = (List<BlobContainerItem>) handler.handleListBlobContainers(client).getBody();
+        final List<BlobContainerItem> blobContainerItems = (List<BlobContainerItem>) blobServiceOperations.listBlobContainers().getBody();
 
         blobContainerItems.forEach(blobContainerItem -> System.out.println(blobContainerItem.getName()));
     }
 
 
-    @Test
+    /*@Test
     public void testHandleListBlobs() {
         configuration.setContainerName("test");
 
-        final BlobContainerClient client = BlobClientFactory.createBlobContainerClient(configuration);
-        final BlobOperationsHandler handler = new BlobOperationsHandler(configuration);
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, BlobClientFactory.createBlobContainerClient(configuration));
 
-        final List<BlobItem> blobContainerItems = (List<BlobItem>) handler.handleListBlobs(client).getBody();
+        final List<BlobItem> blobContainerItems = (List<BlobItem>) blobContainerOperations.listBlobs().getBody();
 
         blobContainerItems.forEach(blobItem -> System.out.println(blobItem.getName()));
-    }
+    }*/
 
     @Test
     public void testHandleGetBlob() throws IOException {
@@ -68,14 +66,14 @@ class BlobOperationsHandlerTest {
         configuration.setBlobName("0b4e673827795_1_V550.jpg");
         configuration.setFileDir("/Users/oalsafi/Work/Apache/camel/components/camel-azure-storage-blob");
 
-        final BlobClient client = BlobClientFactory.createBlobClient(configuration);
-        final BlobOperationsHandler handler = new BlobOperationsHandler(configuration);
+
+        final BlobOperations blobOperations = new BlobOperations(configuration, BlobClientFactory.createBlobClient(configuration));
 
         //final BlobDownloadResponse downloadResponse = handler.handleDownloadBlob(client);
 
         //System.out.println(downloadResponse.getDeserializedHeaders());
 
-        final BlobExchangeResponse response = handler.handleDownloadBlob(client);
+        final BlobOperationResponse response = blobOperations.downloadBlob();
 
         System.out.println(response.getHeaders());
     }
@@ -85,12 +83,10 @@ class BlobOperationsHandlerTest {
         configuration.setContainerName("test");
         configuration.setBlobName("Sharklets_Texture.png");
 
-        final BlobClient client = BlobClientFactory.createBlobClient(configuration);
+        final BlobOperations blobOperations = new BlobOperations(configuration, BlobClientFactory.createBlobClient(configuration));
 
-        final BlobOperationsHandler handler = new BlobOperationsHandler(configuration);
+        final BlobOperationResponse blobOperationResponse = blobOperations.deleteBlob();
 
-        final BlobExchangeResponse blobExchangeResponse = handler.handleDeleteBlob(client);
-
-        System.out.println(blobExchangeResponse.getHeaders());
+        System.out.println(blobOperationResponse.getHeaders());
     }
 }
