@@ -175,6 +175,21 @@ public interface UndertowComponentBuilderFactory {
             return this;
         }
         /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (component then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowComponentBuilder securityProvider(
+                org.apache.camel.component.undertow.spi.UndertowSecurityProvider securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -225,6 +240,7 @@ public interface UndertowComponentBuilderFactory {
             case "undertowHttpBinding": ((UndertowComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
             case "allowedRoles": ((UndertowComponent) component).setAllowedRoles((java.lang.String) value); return true;
             case "securityConfiguration": ((UndertowComponent) component).setSecurityConfiguration((java.lang.Object) value); return true;
+            case "securityProvider": ((UndertowComponent) component).setSecurityProvider((org.apache.camel.component.undertow.spi.UndertowSecurityProvider) value); return true;
             case "sslContextParameters": ((UndertowComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((UndertowComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

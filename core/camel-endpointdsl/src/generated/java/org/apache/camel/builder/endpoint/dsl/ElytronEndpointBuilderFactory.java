@@ -285,6 +285,36 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointConsumerBuilder securityProvider(
+                Object securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointConsumerBuilder securityProvider(
+                String securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -963,6 +993,36 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointProducerBuilder securityProvider(
+                Object securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointProducerBuilder securityProvider(
+                String securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -1284,6 +1344,34 @@ public interface ElytronEndpointBuilderFactory {
         default ElytronEndpointBuilder securityConfiguration(
                 String securityConfiguration) {
             doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointBuilder securityProvider(Object securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
+            return this;
+        }
+        /**
+         * Security provider allows plug in the provider, which will be used to
+         * secure requests. SPI approach could be used too (endpoint then finds
+         * security provider using SPI).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointBuilder securityProvider(String securityProvider) {
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**

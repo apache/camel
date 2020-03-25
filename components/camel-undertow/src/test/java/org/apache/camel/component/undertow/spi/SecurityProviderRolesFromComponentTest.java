@@ -17,17 +17,27 @@
 package org.apache.camel.component.undertow.spi;
 
 import io.undertow.util.StatusCodes;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Basic tests with securityProvider, tests whether securityProvider allows or denies access.
+ * Tests whether security provider parameters defined in component are used.
  */
-public class SecurityProviderTest extends AbstractSecurityProviderTest {
+public class SecurityProviderRolesFromComponentTest extends AbstractSecurityProviderTest {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext =  super.createCamelContext();
+        UndertowComponent component = camelContext.getComponent("undertow", UndertowComponent.class);
+        component.setAllowedRoles("user");
+        return camelContext;
+    }
 
     @Test
     public void testSecuredAllowed() throws Exception {
@@ -57,6 +67,18 @@ public class SecurityProviderTest extends AbstractSecurityProviderTest {
             HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(StatusCodes.FORBIDDEN, he.getStatusCode());
         }
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("undertow:http://localhost:{{port}}/foo")
+                        .to("mock:input")
+                        .transform(simple("${in.header." + PRINCIPAL_PARAMETER + "}"));
+            }
+        };
     }
 
 }
