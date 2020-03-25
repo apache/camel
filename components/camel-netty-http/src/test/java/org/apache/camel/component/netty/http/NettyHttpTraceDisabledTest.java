@@ -17,8 +17,10 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.TraceMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
 public class NettyHttpTraceDisabledTest extends BaseNettyTest {
@@ -28,24 +30,28 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
 
     @Test
     public void testTraceDisabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOff + "/myservice");
-        httpclient.executeMethod(trace);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
+
+        HttpResponse response = client.execute(trace);
 
         // TRACE shouldn't be allowed by default
-        assertTrue(trace.getStatusCode() == 405);
-        trace.releaseConnection();
+        assertEquals(405, response.getStatusLine().getStatusCode());
+
+        client.close();
     }
 
     @Test
     public void testTraceEnabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOn + "/myservice");
-        httpclient.executeMethod(trace);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOn + "/myservice");
 
-        // TRACE is now allowed
-        assertTrue(trace.getStatusCode() == 200);
-        trace.releaseConnection();
+        HttpResponse response = client.execute(trace);
+
+        // TRACE is allowed
+        assertEquals(200, response.getStatusLine().getStatusCode());
+
+        client.close();
     }
 
     @Override

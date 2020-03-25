@@ -18,10 +18,13 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class NettyHttpMethodRestrictTest extends BaseNettyTest {
@@ -32,27 +35,31 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
 
     @Test
     public void testProperHttpMethod() throws Exception {
-        HttpClient httpClient = new HttpClient();
-        PostMethod httpPost = new PostMethod(getUrl());
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        StringRequestEntity reqEntity = new StringRequestEntity("This is a test", null, null);
-        httpPost.setRequestEntity(reqEntity);
+        HttpPost httpPost = new HttpPost(getUrl());
+        httpPost.setEntity(new StringEntity("This is a test"));
 
-        int status = httpClient.executeMethod(httpPost);
+        HttpResponse response = client.execute(httpPost);
 
-        assertEquals("Get a wrong response status", 200, status);
+        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
 
-        String result = httpPost.getResponseBodyAsString();
-        assertEquals("Get a wrong result", "This is a test response", result);
+        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertEquals("Get a wrong result", "This is a test response", responseString);
+
+        client.close();
     }
 
     @Test
     public void testImproperHttpMethod() throws Exception {
-        HttpClient httpClient = new HttpClient();
-        GetMethod httpGet = new GetMethod(getUrl());
-        int status = httpClient.executeMethod(httpGet);
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        assertEquals("Get a wrong response status", 405, status);
+        HttpGet httpGet = new HttpGet(getUrl());
+        HttpResponse response = client.execute(httpGet);
+
+        assertEquals("Get a wrong response status", 405, response.getStatusLine().getStatusCode());
+
+        client.close();
     }
 
     @Override
