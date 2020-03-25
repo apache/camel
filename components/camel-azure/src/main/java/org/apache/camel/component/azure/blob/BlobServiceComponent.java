@@ -63,22 +63,16 @@ public class BlobServiceComponent extends DefaultComponent {
         configuration.setAccountName(parts[0]);
         configuration.setContainerName(parts[1]);
 
-        String blobName = (String) parameters.get(OVERRIDE_BLOB_NAME);
-
-        if (StringUtils.isEmpty(blobName)) {
-            if (parts.length > 2) {
-                // Blob names can contain forward slashes
-                StringBuilder sb = new StringBuilder();
-                for (int i = 2; i < parts.length; i++) {
-                    sb.append(parts[i]);
-                    if (i + 1 < parts.length) {
-                        sb.append('/');
-                    }
+        if (parts.length > 2) {
+            // Blob names can contain forward slashes
+            StringBuilder sb = new StringBuilder();
+            for (int i = 2; i < parts.length; i++) {
+                sb.append(parts[i]);
+                if (i + 1 < parts.length) {
+                    sb.append('/');
                 }
-                configuration.setBlobName(sb.toString());
             }
-        } else {
-            configuration.setBlobName(blobName);
+            configuration.setBlobName(sb.toString());
         }
 
         BlobServiceEndpoint endpoint = new BlobServiceEndpoint(uri, this, configuration);
