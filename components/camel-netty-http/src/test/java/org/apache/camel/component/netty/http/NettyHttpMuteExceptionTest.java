@@ -17,24 +17,30 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class NettyHttpMuteExceptionTest extends BaseNettyTest {
 
     @Test
     public void testMuteException() throws Exception {
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        HttpClient client = new HttpClient();
-        GetMethod get = new GetMethod("http://localhost:" + getPort() + "/foo");
-        get.setRequestHeader("Accept", "application/text");
-        client.executeMethod(get);
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
+        get.addHeader("Accept", "application/text");
 
-        String body = get.getResponseBodyAsString();
+        HttpResponse response = client.execute(get);
+
+        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
         assertEquals("Exception", body);
-        assertEquals(500, get.getStatusCode());
+        assertEquals(500, response.getStatusLine().getStatusCode());
+
+        client.close();
     }
 
     @Override
