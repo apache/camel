@@ -25,8 +25,6 @@ import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.core.Base64;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -195,13 +193,10 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
             (BlobServiceEndpoint)context.getEndpoint("azure-blob://camelazure/component1/blob/sub?credentials=#creds");
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
     }
-    
+
     private static void createConsumer(Endpoint endpoint) throws Exception {
-        endpoint.createConsumer(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                // noop
-            }
+        endpoint.createConsumer(exchange -> {
+            // noop
         });
     }
     

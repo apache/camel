@@ -27,11 +27,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.commons.lang3.StringUtils;
+
+import static org.apache.camel.component.azure.blob.BlobHeadersConstants.OVERRIDE_BLOB_NAME;
 
 @Component("azure-blob")
 public class BlobServiceComponent extends DefaultComponent {
 
-    public static final String MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE =
+    public static final String MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE =
             "One of azureBlobClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
 
     @Metadata(label = "advanced")
@@ -60,16 +63,22 @@ public class BlobServiceComponent extends DefaultComponent {
         configuration.setAccountName(parts[0]);
         configuration.setContainerName(parts[1]);
 
-        if (parts.length > 2) {
-            // Blob names can contain forward slashes
-            StringBuilder sb = new StringBuilder();
-            for (int i = 2; i < parts.length; i++) {
-                sb.append(parts[i]);
-                if (i + 1 < parts.length) {
-                    sb.append('/');
+        String blobName = (String) parameters.get(OVERRIDE_BLOB_NAME);
+
+        if (StringUtils.isEmpty(blobName)) {
+            if (parts.length > 2) {
+                // Blob names can contain forward slashes
+                StringBuilder sb = new StringBuilder();
+                for (int i = 2; i < parts.length; i++) {
+                    sb.append(parts[i]);
+                    if (i + 1 < parts.length) {
+                        sb.append('/');
+                    }
                 }
+                configuration.setBlobName(sb.toString());
             }
-            configuration.setBlobName(sb.toString());
+        } else {
+            configuration.setBlobName(blobName);
         }
 
         BlobServiceEndpoint endpoint = new BlobServiceEndpoint(uri, this, configuration);
@@ -99,7 +108,7 @@ public class BlobServiceComponent extends DefaultComponent {
         StorageCredentials creds = client == null ? cfg.getAccountCredentials()
                 : client.getServiceClient().getCredentials();
         if ((creds == null || creds instanceof StorageCredentialsAnonymous) && !cfg.isPublicForRead()) {
-            throw new IllegalArgumentException(MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
+            throw new IllegalArgumentException(MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
         }
     }
 
