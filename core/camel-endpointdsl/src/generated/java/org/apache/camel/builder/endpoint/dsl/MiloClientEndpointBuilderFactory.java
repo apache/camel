@@ -132,6 +132,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.0
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(
@@ -144,6 +145,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default: 0.0
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(
@@ -410,6 +412,32 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointConsumerBuilder productUri(String productUri) {
             doSetProperty("productUri", productUri);
+            return this;
+        }
+        /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientEndpointConsumerBuilder requestedPublishingInterval(
+                Double requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
+            return this;
+        }
+        /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientEndpointConsumerBuilder requestedPublishingInterval(
+                String requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
             return this;
         }
         /**
@@ -695,6 +723,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.0
          * Group: common
          */
         default MiloClientEndpointProducerBuilder samplingInterval(
@@ -707,6 +736,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default: 0.0
          * Group: common
          */
         default MiloClientEndpointProducerBuilder samplingInterval(
@@ -980,6 +1010,32 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientEndpointProducerBuilder requestedPublishingInterval(
+                Double requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
+            return this;
+        }
+        /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientEndpointProducerBuilder requestedPublishingInterval(
+                String requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
+            return this;
+        }
+        /**
          * Request timeout in milliseconds.
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -1206,6 +1262,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.0
          * Group: common
          */
         default MiloClientEndpointBuilder samplingInterval(
@@ -1218,6 +1275,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default: 0.0
          * Group: common
          */
         default MiloClientEndpointBuilder samplingInterval(
@@ -1439,6 +1497,32 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointBuilder productUri(String productUri) {
             doSetProperty("productUri", productUri);
+            return this;
+        }
+        /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientEndpointBuilder requestedPublishingInterval(
+                Double requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
+            return this;
+        }
+        /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientEndpointBuilder requestedPublishingInterval(
+                String requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
             return this;
         }
         /**
