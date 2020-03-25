@@ -18,7 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -35,31 +35,27 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
 
     @Test
     public void testProperHttpMethod() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(getUrl());
+            httpPost.setEntity(new StringEntity("This is a test"));
 
-        HttpPost httpPost = new HttpPost(getUrl());
-        httpPost.setEntity(new StringEntity("This is a test"));
+            try (CloseableHttpResponse response = client.execute(httpPost)) {
+                assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
 
-        HttpResponse response = client.execute(httpPost);
-
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
-
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertEquals("Get a wrong result", "This is a test response", responseString);
-
-        client.close();
+                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+                assertEquals("Get a wrong result", "This is a test response", responseString);
+            }
+        }
     }
 
     @Test
     public void testImproperHttpMethod() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-
-        HttpGet httpGet = new HttpGet(getUrl());
-        HttpResponse response = client.execute(httpGet);
-
-        assertEquals("Get a wrong response status", 405, response.getStatusLine().getStatusCode());
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet(getUrl());
+            try (CloseableHttpResponse response = client.execute(httpGet)) {
+                assertEquals("Get a wrong response status", 405, response.getStatusLine().getStatusCode());
+            }
+        }
     }
 
     @Override

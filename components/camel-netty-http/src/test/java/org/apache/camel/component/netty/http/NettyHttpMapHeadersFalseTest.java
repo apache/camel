@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -28,19 +28,20 @@ public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
 
     @Test
     public void testHttpHeaderCase() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost method = new HttpPost("http://localhost:" + getPort() + "/myapp/mytest");
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost method = new HttpPost("http://localhost:" + getPort() + "/myapp/mytest");
 
-        method.addHeader("clientHeader", "fooBAR");
-        method.addHeader("OTHER", "123");
-        method.addHeader("beer", "Carlsberg");
+            method.addHeader("clientHeader", "fooBAR");
+            method.addHeader("OTHER", "123");
+            method.addHeader("beer", "Carlsberg");
 
-        HttpResponse response = client.execute(method);
-
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertEquals("Bye World", responseString);
-        assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
-        assertEquals("456DEf", response.getFirstHeader("otherCaseHeader").getValue());
+            try (CloseableHttpResponse response = client.execute(method)) {
+                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+                assertEquals("Bye World", responseString);
+                assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
+                assertEquals("456DEf", response.getFirstHeader("otherCaseHeader").getValue());
+            }
+        }
     }
 
     @Override
