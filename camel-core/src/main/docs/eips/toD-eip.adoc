@@ -67,7 +67,7 @@ then the header foo is appended. So for example if the header foo has
 value order, then the endpoint is computed as "mock:order".
 
 You can also use other languages than <<simple-language,Simple>> such
-as <<xpath-language,XPath>> - this requires to prefix with language: as
+as xref:languages:xpath-language.adoc[XPath] - this requires to prefix with language: as
 shown below (simple language is the default language). If you do not
 specify language: then the endpoint is a component name. And in some
 cases there is both a component and language with the same name such as
@@ -89,7 +89,7 @@ from("direct:start")
   .toD("language:xpath:/order/@uri");
 ----
 
-You can also concat multiple <<language-component,Language>>(s) together
+You can also concat multiple xref:language-component[Language](s) together
 using the plus sign `+` such as shown below:
 
 [source,xml]

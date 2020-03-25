@@ -7,7 +7,7 @@ REST style with verbs such as get, post, delete etc.
 
 === How it works
 
-The Rest DSL is a facade that builds <<rest-component,Rest>> endpoints as
+The Rest DSL is a facade that builds xref:rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
 as <<restlet-component,Restlet>>, <<restlet-component,Spark-rest>>, and
@@ -202,7 +202,7 @@ over <<jms-component,JMS>> where the queue name is dynamic defined
 
 See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
-the <<simple-language,Simple>> language, but it has more power than so.
+the xref:simple-language[Simple] language, but it has more power than so.
 
 === Embedding Camel routes
 
