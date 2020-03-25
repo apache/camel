@@ -28,6 +28,7 @@ import org.apache.camel.component.zookeepermaster.ZKContainer;
 import org.apache.camel.component.zookeepermaster.group.internal.ChildData;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -38,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.SelinuxContext;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
+
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -169,7 +170,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            FileUtils.deleteDirectory(dataDir.toFile());
+            CamelTestSupport.deleteDirectory(dataDir.toFile());
         }
 
     }
@@ -217,7 +218,7 @@ public class GroupTest {
             }
 
             try {
-                FileUtils.deleteDirectory(dataDir.toFile());
+                CamelTestSupport.deleteDirectory(dataDir.toFile());
             } catch (Throwable e) {
                 // ignore
             }
@@ -263,7 +264,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            FileUtils.deleteDirectory(dataDir.toFile());
+            CamelTestSupport.deleteDirectory(dataDir.toFile());
         }
     }
 
@@ -319,7 +320,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            FileUtils.deleteDirectory(dataDir.toFile());
+            CamelTestSupport.deleteDirectory(dataDir.toFile());
         }
     }
 
@@ -368,7 +369,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            FileUtils.deleteDirectory(dataDir.toFile());
+            CamelTestSupport.deleteDirectory(dataDir.toFile());
         }
     }
 
@@ -433,7 +434,7 @@ public class GroupTest {
                 container.stop();
             }
 
-            FileUtils.deleteDirectory(dataDir.toFile());
+            CamelTestSupport.deleteDirectory(dataDir.toFile());
         }
     }
 
