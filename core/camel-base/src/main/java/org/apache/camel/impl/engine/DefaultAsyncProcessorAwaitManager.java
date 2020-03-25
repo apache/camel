@@ -220,11 +220,6 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
     protected void doStop() throws Exception {
         Collection<AwaitThread> threads = browse();
         int count = threads.size();

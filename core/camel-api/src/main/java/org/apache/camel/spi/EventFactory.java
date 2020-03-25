@@ -30,6 +30,22 @@ import org.apache.camel.Route;
 public interface EventFactory {
 
     /**
+     * Creates an {@link CamelEvent} for Camel is initializing.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    CamelEvent createCamelContextInitializingEvent(CamelContext context);
+
+    /**
+     * Creates an {@link CamelEvent} for Camel has been initialized successfully.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    CamelEvent createCamelContextInitializedEvent(CamelContext context);
+
+    /**
      * Creates an {@link CamelEvent} for Camel is starting.
      *
      * @param context camel context

@@ -595,7 +595,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         // ensure camel is initialized
-        camelContext.init();
+        camelContext.build();
 
         configurePropertiesService(camelContext);
 

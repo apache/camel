@@ -283,7 +283,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getContext");
         ctx.addProperty("bundleStateService", createRef(context, ".camelBlueprint.bundleStateService"));
-        ctx.setInitMethod("init");
+        ctx.setInitMethod("build");
         ctx.setDestroyMethod("destroy");
 
         // Register factory beans

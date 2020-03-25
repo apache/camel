@@ -77,7 +77,6 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
         }
 
         MBeanServer server = getMBeanServer();
-        Set<ObjectName> onames = server.queryNames(new ObjectName("org.apache.camel:*"), null);
-        assertEquals(Collections.emptySet(), onames);
+        assertNull(server);
     }
 }

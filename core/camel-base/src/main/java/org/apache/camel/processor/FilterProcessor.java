@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -36,14 +37,22 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
 
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
 
+    private final CamelContext context;
     private String id;
     private String routeId;
     private final Predicate predicate;
     private transient long filtered;
 
-    public FilterProcessor(Predicate predicate, Processor processor) {
+    public FilterProcessor(CamelContext context, Predicate predicate, Processor processor) {
         super(processor);
+        this.context = context;
         this.predicate = predicate;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        predicate.init(context);
     }
 
     @Override

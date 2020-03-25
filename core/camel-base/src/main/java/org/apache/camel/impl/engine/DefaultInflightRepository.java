@@ -198,10 +198,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
     protected void doStop() throws Exception {
         int count = size();
         if (count > 0) {

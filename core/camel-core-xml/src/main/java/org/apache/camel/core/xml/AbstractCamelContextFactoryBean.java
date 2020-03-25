@@ -410,8 +410,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // init stream caching strategy
         initStreamCachingStrategy();
-
-        getContext().init();
     }
     //CHECKSTYLE:ON
 

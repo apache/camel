@@ -136,9 +136,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RuntimeImmutableCamelContext implements ExtendedCamelContext, CatalogCamelContext {
+public class LightweightRuntimeCamelContext implements ExtendedCamelContext, CatalogCamelContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RuntimeImmutableCamelContext.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LightweightRuntimeCamelContext.class);
 
     private final CamelContext reference;
     private final Registry registry;
@@ -176,10 +176,11 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     private final List<Route> routes;
     private final boolean messageHistory;
     private final boolean allowUseOriginalMessage;
+    private final boolean logExhaustedMessageBody;
     private final String version;
     private Date startDate;
 
-    RuntimeImmutableCamelContext(CamelContext reference, CamelContext context) {
+    LightweightRuntimeCamelContext(CamelContext reference, CamelContext context) {
         this.reference = reference;
         registry = context.getRegistry();
         typeConverter = new CoreTypeConverterRegistry(context.getTypeConverterRegistry());
@@ -218,6 +219,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
         useMDCLogging = context.isUseMDCLogging();
         messageHistory = context.isMessageHistory();
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
+        logExhaustedMessageBody = context.isLogExhaustedMessageBody();
         version = context.getVersion();
     }
 
@@ -265,6 +267,11 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     }
 
     @Override
+    public void build() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void init() {
         throw new UnsupportedOperationException();
     }
@@ -285,6 +292,11 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
         LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
         for (Route route : routes) {
             route.getConsumer().start();
+        }
+        if (LOG.isInfoEnabled()) {
+            long l = System.currentTimeMillis() - startDate.getTime();
+            LOG.info("Apache Camel {} (CamelContext: {}) {} routes started in {}",
+                    getVersion(), getName(), routes.size(), TimeUtils.printDuration(l));
         }
     }
 
@@ -350,7 +362,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
 
     @Override
     public Boolean isLogExhaustedMessageBody() {
-        throw new UnsupportedOperationException();
+        return logExhaustedMessageBody;
     }
 
     @Override
@@ -1262,22 +1274,18 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     }
 
     @Override
-    public boolean isAllowAddingNewRoutes() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isClearModelReferences() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void addRoute(Route route) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void removeRoute(Route route) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        // TODO: need to revisit this in order to support dynamic endpoints uri
         throw new UnsupportedOperationException();
     }
 
@@ -1513,16 +1521,6 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
 
     @Override
     public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setClearModelReferences(boolean clearModelReferences) {
         throw new UnsupportedOperationException();
     }
 

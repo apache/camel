@@ -15,8 +15,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowaddingnewroutes":
-        case "AllowAddingNewRoutes": target.setAllowAddingNewRoutes(property(camelContext, boolean.class, value)); return true;
         case "allowuseoriginalmessage":
         case "AllowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "applicationcontextclassloader":
@@ -33,8 +31,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "classresolver":
         case "ClassResolver": target.setClassResolver(property(camelContext, org.apache.camel.spi.ClassResolver.class, value)); return true;
-        case "clearmodelreferences":
-        case "ClearModelReferences": target.setClearModelReferences(property(camelContext, boolean.class, value)); return true;
         case "componentnameresolver":
         case "ComponentNameResolver": target.setComponentNameResolver(property(camelContext, org.apache.camel.spi.ComponentNameResolver.class, value)); return true;
         case "componentresolver":

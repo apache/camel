@@ -100,7 +100,7 @@ public abstract class TestSupport extends Assert {
      * Returns a predicate and value builder for the inbound body on an exchange
      */
     public static ValueBuilder body() {
-        return Builder.body();
+        return init(Builder.body());
     }
 
     /**
@@ -569,5 +569,13 @@ public abstract class TestSupport extends Assert {
                 System.setProperty(sysPropertyName, sysPropertyValue);
             }
         }
+    }
+
+    private static ValueBuilder init(ValueBuilder builder) {
+        Expression exp = builder.getExpression();
+        if (exp != null) {
+            exp.init(new DefaultCamelContext());
+        }
+        return builder;
     }
 }

@@ -513,10 +513,15 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
         if (propertiesSource instanceof CamelContextAware) {
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
-        sources.add(propertiesSource);
-        if (!this.isNew()) {
-            // if we have already initialized or started then we should also init the source
-            ServiceHelper.initService(propertiesSource);
+        synchronized (lock) {
+            sources.add(propertiesSource);
+            if (!isNew()) {
+                // if we have already initialized or started then we should also init the source
+                ServiceHelper.initService(propertiesSource);
+            }
+            if (isStarted()) {
+                ServiceHelper.startService(propertiesSource);
+            }
         }
     }
 
@@ -527,6 +532,24 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
+        }
+        if (environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_NEVER
+                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_FALLBACK
+                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option environmentVariableMode has invalid value: " + environmentVariableMode);
+        }
+
+        // inject the component to the parser
+        if (propertiesParser instanceof DefaultPropertiesParser) {
+            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        }
 
         if (isAutoDiscoverPropertiesSources()) {
             // discover any 3rd party properties sources
@@ -553,35 +576,22 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
             }
         }
 
+        sources.sort(OrderedComparator.get());
         ServiceHelper.initService(sources);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-
-        sources.sort(OrderedComparator.get());
         ServiceHelper.startService(sources);
-
-        if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
-                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
-                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
-            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
-        }
-        if (environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_NEVER
-                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_FALLBACK
-                && environmentVariableMode != ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
-            throw new IllegalArgumentException("Option environmentVariableMode has invalid value: " + environmentVariableMode);
-        }
-
-        // inject the component to the parser
-        if (propertiesParser instanceof DefaultPropertiesParser) {
-            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(sources);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(sources);
     }
 

@@ -48,19 +48,15 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     }
 
     public ExpressionNode(ExpressionDefinition expression) {
-        this.expression = expression;
+        setExpression(expression);
     }
 
     public ExpressionNode(Expression expression) {
-        if (expression != null) {
-            setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
-        }
+        setExpression(expression);
     }
 
     public ExpressionNode(Predicate predicate) {
-        if (predicate != null) {
-            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
-        }
+        setExpression(predicate);
     }
 
     public ExpressionDefinition getExpression() {
@@ -68,7 +64,15 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     }
 
     public void setExpression(Expression expression) {
-        setExpression(new ExpressionDefinition(expression));
+        if (expression != null) {
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
+        }
+    }
+
+    private void setExpression(Predicate predicate) {
+        if (predicate != null) {
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
+        }
     }
 
     public void setExpression(ExpressionDefinition expression) {

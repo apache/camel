@@ -19,6 +19,12 @@ package org.apache.camel.model;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 
 /**
  * Model level interface for the {@link CamelContext}
@@ -32,4 +38,13 @@ public interface ModelCamelContext extends CamelContext, Model {
 
     void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception;
 
+    Expression createExpression(ExpressionDefinition definition);
+
+    Predicate createPredicate(ExpressionDefinition definition);
+
+    RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception;
+
+    void registerValidator(ValidatorDefinition validator);
+
+    void registerTransformer(TransformerDefinition transformer);
 }

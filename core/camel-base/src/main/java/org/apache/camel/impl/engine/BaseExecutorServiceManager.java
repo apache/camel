@@ -421,16 +421,12 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         if (threadNamePattern == null) {
             // set default name pattern which includes the camel context name
             threadNamePattern = "Camel (" + camelContext.getName() + ") thread ##counter# - #name#";
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
     @Override

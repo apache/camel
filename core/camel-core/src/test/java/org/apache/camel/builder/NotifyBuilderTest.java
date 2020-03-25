@@ -355,7 +355,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
     public void testFilterWhenExchangeDone() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).filter(body().contains("World")).whenDone(3).create();
 
-        assertEquals("filter(simple{${body}} contains World).whenDone(3)", notify.toString());
+        assertEquals("filter(${body} contains World).whenDone(3)", notify.toString());
 
         assertEquals(false, notify.matches());
 

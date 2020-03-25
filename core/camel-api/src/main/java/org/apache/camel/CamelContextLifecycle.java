@@ -90,6 +90,8 @@ public interface CamelContextLifecycle extends AutoCloseable {
      */
     boolean isRunAllowed();
 
+    void build();
+
     void init();
 
     /**

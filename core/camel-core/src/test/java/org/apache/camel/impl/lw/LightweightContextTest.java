@@ -21,12 +21,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ImmutableContextTest extends ContextTestSupport {
+public class LightweightContextTest extends ContextTestSupport {
 
     @Override
     @Before
     public void setUp() throws Exception {
-        setUseImmutableContext(true);
+        setUseLightweightContext(true);
         super.setUp();
     }
 

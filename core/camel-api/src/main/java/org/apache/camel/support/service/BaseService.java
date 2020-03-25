@@ -37,16 +37,17 @@ public abstract class BaseService {
 
     protected static final byte NEW = 0;
     protected static final byte BUILDED = 1;
-    protected static final byte INITIALIZED = 2;
-    protected static final byte STARTING = 3;
-    protected static final byte STARTED = 4;
-    protected static final byte SUSPENDING = 5;
-    protected static final byte SUSPENDED = 6;
-    protected static final byte STOPPING = 7;
-    protected static final byte STOPPED = 8;
-    protected static final byte SHUTTINGDOWN = 9;
-    protected static final byte SHUTDOWN = 10;
-    protected static final byte FAILED = 11;
+    protected static final byte INITIALIZING = 2;
+    protected static final byte INITIALIZED = 3;
+    protected static final byte STARTING = 4;
+    protected static final byte STARTED = 5;
+    protected static final byte SUSPENDING = 6;
+    protected static final byte SUSPENDED = 7;
+    protected static final byte STOPPING = 8;
+    protected static final byte STOPPED = 9;
+    protected static final byte SHUTTINGDOWN = 10;
+    protected static final byte SHUTDOWN = 11;
+    protected static final byte FAILED = 12;
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseService.class);
 
@@ -75,15 +76,17 @@ public abstract class BaseService {
         if (status <= BUILDED || status >= STOPPED) {
             synchronized (lock) {
                 if (status <= BUILDED || status >= STOPPED) {
+                    build();
                     LOG.trace("Initializing service: {}", this);
                     try (AutoCloseable ignored = doLifecycleChange()) {
+                        status = INITIALIZING;
                         doInit();
+                        status = INITIALIZED;
+                        LOG.trace("Initialized service: {}", this);
                     } catch (Exception e) {
                         LOG.trace("Error while initializing service: " + this, e);
                         fail(e);
                     }
-                    status = INITIALIZED;
-                    LOG.trace("Initialized service: {}", this);
                 }
             }
         }
@@ -245,6 +248,10 @@ public abstract class BaseService {
 
     public ServiceStatus getStatus() {
         switch (status) {
+            case INITIALIZING:
+                return ServiceStatus.Initializing;
+            case INITIALIZED:
+                return ServiceStatus.Initialized;
             case STARTING:
                 return ServiceStatus.Starting;
             case STARTED:
@@ -338,6 +345,7 @@ public abstract class BaseService {
      * This method will only be called by frameworks which supports pre-building projects such as camel-quarkus.
      */
     protected void doBuild() throws Exception {
+        // noop
     }
 
     /**
@@ -345,6 +353,7 @@ public abstract class BaseService {
      * This method will only be called once before starting.
      */
     protected void doInit() throws Exception {
+        // noop
     }
 
     /**
@@ -354,7 +363,9 @@ public abstract class BaseService {
      *
      * @see #doStop()
      */
-    protected abstract void doStart() throws Exception;
+    protected void doStart() throws Exception {
+        // noop
+    }
 
     /**
      * Implementations override this method to support customized start/stop.
@@ -368,7 +379,9 @@ public abstract class BaseService {
      *
      * @see #doStart()
      */
-    protected abstract void doStop() throws Exception;
+    protected void doStop() throws Exception {
+        // noop
+    }
 
     /**
      * Implementations override this method to support customized suspend/resume.

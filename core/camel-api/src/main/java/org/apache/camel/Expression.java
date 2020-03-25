@@ -30,4 +30,11 @@ public interface Expression {
      * @return the value of the expression
      */
     <T> T evaluate(Exchange exchange, Class<T> type);
+
+    /**
+     * Initialize the expression with the given camel context
+     */
+    default void init(CamelContext context) {
+    }
+
 }

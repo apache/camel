@@ -228,21 +228,29 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (extendedStatistics) {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
             statistics = new DefaultEndpointUtilizationStatistics(max);
+        }
+        ServiceHelper.initService(consumers);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (statistics != null) {
+            statistics.clear();
         }
         ServiceHelper.startService(consumers);
     }
 
     @Override
     protected void doStop() throws Exception {
-        // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownServices(statistics, consumers);
-        if (statistics != null) {
-            statistics.clear();
-        }
+        ServiceHelper.stopService(consumers);
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(consumers);
+    }
 }

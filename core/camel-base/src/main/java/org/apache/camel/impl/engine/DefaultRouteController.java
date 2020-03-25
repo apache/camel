@@ -53,20 +53,6 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     // ***************************************************
-    // Life cycle
-    // ***************************************************
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
-    // ***************************************************
     // Route management
     // ***************************************************
 

@@ -16,23 +16,24 @@
  */
 package org.apache.camel.impl;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.Navigate;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ValueHolder;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -42,18 +43,26 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.reifier.language.ExpressionReifier;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,17 +123,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         model.addRouteDefinitions(routeDefinitions);
     }
 
     @Override
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         model.addRouteDefinition(routeDefinition);
     }
 
@@ -145,9 +148,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         model.addRestDefinitions(restDefinitions, addToRoutes);
     }
 
@@ -367,33 +367,47 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected void clearModelReferences() {
-        model = (Model) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Model.class }, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                throw new UnsupportedOperationException("Model invocations are not supported at runtime");
-            }
-        });
-        for (Route route : getRoutes()) {
-            clearModelReferences(route);
-        }
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        return ErrorHandlerReifier.reifier(route, route.getErrorHandlerFactory())
+                .createErrorHandler(processor);
     }
 
-    private void clearModelReferences(Route r) {
-        if (r instanceof DefaultRoute) {
-            ((DefaultRoute) r).clearModelReferences();
-        }
-        clearModelReferences(r.navigate());
+    @Override
+    public Expression createExpression(ExpressionDefinition definition) {
+        return ExpressionReifier.reifier(this, definition).createExpression();
     }
 
-    private void clearModelReferences(Navigate<Processor> nav) {
-        for (Processor processor : nav.next()) {
-            if (processor instanceof DefaultChannel) {
-                ((DefaultChannel) processor).clearModelReferences();
-            }
-            if (processor instanceof Navigate) {
-                clearModelReferences((Navigate<Processor>) processor);
-            }
-        }
+    @Override
+    public Predicate createPredicate(ExpressionDefinition definition) {
+        return ExpressionReifier.reifier(this, definition).createPredicate();
     }
+
+    @Override
+    public RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception {
+        return RouteReifier.adviceWith(definition, this, builder);
+    }
+
+    @Override
+    public void registerValidator(ValidatorDefinition def) {
+        model.getValidators().add(def);
+        Validator validator = ValidatorReifier.reifier(this, def).createValidator();
+        getValidatorRegistry().put(createValidatorKey(def), validator);
+    }
+
+    private static ValueHolder<String> createValidatorKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
+    }
+
+
+    @Override
+    public void registerTransformer(TransformerDefinition def) {
+        model.getTransformers().add(def);
+        Transformer transformer = TransformerReifier.reifier(this, def).createTransformer();
+        getTransformerRegistry().put(createTransformerKey(def), transformer);
+    }
+
+    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+    }
+
 }

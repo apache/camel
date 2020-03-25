@@ -30,7 +30,6 @@ public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
-        context.init();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }

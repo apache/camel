@@ -272,7 +272,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     }
 
     @Override
-    protected void doInit() {
+    protected void doInit() throws Exception {
         if (injector == null && camelContext != null) {
             injector = camelContext.getInjector();
         }
