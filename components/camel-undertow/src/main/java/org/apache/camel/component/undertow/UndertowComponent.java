@@ -19,9 +19,13 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,6 +39,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -52,6 +57,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
@@ -59,6 +66,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("undertow")
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowComponent.class);
 
     private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
     private final Set<HttpHandlerRegistrationInfo> handlers = new LinkedHashSet<>();
@@ -77,7 +86,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     private Object securityConfiguration;
     @Metadata(label = "security")
     private String allowedRoles;
-
+    @Metadata(label = "security")
+    private UndertowSecurityProvider securityProvider;
 
     public UndertowComponent() {
         this(null);
@@ -153,6 +163,29 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
                                       RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
         return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    private void initSecurityProvider() throws Exception {
+        Object securityConfiguration = getSecurityConfiguration();
+        if (securityConfiguration != null) {
+            ServiceLoader<UndertowSecurityProvider> securityProvider = ServiceLoader.load(UndertowSecurityProvider.class);
+
+            Iterator<UndertowSecurityProvider> iter = securityProvider.iterator();
+            List<String> providers = new LinkedList();
+            while (iter.hasNext()) {
+                UndertowSecurityProvider security =  iter.next();
+                //only securityProvider, who accepts security configuration, could be used
+                if (security.acceptConfiguration(securityConfiguration, null)) {
+                    this.securityProvider = security;
+                    LOG.info("Security provider found {}", securityProvider.getClass().getName());
+                    break;
+                }
+                providers.add(security.getClass().getName());
+            }
+            if (this.securityProvider == null) {
+                LOG.info("Security provider for configuration {} not found {}", securityConfiguration, providers);
+            }
+        }
     }
 
     Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
@@ -306,6 +339,10 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (this.securityProvider == null) {
+            initSecurityProvider();
+        }
+
         RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getComponentName());
 
         // configure additional options on undertow configuration
@@ -314,7 +351,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         }
     }
 
-    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
+    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) throws Exception {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, this::createUndertowHost);
@@ -322,7 +359,13 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         host.validateEndpointURI(uri);
         handlers.add(registrationInfo);
 
-        return host.registerHandler(consumer, registrationInfo, handler);
+
+        HttpHandler handlerWrapped = handler;
+        if (this.securityProvider != null) {
+            handlerWrapped = this.securityProvider.wrapHttpHandler(handler);
+        }
+
+        return host.registerHandler(consumer, registrationInfo, handlerWrapped);
     }
 
     public void unregisterEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
@@ -434,5 +477,17 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
      */
     public void setAllowedRoles(String allowedRoles) {
         this.allowedRoles = allowedRoles;
+    }
+
+    /**
+     * Security provider allows plug in the provider, which will be used to secure requests.
+     * SPI approach could be used too (component then finds security provider using SPI).
+     */
+    public void setSecurityProvider(UndertowSecurityProvider securityProvider) {
+        this.securityProvider = securityProvider;
+    }
+
+    public UndertowSecurityProvider getSecurityProvider() {
+        return securityProvider;
     }
 }

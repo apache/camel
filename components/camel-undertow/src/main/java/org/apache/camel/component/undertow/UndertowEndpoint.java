@@ -133,7 +133,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Object securityConfiguration;
     @UriParam(label = "security", description = "Configuration used by UndertowSecurityProvider. Comma separated list of allowed roles.")
     private String allowedRoles;
-
+    @UriParam(label = "security", description = "Security provider allows plug in the provider, which will be used to secure requests. "
+            + "SPI approach could be used too (endpoint then finds security provider using SPI).")
     private UndertowSecurityProvider securityProvider;
 
     public UndertowEndpoint(String uri, UndertowComponent component) {
@@ -147,7 +148,11 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     public UndertowSecurityProvider getSecurityProvider() {
-        return securityProvider;
+        return this.securityProvider;
+    }
+
+    public void setSecurityProvider(UndertowSecurityProvider securityProvider) {
+        this.securityProvider = securityProvider;
     }
 
     @Override
@@ -454,16 +459,15 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     public Object getSecurityConfiguration() {
-        return this.securityConfiguration == null ? getComponent().getSecurityConfiguration() : this.securityConfiguration;
+        return this.securityConfiguration;
     }
 
     public void setSecurityConfiguration(Object securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
     }
 
-
     public String getAllowedRoles() {
-        return allowedRoles == null ? getComponent().getAllowedRoles() : allowedRoles;
+        return allowedRoles;
     }
 
     public void setAllowedRoles(String allowedRoles) {
@@ -474,7 +478,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     protected void doStart() throws Exception {
         super.doStart();
 
-        initSecurityProvider();
+        if (this.securityProvider == null) {
+            initSecurityProvider();
+        }
 
         final String scheme = httpURI.getScheme();
         this.isWebSocket = UndertowConstants.WS_PROTOCOL.equalsIgnoreCase(scheme) || UndertowConstants.WSS_PROTOCOL.equalsIgnoreCase(scheme);
@@ -554,6 +560,9 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
             if (this.securityProvider == null) {
                 LOG.info("Security provider for configuration {} not found {}", securityConfiguration, providers);
             }
+        }
+        if (this.securityProvider == null) {
+            this.securityProvider = getComponent().getSecurityProvider();
         }
     }
 

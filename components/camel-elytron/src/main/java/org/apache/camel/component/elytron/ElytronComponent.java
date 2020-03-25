@@ -92,7 +92,7 @@ public class ElytronComponent extends UndertowComponent {
     }
 
     @Override
-    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
+    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) throws Exception {
         //injecting elytron
         return super.registerEndpoint(consumer, registrationInfo, sslContext, wrap(handler, getSecurityDomain()));
     }

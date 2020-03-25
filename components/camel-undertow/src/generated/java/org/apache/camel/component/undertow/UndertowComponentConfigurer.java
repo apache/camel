@@ -33,6 +33,8 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "securityconfiguration":
         case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, java.lang.Object.class, value)); return true;
+        case "securityprovider":
+        case "securityProvider": target.setSecurityProvider(property(camelContext, org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "undertowhttpbinding":
@@ -53,6 +55,7 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         answer.put("lazyStartProducer", boolean.class);
         answer.put("muteException", boolean.class);
         answer.put("securityConfiguration", java.lang.Object.class);
+        answer.put("securityProvider", org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class);
         answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
         answer.put("undertowHttpBinding", org.apache.camel.component.undertow.UndertowHttpBinding.class);
         answer.put("useGlobalSslContextParameters", boolean.class);
@@ -77,6 +80,8 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         case "muteException": return target.isMuteException();
         case "securityconfiguration":
         case "securityConfiguration": return target.getSecurityConfiguration();
+        case "securityprovider":
+        case "securityProvider": return target.getSecurityProvider();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         case "undertowhttpbinding":
