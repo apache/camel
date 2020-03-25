@@ -38,8 +38,8 @@ Apache Camel comes with a lot of artifacts with components, data formats, langua
 The up to date list is available online at the Camel website:
 
 * Components: <https://camel.apache.org/components/latest/>
-* Data Formats: <https://camel.apache.org/components/latest/#_data_formats>
-* Languages: <https://camel.apache.org/components/latest/#_expression_languages>
+* Data Formats: <https://camel.apache.org/components/latest/dataformats/>
+* Languages: <https://camel.apache.org/components/latest/languages/>
 * Miscellaneous: <https://camel.apache.org/components/latest/#_miscellaneous_components>
 
 ## Examples
@@ -47,7 +47,7 @@ The up to date list is available online at the Camel website:
 Apache Camel comes with many examples.
 The up to date list is available online at github:
 
-* Examples: <https://github.com/apache/camel-examples/tree/master/examples#examples>
+* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
 
 ## Getting Started
 
@@ -59,7 +59,7 @@ To help you get started, try the following links:
 
 It is also recommended to get started by trying out some of the beginner examples.
 
-* Examples: <https://github.com/apache/camel-examples/tree/master/examples#examples>
+* Examples: <https://github.com/apache/camel-examples/tree/master/examples#welcome-to-the-apache-camel-examples>
 
 **Building**
 
