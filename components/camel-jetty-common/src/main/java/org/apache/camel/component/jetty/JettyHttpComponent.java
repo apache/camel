@@ -1143,8 +1143,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
 
         //must make RFC7578 as default to avoid using the deprecated MultiPartInputStreamParser
-        connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
-             .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
+        try {
+            connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
+                    .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
+        } catch (Throwable e) {
+            // ignore this due to OSGi problems
+            LOG.debug("Cannot set MultiPartFormDataCompliance to RFC7578 due to " + e.getMessage() + ". This exception is ignored.", e);
+        }
 
         return camelServlet;
     }
