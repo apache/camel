@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -28,19 +28,17 @@ public class NettyHttpMuteExceptionTest extends BaseNettyTest {
 
     @Test
     public void testMuteException() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
+            get.addHeader("Accept", "application/text");
 
-        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
-        get.addHeader("Accept", "application/text");
-
-        HttpResponse response = client.execute(get);
-
-        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertNotNull(body);
-        assertEquals("Exception", body);
-        assertEquals(500, response.getStatusLine().getStatusCode());
-
-        client.close();
+            try (CloseableHttpResponse response = client.execute(get)) {
+                String body = EntityUtils.toString(response.getEntity(), "UTF-8");
+                assertNotNull(body);
+                assertEquals("Exception", body);
+                assertEquals(500, response.getStatusLine().getStatusCode());
+            }
+        }
     }
 
     @Override

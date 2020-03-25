@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -30,28 +30,26 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
 
     @Test
     public void testTraceDisabled() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOff + "/myservice");
 
-        HttpResponse response = client.execute(trace);
-
-        // TRACE shouldn't be allowed by default
-        assertEquals(405, response.getStatusLine().getStatusCode());
-
-        client.close();
+            try (CloseableHttpResponse response = client.execute(trace)) {
+                // TRACE shouldn't be allowed by default
+                assertEquals(405, response.getStatusLine().getStatusCode());
+            }
+        }
     }
 
     @Test
     public void testTraceEnabled() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOn + "/myservice");
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpTrace trace = new HttpTrace("http://localhost:" + portTraceOn + "/myservice");
 
-        HttpResponse response = client.execute(trace);
-
-        // TRACE is allowed
-        assertEquals(200, response.getStatusLine().getStatusCode());
-
-        client.close();
+            try (CloseableHttpResponse response = client.execute(trace)) {
+                // TRACE is allowed
+                assertEquals(200, response.getStatusLine().getStatusCode());
+            }
+        }
     }
 
     @Override
