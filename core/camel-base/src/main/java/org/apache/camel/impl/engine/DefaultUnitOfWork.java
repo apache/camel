@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -54,14 +56,13 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for future Camel work
+    private final Deque<Route> routes = new ArrayDeque<>(8);
     final InflightRepository inflightRepository;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
     private final Exchange exchange;
     private final ExtendedCamelContext context;
     private Logger log;
-    private Route prevRoute;
-    private Route route;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
@@ -286,21 +287,17 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public Route getRoute() {
-        return route;
+        return routes.peek();
     }
 
     @Override
     public void pushRoute(Route route) {
-        this.prevRoute = this.route;
-        this.route = route;
+        routes.push(route);
     }
 
     @Override
     public Route popRoute() {
-        Route answer = this.route;
-        this.route = this.prevRoute;
-        this.prevRoute = null;
-        return answer;
+        return routes.pop();
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class OnExceptionErrorHandlerNoRouteOnExchangeIssueTest  extends ContextTestSupport {
@@ -38,7 +37,6 @@ public class OnExceptionErrorHandlerNoRouteOnExchangeIssueTest  extends ContextT
     }
 
     @Test
-    @Ignore("TODO: Fix me https://issues.apache.org/jira/browse/CAMEL-14739")
     public void testBug() throws Exception {
         String out = template.requestBody("direct:bug", null, String.class);
         assertEquals("general exception was properly handled", out);
