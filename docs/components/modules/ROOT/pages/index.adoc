@@ -121,8 +121,6 @@ Number of Components: 310 in 210 JAR artifacts (27 deprecated)
 
 | xref:class-component.adoc[Class] (camel-core) | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
 
-| xref:cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
-
 | xref:cmis-component.adoc[CMIS] (camel-cmis) | 2.11 | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
 
 | xref:coap-component.adoc[CoAP] (camel-coap) | 2.16 | The coap component is used for sending and receiving messages from COAP capable devices.
@@ -679,8 +677,6 @@ Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 | xref:lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
-
-| xref:reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
 
 | xref:ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
