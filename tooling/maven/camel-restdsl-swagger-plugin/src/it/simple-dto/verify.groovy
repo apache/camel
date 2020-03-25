@@ -26,3 +26,7 @@ assert data.contains('restConfiguration().component("servlet");')
 def File restdto = new File(basedir, "target/generated-sources/swagger/src/main/java/com/foo/Order.java")
 
 assert restdto.exists()
+
+def String orderData = restdto.text
+
+assert orderData.contains('import java.time.OffsetDateTime;')
