@@ -195,8 +195,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "65536")
     private Integer receiveBufferBytes = 65536;
     // request.timeout.ms
-    @UriParam(label = "producer", defaultValue = "305000")
-    private Integer requestTimeoutMs = 305000;
+    @UriParam(label = "producer", defaultValue = "30000")
+    private Integer requestTimeoutMs = 30000;
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
