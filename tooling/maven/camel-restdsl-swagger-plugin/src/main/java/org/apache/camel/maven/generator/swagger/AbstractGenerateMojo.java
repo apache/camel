@@ -23,7 +23,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.util.IOHelper;
@@ -177,7 +181,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         }
         if (configOptions != null && !configOptions.isEmpty()) {
             List<MojoExecutor.Element> options = new ArrayList<>();
-            for (Map.Entry<?,?>  configOption : configOptions.entrySet()) {
+            for (Map.Entry<?, ?>  configOption : configOptions.entrySet()) {
                 options.add(new MojoExecutor.Element(configOption.getKey().toString(), configOption.getValue().toString()));
             }
             elements.add(new MojoExecutor.Element("configOptions", options.toArray(new MojoExecutor.Element[options.size()])));
