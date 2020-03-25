@@ -297,7 +297,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public Route popRoute() {
-        return routes.pop();
+        return routes.poll();
     }
 
     @Override
