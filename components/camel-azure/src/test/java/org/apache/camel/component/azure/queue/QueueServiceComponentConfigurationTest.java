@@ -23,8 +23,6 @@ import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import com.microsoft.azure.storage.core.Base64;
 import com.microsoft.azure.storage.queue.CloudQueue;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -129,11 +127,8 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
     
     
     private static void createConsumer(Endpoint endpoint) throws Exception {
-        endpoint.createConsumer(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                // noop
-            }
+        endpoint.createConsumer(exchange -> {
+            // noop
         });
     }
     
