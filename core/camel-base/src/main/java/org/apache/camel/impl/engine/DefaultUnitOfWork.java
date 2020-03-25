@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +26,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
@@ -56,14 +57,13 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for future Camel work
+    private final Deque<RouteContext> routes = new ArrayDeque<>(8);
     final InflightRepository inflightRepository;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
     private final Exchange exchange;
     private final ExtendedCamelContext context;
     private Logger log;
-    private RouteContext prevRouteContext;
-    private RouteContext routeContext;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
@@ -288,21 +288,17 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public RouteContext getRouteContext() {
-        return routeContext;
+        return routes.peek();
     }
 
     @Override
     public void pushRouteContext(RouteContext routeContext) {
-        this.prevRouteContext = this.routeContext;
-        this.routeContext = routeContext;
+        routes.push(routeContext);
     }
 
     @Override
     public RouteContext popRouteContext() {
-        RouteContext answer = this.routeContext;
-        this.routeContext = this.prevRouteContext;
-        this.prevRouteContext = null;
-        return answer;
+        return routes.poll();
     }
 
     @Override
