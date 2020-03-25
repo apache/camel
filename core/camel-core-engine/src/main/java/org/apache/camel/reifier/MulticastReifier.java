@@ -73,7 +73,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             definition.setOnPrepare(mandatoryLookup(definition.getOnPrepareRef(), Processor.class));
         }
 
-        MulticastProcessor answer = new MulticastProcessor(camelContext, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
+        MulticastProcessor answer = new MulticastProcessor(camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
                                                            isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                                                            isStopOnAggregateException);
         return answer;

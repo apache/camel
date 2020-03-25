@@ -14,36 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.impl.lw;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
-public class EventNotifierExchangeSentExampleTest extends ContextTestSupport {
+public class EnricherLightweightTest extends ContextTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
-
-        // START SNIPPET: e1
-        // add event notifier where we can log the times it took to process
-        // exchanges sent to an endpoint
-        context.getManagementStrategy().addEventNotifier(new MyLoggingSentEventNotifer());
-        // END SNIPPET: e1
-
-        return context;
+    @Before
+    public void setUp() throws Exception {
+        setUseLightweightContext(true);
+        super.setUp();
     }
 
     @Test
-    public void testExchangeSent() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+    public void testEnrich() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:enriched");
+        mock.expectedBodiesReceived("res-1", "res-2", "res-3");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", 1);
+        template.sendBody("direct:start", 2);
+        template.sendBody("direct:start", 3);
 
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -51,11 +48,12 @@ public class EventNotifierExchangeSentExampleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("direct:bar").to("mock:result");
+                from("direct:start").enrichWith("direct:resource")
+                        .body(Integer.class, String.class, (o, n) -> n + o).to("mock:enriched");
 
-                from("direct:bar").delay(1000);
+                // set an empty message
+                from("direct:resource").transform().body(b -> "res-");
             }
         };
     }
-
 }

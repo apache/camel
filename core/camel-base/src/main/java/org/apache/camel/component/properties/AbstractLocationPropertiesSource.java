@@ -79,16 +79,6 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
     /**
      * Strategy to prepare loaded properties before being used by Camel.
      * <p/>

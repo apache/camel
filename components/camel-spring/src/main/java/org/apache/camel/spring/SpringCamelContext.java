@@ -100,7 +100,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
-        answer.init();
+        answer.build();
         if (maybeStart) {
             answer.start();
         }

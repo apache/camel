@@ -34,7 +34,6 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         return context;
@@ -42,7 +41,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContextClient() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
+        // JMX tests don't work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
         }

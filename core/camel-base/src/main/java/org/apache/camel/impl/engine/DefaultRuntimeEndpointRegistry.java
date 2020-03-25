@@ -186,7 +186,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
         if (inputs == null) {
@@ -207,6 +207,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         } else {
             LOG.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
+        ServiceHelper.initService(inputUtilization, outputUtilization);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(inputUtilization, outputUtilization);
     }
 

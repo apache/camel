@@ -89,6 +89,20 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        return resolveEndpoint(exchange.getContext(), value);
+    }
+
+    /**
+     * Attempts to resolve the endpoint for the given value
+     *
+     * @param context  the camel context
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolveEndpoint(CamelContext context, Object value) throws NoSuchEndpointException {
         if (value == null) {
             throw new NoSuchEndpointException("null");
         }
@@ -97,10 +111,10 @@ public final class ExchangeHelper {
             endpoint = (Endpoint) value;
         } else if (value instanceof NormalizedEndpointUri) {
             NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
-            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), nu);
+            endpoint = CamelContextHelper.getMandatoryEndpoint(context, nu);
         } else {
             String uri = value.toString().trim();
-            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
+            endpoint = CamelContextHelper.getMandatoryEndpoint(context, uri);
         }
         return endpoint;
     }
@@ -116,6 +130,20 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolvePrototypeEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        return resolvePrototypeEndpoint(exchange.getContext(), value);
+    }
+
+    /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param context  the camel context
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(CamelContext context, Object value) throws NoSuchEndpointException {
         if (value == null) {
             throw new NoSuchEndpointException("null");
         }
@@ -124,10 +152,10 @@ public final class ExchangeHelper {
             endpoint = (Endpoint) value;
         } else if (value instanceof NormalizedEndpointUri) {
             NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
-            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), nu);
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, nu);
         } else {
             String uri = value.toString().trim();
-            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), uri);
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, uri);
         }
         return endpoint;
     }

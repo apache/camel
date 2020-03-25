@@ -37,7 +37,7 @@ public class FilterReifier extends ExpressionReifier<FilterDefinition> {
     protected FilterProcessor createFilterProcessor() throws Exception {
         // filter EIP should have child outputs
         Processor childProcessor = this.createChildProcessor(true);
-        return new FilterProcessor(createPredicate(), childProcessor);
+        return new FilterProcessor(camelContext, createPredicate(), childProcessor);
     }
 
 }

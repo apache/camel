@@ -59,7 +59,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
         Expression exp = createExpression(definition.getExpression());
 
-        Splitter answer = new Splitter(camelContext, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
+        Splitter answer = new Splitter(camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
                                        shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                                        isStopOnAggregateException);
         return answer;

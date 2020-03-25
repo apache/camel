@@ -29,7 +29,6 @@ public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupp
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.init();
         // turn on runtime statistics in extended mode
         camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
         return camelContext;

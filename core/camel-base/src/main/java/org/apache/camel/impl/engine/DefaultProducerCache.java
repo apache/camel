@@ -355,22 +355,30 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (extendedStatistics) {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
             statistics = new DefaultEndpointUtilizationStatistics(max);
         }
+        ServiceHelper.initService(producers);
+    }
 
-        ServiceHelper.startService(producers, statistics);
+    @Override
+    protected void doStart() throws Exception {
+        if (statistics != null) {
+            statistics.clear();
+        }
+        ServiceHelper.startService(producers);
     }
 
     @Override
     protected void doStop() throws Exception {
-        // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownServices(statistics, producers);
-        if (statistics != null) {
-            statistics.clear();
-        }
+        ServiceHelper.stopService(producers);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(producers);
     }
 
     @Override

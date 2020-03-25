@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.event;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.engine.DefaultRoute;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.spi.CamelEvent;
 
-public class DefaultModelRoute extends DefaultRoute {
+public class CamelContextInitializingEvent extends AbstractContextEvent implements CamelEvent.CamelContextStartingEvent {
+    private static final long serialVersionUID = 3931186946570864733L;
 
-    public DefaultModelRoute(CamelContext camelContext, RouteDefinition definition, String id,
-                             String description, Endpoint endpoint) {
-        super(camelContext, definition, id, description, endpoint);
+    public CamelContextInitializingEvent(CamelContext source) {
+        super(source);
     }
 
     @Override
-    public Processor createErrorHandler(Processor processor) throws Exception {
-        return ErrorHandlerReifier.reifier(this, getErrorHandlerFactory())
-                .createErrorHandler(processor);
+    public String toString() {
+        return "Initializing CamelContext: " + getContext().getName();
     }
 }

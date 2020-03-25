@@ -587,9 +587,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         this.typeConverterExists = typeConverterExists;
     }
 
-    protected void doStart() throws Exception {
-    }
-
     protected void doStop() throws Exception {
         // log utilization statistics when stopping, including mappings
         if (statistics.isStatisticsEnabled()) {

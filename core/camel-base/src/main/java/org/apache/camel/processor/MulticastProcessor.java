@@ -57,12 +57,14 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.slf4j.Logger;
@@ -146,6 +148,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     protected final Processor onPrepare;
     private final CamelContext camelContext;
+    private final Route route;
     private final ReactiveExecutor reactiveExecutor;
     private String id;
     private String routeId;
@@ -164,27 +167,28 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     private final ConcurrentMap<ErrorHandlerKey, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
 
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
-        this(camelContext, processors, null);
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
+        this(camelContext, route, processors, null);
     }
 
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
+        this(camelContext, route, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
     }
 
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                               ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
                               boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
+        this(camelContext, route, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
              shareUnitOfWork, parallelAggregate, false);
     }
     
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
+    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
                               boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
+        this.route = route;
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
@@ -233,6 +237,16 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (route != null) {
+            Exchange exchange = new DefaultExchange(getCamelContext());
+            for (Processor processor : getProcessors()) {
+                createErrorHandler(route, exchange, processor);
+            }
+        }
     }
 
     @Override
@@ -710,6 +724,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     protected Processor createErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
 
+        if (route != this.route && this.route != null) {
+            throw new UnsupportedOperationException("Is this really correct ?");
+        }
         boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
 
         // do not wrap in error handler if we are inside a try block

@@ -52,7 +52,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> extends AbstractReifier {
 
-    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
     private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
     static {
         Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
@@ -248,7 +247,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      * TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
-        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+        return !ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
     public void addExceptionPolicy(ErrorHandlerSupport handlerSupport, OnExceptionDefinition exceptionType) {

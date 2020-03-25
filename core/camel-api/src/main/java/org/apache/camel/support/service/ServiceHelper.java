@@ -61,6 +61,20 @@ public final class ServiceHelper {
     }
 
     /**
+     * Initializes each element of the given {@code services} if {@code services} itself is
+     * not {@code null}, otherwise this method would return immediately.
+     *
+     * @see #initService(Object)
+     */
+    public static void initService(Object... services) {
+        if (services != null) {
+            for (Object o : services) {
+                initService(o);
+            }
+        }
+    }
+
+    /**
      * Starts the given {@code value} if it's a {@link Service} or a collection of it.
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.

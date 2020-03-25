@@ -14,27 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.impl.event;
 
-/**
- * Evaluates a binary <a href="http://camel.apache.org/predicate.html">predicate</a> on the
- * message exchange.
- */
-public interface Predicate {
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.CamelEvent;
 
-    /**
-     * Evaluates the predicate on the message exchange and returns true if this
-     * exchange matches the predicate
-     * 
-     * @param exchange the message exchange
-     * @return true if the predicate matches
-     */
-    boolean matches(Exchange exchange);
+public class CamelContextInitializedEvent extends AbstractContextEvent implements CamelEvent.CamelContextStartingEvent {
+    private static final long serialVersionUID = -3416082218670845373L;
 
-    /**
-     * Initialize the predicate with the given camel context
-     */
-    default void init(CamelContext context) {
+    public CamelContextInitializedEvent(CamelContext source) {
+        super(source);
     }
 
+    @Override
+    public String toString() {
+        return "Initialized CamelContext: " + getContext().getName();
+    }
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.SimpleBuilder;
@@ -34,24 +35,46 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
 
     @Override
     public Expression createExpression() {
+        Expression expr = createBuilder().createExpression(camelContext);
+        return new Expression() {
+            @Override
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                return expr.evaluate(exchange, type);
+            }
+            @Override
+            public String toString() {
+                return definition.getExpression();
+            }
+        };
+    }
+
+    @Override
+    public Predicate createPredicate() {
+        Predicate pred = createBuilder().createPredicate(camelContext);
+        return new Predicate() {
+            @Override
+            public boolean matches(Exchange exchange) {
+                return pred.matches(exchange);
+            }
+            @Override
+            public String toString() {
+                return definition.getExpression();
+            }
+        };
+    }
+
+    protected SimpleBuilder createBuilder() {
         String exp = parseString(definition.getExpression());
         // should be true by default
         boolean isTrim = parseBoolean(definition.getTrim(), true);
         if (exp != null && isTrim) {
             exp = exp.trim();
         }
-
         SimpleBuilder answer = new SimpleBuilder(exp);
         Map<String, Object> props = new HashMap<>();
         props.put("resultType", or(definition.getResultType(), definition.getResultTypeName()));
         setProperties(answer, props);
         return answer;
-    }
-
-    @Override
-    public Predicate createPredicate() {
-        // SimpleBuilder is also a Predicate
-        return (Predicate) createExpression();
     }
 
 }

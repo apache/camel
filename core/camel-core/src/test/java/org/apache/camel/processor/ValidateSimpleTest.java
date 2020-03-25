@@ -58,8 +58,8 @@ public class ValidateSimpleTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             // expected
             assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-            String s = "Validation failed for Predicate[Simple: ${body} contains 'Camel'].";
-            assertTrue(e.getCause().getMessage().startsWith(s));
+            String s = "Validation failed for Predicate[${body} contains 'Camel'].";
+            assertStringContains(e.getCause().getMessage(), s);
         }
 
         assertMockEndpointsSatisfied();

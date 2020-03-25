@@ -34,6 +34,16 @@ import org.apache.camel.VetoCamelContextStartException;
 public interface LifecycleStrategy {
 
     /**
+     * Notification on initializing a {@link CamelContext}.
+     *
+     * @param context the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
+     *                                        Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
+     */
+    default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
      * Notification on starting a {@link CamelContext}.
      *
      * @param context the camel context

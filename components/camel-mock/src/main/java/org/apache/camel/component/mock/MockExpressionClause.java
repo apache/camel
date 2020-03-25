@@ -21,6 +21,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
@@ -425,23 +426,32 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.getExpressionType();
     }
 
+    private volatile Expression expr;
+
     @Override
-    public <T> T evaluate(Exchange exchange, Class<T> type) {
-        if (getExpressionValue() != null) {
-            return getExpressionValue().evaluate(exchange, type);
-        } else {
-            Expression exp = delegate.getExpressionType().createExpression(exchange.getContext());
-            return exp.evaluate(exchange, type);
+    public void init(CamelContext context) {
+        if (expr == null) {
+            synchronized (this) {
+                if (expr == null) {
+                    expr = getExpressionValue();
+                    if (expr == null) {
+                        expr = getExpressionType().createExpression(context);
+                    }
+                    expr.init(context);
+                }
+            }
         }
     }
 
     @Override
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        init(exchange.getContext());
+        return expr.evaluate(exchange, type);
+    }
+
+    @Override
     public boolean matches(Exchange exchange) {
-        if (getExpressionValue() != null) {
-            return new ExpressionToPredicateAdapter(getExpressionValue()).matches(exchange);
-        } else {
-            Expression exp = delegate.getExpressionType().createExpression(exchange.getContext());
-            return new ExpressionToPredicateAdapter(exp).matches(exchange);
-        }
+        init(exchange.getContext());
+        return new ExpressionToPredicateAdapter(expr).matches(exchange);
     }
 }

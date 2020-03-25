@@ -428,20 +428,26 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        // create mbean server if is has not be injected.
-        if (server == null) {
-            finalizeSettings();
-            createMBeanServer();
-        }
+        finalizeSettings();
 
-        // ensure assembler is started
         assembler = camelContext.adapt(ExtendedCamelContext.class).getManagementMBeanAssembler();
         if (assembler == null) {
             assembler = new DefaultManagementMBeanAssembler(camelContext);
         }
+        ServiceHelper.initService(assembler);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // create mbean server if is has not be injected.
+        if (server == null) {
+            createMBeanServer();
+        }
+
+        // ensure assembler is started
         ServiceHelper.startService(assembler);
 
         LOG.debug("Starting JMX agent on server: {}", getMBeanServer());

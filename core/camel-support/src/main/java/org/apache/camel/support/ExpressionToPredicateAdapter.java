@@ -58,6 +58,11 @@ public final class ExpressionToPredicateAdapter implements Predicate, CamelConte
     }
 
     @Override
+    public void init(CamelContext context) {
+        expression.init(context);
+    }
+
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         if (expression instanceof CamelContextAware) {
             ((CamelContextAware) expression).setCamelContext(camelContext);

@@ -69,6 +69,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     private String routeId;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
+    private final String destination;
     private long timeout;
     private boolean aggregateOnException;
     private int cacheSize;
@@ -82,6 +83,19 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
      */
     public PollEnricher(Expression expression, long timeout) {
         this.expression = expression;
+        this.destination = null;
+        this.timeout = timeout;
+    }
+
+    /**
+     * Creates a new {@link PollEnricher}.
+     *
+     * @param destination the endpoint to poll from.
+     * @param timeout timeout in millis
+     */
+    public PollEnricher(String destination, long timeout) {
+        this.expression = null;
+        this.destination = destination;
         this.timeout = timeout;
     }
 
@@ -183,6 +197,18 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        if (destination != null) {
+            Endpoint endpoint = getExistingEndpoint(camelContext, destination);
+            if (endpoint == null) {
+                endpoint = resolveEndpoint(camelContext, destination, cacheSize < 0);
+            }
+        } else if (expression != null) {
+            expression.init(camelContext);
+        }
+    }
+
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining
      * additional data from an endpoint represented by an endpoint
@@ -213,11 +239,11 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         Object recipient = null;
         boolean prototype = cacheSize < 0;
         try {
-            recipient = expression.evaluate(exchange, Object.class);
+            recipient = destination != null ? destination : expression.evaluate(exchange, Object.class);
             recipient = prepareRecipient(exchange, recipient);
-            Endpoint existing = getExistingEndpoint(exchange, recipient);
+            Endpoint existing = getExistingEndpoint(camelContext, recipient);
             if (existing == null) {
-                endpoint = resolveEndpoint(exchange, recipient, prototype);
+                endpoint = resolveEndpoint(camelContext, recipient, prototype);
             } else {
                 endpoint = existing;
                 // we have an existing endpoint then its not a prototype scope
@@ -369,25 +395,26 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         return null;
     }
 
-    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+    protected static Endpoint getExistingEndpoint(CamelContext context, Object recipient) {
         if (recipient instanceof Endpoint) {
             return (Endpoint) recipient;
         }
         if (recipient != null) {
             if (recipient instanceof NormalizedEndpointUri) {
                 NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
                 return ecc.hasEndpoint(nu);
             } else {
                 String uri = recipient.toString();
-                return exchange.getContext().hasEndpoint(uri);
+                return context.hasEndpoint(uri);
             }
         }
         return null;
     }
 
-    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
-        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
+    protected static Endpoint resolveEndpoint(CamelContext camelContext, Object recipient, boolean prototype) {
+        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(camelContext, recipient)
+                : ExchangeHelper.resolveEndpoint(camelContext, recipient);
     }
 
     /**
