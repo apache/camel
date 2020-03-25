@@ -250,7 +250,6 @@
 ** xref:pgevent-component.adoc[PostgresSQL Event Component]
 ** xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot Component]
 ** xref:lpr-component.adoc[Printer Component]
-** xref:properties-component.adoc[Properties Component]
 ** xref:pubnub-component.adoc[PubNub Component]
 ** xref:pulsar-component.adoc[Pulsar Component]
 ** xref:quartz-component.adoc[Quartz Component]
