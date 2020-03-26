@@ -49,9 +49,14 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     }
 
     @Override
-    TokenSecurityRealm createBearerRealm() throws NoSuchAlgorithmException {
-        return TokenSecurityRealm.builder().principalClaimName("username")
-                .validator(JwtValidator.builder().publicKey(getKeyPair().getPublic()).build()).build();
+    TokenSecurityRealm createBearerRealm()  {
+        try {
+            return TokenSecurityRealm.builder().principalClaimName("username")
+                    .validator(JwtValidator.builder().publicKey(getKeyPair().getPublic()).build()).build();
+        } catch (NoSuchAlgorithmException e) {
+            fail("Can not prepare realm becase of " + e);
+        }
+        return null;
     }
 
     @Override
@@ -61,7 +66,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
 
     @Test
     public void testBearerToken() throws Exception {
-        String response = template.requestBodyAndHeader("elytron:http://localhost:{{port}}/myapp",
+        String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
                 "empty body",
                 Headers.AUTHORIZATION.toString(),
                 "Bearer " + createToken("alice", "user",  new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
@@ -73,7 +78,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     @Test
     public void testBearerTokenBadRole() throws Exception {
         try {
-            String response = template.requestBodyAndHeader("elytron:http://localhost:{{port}}/myapp",
+            String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
                     "empty body",
                     Headers.AUTHORIZATION.toString(),
                     "Bearer " + createToken("alice", "guest", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
@@ -90,7 +95,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("elytron:http://localhost:{{port}}/myapp?allowedRoles=user")
+                from("undertow:http://localhost:{{port}}/myapp?allowedRoles=user")
                         .transform(simple("Hello ${in.header.securityIdentity.principal}!"));
             }
         };
