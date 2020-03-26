@@ -33,9 +33,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class CustomFiltersTest extends BaseJettyTest {
@@ -63,23 +66,23 @@ public class CustomFiltersTest extends BaseJettyTest {
     }
 
     private void sendRequestAndVerify(String url) throws Exception {
-        HttpClient httpclient = new HttpClient();
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        PostMethod httppost = new PostMethod(url);
+        HttpPost httppost = new HttpPost(url);
+        httppost.setEntity(new StringEntity("This is a test"));
 
-        StringRequestEntity reqEntity = new StringRequestEntity("This is a test", null, null);
-        httppost.setRequestEntity(reqEntity);
+        HttpResponse response = client.execute(httppost);
 
-        int status = httpclient.executeMethod(httppost);
+        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        assertEquals("Get a wrong response status", 200, status);
-
-        String result = httppost.getResponseBodyAsString();
-        assertEquals("Get a wrong result", "This is a test response", result);
-        assertNotNull("Did not use custom multipart filter", httppost.getResponseHeader("MyTestFilter"));
+        assertEquals("Get a wrong result", "This is a test response", responseString);
+        assertEquals("Did not use custom multipart filter", "true", response.getFirstHeader("MyTestFilter").getValue());
 
         // just make sure the KeyWord header is set
-        assertEquals("Did not set the right KeyWord header", "KEY", httppost.getResponseHeader("KeyWord").getValue());
+        assertEquals("Did not set the right KeyWord header", "KEY", response.getFirstHeader("KeyWord").getValue());
+
+        client.close();
     }
 
     @Test
