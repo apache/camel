@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.http.conn.HttpClientConnectionManager;
+
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -75,23 +76,6 @@ public class WeatherConfiguration {
     private List<String> ids;
     @UriParam(label = "filter")
     private Integer cnt;
-
-    @UriParam(label = "proxy")
-    private String proxyHost;
-    @UriParam(label = "proxy")
-    private Integer proxyPort;
-    @UriParam(label = "proxy")
-    private String proxyAuthMethod;
-    @UriParam(label = "proxy", secret = true)
-    private String proxyAuthUsername;
-    @UriParam(label = "proxy", secret = true)
-    private String proxyAuthPassword;
-    @UriParam(label = "proxy")
-    private String proxyAuthDomain;
-    @UriParam(label = "proxy")
-    private String proxyAuthHost;
-    @UriParam(label = "advanced")
-    private HttpConnectionManager httpConnectionManager;
     @UriParam(label = "security")
     @Metadata(required = true)
     private String geolocationAccessKey;
@@ -277,94 +261,6 @@ public class WeatherConfiguration {
      */
     public void setZoom(Integer zoom) {
         this.zoom = zoom;
-    }
-
-    public HttpConnectionManager getHttpConnectionManager() {
-        return httpConnectionManager;
-    }
-
-    /**
-     * To use a custom HttpConnectionManager to manage connections
-     */
-    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
-        this.httpConnectionManager = httpConnectionManager;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * The proxy host name
-     */
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * The proxy port number
-     */
-    public void setProxyPort(Integer proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public String getProxyAuthMethod() {
-        return proxyAuthMethod;
-    }
-
-    /**
-     * Authentication method for proxy, either as Basic, Digest or NTLM.
-     */
-    public void setProxyAuthMethod(String proxyAuthMethod) {
-        this.proxyAuthMethod = proxyAuthMethod;
-    }
-
-    public String getProxyAuthUsername() {
-        return proxyAuthUsername;
-    }
-
-    /**
-     * Username for proxy authentication
-     */
-    public void setProxyAuthUsername(String proxyAuthUsername) {
-        this.proxyAuthUsername = proxyAuthUsername;
-    }
-
-    public String getProxyAuthPassword() {
-        return proxyAuthPassword;
-    }
-
-    /**
-     * Password for proxy authentication
-     */
-    public void setProxyAuthPassword(String proxyAuthPassword) {
-        this.proxyAuthPassword = proxyAuthPassword;
-    }
-
-    public String getProxyAuthDomain() {
-        return proxyAuthDomain;
-    }
-
-    /**
-     * Domain for proxy NTLM authentication
-     */
-    public void setProxyAuthDomain(String proxyAuthDomain) {
-        this.proxyAuthDomain = proxyAuthDomain;
-    }
-
-    public String getProxyAuthHost() {
-        return proxyAuthHost;
-    }
-
-    /**
-     * Optional host for proxy NTLM authentication
-     */
-    public void setProxyAuthHost(String proxyAuthHost) {
-        this.proxyAuthHost = proxyAuthHost;
     }
 
     public String getZip() {

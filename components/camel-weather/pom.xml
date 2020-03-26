@@ -31,12 +31,6 @@
     <name>Camel :: Weather</name>
     <description>Camel Weather support</description>
 
-    <properties>
-        <camel.osgi.import.additional>
-            org.apache.commons.httpclient.*;version="[3.1,4.0)"
-        </camel.osgi.import.additional>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -44,9 +38,8 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${httpclient-version}</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
 
         <!-- Jackson -->

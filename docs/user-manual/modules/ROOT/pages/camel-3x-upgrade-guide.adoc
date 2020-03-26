@@ -744,6 +744,12 @@ For example:
 <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history,adress"/>
 ----
 
+=== camel-weather
+
+This component has been upgraded from using Apache Http Client 3.x to 4.x and is therefore not fully backwards compatible.
+Some options for configurer and setting proxy is removed. You can however configure this directly on a custom `HttpClient` instance
+and set this on the `WeatherComponent` to use.
+
 === Endpoint URIs without context path
 
 Previously Camel components may work by referring to their name only without a colon and context path (eg `log`)

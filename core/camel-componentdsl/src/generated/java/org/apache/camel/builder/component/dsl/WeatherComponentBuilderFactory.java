@@ -49,31 +49,6 @@ public interface WeatherComponentBuilderFactory {
             extends
                 ComponentBuilder<WeatherComponent> {
         /**
-         * The geolocation service now needs an accessKey to be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WeatherComponentBuilder geolocationAccessKey(
-                java.lang.String geolocationAccessKey) {
-            doSetProperty("geolocationAccessKey", geolocationAccessKey);
-            return this;
-        }
-        /**
-         * The geolocation service now needs to specify the IP associated to the
-         * accessKey you're using.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WeatherComponentBuilder geolocationRequestHostIP(
-                java.lang.String geolocationRequestHostIP) {
-            doSetProperty("geolocationRequestHostIP", geolocationRequestHostIP);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -127,6 +102,20 @@ public interface WeatherComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * To use an existing configured http client (for example with http
+         * proxy).
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default WeatherComponentBuilder httpClient(
+                org.apache.http.impl.client.CloseableHttpClient httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
     }
 
     class WeatherComponentBuilderImpl
@@ -144,11 +133,10 @@ public interface WeatherComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "geolocationAccessKey": ((WeatherComponent) component).setGeolocationAccessKey((java.lang.String) value); return true;
-            case "geolocationRequestHostIP": ((WeatherComponent) component).setGeolocationRequestHostIP((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((WeatherComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WeatherComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((WeatherComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "httpClient": ((WeatherComponent) component).setHttpClient((org.apache.http.impl.client.CloseableHttpClient) value); return true;
             default: return false;
             }
         }
