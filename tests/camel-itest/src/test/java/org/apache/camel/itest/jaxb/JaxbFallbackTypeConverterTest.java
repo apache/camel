@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.itest.jaxb.example.Bar;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.junit.Test;
 
 public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
@@ -55,8 +54,6 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
-                        RequestEntity entity = in.getBody(RequestEntity.class);
-                        assertNull("We should not get the entity here", entity);
                         InputStream is = in.getMandatoryBody(InputStream.class);
                         // make sure we can get the InputStream rightly.
                         exchange.getOut().setBody(is);
