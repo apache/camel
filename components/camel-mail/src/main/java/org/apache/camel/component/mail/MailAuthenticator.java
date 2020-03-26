@@ -16,28 +16,17 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 
 /**
- * Mail {@link Authenticator} that supplies username and password
+ * Mail authenticator that supplies username and password
  */
-public class DefaultAuthenticator extends MailAuthenticator {
+public class MailAuthenticator extends javax.mail.Authenticator {
 
-    private final String username;
-    private final String password;
-
-    public DefaultAuthenticator(String username, String password) {
-        this.password = password;
-        this.username = username;
-    }
-
-    /**
-     * Returns an authenticator object for use in sessions
-     */
-    @Override
+    // makes the method public
+    /** Override this method in your implementation. */
     public PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(username, password);
+        return super.getPasswordAuthentication();
     }
 
 }

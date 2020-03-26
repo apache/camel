@@ -29,6 +29,7 @@ import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Store;
 import javax.mail.search.SearchTerm;
 
@@ -565,7 +566,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 LOG.debug("Connecting to MailStore: {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
             }
             store = sender.getSession().getStore(config.getProtocol());
-            store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
+            PasswordAuthentication passwordAuth = config.getPasswordAuthentication();
+            store.connect(config.getHost(), config.getPort(), passwordAuth.getUserName(), passwordAuth.getPassword());
 
             serverCanSort = hasSortCapability(store);
         }

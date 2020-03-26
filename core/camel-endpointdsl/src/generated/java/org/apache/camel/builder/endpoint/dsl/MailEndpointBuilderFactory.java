@@ -880,7 +880,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password for login.
+         * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -917,7 +917,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The username for login.
+         * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1272,6 +1272,36 @@ public interface MailEndpointBuilderFactory {
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
             doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            return this;
+        }
+        /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointConsumerBuilder authenticator(
+                Object authenticator) {
+            doSetProperty("authenticator", authenticator);
+            return this;
+        }
+        /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointConsumerBuilder authenticator(
+                String authenticator) {
+            doSetProperty("authenticator", authenticator);
             return this;
         }
         /**
@@ -1751,7 +1781,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password for login.
+         * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1788,7 +1818,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The username for login.
+         * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1911,6 +1941,36 @@ public interface MailEndpointBuilderFactory {
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
             doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            return this;
+        }
+        /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointProducerBuilder authenticator(
+                Object authenticator) {
+            doSetProperty("authenticator", authenticator);
+            return this;
+        }
+        /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointProducerBuilder authenticator(
+                String authenticator) {
+            doSetProperty("authenticator", authenticator);
             return this;
         }
         /**
@@ -2277,7 +2337,7 @@ public interface MailEndpointBuilderFactory {
             return (AdvancedMailEndpointBuilder) this;
         }
         /**
-         * The password for login.
+         * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2314,7 +2374,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * The username for login.
+         * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2410,6 +2470,34 @@ public interface MailEndpointBuilderFactory {
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
             doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            return this;
+        }
+        /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointBuilder authenticator(Object authenticator) {
+            doSetProperty("authenticator", authenticator);
+            return this;
+        }
+        /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointBuilder authenticator(String authenticator) {
+            doSetProperty("authenticator", authenticator);
             return this;
         }
         /**

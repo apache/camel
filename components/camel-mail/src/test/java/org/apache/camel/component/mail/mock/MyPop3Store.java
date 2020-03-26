@@ -14,30 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mail;
+package org.apache.camel.component.mail.mock;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.URLName;
 
-/**
- * Mail {@link Authenticator} that supplies username and password
- */
-public class DefaultAuthenticator extends MailAuthenticator {
+import org.jvnet.mock_javamail.MockStore;
 
-    private final String username;
-    private final String password;
+public class MyPop3Store extends MockStore {
 
-    public DefaultAuthenticator(String username, String password) {
-        this.password = password;
-        this.username = username;
+    public MyPop3Store(Session session, URLName urlname) {
+        super(session, urlname);
     }
 
-    /**
-     * Returns an authenticator object for use in sessions
-     */
     @Override
-    public PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(username, password);
+    protected boolean protocolConnect(String host, int port, String user, String password) throws MessagingException {
+        if ("wrongPassword".equals(password)) {
+            throw new MessagingException("unauthorized");
+        }
+        return super.protocolConnect(host, port, user, password);
     }
 
 }
