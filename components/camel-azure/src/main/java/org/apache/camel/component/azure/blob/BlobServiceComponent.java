@@ -27,9 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.commons.lang3.StringUtils;
-
-import static org.apache.camel.component.azure.blob.BlobHeadersConstants.OVERRIDE_BLOB_NAME;
 
 @Component("azure-blob")
 public class BlobServiceComponent extends DefaultComponent {
