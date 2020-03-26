@@ -40,6 +40,8 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 public class MockExpressionClause<T> implements Expression, Predicate {
     private MockExpressionClauseSupport<T> delegate;
 
+    private volatile Expression expr;
+
     public MockExpressionClause(T result) {
         this.delegate = new MockExpressionClauseSupport<>(result);
     }
@@ -425,8 +427,6 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     public ExpressionFactory getExpressionType() {
         return delegate.getExpressionType();
     }
-
-    private volatile Expression expr;
 
     @Override
     public void init(CamelContext context) {
