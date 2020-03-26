@@ -44,8 +44,6 @@
         <module>camel-itest-cdi</module>
         <module>camel-itest-jms2</module>
         <module>camel-jmh</module>
-        <module>camel-blueprint-cxf-test</module>
-        <module>camel-blueprint-test</module>
         <module>camel-partial-classpath-test</module>
         <module>camel-typeconverterscan-test</module>
     </modules>
@@ -76,17 +74,8 @@
         <profile>
             <id>release</id>
             <modules>
-                <module>camel-itest-osgi</module>
                 <module>camel-itest-performance</module>
                 <module>camel-performance</module>
-            </modules>
-        </profile>
-
-        <!-- osgi tests -->
-        <profile>
-            <id>osgi.test</id>
-            <modules>
-                <module>camel-itest-osgi</module>
             </modules>
         </profile>
 
