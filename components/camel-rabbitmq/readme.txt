@@ -11,7 +11,7 @@ The integration tests with Qpid could be run via Maven (disabled by default):
 
 The broker can be run via Docker:
 
-    docker run -it -p 5672:5672 -e RABBITMQ_DEFAULT_USER=cameltest -e RABBITMQ_DEFAULT_PASS=cameltest --hostname my-rabbit --name some-rabbit rabbitmq:3
+    docker run -it -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=cameltest -e RABBITMQ_DEFAULT_PASS=cameltest --hostname my-rabbit --name some-rabbit rabbitmq:3-management
 
 Or to install RabbitMQ as standalone and then configure it:
 
