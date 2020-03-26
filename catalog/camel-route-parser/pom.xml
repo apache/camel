@@ -53,6 +53,20 @@
             <artifactId>camel-tooling-util</artifactId>
         </dependency>
 
+        <!-- disable all components -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-allcomponents</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- only test scopes for camel as we have no runtime dependency on camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
