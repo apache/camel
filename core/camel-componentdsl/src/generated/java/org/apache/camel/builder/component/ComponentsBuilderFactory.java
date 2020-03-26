@@ -2965,18 +2965,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PahoComponentBuilderFactory.paho();
     }
     /**
-     * OSGi PAX Logging (camel-paxlogging)
-     * The paxlogging component can be used in an OSGi environment to receive
-     * PaxLogging events and process them.
-     * 
-     * Category: monitoring
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-paxlogging
-     */
-    static org.apache.camel.builder.component.dsl.PaxloggingComponentBuilderFactory.PaxloggingComponentBuilder paxlogging() {
-        return org.apache.camel.builder.component.dsl.PaxloggingComponentBuilderFactory.paxlogging();
-    }
-    /**
      * PDF (camel-pdf)
      * The pdf components provides the ability to create, modify or extract
      * content from PDF documents.

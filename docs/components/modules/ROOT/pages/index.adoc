@@ -503,8 +503,6 @@ Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 | xref:eventadmin-component.adoc[OSGi EventAdmin] (camel-eventadmin) | 2.6 | The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
 
-| xref:paxlogging-component.adoc[OSGi PAX Logging] (camel-paxlogging) | 2.6 | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
-
 | xref:paho-component.adoc[Paho] (camel-paho) | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
 | xref:pdf-component.adoc[PDF] (camel-pdf) | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
