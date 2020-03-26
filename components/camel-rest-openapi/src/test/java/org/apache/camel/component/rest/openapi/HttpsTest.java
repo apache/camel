@@ -127,9 +127,7 @@ public abstract class HttpsTest extends CamelTestSupport {
     public static Iterable<String> knownProducers() {
         final List<String> producers = new ArrayList<>(Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS));
 
-        // we cannot support SSL in the `http` component as it needs to be
-        // configured via static helper method and this influences all users of
-        // the commons-httpclient (all endpoints, component instances)
+        // skip http due security certificate testing problems
         producers.remove("http");
 
         return producers;
