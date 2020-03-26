@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -112,6 +111,15 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
 
         @Override
         public Session getSession() {
+            return null;
+        }
+
+        @Override
+        public void setAuthenticator(MailAuthenticator authenticator) {
+        }
+
+        @Override
+        public MailAuthenticator getAuthenticator() {
             return null;
         }
     }

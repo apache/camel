@@ -25,6 +25,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "alternativeBodyHeader": target.getConfiguration().setAlternativeBodyHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": target.getConfiguration().setAttachmentsContentTransferEncodingResolver(property(camelContext, org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class, value)); return true;
+        case "authenticator": target.getConfiguration().setAuthenticator(property(camelContext, org.apache.camel.component.mail.MailAuthenticator.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -144,6 +145,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("additionalJavaMailProperties", java.util.Properties.class);
         answer.put("alternativeBodyHeader", java.lang.String.class);
         answer.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
+        answer.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
         answer.put("backoffErrorThreshold", int.class);
         answer.put("backoffIdleThreshold", int.class);
         answer.put("backoffMultiplier", int.class);
@@ -220,6 +222,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "alternativeBodyHeader": return target.getConfiguration().getAlternativeBodyHeader();
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": return target.getConfiguration().getAttachmentsContentTransferEncodingResolver();
+        case "authenticator": return target.getConfiguration().getAuthenticator();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
