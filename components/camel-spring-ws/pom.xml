@@ -154,7 +154,7 @@
         <dependency>
             <groupId>net.javacrumbs</groupId>
             <artifactId>smock-springws</artifactId>
-            <version>0.5</version>
+            <version>0.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
