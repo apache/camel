@@ -415,6 +415,21 @@ public interface ImapsComponentBuilderFactory {
             return this;
         }
         /**
+         * The authenticator for login. If set then the password and username
+         * are ignored. Can be used for tokens which can expire and therefore
+         * must be read dynamically.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * 
+         * Group: advanced
+         */
+        default ImapsComponentBuilder authenticator(
+                org.apache.camel.component.mail.MailAuthenticator authenticator) {
+            doSetProperty("authenticator", authenticator);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -579,7 +594,7 @@ public interface ImapsComponentBuilderFactory {
             return this;
         }
         /**
-         * The password for login.
+         * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -616,7 +631,7 @@ public interface ImapsComponentBuilderFactory {
             return this;
         }
         /**
-         * The username for login.
+         * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -675,6 +690,7 @@ public interface ImapsComponentBuilderFactory {
             case "additionalJavaMailProperties": getOrCreateConfiguration((MailComponent) component).setAdditionalJavaMailProperties((java.util.Properties) value); return true;
             case "alternativeBodyHeader": getOrCreateConfiguration((MailComponent) component).setAlternativeBodyHeader((java.lang.String) value); return true;
             case "attachmentsContentTransferEncodingResolver": getOrCreateConfiguration((MailComponent) component).setAttachmentsContentTransferEncodingResolver((org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver) value); return true;
+            case "authenticator": getOrCreateConfiguration((MailComponent) component).setAuthenticator((org.apache.camel.component.mail.MailAuthenticator) value); return true;
             case "basicPropertyBinding": ((MailComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((MailComponent) component).setConfiguration((org.apache.camel.component.mail.MailConfiguration) value); return true;
             case "connectionTimeout": getOrCreateConfiguration((MailComponent) component).setConnectionTimeout((int) value); return true;

@@ -66,4 +66,8 @@ public interface JavaMailSender {
     void setSession(Session session);
 
     Session getSession();
+    
+    void setAuthenticator(MailAuthenticator authenticator);
+    
+    MailAuthenticator getAuthenticator();
 }

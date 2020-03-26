@@ -17,11 +17,11 @@
 package org.apache.camel.component.mail;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
@@ -40,6 +40,7 @@ public class DefaultJavaMailSender implements JavaMailSender {
     private String host;
     private String username;
     private String password;
+    private MailAuthenticator authenticator;
     // -1 means using the default port to access the service
     private int port = -1;
     private String protocol;
@@ -85,7 +86,8 @@ public class DefaultJavaMailSender implements JavaMailSender {
     @Override
     public Session getSession() {
         if (session == null) {
-            session = Session.getInstance(getJavaMailProperties(), new DefaultAuthenticator(username, password));
+            session = Session.getInstance(getJavaMailProperties(),
+                    authenticator == null ? new DefaultAuthenticator(username, password) : authenticator);
         }
         return session;
     }
@@ -106,6 +108,15 @@ public class DefaultJavaMailSender implements JavaMailSender {
     }
 
     @Override
+    public MailAuthenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    @Override
+    public void setAuthenticator(MailAuthenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
     public int getPort() {
         return port;
     }
@@ -125,11 +136,21 @@ public class DefaultJavaMailSender implements JavaMailSender {
         this.protocol = protocol;
     }
 
+    /**
+     * Returns the password authentication from the authenticator or from the
+     * parameters user and password.
+     */
+    public PasswordAuthentication getPasswordAuthentication() {
+        // call authenticator so that the authenticator can dynamically determine the password or token
+        return authenticator == null ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
+    }
+
     @Override
     public void send(MimeMessage mimeMessage) throws MessagingException {
         Transport transport = getTransport(getSession());
         LOG.debug("Connecting to {}:{}", host, port);
-        transport.connect(getHost(), getPort(), getUsername(), getPassword());
+        PasswordAuthentication passwordAuth = getPasswordAuthentication();
+        transport.connect(getHost(), getPort(), passwordAuth.getUserName(), passwordAuth.getPassword());
         try {
             if (mimeMessage.getSentDate() == null) {
                 mimeMessage.setSentDate(new Date());

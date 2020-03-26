@@ -32,6 +32,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "alternativeBodyHeader": getOrCreateConfiguration(target).setAlternativeBodyHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": getOrCreateConfiguration(target).setAttachmentsContentTransferEncodingResolver(property(camelContext, org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class, value)); return true;
+        case "authenticator": getOrCreateConfiguration(target).setAuthenticator(property(camelContext, org.apache.camel.component.mail.MailAuthenticator.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bcc": getOrCreateConfiguration(target).setBcc(property(camelContext, java.lang.String.class, value)); return true;
@@ -105,6 +106,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("additionalJavaMailProperties", java.util.Properties.class);
         answer.put("alternativeBodyHeader", java.lang.String.class);
         answer.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
+        answer.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bcc", java.lang.String.class);
         answer.put("bridgeErrorHandler", boolean.class);
@@ -156,6 +158,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "alternativeBodyHeader": return getOrCreateConfiguration(target).getAlternativeBodyHeader();
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": return getOrCreateConfiguration(target).getAttachmentsContentTransferEncodingResolver();
+        case "authenticator": return getOrCreateConfiguration(target).getAuthenticator();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bcc": return getOrCreateConfiguration(target).getBcc();
