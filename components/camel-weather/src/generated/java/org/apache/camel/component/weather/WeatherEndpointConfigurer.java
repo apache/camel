@@ -43,8 +43,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "headername":
         case "headerName": target.getConfiguration().setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpconnectionmanager":
-        case "httpConnectionManager": target.getConfiguration().setHttpConnectionManager(property(camelContext, org.apache.commons.httpclient.HttpConnectionManager.class, value)); return true;
         case "ids": target.getConfiguration().setIds(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -58,20 +56,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "period": target.getConfiguration().setPeriod(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "proxyauthdomain":
-        case "proxyAuthDomain": target.getConfiguration().setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyauthhost":
-        case "proxyAuthHost": target.getConfiguration().setProxyAuthHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyauthmethod":
-        case "proxyAuthMethod": target.getConfiguration().setProxyAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyauthpassword":
-        case "proxyAuthPassword": target.getConfiguration().setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyauthusername":
-        case "proxyAuthUsername": target.getConfiguration().setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "rightlon":
@@ -120,7 +104,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         answer.put("geolocationRequestHostIP", java.lang.String.class);
         answer.put("greedy", boolean.class);
         answer.put("headerName", java.lang.String.class);
-        answer.put("httpConnectionManager", org.apache.commons.httpclient.HttpConnectionManager.class);
         answer.put("ids", java.lang.String.class);
         answer.put("initialDelay", long.class);
         answer.put("language", org.apache.camel.component.weather.WeatherLanguage.class);
@@ -131,13 +114,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         answer.put("mode", org.apache.camel.component.weather.WeatherMode.class);
         answer.put("period", java.lang.String.class);
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("proxyAuthDomain", java.lang.String.class);
-        answer.put("proxyAuthHost", java.lang.String.class);
-        answer.put("proxyAuthMethod", java.lang.String.class);
-        answer.put("proxyAuthPassword", java.lang.String.class);
-        answer.put("proxyAuthUsername", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
         answer.put("repeatCount", long.class);
         answer.put("rightLon", java.lang.String.class);
         answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
@@ -185,8 +161,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "greedy": return target.isGreedy();
         case "headername":
         case "headerName": return target.getConfiguration().getHeaderName();
-        case "httpconnectionmanager":
-        case "httpConnectionManager": return target.getConfiguration().getHttpConnectionManager();
         case "ids": return target.getConfiguration().getIds();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
@@ -200,20 +174,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "period": return target.getConfiguration().getPeriod();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
-        case "proxyauthdomain":
-        case "proxyAuthDomain": return target.getConfiguration().getProxyAuthDomain();
-        case "proxyauthhost":
-        case "proxyAuthHost": return target.getConfiguration().getProxyAuthHost();
-        case "proxyauthmethod":
-        case "proxyAuthMethod": return target.getConfiguration().getProxyAuthMethod();
-        case "proxyauthpassword":
-        case "proxyAuthPassword": return target.getConfiguration().getProxyAuthPassword();
-        case "proxyauthusername":
-        case "proxyAuthUsername": return target.getConfiguration().getProxyAuthUsername();
-        case "proxyhost":
-        case "proxyHost": return target.getConfiguration().getProxyHost();
-        case "proxyport":
-        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "rightlon":

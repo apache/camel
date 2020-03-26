@@ -405,100 +405,6 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * Domain for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthDomain(
-                String proxyAuthDomain) {
-            doSetProperty("proxyAuthDomain", proxyAuthDomain);
-            return this;
-        }
-        /**
-         * Optional host for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthHost(
-                String proxyAuthHost) {
-            doSetProperty("proxyAuthHost", proxyAuthHost);
-            return this;
-        }
-        /**
-         * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthMethod(
-                String proxyAuthMethod) {
-            doSetProperty("proxyAuthMethod", proxyAuthMethod);
-            return this;
-        }
-        /**
-         * Password for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthPassword(
-                String proxyAuthPassword) {
-            doSetProperty("proxyAuthPassword", proxyAuthPassword);
-            return this;
-        }
-        /**
-         * Username for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthUsername(
-                String proxyAuthUsername) {
-            doSetProperty("proxyAuthUsername", proxyAuthUsername);
-            return this;
-        }
-        /**
-         * The proxy host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -1022,34 +928,6 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpConnectionManager to manage connections.
-         * 
-         * The option is a:
-         * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWeatherEndpointConsumerBuilder httpConnectionManager(
-                Object httpConnectionManager) {
-            doSetProperty("httpConnectionManager", httpConnectionManager);
-            return this;
-        }
-        /**
-         * To use a custom HttpConnectionManager to manage connections.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWeatherEndpointConsumerBuilder httpConnectionManager(
-                String httpConnectionManager) {
-            doSetProperty("httpConnectionManager", httpConnectionManager);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1422,100 +1300,6 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * Domain for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyAuthDomain(
-                String proxyAuthDomain) {
-            doSetProperty("proxyAuthDomain", proxyAuthDomain);
-            return this;
-        }
-        /**
-         * Optional host for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyAuthHost(
-                String proxyAuthHost) {
-            doSetProperty("proxyAuthHost", proxyAuthHost);
-            return this;
-        }
-        /**
-         * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyAuthMethod(
-                String proxyAuthMethod) {
-            doSetProperty("proxyAuthMethod", proxyAuthMethod);
-            return this;
-        }
-        /**
-         * Password for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyAuthPassword(
-                String proxyAuthPassword) {
-            doSetProperty("proxyAuthPassword", proxyAuthPassword);
-            return this;
-        }
-        /**
-         * Username for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyAuthUsername(
-                String proxyAuthUsername) {
-            doSetProperty("proxyAuthUsername", proxyAuthUsername);
-            return this;
-        }
-        /**
-         * The proxy host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
          * The geolocation service now needs an accessKey to be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1579,34 +1363,6 @@ public interface WeatherEndpointBuilderFactory {
         default AdvancedWeatherEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpConnectionManager to manage connections.
-         * 
-         * The option is a:
-         * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWeatherEndpointProducerBuilder httpConnectionManager(
-                Object httpConnectionManager) {
-            doSetProperty("httpConnectionManager", httpConnectionManager);
-            return this;
-        }
-        /**
-         * To use a custom HttpConnectionManager to manage connections.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWeatherEndpointProducerBuilder httpConnectionManager(
-                String httpConnectionManager) {
-            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -1941,97 +1697,6 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * Domain for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
-            doSetProperty("proxyAuthDomain", proxyAuthDomain);
-            return this;
-        }
-        /**
-         * Optional host for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyAuthHost(String proxyAuthHost) {
-            doSetProperty("proxyAuthHost", proxyAuthHost);
-            return this;
-        }
-        /**
-         * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
-            doSetProperty("proxyAuthMethod", proxyAuthMethod);
-            return this;
-        }
-        /**
-         * Password for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyAuthPassword(
-                String proxyAuthPassword) {
-            doSetProperty("proxyAuthPassword", proxyAuthPassword);
-            return this;
-        }
-        /**
-         * Username for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyAuthUsername(
-                String proxyAuthUsername) {
-            doSetProperty("proxyAuthUsername", proxyAuthUsername);
-            return this;
-        }
-        /**
-         * The proxy host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
          * The geolocation service now needs an accessKey to be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2096,34 +1761,6 @@ public interface WeatherEndpointBuilderFactory {
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpConnectionManager to manage connections.
-         * 
-         * The option is a:
-         * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWeatherEndpointBuilder httpConnectionManager(
-                Object httpConnectionManager) {
-            doSetProperty("httpConnectionManager", httpConnectionManager);
-            return this;
-        }
-        /**
-         * To use a custom HttpConnectionManager to manage connections.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWeatherEndpointBuilder httpConnectionManager(
-                String httpConnectionManager) {
-            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**

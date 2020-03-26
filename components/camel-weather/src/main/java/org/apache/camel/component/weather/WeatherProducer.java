@@ -19,9 +19,11 @@ package org.apache.camel.component.weather;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,14 +52,14 @@ public class WeatherProducer extends DefaultProducer {
         }
 
         HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
-        GetMethod method = new GetMethod(q);
+        HttpGet method = new HttpGet(q);
         try {
             LOG.debug("Going to execute the Weather query {}", q);
-            int statusCode = httpClient.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                throw new IllegalStateException("Got the invalid http status value '" + method.getStatusLine() + "' as the result of the query '" + query + "'");
+            HttpResponse response = httpClient.execute(method);
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new IllegalStateException("Got the invalid http status value '" + response.getStatusLine().getStatusCode() + "' as the result of the query '" + query + "'");
             }
-            String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, method.getResponseBodyAsStream());
+            String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
             LOG.debug("Got back the Weather information {}", weather);
 
             if (ObjectHelper.isEmpty(weather)) {
