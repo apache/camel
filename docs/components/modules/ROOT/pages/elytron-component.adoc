@@ -25,6 +25,7 @@ Configuration has to provide all 3 security attributes:
 | *mechanismName* | MechanismName should be selected with regard to default securityRealm. For
 example: to use bearer_token security, mechanism name has to be "BEARER_TOKEN" and realm has to be
 TokenSecurityReal | String
+| *elytronProvider* | Instance of WildFlyElytronBaseProvider ith respect of mechanismName | WildFlyElytronBaseProvider
 |===
 
 Each exchange created by Undertow endpoint with Elytron security contains header 'securityIdentity'
