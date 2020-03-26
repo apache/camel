@@ -1,7 +1,7 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
-import org.apache.camel.component.azure.storage.blob.client.adapter.BlobContainerClientAdapter;
+import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -10,9 +10,11 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobContainerOperations {
 
     private final BlobConfiguration configuration;
-    private final BlobContainerClientAdapter client;
+    private final BlobContainerClientWrapper client;
 
-    public BlobContainerOperations(final BlobConfiguration configuration, final BlobContainerClientAdapter client) {
+    public BlobContainerOperations(final BlobConfiguration configuration, final BlobContainerClientWrapper client) {
+        ObjectHelper.notNull(client, "client cannot be null");
+
         this.configuration = configuration;
         this.client = client;
     }

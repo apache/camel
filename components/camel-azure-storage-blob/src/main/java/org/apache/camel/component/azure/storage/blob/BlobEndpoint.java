@@ -13,6 +13,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
+import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
+import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,8 +33,6 @@ public class BlobEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(BlobEndpoint.class);
 
     private BlobServiceClient blobServiceClient;
-    private BlobContainerClient blobContainerClient;
-
 
     @UriParam
     private BlobConfiguration configuration;
@@ -44,7 +44,7 @@ public class BlobEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new BlobProducer(this);
+        return new BlobProducer(this, new BlobServiceClientWrapper(blobServiceClient));
     }
 
     @Override
@@ -55,20 +55,10 @@ public class BlobEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-    }
 
-    public BlobServiceClient getBlobServiceClient() {
         if (blobServiceClient == null) {
             blobServiceClient = BlobClientFactory.createBlobServiceClient(configuration);
         }
-        return blobServiceClient;
-    }
-
-    public BlobContainerClient getBlobContainerClient() {
-        if (blobContainerClient == null) {
-            blobContainerClient = BlobClientFactory.createBlobContainerClient(configuration);
-        }
-        return blobContainerClient;
     }
 
     public BlobConfiguration getConfiguration() {
@@ -77,5 +67,13 @@ public class BlobEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(BlobConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public BlobServiceClient getBlobServiceClient() {
+        return blobServiceClient;
+    }
+
+    public void setBlobServiceClient(BlobServiceClient blobServiceClient) {
+        this.blobServiceClient = blobServiceClient;
     }
 }

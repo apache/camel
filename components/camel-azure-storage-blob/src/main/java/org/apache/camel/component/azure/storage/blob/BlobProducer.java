@@ -1,6 +1,7 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.azure.storage.blob.BlobContainerClient;
@@ -8,7 +9,12 @@ import com.azure.storage.blob.models.BlobItem;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
+import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
+import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
+import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
+import org.apache.camel.component.azure.storage.blob.operations.BlobServiceOperations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -22,12 +28,14 @@ public class BlobProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(BlobProducer.class);
 
     private final BlobConfiguration configuration;
-    private final BlobOperations handler;
 
-    public BlobProducer(final Endpoint endpoint) {
+    private BlobServiceOperations blobServiceOperations;
+    private BlobContainerOperations blobContainerOperations;
+
+    public BlobProducer(final Endpoint endpoint, final BlobServiceClientWrapper blobServiceClientWrapper) {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
-        this.handler = null;
+        this.blobServiceOperations = new BlobServiceOperations(configuration, blobServiceClientWrapper);
     }
 
     @Override
@@ -41,7 +49,7 @@ public class BlobProducer extends DefaultProducer {
 
         switch (operation) {
             case listBlobContainers:
-                listBlobContainers(exchange);
+                setResponse(exchange, blobServiceOperations.listBlobContainers());
                 break;
             case listBlobs:
                 listBlobs(exchange);
@@ -49,21 +57,17 @@ public class BlobProducer extends DefaultProducer {
         }
     }
 
-    private void listBlobContainers(final Exchange exchange) {
-        //getMessageForResponse(exchange).setBody(handler.handleListBlobContainers(getEndpoint().getBlobServiceClient()));
-    }
-
     private void listBlobs(final Exchange exchange) {
-        final BlobContainerClient client = getEndpoint().getBlobContainerClient();
 
-        final List<BlobItem> blobs = client.listBlobs().stream()
-                .collect(Collectors.toList());
-
-        getMessageForResponse(exchange).setBody(blobs);
     }
 
     private void getBlob(final Exchange exchange) {
 
+    }
+
+    private void setResponse(final Exchange exchange, final BlobOperationResponse blobOperationResponse) {
+        exchange.getMessage().setBody(blobOperationResponse.getBody());
+        exchange.getMessage().setHeaders(blobOperationResponse.getHeaders());
     }
 
     @Override

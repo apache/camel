@@ -38,7 +38,7 @@ class BlobOperationsHandlerTest {
         return IOUtils.toString(inputStream, Charset.defaultCharset());
     }
 
-    @Test
+    /*@Test
     public void testHandleListBlobContainers() {
         final BlobServiceClient client = BlobClientFactory.createBlobServiceClient(configuration);
         final BlobServiceOperations blobServiceOperations = new BlobServiceOperations(configuration, client);
@@ -46,7 +46,7 @@ class BlobOperationsHandlerTest {
         final List<BlobContainerItem> blobContainerItems = (List<BlobContainerItem>) blobServiceOperations.listBlobContainers().getBody();
 
         blobContainerItems.forEach(blobContainerItem -> System.out.println(blobContainerItem.getName()));
-    }
+    }*/
 
 
     /*@Test

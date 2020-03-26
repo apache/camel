@@ -10,6 +10,7 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 public final class BlobClientFactory {
 
@@ -30,6 +31,15 @@ public final class BlobClientFactory {
                 .buildClient();
     }
 
+    public static BlobContainerClient getBlobContainerClient(final BlobServiceClient blobServiceClient, final BlobConfiguration configuration) {
+        ObjectHelper.notNull(blobServiceClient, "blobServiceClient cannot be null");
+
+        if (!ObjectHelper.isEmpty(configuration.getContainerName())) {
+            return blobServiceClient.getBlobContainerClient(configuration.getContainerName());
+        }
+        return null;
+    }
+
     public static BlobClient createBlobClient(final BlobConfiguration configuration) {
         return new BlobClientBuilder()
                 .endpoint(buildAzureEndpointUri(configuration))
@@ -37,6 +47,15 @@ public final class BlobClientFactory {
                 .containerName(configuration.getContainerName())
                 .blobName(configuration.getBlobName())
                 .buildClient();
+    }
+
+    public static BlobClient getBlobClient(final BlobConfiguration configuration, final BlobContainerClient blobContainerClient) {
+        ObjectHelper.notNull(blobContainerClient, "blobContainerClient cannot be null");
+
+        if (!ObjectHelper.isEmpty(configuration.getBlobName())) {
+            return blobContainerClient.getBlobClient(configuration.getBlobName());
+        }
+        return null;
     }
 
     private static String buildAzureEndpointUri(final BlobConfiguration configuration) {
