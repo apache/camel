@@ -18,10 +18,13 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -36,27 +39,31 @@ public class UndertowMethodRestricTest extends BaseUndertowTest {
 
     @Test
     public void testProperHttpMethod() throws Exception {
-        HttpClient httpClient = new HttpClient();
-        PostMethod httpPost = new PostMethod(url);
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        StringRequestEntity reqEntity = new StringRequestEntity("This is a test", null, null);
-        httpPost.setRequestEntity(reqEntity);
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new StringEntity("This is a test"));
 
-        int status = httpClient.executeMethod(httpPost);
+        HttpResponse response = client.execute(httpPost);
 
-        assertEquals(200, status);
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertEquals("This is a test response", responseString);
 
-        String result = httpPost.getResponseBodyAsString();
-        assertEquals("This is a test response", result);
+        client.close();
     }
 
     @Test
     public void testImproperHttpMethod() throws Exception {
-        HttpClient httpClient = new HttpClient();
-        GetMethod httpGet = new GetMethod(url);
-        int status = httpClient.executeMethod(httpGet);
+        CloseableHttpClient client = HttpClients.createDefault();
+
+        HttpGet httpGet = new HttpGet(url);
+        HttpResponse response = client.execute(httpGet);
+        int status = response.getStatusLine().getStatusCode();
 
         assertEquals("Get a wrong response status", 405, status);
+
+        client.close();
     }
 
     @Override
