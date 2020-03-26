@@ -1016,7 +1016,7 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default: 305000
+         * Default: 30000
          * Group: producer
          */
         default KafkaComponentBuilder requestTimeoutMs(
