@@ -11,7 +11,7 @@ Below is the list of components that are provided by Apache Camel.
 == List of Components
 
 // components: START
-Number of Components: 332 in 265 JAR artifacts (1 deprecated)
+Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -222,8 +222,6 @@ Number of Components: 332 in 265 JAR artifacts (1 deprecated)
 | xref:elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
 
 | xref:elsql-component.adoc[ElSQL] (camel-elsql) | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
-
-| xref:elytron-component.adoc[Elytron] (camel-elytron) | 3.1 | The elytron component is allows you to work with the Elytron Security Framework
 
 | xref:etcd-keys-component.adoc[Etcd Keys] (camel-etcd) | 2.18 | Camel Etcd support
 

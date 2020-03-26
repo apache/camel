@@ -1299,18 +1299,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.elsql();
     }
     /**
-     * Elytron (camel-elytron)
-     * The elytron component is allows you to work with the Elytron Security
-     * Framework
-     * 
-     * Category: http
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-elytron
-     */
-    static org.apache.camel.builder.component.dsl.ElytronComponentBuilderFactory.ElytronComponentBuilder elytron() {
-        return org.apache.camel.builder.component.dsl.ElytronComponentBuilderFactory.elytron();
-    }
-    /**
      * Etcd Keys (camel-etcd)
      * Camel Etcd support
      * 

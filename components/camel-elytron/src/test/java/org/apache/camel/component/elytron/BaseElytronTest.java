@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.elytron;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -24,6 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.undertow.UndertowComponent;
+import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
@@ -47,7 +53,7 @@ public abstract class BaseElytronTest extends CamelTestSupport {
 
     abstract String getMechanismName();
 
-    abstract TokenSecurityRealm createBearerRealm() throws NoSuchAlgorithmException;
+    abstract TokenSecurityRealm createBearerRealm();
 
     abstract WildFlyElytronBaseProvider getElytronProvider();
 
@@ -55,6 +61,16 @@ public abstract class BaseElytronTest extends CamelTestSupport {
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         keyPair = null;
+
+        URL location = ElytronSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
+        File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
+        file.getParentFile().mkdirs();
+
+        Writer output = new FileWriter(file);
+        output.write(ElytronSecurityProvider.class.getName());
+        output.close();
+
+        file.deleteOnExit();
     }
 
     protected static int getPort() {
@@ -75,14 +91,30 @@ public abstract class BaseElytronTest extends CamelTestSupport {
 
         context.getPropertiesComponent().setLocation("ref:prop");
 
-        context.getComponent("elytron", ElytronComponent.class).setSecurityDomainBuilder(getSecurityDomainBuilder());
-        context.getComponent("elytron", ElytronComponent.class).setMechanismName(getMechanismName());
-        context.getComponent("elytron", ElytronComponent.class).setElytronProvider(getElytronProvider());
+
+
+        context.getComponent("undertow", UndertowComponent.class).setSecurityConfiguration(new ElytronSercurityConfiguration() {
+            @Override
+            public WildFlyElytronBaseProvider getElytronProvider() {
+                return BaseElytronTest.this.getElytronProvider();
+            }
+
+            @Override
+            public String getMechanismName() {
+                return BaseElytronTest.this.getMechanismName();
+            }
+
+            @Override
+            public SecurityDomain.Builder getDomainBuilder() {
+                return getSecurityDomainBuilder();
+            }
+
+        });
 
         return context;
     }
 
-    SecurityDomain.Builder getSecurityDomainBuilder() throws Exception {
+    SecurityDomain.Builder getSecurityDomainBuilder()  {
 
         SecurityDomain.Builder builder = SecurityDomain.builder()
                 .setDefaultRealmName("realm");
