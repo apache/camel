@@ -268,7 +268,6 @@
 ** xref:optaplanner-component.adoc[OptaPlanner Component]
 ** xref:osgi-activator.adoc[OSGi Camel Routes Activator]
 ** xref:eventadmin-component.adoc[OSGi EventAdmin Component]
-** xref:paxlogging-component.adoc[OSGi PAX Logging Component]
 ** xref:paho-component.adoc[Paho Component]
 ** xref:pdf-component.adoc[PDF Component]
 ** xref:platform-http-component.adoc[Platform HTTP Component]
