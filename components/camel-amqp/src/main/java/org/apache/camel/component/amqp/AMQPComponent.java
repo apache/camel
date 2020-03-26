@@ -72,7 +72,7 @@ public class AMQPComponent extends JmsComponent {
     // Life-cycle
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         Set<AMQPConnectionDetails> connectionDetails = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
         if (connectionDetails.size() == 1) {
             AMQPConnectionDetails details = connectionDetails.iterator().next();
@@ -82,7 +82,7 @@ public class AMQPComponent extends JmsComponent {
             }
             getConfiguration().setConnectionFactory(connectionFactory);
         }
-        super.doStart();
+        super.doInit();
     }
 
     @Override
