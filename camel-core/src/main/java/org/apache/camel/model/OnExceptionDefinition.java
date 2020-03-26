@@ -82,6 +82,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
+    private List<Class<? extends Throwable>> exceptionClasses = new ArrayList<Class<? extends Throwable>>();
+    @XmlTransient
     private Predicate handledPolicy;
     @XmlTransient
     private Predicate continuedPolicy;
@@ -104,10 +106,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
         this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).collect(Collectors.toList()));
+        this.exceptionClasses.addAll(exceptionClasses);
     }
 
     public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
         this.exceptions.add(exceptionType.getName());
+        this.exceptionClasses.add(exceptionType);
     }
 
     public void setRouteScoped(boolean routeScoped) {
@@ -191,6 +195,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         setOnRedeliveryFromRedeliveryRef(routeContext);
         setOnExceptionOccurredFromOnExceptionOccurredRef(routeContext);
 
+        // load exception classes
+        if ((exceptionClasses == null || exceptionClasses.isEmpty()) && exceptions != null && !exceptions.isEmpty()) {
+            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+        }
+
         // must validate configuration before creating processor
         validateConfiguration();
 
@@ -217,7 +226,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
         // load exception classes
         List<Class<? extends Throwable>> exceptionClasses = null;
-        if (exceptions != null && !exceptions.isEmpty()) {
+        if (this.exceptionClasses != null && !this.exceptionClasses.isEmpty()) {
+            exceptionClasses = this.exceptionClasses;
+        } else if (exceptions != null && !exceptions.isEmpty()) {
             exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
         }
 
@@ -281,6 +292,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @Override
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         getExceptions().add(exceptionType.getName());
+        getExceptionClasses().add(exceptionType);
         return this;
     }
 
@@ -859,6 +871,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public boolean isOutputSupported() {
         return true;
+    }
+
+    public List<Class<? extends Throwable>> getExceptionClasses() {
+        return exceptionClasses;
+    }
+
+    public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
+        this.exceptionClasses = exceptionClasses;
     }
 
     public List<String> getExceptions() {
