@@ -44,6 +44,26 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- use http cliet 4.x -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <!-- disable all components -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-allcomponents</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- use groovy grape to download JARs as that is easy to use -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -54,13 +74,6 @@
             <groupId>org.apache.ivy</groupId>
             <artifactId>ivy</artifactId>
             <version>${ivy-version}</version>
-        </dependency>
-
-        <!-- use http client 3.x for downloading as its better than the JDK client -->
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${httpclient-version}</version>
         </dependency>
 
         <!-- testing -->

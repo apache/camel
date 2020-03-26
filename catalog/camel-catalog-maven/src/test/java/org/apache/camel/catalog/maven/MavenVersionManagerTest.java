@@ -38,10 +38,10 @@ public class MavenVersionManagerTest extends Assert {
         String current = manager.getLoadedVersion();
         assertNull(current);
 
-        boolean loaded = manager.loadVersion("2.17.1");
+        boolean loaded = manager.loadVersion("2.17.2");
         assertTrue(loaded);
 
-        assertEquals("2.17.1", manager.getLoadedVersion());
+        assertEquals("2.17.2", manager.getLoadedVersion());
 
         InputStream is = manager.getResourceAsStream(COMPONENTS_CATALOG);
         assertNotNull(is);
@@ -104,8 +104,6 @@ public class MavenVersionManagerTest extends Assert {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-pax-logging does not work in spring-boot
-        assertFalse(names.contains("paxlogging"));
     }
 
     @Test
@@ -130,8 +128,6 @@ public class MavenVersionManagerTest extends Assert {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-pax-logging does not work in spring-boot
-        assertFalse(names.contains("paxlogging"));
     }
 
     @Test

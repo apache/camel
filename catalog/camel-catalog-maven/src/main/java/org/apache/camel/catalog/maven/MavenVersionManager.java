@@ -27,7 +27,6 @@ import java.util.Map;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.VersionManager;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
@@ -199,8 +198,5 @@ public class MavenVersionManager implements VersionManager, Closeable {
 
     @Override
     public void close() throws IOException {
-        // the http client uses this MultiThreadedHttpConnectionManager for handling http connections
-        // and we should ensure its shutdown to not leak connections/threads
-        MultiThreadedHttpConnectionManager.shutdownAll();
     }
 }
