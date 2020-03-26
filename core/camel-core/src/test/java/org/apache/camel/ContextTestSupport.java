@@ -107,21 +107,22 @@ public abstract class ContextTestSupport extends TestSupport {
         }
         assertValidContext(context);
 
+        context.build();
+
+        template = context.createProducerTemplate();
+        consumer = context.createConsumerTemplate();
+
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
             for (RouteBuilder builder : builders) {
                 log.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
-            context.init();
         } else {
             log.debug("isUseRouteBuilder() is false");
         }
 
-
-        template = context.createProducerTemplate();
         template.start();
-        consumer = context.createConsumerTemplate();
         consumer.start();
 
         // create a default notifier when 1 exchange is done which is the most
@@ -183,18 +184,7 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            if (context instanceof LightweightCamelContext) {
-                LightweightCamelContext ctx = (LightweightCamelContext) context;
-                Boolean autoStartup = ctx.isAutoStartup();
-                ctx.setAutoStartup(false);
-                ctx.start();
-                ctx.makeImmutable();
-                if (autoStartup != null && autoStartup) {
-                    ctx.startImmutable();
-                }
-            } else {
-                context.start();
-            }
+            context.start();
         }
     }
 

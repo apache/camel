@@ -224,11 +224,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public void init() {
-        delegate.init();
-    }
-
-    @Override
     public void suspend() {
         delegate.suspend();
     }
@@ -1658,12 +1653,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     // Immutable
     //
 
-    public void makeImmutable() {
+    public void init() {
         if (delegate instanceof LightweightRuntimeCamelContext) {
-            throw new IllegalStateException();
+            return;
         }
-        delegate.setAutoStartup(false);
-        delegate.start();
+        delegate.init();
         for (Route route : delegate.getRoutes()) {
             clearModelReferences(route);
         }
