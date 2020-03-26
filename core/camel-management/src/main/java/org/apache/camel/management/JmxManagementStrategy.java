@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -29,9 +32,6 @@ import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A JMX capable {@link org.apache.camel.spi.ManagementStrategy} that Camel by default uses if possible.
