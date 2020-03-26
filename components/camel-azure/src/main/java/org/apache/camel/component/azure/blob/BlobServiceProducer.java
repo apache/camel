@@ -46,7 +46,6 @@ import org.apache.camel.component.azure.common.ExchangeUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -505,9 +504,8 @@ public class BlobServiceProducer extends DefaultProducer {
     private void overrideBlobName(Exchange exchange) {
         String blobName = exchange.getIn().getHeader(OVERRIDE_BLOB_NAME, String.class);
 
-        if (StringUtils.isNotEmpty(blobName)) {
+        if (ObjectHelper.isNotEmpty(blobName)) {
             getEndpoint().getConfiguration().setBlobName(blobName);
         }
     }
-
 }
