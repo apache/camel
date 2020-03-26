@@ -36,6 +36,7 @@ import org.apache.camel.support.builder.Namespaces;
  */
 public class ExpressionClause<T> implements Expression, Predicate {
     private ExpressionClauseSupport<T> delegate;
+    private volatile Expression expr;
 
     public ExpressionClause(T result) {
         this.delegate = new ExpressionClauseSupport<>(result);
@@ -939,8 +940,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     public ExpressionFactory getExpressionType() {
         return delegate.getExpressionType();
     }
-
-    private volatile Expression expr;
 
     @Override
     public void init(CamelContext context) {
