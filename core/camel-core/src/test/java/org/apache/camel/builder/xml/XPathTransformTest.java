@@ -19,13 +19,13 @@ package org.apache.camel.builder.xml;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.hamcrest.Matchers;
-import org.junit.Assume;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.XPathBuilder;
+import org.hamcrest.Matchers;
+import org.junit.Assume;
 import org.junit.Test;
 import org.slf4j.Logger;
 
