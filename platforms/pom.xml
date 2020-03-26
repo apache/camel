@@ -35,7 +35,6 @@
 
     <modules>
         <module>commands</module>
-        <module>karaf</module>
     </modules>
 
 </project>
