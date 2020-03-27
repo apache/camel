@@ -14,23 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.base64;
+package org.apache.camel.dataformat.beanio;
 
-import org.apache.camel.builder.RouteBuilder;
+public final class Constants {
 
-public class Base64DataFormatDSLDefaultsTest extends Base64DataFormatDefaultsTest {
+    public static final String LS = System.lineSeparator();
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-
-            @Override
-            public void configure() {
-                from("direct:startEncode").marshal().base64().to("mock:result");
-
-                from("direct:startDecode").unmarshal().base64().to("mock:result");
-            }
-        };
+    private Constants() {
     }
 
 }

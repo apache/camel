@@ -24,20 +24,20 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class BeanIODataFormatSimpleTest extends CamelTestSupport {
 
     // START SNIPPET: e2
     private static final String FIXED_DATA =
-            "Joe,Smith,Developer,75000,10012009" + LS
-            + "Jane,Doe,Architect,80000,01152008" + LS
-            + "Jon,Anderson,Manager,85000,03182007" + LS;
+            "Joe,Smith,Developer,75000,10012009" + Constants.LS
+            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+            + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
     // END SNIPPET: e2
 
     @Test
-    public void testMarshal() throws Exception {
+    void testMarshal() throws Exception {
         List<Employee> employees = getEmployees();
 
         MockEndpoint mock = getMockEndpoint("mock:beanio-marshal");
@@ -49,7 +49,7 @@ public class BeanIODataFormatSimpleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshal() throws Exception {
+    void testUnmarshal() throws Exception {
         List<Employee> employees = getEmployees();
 
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
@@ -61,10 +61,10 @@ public class BeanIODataFormatSimpleTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
                 DataFormat format = new BeanIODataFormat(
