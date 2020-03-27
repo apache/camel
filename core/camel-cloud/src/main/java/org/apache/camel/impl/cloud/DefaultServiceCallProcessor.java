@@ -122,8 +122,9 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     // Lifecycle
     // *************************************
 
+
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         StringHelper.notEmpty(name, "name", "service name");
         ObjectHelper.notNull(camelContext, "camel context");
         ObjectHelper.notNull(expression, "expression");
@@ -136,7 +137,10 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
 
         Processor send = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(camelContext, "SendDynamicProcessor", args);
         processor = AsyncProcessorConverterHelper.convert(send);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         // Start services if needed
         ServiceHelper.startService(processor);
         ServiceHelper.startService(loadBalancer);
