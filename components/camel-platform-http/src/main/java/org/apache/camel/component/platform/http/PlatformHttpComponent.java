@@ -47,16 +47,20 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     private static final Logger LOGGER = LoggerFactory.getLogger(PlatformHttpComponent.class);
 
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
-    private PlatformHttpEngine engine;
+    private volatile PlatformHttpEngine engine;
 
-    private boolean localEngine;
+    private volatile boolean localEngine;
+
+    private final Object lock;
 
     public PlatformHttpComponent() {
-        super();
+        this(null);
     }
 
     public PlatformHttpComponent(CamelContext context) {
         super(context);
+
+        this.lock = new Object();
     }
 
     @Override
@@ -83,38 +87,9 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     }
 
     @Override
-    protected void doInit() throws Exception {
-        if (engine == null) {
-            LOGGER.debug("Lookup platform http engine from registry");
-
-            engine = getCamelContext().getRegistry()
-                .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
-
-            if (engine == null) {
-                LOGGER.debug("Lookup platform http engine from factory");
-
-                engine = getCamelContext()
-                    .adapt(ExtendedCamelContext.class)
-                    .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
-                    .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
-                    .orElseThrow(() -> new IllegalStateException(
-                        "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder.")
-                    );
-
-                localEngine = true;
-            }
-        }
-
-        CamelContextAware.trySetCamelContext(engine, getCamelContext());
-        ServiceHelper.initService(engine);
-
-        super.doInit();
-    }
-
-    @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ServiceHelper.startService(engine);
+        ServiceHelper.startService(getOrCreateEngine());
     }
 
     @Override
@@ -190,5 +165,37 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         }
 
         return consumer;
+    }
+
+    PlatformHttpEngine getOrCreateEngine() {
+        if (engine == null) {
+            synchronized (lock) {
+                if (engine == null) {
+                    LOGGER.debug("Lookup platform http engine from registry");
+
+                    engine = getCamelContext().getRegistry()
+                        .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
+
+                    if (engine == null) {
+                        LOGGER.debug("Lookup platform http engine from factory");
+
+                        engine = getCamelContext()
+                            .adapt(ExtendedCamelContext.class)
+                            .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
+                            .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
+                            .orElseThrow(() -> new IllegalStateException(
+                                "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder.")
+                            );
+
+                        localEngine = true;
+                    }
+                }
+            }
+        }
+
+        CamelContextAware.trySetCamelContext(engine, getCamelContext());
+        ServiceHelper.initService(engine);
+
+        return engine;
     }
 }

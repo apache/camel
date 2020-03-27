@@ -28,7 +28,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +82,45 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return platformHttpEngine.createConsumer(this, processor);
+        return new DefaultConsumer(this, processor) {
+            private Consumer delegatedConsumer;
+
+            @Override
+            public PlatformHttpEndpoint getEndpoint () {
+                return (PlatformHttpEndpoint) super.getEndpoint();
+            }
+
+            @Override
+            protected void doStart () throws Exception {
+                super.doStart();
+
+                delegatedConsumer = getEndpoint().getOrCreateEngine().createConsumer(getEndpoint(), getProcessor());
+                configureConsumer(delegatedConsumer);
+
+                ServiceHelper.startService(delegatedConsumer);
+            }
+
+            @Override
+            protected void doStop () throws Exception {
+                super.doStop();
+
+                ServiceHelper.stopAndShutdownServices(delegatedConsumer);
+            }
+
+            @Override
+            protected void doResume () throws Exception {
+                ServiceHelper.resumeService(delegatedConsumer);
+
+                super.doResume();
+            }
+
+            @Override
+            protected void doSuspend () throws Exception {
+                ServiceHelper.suspendService(delegatedConsumer);
+
+                super.doSuspend();
+            }
+        };
     }
 
     @Override
@@ -143,5 +183,11 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setProduces(String produces) {
         this.produces = produces;
+    }
+
+    PlatformHttpEngine getOrCreateEngine() {
+        return platformHttpEngine != null
+            ? platformHttpEngine
+            : ((PlatformHttpComponent)getComponent()).getOrCreateEngine();
     }
 }
