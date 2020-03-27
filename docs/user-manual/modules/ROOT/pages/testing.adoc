@@ -191,13 +191,8 @@ of annotations you can use in your tests.
 === Blueprint Test
 
 Here is the Blueprint Testing
-https://github.com/apache/camel/blob/master/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
+https://github.com/apache/camel-karaf/blob/master/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
 using XML Config]:
-
-[source,java]
-----
-include::{examplesdir}/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[tags=example]
-----
 
 Also notice the use of `getBlueprintDescriptors` to indicate that by
 default we should look for the
