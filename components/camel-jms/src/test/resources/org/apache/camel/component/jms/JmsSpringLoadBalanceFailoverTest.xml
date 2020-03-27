@@ -28,6 +28,8 @@
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
                 <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+                <!-- need to trust when serializing java objects over JMS -->
+                <property name="trustAllPackages" value="true"/>
             </bean>
         </property>
     </bean>
