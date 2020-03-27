@@ -187,6 +187,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setTypeConverterRegistry(tcr);
         }
 
+        // setup whether to load type converters as early as possible
+        if (getLoadTypeConverters() != null) {
+            getContext().setLoadTypeConverters(CamelContextHelper.parseBoolean(getContext(), getLoadTypeConverters()));
+        }
+
         // then properties component
         PropertiesComponent pc = getBeanForType(PropertiesComponent.class);
         if (pc != null) {
@@ -816,11 +821,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getThreadNamePattern();
 
-    public abstract Boolean getLoadTypeConverters();
+    public abstract String getLoadTypeConverters();
 
-    public abstract Boolean getInflightRepositoryBrowseEnabled();
+    public abstract String getInflightRepositoryBrowseEnabled();
 
-    public abstract Boolean getTypeConverterStatisticsEnabled();
+    public abstract String getTypeConverterStatisticsEnabled();
 
     public abstract LoggingLevel getTypeConverterExistsLoggingLevel();
 
@@ -958,10 +963,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setValidators(getValidators().getValidators());
         }
         if (getTypeConverterStatisticsEnabled() != null) {
-            context.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+            context.setTypeConverterStatisticsEnabled(CamelContextHelper.parseBoolean(context, getTypeConverterStatisticsEnabled()));
         }
         if (getInflightRepositoryBrowseEnabled() != null) {
-            context.getInflightRepository().setInflightBrowseEnabled(getInflightRepositoryBrowseEnabled());
+            context.getInflightRepository().setInflightBrowseEnabled(CamelContextHelper.parseBoolean(context, getInflightRepositoryBrowseEnabled()));
         }
         if (getTypeConverterExists() != null) {
             context.getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());

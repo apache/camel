@@ -144,13 +144,13 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private ShutdownRunningTask shutdownRunningTask;
 
     @XmlAttribute
-    private Boolean loadTypeConverters;
+    private String loadTypeConverters;
 
     @XmlAttribute
-    private Boolean typeConverterStatisticsEnabled;
+    private String typeConverterStatisticsEnabled;
 
     @XmlAttribute
-    private Boolean inflightRepositoryBrowseEnabled;
+    private String inflightRepositoryBrowseEnabled;
 
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
@@ -754,29 +754,29 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
-    public Boolean getLoadTypeConverters() {
+    public String getLoadTypeConverters() {
         return loadTypeConverters;
     }
 
-    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+    public void setLoadTypeConverters(String loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
     }
 
     @Override
-    public Boolean getTypeConverterStatisticsEnabled() {
+    public String getTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled;
     }
 
-    public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+    public void setTypeConverterStatisticsEnabled(String typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
     }
 
     @Override
-    public Boolean getInflightRepositoryBrowseEnabled() {
+    public String getInflightRepositoryBrowseEnabled() {
         return inflightRepositoryBrowseEnabled;
     }
 
-    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+    public void setInflightRepositoryBrowseEnabled(String inflightRepositoryBrowseEnabled) {
         this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
