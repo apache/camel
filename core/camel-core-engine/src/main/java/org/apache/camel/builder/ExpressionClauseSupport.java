@@ -65,9 +65,10 @@ public class ExpressionClauseSupport<T> {
      * Specify an {@link org.apache.camel.Expression} instance
      */
     public T expression(Expression expression) {
-        setExpressionValue(expression);
         if (expression instanceof ExpressionFactory) {
-            setExpressionType((ExpressionFactory)expression);
+            setExpressionType((ExpressionFactory) expression);
+        } else {
+            setExpressionValue(expression);
         }
         return result;
     }

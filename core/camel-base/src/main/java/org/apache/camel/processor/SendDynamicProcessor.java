@@ -95,6 +95,11 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     }
 
     @Override
+    protected void doInit() throws Exception {
+        expression.init(camelContext);
+    }
+
+    @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             exchange.setException(new IllegalStateException("SendProcessor has not been started: " + this));
