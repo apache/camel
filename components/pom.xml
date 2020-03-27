@@ -59,7 +59,6 @@
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
-        <module>camel-test-blueprint</module>
         <module>camel-test-cdi</module>
         <module>camel-test-karaf</module>
         <module>camel-test-spring</module>

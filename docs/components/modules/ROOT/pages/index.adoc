@@ -829,7 +829,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -838,8 +838,6 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 | xref:attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
 | xref:aws-xray.adoc[AWS XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
-
-| xref:blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
 | xref:cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
@@ -886,8 +884,6 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 | xref:swagger-java.adoc[Swagger Java] (camel-swagger-java) | 2.16 | Rest-dsl support for using swagger api-doc
 
 | xref:test.adoc[Test] (camel-test) | 2.9 | Camel unit testing
-
-| xref:test-blueprint.adoc[Test Blueprint] (camel-test-blueprint) | 2.10 | Camel unit testing with OSGi Blueprint
 
 | xref:test-cdi.adoc[Test CDI] (camel-test-cdi) | 2.17 | Camel unit testing with CDI
 
