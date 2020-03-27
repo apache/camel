@@ -10,7 +10,6 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobServiceClientWrapper {
 
     private final BlobServiceClient client;
-    private BlobContainerClientWrapper blobContainerClientWrapper;
 
     public BlobServiceClientWrapper(final BlobServiceClient client) {
         ObjectHelper.notNull(client, "client cannot be null");
@@ -24,7 +23,7 @@ public class BlobServiceClientWrapper {
 
     public BlobContainerClientWrapper getBlobContainerClientWrapper(final String containerName) {
         if (!ObjectHelper.isEmpty(containerName)) {
-            return blobContainerClientWrapper == null ? new BlobContainerClientWrapper(client.getBlobContainerClient(containerName)) : blobContainerClientWrapper;
+            return new BlobContainerClientWrapper(client.getBlobContainerClient(containerName));
         }
         throw new IllegalArgumentException("Cannot initialize a blob container since no container name was provided.");
     }

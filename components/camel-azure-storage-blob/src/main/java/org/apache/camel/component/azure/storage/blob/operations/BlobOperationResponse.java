@@ -11,11 +11,23 @@ import org.apache.camel.component.azure.storage.blob.BlobConstants;
 public class BlobOperationResponse {
 
     private Object body;
-    private Map<String, Object> headers;
+    private Map<String, Object> headers = new HashMap<>();
 
     public BlobOperationResponse() {
-        this.body = null;
-        this.headers = new HashMap<>();
+    }
+
+    public BlobOperationResponse(final Object body, final BlobProperties properties) {
+        setBody(body);
+        setHeaders(properties);
+    }
+
+    public BlobOperationResponse(final Object body, final HttpHeaders httpHeaders) {
+        setBody(body);
+        setHeaders(httpHeaders);
+    }
+
+    public BlobOperationResponse(final Object body) {
+        setBody(body);
     }
 
     public Object getBody() {

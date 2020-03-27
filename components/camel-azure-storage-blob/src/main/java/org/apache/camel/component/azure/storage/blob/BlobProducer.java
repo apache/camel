@@ -30,11 +30,12 @@ public class BlobProducer extends DefaultProducer {
     private final BlobConfiguration configuration;
 
     private BlobServiceOperations blobServiceOperations;
-    private BlobContainerOperations blobContainerOperations;
+    private BlobServiceClientWrapper blobServiceClientWrapper;
 
     public BlobProducer(final Endpoint endpoint, final BlobServiceClientWrapper blobServiceClientWrapper) {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
+        this.blobServiceClientWrapper = blobServiceClientWrapper;
         this.blobServiceOperations = new BlobServiceOperations(configuration, blobServiceClientWrapper);
     }
 
@@ -48,21 +49,22 @@ public class BlobProducer extends DefaultProducer {
         }
 
         switch (operation) {
+            // service operations
             case listBlobContainers:
                 setResponse(exchange, blobServiceOperations.listBlobContainers());
                 break;
-            case listBlobs:
-                listBlobs(exchange);
+            // container operations
+            case createBlobContainer:
+                setResponse(exchange, getContainerOperations(exchange).createContainer(exchange));
                 break;
+            case deleteBlobContainer:
+                setResponse(exchange, getContainerOperations(exchange).deleteContainer(exchange));
+                break;
+            case listBlobs:
+                setResponse(exchange, getContainerOperations(exchange).listBlobs(exchange));
+                break;
+            // blob operations
         }
-    }
-
-    private void listBlobs(final Exchange exchange) {
-
-    }
-
-    private void getBlob(final Exchange exchange) {
-
     }
 
     private void setResponse(final Exchange exchange, final BlobOperationResponse blobOperationResponse) {
@@ -76,11 +78,23 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private BlobOperationsDefinition determineOperation(final Exchange exchange) {
-        BlobOperationsDefinition operation = exchange.getIn().getHeader(BlobConstants.BLOB_OPERATION, BlobOperationsDefinition.class);
-        if (operation == null) {
-            operation = configuration.getOperation();
+        final BlobOperationsDefinition operation = exchange.getIn().getHeader(BlobConstants.BLOB_OPERATION, BlobOperationsDefinition.class);
+        if (operation != null) {
+            return operation;
         }
-        return operation;
+        return configuration.getOperation();
+    }
+
+    private BlobContainerOperations getContainerOperations(final Exchange exchange) {
+        return new BlobContainerOperations(configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
+    }
+
+    private String determineContainerName(final Exchange exchange) {
+        final String containerName = exchange.getIn().getHeader(BlobConstants.BLOB_CONTAINER_NAME, String.class);
+        if (!ObjectHelper.isEmpty(containerName)) {
+            return containerName;
+        }
+        return configuration.getContainerName();
     }
 
     private static Message getMessageForResponse(final Exchange exchange) {

@@ -72,6 +72,10 @@ public class BlobConfiguration implements Cloneable {
         this.operation = operation;
     }
 
+    /**
+     * dd
+     * @return
+     */
     public String getBlobName() {
         return blobName;
     }
@@ -80,6 +84,10 @@ public class BlobConfiguration implements Cloneable {
         this.blobName = blobName;
     }
 
+    /**
+     * dd
+     * @return
+     */
     public BlobType getBlobType() {
         return blobType;
     }
@@ -88,6 +96,10 @@ public class BlobConfiguration implements Cloneable {
         this.blobType = blobType;
     }
 
+    /**
+     * dd
+     * @return
+     */
     public String getFileDir() {
         return fileDir;
     }

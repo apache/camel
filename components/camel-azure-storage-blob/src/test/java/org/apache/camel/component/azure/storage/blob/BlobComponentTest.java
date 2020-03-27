@@ -67,7 +67,7 @@ class BlobComponentTest extends CamelTestSupport {
         });
     }
 
-    //@Disabled
+    @Disabled
     @Test
     public void sendIn() throws Exception {
         template.sendBody("direct:listBuckets", ExchangePattern.InOnly, "");

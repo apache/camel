@@ -51,6 +51,33 @@ public interface AzureStorageBlobComponentBuilderFactory {
             extends
                 ComponentBuilder<BlobComponent> {
         /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder blobName(
+                java.lang.String blobName) {
+            doSetProperty("blobName", blobName);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder blobType(
+                org.apache.camel.component.azure.storage.blob.BlobType blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
          * Config.
          * 
          * The option is a:
@@ -61,6 +88,18 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder configuration(
                 org.apache.camel.component.azure.storage.blob.BlobConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder fileDir(
+                java.lang.String fileDir) {
+            doSetProperty("fileDir", fileDir);
             return this;
         }
         /**
@@ -107,12 +146,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * dd.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.blob.BlobOperations</code> type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
          * Group: producer
          */
         default AzureStorageBlobComponentBuilder operation(
-                org.apache.camel.component.azure.storage.blob.BlobOperations operation) {
+                org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -166,10 +205,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "blobName": getOrCreateConfiguration((BlobComponent) component).setBlobName((java.lang.String) value); return true;
+            case "blobType": getOrCreateConfiguration((BlobComponent) component).setBlobType((org.apache.camel.component.azure.storage.blob.BlobType) value); return true;
             case "configuration": ((BlobComponent) component).setConfiguration((org.apache.camel.component.azure.storage.blob.BlobConfiguration) value); return true;
+            case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BlobComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperations) value); return true;
+            case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;
             case "basicPropertyBinding": ((BlobComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((BlobComponent) component).setAccessKey((java.lang.String) value); return true;
             default: return false;

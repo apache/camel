@@ -38,6 +38,16 @@ public final class BlobConstants {
     public static final String COMMITTED_BLOCK_COUNT = HEADER_PREFIX + "CommittedBlockCount";
     public static final String HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
 
+    // headers to be retrieved
+    public static final String LIST_BLOB_OPTIONS = HEADER_PREFIX + "ListBlobOptions";
+    public static final String BLOB_LIST_DETAILS = HEADER_PREFIX + "BlobListDetails";
+    public static final String PREFIX = HEADER_PREFIX + "Prefix";
+    public static final String MAX_RESULTS_PER_PAGE = HEADER_PREFIX + "MaxResultsPerPage";
+    public static final String TIMEOUT = HEADER_PREFIX + "Timeout";
+    public static final String PUBLIC_ACCESS_TYPE = HEADER_PREFIX + "PublicAccessType";
+    public static final String BLOB_REQUEST_CONDITION = HEADER_PREFIX + "BlobRequestCondition";
+    public static final String BLOB_CONTAINER_NAME = HEADER_PREFIX + "BlobContainerName";
+
     private BlobConstants() {
     }
 }

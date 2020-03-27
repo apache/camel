@@ -44,6 +44,56 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointConsumerBuilder) this;
         }
         /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobName(String blobName) {
+            doSetProperty("blobName", blobName);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobType(BlobType blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobType(String blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder fileDir(String fileDir) {
+            doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -230,6 +280,56 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointProducerBuilder) this;
         }
         /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobName(String blobName) {
+            doSetProperty("blobName", blobName);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobType(BlobType blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobType(String blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder fileDir(String fileDir) {
+            doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -275,11 +375,12 @@ public interface BlobEndpointBuilderFactory {
          * dd.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.blob.BlobOperations</code> type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
          * Group: producer
          */
-        default BlobEndpointProducerBuilder operation(BlobOperations operation) {
+        default BlobEndpointProducerBuilder operation(
+                BlobOperationsDefinition operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -287,7 +388,7 @@ public interface BlobEndpointBuilderFactory {
          * dd.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.blob.BlobOperations</code> type.
+         * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
          * Group: producer
          */
@@ -391,6 +492,56 @@ public interface BlobEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Group: common
+         */
+        default BlobEndpointBuilder blobName(String blobName) {
+            doSetProperty("blobName", blobName);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default BlobEndpointBuilder blobType(BlobType blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
+         * type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default BlobEndpointBuilder blobType(String blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder fileDir(String fileDir) {
+            doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * dd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
          * Group: security
          */
         default BlobEndpointBuilder accessKey(String accessKey) {
@@ -468,12 +619,25 @@ public interface BlobEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.azure.storage.blob.BlobOperations</code>
-     * enum.
+     * <code>org.apache.camel.component.azure.storage.blob.BlobType</code> enum.
      */
-    enum BlobOperations {
+    enum BlobType {
+        blockblob,
+        appendblob,
+        pageblob;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> enum.
+     */
+    enum BlobOperationsDefinition {
         listBlobContainers,
-        listBlobs;
+        createBlobContainer,
+        deleteBlobContainer,
+        listBlobs,
+        getBlob,
+        deleteBlob;
     }
 
     public interface BlobBuilders {

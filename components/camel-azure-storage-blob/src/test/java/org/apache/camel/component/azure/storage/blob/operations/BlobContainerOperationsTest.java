@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -40,46 +40,34 @@ class BlobContainerOperationsTest {
 
     @Test
     public void testCreateContainer() {
-        when(client.createContainer()).thenReturn(createContainerMock());
+        when(client.createContainer(any(), any(), any())).thenReturn(createContainerMock());
 
         final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
-        final BlobOperationResponse response = blobContainerOperations.createContainer();
+        final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
         assertNotNull(response);
         assertNotNull(response.getHeaders().get(BlobConstants.HTTP_HEADERS));
         assertTrue((boolean)response.getBody());
-
-        // throw an error in case of no container name set
-        assertThrows(IllegalArgumentException.class, () -> {
-           configuration.setContainerName(null);
-           blobContainerOperations.createContainer();
-        });
     }
 
     @Test
     public void testDeleteContainer() {
-        when(client.deleteContainer()).thenReturn(deleteContainerMock());
+        when(client.deleteContainer(any(), any())).thenReturn(deleteContainerMock());
 
         final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
-        final BlobOperationResponse response = blobContainerOperations.deleteContainer();
+        final BlobOperationResponse response = blobContainerOperations.deleteContainer(null);
 
         assertNotNull(response);
         assertNotNull(response.getHeaders().get(BlobConstants.HTTP_HEADERS));
         assertTrue((boolean)response.getBody());
-
-        // throw an error in case of no container name set
-        assertThrows(IllegalArgumentException.class, () -> {
-            configuration.setContainerName(null);
-            blobContainerOperations.deleteContainer();
-        });
     }
 
     @Test
     public void testListBlob() {
-        when(client.listBlobs()).thenReturn(listBlobsMock());
+        when(client.listBlobs(any(), any())).thenReturn(listBlobsMock());
 
         final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
-        final BlobOperationResponse response = blobContainerOperations.listBlobs();
+        final BlobOperationResponse response = blobContainerOperations.listBlobs(null);
 
         assertNotNull(response);
 
@@ -88,14 +76,7 @@ class BlobContainerOperationsTest {
 
         assertTrue(items.contains("item-1"));
         assertTrue(items.contains("item-2"));
-
-        // throw an error in case of no container name set
-        assertThrows(IllegalArgumentException.class, () -> {
-            configuration.setContainerName(null);
-            blobContainerOperations.listBlobs();
-        });
     }
-
 
     private HttpHeaders createContainerMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();

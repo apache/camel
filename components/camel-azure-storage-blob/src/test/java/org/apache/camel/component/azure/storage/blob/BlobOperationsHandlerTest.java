@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 import com.azure.storage.blob.BlobServiceClient;
 
@@ -15,8 +16,8 @@ import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOpe
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
 import org.apache.camel.component.azure.storage.blob.operations.BlobServiceOperations;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -27,15 +28,11 @@ class BlobOperationsHandlerTest {
 
     @BeforeAll
     public void setup() throws IOException {
+        final Properties properties = BlobTestUtils.loadAzurePropertiesFile();
+
         configuration = new BlobConfiguration();
-        configuration.setAccountName("cameldev");
-        configuration.setAccessKey(loadKey());
-    }
-
-    private String loadKey() throws IOException {
-        final InputStream inputStream = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(".azure_key"));
-
-        return IOUtils.toString(inputStream, Charset.defaultCharset());
+        configuration.setAccountName(properties.getProperty("account_name"));
+        configuration.setAccessKey(properties.getProperty("access_key"));
     }
 
     /*@Test
@@ -61,6 +58,7 @@ class BlobOperationsHandlerTest {
     }*/
 
     @Test
+    @Disabled
     public void testHandleGetBlob() throws IOException {
         configuration.setContainerName("test");
         configuration.setBlobName("0b4e673827795_1_V550.jpg");
@@ -79,6 +77,7 @@ class BlobOperationsHandlerTest {
     }
 
     @Test
+    @Disabled
     public void handleDeleteBlob() {
         configuration.setContainerName("test");
         configuration.setBlobName("Sharklets_Texture.png");
