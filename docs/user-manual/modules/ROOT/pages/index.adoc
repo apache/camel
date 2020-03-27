@@ -428,7 +428,6 @@ camel routes without them knowing
 // <!-- others: START -->
 
 * Miscellaneous Components
-** xref:components::blueprint.adoc[Blueprint]
 ** xref:components::cdi.adoc[CDI]
 ** xref:components::cxf-transport.adoc[CXF Transport]
 ** xref:components::hystrix.adoc[Hystrix]
@@ -445,7 +444,6 @@ camel routes without them knowing
 ** xref:components::spring-security.adoc[Spring Security]
 ** xref:components::swagger-java.adoc[Swagger Java]
 ** xref:components::test.adoc[Test]
-** xref:components::test-blueprint.adoc[Test Blueprint]
 ** xref:components::test-cdi.adoc[Test CDI]
 ** xref:components::test-karaf.adoc[Test Karaf]
 ** xref:components::test-spring.adoc[Test Spring]
