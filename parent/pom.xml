@@ -2052,11 +2052,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-osgi-activator</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-paho</artifactId>
         <version>${project.version}</version>
       </dependency>
