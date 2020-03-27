@@ -432,7 +432,6 @@ camel routes without them knowing
 ** xref:components::cxf-transport.adoc[CXF Transport]
 ** xref:components::hystrix.adoc[Hystrix]
 ** xref:components::jasypt.adoc[Jasypt]
-** xref:components::kura.adoc[Kura]
 ** xref:components::leveldb.adoc[LevelDB]
 ** xref:components::lra.adoc[Lra]
 ** xref:components::opentracing.adoc[OpenTracing]
