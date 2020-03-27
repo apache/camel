@@ -265,7 +265,6 @@
 ** xref:openstack-swift-component.adoc[OpenStack Swift Component]
 ** xref:opentracing.adoc[OpenTracing Component]
 ** xref:optaplanner-component.adoc[OptaPlanner Component]
-** xref:osgi-activator.adoc[OSGi Camel Routes Activator]
 ** xref:eventadmin-component.adoc[OSGi EventAdmin Component]
 ** xref:paho-component.adoc[Paho Component]
 ** xref:pdf-component.adoc[PDF Component]
