@@ -16,26 +16,31 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Ignore;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
-@Ignore("Hangs")
-public class JmsSpringLoadBalanceFailoverTest extends JmsLoadBalanceFailoverTest {
+public class JmsSpringLoadBalanceFailoverTest extends CamelSpringTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml");
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml"), true);
+    @Test
+    public void testFailover() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        String out = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
     }
 
 }
