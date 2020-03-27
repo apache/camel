@@ -11,7 +11,7 @@ Below is the list of components that are provided by Apache Camel.
 == List of Components
 
 // components: START
-Number of Components: 330 in 263 JAR artifacts (1 deprecated)
+Number of Components: 329 in 262 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -500,8 +500,6 @@ Number of Components: 330 in 263 JAR artifacts (1 deprecated)
 | xref:openstack-swift-component.adoc[OpenStack Swift] (camel-openstack) | 2.19 | The openstack-swift component allows messages to be sent to an OpenStack object storage services.
 
 | xref:optaplanner-component.adoc[OptaPlanner] (camel-optaplanner) | 2.13 | Solves the planning problem contained in a message with OptaPlanner.
-
-| xref:eventadmin-component.adoc[OSGi EventAdmin] (camel-eventadmin) | 2.6 | The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
 
 | xref:paho-component.adoc[Paho] (camel-paho) | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
