@@ -15,7 +15,7 @@
     "javaType": "org.apache.camel.component.avro.AvroComponent",
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-avro",
+    "artifactId": "camel-avro-rpc",
     "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {

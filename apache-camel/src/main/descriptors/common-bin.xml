@@ -67,6 +67,7 @@
         <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-attachments</include>
         <include>org.apache.camel:camel-avro</include>
+        <include>org.apache.camel:camel-avro-rpc</include>
         <include>org.apache.camel:camel-aws-cw</include>
         <include>org.apache.camel:camel-aws-ddb</include>
         <include>org.apache.camel:camel-aws-ec2</include>

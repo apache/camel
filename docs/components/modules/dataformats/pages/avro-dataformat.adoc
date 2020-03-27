@@ -6,9 +6,7 @@
 
 This component provides a dataformat for avro, which allows
 serialization and deserialization of messages using Apache Avro's binary
-dataformat. Moreover, it provides support for Apache Avro's rpc, by
-providing producers and consumers endpoint for using avro over netty or
-http.
+dataformat. Since Camel 3.2 rpc functionality was moved into separate `camel-avro-rpc` component.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -23,72 +21,10 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Apache Avro Overview
-
-Avro allows you to define message types and a protocol using a json like
-format and then generate java code for the specified types and messages.
-An example of how a schema looks like is below.
-
-[source,xml]
-------------------------------------------------------------------------------------------
-{"namespace": "org.apache.camel.avro.generated",
- "protocol": "KeyValueProtocol",
-
- "types": [
-     {"name": "Key", "type": "record",
-      "fields": [
-          {"name": "key",   "type": "string"}
-      ]
-     },
-     {"name": "Value", "type": "record",
-      "fields": [
-          {"name": "value",   "type": "string"}
-      ]
-     }
- ],
-
- "messages": {
-     "put": {
-         "request": [{"name": "key", "type": "Key"}, {"name": "value", "type": "Value"} ],
-         "response": "null"
-     },
-     "get": {
-         "request": [{"name": "key", "type": "Key"}],
-         "response": "Value"
-     }
- }
-}
-------------------------------------------------------------------------------------------
 
 You can easily generate classes from a schema, using maven, ant etc.
 More details can be found at the
 http://avro.apache.org/docs/current/[Apache Avro documentation].
-
-However, it doesn't enforce a schema first approach and you can create
-schema for your existing classes. *Since 2.12* you can use existing
-protocol interfaces to make RCP calls. You should use interface for the
-protocol itself and POJO beans or primitive/String classes for parameter
-and result types. Here is an example of the class that corresponds to
-schema above:
-
-[source,java]
---------------------------------------------------------------
-package org.apache.camel.avro.reflection;
-
-public interface KeyValueProtocol {
-    void put(String key, Value value);
-    Value get(String key);
-}
-
-class Value {
-    private String value;
-    public String getValue() { return value; }
-    public void setValue(String value) { this.value = value; }
-}
---------------------------------------------------------------
-
-_Note: Existing classes can be used only for RPC (see below), not in
-data format._
 
 == Using the Avro data format
 
