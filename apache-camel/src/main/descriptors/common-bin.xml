@@ -280,7 +280,6 @@
         <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
-        <include>org.apache.camel:camel-osgi-activator</include>
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-pdf</include>
         <include>org.apache.camel:camel-pg-replication-slot</include>
