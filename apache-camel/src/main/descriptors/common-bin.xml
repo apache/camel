@@ -111,7 +111,6 @@
         <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-beanstalk</include>
         <include>org.apache.camel:camel-bindy</include>
-        <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-box-api</include>
@@ -351,7 +350,6 @@
         <include>org.apache.camel:camel-tarfile</include>
         <include>org.apache.camel:camel-telegram</include>
         <include>org.apache.camel:camel-test</include>
-        <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-junit5</include>
         <include>org.apache.camel:camel-test-karaf</include>
