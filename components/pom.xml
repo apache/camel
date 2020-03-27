@@ -69,7 +69,6 @@
         <module>camel-test-spring-junit5</module>
         <module>camel-testcontainers-junit5</module>
         <module>camel-testcontainers-spring-junit5</module>
-        <module>camel-blueprint</module>
         <module>camel-spring</module>
         <module>camel-spring-main</module>
         <module>camel-groovy</module>
