@@ -83,7 +83,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (engine == null) {
             LOGGER.debug("Lookup platform http engine from registry");
 
@@ -106,9 +106,15 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         }
 
         CamelContextAware.trySetCamelContext(engine, getCamelContext());
-        ServiceHelper.startService(engine);
+        ServiceHelper.initService(engine);
 
+        super.doInit();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         super.doStart();
+        ServiceHelper.startService(engine);
     }
 
     @Override
