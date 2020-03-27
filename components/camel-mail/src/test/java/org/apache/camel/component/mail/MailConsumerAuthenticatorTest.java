@@ -16,13 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.Properties;
 
@@ -31,19 +24,25 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
 import org.apache.camel.Processor;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-/** Test the dynamic behavior of the MailAuthenticator in the MailConsumer. */
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+/**
+ * Test the dynamic behavior of the MailAuthenticator in the MailConsumer.
+ */
 public class MailConsumerAuthenticatorTest {
 
     @Test
     public void dynamicPasswordPop3() throws Exception {
-
         execute("pop3");
     }
 
     @Test
     public void dynamicPasswordImap() throws Exception {
-
         execute("imap");
     }
 
@@ -88,7 +87,7 @@ public class MailConsumerAuthenticatorTest {
 
     public static class MyAuthenticator extends MailAuthenticator {
 
-        private int counter = 0;
+        private int counter;
 
         public PasswordAuthentication getPasswordAuthentication() {
             if (counter == 0) {
