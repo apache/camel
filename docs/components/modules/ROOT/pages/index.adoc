@@ -829,7 +829,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -846,8 +846,6 @@ Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 | xref:hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
 | xref:jasypt.adoc[Jasypt] (camel-jasypt) | 2.5 | Security using Jasypt
-
-| xref:kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 
 | xref:leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
 
