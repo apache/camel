@@ -357,7 +357,6 @@ camel routes without them knowing
 ** xref:components::openstack-nova-component.adoc[OpenStack Nova]
 ** xref:components::openstack-swift-component.adoc[OpenStack Swift]
 ** xref:components::optaplanner-component.adoc[OptaPlanner]
-** xref:components::eventadmin-component.adoc[OSGi EventAdmin]
 ** xref:components::paho-component.adoc[Paho]
 ** xref:components::pdf-component.adoc[PDF]
 ** xref:components::pgevent-component.adoc[PostgresSQL Event]
