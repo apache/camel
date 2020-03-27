@@ -237,7 +237,6 @@
         <include>org.apache.camel:camel-kafka</include>
         <include>org.apache.camel:camel-kubernetes</include>
         <include>org.apache.camel:camel-kudu</include>
-        <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-language</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-ldif</include>
