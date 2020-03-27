@@ -173,6 +173,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             throw new IllegalArgumentException("Id must be set");
         }
 
+        // set properties as early as possible
+        PropertiesComponent pc = getBeanForType(PropertiesComponent.class);
+        if (pc != null) {
+            LOG.debug("Using PropertiesComponent: {}", pc);
+            getContext().setPropertiesComponent(pc);
+        }
+
         // set the package scan resolver as soon as possible
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
@@ -190,13 +197,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // setup whether to load type converters as early as possible
         if (getLoadTypeConverters() != null) {
             getContext().setLoadTypeConverters(CamelContextHelper.parseBoolean(getContext(), getLoadTypeConverters()));
-        }
-
-        // then properties component
-        PropertiesComponent pc = getBeanForType(PropertiesComponent.class);
-        if (pc != null) {
-            LOG.debug("Using PropertiesComponent: {}", pc);
-            getContext().setPropertiesComponent(pc);
         }
 
         // then set custom properties
