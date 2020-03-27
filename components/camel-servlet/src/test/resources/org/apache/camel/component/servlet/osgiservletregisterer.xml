@@ -27,7 +27,7 @@
 	
 	<bean id="camelServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet"/>
 
-	<bean class="org.apache.camel.component.servlet.osgi.OsgiServletRegisterer"
+	<bean class="org.apache.camel.component.osgi.OsgiServletRegisterer"
 		init-method="register"
 		destroy-method="unregister">
 		<property name="alias" value="alias" />
