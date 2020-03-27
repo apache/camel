@@ -1480,6 +1480,7 @@ public abstract class AbstractCamelContext extends BaseService
                     ServiceHelper.startService(service);
                 } else {
                     ServiceHelper.initService(service);
+                    deferStartService(object, stopOnShutdown, true);
                 }
             }
         }
@@ -1543,6 +1544,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
+        deferStartService(object, stopOnShutdown, false);
+    }
+
+    public void deferStartService(Object object, boolean stopOnShutdown, boolean startEarly) throws Exception {
         if (object instanceof Service) {
             Service service = (Service)object;
 
@@ -1564,7 +1569,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (isStarted()) {
                 ServiceHelper.startService(service);
             } else {
-                deferStartupListener.addService(service);
+                deferStartupListener.addService(service, startEarly);
             }
         }
     }
@@ -2463,12 +2468,10 @@ public abstract class AbstractCamelContext extends BaseService
 
         // now call the startup listeners where the routes has been started
         for (StartupListener startup : startupListeners) {
-            if (startup instanceof ExtendedStartupListener) {
-                try {
-                    ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
+            try {
+                startup.onCamelContextFullyStarted(this, isStarted());
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
     }
@@ -2715,6 +2718,14 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due to: {}", getName(), e.getMessage());
                 throw e;
             }
+        }
+
+        // sort the startup listeners so they are started in the right order
+        startupListeners.sort(OrderedComparator.get());
+        // now call the startup listeners where the routes has been warmed up
+        // (only the actual route consumer has not yet been started)
+        for (StartupListener startup : startupListeners) {
+            startup.onCamelContextStarting(getCamelContextReference(), isStarted());
         }
 
         // start notifiers as services
