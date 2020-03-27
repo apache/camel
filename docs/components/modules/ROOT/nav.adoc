@@ -109,7 +109,6 @@
 ** xref:dozer-component.adoc[Dozer Component]
 ** xref:drill-component.adoc[Drill Component]
 ** xref:dropbox-component.adoc[Dropbox Component]
-** xref:kura.adoc[Eclipse Kura component]
 ** xref:ehcache-component.adoc[Ehcache Component]
 ** xref:elasticsearch-rest-component.adoc[Elastichsearch Rest Component]
 ** xref:elsql-component.adoc[ElSQL Component]
