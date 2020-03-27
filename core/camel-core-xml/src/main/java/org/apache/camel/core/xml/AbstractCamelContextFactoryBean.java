@@ -196,7 +196,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // setup whether to load type converters as early as possible
         if (getLoadTypeConverters() != null) {
-            getContext().setLoadTypeConverters(CamelContextHelper.parseBoolean(getContext(), getLoadTypeConverters()));
+            String s = getContext().resolvePropertyPlaceholders(getLoadTypeConverters());
+            getContext().setLoadTypeConverters(Boolean.parseBoolean(s));
         }
 
         // then set custom properties
