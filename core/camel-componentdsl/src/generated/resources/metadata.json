@@ -2249,26 +2249,6 @@
     "artifactId": "camel-etcd",
     "version": "3.2.0-SNAPSHOT"
   },
-  "EventadminComponentBuilderFactory": {
-    "kind": "component",
-    "scheme": "eventadmin",
-    "extendsScheme": "",
-    "syntax": "eventadmin:topic",
-    "title": "OSGi EventAdmin",
-    "description": "The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.",
-    "label": "eventbus",
-    "deprecated": false,
-    "deprecationNote": "eventbus",
-    "async": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "javaType": "org.apache.camel.component.eventadmin.EventAdminComponent",
-    "firstVersion": "2.6.0",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-eventadmin",
-    "version": "3.2.0-SNAPSHOT"
-  },
   "ExecComponentBuilderFactory": {
     "kind": "component",
     "scheme": "exec",

@@ -1334,18 +1334,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.etcdWatch();
     }
     /**
-     * OSGi EventAdmin (camel-eventadmin)
-     * The eventadmin component can be used in an OSGi environment to receive
-     * OSGi EventAdmin events and process them.
-     * 
-     * Category: eventbus
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-eventadmin
-     */
-    static org.apache.camel.builder.component.dsl.EventadminComponentBuilderFactory.EventadminComponentBuilder eventadmin() {
-        return org.apache.camel.builder.component.dsl.EventadminComponentBuilderFactory.eventadmin();
-    }
-    /**
      * Exec (camel-exec)
      * The exec component can be used to execute OS system commands.
      * 
