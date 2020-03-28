@@ -85,11 +85,11 @@ public class CamelCatalogTest {
 
         assertTrue(names.contains("hystrix"));
         assertTrue(names.contains("leveldb"));
-        assertTrue(names.contains("kura"));
         assertTrue(names.contains("swagger-java"));
         assertTrue(names.contains("test-spring"));
 
         assertFalse(names.contains("http-common"));
+        assertFalse(names.contains("kura"));
         assertFalse(names.contains("core-osgi"));
         assertFalse(names.contains("file"));
         assertFalse(names.contains("ftp"));
@@ -161,10 +161,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testXmlSchema() throws Exception {
-        String schema = catalog.blueprintSchemaAsXml();
-        assertNotNull(schema);
-
-        schema = catalog.springSchemaAsXml();
+        String schema = catalog.springSchemaAsXml();
         assertNotNull(schema);
     }
 

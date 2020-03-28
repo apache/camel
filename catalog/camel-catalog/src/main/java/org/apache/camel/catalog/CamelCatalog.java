@@ -369,13 +369,6 @@ public interface CamelCatalog {
     String springSchemaAsXml();
 
     /**
-     * Returns the Camel Blueprint XML schema
-     *
-     * @return the blueprint XML schema
-     */
-    String blueprintSchemaAsXml();
-
-    /**
      * Returns the camel-main json schema
      *
      * @return the camel-main json schema
