@@ -82,8 +82,12 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Not supported");
-    }@Override
-    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
         } 

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,11 +43,8 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.eq;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.when;
+
+import static org.mockito.BDDMockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringBatchEndpointTest extends CamelTestSupport {
@@ -303,7 +301,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         assertSame(alternativeJobLauncher, batchEndpointJobLauncher);
     }
 
-    @Test(expected = FailedToStartRouteException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void shouldFailWhenThereIsNoJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
@@ -320,7 +318,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         camelContext.start();
     }
 
-    @Test(expected = FailedToStartRouteException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void shouldFailWhenThereIsMoreThanOneJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
