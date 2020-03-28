@@ -39,9 +39,10 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
     // Implementation methods
     // -------------------------------------------------------------------------
 
+
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
         if (getHeaderFilterStrategy() == null) {
             setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         }
