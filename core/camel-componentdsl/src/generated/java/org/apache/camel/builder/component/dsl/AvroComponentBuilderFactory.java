@@ -31,12 +31,12 @@ import org.apache.camel.component.avro.AvroComponent;
 public interface AvroComponentBuilderFactory {
 
     /**
-     * Avro (camel-avro)
+     * Avro (camel-avro-rpc)
      * Working with Apache Avro for data serialization.
      * 
      * Category: messaging,transformation
      * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-avro
+     * Maven coordinates: org.apache.camel:camel-avro-rpc
      */
     static AvroComponentBuilder avro() {
         return new AvroComponentBuilderImpl();

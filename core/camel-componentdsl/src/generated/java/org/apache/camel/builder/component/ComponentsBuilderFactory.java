@@ -219,12 +219,12 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.atomixValue();
     }
     /**
-     * Avro (camel-avro)
+     * Avro (camel-avro-rpc)
      * Working with Apache Avro for data serialization.
      * 
      * Category: messaging,transformation
      * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-avro
+     * Maven coordinates: org.apache.camel:camel-avro-rpc
      */
     static org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.AvroComponentBuilder avro() {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
