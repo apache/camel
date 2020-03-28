@@ -66,7 +66,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "prepare-catalog", threadSafe = true)
 public class PrepareCatalogMojo extends AbstractMojo {
 
-    private static final String[] EXCLUDE_DOC_FILES = { "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common"};
+    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common"};
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
