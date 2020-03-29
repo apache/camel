@@ -29,8 +29,8 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
