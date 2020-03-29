@@ -48,7 +48,7 @@
 ** xref:java-dsl.adoc[Java DSL]
 ** xref:spring.adoc[Spring support]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
-* xref:faq::faq.adoc[Frequently Asked Questions]
+* xref:latest@faq::faq.adoc[Frequently Asked Questions]                                                                                                                                                                                                                          xref:faq::faq.adoc[Frequently Asked Questions]
 * xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
 * xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
 
