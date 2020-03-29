@@ -36,8 +36,6 @@
         <firstVersion>2.19.0</firstVersion>
         <label>monitoring,microservice</label>
         <title>OpenTracing</title>
-
-
         <opentracing-agent.lib>${project.build.directory}/lib</opentracing-agent.lib>
     </properties>
 
