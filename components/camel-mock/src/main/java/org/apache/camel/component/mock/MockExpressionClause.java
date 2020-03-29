@@ -433,11 +433,12 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         if (expr == null) {
             synchronized (this) {
                 if (expr == null) {
-                    expr = getExpressionValue();
-                    if (expr == null) {
-                        expr = getExpressionType().createExpression(context);
+                    Expression newExpression = getExpressionValue();
+                    if (newExpression == null) {
+                        newExpression = getExpressionType().createExpression(context);
                     }
-                    expr.init(context);
+                    newExpression.init(context);
+                    expr = newExpression;
                 }
             }
         }
