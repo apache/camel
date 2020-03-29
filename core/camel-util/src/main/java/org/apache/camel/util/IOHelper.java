@@ -40,6 +40,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.function.Supplier;
 
@@ -56,7 +57,6 @@ public final class IOHelper {
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
-    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     // allows to turn on backwards compatible to turn off regarding the first
     // read byte with value zero (0b0) as EOL.
@@ -72,11 +72,7 @@ public final class IOHelper {
      * non-standard default encodings.
      */
     public static String newStringFromBytes(byte[] bytes) {
-        try {
-            return new String(bytes, UTF8_CHARSET.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
-        }
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     /**
@@ -84,11 +80,7 @@ public final class IOHelper {
      * surprises from non-standard default encodings.
      */
     public static String newStringFromBytes(byte[] bytes, int start, int length) {
-        try {
-            return new String(bytes, start, length, UTF8_CHARSET.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
-        }
+        return new String(bytes, start, length, StandardCharsets.UTF_8);
     }
 
     /**
