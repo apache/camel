@@ -20,10 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
+import org.influxdb.InfluxDB;
 
 @Component("influxdb")
 public class InfluxDbComponent extends DefaultComponent {
+
+    private InfluxDB influxDB;
 
     public InfluxDbComponent() {
     }
@@ -32,6 +36,24 @@ public class InfluxDbComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         InfluxDbEndpoint endpoint = new InfluxDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
+        InfluxDB target = influxDB;
+        if (target == null) {
+            // if not using a shared db then lookup
+            target = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, InfluxDB.class);
+        }
+        endpoint.setInfluxDB(target);
+        setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public InfluxDB getInfluxDB() {
+        return influxDB;
+    }
+
+    /**
+     * The shared Influx DB to use for all endpoints
+     */
+    public void setInfluxDB(InfluxDB influxDB) {
+        this.influxDB = influxDB;
     }
 }
