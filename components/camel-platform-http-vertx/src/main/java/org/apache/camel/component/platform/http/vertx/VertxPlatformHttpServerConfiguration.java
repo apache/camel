@@ -32,6 +32,7 @@ public class VertxPlatformHttpServerConfiguration {
 
     private BodyHandler bodyHandler = new BodyHandler();
     private SSLContextParameters sslContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public String getBindHost() {
         return bindHost;
@@ -79,6 +80,14 @@ public class VertxPlatformHttpServerConfiguration {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public static class BodyHandler {

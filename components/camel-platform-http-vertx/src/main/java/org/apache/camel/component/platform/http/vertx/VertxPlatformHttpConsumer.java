@@ -83,8 +83,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         final PlatformHttpEndpoint endpoint = getEndpoint();
         final String path = endpoint.getPath();
