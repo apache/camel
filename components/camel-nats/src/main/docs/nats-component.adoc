@@ -35,7 +35,7 @@ Where *topic* is the topic name
 
 
 // component options: START
-The Nats component supports 5 options, which are listed below.
+The Nats component supports 6 options, which are listed below.
 
 
 
@@ -43,6 +43,7 @@ The Nats component supports 5 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *servers* (common) | URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
+| *verbose* (common) | Whether or not running in verbose mode | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -86,7 +87,7 @@ with the following path and query parameters:
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 60 | int
 | *noEcho* (common) | Turn off echo. If supported by the gnatsd version you are connecting to this flag will prevent the server from echoing messages back to the connection if it has subscriptions on the subject being published to. | false | boolean
 | *noRandomizeServers* (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
-| *pedantic* (common) | Whether or not running in pedantic mode (this affects performace) | false | boolean
+| *pedantic* (common) | Whether or not running in pedantic mode (this affects performance) | false | boolean
 | *pingInterval* (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 120000 | int
 | *reconnect* (common) | Whether or not using reconnection feature | true | boolean
 | *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int

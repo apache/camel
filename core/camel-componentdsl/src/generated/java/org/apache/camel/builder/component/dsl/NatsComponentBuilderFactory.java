@@ -59,6 +59,18 @@ public interface NatsComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether or not running in verbose mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default NatsComponentBuilder verbose(boolean verbose) {
+            doSetProperty("verbose", verbose);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -142,6 +154,7 @@ public interface NatsComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "servers": ((NatsComponent) component).setServers((java.lang.String) value); return true;
+            case "verbose": ((NatsComponent) component).setVerbose((boolean) value); return true;
             case "bridgeErrorHandler": ((NatsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((NatsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((NatsComponent) component).setBasicPropertyBinding((boolean) value); return true;

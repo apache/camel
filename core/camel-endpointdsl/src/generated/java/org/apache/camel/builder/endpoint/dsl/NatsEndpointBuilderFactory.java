@@ -228,7 +228,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not running in pedantic mode (this affects performace).
+         * Whether or not running in pedantic mode (this affects performance).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -240,7 +240,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not running in pedantic mode (this affects performace).
+         * Whether or not running in pedantic mode (this affects performance).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -895,7 +895,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not running in pedantic mode (this affects performace).
+         * Whether or not running in pedantic mode (this affects performance).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -907,7 +907,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not running in pedantic mode (this affects performace).
+         * Whether or not running in pedantic mode (this affects performance).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1443,7 +1443,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not running in pedantic mode (this affects performace).
+         * Whether or not running in pedantic mode (this affects performance).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1455,7 +1455,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not running in pedantic mode (this affects performace).
+         * Whether or not running in pedantic mode (this affects performance).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
