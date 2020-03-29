@@ -946,11 +946,12 @@ public class ExpressionClause<T> implements Expression, Predicate {
         if (expr == null) {
             synchronized (this) {
                 if (expr == null) {
-                    expr = getExpressionValue();
-                    if (expr == null) {
-                        expr = delegate.getExpressionType().createExpression(context);
+                    Expression newExpression = getExpressionValue();
+                    if (newExpression == null) {
+                        newExpression = delegate.getExpressionType().createExpression(context);
                     }
-                    expr.init(context);
+                    newExpression.init(context);
+                    expr = newExpression;
                 }
             }
         }
