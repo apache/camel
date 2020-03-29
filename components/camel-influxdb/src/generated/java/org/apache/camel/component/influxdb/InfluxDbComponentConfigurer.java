@@ -21,6 +21,8 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "influxdb":
+        case "influxDB": target.setInfluxDB(property(camelContext, org.influxdb.InfluxDB.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -31,6 +33,7 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("basicPropertyBinding", boolean.class);
+        answer.put("influxDB", org.influxdb.InfluxDB.class);
         answer.put("lazyStartProducer", boolean.class);
         return answer;
     }
@@ -41,6 +44,8 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "influxdb":
+        case "influxDB": return target.getInfluxDB();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

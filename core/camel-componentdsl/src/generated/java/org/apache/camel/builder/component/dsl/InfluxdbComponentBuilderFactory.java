@@ -51,6 +51,17 @@ public interface InfluxdbComponentBuilderFactory {
             extends
                 ComponentBuilder<InfluxDbComponent> {
         /**
+         * The shared Influx DB to use for all endpoints.
+         * 
+         * The option is a: <code>org.influxdb.InfluxDB</code> type.
+         * 
+         * Group: producer
+         */
+        default InfluxdbComponentBuilder influxDB(org.influxdb.InfluxDB influxDB) {
+            doSetProperty("influxDB", influxDB);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -102,6 +113,7 @@ public interface InfluxdbComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "influxDB": ((InfluxDbComponent) component).setInfluxDB((org.influxdb.InfluxDB) value); return true;
             case "lazyStartProducer": ((InfluxDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((InfluxDbComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
