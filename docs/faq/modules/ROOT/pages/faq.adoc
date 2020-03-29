@@ -1,0 +1,166 @@
+[[FAQ-FAQ]]
+= FAQ
+
+Here are a list of commonly asked questions and answers. If you have any
+questions which are not on this list, please talk to us on the
+xref:mailing-lists.adoc[Mailing Lists].
+
+We xref:contributing.adoc[welcome contributions] and
+this entire website is in
+xref:faq/how-does-the-website-work.adoc[the GitHub repository you can send a pull request],
+so please join in and help us make the documentation better!
+
+[[FAQ-GeneralQuestions]]
+== General Questions
+
+General questions about Camel
+
+* xref:faq/can-i-get-commercial-support.adoc[Can I get commercial support?]
+* xref:support.adoc[How can I get help?]
+* xref:faq/how-can-i-get-the-source-code.adoc[How can I get the source code?]
+* xref:faq/how-does-camel-compare-to-mule.adoc[How does Camel compare to
+Mule?]
+* xref:faq/how-does-camel-compare-to-servicemix.adoc[How does Camel compare
+to ServiceMix?]
+* xref:faq/how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
+compare to ServiceMix EIP?]
+* xref:faq/how-does-camel-compare-to-synapse.adoc[How does Camel compare to
+Synapse?]
+* xref:faq/how-does-camel-work.adoc[How does Camel work?]
+* xref:faq/how-does-camel-work-with-activemq.adoc[How does Camel work with
+ActiveMQ?]
+* xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
+ServiceMix?]
+* xref:faq/how-does-the-camel-api-compare-to.adoc[How does the Camel API
+compare to?]
+* xref:faq/how-does-the-website-work.adoc[How does the website work?]
+* xref:faq/how-do-i-become-a-committer.adoc[How do I become a committer?]
+* xref:faq/how-do-i-compile-the-code.adoc[How do I compile the code?]
+* xref:faq/how-do-i-edit-the-website.adoc[How do I edit the website?]
+* xref:faq/how-do-i-run-camel-using-java-webstart.adoc[How do I run Camel
+using Java WebStart?]
+* xref:faq/if-i-use-servicemix-when-should-i-use-camel.adoc[If I use
+ServiceMix when should I use Camel?]
+* xref:faq/is-camel-an-esb.adoc[Is Camel an ESB?]
+* xref:faq/is-camel-ioc-friendly.adoc[Is Camel IoC friendly?]
+* xref:faq/running-camel-standalone.adoc[Running Camel standalone]
+* xref:faq/what-are-the-dependencies.adoc[What are the dependencies?]
+* xref:faq/what-is-a-router.adoc[What is a router?]
+* xref:faq/what-is-camel.adoc[What is Camel?]
+* xref:faq/what-is-the-license.adoc[What is the license?]
+* xref:faq/what-jars-do-i-need.adoc[What jars do I need?]
+* xref:languages.adoc[What languages are supported?]
+* xref:faq/what-platforms-are-supported.adoc[What platforms are supported?]
+* xref:faq/why-the-name-camel.adoc[Why the name Camel?]
+
+[[FAQ-UsingCamelQuestions]]
+== Using Camel Questions
+
+Questions on using Apache Camel
+
+* xref:faq/classloader-issue-of-servicemix-camel-component.adoc[Classloader issue of servicemix-camel component]
+* xref:faq/how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
+* xref:faq/how-can-i-create-a-custom-component-or-endpoint.adoc[How can I create a custom component or endpoint?]
+* xref:faq/how-can-i-get-the-remote-connection-ip-address-from-the-camel-cxf-consumer-.adoc[How can I get the remote connection IP address from the camel-cxf consumer ?]
+* xref:faq/how-can-i-stop-a-route-from-a-route.adoc[How can I stop a route from a route?]
+* xref:faq/how-can-webservice-clients-see-remote-faults-with-stacktraces-when-using-camel-cxf.adoc[How can webservice clients see remote faults with stacktraces when using camel-cxf?]
+* xref:faq/how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
+* xref:configuring-camel.adoc[How do I add a component?]
+* xref:faq/how-do-i-change-the-logging.adoc[How do I change the logging?]
+* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* xref:faq/how-do-i-configure-password-options-on-camel-endpoints-without-the-value-being-encoded.adoc[How do I configure password options on Camel endpoints without the value being encoded?]
+* xref:faq/how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate?]
+* xref:faq/how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How do I configure the maximum endpoint cache size for CamelContext?]
+* xref:faq/how-do-i-debug-my-route.adoc[How do I debug my route?]
+* xref:faq/how-do-i-disable-jmx.adoc[How do I disable JMX?]
+* xref:faq/how-do-i-enable-streams-when-debug-logging-messages-in-camel.adoc[How do I enable streams when debug logging messages in Camel?]
+* xref:faq/how-do-i-handle-failures-when-consuming-for-example-from-a-ftp-server.adoc[How do I handle failures when consuming for example from a FTP server?]
+* xref:faq/how-do-i-import-rests-from-other-xml-files.adoc[How do I import rests from other XML files?]
+* xref:faq/how-do-i-import-routes-from-other-xml-files.adoc[How do I import routes from other XML files?]
+* xref:faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?]
+* xref:faq/how-do-i-name-my-routes.adoc[How do I name my routes?]
+* xref:faq/how-do-i-restart-camelcontext.adoc[How do I restart CamelContext?]
+* xref:faq/how-do-i-retrieve-the-thrown-exception-during-processing-an-exchange.adoc[How do I retrieve the thrown Exception during processing an Exchange?]
+* xref:faq/how-do-i-retry-failed-messages-forever.adoc[How do I retry failed messages forever?]
+* xref:faq/how-do-i-retry-processing-a-message-from-a-certain-point-back-or-an-entire-route.adoc[How do I retry processing a message from a certain point back or an entire route?]
+* xref:faq/how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How do I reuse the ContextTestSupport class in my unit tests?]
+* xref:faq/how-do-i-run-activemq-and-camel-in-jboss.adoc[How do I run ActiveMQ and Camel in JBoss?]
+* xref:faq/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]
+* xref:faq/how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?]
+* xref:faq/how-do-i-use-camel-inside-servicemix.adoc[How do I use Camel inside ServiceMix?]
+* xref:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do I use Spring Property Placeholder with Camel XML?]
+* xref:faq/how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
+* xref:faq/how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How do I write a custom Processor which sends multiple messages?]
+* xref:faq/how-should-i-invoke-my-pojos-or-spring-services.adoc[How should I invoke my POJOs or Spring Services?]
+* xref:faq/how-should-i-package-applications-using-camel-and-activemq.adoc[How should I package applications using Camel and ActiveMQ?]
+* xref:faq/how-to-avoid-importing-bunch-of-cxf-packages-when-start-up-the-camel-cxf-endpoint-from-osgi-platform-.adoc[How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?]
+* xref:faq/how-to-avoid-sending-some-or-all-message-headers.adoc[How to avoid sending some or all message headers?]
+* xref:faq/how-to-create-executable-jar-camel-main.adoc[How to create executable JAR for camel-main project?]
+* xref:faq/how-to-define-a-static-camel-converter-method-in-scala.adoc[How to define a static Camel converter method in Scala?]
+* xref:faq/how-to-remove-the-http-protocol-headers-in-the-camel-message.adoc[How to remove the http protocol headers in the camel message?]
+* xref:faq/how-to-send-the-same-message-to-multiple-endpoints.adoc[How to send the same message to multiple endpoints?]
+* xref:faq/how-to-switch-the-cxf-consumer-between-http-and-https-without-touching-the-spring-configuration.adoc[How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?]
+* xref:faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in to()?]
+* xref:faq/how-to-use-extra-camel-componets-in-servicemix-camel.adoc[How to use extra Camel componets in servicemix-camel?]
+* xref:faq/is-there-an-ide.adoc[Is there an IDE?]
+* xref:faq/should-i-deploy-camel-inside-the-activemq-broker-or-in-another-application.adoc[Should I deploy Camel inside the ActiveMQ broker or in another application?]
+* xref:faq/using-camel-core-testsjar.adoc[Using camel-core-tests.jar]
+* xref:faq/using-getin-or-getout-methods-on-exchange.adoc[Using getIn or getOut methods on Exchange]
+* xref:faq/why-cant-i-use-sign-in-my-password.adoc[Why can't I use + sign in my password?]
+* xref:faq/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why can I not use when or otherwise in a Java Camel route?]
+* xref:faq/why-does-ftp-component-not-download-any-files.adoc[Why does FTP component not download any files?]
+* xref:faq/why-does-my-file-consumer-not-pick-up-the-file-and-how-do-i-let-the-file-consumer-use-the-camel-error-handler.adoc[Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?]
+* xref:faq/why-does-useoriginalmessage-with-error-handler-not-work-as-expected.adoc[Why does useOriginalMessage with error handler not work as expected?]
+* xref:faq/why-do-my-message-lose-its-headers-during-routing.adoc[Why do my message lose its headers during routing?]
+* xref:faq/why-is-my-message-body-empty.adoc[Why is my message body empty?]
+* xref:faq/why-is-my-processor-not-showing-up-in-jconsole.adoc[Why is my processor not showing up in JConsole?]
+* xref:faq/why-is-the-exception-null-when-i-use-onexception.adoc[Why is the exception null when I use onException?]
+* xref:faq/why-use-multiple-camelcontext.adoc[Why use multiple CamelContext?]
+
+[[FAQ-LoggingQuestions]]
+== Logging Questions
+
+Questions on logging output from Camel to a console, using the
+xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j etc
+
+* xref:faq/how-do-i-enable-debug-logging.adoc[How do I enable debug logging?]
+* xref:faq/how-do-i-use-java-14-logging.adoc[How do I use Java 1.4 logging?]
+* xref:faq/how-do-i-use-log4j.adoc[How do I use log4j?]
+
+[[FAQ-CamelEndpointQuestions]]
+== Camel Endpoint Questions
+
+Questions on using the various Camel xref:components::index.adoc[Components]
+and xref:endpoint.adoc[Endpoint] implementations
+
+* xref:faq/how-do-i-invoke-camel-routes-from-jbi.adoc[How do I invoke Camel routes from JBI?]
+* xref:faq/how-do-i-make-my-jms-endpoint-transactional.adoc[How Do I Make My JMS Endpoint Transactional?]
+* xref:faq/how-do-i-set-the-mep-when-interacting-with-jbi.adoc[How do I set the MEP when interacting with JBI?]
+* xref:faq/how-do-the-direct-event-seda-and-vm-endpoints-compare.adoc[How do the direct, event, seda and vm endpoints compare?]
+* xref:faq/how-do-the-timer-and-quartz-endpoints-compare.adoc[How do the Timer and Quartz endpoints compare?]
+
+[[FAQ-ComponentQuestions]]
+== Component Questions
+
+Questions on using specific components
+
+[[FAQ-JMSQuestions]]
+=== JMS Questions
+
+Questions on using the xref:components::jms-component.adoc[JMS] endpoints in Camel
+
+* xref:faq/why-does-my-jms-route-only-consume-one-message-at-once.adoc[Why does my JMS route only consume one message at once?]
+
+[[FAQ-CommonProblems]]
+== Common Problems
+
+Common Problems that people have when riding the Camel
+
+* xref:faq/exception-beandefinitionstoreexception.adoc[Exception - BeanDefinitionStoreException]
+* xref:faq/exception-javaxnamingnoinitialcontextexception.adoc[Exception - javax.naming.NoInitialContextException]
+* xref:faq/exception-orgapachecamelnosuchendpointexception.adoc[Exception - org.apache.camel.NoSuchEndpointException]
+* xref:faq/exception-orgxmlsaxsaxparseexception.adoc[Exception - org.xml.sax.SAXParseException]
+* xref:faq/memory-leak-when-adding-and-removing-routes-at-runtime.adoc[Memory leak when adding and removing routes at runtime]
+* xref:faq/why-do-camel-throw-so-many-noclassdeffoundexception-on-startup.adoc[Why do Camel throw so many NoClassDefFoundException on startup?]
+* xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
+* xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
