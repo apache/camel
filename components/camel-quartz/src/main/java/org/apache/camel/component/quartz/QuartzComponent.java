@@ -340,6 +340,17 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         return scheduler;
     }
 
+    public Scheduler getOrCreateScheduler() {
+        if (scheduler == null) {
+            try {
+                createAndInitScheduler();
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return scheduler;
+    }
+
     /**
      * To use the custom configured Quartz scheduler, instead of creating a new Scheduler.
      */
