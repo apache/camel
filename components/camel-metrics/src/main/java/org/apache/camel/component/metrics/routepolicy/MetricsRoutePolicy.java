@@ -156,13 +156,6 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
-        // ensure registry service is started
-        try {
-            ServiceHelper.startService(registryService);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-
         // create statistics holder
         // for know we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core

@@ -114,26 +114,15 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
             metricsRegistry = camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
             // create a new metricsRegistry by default
             if (metricsRegistry == null) {
                 metricsRegistry = new MetricRegistry();
-            }
-        }
-
-        if (useJmx) {
-            ManagementAgent agent = getCamelContext().getManagementStrategy().getManagementAgent();
-            if (agent != null) {
-                MBeanServer server = agent.getMBeanServer();
-                if (server != null) {
-                    reporter = JmxReporter.forRegistry(metricsRegistry).registerWith(server).inDomain(jmxDomain).build();
-                    reporter.start();
-                }
-            } else {
-                throw new IllegalStateException("CamelContext has not enabled JMX");
             }
         }
 
@@ -148,7 +137,27 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (useJmx) {
+            ManagementAgent agent = getCamelContext().getManagementStrategy().getManagementAgent();
+            if (agent != null) {
+                MBeanServer server = agent.getMBeanServer();
+                if (server != null) {
+                    reporter = JmxReporter.forRegistry(metricsRegistry).registerWith(server).inDomain(jmxDomain).build();
+                    reporter.start();
+                }
+            } else {
+                throw new IllegalStateException("CamelContext has not enabled JMX");
+            }
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
+        super.doStop();
+
         if (reporter != null) {
             reporter.stop();
             reporter = null;
