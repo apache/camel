@@ -126,7 +126,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Whether or not running in pedantic mode (this affects performace)
+     * Whether or not running in pedantic mode (this affects performance)
      */
     public boolean isPedantic() {
         return pedantic;

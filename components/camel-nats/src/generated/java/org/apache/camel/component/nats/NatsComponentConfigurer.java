@@ -28,6 +28,7 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "servers": target.setServers(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "verbose": target.setVerbose(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -40,6 +41,7 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("lazyStartProducer", boolean.class);
         answer.put("servers", java.lang.String.class);
         answer.put("useGlobalSslContextParameters", boolean.class);
+        answer.put("verbose", boolean.class);
         return answer;
     }
 
@@ -56,6 +58,7 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "servers": return target.getServers();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
+        case "verbose": return target.isVerbose();
         default: return null;
         }
     }
