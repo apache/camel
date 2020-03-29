@@ -31,7 +31,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailProducerTest extends CamelTestSupport {
 
     @Test
-    public void testProduer() throws Exception {
+    public void testProducer() throws Exception {
         Mailbox.clearAll();
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -52,7 +52,7 @@ public class MailProducerTest extends CamelTestSupport {
 
         Address from = new InternetAddress("fromCamelTest@localhost");
         Address to = new InternetAddress("recipient2@localhost");
-        Session session = Session.getDefaultInstance(System.getProperties());
+        Session session = Session.getDefaultInstance(System.getProperties(), new DefaultAuthenticator("camel", "localhost"));
         MimeMessage mimeMessage = new MimeMessage(session);
         mimeMessage.setFrom(from);
         mimeMessage.addRecipient(RecipientType.TO, to);
