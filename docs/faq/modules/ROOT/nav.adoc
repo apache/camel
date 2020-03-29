@@ -99,12 +99,3 @@
 * xref:why-do-camel-throw-so-many-noclassdeffoundexception-on-startup.adoc[Why do Camel throw so many NoClassDefFoundException on startup?]
 * xref:why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
 * xref:why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
-* xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
-* xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
-
-
-* *Reference*
-* xref:latest@components::index.adoc[Components]
-* xref:latest@components:dataformats:index.adoc[Data Formats]
-* xref:latest@components:languages:index.adoc[Supported expression languages]
-* xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
