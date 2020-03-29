@@ -107,9 +107,7 @@ public class JGroupsClusterRouteTest extends Assert {
 
         expectMasterIsNot(firstCamelContext);
         firstCamelContext.stop();
-        assertMasterIsNot(firstCamelContext);
 
-        expectMasterIsNot(firstCamelContext);
         firstCamelContext.start();
         assertMasterIsNot(firstCamelContext);
 
