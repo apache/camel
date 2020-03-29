@@ -442,7 +442,6 @@ camel routes without them knowing
 ** xref:components::swagger-java.adoc[Swagger Java]
 ** xref:components::test.adoc[Test]
 ** xref:components::test-cdi.adoc[Test CDI]
-** xref:components::test-karaf.adoc[Test Karaf]
 ** xref:components::test-spring.adoc[Test Spring]
 ** xref:components::testcontainers.adoc[Testcontainers]
 ** xref:components::testcontainers-spring.adoc[Testcontainers Spring]
