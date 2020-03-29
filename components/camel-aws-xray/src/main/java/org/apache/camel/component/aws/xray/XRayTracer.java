@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Entity;
@@ -79,6 +80,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
     private static final Logger LOG = LoggerFactory.getLogger(XRayTracer.class);
 
+    private static final Pattern SANITIZE_NAME_PATTERN = Pattern.compile("[^\\w.:/%&#=+\\-@]");
+
     private static Map<String, SegmentDecorator> decorators = new HashMap<>();
 
     /** Exchange property for passing a segment between threads **/
@@ -120,7 +123,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
@@ -135,17 +138,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
         camelContext.adapt(ExtendedCamelContext.class).addInterceptStrategy(tracingStrategy);
 
-        LOG.debug("Starting XRay tracer");
+        LOG.debug("Initialized XRay tracer");
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doShutdown() throws Exception {
         // stop event notifier
         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
         ServiceHelper.stopAndShutdownService(eventNotifier);
 
         camelContext.getRoutePolicyFactories().remove(this);
-        LOG.debug("XRay tracer stopped");
+        LOG.debug("XRay tracer shutdown");
     }
 
     /**
@@ -267,9 +270,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
             if (event instanceof ExchangeSendingEvent) {
                 ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-                LOG.trace("-> {} - target: {} (routeId: {})",
-                        event.getClass().getSimpleName(), ese.getEndpoint(),
-                        ese.getExchange().getFromRouteId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("-> {} - target: {} (routeId: {})",
+                            event.getClass().getSimpleName(), ese.getEndpoint(),
+                            ese.getExchange().getFromRouteId());
+                }
 
                 SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
                 if (!sd.newSegment()) {
@@ -289,9 +294,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     try {
                         Subsegment subsegment = AWSXRay.beginSubsegment(name);
                         sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
-                        LOG.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
-                                subsegment.getId(), subsegment.getName(),
-                                subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
+                                    subsegment.getId(), subsegment.getName(),
+                                    subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
+                        }
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment);
                     } catch (AlreadyEmittedException aeEx) {
                         LOG.warn("Ignoring starting of subsegment " + name + " as its parent segment"
@@ -303,8 +310,10 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
             } else if (event instanceof ExchangeSentEvent) {
                 ExchangeSentEvent ese = (ExchangeSentEvent) event;
-                LOG.trace("-> {} - target: {} (routeId: {})",
-                        event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("-> {} - target: {} (routeId: {})",
+                            event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
+                }
 
                 Entity entity = getTraceEntityFromExchange(ese.getExchange());
                 if (entity instanceof Subsegment) {
@@ -314,9 +323,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         Subsegment subsegment = (Subsegment) entity;
                         sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
                         subsegment.close();
-                        LOG.trace("Closing down subsegment with ID {} and name {}",
-                                subsegment.getId(), subsegment.getName());
-                        LOG.trace("Setting trace entity for exchange {} to {}", ese.getExchange(), subsegment.getParent());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Closing down subsegment with ID {} and name {}",
+                                    subsegment.getId(), subsegment.getName());
+                            LOG.trace("Setting trace entity for exchange {} to {}", ese.getExchange(), subsegment.getParent());
+                        }
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment.getParent());
                     } catch (AlreadyEmittedException aeEx) {
                         LOG.warn("Ignoring close of subsegment " + entity.getName()
@@ -371,7 +382,9 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 return;
             }
 
-            LOG.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
+            }
 
             Entity entity = getTraceEntityFromExchange(exchange);
             boolean createSegment = entity == null || !Objects.equals(entity.getName(), routeId);
@@ -392,16 +405,20 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 segment.setParent(entity);
                 segment.setTraceId(traceID);
                 sd.pre(segment, exchange, route.getEndpoint());
-                LOG.trace("Created new XRay segment {} with name {}", segment.getId(), segment.getName());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Created new XRay segment {} with name {}", segment.getId(), segment.getName());
+                }
                 exchange.setProperty(CURRENT_SEGMENT, segment);
             } else {
                 String segmentName = entity.getId();
                 try {
                     Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
                     sd.pre(subsegment, exchange, route.getEndpoint());
-                    LOG.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
-                            subsegment.getId(), subsegment.getName(),
-                            subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
+                                subsegment.getId(), subsegment.getName(),
+                                subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
+                    }
                     exchange.setProperty(CURRENT_SEGMENT, subsegment);
                 } catch (AlreadyEmittedException aeEx) {
                     LOG.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
@@ -417,7 +434,9 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 return;
             }
 
-            LOG.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
+            }
 
             Entity entity = getTraceEntityFromExchange(exchange);
             AWSXRay.setTraceEntity(entity);
@@ -425,9 +444,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
                 sd.post(entity, exchange, route.getEndpoint());
                 entity.close();
-                LOG.trace("Closing down (sub)segment {} with name {} (parent {}, references: {})",
-                        entity.getId(), entity.getName(),
-                        entity.getParentSegment().getId(), entity.getParentSegment().getReferenceCount());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing down (sub)segment {} with name {} (parent {}, references: {})",
+                            entity.getId(), entity.getName(),
+                            entity.getParentSegment().getId(), entity.getParentSegment().getReferenceCount());
+                }
                 exchange.setProperty(CURRENT_SEGMENT, entity.getParent());
             } catch (AlreadyEmittedException aeEx) {
                 LOG.warn("Ignoring closing of (sub)segment {} as the segment was already emitted.", route.getId());
@@ -454,6 +475,6 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     public static String sanitizeName(String name) {
         // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
         // \w = a-zA-Z0-9_
-        return name.replaceAll("[^\\w.:/%&#=+\\-@]", "_");
+        return SANITIZE_NAME_PATTERN.matcher(name).replaceAll("_");
     }
 }
