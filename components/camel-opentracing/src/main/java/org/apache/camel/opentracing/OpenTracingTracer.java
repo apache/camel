@@ -172,7 +172,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
@@ -201,7 +201,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doShutdown() throws Exception {
         // stop event notifier
         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
         ServiceHelper.stopService(eventNotifier);
