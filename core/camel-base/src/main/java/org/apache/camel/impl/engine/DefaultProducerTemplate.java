@@ -782,8 +782,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             synchronized (lock) {
                 if (executor == null) {
                     if (threadedAsyncMode) {
-                        executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
-                        ObjectHelper.notNull(executor, "ExecutorService");
+                        executor = ObjectHelper.notNull(camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate"),
+                                "ExecutorService");
                     } else {
                         executor = new SynchronousExecutorService();
                     }
