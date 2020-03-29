@@ -333,7 +333,6 @@
 ** xref:stub-component.adoc[Stub Component]
 ** xref:swagger-java.adoc[Swagger Java Component]
 ** xref:telegram-component.adoc[Telegram Component]
-** xref:test-karaf.adoc[Test Karaf]
 ** xref:test-junit5.adoc[Test Module]
 ** xref:test.adoc[Test Module]
 ** xref:test-spring.adoc[Test Spring]

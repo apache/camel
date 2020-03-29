@@ -827,7 +827,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -884,8 +884,6 @@ Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
 | xref:test-cdi.adoc[Test CDI] (camel-test-cdi) | 2.17 | Camel unit testing with CDI
 
 | xref:test-junit5.adoc[Test JUnit5] (camel-test-junit5) | 3.0 | Camel unit testing with JUnit 5
-
-| xref:test-karaf.adoc[Test Karaf] (camel-test-karaf) | 2.18 | Camel integration testing with Apache Karaf
 
 | xref:test-spring.adoc[Test Spring] (camel-test-spring) | 2.10 | Camel unit testing with Spring
 
