@@ -46,7 +46,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
     protected void doOnInit(Route route) throws Exception {
         QuartzComponent quartz = route.getCamelContext().getComponent("quartz", QuartzComponent.class);
-        setScheduler(quartz.getScheduler());
+        setScheduler(quartz.getOrCreateScheduler());
 
         // Important: do not start scheduler as QuartzComponent does that automatic
         // when CamelContext has been fully initialized and started
