@@ -263,7 +263,6 @@
         <infinispan-version>10.1.5.Final</infinispan-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
-        <irclib-bundle-version>1.10_5</irclib-bundle-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ironmq-bundle-version>3.0.5_1</ironmq-bundle-version>
