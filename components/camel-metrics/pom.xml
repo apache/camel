@@ -46,6 +46,12 @@
             <artifactId>metrics-core</artifactId>
             <version>${metrics-version}</version>
         </dependency>
+        <!-- jmx -->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jmx</artifactId>
+            <version>${metrics-version}</version>
+        </dependency>
 
         <!-- json support -->
         <dependency>

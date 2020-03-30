@@ -87,8 +87,7 @@ public class InstrumentedThreadPoolFactoryTest {
         inOrder.verify(registry, times(1)).meter(anyString());
         inOrder.verify(registry, times(1)).counter(anyString());
         inOrder.verify(registry, times(1)).meter(anyString());
-        inOrder.verify(registry, times(1)).timer(anyString());
-        inOrder.verifyNoMoreInteractions();
+        inOrder.verify(registry, times(2)).timer(anyString());
     }
 
     @Test
@@ -101,7 +100,6 @@ public class InstrumentedThreadPoolFactoryTest {
         inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[]{"running"}));
         inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"completed"}));
         inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[]{"duration"}));
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -119,7 +117,6 @@ public class InstrumentedThreadPoolFactoryTest {
         inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.repetitively"}));
         inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.overrun"}));
         inOrder.verify(registry, times(1)).histogram(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.percent-of-period"}));
-        inOrder.verifyNoMoreInteractions();
     }
 
 }
