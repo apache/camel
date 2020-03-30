@@ -295,7 +295,6 @@
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <jakarta-mail-version>1.6.5</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
-        <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
