@@ -112,6 +112,10 @@ public class MiloServerComponent extends DefaultComponent {
         this.opcServerConfig = OpcUaServerConfig.copy(serverConfig);
     }
 
+    public CamelNamespace getNamespace() {
+        return namespace;
+    }
+
     @Override
     protected void doStart() throws Exception {
         this.server = new OpcUaServer(buildServerConfig());
@@ -380,7 +384,7 @@ public class MiloServerComponent extends DefaultComponent {
             MiloServerEndpoint endpoint = this.endpoints.get(remaining);
 
             if (endpoint == null) {
-                endpoint = new MiloServerEndpoint(uri, remaining, this.namespace, this);
+                endpoint = new MiloServerEndpoint(uri, remaining, this);
                 setProperties(endpoint, parameters);
                 this.endpoints.put(remaining, endpoint);
             }
