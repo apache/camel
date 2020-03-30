@@ -84,7 +84,6 @@
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-storage-java-sdk-version>8.6.0</azure-storage-java-sdk-version>
-        <bcel-bundle-version>5.2_4</bcel-bundle-version>
         <beanio-version>2.1.0</beanio-version>
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bndlib-version>2.4.0</bndlib-version>
