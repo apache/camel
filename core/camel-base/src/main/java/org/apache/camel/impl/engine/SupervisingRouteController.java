@@ -194,14 +194,17 @@ public class SupervisingRouteController extends DefaultRouteController {
     // *********************************
 
     @Override
-    protected void doStart() throws Exception {
-        final CamelContext context = getCamelContext();
-
+    protected void doInit() throws Exception {
+        CamelContext context = getCamelContext();
         context.setAutoStartup(false);
         context.addRoutePolicyFactory(new ManagedRoutePolicyFactory());
         context.addStartupListener(this.listener);
         context.getManagementStrategy().addEventNotifier(this.listener);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        CamelContext context = getCamelContext();
         executorService = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SupervisingRouteController");
         timer = new BackOffTimer(executorService);
     }
