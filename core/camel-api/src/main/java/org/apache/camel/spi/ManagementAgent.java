@@ -29,7 +29,7 @@ import org.apache.camel.Service;
 public interface ManagementAgent extends Service {
 
     /**
-     * Registers object with management infrastructure with a specific name. Object must be annotated or 
+     * Registers object with management infrastructure with a specific name. Object must be annotated or
      * implement standard MBean interface.
      *
      * @param obj  the object to register
@@ -37,9 +37,9 @@ public interface ManagementAgent extends Service {
      * @throws JMException is thrown if the registration failed
      */
     void register(Object obj, ObjectName name) throws JMException;
-    
+
     /**
-     * Registers object with management infrastructure with a specific name. Object must be annotated or 
+     * Registers object with management infrastructure with a specific name. Object must be annotated or
      * implement standard MBean interface.
      *
      * @param obj  the object to register
@@ -49,7 +49,7 @@ public interface ManagementAgent extends Service {
      * @throws JMException is thrown if the registration failed
      */
     void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException;
-    
+
     /**
      * Unregisters object based upon registered name
      *
@@ -80,7 +80,7 @@ public interface ManagementAgent extends Service {
      * <p/>
      * <b>Notice:</b> If the JMXEnabled configuration is not set to <tt>true</tt>,
      * this method will return <tt>null</tt>.
-     * 
+     *
      * @return the MBeanServer
      */
     MBeanServer getMBeanServer();
@@ -96,38 +96,10 @@ public interface ManagementAgent extends Service {
      * Get domain name for Camel MBeans.
      * <p/>
      * <b>Notice:</b> That this can be different that the default domain name of the MBean Server.
-     * 
+     *
      * @return domain name
      */
     String getMBeanObjectDomainName();
-
-    /**
-     * Sets the port used by {@link java.rmi.registry.LocateRegistry}.
-     *
-     * @param port the port
-     */
-    void setRegistryPort(Integer port);
-
-    /**
-     * Gets the port used by {@link java.rmi.registry.LocateRegistry}.
-     *
-     * @return the port
-     */
-    Integer getRegistryPort();
-
-    /**
-     * Sets the port clients must use to connect
-     *
-     * @param port the port
-     */
-    void setConnectorPort(Integer port);
-
-    /**
-     * Gets the port clients must use to connect
-     *
-     * @return the port
-     */
-    Integer getConnectorPort();
 
     /**
      * Sets the default domain on the MBean server
@@ -149,34 +121,6 @@ public interface ManagementAgent extends Service {
      * @param domainName the object domain name
      */
     void setMBeanObjectDomainName(String domainName);
-
-    /**
-     * Sets the service url
-     *
-     * @param url the service url
-     */
-    void setServiceUrlPath(String url);
-
-    /**
-     * Gets the service url
-     *
-     * @return the url
-     */
-    String getServiceUrlPath();
-
-    /**
-     * Whether connector should be created, allowing clients to connect remotely
-     *
-     * @param createConnector <tt>true</tt> to create connector
-     */
-    void setCreateConnector(Boolean createConnector);
-
-    /**
-     * Whether connector is created, allowing clients to connect remotely
-     *
-     * @return <tt>true</tt> if connector is created
-     */
-    Boolean getCreateConnector();
 
     /**
      * Whether to use the platform MBean Server.
@@ -351,7 +295,7 @@ public interface ManagementAgent extends Service {
      * @return the level
      */
     ManagementStatisticsLevel getStatisticsLevel();
-    
+
     /**
      * Gets whether host IP Address to be used instead of host name.
      *
@@ -360,7 +304,7 @@ public interface ManagementAgent extends Service {
     Boolean getUseHostIPAddress();
 
     /**
-     * Sets whether to use host IP Address 
+     * Sets whether to use host IP Address
      * @param useHostIPAddress <tt>true</tt> to use IP Address.
      */
     void setUseHostIPAddress(Boolean useHostIPAddress);

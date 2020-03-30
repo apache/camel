@@ -68,7 +68,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean useBreadcrumb;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
-    private boolean jmxCreateConnector;
     private boolean useMdcLogging;
     private String mdcLoggingKeysPattern;
     private String threadNamePattern;
@@ -658,19 +657,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-    }
-
-    public boolean isJmxCreateConnector() {
-        return jmxCreateConnector;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     *
-     * The default value is false.
-     */
-    public void setJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
     }
 
     public boolean isUseMdcLogging() {
@@ -1338,16 +1324,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-        return (T) this;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     *
-     * The default value is false.
-     */
-    public T withJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
         return (T) this;
     }
 
