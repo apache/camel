@@ -827,7 +827,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
