@@ -350,7 +350,6 @@
         <json-smart-version>2.3</json-smart-version>
         <jsoup-version>1.12.2</jsoup-version>
         <jt400-version>10.2</jt400-version>
-        <junit-bundle-version>4.11_1</junit-bundle-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
         <junit-version>4.12</junit-version>
         <junit-jupiter-version>5.6.1</junit-jupiter-version>
