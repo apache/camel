@@ -24,7 +24,10 @@ import org.apache.camel.component.influxdb.InfluxDbConstants;
 import org.influxdb.dto.Point;
 
 @Converter(generateLoader = true)
-public class CamelInfluxDbConverters {
+public final class CamelInfluxDbConverters {
+
+    private CamelInfluxDbConverters() {
+    }
 
     @Converter
     public static Point fromMapToPoint(Map<String, Object> map) {
