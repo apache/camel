@@ -2652,13 +2652,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- camel commands -->
-            <dependency>
-                <groupId>org.apache.camel.karaf</groupId>
-                <artifactId>camel-karaf-commands</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- camel misc -->
             <dependency>
                 <groupId>org.apache.camel</groupId>
