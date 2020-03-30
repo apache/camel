@@ -119,7 +119,6 @@
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.7.0</commons-dbcp2-version>
         <commons-exec-version>1.3</commons-exec-version>
-        <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>
         <commons-io-version>2.6</commons-io-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.9</commons-lang3-version>
