@@ -248,7 +248,6 @@
         <hibernate-version>5.4.12.Final</hibernate-version>
         <hikaricp-version>2.4.13</hikaricp-version>
         <hk2-version>2.5.0</hk2-version>
-        <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
         <hsqldb-version>2.5.0</hsqldb-version>
         <htmlunit-bundle-version>2.24_1</htmlunit-bundle-version>
         <htrace-version>3.1.0-incubating</htrace-version>
