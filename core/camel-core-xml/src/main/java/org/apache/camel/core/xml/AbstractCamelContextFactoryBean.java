@@ -552,20 +552,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("JMXAgent enabled: {}", camelJMXAgent);
 
             Map<String, Object> properties = new HashMap<>();
-            if (camelJMXAgent.getConnectorPort() != null) {
-                properties.put("connectorPort", CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getConnectorPort()));
-            }
-            if (camelJMXAgent.getCreateConnector() != null) {
-                properties.put("createConnector", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getCreateConnector()));
-            }
             if (camelJMXAgent.getMbeanObjectDomainName() != null) {
                 properties.put("mbeanObjectDomainName", CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanObjectDomainName()));
-            }
-            if (camelJMXAgent.getRegistryPort() != null) {
-                properties.put("registryPort", CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getRegistryPort()));
-            }
-            if (camelJMXAgent.getServiceUrlPath() != null) {
-                properties.put("serviceUrlPath", CamelContextHelper.parseText(getContext(), camelJMXAgent.getServiceUrlPath()));
             }
             if (camelJMXAgent.getUsePlatformMBeanServer() != null) {
                 properties.put("usePlatformMBeanServer", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUsePlatformMBeanServer()));
