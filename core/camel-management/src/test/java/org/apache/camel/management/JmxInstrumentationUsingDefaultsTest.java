@@ -205,8 +205,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
             System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
             System.clearProperty(JmxSystemPropertyKeys.DOMAIN);
             System.clearProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
-            System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
-            System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
         }
     }
 

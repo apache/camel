@@ -71,8 +71,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JavaRoutesExcludePattern": target.setJavaRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "javaroutesincludepattern":
         case "JavaRoutesIncludePattern": target.setJavaRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "jmxcreateconnector":
-        case "JmxCreateConnector": target.setJmxCreateConnector(property(camelContext, boolean.class, value)); return true;
         case "jmxenabled":
         case "JmxEnabled": target.setJmxEnabled(property(camelContext, boolean.class, value)); return true;
         case "jmxmanagementnamepattern":

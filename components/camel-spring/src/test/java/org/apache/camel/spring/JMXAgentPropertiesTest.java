@@ -25,12 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Test that verifies JMX properties can be configured via Spring.
  */
-public class JMXAgentPropertiesTest extends JMXAgentTest {
-
-    @Override
-    protected int getPort() {
-        return 20009;
-    }
+public class JMXAgentPropertiesTest extends DefaultJMXAgentTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
