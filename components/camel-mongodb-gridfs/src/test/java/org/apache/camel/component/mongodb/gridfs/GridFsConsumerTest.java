@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class GridFsConsumerTest extends AbstractMongoDbTest {
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

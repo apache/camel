@@ -32,9 +32,6 @@
     <name>Camel :: MongoDB GridFS</name>
     <description>Camel MongoDB GridFS component</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -59,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
+            <artifactId>camel-test</artifactId>
             <scope>test</scope>
         </dependency>
 

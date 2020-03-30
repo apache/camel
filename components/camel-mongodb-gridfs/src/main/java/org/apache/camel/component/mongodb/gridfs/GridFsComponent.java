@@ -30,17 +30,10 @@ public class GridFsComponent extends DefaultComponent {
     
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         GridFsEndpoint endpoint = new GridFsEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
         setProperties(endpoint, parameters);
-        
         return endpoint;
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
     }
 
 }

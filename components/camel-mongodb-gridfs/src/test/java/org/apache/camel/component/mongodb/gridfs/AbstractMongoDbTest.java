@@ -19,25 +19,15 @@ package org.apache.camel.component.mongodb.gridfs;
 import com.mongodb.MongoClient;
 import com.mongodb.gridfs.GridFS;
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.apache.camel.component.mongodb.gridfs.EmbedMongoConfiguration.createMongoClient;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     protected MongoClient mongo;
     protected GridFS gridfs;
-
-    protected ApplicationContext applicationContext;
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void doPostSetup() {
-        mongo = applicationContext.getBean(MongoClient.class);
-        gridfs = new GridFS(mongo.getDB("test"), getBucket());
-    }
 
     public String getBucket() {
         return this.getClass().getSimpleName();
@@ -52,10 +42,14 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
-        CamelContext ctx = new SpringCamelContext(applicationContext);
-        ctx.init();
-        ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
-        return ctx;
+        mongo = createMongoClient();
+        gridfs = new GridFS(mongo.getDB("test"), getBucket());
+
+        CamelContext context = super.createCamelContext();
+        context.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
+        context.getRegistry().bind("test", gridfs);
+        context.getRegistry().bind("myDb", mongo);
+
+        return context;
     }
 }
