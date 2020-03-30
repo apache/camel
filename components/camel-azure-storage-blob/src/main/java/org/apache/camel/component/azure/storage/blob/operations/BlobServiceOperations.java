@@ -5,7 +5,7 @@ import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWra
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Operations related to {@link com.azure.storage.blob.BlobServiceClient}
+ * Operations related to {@link com.azure.storage.blob.BlobServiceClient}. This is at the service level.
  */
 public class BlobServiceOperations {
 

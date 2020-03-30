@@ -63,6 +63,19 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder blobOffset(long blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a:
@@ -91,6 +104,19 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder dataCount(
+                java.lang.Long dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -100,6 +126,34 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder fileDir(
                 java.lang.String fileDir) {
             doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder getRangeContentMd5(
+                boolean getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder maxRetryRequests(
+                int maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
             return this;
         }
         /**
@@ -206,9 +260,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "blobName": getOrCreateConfiguration((BlobComponent) component).setBlobName((java.lang.String) value); return true;
+            case "blobOffset": getOrCreateConfiguration((BlobComponent) component).setBlobOffset((long) value); return true;
             case "blobType": getOrCreateConfiguration((BlobComponent) component).setBlobType((org.apache.camel.component.azure.storage.blob.BlobType) value); return true;
             case "configuration": ((BlobComponent) component).setConfiguration((org.apache.camel.component.azure.storage.blob.BlobConfiguration) value); return true;
+            case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
+            case "getRangeContentMd5": getOrCreateConfiguration((BlobComponent) component).setGetRangeContentMd5((boolean) value); return true;
+            case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BlobComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;

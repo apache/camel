@@ -47,6 +47,9 @@ public final class BlobConstants {
     public static final String PUBLIC_ACCESS_TYPE = HEADER_PREFIX + "PublicAccessType";
     public static final String BLOB_REQUEST_CONDITION = HEADER_PREFIX + "BlobRequestCondition";
     public static final String BLOB_CONTAINER_NAME = HEADER_PREFIX + "BlobContainerName";
+    public static final String FILE_DIR = HEADER_PREFIX + "FileDir";
+    public static final String OVERWRITE = HEADER_PREFIX + "Overwrite";
+    public static final String PAGE_BLOB_RANGE = HEADER_PREFIX + "PageBlobRange";
 
     private BlobConstants() {
     }

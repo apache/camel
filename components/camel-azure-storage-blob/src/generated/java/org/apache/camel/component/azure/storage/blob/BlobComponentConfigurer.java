@@ -32,15 +32,23 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": getOrCreateConfiguration(target).setBlobName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bloboffset":
+        case "blobOffset": getOrCreateConfiguration(target).setBlobOffset(property(camelContext, long.class, value)); return true;
         case "blobtype":
         case "blobType": getOrCreateConfiguration(target).setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobConfiguration.class, value)); return true;
+        case "datacount":
+        case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":
         case "fileDir": getOrCreateConfiguration(target).setFileDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "getrangecontentmd5":
+        case "getRangeContentMd5": getOrCreateConfiguration(target).setGetRangeContentMd5(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxretryrequests":
+        case "maxRetryRequests": getOrCreateConfiguration(target).setMaxRetryRequests(property(camelContext, int.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
         default: return false;
         }
@@ -52,11 +60,15 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("accessKey", java.lang.String.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("blobName", java.lang.String.class);
+        answer.put("blobOffset", long.class);
         answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("configuration", org.apache.camel.component.azure.storage.blob.BlobConfiguration.class);
+        answer.put("dataCount", java.lang.Long.class);
         answer.put("fileDir", java.lang.String.class);
+        answer.put("getRangeContentMd5", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
         return answer;
     }
@@ -71,15 +83,23 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobname":
         case "blobName": return getOrCreateConfiguration(target).getBlobName();
+        case "bloboffset":
+        case "blobOffset": return getOrCreateConfiguration(target).getBlobOffset();
         case "blobtype":
         case "blobType": return getOrCreateConfiguration(target).getBlobType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
+        case "datacount":
+        case "dataCount": return getOrCreateConfiguration(target).getDataCount();
         case "filedir":
         case "fileDir": return getOrCreateConfiguration(target).getFileDir();
+        case "getrangecontentmd5":
+        case "getRangeContentMd5": return getOrCreateConfiguration(target).isGetRangeContentMd5();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxretryrequests":
+        case "maxRetryRequests": return getOrCreateConfiguration(target).getMaxRetryRequests();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         default: return null;
         }

@@ -6,7 +6,6 @@ import java.util.Map;
 import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.ListBlobsOptions;
-
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -16,7 +15,7 @@ import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientW
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * All operations related to {@link com.azure.storage.blob.BlobContainerClient}
+ * All operations related to {@link com.azure.storage.blob.BlobContainerClient}. This is at the container level.
  */
 public class BlobContainerOperations {
 
@@ -46,15 +45,14 @@ public class BlobContainerOperations {
             return new BlobOperationResponse(true, client.createContainer(null, null, null));
         }
 
-        @SuppressWarnings("unchecked")
-        final Map<String, String> metadata = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.METADATA, Map.class);
+        @SuppressWarnings("unchecked") final Map<String, String> metadata = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.METADATA, Map.class);
         final PublicAccessType publicAccessType = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.PUBLIC_ACCESS_TYPE, PublicAccessType.class);
         final Duration timeout = getTimeoutFromHeaders(exchange);
 
         return new BlobOperationResponse(true, client.createContainer(metadata, publicAccessType, timeout));
     }
 
-    public BlobOperationResponse deleteContainer(final Exchange exchange) {
+    public BlobOperationResponse deleteContainer (final Exchange exchange) {
         if (exchange == null) {
             return new BlobOperationResponse(true, client.deleteContainer(null, null));
         }
@@ -86,7 +84,7 @@ public class BlobContainerOperations {
         return blobsOptions;
     }
 
-    private Duration getTimeoutFromHeaders (final Exchange exchange) {
+    private Duration getTimeoutFromHeaders(final Exchange exchange) {
         return BlobUtils.getInMessage(exchange).getHeader(BlobConstants.TIMEOUT, Duration.class);
     }
 }

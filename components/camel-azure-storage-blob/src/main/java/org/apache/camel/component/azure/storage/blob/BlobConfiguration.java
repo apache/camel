@@ -22,6 +22,14 @@ public class BlobConfiguration implements Cloneable {
     private BlobType blobType = BlobType.blockblob;
     @UriParam(label = "common")
     private String fileDir;
+    @UriParam(label = "common", defaultValue = "0")
+    private long blobOffset = 0;
+    @UriParam(label = "common")
+    private Long dataCount;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean getRangeContentMd5;
+    @UriParam(label = "common", defaultValue = "0")
+    private int maxRetryRequests = 0;
 
 
     /**
@@ -106,6 +114,50 @@ public class BlobConfiguration implements Cloneable {
 
     public void setFileDir(String fileDir) {
         this.fileDir = fileDir;
+    }
+
+    /**
+     * Set the blob offset for the upload or download operations, default is 0
+     */
+    public long getBlobOffset() {
+        return blobOffset;
+    }
+
+    public void setBlobOffset(long blobOffset) {
+        this.blobOffset = blobOffset;
+    }
+
+    /**
+     * How many bytes to include in the range. Must be greater than or equal to 0 if specified.
+     */
+    public Long getDataCount() {
+        return dataCount;
+    }
+
+    public void setDataCount(Long dataCount) {
+        this.dataCount = dataCount;
+    }
+
+    /**
+     * Whether the contentMD5 for the specified blob range should be returned.
+     */
+    public boolean isGetRangeContentMd5() {
+        return getRangeContentMd5;
+    }
+
+    public void setGetRangeContentMd5(boolean getRangeContentMd5) {
+        this.getRangeContentMd5 = getRangeContentMd5;
+    }
+
+    /**
+     * Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body.
+     */
+    public int getMaxRetryRequests() {
+        return maxRetryRequests;
+    }
+
+    public void setMaxRetryRequests(int maxRetryRequests) {
+        this.maxRetryRequests = maxRetryRequests;
     }
 
     public BlobConfiguration copy() {

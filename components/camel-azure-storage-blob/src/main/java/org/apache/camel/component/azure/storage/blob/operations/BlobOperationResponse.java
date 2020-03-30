@@ -1,10 +1,10 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobProperties;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 
@@ -23,7 +23,13 @@ public class BlobOperationResponse {
 
     public BlobOperationResponse(final Object body, final HttpHeaders httpHeaders) {
         setBody(body);
-        setHeaders(httpHeaders);
+        setHttpHeaders(httpHeaders);
+    }
+
+    public BlobOperationResponse(final Object body, final BlobDownloadHeaders downloadHeaders, final HttpHeaders httpHeaders) {
+        setBody(body);
+        setHeaders(downloadHeaders);
+        setHttpHeaders(httpHeaders);
     }
 
     public BlobOperationResponse(final Object body) {
@@ -46,7 +52,11 @@ public class BlobOperationResponse {
         headers.putAll(createHeadersFromBlobProperties(properties));
     }
 
-    public void setHeaders(final HttpHeaders httpHeaders) {
+    public void setHeaders(final BlobDownloadHeaders downloadHeaders) {
+        headers.putAll(createHeadersFromBlobProperties(buildBlobProperties(downloadHeaders)));
+    }
+
+    public void setHttpHeaders(final HttpHeaders httpHeaders) {
         headers.put(BlobConstants.HTTP_HEADERS, httpHeaders.toMap());
     }
 
@@ -86,5 +96,19 @@ public class BlobOperationResponse {
         headers.put(BlobConstants.METADATA, properties.getMetadata());
 
         return headers;
+    }
+
+    private BlobProperties buildBlobProperties(final BlobDownloadHeaders hd) {
+        if (hd == null) {
+            return null;
+        }
+        return new BlobProperties(null, hd.getLastModified(), hd.getETag(),
+                hd.getContentLength() == null ? 0 : hd.getContentLength(), hd.getContentType(), null,
+                hd.getContentEncoding(), hd.getContentDisposition(), hd.getContentLanguage(), hd.getCacheControl(),
+                hd.getBlobSequenceNumber(), hd.getBlobType(), hd.getLeaseStatus(), hd.getLeaseState(),
+                hd.getLeaseDuration(), hd.getCopyId(), hd.getCopyStatus(), hd.getCopySource(), hd.getCopyProgress(),
+                hd.getCopyCompletionTime(), hd.getCopyStatusDescription(), hd.isServerEncrypted(),
+                null, null, null, null, null, hd.getEncryptionKeySha256(), null, hd.getMetadata(),
+                hd.getBlobCommittedBlockCount());
     }
 }

@@ -55,6 +55,32 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobOffset(long blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobOffset(String blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a:
@@ -83,6 +109,30 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder dataCount(Long dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder dataCount(String dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -91,6 +141,62 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointConsumerBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder getRangeContentMd5(
+                boolean getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder getRangeContentMd5(
+                String getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder maxRetryRequests(
+                int maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder maxRetryRequests(
+                String maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
             return this;
         }
         /**
@@ -291,6 +397,32 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobOffset(long blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobOffset(String blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a:
@@ -319,6 +451,30 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder dataCount(Long dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder dataCount(String dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -327,6 +483,62 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder getRangeContentMd5(
+                boolean getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder getRangeContentMd5(
+                String getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder maxRetryRequests(
+                int maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder maxRetryRequests(
+                String maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
             return this;
         }
         /**
@@ -499,6 +711,32 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointBuilder blobOffset(long blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointBuilder blobOffset(String blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a:
@@ -527,6 +765,30 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder dataCount(Long dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
+         * How many bytes to include in the range. Must be greater than or equal
+         * to 0 if specified.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder dataCount(String dataCount) {
+            doSetProperty("dataCount", dataCount);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -535,6 +797,59 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default BlobEndpointBuilder getRangeContentMd5(
+                boolean getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Whether the contentMD5 for the specified blob range should be
+         * returned.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default BlobEndpointBuilder getRangeContentMd5(String getRangeContentMd5) {
+            doSetProperty("getRangeContentMd5", getRangeContentMd5);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointBuilder maxRetryRequests(int maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of additional HTTP Get requests that
+         * will be made while reading the data from a response body.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default BlobEndpointBuilder maxRetryRequests(String maxRetryRequests) {
+            doSetProperty("maxRetryRequests", maxRetryRequests);
             return this;
         }
         /**

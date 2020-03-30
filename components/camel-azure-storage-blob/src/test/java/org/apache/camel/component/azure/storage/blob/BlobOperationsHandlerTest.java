@@ -1,21 +1,11 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
-import com.azure.storage.blob.BlobServiceClient;
-
-import com.azure.storage.blob.models.BlobContainerItem;
-import com.azure.storage.blob.models.BlobItem;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
-import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
-import org.apache.camel.component.azure.storage.blob.operations.BlobServiceOperations;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -65,15 +55,15 @@ class BlobOperationsHandlerTest {
         configuration.setFileDir("/Users/oalsafi/Work/Apache/camel/components/camel-azure-storage-blob");
 
 
-        final BlobOperations blobOperations = new BlobOperations(configuration, BlobClientFactory.createBlobClient(configuration));
+        //final BlobOperations blobOperations = new BlobOperations(configuration, BlobClientFactory.createBlobClient(configuration));
 
         //final BlobDownloadResponse downloadResponse = handler.handleDownloadBlob(client);
 
         //System.out.println(downloadResponse.getDeserializedHeaders());
 
-        final BlobOperationResponse response = blobOperations.downloadBlob();
+        //final BlobOperationResponse response = blobOperations.getBlob();
 
-        System.out.println(response.getHeaders());
+        //System.out.println(response.getHeaders());
     }
 
     @Test
@@ -82,10 +72,10 @@ class BlobOperationsHandlerTest {
         configuration.setContainerName("test");
         configuration.setBlobName("Sharklets_Texture.png");
 
-        final BlobOperations blobOperations = new BlobOperations(configuration, BlobClientFactory.createBlobClient(configuration));
+        //final BlobOperations blobOperations = new BlobOperations(configuration, BlobClientFactory.createBlobClient(configuration));
 
-        final BlobOperationResponse blobOperationResponse = blobOperations.deleteBlob();
+        //final BlobOperationResponse blobOperationResponse = blobOperations.deleteBlob();
 
-        System.out.println(blobOperationResponse.getHeaders());
+        //System.out.println(blobOperationResponse.getHeaders());
     }
 }

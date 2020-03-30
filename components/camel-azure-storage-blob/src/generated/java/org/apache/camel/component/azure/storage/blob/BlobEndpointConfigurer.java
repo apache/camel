@@ -25,18 +25,26 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bloboffset":
+        case "blobOffset": target.getConfiguration().setBlobOffset(property(camelContext, long.class, value)); return true;
         case "blobtype":
         case "blobType": target.getConfiguration().setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "datacount":
+        case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filedir":
         case "fileDir": target.getConfiguration().setFileDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "getrangecontentmd5":
+        case "getRangeContentMd5": target.getConfiguration().setGetRangeContentMd5(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxretryrequests":
+        case "maxRetryRequests": target.getConfiguration().setMaxRetryRequests(property(camelContext, int.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -49,12 +57,16 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("accessKey", java.lang.String.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("blobName", java.lang.String.class);
+        answer.put("blobOffset", long.class);
         answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("dataCount", java.lang.Long.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("fileDir", java.lang.String.class);
+        answer.put("getRangeContentMd5", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
         answer.put("synchronous", boolean.class);
         return answer;
@@ -70,18 +82,26 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobname":
         case "blobName": return target.getConfiguration().getBlobName();
+        case "bloboffset":
+        case "blobOffset": return target.getConfiguration().getBlobOffset();
         case "blobtype":
         case "blobType": return target.getConfiguration().getBlobType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "datacount":
+        case "dataCount": return target.getConfiguration().getDataCount();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "filedir":
         case "fileDir": return target.getConfiguration().getFileDir();
+        case "getrangecontentmd5":
+        case "getRangeContentMd5": return target.getConfiguration().isGetRangeContentMd5();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxretryrequests":
+        case "maxRetryRequests": return target.getConfiguration().getMaxRetryRequests();
         case "operation": return target.getConfiguration().getOperation();
         case "synchronous": return target.isSynchronous();
         default: return null;

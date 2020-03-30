@@ -12,6 +12,7 @@ import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.PublicAccessType;
+import org.apache.camel.util.ObjectHelper;
 
 public class BlobContainerClientWrapper {
 
@@ -31,5 +32,12 @@ public class BlobContainerClientWrapper {
 
     public List<BlobItem> listBlobs(final ListBlobsOptions listBlobsOptions, final Duration timeout) {
         return client.listBlobs(listBlobsOptions, timeout).stream().collect(Collectors.toList());
+    }
+
+    public BlobClientWrapper getBlobClientWrapper(final String blobName) {
+        if (!ObjectHelper.isEmpty(blobName)) {
+            return new BlobClientWrapper(client.getBlobClient(blobName));
+        }
+        throw new IllegalArgumentException("Cannot initialize a blob since no blob name was provided.");
     }
 }
