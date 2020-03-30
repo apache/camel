@@ -254,7 +254,6 @@
         <httpcore4-version>4.4.13</httpcore4-version>
         <httpclient4-version>4.5.12</httpclient4-version>
         <httpasyncclient-version>4.1.4</httpasyncclient-version>
-        <httpclient-version>3.1</httpclient-version>
         <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>65.1</icu4j-version>
