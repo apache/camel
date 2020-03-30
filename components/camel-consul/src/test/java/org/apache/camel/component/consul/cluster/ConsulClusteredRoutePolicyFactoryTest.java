@@ -28,8 +28,8 @@ import java.util.stream.IntStream;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.component.consul.ConsulTestSupport;
+import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
