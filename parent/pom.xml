@@ -144,8 +144,6 @@
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
-        <digitalpetri-fsm-client>0.2</digitalpetri-fsm-client>
-        <digitalpetri-netty-client>0.3</digitalpetri-netty-client>
         <directory-watcher-version>0.9.9</directory-watcher-version>
         <disruptor-version>3.4.2</disruptor-version>
         <dnsjava-version>2.1.9</dnsjava-version>
