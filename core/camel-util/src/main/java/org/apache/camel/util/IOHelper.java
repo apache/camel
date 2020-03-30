@@ -40,7 +40,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.function.Supplier;
 
@@ -65,22 +64,6 @@ public final class IOHelper {
 
     private IOHelper() {
         // Utility Class
-    }
-
-    /**
-     * Use this function instead of new String(byte[]) to avoid surprises from
-     * non-standard default encodings.
-     */
-    public static String newStringFromBytes(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Use this function instead of new String(byte[], int, int) to avoid
-     * surprises from non-standard default encodings.
-     */
-    public static String newStringFromBytes(byte[] bytes, int start, int length) {
-        return new String(bytes, start, length, StandardCharsets.UTF_8);
     }
 
     /**
