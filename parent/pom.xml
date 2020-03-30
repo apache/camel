@@ -249,7 +249,6 @@
         <hikaricp-version>2.4.13</hikaricp-version>
         <hk2-version>2.5.0</hk2-version>
         <hsqldb-version>2.5.0</hsqldb-version>
-        <htmlunit-bundle-version>2.24_1</htmlunit-bundle-version>
         <htrace-version>3.1.0-incubating</htrace-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore4-version>4.4.13</httpcore4-version>
