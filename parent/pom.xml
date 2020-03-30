@@ -159,7 +159,6 @@
         <elasticsearch-rest-sniffer-version>7.3.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-cluster-runner-version>7.3.2.0</elasticsearch-rest-cluster-runner-version>
         <elasticsearch-rest-version>7.3.2</elasticsearch-rest-version>
-        <elasticsearch-rest-bundle-version>7.3.2_1</elasticsearch-rest-bundle-version>
         <elsql-version>1.3</elsql-version>
         <elytron-web>1.7.0.CR3</elytron-web>
         <eddsa-version>0.3.0</eddsa-version>
