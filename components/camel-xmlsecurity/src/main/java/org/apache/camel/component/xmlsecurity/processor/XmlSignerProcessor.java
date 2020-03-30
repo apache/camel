@@ -620,7 +620,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, bos);
         try {
-            String text = new String(bos.toByteArray(), encoding);
+            String text = bos.toString(encoding);
             return XmlSignatureHelper.newDocumentBuilder(true).newDocument().createTextNode(text);
         } catch (UnsupportedEncodingException e) {
             throw new XmlSignatureException(String.format("The message encoding %s is not supported.", encoding), e);

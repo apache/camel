@@ -274,7 +274,7 @@ public final class EntityUtils {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              PrintStream ps = new PrintStream(baos, true, "utf-8")) {
             printEntity(ps, entity);
-            String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            String content = baos.toString(StandardCharsets.UTF_8.name());
             return content;
         }
     }
