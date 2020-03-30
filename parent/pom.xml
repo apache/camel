@@ -341,7 +341,6 @@
         <jslt-version>0.1.8</jslt-version>
         <jsmpp-version>2.3.9</jsmpp-version>
         <jsch-version>0.1.55</jsch-version>
-        <jsch-bundle-version>0.1.55_1</jsch-bundle-version>
         <json-accessors-smart-version>1.2</json-accessors-smart-version>
         <json-api>1.0</json-api>
         <jsonassert-version>1.5.0</jsonassert-version>
