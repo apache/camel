@@ -276,7 +276,6 @@
         <jasminb-jsonapi-version>0.10</jasminb-jsonapi-version>
         <jandex-version>2.1.3.Final</jandex-version>
         <jasn1-version>1.11.3</jasn1-version>
-        <jasypt-bundle-version>1.9.3_1</jasypt-bundle-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-apns-bundle-version>1.0.0.Beta6_1</java-apns-bundle-version>
         <java-apns-version>1.0.0.Beta6</java-apns-version>
