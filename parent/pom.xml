@@ -374,8 +374,6 @@
         <log4j2-version>2.13.1</log4j2-version>
         <logback-version>1.2.3</logback-version>
         <lucene3-version>3.6.0</lucene3-version>
-        <lucene-bundle-version>8.1.1_1</lucene-bundle-version>
-        <!-- lucene aligned with elasticsearch version of lucene in use -->
         <lucene-version>8.1.1</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
