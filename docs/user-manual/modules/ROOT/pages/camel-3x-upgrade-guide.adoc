@@ -553,6 +553,41 @@ should be rewritten as:
 
 == Upgrading Camel 3.1 to 3.2
 
+=== Camel with Karaf and OSGi
+
+Camel on Apache Karaf / OSGi has been moved to its own project at: https://github.com/apache/camel-karaf
+
+The Maven dependencies has changed the groupid from `org.apache.camel` to `org.apache.camel.karaf`.
+
+For example the `camel-blueprint` would be changed from
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-blueprint</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-blueprint</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+The Camel Karaf features are the same as before, you can still install Camel in Karaf shell via:
+[source,text]
+----
+feature:repo-add camel 3.2.0
+feature:install camel
+----
+
 === EIPs with cacheSize option
 
 The `cacheSize` option on EIPs has been improved to reduce memory usage when the cache is disabled by
@@ -689,6 +724,11 @@ After:
   </any23>
 </dataFormats>
 ----
+
+=== camel-avro
+
+The avro component and data format has been splitup into two JARs. The dataformat is in `camel-avro` JAR
+and the component in `camel-avro-rpc` JAR.
 
 === camel-infinispan
 
