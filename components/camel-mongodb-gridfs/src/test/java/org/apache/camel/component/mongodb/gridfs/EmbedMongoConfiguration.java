@@ -34,9 +34,12 @@ import static com.mongodb.ServerAddress.defaultHost;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
 
-public class EmbedMongoConfiguration {
+public final class EmbedMongoConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbedMongoConfiguration.class);
     private static final int PORT = AvailablePortFinder.getNextAvailable(18500, 19000);
+ 
+    private EmbedMongoConfiguration() {
+    }
 
     static {
         try {

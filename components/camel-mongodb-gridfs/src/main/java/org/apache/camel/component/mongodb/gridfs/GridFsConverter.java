@@ -22,7 +22,10 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 
 @Converter(generateLoader = true)
-public class GridFsConverter {
+public final class GridFsConverter {
+
+    private GridFsConverter() {
+    }
 
     @Converter
     public static WriteConcern toWriteConcern(String value, Exchange exchange) {
