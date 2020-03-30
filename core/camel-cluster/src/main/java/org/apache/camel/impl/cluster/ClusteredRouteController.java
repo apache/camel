@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cluster;
+package org.apache.camel.impl.cluster;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import org.apache.camel.Experimental;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
