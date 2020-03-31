@@ -121,4 +121,10 @@ public @interface Metadata {
      */
     String includeProperties() default "";
 
+    /**
+     * The highest compilation target supported by this entity.
+     */
+    CompilationTarget[] compilationTarget() default CompilationTarget.JVM;
+    enum CompilationTarget {JVM, Native}
+
 }

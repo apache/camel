@@ -146,6 +146,12 @@ public final class JsonMapper {
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.getCompilationTarget() != null) {
+            obj.put("compilationTarget", model.getCompilationTarget().name());
+        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("component", obj);
@@ -199,6 +205,12 @@ public final class JsonMapper {
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.getCompilationTarget() != null) {
+            obj.put("compilationTarget", model.getCompilationTarget().name());
+        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("dataformat", obj);
@@ -245,6 +257,12 @@ public final class JsonMapper {
         obj.put("deprecationNote", model.getDeprecationNote());
         obj.put("input", model.isInput());
         obj.put("output", model.isOutput());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.getCompilationTarget() != null) {
+            obj.put("compilationTarget", model.getCompilationTarget().name());
+        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);
@@ -297,6 +315,12 @@ public final class JsonMapper {
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.getCompilationTarget() != null) {
+            obj.put("compilationTarget", model.getCompilationTarget().name());
+        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("language", obj);
@@ -337,6 +361,12 @@ public final class JsonMapper {
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.getCompilationTarget() != null) {
+            obj.put("compilationTarget", model.getCompilationTarget().name());
+        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("other", obj);
@@ -352,6 +382,8 @@ public final class JsonMapper {
         model.setDeprecated(mobj.getBooleanOrDefault("deprecated", false));
         model.setDeprecationNote(mobj.getString("label"));
         model.setJavaType(mobj.getString("javaType"));
+        model.setCompilationTarget(CompilationTarget.safeValueOf(mobj.getString("compilationTarget")));
+        model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
     }
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
