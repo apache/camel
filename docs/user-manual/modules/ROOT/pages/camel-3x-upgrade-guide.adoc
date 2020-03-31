@@ -35,7 +35,7 @@ https://issues.apache.org/jira/browse/CAMEL-13844
 The following `ServiceDiscovery` implementation has been removed: 
 
 * org.apache.camel.impl.cloud.CachingServiceDiscovery
-* org.apache.camel.impl.cloud.CachingServiceDiscoveryFactoyr
+* org.apache.camel.impl.cloud.CachingServiceDiscoveryFactory
 
 https://issues.apache.org/jira/browse/CAMEL-14813
 
@@ -919,7 +919,7 @@ After:
 
 === camel-avro
 
-The avro component and data format has been splitup into two JARs. The dataformat is in `camel-avro` JAR
+The avro component and data format has been split up into two JARs. The dataformat is in `camel-avro` JAR
 and the component in `camel-avro-rpc` JAR.
 
 === camel-infinispan
@@ -1000,7 +1000,7 @@ Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
 The context scope error handling has been modified a bit.  The processors in those `onException` and
 `onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
 If there is a need to have a single set of processors involved (such as when using a loadbalancer or
-other stateful patterns), then an intermediary route needs to be used. The following exerpt:
+other stateful patterns), then an intermediary route needs to be used. The following excerpt:
 
 [source,java]
 ----
@@ -1027,10 +1027,10 @@ out of `camel-core-engine` into separate JAR named `camel-cluster`.
 === Configuring milli seconds
 
 Camel was using a type converter from `String` -> `long` that accepted
-a time pattern which allowed to configure long values such as `2s` for 2 seconds, eg `2000`.
+a time pattern which allowed to configure long values such as `2s` for 2 seconds, e.g. `2000`.
 And more complex such as `8h15m` for 8 hours and 15 minutes.
 
-However as this was implemented as part of `String` -> `long` type convertion
+However as this was implemented as part of `String` -> `long` type conversion
 which then adds a little bit of overhead during routing, when converting from String to plain numbers.
 
 To make Camel routing engine as fast as possible, then this has been removed.
