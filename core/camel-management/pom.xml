@@ -147,6 +147,7 @@
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
                     <groups>
                         <group>
                             <title>Camel API</title>
@@ -232,6 +233,7 @@
                             </links>
                             <linksource>true</linksource>
                             <maxmemory>256m</maxmemory>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <groups>
                                 <group>
                                     <title>Camel API</title>
