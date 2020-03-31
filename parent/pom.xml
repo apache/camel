@@ -545,7 +545,6 @@
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>5.2.1</woodstox-core-version>
         <wsdl4j-version>1.6.3</wsdl4j-version>
-        <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
         <xalan-version>2.7.2</xalan-version>
         <xbean-spring-version>4.14</xbean-spring-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
