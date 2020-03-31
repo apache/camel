@@ -34,7 +34,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
     private PulsarClient pulsarClient;
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
-    @UriPath(label = "consumer,producer", description = "The Topic's full URI path including type, tenant and namespace")
+    @UriPath(name = "uri", label = "consumer,producer", description = "The Topic's full URI path including type, tenant and namespace")
     private final String topicUri;
 
     public PulsarEndpoint(String uri, String path, PulsarConfiguration pulsarConfiguration, PulsarComponent component, PulsarClient pulsarClient) throws PulsarClientException {

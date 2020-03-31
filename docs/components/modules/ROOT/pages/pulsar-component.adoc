@@ -64,7 +64,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *topicUri* | The Topic's full URI path including type, tenant and namespace |  | String
+| *uri* | The Topic's full URI path including type, tenant and namespace |  | String
 |===
 
 
