@@ -31,12 +31,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path", label = "http", consumerOnly = true)
 public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformHttpEndpoint.class);
 
     @UriPath(description = "The path under which this endpoint serves the HTTP requests")
     @Metadata(required = true)
@@ -86,38 +83,38 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
             private Consumer delegatedConsumer;
 
             @Override
-            public PlatformHttpEndpoint getEndpoint () {
+            public PlatformHttpEndpoint getEndpoint() {
                 return (PlatformHttpEndpoint) super.getEndpoint();
             }
 
             @Override
-            protected void doStart () throws Exception {
-                super.doStart();
-
+            protected void doInit() throws Exception {
+                super.doInit();
                 delegatedConsumer = getEndpoint().getOrCreateEngine().createConsumer(getEndpoint(), getProcessor());
                 configureConsumer(delegatedConsumer);
+            }
 
+            @Override
+            protected void doStart() throws Exception {
+                super.doStart();
                 ServiceHelper.startService(delegatedConsumer);
             }
 
             @Override
-            protected void doStop () throws Exception {
+            protected void doStop() throws Exception {
                 super.doStop();
-
                 ServiceHelper.stopAndShutdownServices(delegatedConsumer);
             }
 
             @Override
-            protected void doResume () throws Exception {
+            protected void doResume() throws Exception {
                 ServiceHelper.resumeService(delegatedConsumer);
-
                 super.doResume();
             }
 
             @Override
-            protected void doSuspend () throws Exception {
+            protected void doSuspend() throws Exception {
                 ServiceHelper.suspendService(delegatedConsumer);
-
                 super.doSuspend();
             }
         };
@@ -187,7 +184,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     PlatformHttpEngine getOrCreateEngine() {
         return platformHttpEngine != null
-            ? platformHttpEngine
-            : ((PlatformHttpComponent)getComponent()).getOrCreateEngine();
+                ? platformHttpEngine
+                : ((PlatformHttpComponent) getComponent()).getOrCreateEngine();
     }
 }
