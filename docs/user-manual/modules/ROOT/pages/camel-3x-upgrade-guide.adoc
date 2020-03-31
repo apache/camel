@@ -9,21 +9,6 @@ xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
-== Upgrading Camel 3.1 to 3.1
-
-=== Rest Configuration
-
-The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
-
-The following methods have been removed:
-
-* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
-* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
-* org.apache.camel.CamelContext#getRestConfigurations
-
-
-https://issues.apache.org/jira/browse/CAMEL-13844
-
 == Upgrading Camel 3.0 to 3.1
 
 === camel-ahc, camel-netty-http, camel-undertow
@@ -553,6 +538,18 @@ should be rewritten as:
 
 == Upgrading Camel 3.1 to 3.2
 
+=== Rest Configuration
+
+The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
+
+The following methods have been removed:
+
+* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
+* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
+* org.apache.camel.CamelContext#getRestConfigurations
+
+https://issues.apache.org/jira/browse/CAMEL-13844
+
 === Camel with Karaf and OSGi
 
 Camel on Apache Karaf / OSGi has been moved to its own project at: https://github.com/apache/camel-karaf
@@ -891,3 +888,17 @@ Its a very slow UUID generator and its not recommended to be used.
 The `org.apache.camel.component.properties.PropertiesFunction` has been moved to `org.apache.camel.spi.PropertiesFunction`
 and its now possible to add custom functions on the `org.apache.camel.spi.PropertiesComponent` interface.
 
+====  JMX Connector configuration removed
+
+The JMX Connector configuration in camel-management has been https://issues.apache.org/jira/browse/CAMEL-14811[removed]
+in Camel 3.2.0. If you want to support the ability to use JMX with Camel remotely, then
+just use the default JVM JMX remote capabilities. For example, use the following (insecure)
+JVM settings to be able to manage Camel remotely on localhost, port 9913:
+
+[source]
+----
+-Dcom.sun.management.jmxremote.port=9913
+-Dcom.sun.management.jmxremote.authenticate=false
+-Dcom.sun.management.jmxremote.ssl=false
+-Djava.rmi.server.hostname=localhost
+----
