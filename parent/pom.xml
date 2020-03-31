@@ -434,7 +434,6 @@
         <openwebbeans1-version>1.2.7</openwebbeans1-version>
         <openwebbeans-version>1.7.3</openwebbeans-version>
         <okclient-version>3.14.7</okclient-version>
-        <okclient-bundle-version>3.14.1_1</okclient-bundle-version>
         <olingo2-version>2.0.11</olingo2-version>
         <olingo-odata2-core-bundle-version>2.0.11_1</olingo-odata2-core-bundle-version>
         <olingo2-gson-version>2.4</olingo2-gson-version>
