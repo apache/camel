@@ -9,6 +9,12 @@ xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.2 to 3.3
+
+=== Camel Elytron
+
+Transitive dependencies from org.wildfly.security:wildfly-elytron were removed.
+
 == Upgrading Camel 3.1 to 3.2
 
 === Rest Configuration
