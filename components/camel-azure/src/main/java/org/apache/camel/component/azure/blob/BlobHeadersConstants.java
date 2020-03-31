@@ -18,6 +18,6 @@ package org.apache.camel.component.azure.blob;
 
 public interface BlobHeadersConstants {
 
-    String OVERRIDE_BLOB_NAME = "CamelOverrideBlobName";
+    String OVERRIDE_BLOB_NAME = "CamelAzureOverrideBlobName";
 
 }
