@@ -45,3 +45,9 @@ for this component:
 </dependency>
 ----
 
+== Other Elytron capabilities
+
+This seurity provider contains only basic Elytron dependencies (without any transitive dependency
+from org.wildfly.security:wildfly-elytron).
+Ignored libraries should be added among application's dependencies for their usage.
+
