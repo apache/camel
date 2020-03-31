@@ -526,7 +526,6 @@
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.13.0</testcontainers-version>
-        <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.24</tika-version>
         <twilio-version>7.9.1</twilio-version>
         <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
