@@ -481,7 +481,6 @@
         <saxon-version>9.9.1-6</saxon-version>
         <scala-version>2.11.7</scala-version>
         <scribe-version>1.3.7</scribe-version>
-        <serp-bundle-version>1.14.1_1</serp-bundle-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
         <servlet-version-range>[3,4)</servlet-version-range>
         <shiro-version>1.5.2</shiro-version>
