@@ -17,7 +17,9 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT",
+    "supportLevel": "Stable",
+    "compilationTarget": "JVM"
   },
   "componentProperties": {
     "algorithm": { "kind": "property", "displayName": "Algorithm", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "SHA256withRSA", "configurationClass": "org.apache.camel.component.crypto.DigitalSignatureConfiguration", "configurationField": "configuration", "description": "Sets the JCE name of the Algorithm that should be used for the signer." },

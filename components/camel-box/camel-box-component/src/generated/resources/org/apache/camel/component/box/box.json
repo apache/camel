@@ -17,7 +17,9 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-box",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT",
+    "supportLevel": "Stable",
+    "compilationTarget": "JVM"
   },
   "componentProperties": {
     "clientId": { "kind": "property", "displayName": "Client Id", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.box.BoxConfiguration", "configurationField": "configuration", "description": "Box application client ID" },

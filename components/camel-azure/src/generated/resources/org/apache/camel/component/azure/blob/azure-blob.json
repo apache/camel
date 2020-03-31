@@ -17,7 +17,9 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT",
+    "supportLevel": "Stable",
+    "compilationTarget": "JVM"
   },
   "componentProperties": {
     "azureBlobClient": { "kind": "property", "displayName": "Azure Blob Client", "group": "common", "label": "", "required": false, "type": "object", "javaType": "com.microsoft.azure.storage.blob.CloudBlob", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.azure.blob.BlobServiceConfiguration", "configurationField": "configuration", "description": "The blob service client" },

@@ -17,7 +17,9 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-pubsub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT",
+    "supportLevel": "Stable",
+    "compilationTarget": "JVM"
   },
   "componentProperties": {
     "endpoint": { "kind": "property", "displayName": "Endpoint", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Endpoint to use with local Pub\/Sub emulator." },

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.function.Supplier;
 
 import org.apache.camel.tooling.util.FileUtil;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -59,6 +60,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
      */
     @Component
     protected BuildContext buildContext;
+
+    private DynamicClassLoader projectClassLoader;
 
     public void execute(MavenProject project,
                         MavenProjectHelper projectHelper,
@@ -158,4 +161,33 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         };
     }
 
+    protected Class<?> loadClass(String loadClassName) {
+        Class<?> optionClass;
+        String org = loadClassName;
+        while (true) {
+            try {
+                optionClass = getProjectClassLoader().loadClass(loadClassName);
+                break;
+            } catch (ClassNotFoundException e) {
+                int dotIndex = loadClassName.lastIndexOf('.');
+                if (dotIndex == -1) {
+                    throw new IllegalArgumentException(org);
+                } else {
+                    loadClassName = loadClassName.substring(0, dotIndex) + "$" + loadClassName.substring(dotIndex + 1);
+                }
+            }
+        }
+        return optionClass;
+    }
+
+    protected final DynamicClassLoader getProjectClassLoader() {
+        if (projectClassLoader == null) {
+            try {
+                projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
+            } catch (DependencyResolutionRequiredException e) {
+                throw new RuntimeException("Unable to create project classloader", e);
+            }
+        }
+        return projectClassLoader;
+    }
 }

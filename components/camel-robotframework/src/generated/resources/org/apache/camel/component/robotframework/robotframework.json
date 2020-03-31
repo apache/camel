@@ -17,7 +17,9 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-robotframework",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT",
+    "supportLevel": "Stable",
+    "compilationTarget": "JVM"
   },
   "componentProperties": {
     "argumentFile": { "kind": "property", "displayName": "Argument File", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.io.File", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration", "configurationField": "configuration", "description": "A text file to read more arguments from." },
