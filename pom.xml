@@ -126,6 +126,8 @@
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
         <groovy-version>3.0.2</groovy-version>
+
+        <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->

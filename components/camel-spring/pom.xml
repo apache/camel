@@ -638,6 +638,7 @@
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
 
                     <groups>
                         <group>
@@ -705,6 +706,7 @@
                                 <link>http://download.oracle.com/javaee/7/api/</link>
                                 <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
                             </links>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
                             <linksource>true</linksource>
                             <source>${jdk.version}</source>
