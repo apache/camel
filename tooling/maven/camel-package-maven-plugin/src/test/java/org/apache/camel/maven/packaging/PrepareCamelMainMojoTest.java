@@ -34,7 +34,7 @@ public class PrepareCamelMainMojoTest {
 
         List<MainModel.MainOptionModel> list = PrepareCamelMainMojo.parseConfigurationSource(fileName);
         assertNotNull(list);
-        assertEquals(40, list.size());
+        assertEquals(39, list.size());
 
         assertEquals("name", list.get(0).getName());
         assertEquals("java.lang.String", list.get(0).getJavaType());
