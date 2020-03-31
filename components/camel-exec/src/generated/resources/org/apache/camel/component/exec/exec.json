@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "exec",
     "scheme": "exec",
     "extendsScheme": "",
     "syntax": "exec:executable",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "iec60870-server",
     "scheme": "iec60870-server",
     "extendsScheme": "",
     "syntax": "iec60870-server:uriPath",

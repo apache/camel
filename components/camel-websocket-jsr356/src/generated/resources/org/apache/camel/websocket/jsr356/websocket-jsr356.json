@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "websocket-jsr356",
     "scheme": "websocket-jsr356",
     "extendsScheme": "",
     "syntax": "websocket-jsr356:uri",

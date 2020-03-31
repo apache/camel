@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "reactive-streams",
     "scheme": "reactive-streams",
     "extendsScheme": "",
     "syntax": "reactive-streams:stream",

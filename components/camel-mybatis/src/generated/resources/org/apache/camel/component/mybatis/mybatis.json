@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "mybatis",
     "scheme": "mybatis",
     "extendsScheme": "",
     "syntax": "mybatis:statement",

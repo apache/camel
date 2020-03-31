@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "dozer",
     "scheme": "dozer",
     "extendsScheme": "",
     "syntax": "dozer:name",

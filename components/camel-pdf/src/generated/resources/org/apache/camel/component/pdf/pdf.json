@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "pdf",
     "scheme": "pdf",
     "extendsScheme": "",
     "syntax": "pdf:operation",

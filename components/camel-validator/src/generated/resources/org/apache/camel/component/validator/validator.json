@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "validator",
     "scheme": "validator",
     "extendsScheme": "",
     "syntax": "validator:resourceUri",

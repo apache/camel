@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "elsql",
     "scheme": "elsql",
     "extendsScheme": "",
     "syntax": "elsql:elsqlName:resourceUri",

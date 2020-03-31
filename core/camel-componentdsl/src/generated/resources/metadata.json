@@ -1,6 +1,7 @@
 {
   "ActivemqComponentBuilderFactory": {
     "kind": "component",
+    "name": "activemq",
     "scheme": "activemq",
     "extendsScheme": "jms",
     "syntax": "activemq:destinationType:destinationName",
@@ -21,6 +22,7 @@
   },
   "AhcComponentBuilderFactory": {
     "kind": "component",
+    "name": "ahc",
     "scheme": "ahc",
     "extendsScheme": "",
     "syntax": "ahc:httpUri",
@@ -41,6 +43,7 @@
   },
   "AhcWsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ahc-ws",
     "scheme": "ahc-ws",
     "extendsScheme": "ahc",
     "alternativeSchemes": "ahc-ws,ahc-wss",
@@ -62,6 +65,7 @@
   },
   "AhcWssComponentBuilderFactory": {
     "kind": "component",
+    "name": "ahc-wss",
     "scheme": "ahc-wss",
     "extendsScheme": "ahc",
     "alternativeSchemes": "ahc-ws,ahc-wss",
@@ -83,6 +87,7 @@
   },
   "AmqpComponentBuilderFactory": {
     "kind": "component",
+    "name": "amqp",
     "scheme": "amqp",
     "extendsScheme": "jms",
     "syntax": "amqp:destinationType:destinationName",
@@ -103,6 +108,7 @@
   },
   "ApnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "apns",
     "scheme": "apns",
     "extendsScheme": "",
     "syntax": "apns:name",
@@ -123,6 +129,7 @@
   },
   "As2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "as2",
     "scheme": "as2",
     "extendsScheme": "",
     "syntax": "as2:apiName\/methodName",
@@ -143,6 +150,7 @@
   },
   "AsteriskComponentBuilderFactory": {
     "kind": "component",
+    "name": "asterisk",
     "scheme": "asterisk",
     "extendsScheme": "",
     "syntax": "asterisk:name",
@@ -163,6 +171,7 @@
   },
   "AtmosComponentBuilderFactory": {
     "kind": "component",
+    "name": "atmos",
     "scheme": "atmos",
     "extendsScheme": "",
     "syntax": "atmos:name\/operation",
@@ -183,6 +192,7 @@
   },
   "AtmosphereWebsocketComponentBuilderFactory": {
     "kind": "component",
+    "name": "atmosphere-websocket",
     "scheme": "atmosphere-websocket",
     "extendsScheme": "servlet",
     "syntax": "atmosphere-websocket:servicePath",
@@ -203,6 +213,7 @@
   },
   "AtomComponentBuilderFactory": {
     "kind": "component",
+    "name": "atom",
     "scheme": "atom",
     "extendsScheme": "",
     "syntax": "atom:feedUri",
@@ -223,6 +234,7 @@
   },
   "AtomixMapComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-map",
     "scheme": "atomix-map",
     "extendsScheme": "",
     "syntax": "atomix-map:resourceName",
@@ -243,6 +255,7 @@
   },
   "AtomixMessagingComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-messaging",
     "scheme": "atomix-messaging",
     "extendsScheme": "",
     "syntax": "atomix-messaging:resourceName",
@@ -263,6 +276,7 @@
   },
   "AtomixMultimapComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-multimap",
     "scheme": "atomix-multimap",
     "extendsScheme": "",
     "syntax": "atomix-multimap:resourceName",
@@ -283,6 +297,7 @@
   },
   "AtomixQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-queue",
     "scheme": "atomix-queue",
     "extendsScheme": "",
     "syntax": "atomix-queue:resourceName",
@@ -303,6 +318,7 @@
   },
   "AtomixSetComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-set",
     "scheme": "atomix-set",
     "extendsScheme": "",
     "syntax": "atomix-set:resourceName",
@@ -323,6 +339,7 @@
   },
   "AtomixValueComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-value",
     "scheme": "atomix-value",
     "extendsScheme": "",
     "syntax": "atomix-value:resourceName",
@@ -343,6 +360,7 @@
   },
   "AvroComponentBuilderFactory": {
     "kind": "component",
+    "name": "avro",
     "scheme": "avro",
     "extendsScheme": "",
     "syntax": "avro:transport:host:port\/messageName",
@@ -363,6 +381,7 @@
   },
   "Aws2CwComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-cw",
     "scheme": "aws2-cw",
     "extendsScheme": "",
     "syntax": "aws2-cw:namespace",
@@ -383,6 +402,7 @@
   },
   "Aws2DdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ddb",
     "scheme": "aws2-ddb",
     "extendsScheme": "",
     "syntax": "aws2-ddb:tableName",
@@ -403,6 +423,7 @@
   },
   "Aws2DdbstreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ddbstream",
     "scheme": "aws2-ddbstream",
     "extendsScheme": "",
     "syntax": "aws2-ddbstream:tableName",
@@ -423,6 +444,7 @@
   },
   "Aws2Ec2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ec2",
     "scheme": "aws2-ec2",
     "extendsScheme": "",
     "syntax": "aws2-ec2:label",
@@ -443,6 +465,7 @@
   },
   "Aws2EcsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ecs",
     "scheme": "aws2-ecs",
     "extendsScheme": "",
     "syntax": "aws2-ecs:label",
@@ -463,6 +486,7 @@
   },
   "Aws2EksComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-eks",
     "scheme": "aws2-eks",
     "extendsScheme": "",
     "syntax": "aws2-eks:label",
@@ -483,6 +507,7 @@
   },
   "Aws2IamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-iam",
     "scheme": "aws2-iam",
     "extendsScheme": "",
     "syntax": "aws2-iam:label",
@@ -503,6 +528,7 @@
   },
   "Aws2KinesisComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-kinesis",
     "scheme": "aws2-kinesis",
     "extendsScheme": "",
     "syntax": "aws2-kinesis:streamName",
@@ -523,6 +549,7 @@
   },
   "Aws2KinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-kinesis-firehose",
     "scheme": "aws2-kinesis-firehose",
     "extendsScheme": "",
     "syntax": "aws2-kinesis-firehose:streamName",
@@ -543,6 +570,7 @@
   },
   "Aws2KmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-kms",
     "scheme": "aws2-kms",
     "extendsScheme": "",
     "syntax": "aws2-kms:label",
@@ -563,6 +591,7 @@
   },
   "Aws2LambdaComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-lambda",
     "scheme": "aws2-lambda",
     "extendsScheme": "",
     "syntax": "aws2-lambda:function",
@@ -583,6 +612,7 @@
   },
   "Aws2MqComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-mq",
     "scheme": "aws2-mq",
     "extendsScheme": "",
     "syntax": "aws2-mq:label",
@@ -603,6 +633,7 @@
   },
   "Aws2MskComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-msk",
     "scheme": "aws2-msk",
     "extendsScheme": "",
     "syntax": "aws2-msk:label",
@@ -623,6 +654,7 @@
   },
   "Aws2S3ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-s3",
     "scheme": "aws2-s3",
     "extendsScheme": "",
     "syntax": "aws2-s3:\/\/bucketNameOrArn",
@@ -643,6 +675,7 @@
   },
   "Aws2SesComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ses",
     "scheme": "aws2-ses",
     "extendsScheme": "",
     "syntax": "aws2-ses:from",
@@ -663,6 +696,7 @@
   },
   "Aws2SnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-sns",
     "scheme": "aws2-sns",
     "extendsScheme": "",
     "syntax": "aws2-sns:topicNameOrArn",
@@ -683,6 +717,7 @@
   },
   "Aws2SqsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-sqs",
     "scheme": "aws2-sqs",
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
@@ -703,6 +738,7 @@
   },
   "Aws2TranslateComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-translate",
     "scheme": "aws2-translate",
     "extendsScheme": "",
     "syntax": "aws2-translate:label",
@@ -723,6 +759,7 @@
   },
   "AwsCwComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-cw",
     "scheme": "aws-cw",
     "extendsScheme": "",
     "syntax": "aws-cw:namespace",
@@ -743,6 +780,7 @@
   },
   "AwsDdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ddb",
     "scheme": "aws-ddb",
     "extendsScheme": "",
     "syntax": "aws-ddb:tableName",
@@ -763,6 +801,7 @@
   },
   "AwsDdbstreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ddbstream",
     "scheme": "aws-ddbstream",
     "extendsScheme": "",
     "syntax": "aws-ddbstream:tableName",
@@ -783,6 +822,7 @@
   },
   "AwsEc2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ec2",
     "scheme": "aws-ec2",
     "extendsScheme": "",
     "syntax": "aws-ec2:label",
@@ -803,6 +843,7 @@
   },
   "AwsEcsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ecs",
     "scheme": "aws-ecs",
     "extendsScheme": "",
     "syntax": "aws-ecs:label",
@@ -823,6 +864,7 @@
   },
   "AwsEksComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-eks",
     "scheme": "aws-eks",
     "extendsScheme": "",
     "syntax": "aws-eks:label",
@@ -843,6 +885,7 @@
   },
   "AwsIamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-iam",
     "scheme": "aws-iam",
     "extendsScheme": "",
     "syntax": "aws-iam:label",
@@ -863,6 +906,7 @@
   },
   "AwsKinesisComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-kinesis",
     "scheme": "aws-kinesis",
     "extendsScheme": "",
     "syntax": "aws-kinesis:streamName",
@@ -883,6 +927,7 @@
   },
   "AwsKinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-kinesis-firehose",
     "scheme": "aws-kinesis-firehose",
     "extendsScheme": "",
     "syntax": "aws-kinesis-firehose:streamName",
@@ -903,6 +948,7 @@
   },
   "AwsKmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-kms",
     "scheme": "aws-kms",
     "extendsScheme": "",
     "syntax": "aws-kms:label",
@@ -923,6 +969,7 @@
   },
   "AwsLambdaComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-lambda",
     "scheme": "aws-lambda",
     "extendsScheme": "",
     "syntax": "aws-lambda:function",
@@ -943,6 +990,7 @@
   },
   "AwsMqComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-mq",
     "scheme": "aws-mq",
     "extendsScheme": "",
     "syntax": "aws-mq:label",
@@ -963,6 +1011,7 @@
   },
   "AwsMskComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-msk",
     "scheme": "aws-msk",
     "extendsScheme": "",
     "syntax": "aws-msk:label",
@@ -983,6 +1032,7 @@
   },
   "AwsS3ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-s3",
     "scheme": "aws-s3",
     "extendsScheme": "",
     "syntax": "aws-s3:\/\/bucketNameOrArn",
@@ -1003,6 +1053,7 @@
   },
   "AwsSdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-sdb",
     "scheme": "aws-sdb",
     "extendsScheme": "",
     "syntax": "aws-sdb:domainName",
@@ -1023,6 +1074,7 @@
   },
   "AwsSesComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ses",
     "scheme": "aws-ses",
     "extendsScheme": "",
     "syntax": "aws-ses:from",
@@ -1043,6 +1095,7 @@
   },
   "AwsSnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-sns",
     "scheme": "aws-sns",
     "extendsScheme": "",
     "syntax": "aws-sns:topicNameOrArn",
@@ -1063,6 +1116,7 @@
   },
   "AwsSqsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-sqs",
     "scheme": "aws-sqs",
     "extendsScheme": "",
     "syntax": "aws-sqs:queueNameOrArn",
@@ -1083,6 +1137,7 @@
   },
   "AwsSwfComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-swf",
     "scheme": "aws-swf",
     "extendsScheme": "",
     "syntax": "aws-swf:type",
@@ -1103,6 +1158,7 @@
   },
   "AwsTranslateComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-translate",
     "scheme": "aws-translate",
     "extendsScheme": "",
     "syntax": "aws-translate:label",
@@ -1123,6 +1179,7 @@
   },
   "AzureBlobComponentBuilderFactory": {
     "kind": "component",
+    "name": "azure-blob",
     "scheme": "azure-blob",
     "extendsScheme": "",
     "syntax": "azure-blob:containerOrBlobUri",
@@ -1143,6 +1200,7 @@
   },
   "AzureQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "azure-queue",
     "scheme": "azure-queue",
     "extendsScheme": "",
     "syntax": "azure-queue:containerAndQueueUri",
@@ -1163,6 +1221,7 @@
   },
   "BeanComponentBuilderFactory": {
     "kind": "component",
+    "name": "bean",
     "scheme": "bean",
     "extendsScheme": "",
     "syntax": "bean:beanName",
@@ -1183,6 +1242,7 @@
   },
   "BeanValidatorComponentBuilderFactory": {
     "kind": "component",
+    "name": "bean-validator",
     "scheme": "bean-validator",
     "extendsScheme": "",
     "syntax": "bean-validator:label",
@@ -1203,6 +1263,7 @@
   },
   "BeanstalkComponentBuilderFactory": {
     "kind": "component",
+    "name": "beanstalk",
     "scheme": "beanstalk",
     "extendsScheme": "",
     "syntax": "beanstalk:connectionSettings",
@@ -1223,6 +1284,7 @@
   },
   "BonitaComponentBuilderFactory": {
     "kind": "component",
+    "name": "bonita",
     "scheme": "bonita",
     "extendsScheme": "",
     "syntax": "bonita:operation",
@@ -1243,6 +1305,7 @@
   },
   "BoxComponentBuilderFactory": {
     "kind": "component",
+    "name": "box",
     "scheme": "box",
     "extendsScheme": "",
     "syntax": "box:apiName\/methodName",
@@ -1263,6 +1326,7 @@
   },
   "BraintreeComponentBuilderFactory": {
     "kind": "component",
+    "name": "braintree",
     "scheme": "braintree",
     "extendsScheme": "",
     "syntax": "braintree:apiName\/methodName",
@@ -1283,6 +1347,7 @@
   },
   "BrowseComponentBuilderFactory": {
     "kind": "component",
+    "name": "browse",
     "scheme": "browse",
     "extendsScheme": "",
     "syntax": "browse:name",
@@ -1303,6 +1368,7 @@
   },
   "CaffeineCacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "caffeine-cache",
     "scheme": "caffeine-cache",
     "extendsScheme": "",
     "syntax": "caffeine-cache:cacheName",
@@ -1323,6 +1389,7 @@
   },
   "CaffeineLoadcacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "caffeine-loadcache",
     "scheme": "caffeine-loadcache",
     "extendsScheme": "",
     "syntax": "caffeine-loadcache:cacheName",
@@ -1343,6 +1410,7 @@
   },
   "ChatscriptComponentBuilderFactory": {
     "kind": "component",
+    "name": "chatscript",
     "scheme": "chatscript",
     "extendsScheme": "",
     "syntax": "chatscript:host:port\/botName",
@@ -1363,6 +1431,7 @@
   },
   "ChunkComponentBuilderFactory": {
     "kind": "component",
+    "name": "chunk",
     "scheme": "chunk",
     "extendsScheme": "",
     "syntax": "chunk:resourceUri",
@@ -1383,6 +1452,7 @@
   },
   "ClasComponentBuilderFactory": {
     "kind": "component",
+    "name": "class",
     "scheme": "class",
     "extendsScheme": "",
     "syntax": "class:beanName",
@@ -1403,6 +1473,7 @@
   },
   "CmSmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "cm-sms",
     "scheme": "cm-sms",
     "extendsScheme": "",
     "syntax": "cm-sms:host",
@@ -1423,6 +1494,7 @@
   },
   "CmisComponentBuilderFactory": {
     "kind": "component",
+    "name": "cmis",
     "scheme": "cmis",
     "extendsScheme": "",
     "syntax": "cmis:cmsUrl",
@@ -1443,6 +1515,7 @@
   },
   "CoapComponentBuilderFactory": {
     "kind": "component",
+    "name": "coap",
     "scheme": "coap",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1464,6 +1537,7 @@
   },
   "CoapTcpComponentBuilderFactory": {
     "kind": "component",
+    "name": "coap+tcp",
     "scheme": "coap+tcp",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1485,6 +1559,7 @@
   },
   "CoapsComponentBuilderFactory": {
     "kind": "component",
+    "name": "coaps",
     "scheme": "coaps",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1506,6 +1581,7 @@
   },
   "CoapsTcpComponentBuilderFactory": {
     "kind": "component",
+    "name": "coaps+tcp",
     "scheme": "coaps+tcp",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1527,6 +1603,7 @@
   },
   "CometdComponentBuilderFactory": {
     "kind": "component",
+    "name": "cometd",
     "scheme": "cometd",
     "extendsScheme": "",
     "alternativeSchemes": "cometd,cometds",
@@ -1548,6 +1625,7 @@
   },
   "CometdsComponentBuilderFactory": {
     "kind": "component",
+    "name": "cometds",
     "scheme": "cometds",
     "extendsScheme": "",
     "alternativeSchemes": "cometd,cometds",
@@ -1569,6 +1647,7 @@
   },
   "ConsulComponentBuilderFactory": {
     "kind": "component",
+    "name": "consul",
     "scheme": "consul",
     "extendsScheme": "",
     "syntax": "consul:apiEndpoint",
@@ -1589,6 +1668,7 @@
   },
   "ControlbusComponentBuilderFactory": {
     "kind": "component",
+    "name": "controlbus",
     "scheme": "controlbus",
     "extendsScheme": "",
     "syntax": "controlbus:command:language",
@@ -1609,6 +1689,7 @@
   },
   "CordaComponentBuilderFactory": {
     "kind": "component",
+    "name": "corda",
     "scheme": "corda",
     "extendsScheme": "",
     "syntax": "corda:node",
@@ -1629,6 +1710,7 @@
   },
   "CouchbaseComponentBuilderFactory": {
     "kind": "component",
+    "name": "couchbase",
     "scheme": "couchbase",
     "extendsScheme": "",
     "syntax": "couchbase:protocol:hostname:port",
@@ -1649,6 +1731,7 @@
   },
   "CouchdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "couchdb",
     "scheme": "couchdb",
     "extendsScheme": "",
     "syntax": "couchdb:protocol:hostname:port\/database",
@@ -1669,6 +1752,7 @@
   },
   "CqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "cql",
     "scheme": "cql",
     "extendsScheme": "",
     "syntax": "cql:beanRef:hosts:port\/keyspace",
@@ -1689,6 +1773,7 @@
   },
   "CronComponentBuilderFactory": {
     "kind": "component",
+    "name": "cron",
     "scheme": "cron",
     "extendsScheme": "",
     "syntax": "cron:name",
@@ -1709,6 +1794,7 @@
   },
   "CryptoCmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "crypto-cms",
     "scheme": "crypto-cms",
     "extendsScheme": "",
     "syntax": "crypto-cms:cryptoOperation:name",
@@ -1729,6 +1815,7 @@
   },
   "CryptoComponentBuilderFactory": {
     "kind": "component",
+    "name": "crypto",
     "scheme": "crypto",
     "extendsScheme": "",
     "syntax": "crypto:cryptoOperation:name",
@@ -1749,6 +1836,7 @@
   },
   "CxfComponentBuilderFactory": {
     "kind": "component",
+    "name": "cxf",
     "scheme": "cxf",
     "extendsScheme": "",
     "syntax": "cxf:beanId:address",
@@ -1769,6 +1857,7 @@
   },
   "CxfrsComponentBuilderFactory": {
     "kind": "component",
+    "name": "cxfrs",
     "scheme": "cxfrs",
     "extendsScheme": "",
     "syntax": "cxfrs:beanId:address",
@@ -1789,6 +1878,7 @@
   },
   "DataformatComponentBuilderFactory": {
     "kind": "component",
+    "name": "dataformat",
     "scheme": "dataformat",
     "extendsScheme": "",
     "syntax": "dataformat:name:operation",
@@ -1809,6 +1899,7 @@
   },
   "DatasetComponentBuilderFactory": {
     "kind": "component",
+    "name": "dataset",
     "scheme": "dataset",
     "extendsScheme": "",
     "syntax": "dataset:name",
@@ -1829,6 +1920,7 @@
   },
   "DatasetTestComponentBuilderFactory": {
     "kind": "component",
+    "name": "dataset-test",
     "scheme": "dataset-test",
     "extendsScheme": "",
     "syntax": "dataset-test:name",
@@ -1849,6 +1941,7 @@
   },
   "DebeziumMongodbComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-mongodb",
     "scheme": "debezium-mongodb",
     "extendsScheme": "",
     "syntax": "debezium-mongodb:name",
@@ -1869,6 +1962,7 @@
   },
   "DebeziumMysqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-mysql",
     "scheme": "debezium-mysql",
     "extendsScheme": "",
     "syntax": "debezium-mysql:name",
@@ -1889,6 +1983,7 @@
   },
   "DebeziumPostgresComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-postgres",
     "scheme": "debezium-postgres",
     "extendsScheme": "",
     "syntax": "debezium-postgres:name",
@@ -1909,6 +2004,7 @@
   },
   "DebeziumSqlserverComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-sqlserver",
     "scheme": "debezium-sqlserver",
     "extendsScheme": "",
     "syntax": "debezium-sqlserver:name",
@@ -1929,6 +2025,7 @@
   },
   "DigitaloceanComponentBuilderFactory": {
     "kind": "component",
+    "name": "digitalocean",
     "scheme": "digitalocean",
     "extendsScheme": "",
     "syntax": "digitalocean:operation",
@@ -1949,6 +2046,7 @@
   },
   "DirectComponentBuilderFactory": {
     "kind": "component",
+    "name": "direct",
     "scheme": "direct",
     "extendsScheme": "",
     "syntax": "direct:name",
@@ -1969,6 +2067,7 @@
   },
   "DirectVmComponentBuilderFactory": {
     "kind": "component",
+    "name": "direct-vm",
     "scheme": "direct-vm",
     "extendsScheme": "",
     "syntax": "direct-vm:name",
@@ -1989,6 +2088,7 @@
   },
   "DisruptorComponentBuilderFactory": {
     "kind": "component",
+    "name": "disruptor",
     "scheme": "disruptor",
     "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
@@ -2010,6 +2110,7 @@
   },
   "DisruptorVmComponentBuilderFactory": {
     "kind": "component",
+    "name": "disruptor-vm",
     "scheme": "disruptor-vm",
     "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
@@ -2031,6 +2132,7 @@
   },
   "DnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "dns",
     "scheme": "dns",
     "extendsScheme": "",
     "syntax": "dns:dnsType",
@@ -2051,6 +2153,7 @@
   },
   "DockerComponentBuilderFactory": {
     "kind": "component",
+    "name": "docker",
     "scheme": "docker",
     "extendsScheme": "",
     "syntax": "docker:operation",
@@ -2071,6 +2174,7 @@
   },
   "DozerComponentBuilderFactory": {
     "kind": "component",
+    "name": "dozer",
     "scheme": "dozer",
     "extendsScheme": "",
     "syntax": "dozer:name",
@@ -2091,6 +2195,7 @@
   },
   "DrillComponentBuilderFactory": {
     "kind": "component",
+    "name": "drill",
     "scheme": "drill",
     "extendsScheme": "",
     "syntax": "drill:host",
@@ -2111,6 +2216,7 @@
   },
   "DropboxComponentBuilderFactory": {
     "kind": "component",
+    "name": "dropbox",
     "scheme": "dropbox",
     "extendsScheme": "",
     "syntax": "dropbox:operation",
@@ -2131,6 +2237,7 @@
   },
   "EhcacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "ehcache",
     "scheme": "ehcache",
     "extendsScheme": "",
     "syntax": "ehcache:cacheName",
@@ -2151,6 +2258,7 @@
   },
   "ElasticsearchRestComponentBuilderFactory": {
     "kind": "component",
+    "name": "elasticsearch-rest",
     "scheme": "elasticsearch-rest",
     "extendsScheme": "",
     "syntax": "elasticsearch-rest:clusterName",
@@ -2171,6 +2279,7 @@
   },
   "ElsqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "elsql",
     "scheme": "elsql",
     "extendsScheme": "",
     "syntax": "elsql:elsqlName:resourceUri",
@@ -2191,6 +2300,7 @@
   },
   "EtcdKeysComponentBuilderFactory": {
     "kind": "component",
+    "name": "etcd-keys",
     "scheme": "etcd-keys",
     "extendsScheme": "",
     "syntax": "etcd-keys:path",
@@ -2211,6 +2321,7 @@
   },
   "EtcdStatsComponentBuilderFactory": {
     "kind": "component",
+    "name": "etcd-stats",
     "scheme": "etcd-stats",
     "extendsScheme": "",
     "syntax": "etcd-stats:path",
@@ -2231,6 +2342,7 @@
   },
   "EtcdWatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "etcd-watch",
     "scheme": "etcd-watch",
     "extendsScheme": "",
     "syntax": "etcd-watch:path",
@@ -2251,6 +2363,7 @@
   },
   "ExecComponentBuilderFactory": {
     "kind": "component",
+    "name": "exec",
     "scheme": "exec",
     "extendsScheme": "",
     "syntax": "exec:executable",
@@ -2271,6 +2384,7 @@
   },
   "FacebookComponentBuilderFactory": {
     "kind": "component",
+    "name": "facebook",
     "scheme": "facebook",
     "extendsScheme": "",
     "syntax": "facebook:methodName",
@@ -2291,6 +2405,7 @@
   },
   "FhirComponentBuilderFactory": {
     "kind": "component",
+    "name": "fhir",
     "scheme": "fhir",
     "extendsScheme": "",
     "syntax": "fhir:apiName\/methodName",
@@ -2311,6 +2426,7 @@
   },
   "FileComponentBuilderFactory": {
     "kind": "component",
+    "name": "file",
     "scheme": "file",
     "extendsScheme": "",
     "syntax": "file:directoryName",
@@ -2331,6 +2447,7 @@
   },
   "FileWatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "file-watch",
     "scheme": "file-watch",
     "extendsScheme": "",
     "syntax": "file-watch:path",
@@ -2351,6 +2468,7 @@
   },
   "FlatpackComponentBuilderFactory": {
     "kind": "component",
+    "name": "flatpack",
     "scheme": "flatpack",
     "extendsScheme": "",
     "syntax": "flatpack:type:resourceUri",
@@ -2371,6 +2489,7 @@
   },
   "FlinkComponentBuilderFactory": {
     "kind": "component",
+    "name": "flink",
     "scheme": "flink",
     "extendsScheme": "",
     "syntax": "flink:endpointType",
@@ -2391,6 +2510,7 @@
   },
   "FopComponentBuilderFactory": {
     "kind": "component",
+    "name": "fop",
     "scheme": "fop",
     "extendsScheme": "",
     "syntax": "fop:outputType",
@@ -2411,6 +2531,7 @@
   },
   "FreemarkerComponentBuilderFactory": {
     "kind": "component",
+    "name": "freemarker",
     "scheme": "freemarker",
     "extendsScheme": "",
     "syntax": "freemarker:resourceUri",
@@ -2431,6 +2552,7 @@
   },
   "FtpComponentBuilderFactory": {
     "kind": "component",
+    "name": "ftp",
     "scheme": "ftp",
     "extendsScheme": "file",
     "syntax": "ftp:host:port\/directoryName",
@@ -2452,6 +2574,7 @@
   },
   "FtpsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ftps",
     "scheme": "ftps",
     "extendsScheme": "file",
     "syntax": "ftps:host:port\/directoryName",
@@ -2473,6 +2596,7 @@
   },
   "GangliaComponentBuilderFactory": {
     "kind": "component",
+    "name": "ganglia",
     "scheme": "ganglia",
     "extendsScheme": "",
     "syntax": "ganglia:host:port",
@@ -2493,6 +2617,7 @@
   },
   "GeocoderComponentBuilderFactory": {
     "kind": "component",
+    "name": "geocoder",
     "scheme": "geocoder",
     "extendsScheme": "",
     "syntax": "geocoder:address:latlng",
@@ -2513,6 +2638,7 @@
   },
   "GitComponentBuilderFactory": {
     "kind": "component",
+    "name": "git",
     "scheme": "git",
     "extendsScheme": "",
     "syntax": "git:localPath",
@@ -2533,6 +2659,7 @@
   },
   "GithubComponentBuilderFactory": {
     "kind": "component",
+    "name": "github",
     "scheme": "github",
     "extendsScheme": "",
     "syntax": "github:type\/branchName",
@@ -2553,6 +2680,7 @@
   },
   "GoogleBigqueryComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-bigquery",
     "scheme": "google-bigquery",
     "extendsScheme": "",
     "syntax": "google-bigquery:projectId:datasetId:tableId",
@@ -2573,6 +2701,7 @@
   },
   "GoogleBigquerySqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-bigquery-sql",
     "scheme": "google-bigquery-sql",
     "extendsScheme": "",
     "syntax": "google-bigquery-sql:projectId:query",
@@ -2593,6 +2722,7 @@
   },
   "GoogleCalendarComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-calendar",
     "scheme": "google-calendar",
     "extendsScheme": "",
     "syntax": "google-calendar:apiName\/methodName",
@@ -2613,6 +2743,7 @@
   },
   "GoogleCalendarStreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-calendar-stream",
     "scheme": "google-calendar-stream",
     "extendsScheme": "",
     "syntax": "google-calendar-stream:index",
@@ -2633,6 +2764,7 @@
   },
   "GoogleDriveComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-drive",
     "scheme": "google-drive",
     "extendsScheme": "",
     "syntax": "google-drive:apiName\/methodName",
@@ -2653,6 +2785,7 @@
   },
   "GoogleMailComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-mail",
     "scheme": "google-mail",
     "extendsScheme": "",
     "syntax": "google-mail:apiName\/methodName",
@@ -2673,6 +2806,7 @@
   },
   "GoogleMailStreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-mail-stream",
     "scheme": "google-mail-stream",
     "extendsScheme": "",
     "syntax": "google-mail-stream:index",
@@ -2693,6 +2827,7 @@
   },
   "GooglePubsubComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-pubsub",
     "scheme": "google-pubsub",
     "extendsScheme": "",
     "syntax": "google-pubsub:projectId:destinationName",
@@ -2713,6 +2848,7 @@
   },
   "GoogleSheetsComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-sheets",
     "scheme": "google-sheets",
     "extendsScheme": "",
     "syntax": "google-sheets:apiName\/methodName",
@@ -2733,6 +2869,7 @@
   },
   "GoogleSheetsStreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-sheets-stream",
     "scheme": "google-sheets-stream",
     "extendsScheme": "",
     "syntax": "google-sheets-stream:apiName",
@@ -2753,6 +2890,7 @@
   },
   "GoraComponentBuilderFactory": {
     "kind": "component",
+    "name": "gora",
     "scheme": "gora",
     "extendsScheme": "",
     "syntax": "gora:name",
@@ -2773,6 +2911,7 @@
   },
   "GrapeComponentBuilderFactory": {
     "kind": "component",
+    "name": "grape",
     "scheme": "grape",
     "extendsScheme": "",
     "syntax": "grape:defaultCoordinates",
@@ -2793,6 +2932,7 @@
   },
   "GraphqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "graphql",
     "scheme": "graphql",
     "extendsScheme": "",
     "syntax": "graphql:httpUri",
@@ -2813,6 +2953,7 @@
   },
   "GrpcComponentBuilderFactory": {
     "kind": "component",
+    "name": "grpc",
     "scheme": "grpc",
     "extendsScheme": "",
     "syntax": "grpc:host:port\/service",
@@ -2833,6 +2974,7 @@
   },
   "GuavaEventbusComponentBuilderFactory": {
     "kind": "component",
+    "name": "guava-eventbus",
     "scheme": "guava-eventbus",
     "extendsScheme": "",
     "syntax": "guava-eventbus:eventBusRef",
@@ -2853,6 +2995,7 @@
   },
   "HazelcastAtomicvalueComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-atomicvalue",
     "scheme": "hazelcast-atomicvalue",
     "extendsScheme": "",
     "syntax": "hazelcast-atomicvalue:cacheName",
@@ -2873,6 +3016,7 @@
   },
   "HazelcastInstanceComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-instance",
     "scheme": "hazelcast-instance",
     "extendsScheme": "",
     "syntax": "hazelcast-instance:cacheName",
@@ -2893,6 +3037,7 @@
   },
   "HazelcastListComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-list",
     "scheme": "hazelcast-list",
     "extendsScheme": "",
     "syntax": "hazelcast-list:cacheName",
@@ -2913,6 +3058,7 @@
   },
   "HazelcastMapComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-map",
     "scheme": "hazelcast-map",
     "extendsScheme": "",
     "syntax": "hazelcast-map:cacheName",
@@ -2933,6 +3079,7 @@
   },
   "HazelcastMultimapComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-multimap",
     "scheme": "hazelcast-multimap",
     "extendsScheme": "",
     "syntax": "hazelcast-multimap:cacheName",
@@ -2953,6 +3100,7 @@
   },
   "HazelcastQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-queue",
     "scheme": "hazelcast-queue",
     "extendsScheme": "",
     "syntax": "hazelcast-queue:cacheName",
@@ -2973,6 +3121,7 @@
   },
   "HazelcastReplicatedmapComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-replicatedmap",
     "scheme": "hazelcast-replicatedmap",
     "extendsScheme": "",
     "syntax": "hazelcast-replicatedmap:cacheName",
@@ -2993,6 +3142,7 @@
   },
   "HazelcastRingbufferComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-ringbuffer",
     "scheme": "hazelcast-ringbuffer",
     "extendsScheme": "",
     "syntax": "hazelcast-ringbuffer:cacheName",
@@ -3013,6 +3163,7 @@
   },
   "HazelcastSedaComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-seda",
     "scheme": "hazelcast-seda",
     "extendsScheme": "",
     "syntax": "hazelcast-seda:cacheName",
@@ -3033,6 +3184,7 @@
   },
   "HazelcastSetComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-set",
     "scheme": "hazelcast-set",
     "extendsScheme": "",
     "syntax": "hazelcast-set:cacheName",
@@ -3053,6 +3205,7 @@
   },
   "HazelcastTopicComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-topic",
     "scheme": "hazelcast-topic",
     "extendsScheme": "",
     "syntax": "hazelcast-topic:cacheName",
@@ -3073,6 +3226,7 @@
   },
   "HbaseComponentBuilderFactory": {
     "kind": "component",
+    "name": "hbase",
     "scheme": "hbase",
     "extendsScheme": "",
     "syntax": "hbase:tableName",
@@ -3093,6 +3247,7 @@
   },
   "HdfsComponentBuilderFactory": {
     "kind": "component",
+    "name": "hdfs",
     "scheme": "hdfs",
     "extendsScheme": "",
     "syntax": "hdfs:hostName:port\/path",
@@ -3113,6 +3268,7 @@
   },
   "HipchatComponentBuilderFactory": {
     "kind": "component",
+    "name": "hipchat",
     "scheme": "hipchat",
     "extendsScheme": "",
     "syntax": "hipchat:protocol:host:port",
@@ -3133,6 +3289,7 @@
   },
   "HttpComponentBuilderFactory": {
     "kind": "component",
+    "name": "http",
     "scheme": "http",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",
@@ -3154,6 +3311,7 @@
   },
   "HttpsComponentBuilderFactory": {
     "kind": "component",
+    "name": "https",
     "scheme": "https",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",
@@ -3175,6 +3333,7 @@
   },
   "Iec60870ClientComponentBuilderFactory": {
     "kind": "component",
+    "name": "iec60870-client",
     "scheme": "iec60870-client",
     "extendsScheme": "",
     "syntax": "iec60870-client:uriPath",
@@ -3195,6 +3354,7 @@
   },
   "Iec60870ServerComponentBuilderFactory": {
     "kind": "component",
+    "name": "iec60870-server",
     "scheme": "iec60870-server",
     "extendsScheme": "",
     "syntax": "iec60870-server:uriPath",
@@ -3215,6 +3375,7 @@
   },
   "IgniteCacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-cache",
     "scheme": "ignite-cache",
     "extendsScheme": "",
     "syntax": "ignite-cache:cacheName",
@@ -3235,6 +3396,7 @@
   },
   "IgniteComputeComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-compute",
     "scheme": "ignite-compute",
     "extendsScheme": "",
     "syntax": "ignite-compute:endpointId",
@@ -3255,6 +3417,7 @@
   },
   "IgniteEventsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-events",
     "scheme": "ignite-events",
     "extendsScheme": "",
     "syntax": "ignite-events:endpointId",
@@ -3275,6 +3438,7 @@
   },
   "IgniteIdgenComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-idgen",
     "scheme": "ignite-idgen",
     "extendsScheme": "",
     "syntax": "ignite-idgen:name",
@@ -3295,6 +3459,7 @@
   },
   "IgniteMessagingComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-messaging",
     "scheme": "ignite-messaging",
     "extendsScheme": "",
     "syntax": "ignite-messaging:topic",
@@ -3315,6 +3480,7 @@
   },
   "IgniteQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-queue",
     "scheme": "ignite-queue",
     "extendsScheme": "",
     "syntax": "ignite-queue:name",
@@ -3335,6 +3501,7 @@
   },
   "IgniteSetComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-set",
     "scheme": "ignite-set",
     "extendsScheme": "",
     "syntax": "ignite-set:name",
@@ -3355,6 +3522,7 @@
   },
   "ImapComponentBuilderFactory": {
     "kind": "component",
+    "name": "imap",
     "scheme": "imap",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -3377,6 +3545,7 @@
   },
   "ImapsComponentBuilderFactory": {
     "kind": "component",
+    "name": "imaps",
     "scheme": "imaps",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -3399,6 +3568,7 @@
   },
   "InfinispanComponentBuilderFactory": {
     "kind": "component",
+    "name": "infinispan",
     "scheme": "infinispan",
     "extendsScheme": "",
     "syntax": "infinispan:cacheName",
@@ -3419,6 +3589,7 @@
   },
   "InfluxdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "influxdb",
     "scheme": "influxdb",
     "extendsScheme": "",
     "syntax": "influxdb:connectionBean",
@@ -3439,6 +3610,7 @@
   },
   "IotaComponentBuilderFactory": {
     "kind": "component",
+    "name": "iota",
     "scheme": "iota",
     "extendsScheme": "",
     "syntax": "iota:name",
@@ -3459,6 +3631,7 @@
   },
   "IpfsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ipfs",
     "scheme": "ipfs",
     "extendsScheme": "",
     "syntax": "ipfs:ipfsCmd",
@@ -3479,6 +3652,7 @@
   },
   "IrcComponentBuilderFactory": {
     "kind": "component",
+    "name": "irc",
     "scheme": "irc",
     "extendsScheme": "",
     "syntax": "irc:hostname:port",
@@ -3500,6 +3674,7 @@
   },
   "IronmqComponentBuilderFactory": {
     "kind": "component",
+    "name": "ironmq",
     "scheme": "ironmq",
     "extendsScheme": "",
     "syntax": "ironmq:queueName",
@@ -3520,6 +3695,7 @@
   },
   "JbpmComponentBuilderFactory": {
     "kind": "component",
+    "name": "jbpm",
     "scheme": "jbpm",
     "extendsScheme": "",
     "syntax": "jbpm:connectionURL",
@@ -3540,6 +3716,7 @@
   },
   "JcacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "jcache",
     "scheme": "jcache",
     "extendsScheme": "",
     "syntax": "jcache:cacheName",
@@ -3560,6 +3737,7 @@
   },
   "JcloudsComponentBuilderFactory": {
     "kind": "component",
+    "name": "jclouds",
     "scheme": "jclouds",
     "extendsScheme": "",
     "syntax": "jclouds:command:providerId",
@@ -3580,6 +3758,7 @@
   },
   "JcrComponentBuilderFactory": {
     "kind": "component",
+    "name": "jcr",
     "scheme": "jcr",
     "extendsScheme": "",
     "syntax": "jcr:host\/base",
@@ -3601,6 +3780,7 @@
   },
   "JdbcComponentBuilderFactory": {
     "kind": "component",
+    "name": "jdbc",
     "scheme": "jdbc",
     "extendsScheme": "",
     "syntax": "jdbc:dataSourceName",
@@ -3621,6 +3801,7 @@
   },
   "JettyComponentBuilderFactory": {
     "kind": "component",
+    "name": "jetty",
     "scheme": "jetty",
     "extendsScheme": "http",
     "syntax": "jetty:httpUri",
@@ -3641,6 +3822,7 @@
   },
   "JgroupsComponentBuilderFactory": {
     "kind": "component",
+    "name": "jgroups",
     "scheme": "jgroups",
     "extendsScheme": "",
     "syntax": "jgroups:clusterName",
@@ -3661,6 +3843,7 @@
   },
   "JgroupsRaftComponentBuilderFactory": {
     "kind": "component",
+    "name": "jgroups-raft",
     "scheme": "jgroups-raft",
     "extendsScheme": "",
     "syntax": "jgroups-raft:clusterName",
@@ -3681,6 +3864,7 @@
   },
   "JingComponentBuilderFactory": {
     "kind": "component",
+    "name": "jing",
     "scheme": "jing",
     "extendsScheme": "",
     "syntax": "jing:resourceUri",
@@ -3701,6 +3885,7 @@
   },
   "JiraComponentBuilderFactory": {
     "kind": "component",
+    "name": "jira",
     "scheme": "jira",
     "extendsScheme": "",
     "syntax": "jira:type",
@@ -3721,6 +3906,7 @@
   },
   "JmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "jms",
     "scheme": "jms",
     "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",
@@ -3741,6 +3927,7 @@
   },
   "JmxComponentBuilderFactory": {
     "kind": "component",
+    "name": "jmx",
     "scheme": "jmx",
     "extendsScheme": "",
     "syntax": "jmx:serverURL",
@@ -3761,6 +3948,7 @@
   },
   "JoltComponentBuilderFactory": {
     "kind": "component",
+    "name": "jolt",
     "scheme": "jolt",
     "extendsScheme": "",
     "syntax": "jolt:resourceUri",
@@ -3781,6 +3969,7 @@
   },
   "JooqComponentBuilderFactory": {
     "kind": "component",
+    "name": "jooq",
     "scheme": "jooq",
     "extendsScheme": "",
     "syntax": "jooq:entityType",
@@ -3801,6 +3990,7 @@
   },
   "JpaComponentBuilderFactory": {
     "kind": "component",
+    "name": "jpa",
     "scheme": "jpa",
     "extendsScheme": "",
     "syntax": "jpa:entityType",
@@ -3821,6 +4011,7 @@
   },
   "JsltComponentBuilderFactory": {
     "kind": "component",
+    "name": "jslt",
     "scheme": "jslt",
     "extendsScheme": "",
     "syntax": "jslt:resourceUri",
@@ -3841,6 +4032,7 @@
   },
   "JsonValidatorComponentBuilderFactory": {
     "kind": "component",
+    "name": "json-validator",
     "scheme": "json-validator",
     "extendsScheme": "",
     "syntax": "json-validator:resourceUri",
@@ -3861,6 +4053,7 @@
   },
   "Jt400ComponentBuilderFactory": {
     "kind": "component",
+    "name": "jt400",
     "scheme": "jt400",
     "extendsScheme": "",
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",
@@ -3881,6 +4074,7 @@
   },
   "KafkaComponentBuilderFactory": {
     "kind": "component",
+    "name": "kafka",
     "scheme": "kafka",
     "extendsScheme": "",
     "syntax": "kafka:topic",
@@ -3901,6 +4095,7 @@
   },
   "KubernetesConfigMapsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-config-maps",
     "scheme": "kubernetes-config-maps",
     "extendsScheme": "",
     "syntax": "kubernetes-config-maps:masterUrl",
@@ -3921,6 +4116,7 @@
   },
   "KubernetesDeploymentsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-deployments",
     "scheme": "kubernetes-deployments",
     "extendsScheme": "",
     "syntax": "kubernetes-deployments:masterUrl",
@@ -3941,6 +4137,7 @@
   },
   "KubernetesHpaComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-hpa",
     "scheme": "kubernetes-hpa",
     "extendsScheme": "",
     "syntax": "kubernetes-hpa:masterUrl",
@@ -3961,6 +4158,7 @@
   },
   "KubernetesJobComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-job",
     "scheme": "kubernetes-job",
     "extendsScheme": "",
     "syntax": "kubernetes-job:masterUrl",
@@ -3981,6 +4179,7 @@
   },
   "KubernetesNamespacesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-namespaces",
     "scheme": "kubernetes-namespaces",
     "extendsScheme": "",
     "syntax": "kubernetes-namespaces:masterUrl",
@@ -4001,6 +4200,7 @@
   },
   "KubernetesNodesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-nodes",
     "scheme": "kubernetes-nodes",
     "extendsScheme": "",
     "syntax": "kubernetes-nodes:masterUrl",
@@ -4021,6 +4221,7 @@
   },
   "KubernetesPersistentVolumesClaimsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-persistent-volumes-claims",
     "scheme": "kubernetes-persistent-volumes-claims",
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes-claims:masterUrl",
@@ -4041,6 +4242,7 @@
   },
   "KubernetesPersistentVolumesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-persistent-volumes",
     "scheme": "kubernetes-persistent-volumes",
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes:masterUrl",
@@ -4061,6 +4263,7 @@
   },
   "KubernetesPodsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-pods",
     "scheme": "kubernetes-pods",
     "extendsScheme": "",
     "syntax": "kubernetes-pods:masterUrl",
@@ -4081,6 +4284,7 @@
   },
   "KubernetesReplicationControllersComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-replication-controllers",
     "scheme": "kubernetes-replication-controllers",
     "extendsScheme": "",
     "syntax": "kubernetes-replication-controllers:masterUrl",
@@ -4101,6 +4305,7 @@
   },
   "KubernetesResourcesQuotaComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-resources-quota",
     "scheme": "kubernetes-resources-quota",
     "extendsScheme": "",
     "syntax": "kubernetes-resources-quota:masterUrl",
@@ -4121,6 +4326,7 @@
   },
   "KubernetesSecretsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-secrets",
     "scheme": "kubernetes-secrets",
     "extendsScheme": "",
     "syntax": "kubernetes-secrets:masterUrl",
@@ -4141,6 +4347,7 @@
   },
   "KubernetesServiceAccountsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-service-accounts",
     "scheme": "kubernetes-service-accounts",
     "extendsScheme": "",
     "syntax": "kubernetes-service-accounts:masterUrl",
@@ -4161,6 +4368,7 @@
   },
   "KubernetesServicesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-services",
     "scheme": "kubernetes-services",
     "extendsScheme": "",
     "syntax": "kubernetes-services:masterUrl",
@@ -4181,6 +4389,7 @@
   },
   "KuduComponentBuilderFactory": {
     "kind": "component",
+    "name": "kudu",
     "scheme": "kudu",
     "extendsScheme": "",
     "syntax": "kudu:host:port\/tableName",
@@ -4201,6 +4410,7 @@
   },
   "LanguageComponentBuilderFactory": {
     "kind": "component",
+    "name": "language",
     "scheme": "language",
     "extendsScheme": "",
     "syntax": "language:languageName:resourceUri",
@@ -4221,6 +4431,7 @@
   },
   "LdapComponentBuilderFactory": {
     "kind": "component",
+    "name": "ldap",
     "scheme": "ldap",
     "extendsScheme": "",
     "syntax": "ldap:dirContextName",
@@ -4241,6 +4452,7 @@
   },
   "LdifComponentBuilderFactory": {
     "kind": "component",
+    "name": "ldif",
     "scheme": "ldif",
     "extendsScheme": "",
     "syntax": "ldif:ldapConnectionName",
@@ -4261,6 +4473,7 @@
   },
   "LogComponentBuilderFactory": {
     "kind": "component",
+    "name": "log",
     "scheme": "log",
     "extendsScheme": "",
     "syntax": "log:loggerName",
@@ -4281,6 +4494,7 @@
   },
   "LprComponentBuilderFactory": {
     "kind": "component",
+    "name": "lpr",
     "scheme": "lpr",
     "extendsScheme": "",
     "syntax": "lpr:hostname:port\/printername",
@@ -4301,6 +4515,7 @@
   },
   "LuceneComponentBuilderFactory": {
     "kind": "component",
+    "name": "lucene",
     "scheme": "lucene",
     "extendsScheme": "",
     "syntax": "lucene:host:operation",
@@ -4321,6 +4536,7 @@
   },
   "LumberjackComponentBuilderFactory": {
     "kind": "component",
+    "name": "lumberjack",
     "scheme": "lumberjack",
     "extendsScheme": "",
     "syntax": "lumberjack:host:port",
@@ -4341,6 +4557,7 @@
   },
   "MasterComponentBuilderFactory": {
     "kind": "component",
+    "name": "master",
     "scheme": "master",
     "extendsScheme": "",
     "syntax": "master:namespace:delegateUri",
@@ -4361,6 +4578,7 @@
   },
   "MetricsComponentBuilderFactory": {
     "kind": "component",
+    "name": "metrics",
     "scheme": "metrics",
     "extendsScheme": "",
     "syntax": "metrics:metricsType:metricsName",
@@ -4381,6 +4599,7 @@
   },
   "MicrometerComponentBuilderFactory": {
     "kind": "component",
+    "name": "micrometer",
     "scheme": "micrometer",
     "extendsScheme": "",
     "syntax": "micrometer:metricsType:metricsName",
@@ -4401,6 +4620,7 @@
   },
   "MicroprofileMetricsComponentBuilderFactory": {
     "kind": "component",
+    "name": "microprofile-metrics",
     "scheme": "microprofile-metrics",
     "extendsScheme": "",
     "syntax": "microprofile-metrics:metricType:metricName",
@@ -4421,6 +4641,7 @@
   },
   "MiloClientComponentBuilderFactory": {
     "kind": "component",
+    "name": "milo-client",
     "scheme": "milo-client",
     "extendsScheme": "",
     "syntax": "milo-client:endpointUri",
@@ -4441,6 +4662,7 @@
   },
   "MiloServerComponentBuilderFactory": {
     "kind": "component",
+    "name": "milo-server",
     "scheme": "milo-server",
     "extendsScheme": "",
     "syntax": "milo-server:itemId",
@@ -4461,6 +4683,7 @@
   },
   "MinaComponentBuilderFactory": {
     "kind": "component",
+    "name": "mina",
     "scheme": "mina",
     "extendsScheme": "",
     "syntax": "mina:protocol:host:port",
@@ -4481,6 +4704,7 @@
   },
   "MllpComponentBuilderFactory": {
     "kind": "component",
+    "name": "mllp",
     "scheme": "mllp",
     "extendsScheme": "",
     "syntax": "mllp:hostname:port",
@@ -4501,6 +4725,7 @@
   },
   "MockComponentBuilderFactory": {
     "kind": "component",
+    "name": "mock",
     "scheme": "mock",
     "extendsScheme": "",
     "syntax": "mock:name",
@@ -4521,6 +4746,7 @@
   },
   "MongodbComponentBuilderFactory": {
     "kind": "component",
+    "name": "mongodb",
     "scheme": "mongodb",
     "extendsScheme": "",
     "syntax": "mongodb:connectionBean",
@@ -4541,6 +4767,7 @@
   },
   "MongodbGridfsComponentBuilderFactory": {
     "kind": "component",
+    "name": "mongodb-gridfs",
     "scheme": "mongodb-gridfs",
     "extendsScheme": "",
     "syntax": "mongodb-gridfs:connectionBean",
@@ -4561,6 +4788,7 @@
   },
   "MsvComponentBuilderFactory": {
     "kind": "component",
+    "name": "msv",
     "scheme": "msv",
     "extendsScheme": "",
     "syntax": "msv:resourceUri",
@@ -4581,6 +4809,7 @@
   },
   "MustacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "mustache",
     "scheme": "mustache",
     "extendsScheme": "",
     "syntax": "mustache:resourceUri",
@@ -4601,6 +4830,7 @@
   },
   "MvelComponentBuilderFactory": {
     "kind": "component",
+    "name": "mvel",
     "scheme": "mvel",
     "extendsScheme": "",
     "syntax": "mvel:resourceUri",
@@ -4621,6 +4851,7 @@
   },
   "MybatisBeanComponentBuilderFactory": {
     "kind": "component",
+    "name": "mybatis-bean",
     "scheme": "mybatis-bean",
     "extendsScheme": "",
     "syntax": "mybatis-bean:beanName:methodName",
@@ -4641,6 +4872,7 @@
   },
   "MybatisComponentBuilderFactory": {
     "kind": "component",
+    "name": "mybatis",
     "scheme": "mybatis",
     "extendsScheme": "",
     "syntax": "mybatis:statement",
@@ -4661,6 +4893,7 @@
   },
   "NagiosComponentBuilderFactory": {
     "kind": "component",
+    "name": "nagios",
     "scheme": "nagios",
     "extendsScheme": "",
     "syntax": "nagios:host:port",
@@ -4681,6 +4914,7 @@
   },
   "NatsComponentBuilderFactory": {
     "kind": "component",
+    "name": "nats",
     "scheme": "nats",
     "extendsScheme": "",
     "syntax": "nats:topic",
@@ -4701,6 +4935,7 @@
   },
   "NettyComponentBuilderFactory": {
     "kind": "component",
+    "name": "netty",
     "scheme": "netty",
     "extendsScheme": "",
     "syntax": "netty:protocol:host:port",
@@ -4721,6 +4956,7 @@
   },
   "NettyHttpComponentBuilderFactory": {
     "kind": "component",
+    "name": "netty-http",
     "scheme": "netty-http",
     "extendsScheme": "netty",
     "syntax": "netty-http:protocol:host:port\/path",
@@ -4741,6 +4977,7 @@
   },
   "NitriteComponentBuilderFactory": {
     "kind": "component",
+    "name": "nitrite",
     "scheme": "nitrite",
     "extendsScheme": "",
     "syntax": "nitrite:database",
@@ -4761,6 +4998,7 @@
   },
   "NsqComponentBuilderFactory": {
     "kind": "component",
+    "name": "nsq",
     "scheme": "nsq",
     "extendsScheme": "",
     "syntax": "nsq:topic",
@@ -4781,6 +5019,7 @@
   },
   "Olingo2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "olingo2",
     "scheme": "olingo2",
     "extendsScheme": "",
     "syntax": "olingo2:apiName\/methodName",
@@ -4801,6 +5040,7 @@
   },
   "Olingo4ComponentBuilderFactory": {
     "kind": "component",
+    "name": "olingo4",
     "scheme": "olingo4",
     "extendsScheme": "",
     "syntax": "olingo4:apiName\/methodName",
@@ -4821,6 +5061,7 @@
   },
   "OpenshiftBuildConfigsComponentBuilderFactory": {
     "kind": "component",
+    "name": "openshift-build-configs",
     "scheme": "openshift-build-configs",
     "extendsScheme": "",
     "syntax": "openshift-build-configs:masterUrl",
@@ -4841,6 +5082,7 @@
   },
   "OpenshiftBuildsComponentBuilderFactory": {
     "kind": "component",
+    "name": "openshift-builds",
     "scheme": "openshift-builds",
     "extendsScheme": "",
     "syntax": "openshift-builds:masterUrl",
@@ -4861,6 +5103,7 @@
   },
   "OpenstackCinderComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-cinder",
     "scheme": "openstack-cinder",
     "extendsScheme": "",
     "syntax": "openstack-cinder:host",
@@ -4881,6 +5124,7 @@
   },
   "OpenstackGlanceComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-glance",
     "scheme": "openstack-glance",
     "extendsScheme": "",
     "syntax": "openstack-glance:host",
@@ -4901,6 +5145,7 @@
   },
   "OpenstackKeystoneComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-keystone",
     "scheme": "openstack-keystone",
     "extendsScheme": "",
     "syntax": "openstack-keystone:host",
@@ -4921,6 +5166,7 @@
   },
   "OpenstackNeutronComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-neutron",
     "scheme": "openstack-neutron",
     "extendsScheme": "",
     "syntax": "openstack-neutron:host",
@@ -4941,6 +5187,7 @@
   },
   "OpenstackNovaComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-nova",
     "scheme": "openstack-nova",
     "extendsScheme": "",
     "syntax": "openstack-nova:host",
@@ -4961,6 +5208,7 @@
   },
   "OpenstackSwiftComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-swift",
     "scheme": "openstack-swift",
     "extendsScheme": "",
     "syntax": "openstack-swift:host",
@@ -4981,6 +5229,7 @@
   },
   "OptaplannerComponentBuilderFactory": {
     "kind": "component",
+    "name": "optaplanner",
     "scheme": "optaplanner",
     "extendsScheme": "",
     "syntax": "optaplanner:configFile",
@@ -5001,6 +5250,7 @@
   },
   "PahoComponentBuilderFactory": {
     "kind": "component",
+    "name": "paho",
     "scheme": "paho",
     "extendsScheme": "",
     "syntax": "paho:topic",
@@ -5021,6 +5271,7 @@
   },
   "PdfComponentBuilderFactory": {
     "kind": "component",
+    "name": "pdf",
     "scheme": "pdf",
     "extendsScheme": "",
     "syntax": "pdf:operation",
@@ -5041,6 +5292,7 @@
   },
   "PgReplicationSlotComponentBuilderFactory": {
     "kind": "component",
+    "name": "pg-replication-slot",
     "scheme": "pg-replication-slot",
     "extendsScheme": "",
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",
@@ -5061,6 +5313,7 @@
   },
   "PgeventComponentBuilderFactory": {
     "kind": "component",
+    "name": "pgevent",
     "scheme": "pgevent",
     "extendsScheme": "",
     "syntax": "pgevent:host:port\/database\/channel",
@@ -5081,6 +5334,7 @@
   },
   "PlatformHttpComponentBuilderFactory": {
     "kind": "component",
+    "name": "platform-http",
     "scheme": "platform-http",
     "extendsScheme": "",
     "syntax": "platform-http:path",
@@ -5101,6 +5355,7 @@
   },
   "Pop3ComponentBuilderFactory": {
     "kind": "component",
+    "name": "pop3",
     "scheme": "pop3",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5123,6 +5378,7 @@
   },
   "Pop3sComponentBuilderFactory": {
     "kind": "component",
+    "name": "pop3s",
     "scheme": "pop3s",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5145,6 +5401,7 @@
   },
   "PubnubComponentBuilderFactory": {
     "kind": "component",
+    "name": "pubnub",
     "scheme": "pubnub",
     "extendsScheme": "",
     "syntax": "pubnub:channel",
@@ -5165,6 +5422,7 @@
   },
   "PulsarComponentBuilderFactory": {
     "kind": "component",
+    "name": "pulsar",
     "scheme": "pulsar",
     "extendsScheme": "",
     "syntax": "pulsar:persistence:\/\/tenant\/namespace\/topic",
@@ -5185,6 +5443,7 @@
   },
   "QuartzComponentBuilderFactory": {
     "kind": "component",
+    "name": "quartz",
     "scheme": "quartz",
     "extendsScheme": "",
     "syntax": "quartz:groupName\/triggerName",
@@ -5205,6 +5464,7 @@
   },
   "QuickfixComponentBuilderFactory": {
     "kind": "component",
+    "name": "quickfix",
     "scheme": "quickfix",
     "extendsScheme": "",
     "syntax": "quickfix:configurationName",
@@ -5225,6 +5485,7 @@
   },
   "RabbitmqComponentBuilderFactory": {
     "kind": "component",
+    "name": "rabbitmq",
     "scheme": "rabbitmq",
     "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",
@@ -5245,6 +5506,7 @@
   },
   "ReactiveStreamsComponentBuilderFactory": {
     "kind": "component",
+    "name": "reactive-streams",
     "scheme": "reactive-streams",
     "extendsScheme": "",
     "syntax": "reactive-streams:stream",
@@ -5265,6 +5527,7 @@
   },
   "RefComponentBuilderFactory": {
     "kind": "component",
+    "name": "ref",
     "scheme": "ref",
     "extendsScheme": "",
     "syntax": "ref:name",
@@ -5285,6 +5548,7 @@
   },
   "RestApiComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest-api",
     "scheme": "rest-api",
     "extendsScheme": "",
     "syntax": "rest-api:path\/contextIdPattern",
@@ -5305,6 +5569,7 @@
   },
   "RestEndpointComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest",
     "scheme": "rest",
     "extendsScheme": "",
     "syntax": "rest:method:path:uriTemplate",
@@ -5325,6 +5590,7 @@
   },
   "RestOpenapiComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest-openapi",
     "scheme": "rest-openapi",
     "extendsScheme": "",
     "syntax": "rest-openapi:specificationUri#operationId",
@@ -5345,6 +5611,7 @@
   },
   "RestSwaggerComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest-swagger",
     "scheme": "rest-swagger",
     "extendsScheme": "",
     "syntax": "rest-swagger:specificationUri#operationId",
@@ -5365,6 +5632,7 @@
   },
   "RobotframeworkComponentBuilderFactory": {
     "kind": "component",
+    "name": "robotframework",
     "scheme": "robotframework",
     "extendsScheme": "",
     "syntax": "robotframework:resourceUri",
@@ -5385,6 +5653,7 @@
   },
   "RssComponentBuilderFactory": {
     "kind": "component",
+    "name": "rss",
     "scheme": "rss",
     "extendsScheme": "atom",
     "syntax": "rss:feedUri",
@@ -5405,6 +5674,7 @@
   },
   "SagaComponentBuilderFactory": {
     "kind": "component",
+    "name": "saga",
     "scheme": "saga",
     "extendsScheme": "",
     "syntax": "saga:action",
@@ -5425,6 +5695,7 @@
   },
   "SalesforceComponentBuilderFactory": {
     "kind": "component",
+    "name": "salesforce",
     "scheme": "salesforce",
     "extendsScheme": "",
     "syntax": "salesforce:operationName:topicName",
@@ -5445,6 +5716,7 @@
   },
   "SapNetweaverComponentBuilderFactory": {
     "kind": "component",
+    "name": "sap-netweaver",
     "scheme": "sap-netweaver",
     "extendsScheme": "",
     "syntax": "sap-netweaver:url",
@@ -5465,6 +5737,7 @@
   },
   "SchedulerComponentBuilderFactory": {
     "kind": "component",
+    "name": "scheduler",
     "scheme": "scheduler",
     "extendsScheme": "",
     "syntax": "scheduler:name",
@@ -5485,6 +5758,7 @@
   },
   "SchematronComponentBuilderFactory": {
     "kind": "component",
+    "name": "schematron",
     "scheme": "schematron",
     "extendsScheme": "",
     "syntax": "schematron:path",
@@ -5505,6 +5779,7 @@
   },
   "ScpComponentBuilderFactory": {
     "kind": "component",
+    "name": "scp",
     "scheme": "scp",
     "extendsScheme": "ftp",
     "syntax": "scp:host:port\/directoryName",
@@ -5525,6 +5800,7 @@
   },
   "SedaComponentBuilderFactory": {
     "kind": "component",
+    "name": "seda",
     "scheme": "seda",
     "extendsScheme": "",
     "syntax": "seda:name",
@@ -5545,6 +5821,7 @@
   },
   "ServiceComponentBuilderFactory": {
     "kind": "component",
+    "name": "service",
     "scheme": "service",
     "extendsScheme": "",
     "syntax": "service:delegateUri",
@@ -5565,6 +5842,7 @@
   },
   "ServicenowComponentBuilderFactory": {
     "kind": "component",
+    "name": "servicenow",
     "scheme": "servicenow",
     "extendsScheme": "",
     "syntax": "servicenow:instanceName",
@@ -5585,6 +5863,7 @@
   },
   "ServletComponentBuilderFactory": {
     "kind": "component",
+    "name": "servlet",
     "scheme": "servlet",
     "extendsScheme": "http",
     "syntax": "servlet:contextPath",
@@ -5605,6 +5884,7 @@
   },
   "SftpComponentBuilderFactory": {
     "kind": "component",
+    "name": "sftp",
     "scheme": "sftp",
     "extendsScheme": "file",
     "syntax": "sftp:host:port\/directoryName",
@@ -5625,6 +5905,7 @@
   },
   "SipComponentBuilderFactory": {
     "kind": "component",
+    "name": "sip",
     "scheme": "sip",
     "extendsScheme": "",
     "alternativeSchemes": "sip,sips",
@@ -5646,6 +5927,7 @@
   },
   "SipsComponentBuilderFactory": {
     "kind": "component",
+    "name": "sips",
     "scheme": "sips",
     "extendsScheme": "",
     "alternativeSchemes": "sip,sips",
@@ -5667,6 +5949,7 @@
   },
   "Sjms2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "sjms2",
     "scheme": "sjms2",
     "extendsScheme": "sjms",
     "syntax": "sjms2:destinationType:destinationName",
@@ -5687,6 +5970,7 @@
   },
   "SjmsBatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "sjms-batch",
     "scheme": "sjms-batch",
     "extendsScheme": "",
     "syntax": "sjms-batch:destinationName",
@@ -5707,6 +5991,7 @@
   },
   "SjmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "sjms",
     "scheme": "sjms",
     "extendsScheme": "",
     "syntax": "sjms:destinationType:destinationName",
@@ -5727,6 +6012,7 @@
   },
   "SlackComponentBuilderFactory": {
     "kind": "component",
+    "name": "slack",
     "scheme": "slack",
     "extendsScheme": "",
     "syntax": "slack:channel",
@@ -5747,6 +6033,7 @@
   },
   "SmppComponentBuilderFactory": {
     "kind": "component",
+    "name": "smpp",
     "scheme": "smpp",
     "extendsScheme": "",
     "alternativeSchemes": "smpp,smpps",
@@ -5768,6 +6055,7 @@
   },
   "SmppsComponentBuilderFactory": {
     "kind": "component",
+    "name": "smpps",
     "scheme": "smpps",
     "extendsScheme": "",
     "alternativeSchemes": "smpp,smpps",
@@ -5789,6 +6077,7 @@
   },
   "SmtpComponentBuilderFactory": {
     "kind": "component",
+    "name": "smtp",
     "scheme": "smtp",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5811,6 +6100,7 @@
   },
   "SmtpsComponentBuilderFactory": {
     "kind": "component",
+    "name": "smtps",
     "scheme": "smtps",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5833,6 +6123,7 @@
   },
   "SnmpComponentBuilderFactory": {
     "kind": "component",
+    "name": "snmp",
     "scheme": "snmp",
     "extendsScheme": "",
     "syntax": "snmp:host:port",
@@ -5853,6 +6144,7 @@
   },
   "SolrComponentBuilderFactory": {
     "kind": "component",
+    "name": "solr",
     "scheme": "solr",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -5874,6 +6166,7 @@
   },
   "SolrcloudComponentBuilderFactory": {
     "kind": "component",
+    "name": "solrCloud",
     "scheme": "solrCloud",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -5895,6 +6188,7 @@
   },
   "SolrsComponentBuilderFactory": {
     "kind": "component",
+    "name": "solrs",
     "scheme": "solrs",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -5916,6 +6210,7 @@
   },
   "SoroushComponentBuilderFactory": {
     "kind": "component",
+    "name": "soroush",
     "scheme": "soroush",
     "extendsScheme": "",
     "syntax": "soroush:action",
@@ -5936,6 +6231,7 @@
   },
   "SparkComponentBuilderFactory": {
     "kind": "component",
+    "name": "spark",
     "scheme": "spark",
     "extendsScheme": "",
     "syntax": "spark:endpointType",
@@ -5956,6 +6252,7 @@
   },
   "SparkRestComponentBuilderFactory": {
     "kind": "component",
+    "name": "spark-rest",
     "scheme": "spark-rest",
     "extendsScheme": "",
     "syntax": "spark-rest:verb:path",
@@ -5976,6 +6273,7 @@
   },
   "SplunkComponentBuilderFactory": {
     "kind": "component",
+    "name": "splunk",
     "scheme": "splunk",
     "extendsScheme": "",
     "syntax": "splunk:name",
@@ -5996,6 +6294,7 @@
   },
   "SpringBatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-batch",
     "scheme": "spring-batch",
     "extendsScheme": "",
     "syntax": "spring-batch:jobName",
@@ -6016,6 +6315,7 @@
   },
   "SpringEventComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-event",
     "scheme": "spring-event",
     "extendsScheme": "",
     "syntax": "spring-event:name",
@@ -6036,6 +6336,7 @@
   },
   "SpringIntegrationComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-integration",
     "scheme": "spring-integration",
     "extendsScheme": "",
     "syntax": "spring-integration:defaultChannel",
@@ -6056,6 +6357,7 @@
   },
   "SpringLdapComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-ldap",
     "scheme": "spring-ldap",
     "extendsScheme": "",
     "syntax": "spring-ldap:templateName",
@@ -6076,6 +6378,7 @@
   },
   "SpringRedisComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-redis",
     "scheme": "spring-redis",
     "extendsScheme": "",
     "syntax": "spring-redis:host:port",
@@ -6096,6 +6399,7 @@
   },
   "SpringWsComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-ws",
     "scheme": "spring-ws",
     "extendsScheme": "",
     "syntax": "spring-ws:type:lookupKey:webServiceEndpointUri",
@@ -6116,6 +6420,7 @@
   },
   "SqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "sql",
     "scheme": "sql",
     "extendsScheme": "",
     "syntax": "sql:query",
@@ -6136,6 +6441,7 @@
   },
   "SqlStoredComponentBuilderFactory": {
     "kind": "component",
+    "name": "sql-stored",
     "scheme": "sql-stored",
     "extendsScheme": "",
     "syntax": "sql-stored:template",
@@ -6156,6 +6462,7 @@
   },
   "SshComponentBuilderFactory": {
     "kind": "component",
+    "name": "ssh",
     "scheme": "ssh",
     "extendsScheme": "",
     "syntax": "ssh:host:port",
@@ -6177,6 +6484,7 @@
   },
   "StaxComponentBuilderFactory": {
     "kind": "component",
+    "name": "stax",
     "scheme": "stax",
     "extendsScheme": "",
     "syntax": "stax:contentHandlerClass",
@@ -6197,6 +6505,7 @@
   },
   "StompComponentBuilderFactory": {
     "kind": "component",
+    "name": "stomp",
     "scheme": "stomp",
     "extendsScheme": "",
     "syntax": "stomp:destination",
@@ -6217,6 +6526,7 @@
   },
   "StreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "stream",
     "scheme": "stream",
     "extendsScheme": "",
     "syntax": "stream:kind",
@@ -6237,6 +6547,7 @@
   },
   "StringTemplateComponentBuilderFactory": {
     "kind": "component",
+    "name": "string-template",
     "scheme": "string-template",
     "extendsScheme": "",
     "syntax": "string-template:resourceUri",
@@ -6257,6 +6568,7 @@
   },
   "StubComponentBuilderFactory": {
     "kind": "component",
+    "name": "stub",
     "scheme": "stub",
     "extendsScheme": "",
     "syntax": "stub:name",
@@ -6277,6 +6589,7 @@
   },
   "TelegramComponentBuilderFactory": {
     "kind": "component",
+    "name": "telegram",
     "scheme": "telegram",
     "extendsScheme": "",
     "syntax": "telegram:type",
@@ -6297,6 +6610,7 @@
   },
   "ThriftComponentBuilderFactory": {
     "kind": "component",
+    "name": "thrift",
     "scheme": "thrift",
     "extendsScheme": "",
     "syntax": "thrift:host:port\/service",
@@ -6317,6 +6631,7 @@
   },
   "TikaComponentBuilderFactory": {
     "kind": "component",
+    "name": "tika",
     "scheme": "tika",
     "extendsScheme": "",
     "syntax": "tika:operation",
@@ -6337,6 +6652,7 @@
   },
   "TimerComponentBuilderFactory": {
     "kind": "component",
+    "name": "timer",
     "scheme": "timer",
     "extendsScheme": "",
     "syntax": "timer:timerName",
@@ -6357,6 +6673,7 @@
   },
   "TwilioComponentBuilderFactory": {
     "kind": "component",
+    "name": "twilio",
     "scheme": "twilio",
     "extendsScheme": "",
     "syntax": "twilio:apiName\/methodName",
@@ -6377,6 +6694,7 @@
   },
   "TwitterDirectmessageComponentBuilderFactory": {
     "kind": "component",
+    "name": "twitter-directmessage",
     "scheme": "twitter-directmessage",
     "extendsScheme": "",
     "syntax": "twitter-directmessage:user",
@@ -6397,6 +6715,7 @@
   },
   "TwitterSearchComponentBuilderFactory": {
     "kind": "component",
+    "name": "twitter-search",
     "scheme": "twitter-search",
     "extendsScheme": "",
     "syntax": "twitter-search:keywords",
@@ -6417,6 +6736,7 @@
   },
   "TwitterTimelineComponentBuilderFactory": {
     "kind": "component",
+    "name": "twitter-timeline",
     "scheme": "twitter-timeline",
     "extendsScheme": "",
     "syntax": "twitter-timeline:timelineType",
@@ -6437,6 +6757,7 @@
   },
   "UndertowComponentBuilderFactory": {
     "kind": "component",
+    "name": "undertow",
     "scheme": "undertow",
     "extendsScheme": "",
     "syntax": "undertow:httpURI",
@@ -6457,6 +6778,7 @@
   },
   "ValidatorComponentBuilderFactory": {
     "kind": "component",
+    "name": "validator",
     "scheme": "validator",
     "extendsScheme": "",
     "syntax": "validator:resourceUri",
@@ -6477,6 +6799,7 @@
   },
   "VelocityComponentBuilderFactory": {
     "kind": "component",
+    "name": "velocity",
     "scheme": "velocity",
     "extendsScheme": "",
     "syntax": "velocity:resourceUri",
@@ -6497,6 +6820,7 @@
   },
   "VertxComponentBuilderFactory": {
     "kind": "component",
+    "name": "vertx",
     "scheme": "vertx",
     "extendsScheme": "",
     "syntax": "vertx:address",
@@ -6517,6 +6841,7 @@
   },
   "VmComponentBuilderFactory": {
     "kind": "component",
+    "name": "vm",
     "scheme": "vm",
     "extendsScheme": "",
     "syntax": "vm:name",
@@ -6537,6 +6862,7 @@
   },
   "WeatherComponentBuilderFactory": {
     "kind": "component",
+    "name": "weather",
     "scheme": "weather",
     "extendsScheme": "",
     "syntax": "weather:name",
@@ -6557,6 +6883,7 @@
   },
   "Web3jComponentBuilderFactory": {
     "kind": "component",
+    "name": "web3j",
     "scheme": "web3j",
     "extendsScheme": "",
     "syntax": "web3j:nodeAddress",
@@ -6577,6 +6904,7 @@
   },
   "WebhookComponentBuilderFactory": {
     "kind": "component",
+    "name": "webhook",
     "scheme": "webhook",
     "extendsScheme": "",
     "syntax": "webhook:endpointUri",
@@ -6597,6 +6925,7 @@
   },
   "WebsocketComponentBuilderFactory": {
     "kind": "component",
+    "name": "websocket",
     "scheme": "websocket",
     "extendsScheme": "",
     "syntax": "websocket:host:port\/resourceUri",
@@ -6617,6 +6946,7 @@
   },
   "WebsocketJsr356ComponentBuilderFactory": {
     "kind": "component",
+    "name": "websocket-jsr356",
     "scheme": "websocket-jsr356",
     "extendsScheme": "",
     "syntax": "websocket-jsr356:uri",
@@ -6637,6 +6967,7 @@
   },
   "WekaComponentBuilderFactory": {
     "kind": "component",
+    "name": "weka",
     "scheme": "weka",
     "extendsScheme": "",
     "syntax": "weka:command",
@@ -6657,6 +6988,7 @@
   },
   "WordpressComponentBuilderFactory": {
     "kind": "component",
+    "name": "wordpress",
     "scheme": "wordpress",
     "extendsScheme": "",
     "syntax": "wordpress:operation",
@@ -6677,6 +7009,7 @@
   },
   "WorkdayComponentBuilderFactory": {
     "kind": "component",
+    "name": "workday",
     "scheme": "workday",
     "extendsScheme": "",
     "syntax": "workday:entity:path",
@@ -6697,6 +7030,7 @@
   },
   "XchangeComponentBuilderFactory": {
     "kind": "component",
+    "name": "xchange",
     "scheme": "xchange",
     "extendsScheme": "",
     "syntax": "xchange:name",
@@ -6717,6 +7051,7 @@
   },
   "XjComponentBuilderFactory": {
     "kind": "component",
+    "name": "xj",
     "scheme": "xj",
     "extendsScheme": "",
     "syntax": "xj:resourceUri",
@@ -6737,6 +7072,7 @@
   },
   "XmlsecuritySignComponentBuilderFactory": {
     "kind": "component",
+    "name": "xmlsecurity-sign",
     "scheme": "xmlsecurity-sign",
     "extendsScheme": "",
     "syntax": "xmlsecurity-sign:name",
@@ -6757,6 +7093,7 @@
   },
   "XmlsecurityVerifyComponentBuilderFactory": {
     "kind": "component",
+    "name": "xmlsecurity-verify",
     "scheme": "xmlsecurity-verify",
     "extendsScheme": "",
     "syntax": "xmlsecurity-verify:name",
@@ -6777,6 +7114,7 @@
   },
   "XmppComponentBuilderFactory": {
     "kind": "component",
+    "name": "xmpp",
     "scheme": "xmpp",
     "extendsScheme": "",
     "syntax": "xmpp:host:port\/participant",
@@ -6798,6 +7136,7 @@
   },
   "XqueryComponentBuilderFactory": {
     "kind": "component",
+    "name": "xquery",
     "scheme": "xquery",
     "extendsScheme": "",
     "syntax": "xquery:resourceUri",
@@ -6818,6 +7157,7 @@
   },
   "XsltComponentBuilderFactory": {
     "kind": "component",
+    "name": "xslt",
     "scheme": "xslt",
     "extendsScheme": "",
     "syntax": "xslt:resourceUri",
@@ -6838,6 +7178,7 @@
   },
   "XsltSaxonComponentBuilderFactory": {
     "kind": "component",
+    "name": "xslt-saxon",
     "scheme": "xslt-saxon",
     "extendsScheme": "",
     "syntax": "xslt-saxon:resourceUri",
@@ -6858,6 +7199,7 @@
   },
   "YammerComponentBuilderFactory": {
     "kind": "component",
+    "name": "yammer",
     "scheme": "yammer",
     "extendsScheme": "",
     "syntax": "yammer:function",
@@ -6878,6 +7220,7 @@
   },
   "ZendeskComponentBuilderFactory": {
     "kind": "component",
+    "name": "zendesk",
     "scheme": "zendesk",
     "extendsScheme": "",
     "syntax": "zendesk:methodName",
@@ -6898,6 +7241,7 @@
   },
   "ZookeeperComponentBuilderFactory": {
     "kind": "component",
+    "name": "zookeeper",
     "scheme": "zookeeper",
     "extendsScheme": "",
     "syntax": "zookeeper:serverUrls\/path",
@@ -6918,6 +7262,7 @@
   },
   "ZookeeperMasterComponentBuilderFactory": {
     "kind": "component",
+    "name": "zookeeper-master",
     "scheme": "zookeeper-master",
     "extendsScheme": "",
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spring-batch",
     "scheme": "spring-batch",
     "extendsScheme": "",
     "syntax": "spring-batch:jobName",

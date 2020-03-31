@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "schematron",
     "scheme": "schematron",
     "extendsScheme": "",
     "syntax": "schematron:path",

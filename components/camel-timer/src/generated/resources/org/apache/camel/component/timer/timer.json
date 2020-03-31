@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "timer",
     "scheme": "timer",
     "extendsScheme": "",
     "syntax": "timer:timerName",

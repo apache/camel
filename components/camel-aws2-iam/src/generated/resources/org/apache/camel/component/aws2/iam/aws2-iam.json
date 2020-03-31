@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-iam",
     "scheme": "aws2-iam",
     "extendsScheme": "",
     "syntax": "aws2-iam:label",

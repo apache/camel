@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "atmosphere-websocket",
     "scheme": "atmosphere-websocket",
     "extendsScheme": "servlet",
     "syntax": "atmosphere-websocket:servicePath",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "zendesk",
     "scheme": "zendesk",
     "extendsScheme": "",
     "syntax": "zendesk:methodName",

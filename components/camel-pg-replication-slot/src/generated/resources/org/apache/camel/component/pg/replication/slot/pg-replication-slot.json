@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "pg-replication-slot",
     "scheme": "pg-replication-slot",
     "extendsScheme": "",
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",

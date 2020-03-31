@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "rest-openapi",
     "scheme": "rest-openapi",
     "extendsScheme": "",
     "syntax": "rest-openapi:specificationUri#operationId",

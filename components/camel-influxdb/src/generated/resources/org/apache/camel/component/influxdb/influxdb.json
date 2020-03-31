@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "influxdb",
     "scheme": "influxdb",
     "extendsScheme": "",
     "syntax": "influxdb:connectionBean",

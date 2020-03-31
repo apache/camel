@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "grpc",
     "scheme": "grpc",
     "extendsScheme": "",
     "syntax": "grpc:host:port\/service",

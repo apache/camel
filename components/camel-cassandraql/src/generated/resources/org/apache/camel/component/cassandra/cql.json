@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "cql",
     "scheme": "cql",
     "extendsScheme": "",
     "syntax": "cql:beanRef:hosts:port\/keyspace",

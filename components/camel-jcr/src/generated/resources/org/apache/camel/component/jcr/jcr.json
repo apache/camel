@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jcr",
     "scheme": "jcr",
     "extendsScheme": "",
     "syntax": "jcr:host\/base",

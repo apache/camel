@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "ref",
     "scheme": "ref",
     "extendsScheme": "",
     "syntax": "ref:name",

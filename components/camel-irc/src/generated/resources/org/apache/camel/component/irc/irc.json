@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "irc",
     "scheme": "irc",
     "extendsScheme": "",
     "syntax": "irc:hostname:port",

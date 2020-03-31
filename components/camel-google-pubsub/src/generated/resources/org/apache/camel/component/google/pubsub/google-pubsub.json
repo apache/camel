@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "google-pubsub",
     "scheme": "google-pubsub",
     "extendsScheme": "",
     "syntax": "google-pubsub:projectId:destinationName",

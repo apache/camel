@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "fop",
     "scheme": "fop",
     "extendsScheme": "",
     "syntax": "fop:outputType",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "websocket",
     "scheme": "websocket",
     "extendsScheme": "",
     "syntax": "websocket:host:port\/resourceUri",

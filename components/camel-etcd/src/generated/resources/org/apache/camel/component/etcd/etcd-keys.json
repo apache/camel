@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "etcd-keys",
     "scheme": "etcd-keys",
     "extendsScheme": "",
     "syntax": "etcd-keys:path",

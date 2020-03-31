@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sip",
     "scheme": "sip",
     "extendsScheme": "",
     "alternativeSchemes": "sip,sips",

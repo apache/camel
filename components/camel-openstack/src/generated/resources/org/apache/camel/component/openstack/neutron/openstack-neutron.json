@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openstack-neutron",
     "scheme": "openstack-neutron",
     "extendsScheme": "",
     "syntax": "openstack-neutron:host",

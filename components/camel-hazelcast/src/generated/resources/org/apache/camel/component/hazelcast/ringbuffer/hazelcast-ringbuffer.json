@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-ringbuffer",
     "scheme": "hazelcast-ringbuffer",
     "extendsScheme": "",
     "syntax": "hazelcast-ringbuffer:cacheName",

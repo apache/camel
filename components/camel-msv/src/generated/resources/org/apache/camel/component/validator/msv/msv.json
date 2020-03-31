@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "msv",
     "scheme": "msv",
     "extendsScheme": "",
     "syntax": "msv:resourceUri",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-sqs",
     "scheme": "aws-sqs",
     "extendsScheme": "",
     "syntax": "aws-sqs:queueNameOrArn",

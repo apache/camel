@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-sns",
     "scheme": "aws-sns",
     "extendsScheme": "",
     "syntax": "aws-sns:topicNameOrArn",

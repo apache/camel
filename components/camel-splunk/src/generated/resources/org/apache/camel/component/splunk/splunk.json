@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "splunk",
     "scheme": "splunk",
     "extendsScheme": "",
     "syntax": "splunk:name",

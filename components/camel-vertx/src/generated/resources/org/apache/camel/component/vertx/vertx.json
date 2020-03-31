@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "vertx",
     "scheme": "vertx",
     "extendsScheme": "",
     "syntax": "vertx:address",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "ehcache",
     "scheme": "ehcache",
     "extendsScheme": "",
     "syntax": "ehcache:cacheName",

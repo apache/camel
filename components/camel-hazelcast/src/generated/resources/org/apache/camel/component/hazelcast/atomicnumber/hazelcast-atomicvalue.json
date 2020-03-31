@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-atomicvalue",
     "scheme": "hazelcast-atomicvalue",
     "extendsScheme": "",
     "syntax": "hazelcast-atomicvalue:cacheName",

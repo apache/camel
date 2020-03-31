@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "docker",
     "scheme": "docker",
     "extendsScheme": "",
     "syntax": "docker:operation",

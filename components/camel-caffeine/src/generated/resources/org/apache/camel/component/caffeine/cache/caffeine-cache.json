@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "caffeine-cache",
     "scheme": "caffeine-cache",
     "extendsScheme": "",
     "syntax": "caffeine-cache:cacheName",

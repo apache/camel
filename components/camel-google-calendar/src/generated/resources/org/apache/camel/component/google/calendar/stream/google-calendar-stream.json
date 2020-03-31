@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "google-calendar-stream",
     "scheme": "google-calendar-stream",
     "extendsScheme": "",
     "syntax": "google-calendar-stream:index",

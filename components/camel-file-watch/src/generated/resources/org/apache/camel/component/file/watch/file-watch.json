@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "file-watch",
     "scheme": "file-watch",
     "extendsScheme": "",
     "syntax": "file-watch:path",

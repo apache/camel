@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jgroups-raft",
     "scheme": "jgroups-raft",
     "extendsScheme": "",
     "syntax": "jgroups-raft:clusterName",

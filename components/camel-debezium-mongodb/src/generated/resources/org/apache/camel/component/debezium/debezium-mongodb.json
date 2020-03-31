@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "debezium-mongodb",
     "scheme": "debezium-mongodb",
     "extendsScheme": "",
     "syntax": "debezium-mongodb:name",

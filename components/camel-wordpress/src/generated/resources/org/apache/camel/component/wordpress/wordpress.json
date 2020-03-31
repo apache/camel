@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "wordpress",
     "scheme": "wordpress",
     "extendsScheme": "",
     "syntax": "wordpress:operation",

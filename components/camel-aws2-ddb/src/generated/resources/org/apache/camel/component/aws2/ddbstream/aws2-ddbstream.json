@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-ddbstream",
     "scheme": "aws2-ddbstream",
     "extendsScheme": "",
     "syntax": "aws2-ddbstream:tableName",

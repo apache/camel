@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "quartz",
     "scheme": "quartz",
     "extendsScheme": "",
     "syntax": "quartz:groupName\/triggerName",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "twitter-timeline",
     "scheme": "twitter-timeline",
     "extendsScheme": "",
     "syntax": "twitter-timeline:timelineType",

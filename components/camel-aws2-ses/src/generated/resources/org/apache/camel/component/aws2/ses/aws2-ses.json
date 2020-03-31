@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-ses",
     "scheme": "aws2-ses",
     "extendsScheme": "",
     "syntax": "aws2-ses:from",

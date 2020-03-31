@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-ecs",
     "scheme": "aws-ecs",
     "extendsScheme": "",
     "syntax": "aws-ecs:label",

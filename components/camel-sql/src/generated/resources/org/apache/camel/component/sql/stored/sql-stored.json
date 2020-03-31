@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sql-stored",
     "scheme": "sql-stored",
     "extendsScheme": "",
     "syntax": "sql-stored:template",

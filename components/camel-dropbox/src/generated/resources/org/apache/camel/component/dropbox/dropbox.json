@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "dropbox",
     "scheme": "dropbox",
     "extendsScheme": "",
     "syntax": "dropbox:operation",

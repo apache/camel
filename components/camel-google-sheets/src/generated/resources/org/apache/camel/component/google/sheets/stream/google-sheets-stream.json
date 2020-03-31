@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "google-sheets-stream",
     "scheme": "google-sheets-stream",
     "extendsScheme": "",
     "syntax": "google-sheets-stream:apiName",

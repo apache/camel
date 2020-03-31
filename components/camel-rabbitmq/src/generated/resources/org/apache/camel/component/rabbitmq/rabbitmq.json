@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "rabbitmq",
     "scheme": "rabbitmq",
     "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",

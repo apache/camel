@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "mllp",
     "scheme": "mllp",
     "extendsScheme": "",
     "syntax": "mllp:hostname:port",

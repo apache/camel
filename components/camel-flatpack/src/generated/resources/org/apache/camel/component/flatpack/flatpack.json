@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "flatpack",
     "scheme": "flatpack",
     "extendsScheme": "",
     "syntax": "flatpack:type:resourceUri",

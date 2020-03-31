@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jslt",
     "scheme": "jslt",
     "extendsScheme": "",
     "syntax": "jslt:resourceUri",

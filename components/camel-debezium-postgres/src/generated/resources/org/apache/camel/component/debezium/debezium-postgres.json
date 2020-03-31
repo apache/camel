@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "debezium-postgres",
     "scheme": "debezium-postgres",
     "extendsScheme": "",
     "syntax": "debezium-postgres:name",

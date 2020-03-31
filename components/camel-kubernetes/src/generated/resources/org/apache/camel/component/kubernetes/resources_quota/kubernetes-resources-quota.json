@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "kubernetes-resources-quota",
     "scheme": "kubernetes-resources-quota",
     "extendsScheme": "",
     "syntax": "kubernetes-resources-quota:masterUrl",

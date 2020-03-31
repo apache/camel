@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spring-ws",
     "scheme": "spring-ws",
     "extendsScheme": "",
     "syntax": "spring-ws:type:lookupKey:webServiceEndpointUri",
