@@ -544,7 +544,6 @@
         <wiremock-version>2.24.1</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>5.2.1</woodstox-core-version>
-        <wsdl4j-bundle-version>1.6.3_1</wsdl4j-bundle-version>
         <wsdl4j-version>1.6.3</wsdl4j-version>
         <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
         <xalan-version>2.7.2</xalan-version>
