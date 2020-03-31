@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import org.apache.camel.spi.annotations.ConstantProvider;
 import org.apache.camel.spi.annotations.ServiceFactory;
 import org.apache.camel.spi.annotations.SubServiceFactory;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -63,8 +62,6 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     protected File sourcesOutputDir;
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
-
-    private ClassLoader projectClassLoader;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -168,21 +165,6 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         return Files.isRegularFile(file);
     }
 
-    private ClassLoader getProjectClassLoader() throws MojoExecutionException {
-        if (projectClassLoader == null) {
-            projectClassLoader = createProjectClassLoader();
-        }
-        return projectClassLoader;
-    }
-
-    private DynamicClassLoader createProjectClassLoader() throws MojoExecutionException {
-        try {
-            return DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
-        } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException("Unable to create project classloader", e);
-        }
-    }
-
     private IndexView getIndex() throws MojoExecutionException {
         try {
             List<IndexView> indices = new ArrayList<>();
@@ -223,7 +205,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         String pn = fqn.substring(0, fqn.lastIndexOf('.'));
         String cn = fqn.substring(fqn.lastIndexOf('.') + 1);
 
-        StringBuilder w = new StringBuilder(); 
+        StringBuilder w = new StringBuilder();
         w.append("/* " + GENERATED_MSG + " */\n");
         w.append("package ").append(pn).append(";\n");
         w.append("\n");
