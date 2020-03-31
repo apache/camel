@@ -749,6 +749,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether stream caching is enabled on this route.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
@@ -764,6 +765,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether tracing is enabled on this route.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     public void setTrace(String trace) {
         this.trace = trace;
     }
@@ -779,7 +781,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -795,6 +797,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     public void setLogMask(String logMask) {
         this.logMask = logMask;
     }
@@ -810,6 +813,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether to slow down processing messages by a given delay in msec.
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Long")
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
@@ -825,7 +829,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether to auto start this route
      */
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -841,6 +845,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * To configure the ordering of the routes being started
      */
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }

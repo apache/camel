@@ -45,8 +45,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
               enums = "AfterConsumer,BeforeConsumer")
     private String mode;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String onCompleteOnly;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String onFailureOnly;
     @XmlElement(name = "onWhen")
     @AsPredicate
@@ -54,8 +56,10 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @XmlAttribute
     private String parallelProcessing;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
+    @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalMessage;
     @XmlTransient
     private ExecutorService executorService;

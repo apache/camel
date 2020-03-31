@@ -38,21 +38,25 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends ExpressionNode {
     @XmlAttribute
-    @Metadata(defaultValue = "-1")
+    @Metadata(javaType = "java.lang.Long", defaultValue = "-1")
     private String timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
     @XmlAttribute(name = "strategyMethodName")
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
+    @Metadata(javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String ignoreInvalidEndpoint;
 
     public PollEnrichDefinition() {

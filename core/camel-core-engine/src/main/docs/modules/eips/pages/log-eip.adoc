@@ -18,7 +18,7 @@ The Log EIP supports 5 options which are listed below:
 |===
 | Name | Description | Default | Type
 | *message* | *Required* Sets the log message (uses simple language) |  | String
-| *loggingLevel* | Sets the logging level. The default value is INFO | INFO | String
+| *loggingLevel* | Sets the logging level. The default value is INFO | INFO | LoggingLevel
 | *logName* | Sets the name of the logger |  | String
 | *marker* | To use slf4j marker |  | String
 | *loggerRef* | To refer to a custom logger instance to lookup from the registry. |  | String

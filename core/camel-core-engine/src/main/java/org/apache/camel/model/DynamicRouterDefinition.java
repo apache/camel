@@ -44,6 +44,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @XmlAttribute
     private String ignoreInvalidEndpoints;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
 
     public DynamicRouterDefinition() {
