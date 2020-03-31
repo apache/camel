@@ -504,10 +504,7 @@
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.2.1.RELEASE</spring-batch-version>
         <spring-boot-version>2.2.6.RELEASE</spring-boot-version>
-        <spring-data-commons-bundle-version>2.2.4.RELEASE_1</spring-data-commons-bundle-version>
-        <spring-data-keyvalue-bundle-version>2.2.4.RELEASE_1</spring-data-keyvalue-bundle-version>
         <spring-data-redis-version>2.2.4.RELEASE</spring-data-redis-version>
-        <spring-data-redis-bundle-version>2.2.4.RELEASE_1</spring-data-redis-bundle-version>
         <spring-integration-version>5.2.5.RELEASE</spring-integration-version>
         <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
         <spring-ldap-bundle-version>2.3.2.RELEASE_2</spring-ldap-bundle-version>
