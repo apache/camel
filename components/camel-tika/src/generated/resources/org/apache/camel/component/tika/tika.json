@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "tika",
     "scheme": "tika",
     "extendsScheme": "",
     "syntax": "tika:operation",

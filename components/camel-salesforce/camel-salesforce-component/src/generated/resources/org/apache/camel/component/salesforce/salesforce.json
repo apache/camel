@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "salesforce",
     "scheme": "salesforce",
     "extendsScheme": "",
     "syntax": "salesforce:operationName:topicName",

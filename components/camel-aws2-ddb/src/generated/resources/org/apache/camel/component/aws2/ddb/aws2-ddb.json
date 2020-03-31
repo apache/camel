@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-ddb",
     "scheme": "aws2-ddb",
     "extendsScheme": "",
     "syntax": "aws2-ddb:tableName",

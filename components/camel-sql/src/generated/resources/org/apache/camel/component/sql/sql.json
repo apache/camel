@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sql",
     "scheme": "sql",
     "extendsScheme": "",
     "syntax": "sql:query",

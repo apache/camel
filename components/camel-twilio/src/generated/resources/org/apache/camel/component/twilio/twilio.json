@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "twilio",
     "scheme": "twilio",
     "extendsScheme": "",
     "syntax": "twilio:apiName\/methodName",

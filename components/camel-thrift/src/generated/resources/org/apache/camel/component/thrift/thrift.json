@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "thrift",
     "scheme": "thrift",
     "extendsScheme": "",
     "syntax": "thrift:host:port\/service",

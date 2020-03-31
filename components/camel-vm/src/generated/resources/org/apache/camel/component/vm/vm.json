@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "vm",
     "scheme": "vm",
     "extendsScheme": "",
     "syntax": "vm:name",

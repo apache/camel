@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "facebook",
     "scheme": "facebook",
     "extendsScheme": "",
     "syntax": "facebook:methodName",

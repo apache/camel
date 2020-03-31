@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openstack-cinder",
     "scheme": "openstack-cinder",
     "extendsScheme": "",
     "syntax": "openstack-cinder:host",

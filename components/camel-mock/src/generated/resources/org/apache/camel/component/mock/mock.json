@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "mock",
     "scheme": "mock",
     "extendsScheme": "",
     "syntax": "mock:name",

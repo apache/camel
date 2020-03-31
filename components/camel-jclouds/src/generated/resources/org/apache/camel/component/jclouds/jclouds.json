@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jclouds",
     "scheme": "jclouds",
     "extendsScheme": "",
     "syntax": "jclouds:command:providerId",

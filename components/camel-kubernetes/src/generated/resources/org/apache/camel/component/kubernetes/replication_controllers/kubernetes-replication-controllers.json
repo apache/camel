@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "kubernetes-replication-controllers",
     "scheme": "kubernetes-replication-controllers",
     "extendsScheme": "",
     "syntax": "kubernetes-replication-controllers:masterUrl",

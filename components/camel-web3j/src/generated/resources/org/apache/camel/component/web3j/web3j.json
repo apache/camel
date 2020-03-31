@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "web3j",
     "scheme": "web3j",
     "extendsScheme": "",
     "syntax": "web3j:nodeAddress",

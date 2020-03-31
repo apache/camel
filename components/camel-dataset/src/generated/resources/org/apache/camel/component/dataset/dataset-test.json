@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "dataset-test",
     "scheme": "dataset-test",
     "extendsScheme": "",
     "syntax": "dataset-test:name",

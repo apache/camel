@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jms",
     "scheme": "jms",
     "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",

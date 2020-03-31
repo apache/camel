@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "box",
     "scheme": "box",
     "extendsScheme": "",
     "syntax": "box:apiName\/methodName",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "olingo2",
     "scheme": "olingo2",
     "extendsScheme": "",
     "syntax": "olingo2:apiName\/methodName",

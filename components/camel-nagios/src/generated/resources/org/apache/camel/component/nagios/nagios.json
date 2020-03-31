@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "nagios",
     "scheme": "nagios",
     "extendsScheme": "",
     "syntax": "nagios:host:port",

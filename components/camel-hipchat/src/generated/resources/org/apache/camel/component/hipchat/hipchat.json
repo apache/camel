@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hipchat",
     "scheme": "hipchat",
     "extendsScheme": "",
     "syntax": "hipchat:protocol:host:port",

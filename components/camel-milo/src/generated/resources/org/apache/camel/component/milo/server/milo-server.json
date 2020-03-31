@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "milo-server",
     "scheme": "milo-server",
     "extendsScheme": "",
     "syntax": "milo-server:itemId",

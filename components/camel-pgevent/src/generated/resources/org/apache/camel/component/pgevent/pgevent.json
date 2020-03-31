@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "pgevent",
     "scheme": "pgevent",
     "extendsScheme": "",
     "syntax": "pgevent:host:port\/database\/channel",

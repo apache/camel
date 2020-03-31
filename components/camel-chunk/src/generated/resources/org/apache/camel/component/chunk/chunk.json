@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "chunk",
     "scheme": "chunk",
     "extendsScheme": "",
     "syntax": "chunk:resourceUri",

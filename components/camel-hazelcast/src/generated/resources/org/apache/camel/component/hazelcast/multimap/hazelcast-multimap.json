@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-multimap",
     "scheme": "hazelcast-multimap",
     "extendsScheme": "",
     "syntax": "hazelcast-multimap:cacheName",

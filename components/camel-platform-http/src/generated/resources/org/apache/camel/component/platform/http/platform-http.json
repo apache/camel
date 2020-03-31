@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "platform-http",
     "scheme": "platform-http",
     "extendsScheme": "",
     "syntax": "platform-http:path",

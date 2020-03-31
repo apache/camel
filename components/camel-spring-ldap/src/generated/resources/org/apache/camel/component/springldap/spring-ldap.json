@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spring-ldap",
     "scheme": "spring-ldap",
     "extendsScheme": "",
     "syntax": "spring-ldap:templateName",

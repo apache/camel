@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "servlet",
     "scheme": "servlet",
     "extendsScheme": "http",
     "syntax": "servlet:contextPath",

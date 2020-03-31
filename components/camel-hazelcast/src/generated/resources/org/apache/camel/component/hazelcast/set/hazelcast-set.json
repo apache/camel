@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-set",
     "scheme": "hazelcast-set",
     "extendsScheme": "",
     "syntax": "hazelcast-set:cacheName",

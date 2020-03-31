@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "netty-http",
     "scheme": "netty-http",
     "extendsScheme": "netty",
     "syntax": "netty-http:protocol:host:port\/path",

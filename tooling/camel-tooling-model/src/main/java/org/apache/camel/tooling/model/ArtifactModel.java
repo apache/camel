@@ -16,14 +16,39 @@
  */
 package org.apache.camel.tooling.model;
 
-public class OtherModel extends ArtifactModel<BaseOptionModel> {
+/**
+ * A {@link BaseModel} with Maven coordinates.
+ *
+ * @param <O> the type of option mode.
+ */
+public abstract class ArtifactModel<O extends BaseOptionModel> extends BaseModel<O> {
 
-    public OtherModel() {
+    protected String groupId;
+    protected String artifactId;
+    protected String version;
+
+    public String getGroupId() {
+        return groupId;
     }
 
-    @Override
-    public String getKind() {
-        return "other";
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
 }

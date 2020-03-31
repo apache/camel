@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-mq",
     "scheme": "aws2-mq",
     "extendsScheme": "",
     "syntax": "aws2-mq:label",

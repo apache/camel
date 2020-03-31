@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "pop3s",
     "scheme": "pop3s",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",

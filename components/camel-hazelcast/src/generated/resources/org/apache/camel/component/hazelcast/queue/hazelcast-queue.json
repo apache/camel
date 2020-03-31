@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-queue",
     "scheme": "hazelcast-queue",
     "extendsScheme": "",
     "syntax": "hazelcast-queue:cacheName",

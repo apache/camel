@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "cm-sms",
     "scheme": "cm-sms",
     "extendsScheme": "",
     "syntax": "cm-sms:host",

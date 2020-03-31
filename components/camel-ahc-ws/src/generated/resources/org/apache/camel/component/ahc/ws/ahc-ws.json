@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "ahc-ws",
     "scheme": "ahc-ws",
     "extendsScheme": "ahc",
     "alternativeSchemes": "ahc-ws,ahc-wss",

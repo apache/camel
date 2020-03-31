@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "graphql",
     "scheme": "graphql",
     "extendsScheme": "",
     "syntax": "graphql:httpUri",

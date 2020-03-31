@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openstack-swift",
     "scheme": "openstack-swift",
     "extendsScheme": "",
     "syntax": "openstack-swift:host",

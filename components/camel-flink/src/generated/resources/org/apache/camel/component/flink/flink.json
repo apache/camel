@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "flink",
     "scheme": "flink",
     "extendsScheme": "",
     "syntax": "flink:endpointType",

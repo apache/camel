@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-kinesis",
     "scheme": "aws-kinesis",
     "extendsScheme": "",
     "syntax": "aws-kinesis:streamName",

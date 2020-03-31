@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jt400",
     "scheme": "jt400",
     "extendsScheme": "",
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",

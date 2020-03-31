@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "kudu",
     "scheme": "kudu",
     "extendsScheme": "",
     "syntax": "kudu:host:port\/tableName",

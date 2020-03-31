@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "google-bigquery-sql",
     "scheme": "google-bigquery-sql",
     "extendsScheme": "",
     "syntax": "google-bigquery-sql:projectId:query",

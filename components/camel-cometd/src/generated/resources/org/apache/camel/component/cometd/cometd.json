@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "cometd",
     "scheme": "cometd",
     "extendsScheme": "",
     "alternativeSchemes": "cometd,cometds",

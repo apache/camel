@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "gora",
     "scheme": "gora",
     "extendsScheme": "",
     "syntax": "gora:name",

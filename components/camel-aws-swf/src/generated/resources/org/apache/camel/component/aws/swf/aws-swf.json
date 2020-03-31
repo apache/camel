@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-swf",
     "scheme": "aws-swf",
     "extendsScheme": "",
     "syntax": "aws-swf:type",

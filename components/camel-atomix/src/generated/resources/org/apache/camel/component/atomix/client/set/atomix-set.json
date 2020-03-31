@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "atomix-set",
     "scheme": "atomix-set",
     "extendsScheme": "",
     "syntax": "atomix-set:resourceName",

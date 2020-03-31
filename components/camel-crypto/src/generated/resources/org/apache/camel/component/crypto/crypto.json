@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "crypto",
     "scheme": "crypto",
     "extendsScheme": "",
     "syntax": "crypto:cryptoOperation:name",

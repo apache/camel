@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "kubernetes-namespaces",
     "scheme": "kubernetes-namespaces",
     "extendsScheme": "",
     "syntax": "kubernetes-namespaces:masterUrl",

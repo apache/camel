@@ -429,6 +429,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                                      String extendsScheme, String label, String[] schemes) {
         ComponentModel model = new ComponentModel();
         model.setScheme(scheme);
+        model.setName(scheme);
         model.setExtendsScheme(extendsScheme);
         // alternative schemes
         if (schemes != null && schemes.length > 1) {

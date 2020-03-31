@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spark",
     "scheme": "spark",
     "extendsScheme": "",
     "syntax": "spark:endpointType",

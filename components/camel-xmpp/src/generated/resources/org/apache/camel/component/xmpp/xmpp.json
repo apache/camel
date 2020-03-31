@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "xmpp",
     "scheme": "xmpp",
     "extendsScheme": "",
     "syntax": "xmpp:host:port\/participant",

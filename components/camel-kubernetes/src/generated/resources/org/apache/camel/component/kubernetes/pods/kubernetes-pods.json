@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "kubernetes-pods",
     "scheme": "kubernetes-pods",
     "extendsScheme": "",
     "syntax": "kubernetes-pods:masterUrl",

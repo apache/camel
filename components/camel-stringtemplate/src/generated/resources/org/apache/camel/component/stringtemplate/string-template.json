@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "string-template",
     "scheme": "string-template",
     "extendsScheme": "",
     "syntax": "string-template:resourceUri",

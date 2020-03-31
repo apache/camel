@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "class",
     "scheme": "class",
     "extendsScheme": "",
     "syntax": "class:beanName",

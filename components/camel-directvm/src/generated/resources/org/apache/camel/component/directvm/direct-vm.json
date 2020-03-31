@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "direct-vm",
     "scheme": "direct-vm",
     "extendsScheme": "",
     "syntax": "direct-vm:name",

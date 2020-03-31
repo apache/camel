@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "soroush",
     "scheme": "soroush",
     "extendsScheme": "",
     "syntax": "soroush:action",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "coaps+tcp",
     "scheme": "coaps+tcp",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",

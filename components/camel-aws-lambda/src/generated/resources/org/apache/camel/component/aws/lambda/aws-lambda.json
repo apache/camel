@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-lambda",
     "scheme": "aws-lambda",
     "extendsScheme": "",
     "syntax": "aws-lambda:function",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-cw",
     "scheme": "aws2-cw",
     "extendsScheme": "",
     "syntax": "aws2-cw:namespace",

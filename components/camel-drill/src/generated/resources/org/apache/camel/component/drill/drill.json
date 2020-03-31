@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "drill",
     "scheme": "drill",
     "extendsScheme": "",
     "syntax": "drill:host",

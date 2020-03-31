@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "beanstalk",
     "scheme": "beanstalk",
     "extendsScheme": "",
     "syntax": "beanstalk:connectionSettings",

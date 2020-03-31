@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "servicenow",
     "scheme": "servicenow",
     "extendsScheme": "",
     "syntax": "servicenow:instanceName",
