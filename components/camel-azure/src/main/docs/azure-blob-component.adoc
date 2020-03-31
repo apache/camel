@@ -17,7 +17,7 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 == URI Format
 
-[source,java]
+[source,text]
 ------------------------------
 azure-blob://accountName/containerName[/blobName][?options]
 ------------------------------
@@ -233,6 +233,20 @@ Then refer to this instance in your Camel `azure-blob` component configuration:
 from("azure-blob://" + accountName + "/" + containerName + "/" + fileName + "?azureBlobClient=#client")
 .to("mock:result");
 ----
+
+== Dynamic blob names
+
+The producer supports overriding the default blob name from a message header as shown below:
+
+[source,java]
+----
+   .setHeader("CamelAzureOverrideBlobName", constant("myNewBlob"))
+    .to("azure-blob://myacount/mycontainer/myblob")
+----
+
+Here the producer would normally use `myBlob` as the blob name, but the header will override this and use
+`myNewBlob` instead. This allow for dynamic blob names.
+
 
 == Dependencies
 
