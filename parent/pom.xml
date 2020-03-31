@@ -503,7 +503,6 @@
         <spark-rest-version>2.9.1</spark-rest-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.2.1.RELEASE</spring-batch-version>
-        <spring-batch-bundle-version>4.2.1.RELEASE_1</spring-batch-bundle-version>
         <spring-boot-version>2.2.6.RELEASE</spring-boot-version>
         <spring-data-commons-bundle-version>2.2.4.RELEASE_1</spring-data-commons-bundle-version>
         <spring-data-keyvalue-bundle-version>2.2.4.RELEASE_1</spring-data-keyvalue-bundle-version>
