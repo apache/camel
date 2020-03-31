@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "lumberjack",
     "scheme": "lumberjack",
     "extendsScheme": "",
     "syntax": "lumberjack:host:port",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-topic",
     "scheme": "hazelcast-topic",
     "extendsScheme": "",
     "syntax": "hazelcast-topic:cacheName",

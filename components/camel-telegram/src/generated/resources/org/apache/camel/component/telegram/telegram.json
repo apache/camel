@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "telegram",
     "scheme": "telegram",
     "extendsScheme": "",
     "syntax": "telegram:type",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spring-event",
     "scheme": "spring-event",
     "extendsScheme": "",
     "syntax": "spring-event:name",

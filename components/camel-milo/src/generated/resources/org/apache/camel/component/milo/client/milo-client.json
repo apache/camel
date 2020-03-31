@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "milo-client",
     "scheme": "milo-client",
     "extendsScheme": "",
     "syntax": "milo-client:endpointUri",

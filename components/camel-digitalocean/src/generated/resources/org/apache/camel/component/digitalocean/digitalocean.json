@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "digitalocean",
     "scheme": "digitalocean",
     "extendsScheme": "",
     "syntax": "digitalocean:operation",

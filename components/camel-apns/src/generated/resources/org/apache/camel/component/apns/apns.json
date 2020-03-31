@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "apns",
     "scheme": "apns",
     "extendsScheme": "",
     "syntax": "apns:name",

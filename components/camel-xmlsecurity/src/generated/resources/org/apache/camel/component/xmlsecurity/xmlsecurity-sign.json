@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "xmlsecurity-sign",
     "scheme": "xmlsecurity-sign",
     "extendsScheme": "",
     "syntax": "xmlsecurity-sign:name",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "kubernetes-persistent-volumes",
     "scheme": "kubernetes-persistent-volumes",
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes:masterUrl",

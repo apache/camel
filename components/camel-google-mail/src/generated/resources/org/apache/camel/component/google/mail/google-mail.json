@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "google-mail",
     "scheme": "google-mail",
     "extendsScheme": "",
     "syntax": "google-mail:apiName\/methodName",

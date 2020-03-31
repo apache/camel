@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "optaplanner",
     "scheme": "optaplanner",
     "extendsScheme": "",
     "syntax": "optaplanner:configFile",

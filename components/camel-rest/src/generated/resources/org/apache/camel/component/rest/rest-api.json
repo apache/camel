@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "rest-api",
     "scheme": "rest-api",
     "extendsScheme": "",
     "syntax": "rest-api:path\/contextIdPattern",

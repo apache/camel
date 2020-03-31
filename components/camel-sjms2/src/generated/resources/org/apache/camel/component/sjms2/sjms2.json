@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sjms2",
     "scheme": "sjms2",
     "extendsScheme": "sjms",
     "syntax": "sjms2:destinationType:destinationName",

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentModel extends BaseModel<ComponentModel.ComponentOptionModel> {
+public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOptionModel> {
 
     protected String scheme;
     protected String extendsScheme;
@@ -32,10 +32,6 @@ public class ComponentModel extends BaseModel<ComponentModel.ComponentOptionMode
     protected boolean producerOnly;
     protected boolean lenientProperties;
     protected String verifiers;
-    protected String groupId;
-    protected String artifactId;
-    protected String version;
-
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
 
     public ComponentModel() {
@@ -124,30 +120,6 @@ public class ComponentModel extends BaseModel<ComponentModel.ComponentOptionMode
 
     public void setVerifiers(String verifiers) {
         this.verifiers = verifiers;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public List<ComponentOptionModel> getComponentOptions() {

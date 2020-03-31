@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "nsq",
     "scheme": "nsq",
     "extendsScheme": "",
     "syntax": "nsq:topic",

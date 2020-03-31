@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "ganglia",
     "scheme": "ganglia",
     "extendsScheme": "",
     "syntax": "ganglia:host:port",

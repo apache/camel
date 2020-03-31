@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jmx",
     "scheme": "jmx",
     "extendsScheme": "",
     "syntax": "jmx:serverURL",

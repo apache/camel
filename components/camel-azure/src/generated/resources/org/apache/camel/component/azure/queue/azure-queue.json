@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "azure-queue",
     "scheme": "azure-queue",
     "extendsScheme": "",
     "syntax": "azure-queue:containerAndQueueUri",

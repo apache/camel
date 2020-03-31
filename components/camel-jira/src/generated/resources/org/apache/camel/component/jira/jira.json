@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jira",
     "scheme": "jira",
     "extendsScheme": "",
     "syntax": "jira:type",

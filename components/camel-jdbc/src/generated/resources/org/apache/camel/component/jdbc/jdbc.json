@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jdbc",
     "scheme": "jdbc",
     "extendsScheme": "",
     "syntax": "jdbc:dataSourceName",

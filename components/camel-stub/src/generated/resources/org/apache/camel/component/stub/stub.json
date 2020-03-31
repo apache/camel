@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "stub",
     "scheme": "stub",
     "extendsScheme": "",
     "syntax": "stub:name",

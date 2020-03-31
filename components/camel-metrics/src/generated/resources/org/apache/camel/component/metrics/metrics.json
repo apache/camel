@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "metrics",
     "scheme": "metrics",
     "extendsScheme": "",
     "syntax": "metrics:metricsType:metricsName",

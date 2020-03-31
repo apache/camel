@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "iota",
     "scheme": "iota",
     "extendsScheme": "",
     "syntax": "iota:name",

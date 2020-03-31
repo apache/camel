@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "dataformat",
     "scheme": "dataformat",
     "extendsScheme": "",
     "syntax": "dataformat:name:operation",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openstack-keystone",
     "scheme": "openstack-keystone",
     "extendsScheme": "",
     "syntax": "openstack-keystone:host",

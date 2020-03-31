@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-s3",
     "scheme": "aws-s3",
     "extendsScheme": "",
     "syntax": "aws-s3:\/\/bucketNameOrArn",

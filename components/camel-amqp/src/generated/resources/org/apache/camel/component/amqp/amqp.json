@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "amqp",
     "scheme": "amqp",
     "extendsScheme": "jms",
     "syntax": "amqp:destinationType:destinationName",

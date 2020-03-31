@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jcache",
     "scheme": "jcache",
     "extendsScheme": "",
     "syntax": "jcache:cacheName",

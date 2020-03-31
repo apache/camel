@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "mongodb-gridfs",
     "scheme": "mongodb-gridfs",
     "extendsScheme": "",
     "syntax": "mongodb-gridfs:connectionBean",

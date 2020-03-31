@@ -16,14 +16,10 @@
  */
 package org.apache.camel.tooling.model;
 
-public class DataFormatModel extends BaseModel<DataFormatModel.DataFormatOptionModel> {
+public class DataFormatModel extends ArtifactModel<DataFormatModel.DataFormatOptionModel> {
 
     protected String modelName;
     protected String modelJavaType;
-    protected String groupId;
-    protected String artifactId;
-    protected String version;
-
     public static class DataFormatOptionModel extends BaseOptionModel {
 
     }
@@ -50,29 +46,5 @@ public class DataFormatModel extends BaseModel<DataFormatModel.DataFormatOptionM
 
     public void setModelJavaType(String modelJavaType) {
         this.modelJavaType = modelJavaType;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 }

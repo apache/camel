@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "smpps",
     "scheme": "smpps",
     "extendsScheme": "",
     "alternativeSchemes": "smpp,smpps",

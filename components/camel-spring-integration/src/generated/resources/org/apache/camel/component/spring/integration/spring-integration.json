@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spring-integration",
     "scheme": "spring-integration",
     "extendsScheme": "",
     "syntax": "spring-integration:defaultChannel",

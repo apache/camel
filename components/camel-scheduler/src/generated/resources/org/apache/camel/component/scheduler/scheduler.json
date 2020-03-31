@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "scheduler",
     "scheme": "scheduler",
     "extendsScheme": "",
     "syntax": "scheduler:name",

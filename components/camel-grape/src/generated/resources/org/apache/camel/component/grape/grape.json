@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "grape",
     "scheme": "grape",
     "extendsScheme": "",
     "syntax": "grape:defaultCoordinates",

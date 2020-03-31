@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "rss",
     "scheme": "rss",
     "extendsScheme": "atom",
     "syntax": "rss:feedUri",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "lucene",
     "scheme": "lucene",
     "extendsScheme": "",
     "syntax": "lucene:host:operation",

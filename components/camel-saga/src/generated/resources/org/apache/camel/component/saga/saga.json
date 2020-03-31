@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "saga",
     "scheme": "saga",
     "extendsScheme": "",
     "syntax": "saga:action",

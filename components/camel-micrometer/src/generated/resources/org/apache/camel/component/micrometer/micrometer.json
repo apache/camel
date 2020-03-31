@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "micrometer",
     "scheme": "micrometer",
     "extendsScheme": "",
     "syntax": "micrometer:metricsType:metricsName",

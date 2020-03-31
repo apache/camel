@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jpa",
     "scheme": "jpa",
     "extendsScheme": "",
     "syntax": "jpa:entityType",

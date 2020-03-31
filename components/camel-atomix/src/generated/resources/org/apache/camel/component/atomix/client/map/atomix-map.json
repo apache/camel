@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "atomix-map",
     "scheme": "atomix-map",
     "extendsScheme": "",
     "syntax": "atomix-map:resourceName",

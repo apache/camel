@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "xquery",
     "scheme": "xquery",
     "extendsScheme": "",
     "syntax": "xquery:resourceUri",

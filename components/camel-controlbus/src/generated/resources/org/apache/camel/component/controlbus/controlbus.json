@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "controlbus",
     "scheme": "controlbus",
     "extendsScheme": "",
     "syntax": "controlbus:command:language",

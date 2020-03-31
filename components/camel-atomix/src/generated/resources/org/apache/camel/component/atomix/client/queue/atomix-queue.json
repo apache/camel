@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "atomix-queue",
     "scheme": "atomix-queue",
     "extendsScheme": "",
     "syntax": "atomix-queue:resourceName",

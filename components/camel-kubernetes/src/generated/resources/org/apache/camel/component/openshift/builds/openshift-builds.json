@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openshift-builds",
     "scheme": "openshift-builds",
     "extendsScheme": "",
     "syntax": "openshift-builds:masterUrl",

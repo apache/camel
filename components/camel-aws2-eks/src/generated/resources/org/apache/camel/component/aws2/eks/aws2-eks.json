@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-eks",
     "scheme": "aws2-eks",
     "extendsScheme": "",
     "syntax": "aws2-eks:label",

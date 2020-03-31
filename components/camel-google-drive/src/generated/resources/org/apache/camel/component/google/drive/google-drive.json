@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "google-drive",
     "scheme": "google-drive",
     "extendsScheme": "",
     "syntax": "google-drive:apiName\/methodName",

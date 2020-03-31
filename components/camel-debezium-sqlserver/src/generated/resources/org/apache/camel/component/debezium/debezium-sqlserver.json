@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "debezium-sqlserver",
     "scheme": "debezium-sqlserver",
     "extendsScheme": "",
     "syntax": "debezium-sqlserver:name",

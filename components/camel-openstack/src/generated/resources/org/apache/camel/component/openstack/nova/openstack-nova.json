@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openstack-nova",
     "scheme": "openstack-nova",
     "extendsScheme": "",
     "syntax": "openstack-nova:host",

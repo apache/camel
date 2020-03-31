@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "hazelcast-map",
     "scheme": "hazelcast-map",
     "extendsScheme": "",
     "syntax": "hazelcast-map:cacheName",

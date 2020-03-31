@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "avro",
     "scheme": "avro",
     "extendsScheme": "",
     "syntax": "avro:transport:host:port\/messageName",

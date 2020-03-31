@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sap-netweaver",
     "scheme": "sap-netweaver",
     "extendsScheme": "",
     "syntax": "sap-netweaver:url",

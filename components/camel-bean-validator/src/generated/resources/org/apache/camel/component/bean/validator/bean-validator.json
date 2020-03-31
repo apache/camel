@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "bean-validator",
     "scheme": "bean-validator",
     "extendsScheme": "",
     "syntax": "bean-validator:label",

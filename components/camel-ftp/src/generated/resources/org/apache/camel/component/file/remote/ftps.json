@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "ftps",
     "scheme": "ftps",
     "extendsScheme": "file",
     "syntax": "ftps:host:port\/directoryName",

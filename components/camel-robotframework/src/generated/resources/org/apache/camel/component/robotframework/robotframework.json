@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "robotframework",
     "scheme": "robotframework",
     "extendsScheme": "",
     "syntax": "robotframework:resourceUri",

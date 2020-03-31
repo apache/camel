@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "openstack-glance",
     "scheme": "openstack-glance",
     "extendsScheme": "",
     "syntax": "openstack-glance:host",

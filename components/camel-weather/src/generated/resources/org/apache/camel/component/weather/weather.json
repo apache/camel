@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "weather",
     "scheme": "weather",
     "extendsScheme": "",
     "syntax": "weather:name",

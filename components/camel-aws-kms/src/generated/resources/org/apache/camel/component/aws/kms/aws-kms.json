@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-kms",
     "scheme": "aws-kms",
     "extendsScheme": "",
     "syntax": "aws-kms:label",

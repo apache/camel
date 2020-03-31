@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spark-rest",
     "scheme": "spark-rest",
     "extendsScheme": "",
     "syntax": "spark-rest:verb:path",

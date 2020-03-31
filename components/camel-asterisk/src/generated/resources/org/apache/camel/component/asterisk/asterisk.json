@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "asterisk",
     "scheme": "asterisk",
     "extendsScheme": "",
     "syntax": "asterisk:name",

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "as2",
     "scheme": "as2",
     "extendsScheme": "",
     "syntax": "as2:apiName\/methodName",
