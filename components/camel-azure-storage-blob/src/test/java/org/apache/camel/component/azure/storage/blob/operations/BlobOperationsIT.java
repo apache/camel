@@ -1,12 +1,15 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,9 +62,20 @@ class BlobOperationsIT extends CamelTestSupport {
         assertNotNull(response.getHeaders());
         assertNotNull(response.getHeaders().get(BlobConstants.CREATION_TIME));
 
-        // second: test with outputstream set on exchange
+        // second: test with exchange set but no outputstream set
         final Exchange exchange = new DefaultExchange(context);
+        final BlobOperationResponse response1 = operations.getBlob(exchange);
 
+        assertNotNull(response1);
+        assertNotNull(response1.getBody());
+        assertNotNull(response1.getHeaders());
+
+        final BlobInputStream inputStream = (BlobInputStream) response1.getBody();
+        final String bufferedText = new BufferedReader(new InputStreamReader(inputStream)).readLine();
+
+        assertEquals("awesome camel!", bufferedText);
+
+        // third: test with outputstream set on exchange
         final File fileToWrite = new File(testDir.toFile(), "test_file.txt");
         exchange.getIn().setBody(new FileOutputStream(fileToWrite));
 

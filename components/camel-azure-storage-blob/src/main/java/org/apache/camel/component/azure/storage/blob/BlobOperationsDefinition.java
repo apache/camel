@@ -25,5 +25,9 @@ public enum BlobOperationsDefinition {
     /**
      * Delete a blob
      */
-    deleteBlob
+    deleteBlob,
+    uploadBlockBlob,
+    uploadBlobBlobList,
+    commitBlobBlockList,
+    getBlockBlobList
 }

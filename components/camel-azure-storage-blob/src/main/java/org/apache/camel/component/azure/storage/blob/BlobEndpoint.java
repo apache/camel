@@ -32,6 +32,7 @@ public class BlobEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobEndpoint.class);
 
+    @UriParam
     private BlobServiceClient blobServiceClient;
 
     @UriParam
@@ -69,6 +70,9 @@ public class BlobEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    /**
+     * client
+     */
     public BlobServiceClient getBlobServiceClient() {
         return blobServiceClient;
     }

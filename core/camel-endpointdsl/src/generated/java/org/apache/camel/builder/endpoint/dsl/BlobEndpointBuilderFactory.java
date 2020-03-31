@@ -81,6 +81,32 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * client.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobServiceClient(
+                Object blobServiceClient) {
+            doSetProperty("blobServiceClient", blobServiceClient);
+            return this;
+        }
+        /**
+         * client.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder blobServiceClient(
+                String blobServiceClient) {
+            doSetProperty("blobServiceClient", blobServiceClient);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a:
@@ -423,6 +449,32 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * client.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobServiceClient(
+                Object blobServiceClient) {
+            doSetProperty("blobServiceClient", blobServiceClient);
+            return this;
+        }
+        /**
+         * client.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder blobServiceClient(
+                String blobServiceClient) {
+            doSetProperty("blobServiceClient", blobServiceClient);
+            return this;
+        }
+        /**
          * dd.
          * 
          * The option is a:
@@ -734,6 +786,30 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder blobOffset(String blobOffset) {
             doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
+         * client.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder blobServiceClient(Object blobServiceClient) {
+            doSetProperty("blobServiceClient", blobServiceClient);
+            return this;
+        }
+        /**
+         * client.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder blobServiceClient(String blobServiceClient) {
+            doSetProperty("blobServiceClient", blobServiceClient);
             return this;
         }
         /**

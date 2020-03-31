@@ -90,11 +90,11 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private String determineContainerName(final Exchange exchange) {
-        final String containerName = exchange.getIn().getHeader(BlobConstants.BLOB_CONTAINER_NAME, String.class);
-        if (!ObjectHelper.isEmpty(containerName)) {
-            return containerName;
+        final String containerName = exchange.getIn().getHeader(BlobConstants.BLOB_CONTAINER_NAME, configuration.getContainerName(), String.class);
+        if (ObjectHelper.isEmpty(containerName)) {
+            throw new IllegalArgumentException("Container name must be specified");
         }
-        return configuration.getContainerName();
+        return containerName;
     }
 
     private static Message getMessageForResponse(final Exchange exchange) {

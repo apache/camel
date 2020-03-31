@@ -27,6 +27,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
         case "blobOffset": target.getConfiguration().setBlobOffset(property(camelContext, long.class, value)); return true;
+        case "blobserviceclient":
+        case "blobServiceClient": target.setBlobServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         case "blobtype":
         case "blobType": target.getConfiguration().setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "bridgeerrorhandler":
@@ -58,6 +60,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("blobName", java.lang.String.class);
         answer.put("blobOffset", long.class);
+        answer.put("blobServiceClient", com.azure.storage.blob.BlobServiceClient.class);
         answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("dataCount", java.lang.Long.class);
@@ -84,6 +87,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blobName": return target.getConfiguration().getBlobName();
         case "bloboffset":
         case "blobOffset": return target.getConfiguration().getBlobOffset();
+        case "blobserviceclient":
+        case "blobServiceClient": return target.getBlobServiceClient();
         case "blobtype":
         case "blobType": return target.getConfiguration().getBlobType();
         case "bridgeerrorhandler":
