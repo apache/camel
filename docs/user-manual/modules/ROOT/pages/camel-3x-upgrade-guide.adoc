@@ -609,6 +609,171 @@ feature:repo-add camel 3.2.0
 feature:install camel
 ----
 
+==== Other components involved
+
+- Camel-test-blueprint
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-test-karaf
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-karaf</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-test-karaf</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-eventadmin
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-kura
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kura</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-kura</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-osgi-activator
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-osgi-activator</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-osgi-activator</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-paxlogging
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-paxlogging</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-paxlogging</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+==== Introducing a camel-karaf-bom
+
+We introduce a camel-karaf-bom too, so the end-users should be able to have all of this dependencies easier:
+
+[source,xml]
+----
+    <dependencyManagement>
+        <dependencies>
+            <!-- Add Camel BOM -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Add Camel Karaf BOM -->
+            <dependency>
+                <groupId>org.apache.camel.karaf</groupId>
+                <artifactId>camel-karaf-bom</artifactId>
+                <version>${camel.karaf.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+----
+
+In this way you'll get both the boms and all the "goodies"
+
+
 === EIPs with cacheSize option
 
 The `cacheSize` option on EIPs has been improved to reduce memory usage when the cache is disabled by
