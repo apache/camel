@@ -89,8 +89,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
         RouteDefinition rd = findRouteDefinition(camelContext, routeId);
-
-        return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
+        return camelContext.adapt(ModelCamelContext.class).adviceWith(rd, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 builder.accept(this);

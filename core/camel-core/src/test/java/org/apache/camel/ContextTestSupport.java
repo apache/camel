@@ -24,7 +24,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.lw.ImmutableCamelContext;
+import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -44,7 +44,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
-    private boolean useImmutableContext;
+    private boolean useLightweightContext;
     private Service camelContextService;
 
     /**
@@ -62,12 +62,12 @@ public abstract class ContextTestSupport extends TestSupport {
         this.useRouteBuilder = useRouteBuilder;
     }
 
-    public boolean isUseImmutableContext() {
-        return useImmutableContext;
+    public boolean isUseLightweightContext() {
+        return useLightweightContext;
     }
 
-    public void setUseImmutableContext(boolean useImmutableContext) {
-        this.useImmutableContext = useImmutableContext;
+    public void setUseLightweightContext(boolean useLightweightContext) {
+        this.useLightweightContext = useLightweightContext;
     }
 
     public Service getCamelContextService() {
@@ -106,19 +106,11 @@ public abstract class ContextTestSupport extends TestSupport {
             throw new Exception("Context must be a ModelCamelContext");
         }
         assertValidContext(context);
-        context.init();
 
-        // reduce default shutdown timeout to avoid waiting for 300 seconds
-        context.getShutdownStrategy().setTimeout(10);
+        context.build();
 
         template = context.createProducerTemplate();
-        template.start();
         consumer = context.createConsumerTemplate();
-        consumer.start();
-
-        // create a default notifier when 1 exchange is done which is the most
-        // common case
-        oneExchangeDone = event().whenDone(1).create();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
@@ -126,11 +118,23 @@ public abstract class ContextTestSupport extends TestSupport {
                 log.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
-            startCamelContext();
         } else {
             log.debug("isUseRouteBuilder() is false");
         }
 
+        template.start();
+        consumer.start();
+
+        // create a default notifier when 1 exchange is done which is the most
+        // common case
+        oneExchangeDone = event().whenDone(1).create();
+
+        if (isUseRouteBuilder()) {
+            startCamelContext();
+        }
+
+        // reduce default shutdown timeout to avoid waiting for 300 seconds
+        context.getShutdownStrategy().setTimeout(10);
     }
 
     @Override
@@ -180,29 +184,18 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            if (context instanceof ImmutableCamelContext) {
-                ImmutableCamelContext ctx = (ImmutableCamelContext) context;
-                Boolean autoStartup = ctx.isAutoStartup();
-                ctx.setAutoStartup(false);
-                ctx.start();
-                ctx.makeImmutable();
-                if (autoStartup != null && autoStartup) {
-                    ctx.startImmutable();
-                }
-            } else {
-                context.start();
-            }
+            context.start();
         }
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context;
-        if (useImmutableContext) {
-            ImmutableCamelContext ctx = new ImmutableCamelContext();
+        if (useLightweightContext) {
+            LightweightCamelContext ctx = new LightweightCamelContext();
             ctx.setRegistry(createRegistry());
             context = ctx;
         } else {
-            DefaultCamelContext ctx = new DefaultCamelContext(false);
+            DefaultCamelContext ctx = new DefaultCamelContext(true);
             ctx.setRegistry(createRegistry());
             context = ctx;
         }

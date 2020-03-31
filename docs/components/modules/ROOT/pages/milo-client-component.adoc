@@ -29,7 +29,7 @@ for this component:
 
 
 // component options: START
-The OPC UA Client component supports 23 options, which are listed below.
+The OPC UA Client component supports 24 options, which are listed below.
 
 
 
@@ -56,6 +56,7 @@ The OPC UA Client component supports 23 options, which are listed below.
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
 | *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
 | *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
+| *requestedPublishingInterval* (client) | The requested publishing interval in milliseconds | 1_000.0 | Double
 | *requestTimeout* (client) | Request timeout in milliseconds |  | Long
 | *sessionName* (client) | Session name |  | String
 | *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
@@ -121,7 +122,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (29 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -133,7 +134,7 @@ with the following path and query parameters:
 | *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
 | *method* (common) | The method definition (see Method ID) |  | String
 | *node* (common) | The node definition (see Node ID) |  | String
-| *samplingInterval* (common) | The sampling interval in milliseconds |  | Double
+| *samplingInterval* (common) | The sampling interval in milliseconds | 0.0 | Double
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
@@ -153,6 +154,7 @@ with the following path and query parameters:
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
 | *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
 | *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
+| *requestedPublishingInterval* (client) | The requested publishing interval in milliseconds | 1_000.0 | Double
 | *requestTimeout* (client) | Request timeout in milliseconds |  | Long
 | *sessionName* (client) | Session name |  | String
 | *sessionTimeout* (client) | Session timeout in milliseconds |  | Long

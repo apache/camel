@@ -147,14 +147,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs</groupId>
             <artifactId>smock-springws</artifactId>
-            <version>0.5</version>
+            <version>0.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

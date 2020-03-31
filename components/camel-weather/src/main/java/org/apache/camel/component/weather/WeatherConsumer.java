@@ -20,9 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,14 +49,14 @@ public class WeatherConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         LOG.debug("Going to execute the Weather query {}", query);
         HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
-        GetMethod getMethod = new GetMethod(query);
+        HttpGet getMethod = new HttpGet(query);
         try {
-            int status = httpClient.executeMethod(getMethod);
-            if (status != HttpStatus.SC_OK) {
-                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status, getMethod.getStatusLine(), query);
+            HttpResponse response = httpClient.execute(getMethod);
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status, response.getStatusLine().getStatusCode(), query);
                 return 0;
             }
-            String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
+            String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
             LOG.debug("Got back the Weather information {}", weather);
             if (ObjectHelper.isEmpty(weather)) {
                 // empty response

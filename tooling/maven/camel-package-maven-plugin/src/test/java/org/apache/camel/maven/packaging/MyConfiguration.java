@@ -57,7 +57,6 @@ public class MyConfiguration {
     private boolean useDataType;
     private boolean useBreadcrumb;
     private String jmxManagementNamePattern = "#name#";
-    private boolean jmxCreateConnector;
     private boolean useMdcLogging;
     private String threadNamePattern;
     private String routeFilterIncludePattern;
@@ -509,18 +508,6 @@ public class MyConfiguration {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-    }
-
-    public boolean isJmxCreateConnector() {
-        return jmxCreateConnector;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     * The default value is false.
-     */
-    public void setJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
     }
 
     public boolean isUseMdcLogging() {

@@ -53,13 +53,13 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-blueprint</artifactId>
     </dependency>
 
     <!-- Testing -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.apache.camel.karaf</groupId>
       <artifactId>camel-test-blueprint</artifactId>
       <scope>test</scope>
     </dependency>

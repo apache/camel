@@ -34,6 +34,7 @@ import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -87,7 +88,8 @@ public class AbstractCamelContextFactoryBeanTest {
     // properties that should return value that can be converted to boolean
     Set<String> valuesThatReturnBoolean = new HashSet<>(asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
         "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}", "{{getCaseInsensitiveHeaders}}",
-        "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}", "{{getAllowUseOriginalMessage}}"));
+        "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}", "{{getAllowUseOriginalMessage}}",
+        "{{getLoadTypeConverters}}", "{{getTypeConverterStatisticsEnabled}}", "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
     Set<String> valuesThatReturnLong = new HashSet<>(asList("{{getDelayer}}"));
@@ -127,6 +129,7 @@ public class AbstractCamelContextFactoryBeanTest {
         when(context.getRuntimeEndpointRegistry()).thenReturn(mock(RuntimeEndpointRegistry.class));
         when(context.getManagementNameStrategy()).thenReturn(mock(ManagementNameStrategy.class));
         when(context.getExecutorServiceManager()).thenReturn(mock(ExecutorServiceManager.class));
+        when(context.getInflightRepository()).thenReturn(mock(InflightRepository.class));
 
         @SuppressWarnings("unchecked")
         final AbstractCamelContextFactoryBean<ModelCamelContext> factory = mock(AbstractCamelContextFactoryBean.class);

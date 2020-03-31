@@ -221,7 +221,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (camelContext != null) {
             camelContext.addStartupListener(this);
         }

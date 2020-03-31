@@ -22,8 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
 public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
@@ -48,12 +50,14 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isNull();
 
         // cannot use template as it automatically decodes some chars in the path
-        HttpClient httpClient = new HttpClient();
-        GetMethod httpGet = new GetMethod("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
-        int status = httpClient.executeMethod(httpGet);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
 
-        assertEquals("Get a wrong response status", 200, status);
-        assertMockEndpointsSatisfied();
+            try (CloseableHttpResponse response = client.execute(httpGet)) {
+                assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+                assertMockEndpointsSatisfied();
+            }
+        }
     }
 
     @Override

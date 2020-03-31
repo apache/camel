@@ -300,7 +300,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
     }
 

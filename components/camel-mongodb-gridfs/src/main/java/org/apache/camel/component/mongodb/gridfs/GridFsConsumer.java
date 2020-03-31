@@ -30,15 +30,12 @@ import com.mongodb.util.JSON;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.IOHelper;
 
 public class GridFsConsumer extends DefaultConsumer implements Runnable {
-    final GridFsEndpoint endpoint;
-    private ExecutorService executor;
+    private final GridFsEndpoint endpoint;
+    private volatile ExecutorService executor;
 
-    /**
-     * @param endpoint
-     * @param processor
-     */
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
@@ -48,7 +45,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     protected void doStop() throws Exception {
         super.doStop();
         if (executor != null) {
-            executor.shutdown();
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
     }
@@ -76,13 +73,13 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         DBObject persistentTimestamp = null;
         if (persistsTimestamp) {
             ptsCollection = endpoint.getDB().getCollection(endpoint.getPersistentTSCollection());
-         // ensure standard indexes as long as collections are small
+            // ensure standard indexes as long as collections are small
             try {
                 if (ptsCollection.count() < 1000) {
                     ptsCollection.createIndex(new BasicDBObject("id", 1));
                 }
             } catch (MongoException e) {
-                //TODO: Logging
+                // ignore
             }
             persistentTimestamp = ptsCollection.findOne(new BasicDBObject("id", endpoint.getPersistentTSObject()));
             if (persistentTimestamp == null) {
@@ -137,7 +134,6 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                         exchange.getIn().setBody(file.getInputStream(), InputStream.class);
                         try {
                             getProcessor().process(exchange);
-                            //System.out.println("Processing " + file.getFilename());
                             if (usesAttribute) {
                                 forig.put(endpoint.getFileAttributeName(), "done");
                                 endpoint.getFilesCollection().save(forig);
@@ -149,8 +145,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                                 }
                             }
                         } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            // ignore
                         }
                     }
                 }
@@ -161,11 +156,10 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 Thread.sleep(endpoint.getDelay());
             }
         } catch (Throwable e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            // ignore
         }
         if (c != null) {
-            c.close();
+            IOHelper.close(c);
         }
     }
     

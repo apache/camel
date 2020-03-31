@@ -79,7 +79,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
             ServiceHelper.startService(endpoint);
             producer = endpoint.createProducer();
             // add and start producer
-            camelContext.addService(producer, true, true);
+            camelContext.addService(producer, true, false);
             serviceProxy = ProxyHelper.createProxy(endpoint, bind, producer, getServiceInterface());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);

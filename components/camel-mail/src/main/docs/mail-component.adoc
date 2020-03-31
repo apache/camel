@@ -93,7 +93,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mail component supports 41 options, which are listed below.
+The Mail component supports 42 options, which are listed below.
 
 
 
@@ -125,6 +125,7 @@ The Mail component supports 41 options, which are listed below.
 | *additionalJavaMailProperties* (advanced) | Sets additional java mail properties, that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is. |  | Properties
 | *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
 | *attachmentsContentTransfer EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
+| *authenticator* (advanced) | The authenticator for login. If set then the password and username are ignored. Can be used for tokens which can expire and therefore must be read dynamically. |  | MailAuthenticator
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | Sets the Mail configuration |  | MailConfiguration
 | *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
@@ -137,10 +138,10 @@ The Mail component supports 41 options, which are listed below.
 | *session* (advanced) | Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where mail sessions are created and managed by some other resource, such as a JavaEE container. When using a custom mail session, then the hostname and port from the mail session will be used (if configured on the session). |  | Session
 | *useInlineAttachments* (advanced) | Whether to use disposition inline or attachment. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *password* (security) | The password for login |  | String
+| *password* (security) | The password for login. See also setAuthenticator(MailAuthenticator). |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *username* (security) | The username for login |  | String
+| *username* (security) | The username for login. See also setAuthenticator(MailAuthenticator). |  | String
 |===
 // component options: END
 
@@ -169,7 +170,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (66 parameters):
+=== Query Parameters (67 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -207,6 +208,7 @@ with the following path and query parameters:
 | *additionalJavaMailProperties* (advanced) | Sets additional java mail properties, that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is. |  | Properties
 | *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
 | *attachmentsContentTransfer EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
+| *authenticator* (advanced) | The authenticator for login. If set then the password and username are ignored. Can be used for tokens which can expire and therefore must be read dynamically. |  | MailAuthenticator
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *binding* (advanced) | Sets the binding used to convert from a Camel message to and from a Mail message |  | MailBinding
 | *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
@@ -237,9 +239,9 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *password* (security) | The password for login |  | String
+| *password* (security) | The password for login. See also setAuthenticator(MailAuthenticator). |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
-| *username* (security) | The username for login |  | String
+| *username* (security) | The username for login. See also setAuthenticator(MailAuthenticator). |  | String
 | *sortTerm* (sort) | Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3 or when IMAP server does not have the SORT capability. |  | SortTerm[]
 |===
 // endpoint options: END

@@ -66,11 +66,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
-    private boolean allowAddingNewRoutes = true;
-    private boolean clearModelReferences;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
-    private boolean jmxCreateConnector;
     private boolean useMdcLogging;
     private String mdcLoggingKeysPattern;
     private String threadNamePattern;
@@ -83,6 +80,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String javaRoutesExcludePattern;
     private String xmlRoutes = "classpath:camel/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
+    private boolean lightweight;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -634,38 +632,6 @@ public abstract class DefaultConfigurationProperties<T> {
         this.useBreadcrumb = useBreadcrumb;
     }
 
-    /**
-     * Whether its allowed to add new routes after Camel has been started.
-     * This is enabled by default.
-     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
-     * <p/>
-     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
-     * As this affects the entire JVM where Camel JARs are on the classpath.
-     */
-    public boolean isAllowAddingNewRoutes() {
-        return allowAddingNewRoutes;
-    }
-
-    /**
-     * Whether its allowed to add new routes after Camel has been started.
-     * This is enabled by default.
-     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
-     * <p/>
-     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
-     * As this affects the entire JVM where Camel JARs are on the classpath.
-     */
-    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
-        this.allowAddingNewRoutes = allowAddingNewRoutes;
-    }
-
-    public boolean isClearModelReferences() {
-        return clearModelReferences;
-    }
-
-    public void setClearModelReferences(boolean clearModelReferences) {
-        this.clearModelReferences = clearModelReferences;
-    }
-
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
         return jmxManagementStatisticsLevel;
     }
@@ -691,19 +657,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-    }
-
-    public boolean isJmxCreateConnector() {
-        return jmxCreateConnector;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     *
-     * The default value is false.
-     */
-    public void setJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
     }
 
     public boolean isUseMdcLogging() {
@@ -922,6 +875,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setXmlRests(String xmlRests) {
         this.xmlRests = xmlRests;
+    }
+
+    public boolean isLightweight() {
+        return lightweight;
+    }
+
+    /**
+     * Configure the context to be lightweight.  This will trigger some optimizations
+     * and memory reduction options.  Lightweight context have some limitations.  At
+     * this moment, dynamic endpoint destinations are not supported.
+     */
+    public void setLightweight(boolean lightweight) {
+        this.lightweight = lightweight;
     }
 
     // fluent builders
@@ -1332,19 +1298,6 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether its allowed to add new routes after Camel has been started.
-     * This is enabled by default.
-     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
-     * <p/>
-     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
-     * As this affects the entire JVM where Camel JARs are on the classpath.
-     */
-    public T withAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
-        this.allowAddingNewRoutes = allowAddingNewRoutes;
-        return (T) this;
-    }
-
-    /**
      * Set whether breadcrumb is enabled.
      * The default value is false.
      */
@@ -1371,16 +1324,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
-        return (T) this;
-    }
-
-    /**
-     * Whether JMX connector is created, allowing clients to connect remotely
-     *
-     * The default value is false.
-     */
-    public T withJmxCreateConnector(boolean jmxCreateConnector) {
-        this.jmxCreateConnector = jmxCreateConnector;
         return (T) this;
     }
 
@@ -1578,6 +1521,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withXmlRests(String xmlRests) {
         this.xmlRests = xmlRests;
+        return (T) this;
+    }
+
+    /*
+     * Configure the context to be lightweight.  This will trigger some optimizations
+     * and memory reduction options.
+     * <p/>
+     * Lightweight context have some limitations.  At the moment, dynamic endpoint
+     * destinations are not supported.  Also, this should only be done on a JVM with
+     * a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public T withLightweight(boolean lightweight) {
+        this.lightweight = lightweight;
         return (T) this;
     }
 }

@@ -1,0 +1,273 @@
+[[avro-component]]
+= Avro Component
+
+*Since Camel 2.10*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+This component provides a support for Apache Avro's rpc, by
+providing producers and consumers endpoint for using avro over netty or
+http. Before Camel 3.2 this functionality was a part of camel-avro component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-avro-rpc</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== Apache Avro Overview
+
+Avro allows you to define message types and a protocol using a json like
+format and then generate java code for the specified types and messages.
+An example of how a schema looks like is below.
+
+[source,xml]
+------------------------------------------------------------------------------------------
+{"namespace": "org.apache.camel.avro.generated",
+ "protocol": "KeyValueProtocol",
+
+ "types": [
+     {"name": "Key", "type": "record",
+      "fields": [
+          {"name": "key",   "type": "string"}
+      ]
+     },
+     {"name": "Value", "type": "record",
+      "fields": [
+          {"name": "value",   "type": "string"}
+      ]
+     }
+ ],
+
+ "messages": {
+     "put": {
+         "request": [{"name": "key", "type": "Key"}, {"name": "value", "type": "Value"} ],
+         "response": "null"
+     },
+     "get": {
+         "request": [{"name": "key", "type": "Key"}],
+         "response": "Value"
+     }
+ }
+}
+------------------------------------------------------------------------------------------
+
+You can easily generate classes from a schema, using maven, ant etc.
+More details can be found at the
+http://avro.apache.org/docs/current/[Apache Avro documentation].
+
+However, it doesn't enforce a schema first approach and you can create
+schema for your existing classes. *Since 2.12* you can use existing
+protocol interfaces to make RCP calls. You should use interface for the
+protocol itself and POJO beans or primitive/String classes for parameter
+and result types. Here is an example of the class that corresponds to
+schema above:
+
+[source,java]
+--------------------------------------------------------------
+package org.apache.camel.avro.reflection;
+
+public interface KeyValueProtocol {
+    void put(String key, Value value);
+    Value get(String key);
+}
+
+class Value {
+    private String value;
+    public String getValue() { return value; }
+    public void setValue(String value) { this.value = value; }
+}
+--------------------------------------------------------------
+
+_Note: Existing classes can be used only for RPC (see below), not in
+data format._
+
+== Using Avro RPC in Camel
+
+As mentioned above Avro also provides RPC support over multiple
+transports such as http and netty. Camel provides consumers and
+producers for these two transports.
+
+[source,java]
+----------------------------------------
+avro:[transport]:[host]:[port][?options]
+----------------------------------------
+
+The supported transport values are currently http or netty.
+
+*Since 2.12* you can specify message name right in the URI:
+
+[source,java]
+------------------------------------------------------
+avro:[transport]:[host]:[port][/messageName][?options]
+------------------------------------------------------
+
+For consumers this allows you to have multiple routes attached to the
+same socket. Dispatching to correct route will be done by the avro
+component automatically. Route with no messageName specified (if any)
+will be used as default.
+
+When using camel producers for avro ipc, the "in" message body needs to
+contain the parameters of the operation specified in the avro protocol.
+The response will be added in the body of the "out" message.
+
+In a similar manner when using camel avro consumers for avro ipc, the
+requests parameters will be placed inside the "in" message body of the
+created exchange and once the exchange is processed the body of the
+"out" message will be send as a response.
+
+*Note:* By default consumer parameters are wrapped into array. If you've
+got only one parameter, *since 2.12* you can use `singleParameter` URI
+option to receive it direcly in the "in" message body without array
+wrapping.
+
+== Avro RPC URI Options
+
+// component options: START
+The Avro component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *protocol* (common) | Avro protocol to use |  | Protocol
+| *protocolClassName* (common) | Avro protocol to use defined by the FQN class name |  | String
+| *protocolLocation* (common) | Avro protocol location |  | String
+| *reflectionProtocol* (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
+| *singleParameter* (common) | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
+| *uriAuthority* (common) | Authority to use (username and password) |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | To use a shared AvroConfiguration to configure options once |  | AvroConfiguration
+|===
+// component options: END
+
+// endpoint options: START
+The Avro endpoint is configured using URI syntax:
+
+----
+avro:transport:host:port/messageName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *transport* | *Required* Transport to use, can be either http or netty. The value can be one of: http, netty |  | AvroTransport
+| *port* | *Required* Port number to use |  | int
+| *host* | *Required* Hostname to use |  | String
+| *messageName* | The name of the message to send. |  | String
+|===
+
+
+=== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *protocol* (common) | Avro protocol to use |  | Protocol
+| *protocolClassName* (common) | Avro protocol to use defined by the FQN class name |  | String
+| *protocolLocation* (common) | Avro protocol location |  | String
+| *reflectionProtocol* (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
+| *singleParameter* (common) | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
+| *uriAuthority* (common) | Authority to use (username and password) |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+== Avro RPC Headers
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Name |Description
+
+|`CamelAvroMessageName` |The name of the message to send. In consumer overrides message name from
+URI (if any)
+|=======================================================================
+
+== Examples
+
+An example of using camel avro producers via http:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
+---------------------------------------------------------------------------------------------------------------------------
+
+In the example above you need to fill `CamelAvroMessageName` header.
+*Since 2.12* you can use following syntax to call constant messages:
+
+[source,xml]
+-------------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
+-------------------------------------------------------------------------------------------------------------------------------
+
+An example of consuming messages using camel avro consumers via netty:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="avro:netty:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <choice>
+                <when>
+                    <el>${in.headers.CamelAvroMessageName == 'put'}</el>
+                    <process ref="putProcessor"/>
+                </when>
+                <when>
+                    <el>${in.headers.CamelAvroMessageName == 'get'}</el>
+                    <process ref="getProcessor"/>
+                </when>
+            </choice>
+        </route>
+------------------------------------------------------------------------------------------------------------------------------
+
+*Since 2.12* you can set up two distinct routes to perform the same
+task:
+
+[source,xml]
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+        <route>
+            <from uri="avro:netty:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol">
+            <process ref="putProcessor"/>
+        </route>
+        <route>
+            <from uri="avro:netty:localhost:{{avroport}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true"/>
+            <process ref="getProcessor"/>
+        </route>
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the example above, get takes only one parameter, so `singleParameter`
+is used and `getProcessor` will receive Value class directly in body,
+while `putProcessor` will receive an array of size 2 with String key and
+Value value filled as array contents.
+
+include::camel-spring-boot::page$avro-starter.adoc[]

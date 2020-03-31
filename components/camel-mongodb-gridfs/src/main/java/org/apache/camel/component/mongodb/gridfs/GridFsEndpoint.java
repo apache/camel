@@ -69,7 +69,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private long initialDelay = 1000;
     @UriParam(label = "consumer", defaultValue = "500")
     private long delay = 500;
-
     @UriParam(label = "consumer", defaultValue = "TimeStamp")
     private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;
     @UriParam(label = "consumer", defaultValue = "camel-timestamps")
@@ -78,7 +77,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private String persistentTSObject = "camel-timestamp";
     @UriParam(label = "consumer", defaultValue = "camel-processed")
     private String fileAttributeName = "camel-processed";
-
 
     private MongoClient mongoConnection;
     private DB db;
@@ -117,18 +115,17 @@ public class GridFsEndpoint extends DefaultEndpoint {
         };
     }
 
-
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
         LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         setWriteReadOptionsOnConnection();
-        super.doStart();
+        super.doInit();
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
         if (mongoConnection != null) {
             LOG.debug("Closing connection");
             mongoConnection.close();
@@ -148,6 +145,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     // ======= Getters and setters ===============================================
+
     public String getConnectionBean() {
         return connectionBean;
     }
@@ -207,8 +205,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
     /**
      * Additional query parameters (in JSON) that are used to configure the query used for finding
      * files in the GridFsConsumer
-     *
-     * @param query
      */
     public void setQuery(String query) {
         this.query = query;
@@ -219,9 +215,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the delay between polls within the Consumer.  Default is 500ms
-     *
-     * @param delay
+     * Sets the delay between polls within the Consumer. Default is 500ms
      */
     public void setDelay(long delay) {
         this.delay = delay;
@@ -232,9 +226,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the initialDelay before the consumer will start polling.  Default is 1000ms
-     *
-     * @param initialDelay
+     * Sets the initialDelay before the consumer will start polling. Default is 1000ms
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = delay;
@@ -248,7 +240,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the QueryStrategy that is used for polling for new files.  Default is Timestamp
+     * Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
      */
     public void setQueryStrategy(QueryStrategy queryStrategy) {
         this.queryStrategy = queryStrategy;

@@ -133,6 +133,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     @Override
+    public void init(CamelContext context) {
+    }
+
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);

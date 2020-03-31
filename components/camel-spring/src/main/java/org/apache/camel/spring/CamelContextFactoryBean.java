@@ -149,11 +149,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute @Metadata(defaultValue = "true")
-    private Boolean loadTypeConverters;
+    private String loadTypeConverters;
     @XmlAttribute
-    private Boolean typeConverterStatisticsEnabled;
+    private String typeConverterStatisticsEnabled;
     @XmlAttribute
-    private Boolean inflightRepositoryBrowseEnabled;
+    private String inflightRepositoryBrowseEnabled;
     @XmlAttribute @Metadata(defaultValue = "Override")
     private TypeConverterExists typeConverterExists;
     @XmlAttribute @Metadata(defaultValue = "WARN")
@@ -483,7 +483,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         if (context == null && create) {
             context = createContext();
             configure(context);
-            context.init();
+            context.build();
         }
         return context;
     }
@@ -943,7 +943,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
-    public Boolean getInflightRepositoryBrowseEnabled() {
+    public String getInflightRepositoryBrowseEnabled() {
         return inflightRepositoryBrowseEnabled;
     }
 
@@ -952,7 +952,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      *
      * This is by default disabled as there is a very slight performance overhead when enabled.
      */
-    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+    public void setInflightRepositoryBrowseEnabled(String inflightRepositoryBrowseEnabled) {
         this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
@@ -988,7 +988,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
-    public Boolean getLoadTypeConverters() {
+    public String getLoadTypeConverters() {
         return loadTypeConverters;
     }
 
@@ -1001,12 +1001,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      *
      * @param loadTypeConverters whether to load custom type converters.
      */
-    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+    public void setLoadTypeConverters(String loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
     }
 
     @Override
-    public Boolean getTypeConverterStatisticsEnabled() {
+    public String getTypeConverterStatisticsEnabled() {
         return typeConverterStatisticsEnabled;
     }
 
@@ -1020,7 +1020,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * {@link org.apache.camel.spi.TypeConverterRegistry#getStatistics()#setTypeConverterStatisticsEnabled(Boolean)} method,
      * or from JMX on the {@link org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean} mbean.
      */
-    public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
+    public void setTypeConverterStatisticsEnabled(String typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
     }
 

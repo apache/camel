@@ -26,18 +26,20 @@ public class NatsConsumerReplyToTest extends NatsTestSupport {
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
+    @EndpointInject("mock:reply")
+    protected MockEndpoint mockReplyEndpoint;
+
     @Test
     public void testReplyTo() throws Exception {
         mockResultEndpoint.expectedBodiesReceived("World");
         mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
+        mockReplyEndpoint.expectedBodiesReceived("Bye World");
+        mockReplyEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "myReplyQueue");
 
         template.sendBody("direct:send", "World");
 
         mockResultEndpoint.assertIsSatisfied();
-
-        // grab reply message from the reply queue
-        String out = consumer.receiveBody("nats:myReplyQueue", 5000, String.class);
-        assertEquals("Bye World", out);
+        mockReplyEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -52,6 +54,9 @@ public class NatsConsumerReplyToTest extends NatsTestSupport {
                         .to(mockResultEndpoint)
                         .convertBodyTo(String.class)
                         .setBody().simple("Bye ${body}");
+
+                from("nats:myReplyQueue")
+                        .to("mock:reply");
             }
         };
     }

@@ -24,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -371,7 +372,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return new MulticastProcessor(getCamelContextReference(), processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
+        return new MulticastProcessor(getCamelContextReference(), null, processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
     }
 
     @Override
@@ -387,5 +388,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ExecutorServiceManager createExecutorServiceManager() {
         return new BaseExecutorServiceManager(getCamelContextReference());
+    }
+
+    @Override
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        throw new UnsupportedOperationException();
     }
 }

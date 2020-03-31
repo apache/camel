@@ -29,8 +29,10 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -177,10 +179,13 @@ public class Main extends MainCommandLineSupport {
             applicationContext.start();
 
             initCamelContext();
-        } finally {
+        } catch (Exception e) {
             // if we were veto started then mark as completed
-            if (getCamelContext() != null && getCamelContext().isVetoStarted()) {
+            VetoCamelContextStartException veto = ObjectHelper.getException(VetoCamelContextStartException.class, e);
+            if (veto != null) {
                 completed();
+            } else {
+                throw e;
             }
         }
     }

@@ -15,8 +15,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MainConfigurationProperties target = (org.apache.camel.main.MainConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowaddingnewroutes":
-        case "AllowAddingNewRoutes": target.setAllowAddingNewRoutes(property(camelContext, boolean.class, value)); return true;
         case "allowuseoriginalmessage":
         case "AllowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, boolean.class, value)); return true;
         case "autoconfigurationenabled":
@@ -45,8 +43,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionLoggingLevel": target.setBeanIntrospectionLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
-        case "clearmodelreferences":
-        case "ClearModelReferences": target.setClearModelReferences(property(camelContext, boolean.class, value)); return true;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
         case "durationhitexitcode":
@@ -75,14 +71,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JavaRoutesExcludePattern": target.setJavaRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "javaroutesincludepattern":
         case "JavaRoutesIncludePattern": target.setJavaRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "jmxcreateconnector":
-        case "JmxCreateConnector": target.setJmxCreateConnector(property(camelContext, boolean.class, value)); return true;
         case "jmxenabled":
         case "JmxEnabled": target.setJmxEnabled(property(camelContext, boolean.class, value)); return true;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": target.setJmxManagementNamePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "jmxmanagementstatisticslevel":
         case "JmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
+        case "lightweight":
+        case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "loadtypeconverters":
         case "LoadTypeConverters": target.setLoadTypeConverters(property(camelContext, boolean.class, value)); return true;
         case "logdebugmaxchars":

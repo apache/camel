@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow.spi;
 
+import io.undertow.util.StatusCodes;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -54,7 +55,7 @@ public class SecurityProviderTest extends AbstractSecurityProviderTest {
 
         } catch (CamelExecutionException e) {
             HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(403, he.getStatusCode());
+            assertEquals(StatusCodes.FORBIDDEN, he.getStatusCode());
         }
     }
 

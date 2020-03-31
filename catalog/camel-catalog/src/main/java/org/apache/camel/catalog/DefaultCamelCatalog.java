@@ -587,11 +587,6 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
-    public String blueprintSchemaAsXml() {
-        return cache(SCHEMAS_XML + "/camel-blueprint.xsd", this::loadResource);
-    }
-
-    @Override
     public String mainJsonSchema() {
         return cache(MAIN_DIR + "/camel-main-configuration-metadata.json", this::loadResource);
     }

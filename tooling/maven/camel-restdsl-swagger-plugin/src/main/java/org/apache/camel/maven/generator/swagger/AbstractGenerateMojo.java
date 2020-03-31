@@ -26,6 +26,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
@@ -92,8 +93,12 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/src/spec/swagger.json", required = true)
     String specificationUri;
 
-    @Parameter(defaultValue = "2.3.1")
+    @Parameter(defaultValue = "2.4.12")
     String swaggerCodegenMavenPluginVersion;
+
+    // A map of the language-specific parameters passed to the swagger-codegen-maven-plugin
+    @Parameter(name = "configOptions")
+    Map<?, ?> configOptions;
 
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject mavenProject;
@@ -173,6 +178,13 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         }
         if (modelWithXml != null) {
             elements.add(new MojoExecutor.Element("withXml", modelPackage));
+        }
+        if (configOptions != null && !configOptions.isEmpty()) {
+            List<MojoExecutor.Element> options = new ArrayList<>();
+            for (Map.Entry<?, ?>  configOption : configOptions.entrySet()) {
+                options.add(new MojoExecutor.Element(configOption.getKey().toString(), configOption.getValue().toString()));
+            }
+            elements.add(new MojoExecutor.Element("configOptions", options.toArray(new MojoExecutor.Element[options.size()])));
         }
 
         executeMojo(

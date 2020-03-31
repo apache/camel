@@ -17,7 +17,6 @@
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.Command;
@@ -27,20 +26,20 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import org.apache.camel.test.AvailablePortFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import static com.mongodb.ServerAddress.defaultHost;
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
-@Configuration
-public class EmbedMongoConfiguration {
+public final class EmbedMongoConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbedMongoConfiguration.class);
-    private static final int PORT = findAvailableTcpPort(18500); // 1024 is too low on CI servers to find free ports
+    private static final int PORT = AvailablePortFinder.getNextAvailable(18500, 19000);
+ 
+    private EmbedMongoConfiguration() {
+    }
 
     static {
         try {
@@ -59,8 +58,7 @@ public class EmbedMongoConfiguration {
         }
     }
 
-    @Bean
-    public MongoClient myDb() throws UnknownHostException {
+    public static MongoClient createMongoClient()  {
         return new MongoClient(defaultHost(), PORT);
     }
 }

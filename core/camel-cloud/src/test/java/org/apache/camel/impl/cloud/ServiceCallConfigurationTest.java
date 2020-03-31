@@ -426,7 +426,8 @@ public class ServiceCallConfigurationTest {
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
             Assert.assertNotNull(proc);
-            Assert.assertTrue(proc.getExpression() instanceof SimpleExpression);
+            Assert.assertEquals("file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}",
+                    proc.getExpression().toString());
 
         } finally {
             if (context != null) {

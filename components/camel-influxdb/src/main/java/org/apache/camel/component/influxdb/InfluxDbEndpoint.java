@@ -67,18 +67,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
     
-    @Override
-    protected void doStart() throws Exception {
-        influxDB = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, InfluxDB.class);
-        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, influxDB);
-        super.doStart();  
-    }
-    
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
     public InfluxDB getInfluxDB() {
         return influxDB;
     }

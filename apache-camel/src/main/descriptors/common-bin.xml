@@ -36,7 +36,6 @@
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-engine</include>
         <include>org.apache.camel:camel-core-languages</include>
-        <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-core-catalog</include>
         <include>org.apache.camel:camel-cloud</include>
@@ -68,6 +67,7 @@
         <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-attachments</include>
         <include>org.apache.camel:camel-avro</include>
+        <include>org.apache.camel:camel-avro-rpc</include>
         <include>org.apache.camel:camel-aws-cw</include>
         <include>org.apache.camel:camel-aws-ddb</include>
         <include>org.apache.camel:camel-aws-ec2</include>
@@ -112,7 +112,6 @@
         <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-beanstalk</include>
         <include>org.apache.camel:camel-bindy</include>
-        <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-box-api</include>
@@ -160,7 +159,6 @@
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-elytron</include>
         <include>org.apache.camel:camel-etcd</include>
-        <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
         <include>org.apache.camel:camel-fastjson</include>
@@ -239,7 +237,6 @@
         <include>org.apache.camel:camel-kafka</include>
         <include>org.apache.camel:camel-kubernetes</include>
         <include>org.apache.camel:camel-kudu</include>
-        <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-language</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-ldif</include>
@@ -281,9 +278,7 @@
         <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
-        <include>org.apache.camel:camel-osgi-activator</include>
         <include>org.apache.camel:camel-paho</include>
-        <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-pdf</include>
         <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
@@ -354,10 +349,8 @@
         <include>org.apache.camel:camel-tarfile</include>
         <include>org.apache.camel:camel-telegram</include>
         <include>org.apache.camel:camel-test</include>
-        <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-junit5</include>
-        <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-test-spring-junit5</include>
         <include>org.apache.camel:camel-testcontainers</include>
@@ -420,9 +413,6 @@
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-catalog-lucene</include>
         <include>org.apache.camel:camel-catalog-maven</include>
-        <include>org.apache.camel:camel-catalog-provider-karaf</include>
-        <include>org.apache.camel:camel-commands-core</include>
-        <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <include>org.apache.camel:camel-route-parser</include>
       </includes>
     </dependencySet>

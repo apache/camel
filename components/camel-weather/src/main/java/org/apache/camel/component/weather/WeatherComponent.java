@@ -19,16 +19,12 @@ package org.apache.camel.component.weather;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.weather.http.AuthenticationHttpClientConfigurer;
-import org.apache.camel.component.weather.http.AuthenticationMethod;
-import org.apache.camel.component.weather.http.CompositeHttpConfigurer;
-import org.apache.camel.component.weather.http.HttpClientConfigurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.camel.util.IOHelper;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 /**
  * A <a href="http://camel.apache.org/weather.html">Weather Component</a>.
@@ -38,7 +34,8 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 @Component("weather")
 public class WeatherComponent extends DefaultComponent {
 
-    private HttpClient httpClient;
+    @Metadata(label = "advanced")
+    private CloseableHttpClient httpClient;
     private String geolocationAccessKey;
     private String geolocationRequestHostIP;
 
@@ -48,74 +45,28 @@ public class WeatherComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WeatherConfiguration configuration = new WeatherConfiguration(this);
+        configuration.setGeolocationAccessKey(geolocationAccessKey);
+        configuration.setGeolocationRequestHostIP(geolocationRequestHostIP);
 
-        httpClient = createHttpClient(configuration);
-        geolocationAccessKey = configuration.getGeolocationAccessKey();
-        geolocationRequestHostIP = configuration.getGeolocationRequestHostIP();
         WeatherEndpoint endpoint = new WeatherEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        if (httpClient == null) {
+            httpClient = HttpClients.createDefault();
+        }
+
         return endpoint;
     }
 
-    private HttpClient createHttpClient(WeatherConfiguration configuration) {
-        HttpConnectionManager connectionManager = configuration.getHttpConnectionManager();
-        if (connectionManager == null) {
-            connectionManager = new MultiThreadedHttpConnectionManager();
-        }
-        HttpClient httpClient = new HttpClient(connectionManager);
-
-        if (configuration.getProxyHost() != null && configuration.getProxyPort() != null) {
-            httpClient.getHostConfiguration().setProxy(configuration.getProxyHost(), configuration.getProxyPort());
-        }
-
-        if (configuration.getProxyAuthUsername() != null && configuration.getProxyAuthMethod() == null) {
-            throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
-        }
-
-        CompositeHttpConfigurer configurer = new CompositeHttpConfigurer();
-        if (configuration.getProxyAuthMethod() != null) {
-            configureProxyAuth(configurer, configuration.getProxyAuthMethod(), configuration.getProxyAuthUsername(), configuration.getProxyAuthPassword(),
-                               configuration.getProxyAuthDomain(), configuration.getProxyAuthHost());
-        }
-
-        configurer.configureHttpClient(httpClient);
-
+    public CloseableHttpClient getHttpClient() {
         return httpClient;
     }
 
-    private HttpClientConfigurer configureProxyAuth(CompositeHttpConfigurer configurer, String authMethod, String username, String password, String domain, String host) {
-        // no proxy auth is in use
-        if (username == null && authMethod == null) {
-            return configurer;
-        }
-
-        // validate mandatory options given
-        if (username != null && authMethod == null) {
-            throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
-        }
-
-        ObjectHelper.notNull(authMethod, "proxyAuthMethod");
-        ObjectHelper.notNull(username, "proxyAuthUsername");
-        ObjectHelper.notNull(password, "proxyAuthPassword");
-
-        AuthenticationMethod auth = getCamelContext().getTypeConverter().convertTo(AuthenticationMethod.class, authMethod);
-
-        if (auth == AuthenticationMethod.Basic || auth == AuthenticationMethod.Digest) {
-            configurer.addConfigurer(AuthenticationHttpClientConfigurer.basicAutenticationConfigurer(true, username, password));
-            return configurer;
-        } else if (auth == AuthenticationMethod.NTLM) {
-            // domain is mandatory for NTML
-            ObjectHelper.notNull(domain, "proxyAuthDomain");
-            configurer.addConfigurer(AuthenticationHttpClientConfigurer.ntlmAutenticationConfigurer(true, username, password, domain, host));
-            return configurer;
-        }
-
-        throw new IllegalArgumentException("Unknown proxyAuthMethod " + authMethod);
-
-    }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
+    /**
+     * To use an existing configured http client (for example with http proxy)
+     */
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     public String getGeolocationAccessKey() {
@@ -134,11 +85,19 @@ public class WeatherComponent extends DefaultComponent {
     }
 
     /**
-     * The geolocation service now needs to specify the IP associated to the
-     * accessKey you're using
+     * The geolocation service now needs to specify the IP associated to the accessKey you're using
      */
     public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
         this.geolocationRequestHostIP = geolocationRequestHostIP;
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+
+        if (httpClient != null) {
+            IOHelper.close(httpClient);
+            httpClient = null;
+        }
+    }
 }

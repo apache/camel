@@ -32,11 +32,6 @@ import org.junit.Test;
 
 public class KafkaComponentTest extends CamelTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testPropertiesSet() throws Exception {
         String uri = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party";

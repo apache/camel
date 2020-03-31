@@ -261,7 +261,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsBuilders,
             org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerBuilders,
             org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.PahoBuilders,
-            org.apache.camel.builder.endpoint.dsl.PaxLoggingEndpointBuilderFactory.PaxLoggingBuilders,
             org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.PdfBuilders,
             org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventBuilders,
             org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotBuilders,

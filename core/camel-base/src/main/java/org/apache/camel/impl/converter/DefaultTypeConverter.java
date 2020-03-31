@@ -57,15 +57,10 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
     }
 
     @Override
-    protected void doInit() {
-        super.doInit();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         StopWatch watch = new StopWatch();
 
-        super.doStart();
+        super.doInit();
 
         // core type converters is always loaded which does not use any classpath scanning and therefore is fast
         loadCoreAndFastTypeConverters();

@@ -219,12 +219,12 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.atomixValue();
     }
     /**
-     * Avro (camel-avro)
+     * Avro (camel-avro-rpc)
      * Working with Apache Avro for data serialization.
      * 
      * Category: messaging,transformation
      * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-avro
+     * Maven coordinates: org.apache.camel:camel-avro-rpc
      */
     static org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.AvroComponentBuilder avro() {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
@@ -1311,18 +1311,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.elsql();
     }
     /**
-     * Elytron (camel-elytron)
-     * The elytron component is allows you to work with the Elytron Security
-     * Framework
-     * 
-     * Category: http
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-elytron
-     */
-    static org.apache.camel.builder.component.dsl.ElytronComponentBuilderFactory.ElytronComponentBuilder elytron() {
-        return org.apache.camel.builder.component.dsl.ElytronComponentBuilderFactory.elytron();
-    }
-    /**
      * Etcd Keys (camel-etcd)
      * Camel Etcd support
      * 
@@ -1356,18 +1344,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.EtcdWatchComponentBuilder etcdWatch() {
         return org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.etcdWatch();
-    }
-    /**
-     * OSGi EventAdmin (camel-eventadmin)
-     * The eventadmin component can be used in an OSGi environment to receive
-     * OSGi EventAdmin events and process them.
-     * 
-     * Category: eventbus
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-eventadmin
-     */
-    static org.apache.camel.builder.component.dsl.EventadminComponentBuilderFactory.EventadminComponentBuilder eventadmin() {
-        return org.apache.camel.builder.component.dsl.EventadminComponentBuilderFactory.eventadmin();
     }
     /**
      * Exec (camel-exec)
@@ -2987,18 +2963,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.PahoComponentBuilderFactory.PahoComponentBuilder paho() {
         return org.apache.camel.builder.component.dsl.PahoComponentBuilderFactory.paho();
-    }
-    /**
-     * OSGi PAX Logging (camel-paxlogging)
-     * The paxlogging component can be used in an OSGi environment to receive
-     * PaxLogging events and process them.
-     * 
-     * Category: monitoring
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-paxlogging
-     */
-    static org.apache.camel.builder.component.dsl.PaxloggingComponentBuilderFactory.PaxloggingComponentBuilder paxlogging() {
-        return org.apache.camel.builder.component.dsl.PaxloggingComponentBuilderFactory.paxlogging();
     }
     /**
      * PDF (camel-pdf)

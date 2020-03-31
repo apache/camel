@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +45,8 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmxManagementStrategy.class);
 
+    private final List<Object> managed = new ArrayList<>();
+
     public JmxManagementStrategy() {
     }
 
@@ -53,6 +58,10 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     @Override
     public void manageObject(Object managedObject) throws Exception {
+        if (!isStartingOrStarted()) {
+            managed.add(managedObject);
+            return;
+        }
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().register(managedObject, objectName);
@@ -61,6 +70,10 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     @Override
     public void unmanageObject(Object managedObject) throws Exception {
+        if (!isStartingOrStarted()) {
+            managed.remove(managedObject);
+            return;
+        }
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().unregister(objectName);
@@ -99,14 +112,10 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("JMX is enabled");
-
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-        if (!getEventNotifiers().isEmpty()) {
-            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+        super.doStart();
+        for (Object o : managed) {
+            manageObject(o);
         }
-
-        doStartManagementStrategy();
     }
 
     @Override

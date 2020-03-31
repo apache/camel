@@ -56,6 +56,6 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
             Exchange.HTTP_METHOD, "POST", String.class);
 
         assertNotNull(response);
-        assertTrue(response.contains("Problem accessing /CxfOperationExceptionTest/rest"));
+        assertTrue(response.contains("CxfOperationExceptionTest/rest"));
     }
 }

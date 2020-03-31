@@ -50,18 +50,6 @@ public class IOHelperTest extends Assert {
     }
 
     @Test
-    public void testNewStringFromBytes() {
-        String s = IOHelper.newStringFromBytes("Hello".getBytes());
-        assertEquals("Hello", s);
-    }
-
-    @Test
-    public void testNewStringFromBytesWithStart() {
-        String s = IOHelper.newStringFromBytes("Hello".getBytes(), 2, 3);
-        assertEquals("llo", s);
-    }
-
-    @Test
     public void testCopyAndCloseInput() throws Exception {
         InputStream is = new ByteArrayInputStream("Hello".getBytes());
         OutputStream os = new ByteArrayOutputStream();

@@ -20,7 +20,7 @@ To include both, AWS XRay and Camel, dependencies use the following Maven import
       <dependency>
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-xray-recorder-sdk-bom</artifactId>
-        <version>1.3.1</version>
+        <version>2.4.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

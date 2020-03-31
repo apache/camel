@@ -17,27 +17,31 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
 
     @Test
     public void testHttpHeaderCase() throws Exception {
-        HttpClient client = new HttpClient();
-        HttpMethod method = new PostMethod("http://localhost:" + getPort() + "/myapp/mytest");
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost method = new HttpPost("http://localhost:" + getPort() + "/myapp/mytest");
 
-        method.setRequestHeader("clientHeader", "fooBAR");
-        method.setRequestHeader("OTHER", "123");
-        method.setRequestHeader("beer", "Carlsberg");
+            method.addHeader("clientHeader", "fooBAR");
+            method.addHeader("OTHER", "123");
+            method.addHeader("beer", "Carlsberg");
 
-        client.executeMethod(method);
-
-        assertEquals("Bye World", method.getResponseBodyAsString());
-        assertEquals("aBc123", method.getResponseHeader("MyCaseHeader").getValue());
-        assertEquals("456DEf", method.getResponseHeader("otherCaseHeader").getValue());
+            try (CloseableHttpResponse response = client.execute(method)) {
+                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+                assertEquals("Bye World", responseString);
+                assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
+                assertEquals("456DEf", response.getFirstHeader("otherCaseHeader").getValue());
+            }
+        }
     }
 
     @Override

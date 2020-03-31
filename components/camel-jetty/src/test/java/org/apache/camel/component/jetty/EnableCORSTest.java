@@ -17,43 +17,48 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
 public class EnableCORSTest extends BaseJettyTest {
 
     @Test
     public void testCORSdisabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        HttpMethod httpMethod = new GetMethod("http://localhost:" + getPort() + "/test1");
-        httpMethod.addRequestHeader("Origin", "http://localhost:9000");
-        httpMethod.addRequestHeader("Referer", "http://localhost:9000");
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        int status = httpclient.executeMethod(httpMethod);
+        HttpGet httpMethod = new HttpGet("http://localhost:" + getPort() + "/test1");
+        httpMethod.addHeader("Origin", "http://localhost:9000");
+        httpMethod.addHeader("Referer", "http://localhost:9000");
 
-        assertEquals("Get a wrong response status", 200, status);
+        HttpResponse response = client.execute(httpMethod);
 
-        Header responseHeader = httpMethod.getResponseHeader("Access-Control-Allow-Credentials");
+        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+
+        Object responseHeader = response.getFirstHeader("Access-Control-Allow-Credentials");
         assertNull("Access-Control-Allow-Credentials HEADER should not be set", responseHeader);
+
+        client.close();
     }
 
     @Test
     public void testCORSenabled() throws Exception {
-        HttpClient httpclient = new HttpClient();
-        HttpMethod httpMethod = new GetMethod("http://localhost:" + getPort2() + "/test2");
-        httpMethod.addRequestHeader("Origin", "http://localhost:9000");
-        httpMethod.addRequestHeader("Referer", "http://localhost:9000");
+        CloseableHttpClient client = HttpClients.createDefault();
 
-        int status = httpclient.executeMethod(httpMethod);
+        HttpGet httpMethod = new HttpGet("http://localhost:" + getPort2() + "/test2");
+        httpMethod.addHeader("Origin", "http://localhost:9000");
+        httpMethod.addHeader("Referer", "http://localhost:9000");
 
-        assertEquals("Get a wrong response status", 200, status);
+        HttpResponse response = client.execute(httpMethod);
 
-        Header responseHeader = httpMethod.getResponseHeader("Access-Control-Allow-Credentials");
-        assertTrue("CORS not enabled", Boolean.valueOf(responseHeader.getValue()));
+        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
 
+        String responseHeader = response.getFirstHeader("Access-Control-Allow-Credentials").getValue();
+        assertTrue("CORS not enabled", Boolean.parseBoolean(responseHeader));
+
+        client.close();
     }
 
     @Override

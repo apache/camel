@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow.spi;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
 /**
@@ -61,4 +62,14 @@ public interface UndertowSecurityProvider {
      * @return True if securityProvider is initialized from data and is able to authenticate requests.
      */
     boolean acceptConfiguration(Object configuration, String endpointUri) throws Exception;
+
+    /**
+     * SecurityProvider may change instance of undertow httpHandler during endpoint registration.
+     *
+     * @param httpHandler Original httpHandler
+     * @return New httpHandler (default behavior is to return the same handler)
+     */
+    default HttpHandler wrapHttpHandler(HttpHandler httpHandler) throws Exception {
+        return  httpHandler;
+    }
 }

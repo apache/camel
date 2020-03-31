@@ -82,10 +82,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-osgi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
         </dependency>
         <dependency>
@@ -152,18 +148,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog-maven</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-catalog-provider-karaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-commands-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel.karaf</groupId>
-            <artifactId>camel-karaf-commands</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

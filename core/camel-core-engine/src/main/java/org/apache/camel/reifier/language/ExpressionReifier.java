@@ -136,6 +136,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         if (expression instanceof CamelContextAware) {
             ((CamelContextAware) expression).setCamelContext(camelContext);
         }
+        expression.init(camelContext);
         return expression;
     }
 
@@ -171,6 +172,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         if (predicate instanceof CamelContextAware) {
             ((CamelContextAware) predicate).setCamelContext(camelContext);
         }
+        predicate.init(camelContext);
         return predicate;
     }
 

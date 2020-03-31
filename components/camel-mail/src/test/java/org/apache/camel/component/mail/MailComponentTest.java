@@ -222,6 +222,29 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testAuthenticator() {
+        DefaultAuthenticator auth1 = new DefaultAuthenticator("u1", "p1");
+        context.getRegistry().bind("auth1", auth1);
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25/?authenticator=#auth1&to=james%40myhost");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "smtp", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", 25, config.getPort());
+        assertEquals("getUsername()", null, config.getUsername());
+        assertNotNull("getPasswordAuthentication()", config.getPasswordAuthentication());
+        assertEquals("getPasswordAuthentication().getUserName()", "u1", config.getPasswordAuthentication().getUserName());
+        assertEquals("getPasswordAuthentication().getUserName()", "p1", config.getPasswordAuthentication().getPassword());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
+        assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals("from", "camel@localhost", config.getFrom());
+        assertEquals("password", null, config.getPassword());
+        assertEquals(false, config.isDelete());
+        assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals(false, config.isDebugMode());
+    }
+
+    @Test
     public void testMailEndpointsWithFetchSize() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?fetchSize=5");
         MailConfiguration config = endpoint.getConfiguration();

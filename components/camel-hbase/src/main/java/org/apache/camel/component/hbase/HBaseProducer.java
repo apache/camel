@@ -103,9 +103,6 @@ public class HBaseProducer extends DefaultProducer {
 
     /**
      * Creates an HBase {@link Put} on a specific row, using a collection of values (family/column/value pairs).
-     *
-     * @param hRow
-     * @throws Exception
      */
     private Put createPut(HBaseRow hRow) throws Exception {
         ObjectHelper.notNull(hRow, "HBase row");

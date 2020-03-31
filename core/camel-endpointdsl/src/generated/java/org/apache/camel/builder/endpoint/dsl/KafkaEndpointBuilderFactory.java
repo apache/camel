@@ -2331,7 +2331,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default: 305000
+         * Default: 30000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder requestTimeoutMs(
@@ -2347,7 +2347,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default: 305000
+         * Default: 30000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder requestTimeoutMs(

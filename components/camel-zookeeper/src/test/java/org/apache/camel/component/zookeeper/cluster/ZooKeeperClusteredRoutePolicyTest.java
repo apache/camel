@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cluster.ClusteredRoutePolicy;
 import org.apache.camel.component.zookeeper.ZooKeeperContainer;
+import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;

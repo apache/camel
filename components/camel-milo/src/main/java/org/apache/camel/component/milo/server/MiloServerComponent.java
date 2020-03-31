@@ -81,7 +81,6 @@ public class MiloServerComponent extends DefaultComponent {
     private static final String URL_CHARSET = "UTF-8";
 
     private final List<Runnable> runOnStop = new LinkedList<>();
-    private final Map<String, MiloServerEndpoint> endpoints = new HashMap<>();
 
     private int port;
     private String namespaceUri = DEFAULT_NAMESPACE_URI;
@@ -110,6 +109,10 @@ public class MiloServerComponent extends DefaultComponent {
 
     public MiloServerComponent(final OpcUaServerConfig serverConfig) {
         this.opcServerConfig = OpcUaServerConfig.copy(serverConfig);
+    }
+
+    public CamelNamespace getNamespace() {
+        return namespace;
     }
 
     @Override
@@ -372,21 +375,9 @@ public class MiloServerComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        synchronized (this) {
-            if (remaining == null || remaining.isEmpty()) {
-                return null;
-            }
-
-            MiloServerEndpoint endpoint = this.endpoints.get(remaining);
-
-            if (endpoint == null) {
-                endpoint = new MiloServerEndpoint(uri, remaining, this.namespace, this);
-                setProperties(endpoint, parameters);
-                this.endpoints.put(remaining, endpoint);
-            }
-
-            return endpoint;
-        }
+        Endpoint endpoint = new MiloServerEndpoint(uri, remaining, this);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     /**
@@ -510,9 +501,7 @@ public class MiloServerComponent extends DefaultComponent {
 
     /**
      * Set user password combinations in the form of "user1:pwd1,user2:pwd2"
-     * <p>
      * Usernames and passwords will be URL decoded
-     * </p>
      */
     public void setUserAuthenticationCredentials(final String userAuthenticationCredentials) {
         this.userAuthenticationCredentials = userAuthenticationCredentials;

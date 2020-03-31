@@ -314,6 +314,19 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
+         * The requested publishing interval in milliseconds.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Default: 1_000.0
+         * Group: client
+         */
+        default MiloClientComponentBuilder requestedPublishingInterval(
+                java.lang.Double requestedPublishingInterval) {
+            doSetProperty("requestedPublishingInterval", requestedPublishingInterval);
+            return this;
+        }
+        /**
          * Request timeout in milliseconds.
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -393,6 +406,7 @@ public interface MiloClientComponentBuilderFactory {
             case "maxResponseMessageSize": getOrCreateConfiguration((MiloClientComponent) component).setMaxResponseMessageSize((java.lang.Long) value); return true;
             case "overrideHost": getOrCreateConfiguration((MiloClientComponent) component).setOverrideHost((boolean) value); return true;
             case "productUri": getOrCreateConfiguration((MiloClientComponent) component).setProductUri((java.lang.String) value); return true;
+            case "requestedPublishingInterval": getOrCreateConfiguration((MiloClientComponent) component).setRequestedPublishingInterval((java.lang.Double) value); return true;
             case "requestTimeout": getOrCreateConfiguration((MiloClientComponent) component).setRequestTimeout((java.lang.Long) value); return true;
             case "sessionName": getOrCreateConfiguration((MiloClientComponent) component).setSessionName((java.lang.String) value); return true;
             case "sessionTimeout": getOrCreateConfiguration((MiloClientComponent) component).setSessionTimeout((java.lang.Long) value); return true;

@@ -19,6 +19,8 @@ package org.apache.camel.component.quartz;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedStartupListener;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
@@ -52,6 +55,9 @@ import org.slf4j.LoggerFactory;
 public class QuartzComponent extends DefaultComponent implements ExtendedStartupListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
+
+    private final List<SchedulerInitTask> schedulerInitTasks = new ArrayList<>();
+    private volatile boolean schedulerInitTasksDone;
 
     @Metadata(label = "advanced")
     private Scheduler scheduler;
@@ -341,6 +347,23 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
+     * Adds a task to be executed as part of initializing and starting the scheduler; or
+     * executes the task if the scheduler has already been started.
+     */
+    public void addScheduleInitTask(SchedulerInitTask task) {
+        if (schedulerInitTasksDone) {
+            // task already done then run task now
+            try {
+                task.initializeTask(scheduler);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        } else {
+            this.schedulerInitTasks.add(task);
+        }
+    }
+
+    /**
      * To use the custom configured Quartz scheduler, instead of creating a new Scheduler.
      */
     public void setScheduler(Scheduler scheduler) {
@@ -507,6 +530,14 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // current camel context to quartz context so jobs have access
             storeCamelContextInQuartzContext();
         }
+
+        // initialize scheduler tasks
+        for (SchedulerInitTask task : schedulerInitTasks) {
+            task.initializeTask(scheduler);
+        }
+        // cleanup tasks as they need only to be triggered once
+        schedulerInitTasks.clear();
+        schedulerInitTasksDone = true;
 
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {

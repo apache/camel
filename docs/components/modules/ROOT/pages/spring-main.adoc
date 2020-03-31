@@ -1,0 +1,5 @@
+[[SpringMain-SpringMain]]
+= Spring Main
+:page-source: components/camel-spring-main/src/main/docs/spring-main.adoc
+
+This module is used for running Spring standalone via a main class extended from `camel-main`.
