@@ -20,7 +20,6 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.model.PubsubMessage;
 import com.google.api.services.pubsub.model.PullRequest;
@@ -31,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.consumer.ExchangeAckTransaction;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
         String loggerId = endpoint.getLoggerId();
 
-        if (Strings.isNullOrEmpty(loggerId)) {
+        if (ObjectHelper.isEmpty(loggerId)) {
             loggerId = this.getClass().getName();
         }
 
