@@ -1,4 +1,32 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.camel.component.djl.model;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
 
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
@@ -8,16 +36,6 @@ import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CustomImageClassificationPredictor extends AbstractPredictor {
     private static final Logger LOG = LoggerFactory.getLogger(CustomImageClassificationPredictor.class);
@@ -70,11 +88,7 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
         try (Predictor<BufferedImage, Classifications> predictor = model.newPredictor(translator)) {
             Classifications classifications = predictor.predict(input);
             List<Classifications.Classification> list = classifications.items();
-            return list.stream()
-                    .collect(
-                            Collectors.toMap(
-                                    Classifications.Classification::getClassName,
-                                    x -> (float) x.getProbability()));
+            return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             throw new Exception("Failed to process output", e);
         }
