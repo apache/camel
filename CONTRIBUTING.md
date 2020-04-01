@@ -95,6 +95,8 @@ First thing to be done is running a full build of Camel. Then
     cd platform/karaf/features/
     mvn clean install
 
+If you modified a component/dataformat or updated a dependency in the main camel repository, you'll first need to build the main camel locally and then run a full build of camel-karaf.
+
 ## Apache Camel committers should work on the ASF git repo
 
 If you are an Apache Camel committer then clone the ASF git repo at
