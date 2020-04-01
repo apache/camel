@@ -46,7 +46,7 @@ class BlobContainerOperationsTest {
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
         assertNotNull(response);
-        assertNotNull(response.getHeaders().get(BlobConstants.HTTP_HEADERS));
+        assertNotNull(response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS));
         assertTrue((boolean)response.getBody());
     }
 
@@ -58,7 +58,7 @@ class BlobContainerOperationsTest {
         final BlobOperationResponse response = blobContainerOperations.deleteContainer(null);
 
         assertNotNull(response);
-        assertNotNull(response.getHeaders().get(BlobConstants.HTTP_HEADERS));
+        assertNotNull(response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS));
         assertTrue((boolean)response.getBody());
     }
 

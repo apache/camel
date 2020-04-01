@@ -48,7 +48,7 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
         assertNotNull(response);
-        assertNotNull(response.getHeaders().get(BlobConstants.HTTP_HEADERS));
+        assertNotNull(response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS));
         assertTrue((boolean)response.getBody());
 
         // delete everything
@@ -65,7 +65,7 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response1 = blobContainerOperations.createContainer(exchange);
 
         assertNotNull(response1);
-        assertNotNull(response1.getHeaders().get(BlobConstants.HTTP_HEADERS));
+        assertNotNull(response1.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS));
         assertTrue((boolean)response1.getBody());
 
         blobContainerOperations.deleteContainer(null);

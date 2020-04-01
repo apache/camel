@@ -17,13 +17,15 @@ import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
+import com.azure.storage.blob.models.BlockBlobItem;
 import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
-import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.BlobType;
+import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.util.ObjectHelper;
@@ -49,55 +51,57 @@ public class BlobOperations {
 
     public BlobOperationResponse getBlob(final Exchange exchange) {
         if (exchange == null) {
-            final Map<String, Object> blobInputStream = client.openInputStream(new BlobRange(0), null);
-            return new BlobOperationResponse(blobInputStream.get("inputStream"), (BlobProperties) blobInputStream.get("properties"));
+            final BlobClientWrapper.ResponseEnvelope<InputStream, BlobProperties> blobInputStream = client.openInputStream(new BlobRange(0), null);
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(blobInputStream.getSecondObject());
+
+            return new BlobOperationResponse(blobInputStream.getFirstObject(), blobExchangeHeaders.toMap());
         }
 
         LOG.trace("Getting a blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
 
         final OutputStream outputStream = BlobUtils.getInMessage(exchange).getBody(OutputStream.class);
         final BlobRange blobRange = getBlobRangeFromHeadersOrConfig(exchange, configuration);
-        final BlobRequestConditions blobRequestConditions = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.BLOB_REQUEST_CONDITION, BlobRequestConditions.class);
+        final BlobRequestConditions blobRequestConditions = BlobExchangeHeaders.getBlobRequestConditionsFromHeaders(exchange);
 
         if (outputStream == null) {
             // Then we create an input stream
-            final Map<String, Object> blobInputStream = client.openInputStream(blobRange, blobRequestConditions);
-            return new BlobOperationResponse(blobInputStream.get("inputStream"), (BlobProperties) blobInputStream.get("properties"));
+            final BlobClientWrapper.ResponseEnvelope<InputStream, BlobProperties> blobInputStream = client.openInputStream(blobRange, blobRequestConditions);
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(blobInputStream.getSecondObject());
+
+            return new BlobOperationResponse(blobInputStream.getFirstObject(), blobExchangeHeaders.toMap());
         }
         // we have an outputStream set, so we use it
         final DownloadRetryOptions downloadRetryOptions = new DownloadRetryOptions();
         downloadRetryOptions.setMaxRetryRequests(configuration.getMaxRetryRequests());
-        final Duration timeout = getTimeoutFromHeaders(exchange);
 
-        final Map<String, Object> blobDownloadResponse = client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobRequestConditions,
+        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
+
+        final BlobClientWrapper.ResponseEnvelope<BlobDownloadHeaders, HttpHeaders> blobDownloadResponse = client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobRequestConditions,
                 configuration.isGetRangeContentMd5(), timeout);
 
-        return new BlobOperationResponse(outputStream, (BlobDownloadHeaders) blobDownloadResponse.get("deserializedHeaders"), (HttpHeaders) blobDownloadResponse.get("httpHeaders"));
-    }
+        final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(blobDownloadResponse.getFirstObject())
+                .httpHeaders(blobDownloadResponse.getSecondObject());
 
-    public BlobOperationResponse deleteBlob() {
-        final BlobOperationResponse blobOperationResponse = new BlobOperationResponse();
-        //final Response<Void> azureResponse = oldClient.deleteWithResponse(null, null, null, Context.NONE);
-
-
-        return blobOperationResponse;
+        return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
     }
 
     public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws Exception {
         final InputStream inputStream = getInputStreamFromExchange(exchange);
-        final BlobHttpHeaders blobHttpHeaders = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.HTTP_HEADERS, BlobHttpHeaders.class);
-        @SuppressWarnings("unchecked") final Map<String, String> metadata = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.METADATA, Map.class);
-        final AccessTier accessTier = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.ACCESS_TIER, AccessTier.class);
-        final byte[] contentMD5 = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.CONTENT_MD5, byte[].class);
-        final BlobRequestConditions blobRequestConditions = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.BLOB_REQUEST_CONDITION, BlobRequestConditions.class);
-        final Duration timeout = getTimeoutFromHeaders(exchange);
+        final BlobHttpHeaders blobHttpHeaders = BlobExchangeHeaders.getBlobHttpHeadersFromHeaders(exchange);
+        final Map<String, String> metadata = BlobExchangeHeaders.getMetadataFromHeaders(exchange);
+        final AccessTier accessTier = BlobExchangeHeaders.getAccessTierFromHeaders(exchange);
+        final byte[] contentMD5 = BlobExchangeHeaders.getContentMd5FromHeaders(exchange);
+        final BlobRequestConditions blobRequestConditions = BlobExchangeHeaders.getBlobRequestConditionsFromHeaders(exchange);
+        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
 
         LOG.trace("Putting a block blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
 
         try {
-            final Map<String, Object> uploadedResults = client.uploadBlockBlob(inputStream, -1, blobHttpHeaders, metadata, accessTier, contentMD5, blobRequestConditions, timeout);
+            final BlobClientWrapper.ResponseEnvelope<BlockBlobItem, HttpHeaders> uploadedResults = client.uploadBlockBlob(inputStream, -1, blobHttpHeaders, metadata, accessTier, contentMD5, blobRequestConditions, timeout);
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem(uploadedResults.getFirstObject())
+                    .httpHeaders(uploadedResults.getSecondObject());
 
-            return new BlobOperationResponse(true, (HttpHeaders) uploadedResults.get("httpHeaders"));
+            return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
         } finally {
             closeInputStreamIfNeeded(inputStream);
         }
@@ -134,7 +138,7 @@ public class BlobOperations {
 
     private BlobRange getBlobRangeFromHeadersOrConfig(final Exchange exchange, final BlobConfiguration configuration) {
         if (configuration.getBlobType() == BlobType.pageblob) {
-            final PageRange pageRange = BlobUtils.getInMessage(exchange).getHeader(BlobConstants.PAGE_BLOB_RANGE, PageRange.class);
+            final PageRange pageRange = BlobExchangeHeaders.getPageRangeFromHeaders(exchange);
             if (pageRange != null) {
                 final long blobOffset = pageRange.getStart();
                 final long dataCount = pageRange.getEnd() - pageRange.getStart();
@@ -143,10 +147,6 @@ public class BlobOperations {
             }
         }
         return new BlobRange(configuration.getBlobOffset(), configuration.getDataCount());
-    }
-
-    private Duration getTimeoutFromHeaders(final Exchange exchange) {
-        return BlobUtils.getInMessage(exchange).getHeader(BlobConstants.TIMEOUT, Duration.class);
     }
 
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {

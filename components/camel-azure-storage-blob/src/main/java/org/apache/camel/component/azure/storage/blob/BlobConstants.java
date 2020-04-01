@@ -5,6 +5,7 @@ public final class BlobConstants {
 
     // header names
     public static final String BLOB_OPERATION = HEADER_PREFIX + "Operation";
+    public static final String BLOB_HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
     public static final String E_TAG = HEADER_PREFIX + "ETag";
     public static final String CREATION_TIME = HEADER_PREFIX + "CreationTime";
     public static final String LAST_MODIFIED = HEADER_PREFIX + "LastModified";
@@ -33,10 +34,11 @@ public final class BlobConstants {
     public static final String IS_ACCESS_TIER_INFRRRED = HEADER_PREFIX + "IsAccessTierInferred";
     public static final String ARCHIVE_STATUS = HEADER_PREFIX + "ArchiveStatus";
     public static final String ENCRYPTION_KEY_SHA_256 = HEADER_PREFIX + "EncryptionKeySha256";
+    public static final String ENCRYPTION_SCOPE = HEADER_PREFIX + "EncryptionScope";
     public static final String ACCESS_TIER_CHANGE_TIME = HEADER_PREFIX + "accessTierChangeTime";
     public static final String METADATA = HEADER_PREFIX + "Metadata";
     public static final String COMMITTED_BLOCK_COUNT = HEADER_PREFIX + "CommittedBlockCount";
-    public static final String HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
+    public static final String RAW_HTTP_HEADERS = HEADER_PREFIX + "RawHttpHeaders";
 
     // headers to be retrieved
     public static final String LIST_BLOB_OPTIONS = HEADER_PREFIX + "ListBlobOptions";

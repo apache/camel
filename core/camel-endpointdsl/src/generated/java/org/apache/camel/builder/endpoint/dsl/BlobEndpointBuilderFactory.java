@@ -1028,7 +1028,11 @@ public interface BlobEndpointBuilderFactory {
         deleteBlobContainer,
         listBlobs,
         getBlob,
-        deleteBlob;
+        deleteBlob,
+        uploadBlockBlob,
+        uploadBlobBlobList,
+        commitBlobBlockList,
+        getBlockBlobList;
     }
 
     public interface BlobBuilders {
