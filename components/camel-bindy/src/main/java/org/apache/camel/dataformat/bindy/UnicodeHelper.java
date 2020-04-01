@@ -117,25 +117,24 @@ public class UnicodeHelper implements Serializable {
      * @see String#indexOf(String)
      */
     public int indexOf(final String str) {
+        return indexOf(str, 0);
+    }   
+    
+    /**
+     * @see String#indexOf(String, int)
+     */
+    public int indexOf(final String str, final int fromIndex) {
         split();
         
-        final int tempIdx = input.indexOf(str);
-        if (tempIdx < 0) {
-            return tempIdx;
-        }
-        
-        for (int b = 0; b < splitted.size() - 1; b++) {
-            if (tempIdx == splitted.get(b)) {
-                for (int e = b + 1; e < splitted.size() - 1; e++) {
-                    if (tempIdx + str.length() == splitted.get(e)) {
-                        return b;
-                    }
-                }
+        final int len = new UnicodeHelper(str, method).length();
+
+        for (int index = fromIndex; index + len < length(); index++) {
+            if (str.equals(input.substring(splitted.get(index), splitted.get(index + len)))) {
+                return index;
             }
         }
-        
-        final String cps = str.codePoints().mapToObj(cp -> String.format("0x%X", cp)).collect(Collectors.joining(","));
-        throw new IllegalArgumentException("Given string (" + cps + ") is not a valid sequence of " + this.method + "s.");
+
+        return -1;
     }
     
     private void split() {
