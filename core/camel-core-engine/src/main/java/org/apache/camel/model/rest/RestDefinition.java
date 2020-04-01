@@ -476,19 +476,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     public RestDefinition bindingMode(RestBindingMode mode) {
-        if (getVerbs().isEmpty()) {
-            this.bindingMode = mode.name();
-        } else {
-            // add on last verb as that is how the Java DSL works
-            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setBindingMode(mode.name());
-        }
-
-        return this;
+        return bindingMode(mode.name());
     }
 
     public RestDefinition bindingMode(String mode) {
-        return bindingMode(mode.toLowerCase());
+        if (getVerbs().isEmpty()) {
+            this.bindingMode = mode.toLowerCase();
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setBindingMode(mode.toLowerCase());
+        }
+
+        return this;
     }
 
     public RestDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
