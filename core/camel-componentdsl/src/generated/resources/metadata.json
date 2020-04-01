@@ -6250,27 +6250,6 @@
     "artifactId": "camel-spark",
     "version": "3.2.0-SNAPSHOT"
   },
-  "SparkRestComponentBuilderFactory": {
-    "kind": "component",
-    "name": "spark-rest",
-    "scheme": "spark-rest",
-    "extendsScheme": "",
-    "syntax": "spark-rest:verb:path",
-    "title": "Spark Rest",
-    "description": "The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.",
-    "label": "rest",
-    "deprecated": false,
-    "deprecationNote": "rest",
-    "async": false,
-    "consumerOnly": true,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "javaType": "org.apache.camel.component.sparkrest.SparkRestComponent",
-    "firstVersion": "2.14.0",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-spark-rest",
-    "version": "3.2.0-SNAPSHOT"
-  },
   "SplunkComponentBuilderFactory": {
     "kind": "component",
     "name": "splunk",

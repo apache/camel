@@ -581,8 +581,6 @@ Number of Components: 329 in 262 JAR artifacts (1 deprecated)
 
 | xref:spark-component.adoc[Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
 
-| xref:spark-rest-component.adoc[Spark Rest] (camel-spark-rest) | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
-
 | xref:splunk-component.adoc[Splunk] (camel-splunk) | 2.13 | The splunk component allows to publish or search for events in Splunk.
 
 | xref:spring-batch-component.adoc[Spring Batch] (camel-spring-batch) | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.

@@ -97,7 +97,6 @@ The following components support rest consumer (Rest DSL):
 * camel-netty-http
 * camel-jetty
 * camel-servlet
-* camel-spark-rest
 * camel-undertow
 
 The following components support rest producer:
