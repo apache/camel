@@ -18,10 +18,10 @@ package org.apache.camel.component.google.pubsub.consumer;
 
 import java.util.List;
 
-import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.model.AcknowledgeRequest;
 import com.google.api.services.pubsub.model.ModifyAckDeadlineRequest;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public abstract class PubsubAcknowledgement {
 
         String loggerId = endpoint.getLoggerId();
 
-        if (Strings.isNullOrEmpty(loggerId)) {
+        if (ObjectHelper.isEmpty(loggerId)) {
             loggerId = this.getClass().getName();
         }
 

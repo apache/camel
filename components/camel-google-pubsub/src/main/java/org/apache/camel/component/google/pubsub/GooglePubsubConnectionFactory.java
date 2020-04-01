@@ -30,9 +30,9 @@ import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Base64;
-import com.google.api.client.util.Strings;
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.PubsubScopes;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -80,14 +80,14 @@ public class GooglePubsubConnectionFactory {
 
         GoogleCredential credential = null;
 
-        if (!Strings.isNullOrEmpty(serviceAccount) && !Strings.isNullOrEmpty(serviceAccountKey)) {
+        if (!ObjectHelper.isEmpty(serviceAccount) && !ObjectHelper.isEmpty(serviceAccountKey)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Service Account and Key have been set explicitly. Initialising PubSub using Service Account " + serviceAccount);
             }
             credential = createFromAccountKeyPair(httpTransport);
         }
 
-        if (credential == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
+        if (credential == null && !ObjectHelper.isEmpty(credentialsFileLocation)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Key File Name has been set explicitly. Initialising PubSub using Key File " + credentialsFileLocation);
             }
