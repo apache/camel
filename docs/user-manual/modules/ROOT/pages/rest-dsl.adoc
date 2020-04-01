@@ -26,8 +26,6 @@ supports Swagger Java)
 supports Swagger Java)
 * xref:components::servlet-component.adoc[camel-servlet] (also
 supports Swagger Java)
-* xref:components::spark-rest-component.adoc[camel-spark-rest] (also
-supports Swagger Java)
 * xref:components::undertow-component.adoc[camel-undertow] (also
 supports Swagger Java)
 

@@ -11,7 +11,7 @@ Below is the list of components that are provided by Apache Camel.
 == List of Components
 
 // components: START
-Number of Components: 329 in 262 JAR artifacts (1 deprecated)
+Number of Components: 328 in 261 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
