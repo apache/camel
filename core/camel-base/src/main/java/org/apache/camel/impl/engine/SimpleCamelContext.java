@@ -63,6 +63,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -313,6 +314,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. "
                         + "Add camel-xml-jaxb to classpath."));
+    }
+
+    @Override
+    protected RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory() {
+        return new BaseServiceResolver<>(RestBindingJaxbDataFormatFactory.FACTORY, RestBindingJaxbDataFormatFactory.class)
+                .resolve(getCamelContextReference())
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find RestBindingJaxbDataFormatFactory on classpath. "
+                        + "Add camel-jaxb to classpath."));
     }
 
     @Override

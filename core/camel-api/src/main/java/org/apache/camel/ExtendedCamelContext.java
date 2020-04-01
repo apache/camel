@@ -53,6 +53,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -522,6 +523,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Gets the {@link ModelToXMLDumper} to be used.
      */
     ModelToXMLDumper getModelToXMLDumper();
+
+    /**
+     * Sets a custom {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
+
+    /**
+     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory();
 
     /**
      * Gets the {@link RuntimeCamelCatalog} if available on the classpath.

@@ -111,6 +111,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
@@ -1376,6 +1377,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public ModelToXMLDumper getModelToXMLDumper() {
         return getExtendedCamelContext().getModelToXMLDumper();
+    }
+
+    @Override
+    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
+        getExtendedCamelContext().setRestBindingJaxbDataFormatFactory(restBindingJaxbDataFormatFactory);
+    }
+
+    @Override
+    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
+        return getExtendedCamelContext().getRestBindingJaxbDataFormatFactory();
     }
 
     @Override
