@@ -123,7 +123,9 @@ public class XRefCheckMojo extends AbstractMojo {
                 String link = m.group("link");
                 String all = m.group("all");
                 String[] groups = link.split(":");
-                String cl, ml, rem;
+                String cl;
+                String ml;
+                String rem;
                 if (groups.length == 3) {
                     cl = groups[0];
                     ml = groups[1].isEmpty() ? "ROOT" : groups[1];
