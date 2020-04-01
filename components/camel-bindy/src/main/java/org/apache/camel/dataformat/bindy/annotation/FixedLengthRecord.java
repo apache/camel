@@ -102,5 +102,5 @@ public @interface FixedLengthRecord {
     /**
      * Indicates how chars are counted
      */
-    boolean countGrapheme() default true;
+    boolean countGrapheme() default false;
 }
