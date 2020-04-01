@@ -384,7 +384,6 @@ camel routes without them knowing
 ** xref:components::smpp-component.adoc[SMPP]
 ** xref:components::snmp-component.adoc[SNMP]
 ** xref:components::solr-component.adoc[Solr]
-** xref:components::spark-rest-component.adoc[Spark Rest]
 ** xref:components::splunk-component.adoc[Splunk]
 ** xref:components::spring-batch-component.adoc[Spring Batch]
 ** xref:components::spring-event-component.adoc[Spring Event]
