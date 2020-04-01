@@ -87,6 +87,8 @@ Please remember to run this check on your code changes before submitting a patch
 
 ## Verify Karaf features
 
+Camel-Karaf lives now in his own repository, so to verify a Karaf feature you'll need to fork the following [repository](https://github.com/apache/camel-karaf).
+
 To check a new Karaf feature or an existing one you should run a verification on the features.xml file. You'll need to follow these steps:
 First thing to be done is running a full build of Camel. Then
 
