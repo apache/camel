@@ -77,7 +77,7 @@ http://maven.apache.org/guides/mini/guide-encryption.html[password encryption re
 </settings>
 ----
 
-[[ReleaseGuide-CreatingTheRelease]]
+[[ReleaseGuide-CreatingTheRelease-Camel]]
 == Creating the Release
 
 Complete the following steps to create a new Camel release:
@@ -165,6 +165,93 @@ Pay particular attention to the existence of *.asc (signature) files.
 If the you don't like the content of the repository, right click your repository and choose "Drop".
 You can then rollback your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
+
+[[ReleaseGuide-CreatingTheRelease-Camel-spring-boot]]
+== Creating the Release for camel-spring-boot
+
+Complete the following steps to create a new Camel release:
+
+. Grab the latest source from Git and checkout the target branch (`BRANCH_NAME`) to build from:
+
+  $ git clone https://git-wip-us.apache.org/repos/asf/camel-spring-boot.git
+  $ cd camel
+  $ git checkout BRANCH_NAME
+  
+. Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
+
+  ./mvnw -e org.apache.rat:apache-rat-plugin:check
+  grep -e ' !?????' target/rat.txt
+  
+*  The latter command will provide a list of all files without valid license headers.
+  Ideally this list is empty, otherwise fix the issues by adding valid license headers and rerun the above commands before
+  proceeding with the next step.
+
+. You already have built the main camel repo for releasing, so you already have a final version in your local repository.
+Change the camel-version property in https://github.com/apache/camel-spring-boot/blob/master/pom.xml accordingly and commit.
+
+. Do a release dry run to check for problems:
+
+  ./mvnw release:prepare -DdryRun -Prelease
+  
+ * The release plugin will prompt for a release version, an SCM tag and next release version.
+
+*  Use a three digit release version of the form: `MAJOR.MINOR.PATCH`, e.g. `3.0.0`.
+
+*  For the tag use a string of the form: `camel-MAJOR.MINOR.PATCH`, e.g. `camel-3.0.0`.
+
+*  For the next version increase the patch version and append `-SNAPSHOT`, e.g. `3.0.1-SNAPSHOT`.
+
+* Make sure to check the generated signature files:
+
+  $ gpg core/camel-spring-boot/target/camel-spring-boot-3.0.0-SNAPSHOT.jar.asc
+  gpg: assuming signed data in `core/camel-spring-boot/target/camel-spring-boot-3.0.0-SNAPSHOT.jar'
+  gpg: Signature made Sat 06 Apr 2019 03:58:01 AM PDT using RSA key ID 5942C049
+  gpg: Good signature from "Gregor Zurowski <gzurowski@apache.org>"
+ 
+
+. Prepare the release:
+
+* First clean up the dry run results:
+
+
+  $ ./mvnw release:clean -Prelease
+
+
+* Next prepare the release:
+
+
+  $ ./mvnw release:prepare -Prelease
+
+
+*  This command will create the tag and update all pom files with the given version number.
+
+. Perform the release and publish to the Apache staging repository:
+
+
+  $ ./mvnw release:perform -Prelease
+
+
+. Close the Apache staging repository:
+
+* Login to https://repository.apache.org using your Apache LDAP credentials.
+Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
+your username and ip.
+Click "Close" on the tool bar above.
+This will close the repository from future deployments and make it available for others to view.
+If you are staging multiple releases together, skip this step until you have staged everything.
+Enter the name and version of the artifact being released in the "Description" field and then click "Close".
+This will make it easier to identify it later.
+
+. Verify staged artifacts:
+
+* If you click on your repository, a tree view will appear below.
+You can then browse the contents to ensure the artifacts are as you expect them.
+Pay particular attention to the existence of *.asc (signature) files.
+If the you don't like the content of the repository, right click your repository and choose "Drop".
+You can then rollback your release and repeat the process.
+Note the repository URL, you will need this in your vote email.
+
+
 
 . Once the release has been voted
 
