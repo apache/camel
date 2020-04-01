@@ -157,6 +157,12 @@
             <artifactId>httpmime</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron-auth-server</artifactId>
+            <version>${wildfly-elytron}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
