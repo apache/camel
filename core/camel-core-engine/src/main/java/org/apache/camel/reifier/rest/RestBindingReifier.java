@@ -120,7 +120,7 @@ public class RestBindingReifier extends AbstractReifier {
             }
 
             if (jaxb != null) {
-                // to setup JAXB we need to use camel-xml-jaxb
+                // to setup JAXB we need to use camel-jaxb
                 camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
                         .setupJaxb(camelContext, config, parseString(definition.getType()), parseString(definition.getOutType()), jaxb, outJaxb);
             }
