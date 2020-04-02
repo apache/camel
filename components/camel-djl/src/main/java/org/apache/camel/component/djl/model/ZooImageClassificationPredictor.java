@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class ZooImageClassificationPredictor extends AbstractPredictor {
     private static final Logger LOG = LoggerFactory.getLogger(ZooImageClassificationPredictor.class);
 
-    private ZooModel<BufferedImage, Classifications> model;
+    private final ZooModel<BufferedImage, Classifications> model;
 
     public ZooImageClassificationPredictor(String artifactId) throws Exception {
         Criteria<BufferedImage, Classifications> criteria =
@@ -76,7 +76,7 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
             return classify(ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
@@ -85,7 +85,7 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
             return classify(ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
@@ -95,7 +95,7 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
             List<Classifications.Classification> list = classifications.items();
             return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
-            throw new Exception("Failed to process output", e);
+            throw new TranslateException("Failed to process output", e);
         }
     }
 }

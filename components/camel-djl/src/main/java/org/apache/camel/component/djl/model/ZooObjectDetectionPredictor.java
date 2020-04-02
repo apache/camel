@@ -41,7 +41,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZooObjectDetectionPredictor.class);
 
-    private ZooModel<BufferedImage, DetectedObjects> model;
+    private final ZooModel<BufferedImage, DetectedObjects> model;
 
     public ZooObjectDetectionPredictor(String artifactId) throws Exception {
         Criteria<BufferedImage, DetectedObjects> criteria =
@@ -74,7 +74,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
             DetectedObjects detectedObjects = predictor.predict(input);
             return detectedObjects;
         } catch (TranslateException e) {
-            throw new Exception("Failed to process output", e);
+            throw new TranslateException("Failed to process output", e);
         }
     }
 
@@ -83,7 +83,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
             return classify(ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
             return classify(ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 }

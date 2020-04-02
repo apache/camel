@@ -18,24 +18,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <djl.version>0.4.0</djl.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Camel BOM -->
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bom</artifactId>
-                <version>3.1.0</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-
         <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -46,29 +31,29 @@
         <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>api</artifactId>
-            <version>${djl.version}</version>
+            <version>${djl-version}</version>
         </dependency>
         <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>model-zoo</artifactId>
-            <version>${djl.version}</version>
+            <version>${djl-version}</version>
         </dependency>
 
         <!-- MxNet Engine -->
         <dependency>
             <groupId>ai.djl.mxnet</groupId>
             <artifactId>mxnet-model-zoo</artifactId>
-            <version>${djl.version}</version>
+            <version>${djl-version}</version>
         </dependency>
         <dependency>
             <groupId>ai.djl.mxnet</groupId>
             <artifactId>mxnet-engine</artifactId>
-            <version>${djl.version}</version>
+            <version>${djl-version}</version>
         </dependency>
         <dependency>
             <groupId>ai.djl.mxnet</groupId>
             <artifactId>mxnet-native-auto</artifactId>
-            <version>1.6.0</version>
+            <version>${djl-mxnet-native-version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -76,19 +61,16 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.13.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.13.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.13.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -101,7 +83,7 @@
         <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>basicdataset</artifactId>
-            <version>${djl.version}</version>
+            <version>${djl-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -114,7 +96,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -124,7 +105,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -134,7 +114,7 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>generate</id>

@@ -148,6 +148,7 @@
         <include>org.apache.camel:camel-direct</include>
         <include>org.apache.camel:camel-directvm</include>
         <include>org.apache.camel:camel-disruptor</include>
+        <include>org.apache.camel:camel-djl</include>
         <include>org.apache.camel:camel-dns</include>
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>

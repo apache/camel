@@ -172,6 +172,7 @@
         <module>camel-debezium-sqlserver</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
+        <module>camel-djl</module>
         <module>camel-dns</module>
         <module>camel-docker</module>
         <module>camel-dozer</module>
@@ -374,7 +375,6 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
-    <module>camel-djl</module>
   </modules>
 
     <properties>

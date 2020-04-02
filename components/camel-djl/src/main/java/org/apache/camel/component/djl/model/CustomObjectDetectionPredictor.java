@@ -38,8 +38,8 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomObjectDetectionPredictor.class);
 
-    private String modelName;
-    private String translatorName;
+    private final String modelName;
+    private final String translatorName;
 
     public CustomObjectDetectionPredictor(String modelName, String translatorName) {
         this.modelName = modelName;
@@ -69,7 +69,7 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
             DetectedObjects detectedObjects = predictor.predict(input);
             return detectedObjects;
         } catch (TranslateException e) {
-            throw new Exception("Failed to process output", e);
+            throw new TranslateException("Failed to process output", e);
         }
     }
 
@@ -78,7 +78,7 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
             return classify(model, translator, ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
@@ -87,7 +87,7 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
             return classify(model, translator, ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 }
