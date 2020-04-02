@@ -81,8 +81,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class DataFormatReifier<T extends DataFormatDefinition> extends AbstractReifier {
 
-    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
-
     private static final Logger LOG = LoggerFactory.getLogger(DataFormatReifier.class);
 
     private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
@@ -270,22 +268,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             }
         }
         if (configurer == null) {
-            final String configurerName = name + "-dataformat-configurer";
-            configurer = lookup(configurerName, PropertyConfigurer.class);
-            if (LOG.isDebugEnabled() && configurer != null) {
-                LOG.debug("Discovered dataformat property configurer using the Camel registry: {} -> {}", configurerName, configurer);
-            }
-        }
-        if (configurer == null) {
-            Class<?> clazz = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                    .findOptionalClass(name + "-dataformat-configurer", null)
-                    .orElse(null);
-            if (clazz != null) {
-                configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
-                if (LOG.isDebugEnabled() && configurer != null) {
-                    LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
-                }
-            }
+            String configurerName = name + "-dataformat-configurer";
+            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configurerName, camelContext);
         }
         return configurer;
     }

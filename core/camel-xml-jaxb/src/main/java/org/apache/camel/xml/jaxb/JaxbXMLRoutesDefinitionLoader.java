@@ -131,9 +131,9 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         return "camel-xml-jaxb";
     }
 
-    private static JAXBContext getJAXBContext(CamelContext context) throws JAXBException {
+    private static JAXBContext getJAXBContext(CamelContext context) throws Exception {
         ModelJAXBContextFactory factory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
-        return factory.newJAXBContext();
+        return (JAXBContext) factory.newJAXBContext();
     }
 
     /**

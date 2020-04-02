@@ -24,8 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -225,7 +223,8 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Replaces placeholders "{}" with message header values
+     * Replaces placeholders "{}" with message header values.
+     *
      * @param str string with placeholders
      * @param msg message with headers
      * @return filled string
@@ -249,12 +248,15 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    protected void doInit() throws Exception {
+        super.doInit();
         // create binding processor (returns null if binding is not in use)
         binding = createBindingProcessor();
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         ServiceHelper.startService(binding, producer);
     }
 
@@ -265,7 +267,6 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     protected AsyncProcessor createBindingProcessor() throws Exception {
-
         // these options can be overridden per endpoint
         String mode = configuration.getBindingMode().name();
         if (bindingMode != null) {
@@ -276,7 +277,7 @@ public class RestProducer extends DefaultAsyncProducer {
             skip = skipBindingOnErrorCode;
         }
 
-        if (mode == null || "off".equals(mode)) {
+        if ("off".equals(mode)) {
             // binding mode is off
             return null;
         }
@@ -347,31 +348,9 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         if (jaxb != null) {
-            Class<?> clazz = null;
-            if (type != null) {
-                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
-            }
-            if (clazz != null) {
-                JAXBContext jc = JAXBContext.newInstance(clazz);
-                beanIntrospection.setProperty(camelContext, jaxb, "context", jc);
-            }
-            setAdditionalConfiguration(configuration, camelContext, jaxb, "xml.in.");
-
-            Class<?> outClazz = null;
-            if (outType != null) {
-                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
-            }
-            if (outClazz != null) {
-                JAXBContext jc = JAXBContext.newInstance(outClazz);
-                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
-            } else if (clazz != null) {
-                // fallback and use the context from the input
-                JAXBContext jc = JAXBContext.newInstance(clazz);
-                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
-            }
-            setAdditionalConfiguration(configuration, camelContext, outJaxb, "xml.out.");
+            // to setup JAXB we need to use camel-jaxb
+            camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
+                    .setupJaxb(camelContext, configuration, type, outType, jaxb, outJaxb);
         }
 
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);

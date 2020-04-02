@@ -51,7 +51,6 @@
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.17.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
-        <apache-mime4j-version>0.8.3</apache-mime4j-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
         <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
         <aries-blueprint-core-version>1.10.0</aries-blueprint-core-version>
@@ -77,7 +76,7 @@
         <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.11.5</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.11.6</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -86,7 +85,7 @@
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bouncycastle-version>1.64</bouncycastle-version>
         <box-java-sdk-version>2.44.1</box-java-sdk-version>
-        <braintree-gateway-version>2.107.0</braintree-gateway-version>
+        <braintree-gateway-version>2.108.0</braintree-gateway-version>
         <brave-zipkin-version>5.10.2</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
