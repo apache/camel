@@ -223,7 +223,8 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Replaces placeholders "{}" with message header values
+     * Replaces placeholders "{}" with message header values.
+     *
      * @param str string with placeholders
      * @param msg message with headers
      * @return filled string
@@ -247,12 +248,15 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    protected void doInit() throws Exception {
+        super.doInit();
         // create binding processor (returns null if binding is not in use)
         binding = createBindingProcessor();
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         ServiceHelper.startService(binding, producer);
     }
 
@@ -263,7 +267,6 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     protected AsyncProcessor createBindingProcessor() throws Exception {
-
         // these options can be overridden per endpoint
         String mode = configuration.getBindingMode().name();
         if (bindingMode != null) {
@@ -274,7 +277,7 @@ public class RestProducer extends DefaultAsyncProducer {
             skip = skipBindingOnErrorCode;
         }
 
-        if (mode == null || "off".equals(mode)) {
+        if ("off".equals(mode)) {
             // binding mode is off
             return null;
         }
