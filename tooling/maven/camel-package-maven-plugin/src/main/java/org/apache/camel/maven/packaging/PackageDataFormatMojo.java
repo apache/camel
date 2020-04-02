@@ -217,7 +217,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                                 pn.replace('.', '/') + "/" + cn + "Configurer.java",
                                 generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
                         updateResource(configurerResourceOutDir.toPath(),
-                                "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer",
+                                "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat",
                                 generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
                     }
                 } else {
