@@ -181,9 +181,9 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         return xml;
     }
 
-    private static JAXBContext getJAXBContext(CamelContext context) throws JAXBException {
+    private static JAXBContext getJAXBContext(CamelContext context) throws Exception {
         ModelJAXBContextFactory factory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
-        return factory.newJAXBContext();
+        return (JAXBContext) factory.newJAXBContext();
     }
 
     /**
