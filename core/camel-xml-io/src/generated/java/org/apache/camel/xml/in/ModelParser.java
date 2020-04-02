@@ -1902,6 +1902,7 @@ public class ModelParser extends BaseParser {
         return doParse(new JaxbDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "contextPath": def.setContextPath(val); break;
+                case "contextPathIsClassName": def.setContextPathIsClassName(val); break;
                 case "encoding": def.setEncoding(val); break;
                 case "filterNonXmlChars": def.setFilterNonXmlChars(val); break;
                 case "fragment": def.setFragment(val); break;

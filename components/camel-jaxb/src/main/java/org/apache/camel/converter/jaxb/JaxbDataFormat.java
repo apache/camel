@@ -83,6 +83,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private JAXBContext context;
     private JAXBIntrospector introspector;
     private String contextPath;
+    private boolean contextPathIsClassName;
     private String schema;
     private int schemaSeverityLevel; // 0 = warning, 1 = error, 2 = fatal
     private String schemaLocation;
@@ -349,6 +350,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.contextPath = contextPath;
     }
 
+    public boolean isContextPathIsClassName() {
+        return contextPathIsClassName;
+    }
+
+    public void setContextPathIsClassName(boolean contextPathIsClassName) {
+        this.contextPathIsClassName = contextPathIsClassName;
+    }
+
     public SchemaFactory getSchemaFactory() {
         if (schemaFactory == null) {
             return getOrCreateSchemaFactory();
@@ -522,17 +531,29 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     /**
      * Strategy to create JAXB context
      */
-    protected JAXBContext createContext() throws JAXBException {
+    protected JAXBContext createContext() throws Exception {
         if (contextPath != null) {
             // prefer to use application class loader which is most likely to be able to
             // load the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
-                LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
-                return JAXBContext.newInstance(contextPath, cl);
+                if (contextPathIsClassName) {
+                    LOG.debug("Creating JAXBContext with className: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                    Class clazz = camelContext.getClassResolver().resolveMandatoryClass(contextPath, cl);
+                    return JAXBContext.newInstance(clazz);
+                } else {
+                    LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                    return JAXBContext.newInstance(contextPath, cl);
+                }
             } else {
-                LOG.debug("Creating JAXBContext with contextPath: {}", contextPath);
-                return JAXBContext.newInstance(contextPath);
+                if (contextPathIsClassName) {
+                    LOG.debug("Creating JAXBContext with className: {}", contextPath);
+                    Class clazz = camelContext.getClassResolver().resolveMandatoryClass(contextPath);
+                    return JAXBContext.newInstance(clazz);
+                } else {
+                    LOG.debug("Creating JAXBContext with contextPath: {}", contextPath);
+                    return JAXBContext.newInstance(contextPath);
+                }
             }
         } else {
             LOG.debug("Creating JAXBContext");

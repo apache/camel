@@ -37,6 +37,7 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
         properties.put("filterNonXmlChars", definition.getFilterNonXmlChars());
         properties.put("fragment", definition.getFragment());
         properties.put("contextPath", definition.getContextPath());
+        properties.put("contextPathIsClassName", definition.getContextPathIsClassName());
         properties.put("partClass", definition.getPartClass());
         properties.put("partNamespace", definition.getPartNamespace());
         properties.put("encoding", definition.getEncoding());
