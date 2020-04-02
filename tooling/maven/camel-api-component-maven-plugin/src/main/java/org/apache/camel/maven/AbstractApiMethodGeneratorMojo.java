@@ -344,9 +344,15 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                         parameterizedType.append(
                             getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
                     } catch (ClassNotFoundException e1) {
-                        log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
-                                 + ", unable to load parametric type argument " + argType, e1);
-                        ignore = true;
+                        // if the length of the artType is 1, we think that it's variable type parameter (like T in List<T>)
+                        // not perfect solution, but should work in most of the cases
+                        if (argType.trim().length() > 1) {
+                            log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
+                                    + ", unable to load parametric type argument " + argType, e1);
+                            ignore = true;
+                        } else {
+                            parameterizedType.append("?");
+                        }
                     }
                 }
 
