@@ -345,7 +345,7 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         if (jaxb != null) {
-            // to setup JAXB we need to use camel-xml-jaxb
+            // to setup JAXB we need to use camel-jaxb
             camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
                     .setupJaxb(camelContext, configuration, type, outType, jaxb, outJaxb);
         }
