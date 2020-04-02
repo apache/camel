@@ -33,13 +33,6 @@
     <name>Camel :: Util</name>
     <description>The Camel Utilities</description>
 
-    <properties>
-        <camel.osgi.import>
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
-    </properties>
-
     <dependencies>
 
         <!-- required dependencies by camel-util -->
@@ -99,7 +92,6 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 
