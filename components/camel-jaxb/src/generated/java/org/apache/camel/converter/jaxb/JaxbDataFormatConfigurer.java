@@ -20,6 +20,8 @@ public class JaxbDataFormatConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "contextpath":
         case "contextPath": dataformat.setContextPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "contextpathisclassname":
+        case "contextPathIsClassName": dataformat.setContextPathIsClassName(property(camelContext, boolean.class, value)); return true;
         case "schema": dataformat.setSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaseveritylevel":
         case "schemaSeverityLevel": dataformat.setSchemaSeverityLevel(property(camelContext, int.class, value)); return true;

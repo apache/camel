@@ -16,15 +16,25 @@
  */
 package org.apache.camel.component.undertow.rest;
 
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.spi.BeanIntrospection;
 import org.junit.Test;
 
 public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
 
     @Test
     public void testUndertowGetPojoRequest() throws Exception {
+        // should not use reflection when using rest binding in the rest producer
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi.setLoggingLevel(LoggingLevel.INFO);
+        bi.resetCounters();
+
+        assertEquals(0, bi.getInvokedCounter());
+
         String url = "rest:get:users/lives?outType=" + CountryPojo.class.getName();
         Object out = template.requestBody(url, (String) null);
 
@@ -32,6 +42,10 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
         CountryPojo pojo = assertIsInstanceOf(CountryPojo.class, out);
         assertEquals("EN", pojo.getIso());
         assertEquals("England", pojo.getCountry());
+
+        // TODO: Should be 0, but there are elsewhere things being reflected
+        // assertEquals(0, bi.getInvokedCounter());
+        assertEquals(1, bi.getInvokedCounter());
     }
 
     @Override
@@ -41,7 +55,7 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
             public void configure() throws Exception {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
