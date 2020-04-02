@@ -48,6 +48,12 @@
             <version>${azure-storage-blob-java-sdk12-version}</version>
         </dependency>
 
+        <!-- extras -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -77,11 +83,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

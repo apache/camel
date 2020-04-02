@@ -141,6 +141,10 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.PAGE_BLOB_RANGE, PageRange.class);
     }
 
+    public static boolean getCommitBlockListFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.COMMIT_BLOCK_LIST_LATER, boolean.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }

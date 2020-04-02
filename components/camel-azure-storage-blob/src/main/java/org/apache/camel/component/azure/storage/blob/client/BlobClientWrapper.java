@@ -3,7 +3,7 @@ package org.apache.camel.component.azure.storage.blob.client;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
@@ -18,6 +18,7 @@ import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.BlockBlobItem;
+import com.azure.storage.blob.models.DeleteSnapshotsOptionType;
 import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +35,11 @@ public class BlobClientWrapper {
 
     public BlobProperties downloadToFile(final String fileDir, final boolean overwrite) {
         return client.downloadToFile(fileDir, overwrite);
+    }
+
+    public HttpHeaders delete(final DeleteSnapshotsOptionType deleteBlobSnapshotOptions,
+                              final BlobRequestConditions requestConditions, final Duration timeout) {
+        return client.deleteWithResponse(deleteBlobSnapshotOptions, requestConditions, timeout, Context.NONE).getHeaders();
     }
 
     public ResponseEnvelope<InputStream, BlobProperties> openInputStream(final BlobRange blobRange, final BlobRequestConditions blobRequestConditions) {
@@ -56,6 +62,18 @@ public class BlobClientWrapper {
         final Response<BlockBlobItem> uploadResponse = client.getBlockBlobClient().uploadWithResponse(data, length, headers, metadata, tier, contentMd5, requestConditions, timeout, Context.NONE);
 
         return new ResponseEnvelope<>(uploadResponse.getValue(), uploadResponse.getHeaders());
+    }
+
+    public HttpHeaders stageBlockBlob(final String base64BlockId, final InputStream data, final long length, final byte[] contentMd5,
+                                      final String leaseId, final Duration timeout) {
+        return client.getBlockBlobClient().stageBlockWithResponse(base64BlockId, data, length, contentMd5, leaseId, timeout, Context.NONE).getHeaders();
+    }
+
+    public ResponseEnvelope<BlockBlobItem, HttpHeaders> commitBlockBlob(final List<String> base64BlockIds, final BlobHttpHeaders headers,
+                                                                        final Map<String, String> metadata, final AccessTier tier, final BlobRequestConditions requestConditions, final Duration timeout) {
+        final Response<BlockBlobItem> response = client.getBlockBlobClient().commitBlockListWithResponse(base64BlockIds, headers, metadata, tier, requestConditions, timeout, Context.NONE);
+
+        return new ResponseEnvelope<>(response.getValue(), response.getHeaders());
     }
 
     /**
