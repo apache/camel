@@ -46,9 +46,6 @@ pipeline {
     stages {
 
         stage('Camel master') {
-            when {
-                branch 'master'
-            }
 
             steps {
                 build job: 'Apache Camel/master', wait: false
@@ -56,9 +53,6 @@ pipeline {
         }
 
         stage('Camel-spring-boot') {
-            when {
-                branch 'master'
-            }
 
             steps {
                 build job: 'camel.daily.sb', wait: false
@@ -66,9 +60,6 @@ pipeline {
         }
 
         stage('Camel-karaf') {
-            when {
-                branch 'master'
-            }
 
             steps {
                 build job: 'camel.daily.karaf', wait: false
