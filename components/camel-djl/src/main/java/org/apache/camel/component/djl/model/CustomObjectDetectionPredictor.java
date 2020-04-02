@@ -61,6 +61,8 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
         } else if (exchange.getIn().getBody() instanceof InputStream) {
             DetectedObjects result = classify(model, translator, exchange.getIn().getBody(InputStream.class));
             exchange.getIn().setBody(result);
+        } else {
+            throw new RuntimeException("Data type is not supported. Body should be byte[], InputStream or File");
         }
     }
 
