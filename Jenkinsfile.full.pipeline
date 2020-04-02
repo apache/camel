@@ -48,7 +48,7 @@ pipeline {
         stage('Camel master') {
 
             steps {
-                build job: 'Apache Camel/master', wait: false
+                build job: 'Camel/master', wait: false
             }
         }
 
