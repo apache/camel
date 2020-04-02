@@ -48,21 +48,21 @@ pipeline {
         stage('Camel master') {
 
             steps {
-                build job: 'Camel/master', wait: false
+                build job: 'Camel/master', wait: true
             }
         }
 
         stage('Camel-spring-boot') {
 
             steps {
-                build job: 'camel.daily.sb', wait: false
+                build job: 'camel.daily.sb', wait: true
             }
         }
 
         stage('Camel-karaf') {
 
             steps {
-                build job: 'camel.daily.karaf', wait: false
+                build job: 'camel.daily.karaf', wait: true
             }
         }
 
