@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 public class CustomImageClassificationPredictor extends AbstractPredictor {
     private static final Logger LOG = LoggerFactory.getLogger(CustomImageClassificationPredictor.class);
 
-    private String modelName;
-    private String translatorName;
+    private final String modelName;
+    private final String translatorName;
 
     public CustomImageClassificationPredictor(String modelName, String translatorName) {
         this.modelName = modelName;
@@ -71,7 +71,7 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
             return classify(model, translator, ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
@@ -80,7 +80,7 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
             return classify(model, translator, ImageIO.read(input));
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
-            throw new Exception("Couldn't transform input into a BufferedImage", e);
+            throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
@@ -90,7 +90,7 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
             List<Classifications.Classification> list = classifications.items();
             return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
-            throw new Exception("Failed to process output", e);
+            throw new TranslateException("Failed to process output", e);
         }
     }
 }

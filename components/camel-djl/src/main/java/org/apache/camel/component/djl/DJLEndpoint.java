@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Represents a DJL endpoint.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "djl", title = "DJL", syntax = "djl:application", label = "djl", producerOnly = true)
+@UriEndpoint(firstVersion = "3.2.0", scheme = "djl", title = "DJL", syntax = "djl:application", label = "deeplearning", producerOnly = true)
 public class DJLEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true, description = "Application name")
@@ -58,10 +58,6 @@ public class DJLEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public String getApplication() {

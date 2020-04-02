@@ -1,12 +1,13 @@
 {
   "component": {
     "kind": "component",
+    "name": "djl",
     "scheme": "djl",
     "extendsScheme": "",
     "syntax": "djl:application",
     "title": "DJL",
     "description": "Represents a DJL endpoint.",
-    "label": "djl",
+    "label": "deeplearning",
     "deprecated": false,
     "async": false,
     "consumerOnly": false,
