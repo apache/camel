@@ -29,12 +29,10 @@ import org.slf4j.LoggerFactory;
  */
 public class DJLProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(DJLProducer.class);
-    private DJLEndpoint endpoint;
     private AbstractPredictor abstractPredictor;
 
     public DJLProducer(DJLEndpoint endpoint) throws Exception {
         super(endpoint);
-        this.endpoint = endpoint;
         if (endpoint.getArtifactId() != null) {
             this.abstractPredictor = ModelPredictorProducer.getZooPredictor(endpoint.getApplication(), endpoint.getArtifactId());
         } else {
