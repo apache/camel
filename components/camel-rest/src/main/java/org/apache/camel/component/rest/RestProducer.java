@@ -24,8 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -347,31 +345,9 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         if (jaxb != null) {
-            Class<?> clazz = null;
-            if (type != null) {
-                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
-            }
-            if (clazz != null) {
-                JAXBContext jc = JAXBContext.newInstance(clazz);
-                beanIntrospection.setProperty(camelContext, jaxb, "context", jc);
-            }
-            setAdditionalConfiguration(configuration, camelContext, jaxb, "xml.in.");
-
-            Class<?> outClazz = null;
-            if (outType != null) {
-                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
-            }
-            if (outClazz != null) {
-                JAXBContext jc = JAXBContext.newInstance(outClazz);
-                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
-            } else if (clazz != null) {
-                // fallback and use the context from the input
-                JAXBContext jc = JAXBContext.newInstance(clazz);
-                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
-            }
-            setAdditionalConfiguration(configuration, camelContext, outJaxb, "xml.out.");
+            // to setup JAXB we need to use camel-xml-jaxb
+            camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
+                    .setupJaxb(camelContext, configuration, type, outType, jaxb, outJaxb);
         }
 
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
