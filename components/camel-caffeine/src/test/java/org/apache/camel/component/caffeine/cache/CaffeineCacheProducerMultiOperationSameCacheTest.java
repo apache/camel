@@ -22,12 +22,14 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CaffeineCacheProducerMultiOperationSameCacheTest extends CaffeineCacheTestSupport {
 
     @Test
-    public void testSameCachePutAndGet() throws Exception {
+    void testSameCachePutAndGet() throws Exception {
         final Map<String, String> map = new HashMap<>();
         map.put("1", "1");
 
@@ -48,7 +50,7 @@ public class CaffeineCacheProducerMultiOperationSameCacheTest extends CaffeineCa
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start").toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")

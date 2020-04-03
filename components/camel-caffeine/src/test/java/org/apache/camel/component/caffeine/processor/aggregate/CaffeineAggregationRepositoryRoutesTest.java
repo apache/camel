@@ -27,8 +27,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
     private static final String ENDPOINT_MOCK = "mock:result";
@@ -44,7 +44,7 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
     private ProducerTemplate producer;
 
     @Test
-    public void checkAggregationFromOneRoute() throws Exception {
+    void checkAggregationFromOneRoute() throws Exception {
         mock.expectedMessageCount(VALUES.length);
         mock.expectedBodiesReceived(SUM);
 
@@ -70,10 +70,10 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(ENDPOINT_DIRECT)
                     .routeId("AggregatingRouteOne")
                     .aggregate(header(CORRELATOR))
@@ -95,7 +95,7 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
         return array;
     }
     
-    protected CaffeineAggregationRepository createAggregateRepository() throws Exception {
+    protected CaffeineAggregationRepository createAggregateRepository() {
         CaffeineAggregationRepository repository = new CaffeineAggregationRepository();
 
         return repository;
