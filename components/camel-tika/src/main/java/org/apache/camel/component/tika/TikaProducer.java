@@ -59,12 +59,20 @@ public class TikaProducer extends DefaultProducer {
     private final String encoding;
 
     public TikaProducer(TikaEndpoint endpoint) {
+        this(endpoint,  null);
+    }
+
+    public TikaProducer(TikaEndpoint endpoint, Parser parser) {
         super(endpoint);
         this.tikaConfiguration = endpoint.getTikaConfiguration();
         this.encoding = this.tikaConfiguration.getTikaParseOutputEncoding();
         TikaConfig config = this.tikaConfiguration.getTikaConfig();
-        this.parser = new AutoDetectParser(config);
         this.detector = config.getDetector();
+        if (parser == null) {
+            this.parser = new AutoDetectParser(this.tikaConfiguration.getTikaConfig());
+        } else {
+            this.parser = parser;
+        }
     }
 
     @Override

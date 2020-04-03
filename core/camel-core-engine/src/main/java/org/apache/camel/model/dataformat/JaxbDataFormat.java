@@ -35,6 +35,9 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String contextPathIsClassName;
+    @XmlAttribute
     private String schema;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0")
@@ -95,6 +98,17 @@ public class JaxbDataFormat extends DataFormatDefinition {
      */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public String getContextPathIsClassName() {
+        return contextPathIsClassName;
+    }
+
+    /**
+     * This can be set to true to mark that the contextPath is referring to a classname and not a package name.
+     */
+    public void setContextPathIsClassName(String contextPathIsClassName) {
+        this.contextPathIsClassName = contextPathIsClassName;
     }
 
     public String getSchema() {

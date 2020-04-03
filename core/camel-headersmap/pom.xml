@@ -50,7 +50,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-core</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -142,9 +142,7 @@
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.9.9</directory-watcher-version>
         <disruptor-version>3.4.2</disruptor-version>
-        <djl-version>0.4.0</djl-version>
-        <djl-mxnet-native-version>1.6.0</djl-mxnet-native-version>
-        <dnsjava-version>2.1.9</dnsjava-version>
+        <dnsjava-version>3.0.1</dnsjava-version>
         <docker-java-version>3.1.5</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
         <drools-version>7.35.0.Final</drools-version>
@@ -222,12 +220,11 @@
         <google-proto-iam-version>0.13.0</google-proto-iam-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
-        <grpc-version>1.27.0</grpc-version>
+        <grpc-version>1.28.0</grpc-version>
         <grpc-google-auth-library-version>0.19.0</grpc-google-auth-library-version>
         <grpc-guava-version>28.2-jre</grpc-guava-version>
         <grpc-java-jwt-version>3.7.0</grpc-java-jwt-version>
-        <grpc-netty-tcnative-boringssl-static-version>2.0.26.Final</grpc-netty-tcnative-boringssl-static-version>
-        <grpc-errorprone-version>2.3.4</grpc-errorprone-version>
+        <grpc-netty-tcnative-boringssl-static-version>2.0.28.Final</grpc-netty-tcnative-boringssl-static-version>
         <!-- 2.8.6 is broken in OSGi -->
         <gson-version>2.8.5</gson-version>
         <guava-eventbus-version>28.2-jre</guava-eventbus-version>
@@ -353,7 +350,7 @@
         <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>2.4.0</kafka-version>
+        <kafka-version>2.4.1</kafka-version>
         <kie-version>7.35.0.Final</kie-version>
         <kubernetes-client-version>4.9.0</kubernetes-client-version>
         <kubernetes-model-version>4.9.0</kubernetes-model-version>
@@ -362,7 +359,7 @@
         <leveldb-api-version>0.10</leveldb-api-version>
         <leveldb-version>0.10</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
-        <libphonenumber-version>8.11.3</libphonenumber-version>
+        <libphonenumber-version>8.11.5</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
@@ -501,7 +498,6 @@
         <solr-version>8.4.1</solr-version>
         <solr-version-range>[8,9)</solr-version-range>
         <spark-version>2.4.5</spark-version>
-        <spark-rest-version>2.9.1</spark-rest-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.2.1.RELEASE</spring-batch-version>
         <spring-boot-version>2.2.6.RELEASE</spring-boot-version>
@@ -1238,11 +1234,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-disruptor</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-djl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

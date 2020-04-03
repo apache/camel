@@ -32,8 +32,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -302,29 +302,36 @@ public class RestProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
         }
 
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         if (json != null) {
-            Class<?> clazz = null;
+            // lookup configurer
+            PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
+            if (configurer == null) {
+                throw new IllegalStateException("Cannot find configurer for dataformat: " + name);
+            }
+
+            PropertyBindingSupport.Builder builder = PropertyBindingSupport.build()
+                    .withCamelContext(camelContext)
+                    .withConfigurer(configurer)
+                    .withTarget(json);
             if (type != null) {
                 String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("useList", type.endsWith("[]"));
             }
-            if (clazz != null) {
-                beanIntrospection.setProperty(camelContext, json, "unmarshalType", clazz);
-                beanIntrospection.setProperty(camelContext, json, "useList", type.endsWith("[]"));
-            }
-            setAdditionalConfiguration(configuration, camelContext, json, "json.in.");
+            setAdditionalConfiguration(configuration, "json.in.", builder);
+            builder.bind();
 
-            Class<?> outClazz = null;
+            builder = PropertyBindingSupport.build()
+                    .withCamelContext(camelContext)
+                    .withConfigurer(configurer)
+                    .withTarget(outJson);
             if (outType != null) {
                 String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+                builder.withProperty("unmarshalTypeName", typeName);
+                builder.withProperty("useList", outType.endsWith("[]"));
             }
-            if (outClazz != null) {
-                beanIntrospection.setProperty(camelContext, outJson, "unmarshalType", outClazz);
-                beanIntrospection.setProperty(camelContext, outJson, "useList", outType.endsWith("[]"));
-            }
-            setAdditionalConfiguration(configuration, camelContext, outJson, "json.out.");
+            setAdditionalConfiguration(configuration, "json.out.", builder);
+            builder.bind();
         }
 
         // setup xml data format
@@ -356,8 +363,7 @@ public class RestProducer extends DefaultAsyncProducer {
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
-                                            DataFormat dataFormat, String prefix) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
             Map<String, Object> copy = new HashMap<>();
@@ -381,8 +387,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 }
             }
 
-            // set reference properties first as they use # syntax that fools the regular properties setter
-            PropertyBindingSupport.bindProperties(context, dataFormat, copy);
+            builder.withProperties(copy);
         }
     }
 

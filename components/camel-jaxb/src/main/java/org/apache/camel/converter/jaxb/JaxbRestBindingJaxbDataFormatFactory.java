@@ -19,11 +19,10 @@ package org.apache.camel.converter.jaxb;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
@@ -37,38 +36,43 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
 
     @Override
     public void setupJaxb(CamelContext camelContext, RestConfiguration config, String type, String outType, DataFormat jaxb, DataFormat outJaxb) throws Exception {
-        Class<?> clazz = null;
+        // lookup configurer
+        PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
+        if (configurer == null) {
+            throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");
+        }
+
+        PropertyBindingSupport.Builder builder = PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withTarget(jaxb);
         if (type != null) {
             String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-            clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            builder.withProperty("contextPath", typeName);
+            builder.withProperty("contextPathIsClassName", "true");
         }
-        if (clazz != null) {
-            JAXBContext jc = JAXBContext.newInstance(clazz);
-            setJaxbContext(camelContext, jaxb, jc);
-        }
-        setAdditionalConfiguration(camelContext, config, jaxb, "xml.in.");
+        setAdditionalConfiguration(config, "xml.in.", builder);
+        builder.bind();
 
-        Class<?> outClazz = null;
+        builder = PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withTarget(outJaxb);
         if (outType != null) {
             String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-            outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
-        }
-        if (outClazz != null) {
-            JAXBContext jc = JAXBContext.newInstance(outClazz);
-            setJaxbContext(camelContext, outJaxb, jc);
-        } else if (clazz != null) {
+            builder.withProperty("contextPath", typeName);
+            builder.withProperty("contextPathIsClassName", "true");
+        } else if (type != null) {
             // fallback and use the context from the input
-            JAXBContext jc = JAXBContext.newInstance(clazz);
-            setJaxbContext(camelContext, outJaxb, jc);
+            String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+            builder.withProperty("contextPath", typeName);
+            builder.withProperty("contextPathIsClassName", "true");
         }
-        setAdditionalConfiguration(camelContext, config, outJaxb, "xml.out.");
+        setAdditionalConfiguration(config, "xml.out.", builder);
+        builder.bind();
     }
 
-    private void setJaxbContext(CamelContext camelContext, DataFormat jaxb, JAXBContext jc) throws Exception {
-        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, jaxb, "context", jc);
-    }
-
-    private void setAdditionalConfiguration(CamelContext camelContext, RestConfiguration config, DataFormat dataFormat, String prefix) throws Exception {
+    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties
@@ -93,7 +97,7 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
                 }
             }
 
-            PropertyBindingSupport.build().bind(camelContext, dataFormat, copy);
+            builder.withProperties(copy);
         }
     }
 
