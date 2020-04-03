@@ -76,7 +76,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
             DetectedObjects detectedObjects = predictor.predict(input);
             return detectedObjects;
         } catch (TranslateException e) {
-            throw new TranslateException("Failed to process output", e);
+            throw new RuntimeException("Could not process input or output", e);
         }
     }
 

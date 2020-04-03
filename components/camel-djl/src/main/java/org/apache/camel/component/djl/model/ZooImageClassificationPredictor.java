@@ -97,7 +97,8 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
             List<Classifications.Classification> list = classifications.items();
             return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
-            throw new TranslateException("Failed to process output", e);
+            LOG.error("Could not process input or output", e);
+            throw new RuntimeException("Could not process input or output", e);
         }
     }
 }

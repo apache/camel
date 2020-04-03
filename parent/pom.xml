@@ -142,6 +142,8 @@
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.9.9</directory-watcher-version>
         <disruptor-version>3.4.2</disruptor-version>
+        <djl-version>0.4.0</djl-version>
+        <djl-mxnet-native-version>1.6.0</djl-mxnet-native-version>
         <dnsjava-version>3.0.1</dnsjava-version>
         <docker-java-version>3.1.5</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
