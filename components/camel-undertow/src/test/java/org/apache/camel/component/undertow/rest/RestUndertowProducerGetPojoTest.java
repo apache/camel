@@ -26,11 +26,6 @@ import org.junit.Test;
 
 public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testUndertowGetPojoRequest() throws Exception {
         // should not use reflection when using rest binding in the rest producer
@@ -58,7 +53,10 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
             public void configure() throws Exception {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
+                restConfiguration()
+                        .component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
+                        .componentProperty("muteException", "true")
+                        .endpointProperty("keepAlive", "false");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
