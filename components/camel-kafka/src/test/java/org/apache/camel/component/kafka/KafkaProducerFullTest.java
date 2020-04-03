@@ -124,12 +124,6 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         bytesConsumerConn = new KafkaConsumer<>(bytesProps);
     }
 
-    @AfterClass
-    public static void after() {
-        stringsConsumerConn.close();
-        bytesConsumerConn.close();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
