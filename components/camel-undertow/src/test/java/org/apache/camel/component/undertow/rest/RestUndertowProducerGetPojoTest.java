@@ -26,6 +26,11 @@ import org.junit.Test;
 
 public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
 
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
     @Test
     public void testUndertowGetPojoRequest() throws Exception {
         // should not use reflection when using rest binding in the rest producer
@@ -43,9 +48,7 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
         assertEquals("EN", pojo.getIso());
         assertEquals("England", pojo.getCountry());
 
-        // TODO: Should be 0, but there are elsewhere things being reflected
-        // assertEquals(0, bi.getInvokedCounter());
-        assertEquals(1, bi.getInvokedCounter());
+        assertEquals(0, bi.getInvokedCounter());
     }
 
     @Override
