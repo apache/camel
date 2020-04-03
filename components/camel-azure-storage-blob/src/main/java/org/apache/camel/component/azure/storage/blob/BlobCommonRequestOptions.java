@@ -37,8 +37,9 @@ public class BlobCommonRequestOptions {
         return accessTier;
     }
 
-    public BlobRequestConditions getBlobRequestConditions() {
-        return blobRequestConditions;
+    @SuppressWarnings("unchecked")
+    public <T extends BlobRequestConditions> T getBlobRequestConditions() {
+        return blobRequestConditions == null ? null : (T) blobRequestConditions;
     }
 
     public byte[] getContentMD5() {

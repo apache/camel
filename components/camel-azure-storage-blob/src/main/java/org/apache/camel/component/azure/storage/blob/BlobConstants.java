@@ -53,9 +53,11 @@ public final class BlobConstants {
     public static final String FILE_DIR = HEADER_PREFIX + "FileDir";
     public static final String OVERWRITE = HEADER_PREFIX + "Overwrite";
     public static final String PAGE_BLOB_RANGE = HEADER_PREFIX + "PageBlobRange";
+    public static final String PAGE_BLOB_SIZE = HEADER_PREFIX + "PageBlobSize";
     public static final String COMMIT_BLOCK_LIST_LATER = HEADER_PREFIX + "CommitBlobBlockListLater";
     public static final String BLOCK_LIST_TYPE = HEADER_PREFIX + "BlockListType";
     public static final String APPEND_BLOCK_CREATED = HEADER_PREFIX + "AppendBlobCreated";
+    public static final String PAGE_BLOCK_CREATED = HEADER_PREFIX + "PageBlockCreated";
 
     private BlobConstants() {
     }

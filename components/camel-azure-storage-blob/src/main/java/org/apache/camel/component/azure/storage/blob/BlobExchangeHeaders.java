@@ -22,6 +22,7 @@ import com.azure.storage.blob.models.LeaseDurationType;
 import com.azure.storage.blob.models.LeaseStateType;
 import com.azure.storage.blob.models.LeaseStatusType;
 import com.azure.storage.blob.models.ListBlobsOptions;
+import com.azure.storage.blob.models.PageBlobItem;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
@@ -93,6 +94,16 @@ public class BlobExchangeHeaders {
                 .encryptionScope(appendBlobItem.getEncryptionScope())
                 .appendOffset(appendBlobItem.getBlobAppendOffset())
                 .committedBlockCount(appendBlobItem.getBlobCommittedBlockCount());
+    }
+
+    public static BlobExchangeHeaders createBlobExchangeHeadersFromPageBlobItem(final PageBlobItem pageBlobItem) {
+        return new BlobExchangeHeaders()
+                .eTag(pageBlobItem.getETag())
+                .lastModified(pageBlobItem.getLastModified())
+                .contentMd5(pageBlobItem.getContentMd5())
+                .isServerEncrypted(pageBlobItem.isServerEncrypted())
+                .encryptionScope(pageBlobItem.getEncryptionScope())
+                .blobSequenceNumber(pageBlobItem.getBlobSequenceNumber());
     }
 
     public static BlobExchangeHeaders create() {
@@ -167,8 +178,20 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.APPEND_BLOCK_CREATED, boolean.class);
     }
 
+    public static boolean getPageBlockCreatedFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.PAGE_BLOCK_CREATED, boolean.class);
+    }
+
     public static BlockListType getBlockListTypeFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.BLOCK_LIST_TYPE, BlockListType.class);
+    }
+
+    public static Long getPageBlobSize(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.PAGE_BLOB_SIZE, Long.class);
+    }
+
+    public static Long getBlobSequenceNumberFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_SEQUENCE_NUMBER, Long.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {

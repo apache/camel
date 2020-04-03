@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.core.http.rest.Response;
+import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.AppendBlobItem;
@@ -29,7 +31,11 @@ import com.azure.storage.blob.models.BlockBlobItem;
 import com.azure.storage.blob.models.BlockList;
 import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.blob.models.DownloadRetryOptions;
+import com.azure.storage.blob.models.PageBlobItem;
+import com.azure.storage.blob.models.PageBlobRequestConditions;
+import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
@@ -64,10 +70,10 @@ public class BlobOperations {
 
     public BlobOperationResponse getBlob(final Exchange exchange) {
         if (exchange == null) {
-            final BlobClientWrapper.ResponseEnvelope<InputStream, BlobProperties> blobInputStream = client.openInputStream(new BlobRange(0), null);
-            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(blobInputStream.getSecondObject());
+            final Map<String, Object> blobInputStream = client.openInputStream(new BlobRange(0), null);
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
 
-            return new BlobOperationResponse(blobInputStream.getFirstObject(), blobExchangeHeaders.toMap());
+            return new BlobOperationResponse(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
 
         LOG.trace("Getting a blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
@@ -78,20 +84,20 @@ public class BlobOperations {
 
         if (outputStream == null) {
             // Then we create an input stream
-            final BlobClientWrapper.ResponseEnvelope<InputStream, BlobProperties> blobInputStream = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
-            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(blobInputStream.getSecondObject());
+            final Map<String, Object> blobInputStream = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(((BlobProperties) blobInputStream.get("properties")));
 
-            return new BlobOperationResponse(blobInputStream.getFirstObject(), blobExchangeHeaders.toMap());
+            return new BlobOperationResponse(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
         // we have an outputStream set, so we use it
         final DownloadRetryOptions downloadRetryOptions = new DownloadRetryOptions();
         downloadRetryOptions.setMaxRetryRequests(configuration.getMaxRetryRequests());
 
-        final BlobClientWrapper.ResponseEnvelope<BlobDownloadHeaders, HttpHeaders> blobDownloadResponse = client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
+        final ResponseBase<BlobDownloadHeaders, Void> response =  client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
                 configuration.isGetRangeContentMd5(), blobCommonRequestOptions.getTimeout());
 
-        final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(blobDownloadResponse.getFirstObject())
-                .httpHeaders(blobDownloadResponse.getSecondObject());
+        final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
+                .httpHeaders(response.getHeaders());
 
         return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
     }
@@ -105,12 +111,10 @@ public class BlobOperations {
         LOG.trace("Putting a block blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
 
         try {
-            final BlobClientWrapper.ResponseEnvelope<BlockBlobItem, HttpHeaders> uploadedResults = client.uploadBlockBlob(blobStreamAndLength.getInputStream(), blobStreamAndLength.getStreamLength(), commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(), commonRequestOptions.getAccessTier(),
+            final Response<BlockBlobItem> response = client.uploadBlockBlob(blobStreamAndLength.getInputStream(), blobStreamAndLength.getStreamLength(), commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(), commonRequestOptions.getAccessTier(),
                     commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
-            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem(uploadedResults.getFirstObject())
-                    .httpHeaders(uploadedResults.getSecondObject());
 
-            return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
+            return buildResponse(response, true);
         } finally {
             closeInputStreamIfNeeded(blobStreamAndLength.getInputStream());
         }
@@ -177,20 +181,17 @@ public class BlobOperations {
                 .map(Block::getName)
                 .collect(Collectors.toList());
 
-        final BlobClientWrapper.ResponseEnvelope<BlockBlobItem, HttpHeaders> responseEnvelope = client.commitBlockBlob(blockIds, commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(),
+        final Response<BlockBlobItem> response = client.commitBlockBlob(blockIds, commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(),
                 commonRequestOptions.getAccessTier(), commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
-        final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem(responseEnvelope.getFirstObject())
-                .httpHeaders(responseEnvelope.getSecondObject());
 
-        return new BlobOperationResponse(true, blobExchangeHeaders.toMap());
+        return buildResponse(response, true);
     }
 
     public BlobOperationResponse getBlobBlockList(final Exchange exchange) {
         if (exchange == null) {
-            final BlobClientWrapper.ResponseEnvelope<BlockList, HttpHeaders> responseEnvelop = client.listBlobBlocks(BlockListType.COMMITTED, null, null);
-            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.create().httpHeaders(responseEnvelop.getSecondObject());
+            final Response<BlockList> response = client.listBlobBlocks(BlockListType.COMMITTED, null, null);
 
-            return new BlobOperationResponse(responseEnvelop.getFirstObject(), blobExchangeHeaders.toMap());
+            return buildResponse(response, false);
         }
 
         LOG.trace("Getting the blob block list [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
@@ -198,29 +199,26 @@ public class BlobOperations {
         final BlockListType blockListType = BlobExchangeHeaders.getBlockListTypeFromHeaders(exchange) == null ? BlockListType.COMMITTED : BlobExchangeHeaders.getBlockListTypeFromHeaders(exchange);
         final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
 
-        final BlobClientWrapper.ResponseEnvelope<BlockList, HttpHeaders> responseEnvelop = client.listBlobBlocks(blockListType, commonRequestOptions.leaseId(), commonRequestOptions.getTimeout());
-        final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.create().httpHeaders(responseEnvelop.getSecondObject());
+        final Response<BlockList> response = client.listBlobBlocks(blockListType, commonRequestOptions.leaseId(), commonRequestOptions.getTimeout());
 
-        return new BlobOperationResponse(responseEnvelop.getFirstObject(), blobExchangeHeaders.toMap());
+        return buildResponse(response, false);
     }
 
     public BlobOperationResponse createAppendBlob(final Exchange exchange) {
         if (exchange == null) {
-            final BlobClientWrapper.ResponseEnvelope<AppendBlobItem, HttpHeaders> responseEnvelope = client.createAppendBlob(null, null, null, null);
-            final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem(responseEnvelope.getFirstObject()).httpHeaders(responseEnvelope.getSecondObject());
+            final Response<AppendBlobItem> response = client.createAppendBlob(null, null, null, null);
 
-            return new BlobOperationResponse(true, exchangeHeaders.toMap());
+            return buildResponse(response, true);
         }
 
         LOG.trace("Creating an append blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
 
         final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
 
-        final BlobClientWrapper.ResponseEnvelope<AppendBlobItem, HttpHeaders> responseEnvelope = client.createAppendBlob(commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(),
+        final Response<AppendBlobItem> response = client.createAppendBlob(commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(),
                 commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
-        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create().httpHeaders(responseEnvelope.getSecondObject());
 
-        return new BlobOperationResponse(true, exchangeHeaders.toMap());
+        return buildResponse(response, true);
     }
 
     public BlobOperationResponse updateAppendBlob(final Exchange exchange) throws IOException {
@@ -236,15 +234,114 @@ public class BlobOperations {
         final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
 
         try {
-            final BlobClientWrapper.ResponseEnvelope<AppendBlobItem, HttpHeaders> responseEnvelope = client.appendBlobBlock(streamAndLength.getInputStream(), streamAndLength.getStreamLength(),
-                    commonRequestOptions.getContentMD5(), (AppendBlobRequestConditions) commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
-            final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem(responseEnvelope.getFirstObject())
-                    .httpHeaders(responseEnvelope.getSecondObject());
+            final Response<AppendBlobItem> response = client.appendBlobBlock(streamAndLength.getInputStream(), streamAndLength.getStreamLength(),
+                    commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
 
-            return new BlobOperationResponse(true, exchangeHeaders.toMap());
+            return buildResponse(response, true);
         } finally {
             closeInputStreamIfNeeded(streamAndLength.getInputStream());
         }
+    }
+
+    public BlobOperationResponse createPageBlob(final Exchange exchange) {
+        if (exchange == null) {
+            final Response<PageBlobItem> response = client.createPageBlob(getPageBlobSize(null), null, null, null, null
+                    , null);
+            return buildResponse(response, true);
+        }
+
+        LOG.trace("Creating a page blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
+
+        final Long pageSize = getPageBlobSize(exchange);
+        final BlobCommonRequestOptions requestOptions = BlobUtils.getCommonRequestOptions(exchange);
+        final Long sequenceNumber = BlobExchangeHeaders.getBlobSequenceNumberFromHeaders(exchange);
+
+        final Response<PageBlobItem> response = client.createPageBlob(pageSize, sequenceNumber, requestOptions.getBlobHttpHeaders(),
+                requestOptions.getMetadata(), requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+
+        return buildResponse(response, true);
+    }
+
+    public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws IOException {
+        ObjectHelper.notNull(exchange, "exchange cannot be null");
+
+        final boolean pageBlobCreated = BlobExchangeHeaders.getPageBlockCreatedFlagFromHeaders(exchange);
+
+        if (!pageBlobCreated) {
+            createPageBlob(exchange);
+        }
+
+        final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
+        final BlobCommonRequestOptions requestOptions = BlobUtils.getCommonRequestOptions(exchange);
+        final PageRange pageRange = BlobExchangeHeaders.getPageRangeFromHeaders(exchange);
+
+        try {
+            final Response<PageBlobItem> response = client.uploadPageBlob(pageRange, streamAndLength.getInputStream(), requestOptions.getContentMD5(),
+                    requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+
+            return buildResponse(response, true);
+        } finally {
+            closeInputStreamIfNeeded(streamAndLength.getInputStream());
+        }
+    }
+
+    public BlobOperationResponse resizePageBlob(final Exchange exchange) {
+        if (exchange == null) {
+            final Response<PageBlobItem> response = client.resizePageBlob(getPageBlobSize(null), null, null);
+            return buildResponse(response, true);
+        }
+
+        LOG.trace("Resizing a page blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
+
+        final Long pageSize = getPageBlobSize(exchange);
+        final BlobCommonRequestOptions requestOptions = BlobUtils.getCommonRequestOptions(exchange);
+
+        final Response<PageBlobItem> response = client.resizePageBlob(pageSize, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+
+        return buildResponse(response, true);
+    }
+
+    public BlobOperationResponse clearPageBlob(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, "exchange cannot be null");
+
+        final PageRange pageRange = BlobExchangeHeaders.getPageRangeFromHeaders(exchange);
+        final BlobCommonRequestOptions requestOptions = BlobUtils.getCommonRequestOptions(exchange);
+
+        final Response<PageBlobItem> response = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+
+        return buildResponse(response, true);
+    }
+
+    public BlobOperationResponse getPageBlobRanges(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, "exchange cannot be null");
+
+        final BlobRange blobRange = getBlobRangeFromHeadersOrConfig(exchange, configuration);
+        final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
+
+        LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
+
+        final Response<PageList> response = client.getPageBlobRanges(blobRange, commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
+
+        return buildResponse(response, false);
+    }
+
+    private BlobOperationResponse buildResponse(final Response response, final boolean emptyBody) {
+        final Object body = emptyBody ? true : response.getValue();
+        BlobExchangeHeaders exchangeHeaders;
+
+        if (response.getValue() instanceof BlockBlobItem) {
+            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem((BlockBlobItem) response.getValue());
+        } else if (response.getValue() instanceof AppendBlobItem) {
+            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem((AppendBlobItem) response.getValue());
+        } else if (response.getValue() instanceof PageBlobItem) {
+            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromPageBlobItem((PageBlobItem) response.getValue());
+        } else {
+            exchangeHeaders = BlobExchangeHeaders.create();
+        }
+
+        exchangeHeaders.httpHeaders(response.getHeaders());
+
+        return new BlobOperationResponse(body, exchangeHeaders.toMap());
     }
 
     private BlobRange getBlobRangeFromHeadersOrConfig(final Exchange exchange, final BlobConfiguration configuration) {
@@ -258,6 +355,17 @@ public class BlobOperations {
             }
         }
         return new BlobRange(configuration.getBlobOffset(), configuration.getDataCount());
+    }
+
+    private Long getPageBlobSize(final Exchange exchange) {
+        if (exchange == null) {
+            return 512L;
+        }
+        Long pageSize = BlobExchangeHeaders.getPageBlobSize(exchange);
+        if (pageSize == null) {
+            pageSize = 512L;
+        }
+        return pageSize;
     }
 
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {

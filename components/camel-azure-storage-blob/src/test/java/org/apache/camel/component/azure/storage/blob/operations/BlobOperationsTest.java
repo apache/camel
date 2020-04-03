@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.core.http.HttpRequest;
+import com.azure.core.http.rest.Response;
+import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobProperties;
@@ -67,8 +70,9 @@ public class BlobOperationsTest {
     @Test
     public void testGetBlob() throws IOException {
         // mocking
-        final BlobClientWrapper.ResponseEnvelope<InputStream, BlobProperties> mockedResults = new BlobClientWrapper.ResponseEnvelope<>(new ByteArrayInputStream("testInput".getBytes(Charset.defaultCharset())),
-                createBlobProperties());
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("testInput".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
 
         when(client.openInputStream(any(), any())).thenReturn(mockedResults);
 
@@ -102,7 +106,7 @@ public class BlobOperationsTest {
 
         //third: test with exchange provided but with outputstream set
         // mocking
-        final BlobClientWrapper.ResponseEnvelope<BlobDownloadHeaders, HttpHeaders> mockedResults2 = new BlobClientWrapper.ResponseEnvelope<>(new BlobDownloadHeaders().setETag("tag1"), new HttpHeaders().put("x-test-header", "123"));
+        final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(null, 200, new HttpHeaders().put("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
         when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any())).thenReturn(mockedResults2);
         when(exchange.getIn().getBody(OutputStream.class)).thenReturn(new ByteArrayOutputStream());
 
@@ -119,9 +123,8 @@ public class BlobOperationsTest {
         // mocking
         final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
         final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
-        final BlobClientWrapper.ResponseEnvelope<BlockBlobItem, HttpHeaders> mockedResponseEnvelope = new BlobClientWrapper.ResponseEnvelope<>(blockBlobItem, httpHeaders);
 
-        when(client.uploadBlockBlob(any(), anyLong(), any(), anyMap(), any(), any(), any(), any())).thenReturn(mockedResponseEnvelope);
+        when(client.uploadBlockBlob(any(), anyLong(), any(), anyMap(), any(), any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
 
         final Exchange exchange = mock(Exchange.class);
         final Message message = mock(Message.class);
