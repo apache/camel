@@ -19,12 +19,14 @@ import java.util.Properties;
 
 import com.azure.core.exception.UnexpectedLengthException;
 import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
+import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
@@ -170,6 +172,45 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
         assertEquals("HelloFromCamel", IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    public void testGetBlobBlockList() {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        final BlobOperationResponse response = operations.getBlobBlockList(null);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertNotNull(response.getHeaders());
+    }
+
+    @Test
+    public void testCreateAndUpdateAppendBlob() throws IOException {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        final String data = "Hello world from my awesome tests!";
+        final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(dataStream);
+
+        final BlobOperationResponse response = operations.updateAppendBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean)response.getBody());
+        // check for eTag and md5 to make sure is uploaded
+        assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
+        assertNotNull(response.getHeaders().get(BlobConstants.COMMITTED_BLOCK_COUNT));
+
+        // check content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+
+        assertEquals(data, IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
 
         blobClientWrapper.delete(null, null, null);
     }

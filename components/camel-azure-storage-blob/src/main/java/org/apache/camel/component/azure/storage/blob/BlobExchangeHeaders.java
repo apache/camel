@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
 import com.azure.storage.blob.models.AccessTier;
+import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.ArchiveStatus;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobHttpHeaders;
@@ -15,6 +16,7 @@ import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.BlobType;
 import com.azure.storage.blob.models.BlockBlobItem;
+import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.blob.models.CopyStatusType;
 import com.azure.storage.blob.models.LeaseDurationType;
 import com.azure.storage.blob.models.LeaseStateType;
@@ -81,6 +83,22 @@ public class BlobExchangeHeaders {
                 .encryptionScope(blockBlobItem.getEncryptionScope());
     }
 
+    public static BlobExchangeHeaders createBlobExchangeHeadersFromAppendBlobItem(final AppendBlobItem appendBlobItem) {
+        return new BlobExchangeHeaders()
+                .eTag(appendBlobItem.getETag())
+                .lastModified(appendBlobItem.getLastModified())
+                .contentMd5(appendBlobItem.getContentMd5())
+                .isServerEncrypted(appendBlobItem.isServerEncrypted())
+                .encryptionKeySha256(appendBlobItem.getEncryptionKeySha256())
+                .encryptionScope(appendBlobItem.getEncryptionScope())
+                .appendOffset(appendBlobItem.getBlobAppendOffset())
+                .committedBlockCount(appendBlobItem.getBlobCommittedBlockCount());
+    }
+
+    public static BlobExchangeHeaders create() {
+        return new BlobExchangeHeaders();
+    }
+
     private static BlobProperties buildBlobProperties(final BlobDownloadHeaders hd) {
         return new BlobProperties(null, hd.getLastModified(), hd.getETag(),
                 hd.getContentLength() == null ? 0 : hd.getContentLength(), hd.getContentType(), null,
@@ -143,6 +161,14 @@ public class BlobExchangeHeaders {
 
     public static boolean getCommitBlockListFlagFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.COMMIT_BLOCK_LIST_LATER, boolean.class);
+    }
+
+    public static boolean getAppendBlockCreatedFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.APPEND_BLOCK_CREATED, boolean.class);
+    }
+
+    public static BlockListType getBlockListTypeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOCK_LIST_TYPE, BlockListType.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
@@ -306,6 +332,11 @@ public class BlobExchangeHeaders {
 
     public BlobExchangeHeaders metadata(final Map<String, String> metadata) {
         headers.put(BlobConstants.METADATA, metadata);
+        return this;
+    }
+
+    public BlobExchangeHeaders appendOffset(final String offset) {
+        headers.put(BlobConstants.APPEND_OFFSET, offset);
         return this;
     }
 

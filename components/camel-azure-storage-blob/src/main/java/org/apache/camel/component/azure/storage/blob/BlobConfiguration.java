@@ -30,6 +30,10 @@ public class BlobConfiguration implements Cloneable {
     private boolean getRangeContentMd5;
     @UriParam(label = "common", defaultValue = "0")
     private int maxRetryRequests = 0;
+    @UriParam(defaultValue = "true")
+    private boolean closeStreamAfterRead = true;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean closeStreamAfterWrite = true;
 
 
     /**
@@ -158,6 +162,22 @@ public class BlobConfiguration implements Cloneable {
 
     public void setMaxRetryRequests(int maxRetryRequests) {
         this.maxRetryRequests = maxRetryRequests;
+    }
+
+    public boolean isCloseStreamAfterRead() {
+        return closeStreamAfterRead;
+    }
+
+    public void setCloseStreamAfterRead(boolean closeStreamAfterRead) {
+        this.closeStreamAfterRead = closeStreamAfterRead;
+    }
+
+    public boolean isCloseStreamAfterWrite() {
+        return closeStreamAfterWrite;
+    }
+
+    public void setCloseStreamAfterWrite(boolean closeStreamAfterWrite) {
+        this.closeStreamAfterWrite = closeStreamAfterWrite;
     }
 
     public BlobConfiguration copy() {

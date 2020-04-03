@@ -38,6 +38,7 @@ public final class BlobConstants {
     public static final String ACCESS_TIER_CHANGE_TIME = HEADER_PREFIX + "accessTierChangeTime";
     public static final String METADATA = HEADER_PREFIX + "Metadata";
     public static final String COMMITTED_BLOCK_COUNT = HEADER_PREFIX + "CommittedBlockCount";
+    public static final String APPEND_OFFSET = HEADER_PREFIX + "AppendOffset";
     public static final String RAW_HTTP_HEADERS = HEADER_PREFIX + "RawHttpHeaders";
 
     // headers to be retrieved
@@ -53,6 +54,8 @@ public final class BlobConstants {
     public static final String OVERWRITE = HEADER_PREFIX + "Overwrite";
     public static final String PAGE_BLOB_RANGE = HEADER_PREFIX + "PageBlobRange";
     public static final String COMMIT_BLOCK_LIST_LATER = HEADER_PREFIX + "CommitBlobBlockListLater";
+    public static final String BLOCK_LIST_TYPE = HEADER_PREFIX + "BlockListType";
+    public static final String APPEND_BLOCK_CREATED = HEADER_PREFIX + "AppendBlobCreated";
 
     private BlobConstants() {
     }
