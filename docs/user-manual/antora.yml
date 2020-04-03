@@ -17,6 +17,6 @@
 
 name: manual
 title: User manual
-version: latest
+version: 3.2.x
 nav:
 - modules/ROOT/nav.adoc
