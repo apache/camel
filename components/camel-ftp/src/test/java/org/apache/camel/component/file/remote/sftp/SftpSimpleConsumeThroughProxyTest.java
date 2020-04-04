@@ -23,9 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServer;
-import org.littleshoot.proxy.ProxyAuthorizationHandler;
+import org.littleshoot.proxy.ProxyAuthenticator;
+import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
 
@@ -38,14 +38,19 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         }
 
         // start http proxy
-        HttpProxyServer proxyServer = new DefaultHttpProxyServer(proxyPort);
-        proxyServer.addProxyAuthenticationHandler(new ProxyAuthorizationHandler() {
-            @Override
-            public boolean authenticate(String userName, String password) {
-                return "user".equals(userName) && "password".equals(password);
-            }
-        });
-        proxyServer.start();
+        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+            .withPort(proxyPort)
+            .withProxyAuthenticator(new ProxyAuthenticator() {
+                @Override
+                public boolean authenticate(String userName, String password) {
+                    return "user".equals(userName) && "password".equals(password);
+                }
+
+                @Override
+                public String getRealm() {
+                    return "myrealm";
+                }
+            }).start();
 
         String expected = "Hello World";
 

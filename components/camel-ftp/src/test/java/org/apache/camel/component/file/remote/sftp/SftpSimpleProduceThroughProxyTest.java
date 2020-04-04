@@ -23,9 +23,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServer;
-import org.littleshoot.proxy.ProxyAuthorizationHandler;
+import org.littleshoot.proxy.ProxyAuthenticator;
+import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,14 +41,19 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
         }
 
         // start http proxy
-        HttpProxyServer proxyServer = new DefaultHttpProxyServer(proxyPort);
-        proxyServer.addProxyAuthenticationHandler(new ProxyAuthorizationHandler() {
-            @Override
-            public boolean authenticate(String userName, String password) {
-                return "user".equals(userName) && "password".equals(password);
-            }
-        });
-        proxyServer.start();
+        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+                .withPort(proxyPort)
+                .withProxyAuthenticator(new ProxyAuthenticator() {
+                    @Override
+                    public boolean authenticate(String userName, String password) {
+                        return "user".equals(userName) && "password".equals(password);
+                    }
+
+                    @Override
+                    public String getRealm() {
+                        return "myrealm";
+                    }
+                }).start();
 
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&proxy=#proxy", "Hello World", Exchange.FILE_NAME,
                                    "hello.txt");
@@ -67,14 +72,19 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
         }
 
         // start http proxy
-        HttpProxyServer proxyServer = new DefaultHttpProxyServer(proxyPort);
-        proxyServer.addProxyAuthenticationHandler(new ProxyAuthorizationHandler() {
-            @Override
-            public boolean authenticate(String userName, String password) {
-                return "user".equals(userName) && "password".equals(password);
-            }
-        });
-        proxyServer.start();
+        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+                .withPort(proxyPort)
+                .withProxyAuthenticator(new ProxyAuthenticator() {
+                    @Override
+                    public boolean authenticate(String userName, String password) {
+                        return "user".equals(userName) && "password".equals(password);
+                    }
+
+                    @Override
+                    public String getRealm() {
+                        return "myrealm";
+                    }
+                }).start();
 
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin&proxy=#proxy", "Bye World", Exchange.FILE_NAME,
                                    "bye.txt");
@@ -93,14 +103,19 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
         }
 
         // start http proxy
-        HttpProxyServer proxyServer = new DefaultHttpProxyServer(proxyPort);
-        proxyServer.addProxyAuthenticationHandler(new ProxyAuthorizationHandler() {
-            @Override
-            public boolean authenticate(String userName, String password) {
-                return "user".equals(userName) && "password".equals(password);
-            }
-        });
-        proxyServer.start();
+        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+                .withPort(proxyPort)
+                .withProxyAuthenticator(new ProxyAuthenticator() {
+                    @Override
+                    public boolean authenticate(String userName, String password) {
+                        return "user".equals(userName) && "password".equals(password);
+                    }
+
+                    @Override
+                    public String getRealm() {
+                        return "myrealm";
+                    }
+                }).start();
 
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub/myother?username=admin&password=admin&proxy=#proxy", "Farewell World",
                                    Exchange.FILE_NAME, "farewell.txt");
