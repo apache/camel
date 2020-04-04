@@ -9,7 +9,7 @@ the problem at hand with properly shutting down all the routes in a
 reliable manner to the `ShutdownStrategy`.
 
 Camel provides a default strategy in the
-`org.apache.camel.impl.DefaultShutdownStrategy` which is capable of
+`org.apache.camel.impl.engine.DefaultShutdownStrategy` which is capable of
 doing that.
 
 [[GracefulShutdown-DefaultShutdownStrategy]]
@@ -94,7 +94,7 @@ long at the current node (eg delay1) and duration is total time in
 mills.
 
 If you enable DEBUG logging level
-on `org.apache.camel.impl.DefaultShutdownStrategy` then it logs the same
+on `org.apache.camel.impl.engine.DefaultShutdownStrategy` then it logs the same
 inflight exchange information during graceful shutdown
 
 [source,bash]
@@ -118,7 +118,7 @@ context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 == Controlling ordering of routes
 
 You can configure the order in which routes should be started, and thus
-also the same order they are being shutdown. 
+also the same order they are being shutdown.
  See more at
 xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
 route startup ordering and autostartup].
