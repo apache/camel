@@ -43,7 +43,6 @@
         <!-- tooling that depends on catalog -->
         <module>camel-route-parser</module>
         <module>camel-report-maven-plugin</module>
-        <module>camel-main-maven-plugin</module>
     </modules>
 
     <dependencies>
