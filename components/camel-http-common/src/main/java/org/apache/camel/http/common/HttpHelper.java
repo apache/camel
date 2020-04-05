@@ -223,7 +223,7 @@ public final class HttpHelper {
             }
             if (path.length() > 0) {
                 // inject the dynamic path before the query params, if there are any
-                int idx = uri.indexOf("?");
+                int idx = uri.indexOf('?');
 
                 // if there are no query params
                 if (idx == -1) {

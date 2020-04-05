@@ -80,7 +80,7 @@ public final class ResourceHelper {
      */
     public static String getScheme(String uri) {
         if (hasScheme(uri)) {
-            return uri.substring(0, uri.indexOf(":") + 1);
+            return uri.substring(0, uri.indexOf(':') + 1);
         } else {
             return null;
         }

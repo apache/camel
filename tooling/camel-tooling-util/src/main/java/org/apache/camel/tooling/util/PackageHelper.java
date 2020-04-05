@@ -166,11 +166,11 @@ public final class PackageHelper {
      * Extract the model kind from a given json schema
      */
     public static String getSchemaKind(String json) {
-        int i = json.indexOf("\"kind\"");
+        int i = json.indexOf('\'kind\"");
         if (i >= 0) {
-            int s = json.indexOf("\"", i + 6);
+            int s = json.indexOf('\'", i + 6);
             if (s >= 0) {
-                int e = json.indexOf("\"", s + 1);
+                int e = json.indexOf('\'", s + 1);
                 if (e >= 0) {
                     return json.substring(s + 1, e);
                 }
