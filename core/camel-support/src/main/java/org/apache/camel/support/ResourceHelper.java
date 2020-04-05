@@ -327,7 +327,7 @@ public final class ResourceHelper {
                 .filter(entry -> {
                     Path relative = root.relativize(entry);
                     boolean match = AntPathMatcher.INSTANCE.match(pattern, relative.toString());
-                    LOG.debug("Found resource: {} matching pattern: {} -> {}", entry.toString(), pattern, match);
+                    LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
                     return match;
                 })
                 .collect(Collectors.toCollection(LinkedHashSet::new));
