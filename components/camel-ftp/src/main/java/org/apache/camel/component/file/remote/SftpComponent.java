@@ -48,7 +48,7 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
         // to escape the $ for the expression (file language)
         String baseUri = uri;
         if (uri.contains("?")) {
-            baseUri = uri.substring(0, uri.indexOf("?"));
+            baseUri = uri.substring(0, uri.indexOf('?'));
         }
 
         // lets make sure we create a new configuration as each endpoint can

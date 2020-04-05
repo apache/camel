@@ -112,14 +112,14 @@ public class ExpressionMapper extends BaseConverter {
      * The actual expression, without the language prefix.
      */
     public String getExpressionPart() {
-        return getParameter().substring(getParameter().indexOf(":") + 1);
+        return getParameter().substring(getParameter().indexOf(':') + 1);
     }
     
     /**
      * The expression language used for this mapping.
      */
     public String getLanguagePart() {
-        return getParameter().substring(0, getParameter().indexOf(":"));
+        return getParameter().substring(0, getParameter().indexOf(':'));
     }
     
     /**
