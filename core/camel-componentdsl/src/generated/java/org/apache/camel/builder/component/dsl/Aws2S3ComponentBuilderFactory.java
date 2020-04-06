@@ -272,6 +272,20 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the folders/directories will be consumed. If it is
+         * false, they will be ignored, and Exchanges will not be created for
+         * those.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default Aws2S3ComponentBuilder includeFolders(boolean includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
          * The prefix which is used in the
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
@@ -498,6 +512,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
             case "fileName": getOrCreateConfiguration((AWS2S3Component) component).setFileName((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
+            case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((AWS2S3Component) component).setPrefix((java.lang.String) value); return true;
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
             case "deleteAfterWrite": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterWrite((boolean) value); return true;
