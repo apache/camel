@@ -75,37 +75,46 @@ public class XRefCheckMojo extends AbstractMojo {
             attributes = attributes.entrySet().stream()
                     .collect(Collectors.toMap(e -> "{" + e.getKey() + "}", e -> e.getValue()));
         }
+        Map<String, List<Path>> componentPaths = new HashMap<>();
+        Map<String, List<String>> componentNavs = new HashMap<>();
         Map<String, Path> pages = new TreeMap<>();
-        for (Map component : (List<Map>) ((Map) site.get("content")).get("sources")) {
-            String url = (String) component.get("url");
-            String startPath = (String) component.get("start_path");
+        for (Map source : (List<Map>) ((Map) site.get("content")).get("sources")) {
+            String url = (String) source.get("url");
+            String startPath = (String) source.get("start_path");
             Path root = path.resolve(url).resolve(startPath).normalize();
             Map antora;
             try (Reader r = Files.newBufferedReader(root.resolve("antora.yml"))) {
                 antora = (Map) yaml.loadFromReader(r);
             }
             String name = (String) antora.get("name");
-            List<Path> navs = Optional.ofNullable((List<String>) antora.get("nav"))
-                    .map(List::stream)
-                    .orElse(Stream.empty())
-                    .map(root::resolve)
-                    .collect(Collectors.toList());
-            for (Path nav : navs) {
-                pages.put(name + ":ROOT:" + nav.getFileName().toString(), nav);
+            componentPaths.computeIfAbsent(name, n -> new ArrayList<>()).add(root);
+            componentNavs.computeIfAbsent(name, n -> new ArrayList<>()).addAll(
+                    Optional.ofNullable((List<String>) antora.get("nav")).orElse(Collections.emptyList()));
+        }
+        for (String component : componentPaths.keySet()) {
+            for (String nav : componentNavs.get(component)) {
+                Optional<Path> n = componentPaths.get(component).stream().map(p -> p.resolve(nav))
+                    .filter(Files::isRegularFile)
+                    .findFirst();
+                if (n.isPresent()) {
+                    pages.put(component + ":ROOT:" + n.get().getFileName().toString(), n.get());
+                }
             }
-            Files.list(root.resolve("modules"))
-                    .filter(Files::isDirectory)
-                    .filter(p -> Files.isDirectory(p.resolve("pages")))
-                    .forEach(module -> {
-                        String m = module.getFileName().toString();
-                        Path pagesDir = module.resolve("pages");
-                        walk(pagesDir)
-                                .filter(Files::isRegularFile)
-                                .forEach(page -> {
-                                    Path rel = pagesDir.relativize(page);
-                                    pages.put(name + ":" + m + ":" + rel.toString(), page);
-                                });
-                    });
+            for (Path root : componentPaths.get(component)) {
+                Files.list(root.resolve("modules"))
+                        .filter(Files::isDirectory)
+                        .filter(p -> Files.isDirectory(p.resolve("pages")))
+                        .forEach(module -> {
+                            String m = module.getFileName().toString();
+                            Path pagesDir = module.resolve("pages");
+                            walk(pagesDir)
+                                    .filter(Files::isRegularFile)
+                                    .forEach(page -> {
+                                        Path rel = pagesDir.relativize(page);
+                                        pages.put(component + ":" + m + ":" + rel.toString(), page);
+                                    });
+                        });
+            }
         }
 
         Pattern xref = Pattern.compile("\\b(?<all>xref:(?<link>[^\\[]+.adoc)[^\\]]*\\])");
