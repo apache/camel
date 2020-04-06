@@ -557,7 +557,7 @@ public final class IOHelper {
                 }
                 bufferBytes = defaultStreamCharset.encode(bufferedChars);
             }
-            return bufferBytes.get();
+            return bufferBytes.get() & 0xFF;
         }
 
         @Override
