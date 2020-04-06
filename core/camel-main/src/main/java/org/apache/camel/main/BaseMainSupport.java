@@ -874,7 +874,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.component.properties.")) {
-                int dot = key.indexOf('.', 26);
+                int dot = key.indexOf(".", 26);
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
                 validateOptionAndValue(key, option, value);
@@ -1208,7 +1208,7 @@ public abstract class BaseMainSupport extends BaseService {
                                             Function<String, Iterable<Object>> supplier) {
         if (key.startsWith(keyPrefix)) {
             // grab name
-            final int dot = key.indexOf('.', keyPrefix.length());
+            final int dot = key.indexOf(".", keyPrefix.length());
             final String name = dot == -1 ? key.substring(keyPrefix.length()) : key.substring(keyPrefix.length(), dot);
 
             // enabled is a virtual property
