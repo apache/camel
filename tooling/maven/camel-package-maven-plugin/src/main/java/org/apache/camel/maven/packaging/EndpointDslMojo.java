@@ -676,7 +676,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private String getComponentNameFromType(String type) {
-        int pos = type.lastIndexOf(".");
+        int pos = type.lastIndexOf('.');
         String name = type.substring(pos + 1).replace("Component", "");
 
         switch (type) {
