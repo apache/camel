@@ -17,7 +17,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-postgres",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "additionalProperties": { "kind": "property", "displayName": "Additional Properties", "group": "common", "label": "common", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.Object>", "prefix": "additionalProperties.", "multiValue": true, "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration", "configurationField": "configuration", "description": "Additional properties for debezium components in case they can't be set directly on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore), the properties have to be prefixed with additionalProperties.. E.g: additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http:\/\/localhost:8811\/avro" },

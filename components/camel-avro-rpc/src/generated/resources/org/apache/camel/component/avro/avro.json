@@ -17,7 +17,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro-rpc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "protocol": { "kind": "property", "displayName": "Protocol", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.apache.avro.Protocol", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.avro.AvroConfiguration", "configurationField": "configuration", "description": "Avro protocol to use" },

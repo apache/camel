@@ -17,7 +17,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-yammer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "useJson": { "kind": "property", "displayName": "Use Json", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.yammer.YammerConfiguration", "configurationField": "configuration", "description": "Set to true if you want to use raw JSON rather than converting to POJOs." },

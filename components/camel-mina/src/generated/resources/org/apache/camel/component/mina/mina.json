@@ -17,7 +17,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mina",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "disconnect": { "kind": "property", "displayName": "Disconnect", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.mina.MinaConfiguration", "configurationField": "configuration", "description": "Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer." },
