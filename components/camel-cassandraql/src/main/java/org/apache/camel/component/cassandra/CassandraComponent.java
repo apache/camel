@@ -57,7 +57,7 @@ public class CassandraComponent extends DefaultComponent {
         String port = null;
         String keyspace = null;
 
-        int pos = remaining.lastIndexOf("/");
+        int pos = remaining.lastIndexOf('/');
         if (pos > 0) {
             keyspace = remaining.substring(pos + 1);
             remaining = remaining.substring(0, pos);

@@ -219,7 +219,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // write json schema file
-        String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
+        String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf('.'));
         String json = JsonMapper.createParameterJsonSchema(eipModel);
         updateResource(
                 resourcesOutputDir.toPath(),
