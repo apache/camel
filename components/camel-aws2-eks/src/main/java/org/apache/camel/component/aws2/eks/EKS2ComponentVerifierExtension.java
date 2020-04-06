@@ -67,6 +67,10 @@ public class EKS2ComponentVerifierExtension extends DefaultComponentVerifierExte
 
         try {
             EKS2Configuration configuration = setProperties(new EKS2Configuration(), parameters);
+            if (!EksClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             EksClientBuilder clientBuilder = EksClient.builder();
             EksClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
