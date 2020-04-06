@@ -16,10 +16,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Random;
 
 import com.azure.core.exception.UnexpectedLengthException;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.AppendBlobRequestConditions;
+import com.azure.storage.blob.models.PageList;
+import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import org.apache.camel.Exchange;
@@ -28,6 +31,7 @@ import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
+import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
@@ -211,6 +215,130 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
         assertEquals(data, IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    public void testCreateAndUploadPageBlob() throws IOException {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
+        new Random().nextBytes(dataBytes);
+        final String data = new String(dataBytes, StandardCharsets.UTF_8);
+        final InputStream dataStream = new ByteArrayInputStream(dataBytes);
+
+        final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(dataStream);
+        exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+
+        final BlobOperationResponse response = operations.uploadPageBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean)response.getBody());
+        assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
+
+        // check content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+
+        assertEquals(data, IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    public void testResizePageBlob() throws IOException {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        byte[] dataBytes = new byte[1024]; // we set range for the page from 0-511
+        new Random().nextBytes(dataBytes);
+        final String data = new String(dataBytes, StandardCharsets.UTF_8);
+        final InputStream dataStream = new ByteArrayInputStream(dataBytes);
+
+        final PageRange pageRange = new PageRange().setStart(0).setEnd(1023);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(dataStream);
+        exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+
+        // create our page
+        operations.uploadPageBlob(exchange);
+
+        // create the new size
+        exchange.getIn().removeHeader(BlobConstants.PAGE_BLOB_RANGE);
+        exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_SIZE, 512L);
+
+        final BlobOperationResponse response = operations.resizePageBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean)response.getBody());
+
+        // check for content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+        final BlobInputStream inputStream = (BlobInputStream) getBlobResponse.getBody();
+        assertEquals(512, IOUtils.toByteArray(inputStream).length);
+
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    public void testClearPages() throws IOException {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
+        new Random().nextBytes(dataBytes);
+        final String data = new String(dataBytes, StandardCharsets.UTF_8);
+        final InputStream dataStream = new ByteArrayInputStream(dataBytes);
+
+        final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(dataStream);
+        exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+
+        // create our page
+        operations.uploadPageBlob(exchange);
+
+        final BlobOperationResponse response = operations.clearPageBlob(exchange);
+
+        // check content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+
+        assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8).trim().isEmpty());
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    public void testGetPageBlobRanges() throws IOException {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
+        new Random().nextBytes(dataBytes);
+        final String data = new String(dataBytes, StandardCharsets.UTF_8);
+        final InputStream dataStream = new ByteArrayInputStream(dataBytes);
+
+        final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(dataStream);
+        exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+
+        // create our page
+        operations.uploadPageBlob(exchange);
+
+        final BlobOperationResponse response = operations.getPageBlobRanges(exchange);
+
+        assertNotNull(response);
+
+        final PageList pageList = (PageList) response.getBody();
+
+        assertEquals(pageRange.getStart(), pageList.getPageRange().get(0).getStart());
+        assertEquals(pageRange.getEnd(), pageList.getPageRange().get(0).getEnd());
 
         blobClientWrapper.delete(null, null, null);
     }

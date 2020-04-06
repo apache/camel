@@ -42,6 +42,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
+import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.BlobStreamAndLength;
 import org.apache.camel.component.azure.storage.blob.BlobType;
 import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
@@ -275,6 +276,10 @@ public class BlobOperations {
         final BlobCommonRequestOptions requestOptions = BlobUtils.getCommonRequestOptions(exchange);
         final PageRange pageRange = BlobExchangeHeaders.getPageRangeFromHeaders(exchange);
 
+        if (pageRange == null) {
+            throw new IllegalArgumentException("You need to set page range in the exchange headers.");
+        }
+
         try {
             final Response<PageBlobItem> response = client.uploadPageBlob(pageRange, streamAndLength.getInputStream(), requestOptions.getContentMD5(),
                     requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
@@ -306,6 +311,10 @@ public class BlobOperations {
 
         final PageRange pageRange = BlobExchangeHeaders.getPageRangeFromHeaders(exchange);
         final BlobCommonRequestOptions requestOptions = BlobUtils.getCommonRequestOptions(exchange);
+
+        if (pageRange == null) {
+            throw new IllegalArgumentException("You need to set page range in the exchange headers.");
+        }
 
         final Response<PageBlobItem> response = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
@@ -359,13 +368,19 @@ public class BlobOperations {
 
     private Long getPageBlobSize(final Exchange exchange) {
         if (exchange == null) {
-            return 512L;
+            return BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
         }
-        Long pageSize = BlobExchangeHeaders.getPageBlobSize(exchange);
-        if (pageSize == null) {
-            pageSize = 512L;
+        // we try to get the size from the page range if exists
+        final PageRange pageRange = BlobExchangeHeaders.getPageRangeFromHeaders(exchange);
+        if (pageRange != null) {
+            return pageRange.getEnd() - pageRange.getStart() + 1; //e.g: 1023-0+1 = 1024 size
         }
-        return pageSize;
+        // now we try the page size
+        final Long pageSize = BlobExchangeHeaders.getPageBlobSize(exchange);
+        if (pageSize != null) {
+            return pageSize;
+        }
+        return BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
     }
 
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {

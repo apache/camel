@@ -59,6 +59,9 @@ public final class BlobConstants {
     public static final String APPEND_BLOCK_CREATED = HEADER_PREFIX + "AppendBlobCreated";
     public static final String PAGE_BLOCK_CREATED = HEADER_PREFIX + "PageBlockCreated";
 
+    // constants
+    public static final Long PAGE_BLOB_DEFAULT_SIZE = 512L;
+
     private BlobConstants() {
     }
 }
