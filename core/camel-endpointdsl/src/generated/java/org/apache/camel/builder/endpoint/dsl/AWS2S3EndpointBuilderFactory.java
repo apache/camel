@@ -394,6 +394,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the folders/directories will be consumed. If it is
+         * false, they will be ignored, and Exchanges will not be created for
+         * those.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder includeFolders(
+                boolean includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
+         * If it is true, the folders/directories will be consumed. If it is
+         * false, they will be ignored, and Exchanges will not be created for
+         * those.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder includeFolders(
+                String includeFolders) {
+            doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
          * Set the maxConnections parameter in the S3 client configuration.
          * 
          * The option is a: <code>int</code> type.

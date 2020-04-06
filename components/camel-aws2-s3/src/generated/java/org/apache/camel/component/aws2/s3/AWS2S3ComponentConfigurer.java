@@ -50,6 +50,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
+        case "includefolders":
+        case "includeFolders": getOrCreateConfiguration(target).setIncludeFolders(property(camelContext, boolean.class, value)); return true;
         case "keyname":
         case "keyName": getOrCreateConfiguration(target).setKeyName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -100,6 +102,7 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("delimiter", java.lang.String.class);
         answer.put("fileName", java.lang.String.class);
         answer.put("includeBody", boolean.class);
+        answer.put("includeFolders", boolean.class);
         answer.put("keyName", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("multiPartUpload", boolean.class);
@@ -148,6 +151,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
+        case "includefolders":
+        case "includeFolders": return getOrCreateConfiguration(target).isIncludeFolders();
         case "keyname":
         case "keyName": return getOrCreateConfiguration(target).getKeyName();
         case "lazystartproducer":

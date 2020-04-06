@@ -54,6 +54,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
+        case "includefolders":
+        case "includeFolders": target.getConfiguration().setIncludeFolders(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "keyname":
@@ -136,6 +138,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("fileName", java.lang.String.class);
         answer.put("greedy", boolean.class);
         answer.put("includeBody", boolean.class);
+        answer.put("includeFolders", boolean.class);
         answer.put("initialDelay", long.class);
         answer.put("keyName", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -209,6 +212,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "greedy": return target.isGreedy();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
+        case "includefolders":
+        case "includeFolders": return target.getConfiguration().isIncludeFolders();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "keyname":
