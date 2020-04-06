@@ -455,7 +455,7 @@ public class MailConfiguration implements Cloneable {
             // set default destination to username@host for backwards compatibility
             // can be overridden by URI parameters
             String address = username;
-            if (address.indexOf("@") == -1) {
+            if (address.indexOf('@') == -1) {
                 address += "@" + host;
             }
             setTo(address);

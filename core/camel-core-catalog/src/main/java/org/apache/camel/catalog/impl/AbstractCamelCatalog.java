@@ -397,7 +397,7 @@ public abstract class AbstractCamelCatalog {
             // clip the scheme from the syntax
             alternativeSyntax = CatalogHelper.after(alternativeSyntax, ":");
             // trim so only userinfo
-            int idx = alternativeSyntax.indexOf("@");
+            int idx = alternativeSyntax.indexOf('@');
             String fields = alternativeSyntax.substring(0, idx);
             String[] names = fields.split(":");
 
@@ -408,7 +408,7 @@ public abstract class AbstractCamelCatalog {
                 String password = null;
 
                 // grab unserinfo part before @
-                String userInfo = authority.substring(0, authority.indexOf("@"));
+                String userInfo = authority.substring(0, authority.indexOf('@'));
                 String[] parts = userInfo.split(":");
                 if (parts.length == 2) {
                     username = parts[0];
@@ -661,7 +661,7 @@ public abstract class AbstractCamelCatalog {
 
     public String endpointComponentName(String uri) {
         if (uri != null) {
-            int idx = uri.indexOf(":");
+            int idx = uri.indexOf(':');
             if (idx > 0) {
                 return uri.substring(0, idx);
             }

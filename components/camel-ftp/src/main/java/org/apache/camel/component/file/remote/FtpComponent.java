@@ -70,8 +70,8 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
      */
     protected String getBaseUri(String uri) {
         String baseUri = uri;
-        if (uri.indexOf("?") != -1) {
-            baseUri = uri.substring(0, uri.indexOf("?"));
+        if (uri.indexOf('?') != -1) {
+            baseUri = uri.substring(0, uri.indexOf('?'));
         }
         return baseUri;
     }

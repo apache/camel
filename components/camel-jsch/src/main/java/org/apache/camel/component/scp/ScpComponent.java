@@ -44,7 +44,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
     @Override
     protected GenericFileEndpoint<ScpFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        int query = uri.indexOf("?");
+        int query = uri.indexOf('?');
         return new ScpEndpoint(uri, this, new ScpConfiguration(new URI(query >= 0 ? uri.substring(0, query) : uri)));
     }
 

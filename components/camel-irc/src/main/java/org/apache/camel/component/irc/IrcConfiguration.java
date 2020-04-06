@@ -160,7 +160,7 @@ public class IrcConfiguration implements Cloneable {
         String username = null;
         String password = null;
         if (userInfo != null) {
-            int colonIndex = userInfo.indexOf(":");
+            int colonIndex = userInfo.indexOf(':');
             if (colonIndex != -1) {
                 username = userInfo.substring(0, colonIndex);
                 password = userInfo.substring(colonIndex + 1);

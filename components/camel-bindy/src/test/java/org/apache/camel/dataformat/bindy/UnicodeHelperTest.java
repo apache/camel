@@ -166,7 +166,7 @@ public class UnicodeHelperTest {
     @Test
     public void testIndexOf() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
-        Assert.assertEquals(-1, lh.indexOf("b"));
+        Assert.assertEquals(-1, lh.indexOf('b'));
 
         final UnicodeHelper lh2 = new UnicodeHelper(
             "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
@@ -186,7 +186,7 @@ public class UnicodeHelperTest {
     @Test
     public void testIndexOf2() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
-        Assert.assertEquals(-1, lh.indexOf("b"));
+        Assert.assertEquals(-1, lh.indexOf('b'));
 
         final UnicodeHelper lh2 = new UnicodeHelper(
             "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
@@ -201,8 +201,8 @@ public class UnicodeHelperTest {
         Assert.assertEquals(11, lh2.indexOf(UCSTR), 8);
         
         final UnicodeHelper lh3 = new UnicodeHelper("mm̂mm̂m", Method.GRAPHEME);
-        Assert.assertEquals(0, lh3.indexOf("m"));
-        Assert.assertEquals(2, lh3.indexOf("m", 1));
+        Assert.assertEquals(0, lh3.indexOf('m'));
+        Assert.assertEquals(2, lh3.indexOf('m', 1));
         Assert.assertEquals(3, lh3.indexOf("m̂", 2));
     }
     
