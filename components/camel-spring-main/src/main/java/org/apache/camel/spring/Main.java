@@ -243,7 +243,7 @@ public class Main extends MainCommandLineSupport {
                 String[] classes = routeBuilderClasses.split(",");
                 for (String clazz : classes) {
                     if (clazz.contains(".")) {
-                        String packageName = clazz.substring(0, clazz.lastIndexOf("."));
+                        String packageName = clazz.substring(0, clazz.lastIndexOf('.'));
                         packages.add(packageName);
                     }
                 }

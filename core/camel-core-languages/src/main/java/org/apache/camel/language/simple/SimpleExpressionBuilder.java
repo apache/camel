@@ -716,7 +716,7 @@ public final class SimpleExpressionBuilder {
                     return type;
                 }
 
-                int pos = text.lastIndexOf(".");
+                int pos = text.lastIndexOf('.');
                 if (pos > 0) {
                     String before = text.substring(0, pos);
                     String after = text.substring(pos + 1);

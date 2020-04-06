@@ -179,7 +179,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         if (parentUriEndpoint != null) {
                             String parentScheme = parentUriEndpoint.scheme().split(",")[0];
                             String superClassName = superclass.getName();
-                            String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
+                            String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
                             String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
                             String json = loadResource(fileName);
                             parentData = JsonMapper.generateComponentModel(json);
@@ -237,7 +237,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // write json schema
         String name = classElement.getName();
-        String packageName = name.substring(0, name.lastIndexOf("."));
+        String packageName = name.substring(0, name.lastIndexOf('.'));
         String fileName = scheme + PackageHelper.JSON_SUFIX;
 
         String file = packageName.replace('.', '/') + "/" + fileName;

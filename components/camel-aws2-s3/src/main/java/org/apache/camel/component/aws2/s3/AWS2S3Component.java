@@ -54,7 +54,7 @@ public class AWS2S3Component extends DefaultComponent {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
         if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
         final AWS2S3Configuration configuration = this.configuration != null ? this.configuration.copy() : new AWS2S3Configuration();
         configuration.setBucketName(remaining);
