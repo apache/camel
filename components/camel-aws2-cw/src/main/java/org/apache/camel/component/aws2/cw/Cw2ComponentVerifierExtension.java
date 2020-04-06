@@ -65,7 +65,7 @@ public class Cw2ComponentVerifierExtension extends DefaultComponentVerifierExten
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
         try {
             Cw2Configuration configuration = setProperties(new Cw2Configuration(), parameters);
-            if (!CloudWatchClient.serviceMetadata().regions().contains(configuration.getRegion())) {
+            if (!CloudWatchClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
                 return builder.error(errorBuilder.build()).build();
             }
