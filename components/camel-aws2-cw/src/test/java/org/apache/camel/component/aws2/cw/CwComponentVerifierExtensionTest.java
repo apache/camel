@@ -82,7 +82,6 @@ public class CwComponentVerifierExtensionTest extends CamelTestSupport {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        System.err.println(result.getErrors().toString());
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 
