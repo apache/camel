@@ -17,6 +17,7 @@
 package org.apache.camel.impl.health;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheckResultBuilder;
@@ -157,8 +158,7 @@ public final class RoutePerformanceCounterEvaluators {
     public static final class LastProcessingTime implements PerformanceCounterEvaluator<ManagedRouteMBean> {
         private final long timeThreshold;
         private final int failuresThreshold;
-
-        private volatile int failureCount;
+        private final AtomicInteger failureCount = new AtomicInteger();
 
         public LastProcessingTime(long timeThreshold, int failuresThreshold) {
             this.timeThreshold = timeThreshold;
@@ -170,13 +170,13 @@ public final class RoutePerformanceCounterEvaluators {
             try {
                 long value = counter.getLastProcessingTime();
                 if (value > timeThreshold) {
-                    failureCount++;
+                    int newFailureCount = failureCount.incrementAndGet();
 
-                    if (failureCount > failuresThreshold) {
+                    if (newFailureCount > failuresThreshold) {
                         builder.down();
                     }
                 } else {
-                    failureCount = 0;
+                    failureCount.set(0);
                 }
 
                 builder.detail("exchanges.last-processing-time", value);
@@ -190,8 +190,7 @@ public final class RoutePerformanceCounterEvaluators {
     public static final class MinProcessingTime implements PerformanceCounterEvaluator<ManagedRouteMBean> {
         private final long timeThreshold;
         private final int failuresThreshold;
-
-        private volatile int failureCount;
+        private final AtomicInteger failureCount = new AtomicInteger();
 
         public MinProcessingTime(long timeThreshold, int failuresThreshold) {
             this.timeThreshold = timeThreshold;
@@ -203,13 +202,13 @@ public final class RoutePerformanceCounterEvaluators {
             try {
                 long value = counter.getMinProcessingTime();
                 if (value > timeThreshold) {
-                    failureCount++;
+                    int newFailureCount = failureCount.incrementAndGet();
 
-                    if (failureCount > failuresThreshold) {
+                    if (newFailureCount > failuresThreshold) {
                         builder.down();
                     }
                 } else {
-                    failureCount = 0;
+                    failureCount.set(0);
                 }
 
                 builder.detail("exchanges.min-processing-time", value);
@@ -223,8 +222,7 @@ public final class RoutePerformanceCounterEvaluators {
     public static final class MeanProcessingTime implements PerformanceCounterEvaluator<ManagedRouteMBean> {
         private final long timeThreshold;
         private final int failuresThreshold;
-
-        private volatile int failureCount;
+        private final AtomicInteger failureCount = new AtomicInteger();
 
         public MeanProcessingTime(long timeThreshold, int failuresThreshold) {
             this.timeThreshold = timeThreshold;
@@ -236,13 +234,13 @@ public final class RoutePerformanceCounterEvaluators {
             try {
                 long value = counter.getMeanProcessingTime();
                 if (value > timeThreshold) {
-                    failureCount++;
+                    int newFailureCount = failureCount.incrementAndGet();
 
-                    if (failureCount > failuresThreshold) {
+                    if (newFailureCount > failuresThreshold) {
                         builder.down();
                     }
                 } else {
-                    failureCount = 0;
+                    failureCount.set(0);
                 }
 
                 builder.detail("exchanges.mean-processing-time", value);
@@ -256,8 +254,7 @@ public final class RoutePerformanceCounterEvaluators {
     public static final class MaxProcessingTime implements PerformanceCounterEvaluator<ManagedRouteMBean> {
         private final long timeThreshold;
         private final int failuresThreshold;
-
-        private volatile int failureCount;
+        private final AtomicInteger failureCount = new AtomicInteger();
 
         public MaxProcessingTime(long timeThreshold, int failuresThreshold) {
             this.timeThreshold = timeThreshold;
@@ -269,13 +266,13 @@ public final class RoutePerformanceCounterEvaluators {
             try {
                 long value = counter.getMaxProcessingTime();
                 if (value > timeThreshold) {
-                    failureCount++;
+                    int newFailureCount = failureCount.incrementAndGet();
 
-                    if (failureCount > failuresThreshold) {
+                    if (newFailureCount > failuresThreshold) {
                         builder.down();
                     }
                 } else {
-                    failureCount = 0;
+                    failureCount.set(0);
                 }
 
                 builder.detail("exchanges.max-processing-time", value);
