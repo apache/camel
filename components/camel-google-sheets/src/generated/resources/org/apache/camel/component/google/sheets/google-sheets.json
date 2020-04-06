@@ -18,7 +18,7 @@
     "verifiers": "parameters,connectivity",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "applicationName": { "kind": "property", "displayName": "Application Name", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.google.sheets.GoogleSheetsConfiguration", "configurationField": "configuration", "description": "Google Sheets application name. Example would be camel-google-sheets\/1.0" },

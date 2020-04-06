@@ -17,7 +17,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonDDBClient": { "kind": "property", "displayName": "Amazon DDBClient", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "com.amazonaws.services.dynamodbv2.AmazonDynamoDB", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws.ddb.DdbConfiguration", "configurationField": "configuration", "description": "To use the AmazonDynamoDB as the client" },

@@ -17,7 +17,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-cw",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonCwClient": { "kind": "property", "displayName": "Amazon Cw Client", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "com.amazonaws.services.cloudwatch.AmazonCloudWatch", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws.cw.CwConfiguration", "configurationField": "configuration", "description": "To use the AmazonCloudWatch as the client" },

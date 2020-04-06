@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.YAMLDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-snakeyaml",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "properties": {
     "library": { "kind": "attribute", "displayName": "Library", "required": false, "type": "enum", "javaType": "org.apache.camel.model.dataformat.YAMLLibrary", "enum": [ "SnakeYAML" ], "deprecated": false, "secret": false, "defaultValue": "SnakeYAML", "description": "Which yaml library to use. By default it is SnakeYAML" },

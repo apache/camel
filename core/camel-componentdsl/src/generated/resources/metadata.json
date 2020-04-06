@@ -18,7 +18,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-activemq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AhcComponentBuilderFactory": {
     "kind": "component",
@@ -39,7 +39,7 @@
     "firstVersion": "2.8.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AhcWsComponentBuilderFactory": {
     "kind": "component",
@@ -61,7 +61,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc-ws",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AhcWssComponentBuilderFactory": {
     "kind": "component",
@@ -83,7 +83,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc-ws",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AmqpComponentBuilderFactory": {
     "kind": "component",
@@ -104,7 +104,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-amqp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ApnsComponentBuilderFactory": {
     "kind": "component",
@@ -125,7 +125,7 @@
     "firstVersion": "2.8.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-apns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "As2ComponentBuilderFactory": {
     "kind": "component",
@@ -146,7 +146,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-as2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AsteriskComponentBuilderFactory": {
     "kind": "component",
@@ -167,7 +167,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-asterisk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtmosComponentBuilderFactory": {
     "kind": "component",
@@ -188,7 +188,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmos",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtmosphereWebsocketComponentBuilderFactory": {
     "kind": "component",
@@ -209,7 +209,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmosphere-websocket",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomComponentBuilderFactory": {
     "kind": "component",
@@ -230,7 +230,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atom",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixMapComponentBuilderFactory": {
     "kind": "component",
@@ -251,7 +251,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixMessagingComponentBuilderFactory": {
     "kind": "component",
@@ -272,7 +272,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixMultimapComponentBuilderFactory": {
     "kind": "component",
@@ -293,7 +293,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixQueueComponentBuilderFactory": {
     "kind": "component",
@@ -314,7 +314,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixSetComponentBuilderFactory": {
     "kind": "component",
@@ -335,7 +335,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixValueComponentBuilderFactory": {
     "kind": "component",
@@ -356,7 +356,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AvroComponentBuilderFactory": {
     "kind": "component",
@@ -377,7 +377,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro-rpc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2CwComponentBuilderFactory": {
     "kind": "component",
@@ -398,7 +398,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-cw",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2DdbComponentBuilderFactory": {
     "kind": "component",
@@ -419,7 +419,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2DdbstreamComponentBuilderFactory": {
     "kind": "component",
@@ -440,7 +440,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2Ec2ComponentBuilderFactory": {
     "kind": "component",
@@ -461,7 +461,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ec2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2EcsComponentBuilderFactory": {
     "kind": "component",
@@ -482,7 +482,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ecs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2EksComponentBuilderFactory": {
     "kind": "component",
@@ -503,7 +503,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-eks",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2IamComponentBuilderFactory": {
     "kind": "component",
@@ -524,7 +524,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-iam",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2KinesisComponentBuilderFactory": {
     "kind": "component",
@@ -545,7 +545,7 @@
     "firstVersion": "3.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2KinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
@@ -566,7 +566,7 @@
     "firstVersion": "3.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2KmsComponentBuilderFactory": {
     "kind": "component",
@@ -587,7 +587,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2LambdaComponentBuilderFactory": {
     "kind": "component",
@@ -608,7 +608,7 @@
     "firstVersion": "3.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-lambda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2MqComponentBuilderFactory": {
     "kind": "component",
@@ -629,7 +629,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-mq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2MskComponentBuilderFactory": {
     "kind": "component",
@@ -650,7 +650,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-msk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2S3ComponentBuilderFactory": {
     "kind": "component",
@@ -671,7 +671,7 @@
     "firstVersion": "3.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-s3",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2SesComponentBuilderFactory": {
     "kind": "component",
@@ -692,7 +692,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ses",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2SnsComponentBuilderFactory": {
     "kind": "component",
@@ -713,7 +713,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2SqsComponentBuilderFactory": {
     "kind": "component",
@@ -734,7 +734,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sqs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2TranslateComponentBuilderFactory": {
     "kind": "component",
@@ -755,7 +755,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-translate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsCwComponentBuilderFactory": {
     "kind": "component",
@@ -776,7 +776,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-cw",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsDdbComponentBuilderFactory": {
     "kind": "component",
@@ -797,7 +797,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsDdbstreamComponentBuilderFactory": {
     "kind": "component",
@@ -818,7 +818,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsEc2ComponentBuilderFactory": {
     "kind": "component",
@@ -839,7 +839,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ec2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsEcsComponentBuilderFactory": {
     "kind": "component",
@@ -860,7 +860,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ecs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsEksComponentBuilderFactory": {
     "kind": "component",
@@ -881,7 +881,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-eks",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsIamComponentBuilderFactory": {
     "kind": "component",
@@ -902,7 +902,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-iam",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsKinesisComponentBuilderFactory": {
     "kind": "component",
@@ -923,7 +923,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsKinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
@@ -944,7 +944,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsKmsComponentBuilderFactory": {
     "kind": "component",
@@ -965,7 +965,7 @@
     "firstVersion": "2.21.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsLambdaComponentBuilderFactory": {
     "kind": "component",
@@ -986,7 +986,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-lambda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsMqComponentBuilderFactory": {
     "kind": "component",
@@ -1007,7 +1007,7 @@
     "firstVersion": "2.21.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-mq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsMskComponentBuilderFactory": {
     "kind": "component",
@@ -1028,7 +1028,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-msk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsS3ComponentBuilderFactory": {
     "kind": "component",
@@ -1049,7 +1049,7 @@
     "firstVersion": "2.8.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-s3",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSdbComponentBuilderFactory": {
     "kind": "component",
@@ -1070,7 +1070,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSesComponentBuilderFactory": {
     "kind": "component",
@@ -1091,7 +1091,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ses",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSnsComponentBuilderFactory": {
     "kind": "component",
@@ -1112,7 +1112,7 @@
     "firstVersion": "2.8.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSqsComponentBuilderFactory": {
     "kind": "component",
@@ -1133,7 +1133,7 @@
     "firstVersion": "2.6.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sqs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSwfComponentBuilderFactory": {
     "kind": "component",
@@ -1154,7 +1154,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-swf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsTranslateComponentBuilderFactory": {
     "kind": "component",
@@ -1175,7 +1175,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-translate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AzureBlobComponentBuilderFactory": {
     "kind": "component",
@@ -1196,7 +1196,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AzureQueueComponentBuilderFactory": {
     "kind": "component",
@@ -1217,7 +1217,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BeanComponentBuilderFactory": {
     "kind": "component",
@@ -1238,7 +1238,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BeanValidatorComponentBuilderFactory": {
     "kind": "component",
@@ -1259,7 +1259,7 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean-validator",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BeanstalkComponentBuilderFactory": {
     "kind": "component",
@@ -1280,7 +1280,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-beanstalk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BonitaComponentBuilderFactory": {
     "kind": "component",
@@ -1301,7 +1301,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bonita",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BoxComponentBuilderFactory": {
     "kind": "component",
@@ -1322,7 +1322,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-box",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BraintreeComponentBuilderFactory": {
     "kind": "component",
@@ -1343,7 +1343,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-braintree",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BrowseComponentBuilderFactory": {
     "kind": "component",
@@ -1364,7 +1364,7 @@
     "firstVersion": "1.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-browse",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CaffeineCacheComponentBuilderFactory": {
     "kind": "component",
@@ -1385,7 +1385,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CaffeineLoadcacheComponentBuilderFactory": {
     "kind": "component",
@@ -1406,7 +1406,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ChatscriptComponentBuilderFactory": {
     "kind": "component",
@@ -1427,7 +1427,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-chatscript",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ChunkComponentBuilderFactory": {
     "kind": "component",
@@ -1448,7 +1448,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-chunk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ClasComponentBuilderFactory": {
     "kind": "component",
@@ -1469,7 +1469,7 @@
     "firstVersion": "2.4.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CmSmsComponentBuilderFactory": {
     "kind": "component",
@@ -1490,7 +1490,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cm-sms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CmisComponentBuilderFactory": {
     "kind": "component",
@@ -1511,7 +1511,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cmis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapComponentBuilderFactory": {
     "kind": "component",
@@ -1533,7 +1533,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapTcpComponentBuilderFactory": {
     "kind": "component",
@@ -1555,7 +1555,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapsComponentBuilderFactory": {
     "kind": "component",
@@ -1577,7 +1577,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapsTcpComponentBuilderFactory": {
     "kind": "component",
@@ -1599,7 +1599,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CometdComponentBuilderFactory": {
     "kind": "component",
@@ -1621,7 +1621,7 @@
     "firstVersion": "2.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cometd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CometdsComponentBuilderFactory": {
     "kind": "component",
@@ -1643,7 +1643,7 @@
     "firstVersion": "2.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cometd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ConsulComponentBuilderFactory": {
     "kind": "component",
@@ -1664,7 +1664,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-consul",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ControlbusComponentBuilderFactory": {
     "kind": "component",
@@ -1685,7 +1685,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-controlbus",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CordaComponentBuilderFactory": {
     "kind": "component",
@@ -1706,7 +1706,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-corda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CouchbaseComponentBuilderFactory": {
     "kind": "component",
@@ -1727,7 +1727,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-couchbase",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CouchdbComponentBuilderFactory": {
     "kind": "component",
@@ -1748,7 +1748,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-couchdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CqlComponentBuilderFactory": {
     "kind": "component",
@@ -1769,7 +1769,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cassandraql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CronComponentBuilderFactory": {
     "kind": "component",
@@ -1790,7 +1790,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cron",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CryptoCmsComponentBuilderFactory": {
     "kind": "component",
@@ -1811,7 +1811,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto-cms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CryptoComponentBuilderFactory": {
     "kind": "component",
@@ -1832,7 +1832,7 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CxfComponentBuilderFactory": {
     "kind": "component",
@@ -1853,7 +1853,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CxfrsComponentBuilderFactory": {
     "kind": "component",
@@ -1874,7 +1874,7 @@
     "firstVersion": "2.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DataformatComponentBuilderFactory": {
     "kind": "component",
@@ -1895,7 +1895,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataformat",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DatasetComponentBuilderFactory": {
     "kind": "component",
@@ -1916,7 +1916,7 @@
     "firstVersion": "1.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DatasetTestComponentBuilderFactory": {
     "kind": "component",
@@ -1937,7 +1937,7 @@
     "firstVersion": "1.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumMongodbComponentBuilderFactory": {
     "kind": "component",
@@ -1958,7 +1958,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-mongodb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumMysqlComponentBuilderFactory": {
     "kind": "component",
@@ -1979,7 +1979,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-mysql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumPostgresComponentBuilderFactory": {
     "kind": "component",
@@ -2000,7 +2000,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-postgres",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumSqlserverComponentBuilderFactory": {
     "kind": "component",
@@ -2021,7 +2021,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-sqlserver",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DigitaloceanComponentBuilderFactory": {
     "kind": "component",
@@ -2042,7 +2042,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-digitalocean",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DirectComponentBuilderFactory": {
     "kind": "component",
@@ -2063,7 +2063,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-direct",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DirectVmComponentBuilderFactory": {
     "kind": "component",
@@ -2084,7 +2084,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-directvm",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DisruptorComponentBuilderFactory": {
     "kind": "component",
@@ -2106,7 +2106,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DisruptorVmComponentBuilderFactory": {
     "kind": "component",
@@ -2128,7 +2128,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DnsComponentBuilderFactory": {
     "kind": "component",
@@ -2149,7 +2149,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DockerComponentBuilderFactory": {
     "kind": "component",
@@ -2170,7 +2170,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-docker",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DozerComponentBuilderFactory": {
     "kind": "component",
@@ -2191,7 +2191,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dozer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DrillComponentBuilderFactory": {
     "kind": "component",
@@ -2212,7 +2212,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-drill",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DropboxComponentBuilderFactory": {
     "kind": "component",
@@ -2233,7 +2233,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dropbox",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EhcacheComponentBuilderFactory": {
     "kind": "component",
@@ -2254,7 +2254,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ehcache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ElasticsearchRestComponentBuilderFactory": {
     "kind": "component",
@@ -2275,7 +2275,7 @@
     "firstVersion": "2.21.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elasticsearch-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ElsqlComponentBuilderFactory": {
     "kind": "component",
@@ -2296,7 +2296,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elsql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EtcdKeysComponentBuilderFactory": {
     "kind": "component",
@@ -2317,7 +2317,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EtcdStatsComponentBuilderFactory": {
     "kind": "component",
@@ -2338,7 +2338,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EtcdWatchComponentBuilderFactory": {
     "kind": "component",
@@ -2359,7 +2359,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ExecComponentBuilderFactory": {
     "kind": "component",
@@ -2380,7 +2380,7 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-exec",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FacebookComponentBuilderFactory": {
     "kind": "component",
@@ -2401,7 +2401,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-facebook",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FhirComponentBuilderFactory": {
     "kind": "component",
@@ -2422,7 +2422,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fhir",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FileComponentBuilderFactory": {
     "kind": "component",
@@ -2443,7 +2443,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FileWatchComponentBuilderFactory": {
     "kind": "component",
@@ -2464,7 +2464,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file-watch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FlatpackComponentBuilderFactory": {
     "kind": "component",
@@ -2485,7 +2485,7 @@
     "firstVersion": "1.4.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flatpack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FlinkComponentBuilderFactory": {
     "kind": "component",
@@ -2506,7 +2506,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flink",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FopComponentBuilderFactory": {
     "kind": "component",
@@ -2527,7 +2527,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fop",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FreemarkerComponentBuilderFactory": {
     "kind": "component",
@@ -2548,7 +2548,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-freemarker",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FtpComponentBuilderFactory": {
     "kind": "component",
@@ -2570,7 +2570,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FtpsComponentBuilderFactory": {
     "kind": "component",
@@ -2592,7 +2592,7 @@
     "firstVersion": "2.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GangliaComponentBuilderFactory": {
     "kind": "component",
@@ -2613,7 +2613,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ganglia",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GeocoderComponentBuilderFactory": {
     "kind": "component",
@@ -2634,7 +2634,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-geocoder",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GitComponentBuilderFactory": {
     "kind": "component",
@@ -2655,7 +2655,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-git",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GithubComponentBuilderFactory": {
     "kind": "component",
@@ -2676,7 +2676,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-github",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleBigqueryComponentBuilderFactory": {
     "kind": "component",
@@ -2697,7 +2697,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleBigquerySqlComponentBuilderFactory": {
     "kind": "component",
@@ -2718,7 +2718,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleCalendarComponentBuilderFactory": {
     "kind": "component",
@@ -2739,7 +2739,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-calendar",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleCalendarStreamComponentBuilderFactory": {
     "kind": "component",
@@ -2760,7 +2760,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-calendar",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleDriveComponentBuilderFactory": {
     "kind": "component",
@@ -2781,7 +2781,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-drive",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleMailComponentBuilderFactory": {
     "kind": "component",
@@ -2802,7 +2802,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleMailStreamComponentBuilderFactory": {
     "kind": "component",
@@ -2823,7 +2823,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GooglePubsubComponentBuilderFactory": {
     "kind": "component",
@@ -2844,7 +2844,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-pubsub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleSheetsComponentBuilderFactory": {
     "kind": "component",
@@ -2865,7 +2865,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleSheetsStreamComponentBuilderFactory": {
     "kind": "component",
@@ -2886,7 +2886,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoraComponentBuilderFactory": {
     "kind": "component",
@@ -2907,7 +2907,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-gora",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GrapeComponentBuilderFactory": {
     "kind": "component",
@@ -2928,7 +2928,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grape",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GraphqlComponentBuilderFactory": {
     "kind": "component",
@@ -2949,7 +2949,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-graphql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GrpcComponentBuilderFactory": {
     "kind": "component",
@@ -2970,7 +2970,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grpc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GuavaEventbusComponentBuilderFactory": {
     "kind": "component",
@@ -2991,7 +2991,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-guava-eventbus",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastAtomicvalueComponentBuilderFactory": {
     "kind": "component",
@@ -3012,7 +3012,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastInstanceComponentBuilderFactory": {
     "kind": "component",
@@ -3033,7 +3033,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastListComponentBuilderFactory": {
     "kind": "component",
@@ -3054,7 +3054,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastMapComponentBuilderFactory": {
     "kind": "component",
@@ -3075,7 +3075,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastMultimapComponentBuilderFactory": {
     "kind": "component",
@@ -3096,7 +3096,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastQueueComponentBuilderFactory": {
     "kind": "component",
@@ -3117,7 +3117,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastReplicatedmapComponentBuilderFactory": {
     "kind": "component",
@@ -3138,7 +3138,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastRingbufferComponentBuilderFactory": {
     "kind": "component",
@@ -3159,7 +3159,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastSedaComponentBuilderFactory": {
     "kind": "component",
@@ -3180,7 +3180,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastSetComponentBuilderFactory": {
     "kind": "component",
@@ -3201,7 +3201,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastTopicComponentBuilderFactory": {
     "kind": "component",
@@ -3222,7 +3222,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HbaseComponentBuilderFactory": {
     "kind": "component",
@@ -3243,7 +3243,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hbase",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HdfsComponentBuilderFactory": {
     "kind": "component",
@@ -3264,7 +3264,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hdfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HipchatComponentBuilderFactory": {
     "kind": "component",
@@ -3285,7 +3285,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hipchat",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HttpComponentBuilderFactory": {
     "kind": "component",
@@ -3307,7 +3307,7 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HttpsComponentBuilderFactory": {
     "kind": "component",
@@ -3329,7 +3329,7 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Iec60870ClientComponentBuilderFactory": {
     "kind": "component",
@@ -3350,7 +3350,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Iec60870ServerComponentBuilderFactory": {
     "kind": "component",
@@ -3371,7 +3371,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteCacheComponentBuilderFactory": {
     "kind": "component",
@@ -3392,7 +3392,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteComputeComponentBuilderFactory": {
     "kind": "component",
@@ -3413,7 +3413,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteEventsComponentBuilderFactory": {
     "kind": "component",
@@ -3434,7 +3434,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteIdgenComponentBuilderFactory": {
     "kind": "component",
@@ -3455,7 +3455,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteMessagingComponentBuilderFactory": {
     "kind": "component",
@@ -3476,7 +3476,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteQueueComponentBuilderFactory": {
     "kind": "component",
@@ -3497,7 +3497,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteSetComponentBuilderFactory": {
     "kind": "component",
@@ -3518,7 +3518,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ImapComponentBuilderFactory": {
     "kind": "component",
@@ -3541,7 +3541,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ImapsComponentBuilderFactory": {
     "kind": "component",
@@ -3564,7 +3564,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "InfinispanComponentBuilderFactory": {
     "kind": "component",
@@ -3585,7 +3585,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-infinispan",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "InfluxdbComponentBuilderFactory": {
     "kind": "component",
@@ -3606,7 +3606,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-influxdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IotaComponentBuilderFactory": {
     "kind": "component",
@@ -3627,7 +3627,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iota",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IpfsComponentBuilderFactory": {
     "kind": "component",
@@ -3648,7 +3648,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ipfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IrcComponentBuilderFactory": {
     "kind": "component",
@@ -3670,7 +3670,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-irc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IronmqComponentBuilderFactory": {
     "kind": "component",
@@ -3691,7 +3691,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ironmq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JbpmComponentBuilderFactory": {
     "kind": "component",
@@ -3712,7 +3712,7 @@
     "firstVersion": "2.6.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbpm",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JcacheComponentBuilderFactory": {
     "kind": "component",
@@ -3733,7 +3733,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JcloudsComponentBuilderFactory": {
     "kind": "component",
@@ -3754,7 +3754,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jclouds",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JcrComponentBuilderFactory": {
     "kind": "component",
@@ -3776,7 +3776,7 @@
     "firstVersion": "1.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JdbcComponentBuilderFactory": {
     "kind": "component",
@@ -3797,7 +3797,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jdbc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JettyComponentBuilderFactory": {
     "kind": "component",
@@ -3818,7 +3818,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jetty",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JgroupsComponentBuilderFactory": {
     "kind": "component",
@@ -3839,7 +3839,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JgroupsRaftComponentBuilderFactory": {
     "kind": "component",
@@ -3860,7 +3860,7 @@
     "firstVersion": "2.24.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups-raft",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JingComponentBuilderFactory": {
     "kind": "component",
@@ -3881,7 +3881,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jing",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JiraComponentBuilderFactory": {
     "kind": "component",
@@ -3902,7 +3902,7 @@
     "firstVersion": "3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jira",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JmsComponentBuilderFactory": {
     "kind": "component",
@@ -3923,7 +3923,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JmxComponentBuilderFactory": {
     "kind": "component",
@@ -3944,7 +3944,7 @@
     "firstVersion": "2.6.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jmx",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JoltComponentBuilderFactory": {
     "kind": "component",
@@ -3965,7 +3965,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jolt",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JooqComponentBuilderFactory": {
     "kind": "component",
@@ -3986,7 +3986,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jooq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JpaComponentBuilderFactory": {
     "kind": "component",
@@ -4007,7 +4007,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jpa",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JsltComponentBuilderFactory": {
     "kind": "component",
@@ -4028,7 +4028,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jslt",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JsonValidatorComponentBuilderFactory": {
     "kind": "component",
@@ -4049,7 +4049,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-json-validator",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Jt400ComponentBuilderFactory": {
     "kind": "component",
@@ -4070,7 +4070,7 @@
     "firstVersion": "1.5.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jt400",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KafkaComponentBuilderFactory": {
     "kind": "component",
@@ -4091,7 +4091,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesConfigMapsComponentBuilderFactory": {
     "kind": "component",
@@ -4112,7 +4112,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesDeploymentsComponentBuilderFactory": {
     "kind": "component",
@@ -4133,7 +4133,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesHpaComponentBuilderFactory": {
     "kind": "component",
@@ -4154,7 +4154,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesJobComponentBuilderFactory": {
     "kind": "component",
@@ -4175,7 +4175,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesNamespacesComponentBuilderFactory": {
     "kind": "component",
@@ -4196,7 +4196,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesNodesComponentBuilderFactory": {
     "kind": "component",
@@ -4217,7 +4217,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesPersistentVolumesClaimsComponentBuilderFactory": {
     "kind": "component",
@@ -4238,7 +4238,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesPersistentVolumesComponentBuilderFactory": {
     "kind": "component",
@@ -4259,7 +4259,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesPodsComponentBuilderFactory": {
     "kind": "component",
@@ -4280,7 +4280,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesReplicationControllersComponentBuilderFactory": {
     "kind": "component",
@@ -4301,7 +4301,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesResourcesQuotaComponentBuilderFactory": {
     "kind": "component",
@@ -4322,7 +4322,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesSecretsComponentBuilderFactory": {
     "kind": "component",
@@ -4343,7 +4343,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesServiceAccountsComponentBuilderFactory": {
     "kind": "component",
@@ -4364,7 +4364,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesServicesComponentBuilderFactory": {
     "kind": "component",
@@ -4385,7 +4385,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KuduComponentBuilderFactory": {
     "kind": "component",
@@ -4406,7 +4406,7 @@
     "firstVersion": "3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kudu",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LanguageComponentBuilderFactory": {
     "kind": "component",
@@ -4427,7 +4427,7 @@
     "firstVersion": "2.5.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-language",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LdapComponentBuilderFactory": {
     "kind": "component",
@@ -4448,7 +4448,7 @@
     "firstVersion": "1.5.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ldap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LdifComponentBuilderFactory": {
     "kind": "component",
@@ -4469,7 +4469,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ldif",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LogComponentBuilderFactory": {
     "kind": "component",
@@ -4490,7 +4490,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-log",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LprComponentBuilderFactory": {
     "kind": "component",
@@ -4511,7 +4511,7 @@
     "firstVersion": "2.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-printer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LuceneComponentBuilderFactory": {
     "kind": "component",
@@ -4532,7 +4532,7 @@
     "firstVersion": "2.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lucene",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LumberjackComponentBuilderFactory": {
     "kind": "component",
@@ -4553,7 +4553,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lumberjack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MasterComponentBuilderFactory": {
     "kind": "component",
@@ -4574,7 +4574,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-master",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MetricsComponentBuilderFactory": {
     "kind": "component",
@@ -4595,7 +4595,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-metrics",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MicrometerComponentBuilderFactory": {
     "kind": "component",
@@ -4616,7 +4616,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-micrometer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MicroprofileMetricsComponentBuilderFactory": {
     "kind": "component",
@@ -4637,7 +4637,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-microprofile-metrics",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MiloClientComponentBuilderFactory": {
     "kind": "component",
@@ -4658,7 +4658,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MiloServerComponentBuilderFactory": {
     "kind": "component",
@@ -4679,7 +4679,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MinaComponentBuilderFactory": {
     "kind": "component",
@@ -4700,7 +4700,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mina",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MllpComponentBuilderFactory": {
     "kind": "component",
@@ -4721,7 +4721,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mllp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MockComponentBuilderFactory": {
     "kind": "component",
@@ -4742,7 +4742,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mock",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MongodbComponentBuilderFactory": {
     "kind": "component",
@@ -4763,7 +4763,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MongodbGridfsComponentBuilderFactory": {
     "kind": "component",
@@ -4784,7 +4784,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb-gridfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MsvComponentBuilderFactory": {
     "kind": "component",
@@ -4805,7 +4805,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-msv",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MustacheComponentBuilderFactory": {
     "kind": "component",
@@ -4826,7 +4826,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mustache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MvelComponentBuilderFactory": {
     "kind": "component",
@@ -4847,7 +4847,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mvel",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MybatisBeanComponentBuilderFactory": {
     "kind": "component",
@@ -4868,7 +4868,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MybatisComponentBuilderFactory": {
     "kind": "component",
@@ -4889,7 +4889,7 @@
     "firstVersion": "2.7.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NagiosComponentBuilderFactory": {
     "kind": "component",
@@ -4910,7 +4910,7 @@
     "firstVersion": "2.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nagios",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NatsComponentBuilderFactory": {
     "kind": "component",
@@ -4931,7 +4931,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nats",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NettyComponentBuilderFactory": {
     "kind": "component",
@@ -4952,7 +4952,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NettyHttpComponentBuilderFactory": {
     "kind": "component",
@@ -4973,7 +4973,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NitriteComponentBuilderFactory": {
     "kind": "component",
@@ -4994,7 +4994,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nitrite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NsqComponentBuilderFactory": {
     "kind": "component",
@@ -5015,7 +5015,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nsq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Olingo2ComponentBuilderFactory": {
     "kind": "component",
@@ -5036,7 +5036,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Olingo4ComponentBuilderFactory": {
     "kind": "component",
@@ -5057,7 +5057,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo4",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenshiftBuildConfigsComponentBuilderFactory": {
     "kind": "component",
@@ -5078,7 +5078,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenshiftBuildsComponentBuilderFactory": {
     "kind": "component",
@@ -5099,7 +5099,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackCinderComponentBuilderFactory": {
     "kind": "component",
@@ -5120,7 +5120,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackGlanceComponentBuilderFactory": {
     "kind": "component",
@@ -5141,7 +5141,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackKeystoneComponentBuilderFactory": {
     "kind": "component",
@@ -5162,7 +5162,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackNeutronComponentBuilderFactory": {
     "kind": "component",
@@ -5183,7 +5183,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackNovaComponentBuilderFactory": {
     "kind": "component",
@@ -5204,7 +5204,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackSwiftComponentBuilderFactory": {
     "kind": "component",
@@ -5225,7 +5225,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OptaplannerComponentBuilderFactory": {
     "kind": "component",
@@ -5246,7 +5246,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-optaplanner",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PahoComponentBuilderFactory": {
     "kind": "component",
@@ -5267,7 +5267,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-paho",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PdfComponentBuilderFactory": {
     "kind": "component",
@@ -5288,7 +5288,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pdf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PgReplicationSlotComponentBuilderFactory": {
     "kind": "component",
@@ -5309,7 +5309,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pg-replication-slot",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PgeventComponentBuilderFactory": {
     "kind": "component",
@@ -5330,7 +5330,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pgevent",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PlatformHttpComponentBuilderFactory": {
     "kind": "component",
@@ -5351,7 +5351,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-platform-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Pop3ComponentBuilderFactory": {
     "kind": "component",
@@ -5374,7 +5374,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Pop3sComponentBuilderFactory": {
     "kind": "component",
@@ -5397,7 +5397,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PubnubComponentBuilderFactory": {
     "kind": "component",
@@ -5418,7 +5418,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pubnub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PulsarComponentBuilderFactory": {
     "kind": "component",
@@ -5439,7 +5439,7 @@
     "firstVersion": "2.24.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pulsar",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "QuartzComponentBuilderFactory": {
     "kind": "component",
@@ -5460,7 +5460,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quartz",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "QuickfixComponentBuilderFactory": {
     "kind": "component",
@@ -5481,7 +5481,7 @@
     "firstVersion": "2.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quickfix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RabbitmqComponentBuilderFactory": {
     "kind": "component",
@@ -5502,7 +5502,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rabbitmq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ReactiveStreamsComponentBuilderFactory": {
     "kind": "component",
@@ -5523,7 +5523,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-reactive-streams",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RefComponentBuilderFactory": {
     "kind": "component",
@@ -5544,7 +5544,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ref",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestApiComponentBuilderFactory": {
     "kind": "component",
@@ -5565,7 +5565,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestEndpointComponentBuilderFactory": {
     "kind": "component",
@@ -5586,7 +5586,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestOpenapiComponentBuilderFactory": {
     "kind": "component",
@@ -5607,7 +5607,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-openapi",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestSwaggerComponentBuilderFactory": {
     "kind": "component",
@@ -5628,7 +5628,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-swagger",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RobotframeworkComponentBuilderFactory": {
     "kind": "component",
@@ -5649,7 +5649,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-robotframework",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RssComponentBuilderFactory": {
     "kind": "component",
@@ -5670,7 +5670,7 @@
     "firstVersion": "2.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rss",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SagaComponentBuilderFactory": {
     "kind": "component",
@@ -5691,7 +5691,7 @@
     "firstVersion": "2.21.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saga",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SalesforceComponentBuilderFactory": {
     "kind": "component",
@@ -5712,7 +5712,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-salesforce",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SapNetweaverComponentBuilderFactory": {
     "kind": "component",
@@ -5733,7 +5733,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sap-netweaver",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SchedulerComponentBuilderFactory": {
     "kind": "component",
@@ -5754,7 +5754,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-scheduler",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SchematronComponentBuilderFactory": {
     "kind": "component",
@@ -5775,7 +5775,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-schematron",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ScpComponentBuilderFactory": {
     "kind": "component",
@@ -5796,7 +5796,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SedaComponentBuilderFactory": {
     "kind": "component",
@@ -5817,7 +5817,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-seda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ServiceComponentBuilderFactory": {
     "kind": "component",
@@ -5838,7 +5838,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-service",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ServicenowComponentBuilderFactory": {
     "kind": "component",
@@ -5859,7 +5859,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servicenow",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ServletComponentBuilderFactory": {
     "kind": "component",
@@ -5880,7 +5880,7 @@
     "firstVersion": "2.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servlet",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SftpComponentBuilderFactory": {
     "kind": "component",
@@ -5901,7 +5901,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SipComponentBuilderFactory": {
     "kind": "component",
@@ -5923,7 +5923,7 @@
     "firstVersion": "2.5.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sip",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SipsComponentBuilderFactory": {
     "kind": "component",
@@ -5945,7 +5945,7 @@
     "firstVersion": "2.5.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sip",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Sjms2ComponentBuilderFactory": {
     "kind": "component",
@@ -5966,7 +5966,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SjmsBatchComponentBuilderFactory": {
     "kind": "component",
@@ -5987,7 +5987,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SjmsComponentBuilderFactory": {
     "kind": "component",
@@ -6008,7 +6008,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SlackComponentBuilderFactory": {
     "kind": "component",
@@ -6029,7 +6029,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-slack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmppComponentBuilderFactory": {
     "kind": "component",
@@ -6051,7 +6051,7 @@
     "firstVersion": "2.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmppsComponentBuilderFactory": {
     "kind": "component",
@@ -6073,7 +6073,7 @@
     "firstVersion": "2.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmtpComponentBuilderFactory": {
     "kind": "component",
@@ -6096,7 +6096,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmtpsComponentBuilderFactory": {
     "kind": "component",
@@ -6119,7 +6119,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SnmpComponentBuilderFactory": {
     "kind": "component",
@@ -6140,7 +6140,7 @@
     "firstVersion": "2.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-snmp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SolrComponentBuilderFactory": {
     "kind": "component",
@@ -6162,7 +6162,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SolrcloudComponentBuilderFactory": {
     "kind": "component",
@@ -6184,7 +6184,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SolrsComponentBuilderFactory": {
     "kind": "component",
@@ -6206,7 +6206,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SoroushComponentBuilderFactory": {
     "kind": "component",
@@ -6227,7 +6227,7 @@
     "firstVersion": "3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-soroush",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SparkComponentBuilderFactory": {
     "kind": "component",
@@ -6248,7 +6248,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spark",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SplunkComponentBuilderFactory": {
     "kind": "component",
@@ -6269,7 +6269,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-splunk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringBatchComponentBuilderFactory": {
     "kind": "component",
@@ -6290,7 +6290,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-batch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringEventComponentBuilderFactory": {
     "kind": "component",
@@ -6311,7 +6311,7 @@
     "firstVersion": "1.4.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringIntegrationComponentBuilderFactory": {
     "kind": "component",
@@ -6332,7 +6332,7 @@
     "firstVersion": "1.4.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-integration",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringLdapComponentBuilderFactory": {
     "kind": "component",
@@ -6353,7 +6353,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ldap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringRedisComponentBuilderFactory": {
     "kind": "component",
@@ -6374,7 +6374,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-redis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringWsComponentBuilderFactory": {
     "kind": "component",
@@ -6395,7 +6395,7 @@
     "firstVersion": "2.6.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ws",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SqlComponentBuilderFactory": {
     "kind": "component",
@@ -6416,7 +6416,7 @@
     "firstVersion": "1.4.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SqlStoredComponentBuilderFactory": {
     "kind": "component",
@@ -6437,7 +6437,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SshComponentBuilderFactory": {
     "kind": "component",
@@ -6459,7 +6459,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ssh",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StaxComponentBuilderFactory": {
     "kind": "component",
@@ -6480,7 +6480,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stax",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StompComponentBuilderFactory": {
     "kind": "component",
@@ -6501,7 +6501,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stomp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StreamComponentBuilderFactory": {
     "kind": "component",
@@ -6522,7 +6522,7 @@
     "firstVersion": "1.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stream",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StringTemplateComponentBuilderFactory": {
     "kind": "component",
@@ -6543,7 +6543,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stringtemplate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StubComponentBuilderFactory": {
     "kind": "component",
@@ -6564,7 +6564,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TelegramComponentBuilderFactory": {
     "kind": "component",
@@ -6585,7 +6585,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-telegram",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ThriftComponentBuilderFactory": {
     "kind": "component",
@@ -6606,7 +6606,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-thrift",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TikaComponentBuilderFactory": {
     "kind": "component",
@@ -6627,7 +6627,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tika",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TimerComponentBuilderFactory": {
     "kind": "component",
@@ -6648,7 +6648,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-timer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwilioComponentBuilderFactory": {
     "kind": "component",
@@ -6669,7 +6669,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twilio",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwitterDirectmessageComponentBuilderFactory": {
     "kind": "component",
@@ -6690,7 +6690,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwitterSearchComponentBuilderFactory": {
     "kind": "component",
@@ -6711,7 +6711,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwitterTimelineComponentBuilderFactory": {
     "kind": "component",
@@ -6732,7 +6732,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "UndertowComponentBuilderFactory": {
     "kind": "component",
@@ -6753,7 +6753,7 @@
     "firstVersion": "2.16.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-undertow",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ValidatorComponentBuilderFactory": {
     "kind": "component",
@@ -6774,7 +6774,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-validator",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "VelocityComponentBuilderFactory": {
     "kind": "component",
@@ -6795,7 +6795,7 @@
     "firstVersion": "1.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-velocity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "VertxComponentBuilderFactory": {
     "kind": "component",
@@ -6816,7 +6816,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "VmComponentBuilderFactory": {
     "kind": "component",
@@ -6837,7 +6837,7 @@
     "firstVersion": "1.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vm",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WeatherComponentBuilderFactory": {
     "kind": "component",
@@ -6858,7 +6858,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-weather",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Web3jComponentBuilderFactory": {
     "kind": "component",
@@ -6879,7 +6879,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-web3j",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WebhookComponentBuilderFactory": {
     "kind": "component",
@@ -6900,7 +6900,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-webhook",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WebsocketComponentBuilderFactory": {
     "kind": "component",
@@ -6921,7 +6921,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WebsocketJsr356ComponentBuilderFactory": {
     "kind": "component",
@@ -6942,7 +6942,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket-jsr356",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WekaComponentBuilderFactory": {
     "kind": "component",
@@ -6963,7 +6963,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-weka",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WordpressComponentBuilderFactory": {
     "kind": "component",
@@ -6984,7 +6984,7 @@
     "firstVersion": "2.21.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-wordpress",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WorkdayComponentBuilderFactory": {
     "kind": "component",
@@ -7005,7 +7005,7 @@
     "firstVersion": "3.1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-workday",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XchangeComponentBuilderFactory": {
     "kind": "component",
@@ -7026,7 +7026,7 @@
     "firstVersion": "2.21.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xchange",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XjComponentBuilderFactory": {
     "kind": "component",
@@ -7047,7 +7047,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xj",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XmlsecuritySignComponentBuilderFactory": {
     "kind": "component",
@@ -7068,7 +7068,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XmlsecurityVerifyComponentBuilderFactory": {
     "kind": "component",
@@ -7089,7 +7089,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XmppComponentBuilderFactory": {
     "kind": "component",
@@ -7111,7 +7111,7 @@
     "firstVersion": "1.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XqueryComponentBuilderFactory": {
     "kind": "component",
@@ -7132,7 +7132,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saxon",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XsltComponentBuilderFactory": {
     "kind": "component",
@@ -7153,7 +7153,7 @@
     "firstVersion": "1.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XsltSaxonComponentBuilderFactory": {
     "kind": "component",
@@ -7174,7 +7174,7 @@
     "firstVersion": "3.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt-saxon",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "YammerComponentBuilderFactory": {
     "kind": "component",
@@ -7195,7 +7195,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-yammer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ZendeskComponentBuilderFactory": {
     "kind": "component",
@@ -7216,7 +7216,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zendesk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ZookeeperComponentBuilderFactory": {
     "kind": "component",
@@ -7237,7 +7237,7 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zookeeper",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ZookeeperMasterComponentBuilderFactory": {
     "kind": "component",
@@ -7258,6 +7258,6 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zookeeper-master",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   }
 }

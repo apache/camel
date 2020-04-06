@@ -18,7 +18,7 @@
     "firstVersion": "2.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "initialReconnectDelay": { "kind": "property", "displayName": "Initial Reconnect Delay", "group": "common", "label": "common", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "secret": false, "defaultValue": "5000", "configurationClass": "org.apache.camel.component.smpp.SmppConfiguration", "configurationField": "configuration", "description": "Defines the initial delay in milliseconds after the consumer\/producer tries to reconnect to the SMSC, after the connection was lost." },

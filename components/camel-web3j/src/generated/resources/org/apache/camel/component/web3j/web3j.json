@@ -17,7 +17,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-web3j",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "addresses": { "kind": "property", "displayName": "Addresses", "group": "common", "label": "common", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.web3j.Web3jConfiguration", "configurationField": "configuration", "description": "Contract address or a list of addresses." },

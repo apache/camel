@@ -17,7 +17,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-influxdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "influxDB": { "kind": "property", "displayName": "Influx DB", "group": "producer", "required": false, "type": "object", "javaType": "org.influxdb.InfluxDB", "deprecated": false, "secret": false, "description": "The shared Influx DB to use for all endpoints" },
