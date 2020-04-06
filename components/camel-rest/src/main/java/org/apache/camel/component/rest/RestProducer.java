@@ -232,8 +232,8 @@ public class RestProducer extends DefaultAsyncProducer {
     private String resolveHeaderPlaceholders(String str, Message msg) {
         int startIndex = -1;
         String res = str;
-        while ((startIndex = res.indexOf("{", startIndex + 1)) >= 0) {
-            int endIndex = res.indexOf("}", startIndex);
+        while ((startIndex = res.indexOf('{', startIndex + 1)) >= 0) {
+            int endIndex = res.indexOf('}', startIndex);
             if (endIndex == -1) {
                 continue;
             }

@@ -119,8 +119,8 @@ public class XRefCheckMojo extends AbstractMojo {
 
         Pattern xref = Pattern.compile("\\b(?<all>xref:(?<link>[^\\[]+.adoc)[^\\]]*\\])");
         for (Map.Entry<String, Path> page : pages.entrySet()) {
-            int firstDot = page.getKey().indexOf(":");
-            int secondDot = firstDot >= 0 ? page.getKey().indexOf(":", firstDot + 1) : -1;
+            int firstDot = page.getKey().indexOf(':');
+            int secondDot = firstDot >= 0 ? page.getKey().indexOf(':', firstDot + 1) : -1;
             String component = secondDot >= 0 ? page.getKey().substring(0, firstDot) : "";
             String module = secondDot >= 0 ? page.getKey().substring(firstDot + 1, secondDot) : "";
             String str = PackageHelper.loadText(page.getValue());

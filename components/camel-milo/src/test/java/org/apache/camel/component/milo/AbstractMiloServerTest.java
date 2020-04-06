@@ -132,7 +132,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
     boolean isJavaVersionSatisfied(int requiredVersion) {
         String version = System.getProperty("java.version");
         if (!version.startsWith("1.")) {
-            int dot = version.indexOf(".");
+            int dot = version.indexOf('.');
             if (dot != -1) {
                 version = version.substring(0, dot);
             }
