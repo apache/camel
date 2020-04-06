@@ -23,47 +23,17 @@ public final class BlobClientFactory {
                 .buildClient();
     }
 
-    public static BlobContainerClient createBlobContainerClient(final BlobConfiguration configuration) {
-        return new BlobContainerClientBuilder()
-                .endpoint(buildAzureEndpointUri(configuration))
-                .credential(getCredentialForClient(configuration))
-                .containerName(configuration.getContainerName())
-                .buildClient();
-    }
-
-    public static BlobContainerClient getBlobContainerClient(final BlobServiceClient blobServiceClient, final BlobConfiguration configuration) {
-        ObjectHelper.notNull(blobServiceClient, "blobServiceClient cannot be null");
-
-        if (!ObjectHelper.isEmpty(configuration.getContainerName())) {
-            return blobServiceClient.getBlobContainerClient(configuration.getContainerName());
-        }
-        return null;
-    }
-
-    public static BlobClient createBlobClient(final BlobConfiguration configuration) {
-        return new BlobClientBuilder()
-                .endpoint(buildAzureEndpointUri(configuration))
-                .credential(getCredentialForClient(configuration))
-                .containerName(configuration.getContainerName())
-                .blobName(configuration.getBlobName())
-                .buildClient();
-    }
-
-    public static BlobClient getBlobClient(final BlobConfiguration configuration, final BlobContainerClient blobContainerClient) {
-        ObjectHelper.notNull(blobContainerClient, "blobContainerClient cannot be null");
-
-        if (!ObjectHelper.isEmpty(configuration.getBlobName())) {
-            return blobContainerClient.getBlobClient(configuration.getBlobName());
-        }
-        return null;
-    }
-
     private static String buildAzureEndpointUri(final BlobConfiguration configuration) {
         return String.format(Locale.ROOT, "https://%s" + SERVICE_URI_SEGMENT, configuration.getAccountName());
     }
 
     private static StorageSharedKeyCredential getCredentialForClient(final BlobConfiguration configuration) {
-        //TODO: check for injected credential
+        final StorageSharedKeyCredential storageSharedKeyCredential = configuration.getStorageSharedKeyCredential();
+
+        if (storageSharedKeyCredential != null) {
+            return storageSharedKeyCredential;
+        }
+
         return new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey());
     }
 

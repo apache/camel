@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,8 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.sas.BlobSasPermission;
+import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import org.apache.camel.Exchange;
@@ -105,6 +108,41 @@ class BlobOperationsIT extends CamelTestSupport {
         assertNotNull(response2.getBody());
         assertNotNull(response2.getHeaders());
         assertTrue(fileContent.contains("awesome camel!"));
+    }
+
+    @Test
+    public void testDownloadToFile(@TempDir Path testDir) throws IOException {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.FILE_DIR, testDir.toString());
+        exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_file");
+
+        final BlobOperationResponse response = operations.downloadBlobToFile(exchange);
+
+        // third: test with outputstream set on exchange
+        final File fileToWrite = testDir.resolve("test_file").toFile();
+        final String fileContent = FileUtils.readFileToString(fileToWrite, Charset.defaultCharset());
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders());
+        assertNotNull(response.getHeaders().get(BlobConstants.FILE_NAME));
+        assertTrue(fileContent.contains("awesome camel!"));
+    }
+
+    @Test
+    public void testDownloadLink() {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        final BlobOperationResponse response = operations.downloadLink(null);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders().get(BlobConstants.DOWNLOAD_LINK));
     }
 
     @Test

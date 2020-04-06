@@ -1,44 +1,37 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.AppendBlobItem;
-import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
-import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
-import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.Block;
 import com.azure.storage.blob.models.BlockBlobItem;
 import com.azure.storage.blob.models.BlockList;
 import com.azure.storage.blob.models.BlockListType;
+import com.azure.storage.blob.models.DeleteSnapshotsOptionType;
 import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.models.PageBlobItem;
-import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
-import com.azure.storage.blob.specialized.BlobInputStream;
+import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.sas.BlobSasPermission;
+import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -69,7 +62,7 @@ public class BlobOperations {
         this.client = client;
     }
 
-    public BlobOperationResponse getBlob(final Exchange exchange) {
+    public BlobOperationResponse getBlob(final Exchange exchange) throws IOException {
         if (exchange == null) {
             final Map<String, Object> blobInputStream = client.openInputStream(new BlobRange(0), null);
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
@@ -91,16 +84,94 @@ public class BlobOperations {
             return new BlobOperationResponse(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
         // we have an outputStream set, so we use it
-        final DownloadRetryOptions downloadRetryOptions = new DownloadRetryOptions();
-        downloadRetryOptions.setMaxRetryRequests(configuration.getMaxRetryRequests());
+        final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configuration);
 
-        final ResponseBase<BlobDownloadHeaders, Void> response =  client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
-                configuration.isGetRangeContentMd5(), blobCommonRequestOptions.getTimeout());
+        try {
+            final ResponseBase<BlobDownloadHeaders, Void> response =  client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
+                    configuration.isGetRangeContentMd5(), blobCommonRequestOptions.getTimeout());
 
-        final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
-                .httpHeaders(response.getHeaders());
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
+                    .httpHeaders(response.getHeaders());
 
-        return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
+            return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
+        } finally {
+            if (configuration.isCloseStreamAfterRead()) outputStream.close();
+        }
+    }
+
+    public BlobOperationResponse downloadBlobToFile(final Exchange exchange) {
+        // check for fileDir
+        final String fileDir = ObjectHelper.isEmpty(BlobExchangeHeaders.getFileDirFromHeaders(exchange)) ? configuration.getFileDir() : BlobExchangeHeaders.getFileDirFromHeaders(exchange);
+        if (ObjectHelper.isEmpty(fileDir)) {
+            throw new IllegalArgumentException("In order to download a blob, you will need to specify the fileDir in the URI");
+        }
+
+        final File fileToDownload = new File(fileDir, client.getBlobName());
+
+        if (exchange == null) {
+            final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), null, null, null, null,
+                    true, null);
+            final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(response.getValue())
+                    .httpHeaders(response.getHeaders())
+                    .fileName(fileToDownload.toString());
+
+            return new BlobOperationResponse(true, exchangeHeaders.toMap());
+        }
+        final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
+        final BlobRange blobRange = getBlobRangeFromHeadersOrConfig(exchange, configuration);
+        final ParallelTransferOptions parallelTransferOptions = BlobExchangeHeaders.getParallelTransferOptionsFromHeaders(exchange);
+        final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configuration);
+
+        final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), blobRange, parallelTransferOptions, downloadRetryOptions,
+                commonRequestOptions.getBlobRequestConditions(), true, commonRequestOptions.getTimeout());
+
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(response.getValue())
+                .httpHeaders(response.getHeaders())
+                .fileName(fileToDownload.toString());
+
+        return new BlobOperationResponse(true, exchangeHeaders.toMap());
+    }
+
+    public BlobOperationResponse deleteBlob(final Exchange exchange) {
+        if (exchange == null) {
+            return buildResponse(client.delete(null, null, null), true);
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
+        final DeleteSnapshotsOptionType deleteSnapshotsOptionType = BlobExchangeHeaders.getDeleteSnapshotsOptionTypeFromHeaders(exchange);
+
+        return buildResponse(client.delete(deleteSnapshotsOptionType, commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout()), true);
+    }
+
+    public BlobOperationResponse downloadLink(final Exchange exchange) {
+        final OffsetDateTime offsetDateTime = OffsetDateTime.now();
+        final long defaultExpirationTime = 60 * 60; // 1 hour
+        final BlobSasPermission sasPermission = new BlobSasPermission().setReadPermission(true); // only read access
+
+        if (exchange == null) {
+            final BlobServiceSasSignatureValues serviceSasSignatureValues = new BlobServiceSasSignatureValues(OffsetDateTime.now().plusSeconds(defaultExpirationTime), sasPermission);
+            final String url = client.getBlobUrl() + "?" + client.generateSas(serviceSasSignatureValues);
+
+            final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
+
+            return new BlobOperationResponse(true, headers.toMap());
+        }
+
+        final Long expirationMillis = BlobExchangeHeaders.getDownloadLinkExpirationFromHeaders(exchange);
+        OffsetDateTime offsetDateTimeToSet;
+        if (expirationMillis != null) {
+            offsetDateTimeToSet = offsetDateTime.plusSeconds(expirationMillis/1000);
+        } else {
+            offsetDateTimeToSet = offsetDateTime.plusSeconds(defaultExpirationTime);
+        }
+
+        final BlobServiceSasSignatureValues serviceSasSignatureValues = new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
+        final String url = client.getBlobUrl() + "?" + client.generateSas(serviceSasSignatureValues);
+
+        final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
+
+        return new BlobOperationResponse(true, headers.toMap());
     }
 
     public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws IOException {
@@ -334,6 +405,10 @@ public class BlobOperations {
         return buildResponse(response, false);
     }
 
+    private DownloadRetryOptions getDownloadRetryOptions(final BlobConfiguration configuration) {
+        return new DownloadRetryOptions().setMaxRetryRequests(configuration.getMaxRetryRequests());
+    }
+
     private BlobOperationResponse buildResponse(final Response response, final boolean emptyBody) {
         final Object body = emptyBody ? true : response.getValue();
         BlobExchangeHeaders exchangeHeaders;
@@ -344,6 +419,8 @@ public class BlobOperations {
             exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromAppendBlobItem((AppendBlobItem) response.getValue());
         } else if (response.getValue() instanceof PageBlobItem) {
             exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromPageBlobItem((PageBlobItem) response.getValue());
+        } else if (response.getValue() instanceof BlobProperties) {
+            exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties((BlobProperties) response.getValue());
         } else {
             exchangeHeaders = BlobExchangeHeaders.create();
         }

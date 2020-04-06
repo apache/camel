@@ -10,6 +10,7 @@ import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 
 public final class BlobUtils {
@@ -37,6 +38,11 @@ public final class BlobUtils {
         final byte[] contentMD5 = BlobExchangeHeaders.getContentMd5FromHeaders(exchange);
 
         return new BlobCommonRequestOptions(blobHttpHeaders, metadata, accessTier, blobRequestConditions, contentMD5, timeout);
+    }
+
+    public static String determineBlobName(final BlobConfiguration configuration, final Exchange exchange) {
+        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange)) ? configuration.getBlobName() :
+                BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
     }
 
     private BlobUtils() {

@@ -1,6 +1,11 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
+import java.time.Duration;
+
+import com.azure.storage.blob.models.ListBlobContainersOptions;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
+import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -19,10 +24,13 @@ public class BlobServiceOperations {
         this.client = client;
     }
 
-    public BlobOperationResponse listBlobContainers() {
-        final BlobOperationResponse blobOperationResponse = new BlobOperationResponse();
-        blobOperationResponse.setBody(client.listBlobContainers());
+    public BlobOperationResponse listBlobContainers(final Exchange exchange) {
+        if (exchange == null) {
+            return new BlobOperationResponse(client.listBlobContainers(null, null));
+        }
+        final ListBlobContainersOptions listBlobContainersOptions = BlobExchangeHeaders.getListBlobContainersOptionsFromHeaders(exchange);
+        final Duration timeout = BlobExchangeHeaders.getTimeoutFromHeaders(exchange);
 
-        return blobOperationResponse;
+        return new BlobOperationResponse(client.listBlobContainers(listBlobContainersOptions, timeout));
     }
 }

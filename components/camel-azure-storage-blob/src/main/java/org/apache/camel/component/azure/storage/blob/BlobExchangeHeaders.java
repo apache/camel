@@ -18,12 +18,15 @@ import com.azure.storage.blob.models.BlobType;
 import com.azure.storage.blob.models.BlockBlobItem;
 import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.blob.models.CopyStatusType;
+import com.azure.storage.blob.models.DeleteSnapshotsOptionType;
 import com.azure.storage.blob.models.LeaseDurationType;
 import com.azure.storage.blob.models.LeaseStateType;
 import com.azure.storage.blob.models.LeaseStatusType;
+import com.azure.storage.blob.models.ListBlobContainersOptions;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.models.PageBlobItem;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.models.ParallelTransferOptions;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
 
@@ -194,6 +197,30 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_SEQUENCE_NUMBER, Long.class);
     }
 
+    public static DeleteSnapshotsOptionType getDeleteSnapshotsOptionTypeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.DELETE_SNAPSHOT_OPTION_TYPE, DeleteSnapshotsOptionType.class);
+    }
+
+    public static ListBlobContainersOptions getListBlobContainersOptionsFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.LIST_BLOB_CONTAINERS_OPTIONS, ListBlobContainersOptions.class);
+    }
+
+    public static ParallelTransferOptions getParallelTransferOptionsFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.PARALLEL_TRANSFER_OPTIONS, ParallelTransferOptions.class);
+    }
+
+    public static String getFileDirFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.FILE_DIR, String.class);
+    }
+
+    public static Long getDownloadLinkExpirationFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.DOWNLOAD_LINK_EXPIRATION, Long.class);
+    }
+
+    public static String getBlobNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_NAME, String.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }
@@ -360,6 +387,16 @@ public class BlobExchangeHeaders {
 
     public BlobExchangeHeaders appendOffset(final String offset) {
         headers.put(BlobConstants.APPEND_OFFSET, offset);
+        return this;
+    }
+
+    public BlobExchangeHeaders fileName(final String fileName) {
+        headers.put(BlobConstants.FILE_NAME, fileName);
+        return this;
+    }
+
+    public BlobExchangeHeaders downloadLink(final String downloadLink) {
+        headers.put(BlobConstants.DOWNLOAD_LINK, downloadLink);
         return this;
     }
 

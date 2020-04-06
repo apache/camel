@@ -40,6 +40,8 @@ public final class BlobConstants {
     public static final String COMMITTED_BLOCK_COUNT = HEADER_PREFIX + "CommittedBlockCount";
     public static final String APPEND_OFFSET = HEADER_PREFIX + "AppendOffset";
     public static final String RAW_HTTP_HEADERS = HEADER_PREFIX + "RawHttpHeaders";
+    public static final String FILE_NAME = HEADER_PREFIX + "FileName";
+    public static final String DOWNLOAD_LINK = HEADER_PREFIX + "DownloadLink";
 
     // headers to be retrieved
     public static final String LIST_BLOB_OPTIONS = HEADER_PREFIX + "ListBlobOptions";
@@ -50,14 +52,18 @@ public final class BlobConstants {
     public static final String PUBLIC_ACCESS_TYPE = HEADER_PREFIX + "PublicAccessType";
     public static final String BLOB_REQUEST_CONDITION = HEADER_PREFIX + "BlobRequestCondition";
     public static final String BLOB_CONTAINER_NAME = HEADER_PREFIX + "BlobContainerName";
+    public static final String BLOB_NAME = HEADER_PREFIX + "BlobName";
     public static final String FILE_DIR = HEADER_PREFIX + "FileDir";
-    public static final String OVERWRITE = HEADER_PREFIX + "Overwrite";
     public static final String PAGE_BLOB_RANGE = HEADER_PREFIX + "PageBlobRange";
     public static final String PAGE_BLOB_SIZE = HEADER_PREFIX + "PageBlobSize";
     public static final String COMMIT_BLOCK_LIST_LATER = HEADER_PREFIX + "CommitBlobBlockListLater";
     public static final String BLOCK_LIST_TYPE = HEADER_PREFIX + "BlockListType";
     public static final String APPEND_BLOCK_CREATED = HEADER_PREFIX + "AppendBlobCreated";
     public static final String PAGE_BLOCK_CREATED = HEADER_PREFIX + "PageBlockCreated";
+    public static final String DELETE_SNAPSHOT_OPTION_TYPE = HEADER_PREFIX + "DeleteSnapshotsOptionType";
+    public static final String LIST_BLOB_CONTAINERS_OPTIONS = HEADER_PREFIX + "ListBlobContainersOptions";
+    public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";
+    public static final String DOWNLOAD_LINK_EXPIRATION = HEADER_PREFIX + "DownloadLinkExpiration";
 
     // constants
     public static final Long PAGE_BLOB_DEFAULT_SIZE = 512L;

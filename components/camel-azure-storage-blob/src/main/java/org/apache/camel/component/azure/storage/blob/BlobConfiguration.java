@@ -1,5 +1,7 @@
 package org.apache.camel.component.azure.storage.blob;
 
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -12,10 +14,14 @@ public class BlobConfiguration implements Cloneable {
     private String accountName;
     @UriPath
     private String containerName;
+    @UriParam
+    private StorageSharedKeyCredential storageSharedKeyCredential;
+    @UriParam
+    private BlobServiceClient blobServiceClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", enums = "listContainers")
-    private BlobOperationsDefinition operation;
+    @UriParam(label = "producer", enums = "listContainers", defaultValue = "listBlobContainers")
+    private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;
     @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
@@ -58,6 +64,22 @@ public class BlobConfiguration implements Cloneable {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
+    }
+
+    public StorageSharedKeyCredential getStorageSharedKeyCredential() {
+        return storageSharedKeyCredential;
+    }
+
+    public void setStorageSharedKeyCredential(StorageSharedKeyCredential storageSharedKeyCredential) {
+        this.storageSharedKeyCredential = storageSharedKeyCredential;
+    }
+
+    public BlobServiceClient getBlobServiceClient() {
+        return blobServiceClient;
+    }
+
+    public void setBlobServiceClient(BlobServiceClient blobServiceClient) {
+        this.blobServiceClient = blobServiceClient;
     }
 
     /**
@@ -179,6 +201,10 @@ public class BlobConfiguration implements Cloneable {
     public void setCloseStreamAfterWrite(boolean closeStreamAfterWrite) {
         this.closeStreamAfterWrite = closeStreamAfterWrite;
     }
+
+    // *************************************************
+    //
+    // *************************************************
 
     public BlobConfiguration copy() {
         try {

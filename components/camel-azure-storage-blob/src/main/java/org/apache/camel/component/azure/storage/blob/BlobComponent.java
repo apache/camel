@@ -17,18 +17,26 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.util.Map;
+import java.util.Set;
 
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Azure Blob Storage component using azure java sdk v12.x
  */
 @Component("azure-storage-blob")
 public class BlobComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BlobComponent.class);
 
     @Metadata
     private BlobConfiguration configuration = new BlobConfiguration();
@@ -62,6 +70,9 @@ public class BlobComponent extends DefaultComponent {
         final BlobEndpoint endpoint = new BlobEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
+        checkAndSetRegistryClient(configuration, endpoint);
+        checkCredentials(configuration);
+
         validateConfigurations(configuration);
 
         return endpoint;
@@ -78,11 +89,36 @@ public class BlobComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void validateConfigurations(final BlobConfiguration configuration) {
+    private void checkCredentials(final BlobConfiguration configuration) {
+        final BlobServiceClient client = configuration.getBlobServiceClient();
 
-        // TODO: Add client
-        if (configuration.getAccessKey() == null) {
-            throw new IllegalArgumentException("Azure Storage accessKey or must be specified.");
+        //if no azureBlobClient is provided fallback to credentials
+        if (client == null) {
+            Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
+            if (storageSharedKeyCredentials.size() == 1) {
+                configuration.setStorageSharedKeyCredential(storageSharedKeyCredentials.stream().findFirst().get());
+            }
+        }
+    }
+
+    private void checkAndSetRegistryClient(final BlobConfiguration configuration, final BlobEndpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getBlobServiceClient())) {
+            LOG.debug("Looking for an BlobServiceClient instance in the registry");
+            final Set<BlobServiceClient> clients = getCamelContext().getRegistry().findByType(BlobServiceClient.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one BlobServiceClient instance in the registry");
+                configuration.setBlobServiceClient(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No BlobServiceClient instance in the registry");
+            }
+        } else {
+            LOG.debug("BlobServiceClient instance is already set at endpoint level: skipping the check in the registry");
+        }
+    }
+
+    private void validateConfigurations(final BlobConfiguration configuration) {
+        if (configuration.getBlobServiceClient() == null && configuration.getAccessKey() == null) {
+            throw new IllegalArgumentException("Azure Storage accessKey or BlobServiceClient must be specified.");
         }
     }
 }

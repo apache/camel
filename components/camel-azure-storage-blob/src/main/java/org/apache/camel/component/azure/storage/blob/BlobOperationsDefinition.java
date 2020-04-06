@@ -26,8 +26,18 @@ public enum BlobOperationsDefinition {
      * Delete a blob
      */
     deleteBlob,
+    downloadBlobToFile,
+    downloadLink,
     uploadBlockBlob,
-    uploadBlobBlobList,
+    stageBlockBlobList,
     commitBlobBlockList,
-    getBlockBlobList
+    getBlobBlockList,
+    createAppendBlob,
+    updateAppendBlob,
+    createPageBlob,
+    uploadPageBlob,
+    resizePageBlob,
+    clearPageBlob,
+    getPageBlobRanges,
+
 }

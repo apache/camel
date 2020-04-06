@@ -29,6 +29,8 @@ import com.azure.storage.blob.models.PageBlobItem;
 import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.AppendBlobClient;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlockBlobClient;
@@ -45,13 +47,21 @@ public class BlobClientWrapper {
         this.client = client;
     }
 
+    public String getBlobName() {
+        return client.getBlobName();
+    }
+
+    public String getBlobUrl() {
+        return client.getBlobUrl();
+    }
+
     public BlobProperties downloadToFile(final String fileDir, final boolean overwrite) {
         return client.downloadToFile(fileDir, overwrite);
     }
 
-    public HttpHeaders delete(final DeleteSnapshotsOptionType deleteBlobSnapshotOptions,
-                              final BlobRequestConditions requestConditions, final Duration timeout) {
-        return client.deleteWithResponse(deleteBlobSnapshotOptions, requestConditions, timeout, Context.NONE).getHeaders();
+    public Response<Void> delete(final DeleteSnapshotsOptionType deleteBlobSnapshotOptions,
+                                 final BlobRequestConditions requestConditions, final Duration timeout) {
+        return client.deleteWithResponse(deleteBlobSnapshotOptions, requestConditions, timeout, Context.NONE);
     }
 
     public Map<String, Object> openInputStream(final BlobRange blobRange, final BlobRequestConditions blobRequestConditions) {
@@ -70,6 +80,13 @@ public class BlobClientWrapper {
                                                                         final DownloadRetryOptions options, final BlobRequestConditions requestConditions, final boolean getRangeContentMd5,
                                                                         final Duration timeout) {
         return client.downloadWithResponse(stream, range, options, requestConditions, getRangeContentMd5, timeout, Context.NONE);
+    }
+
+    public Response<BlobProperties> downloadToFileWithResponse(final String filePath, final BlobRange range,
+                                                               final ParallelTransferOptions parallelTransferOptions, final DownloadRetryOptions downloadRetryOptions,
+                                                               final BlobRequestConditions requestConditions,
+                                                               final boolean rangeGetContentMd5, final Duration timeout) {
+        return client.downloadToFileWithResponse(filePath, range, parallelTransferOptions, downloadRetryOptions, requestConditions, rangeGetContentMd5, timeout, Context.NONE);
     }
 
     public Response<BlockBlobItem> uploadBlockBlob(final InputStream data, final long length, final BlobHttpHeaders headers,
@@ -124,6 +141,10 @@ public class BlobClientWrapper {
     public Response<PageList> getPageBlobRanges(final BlobRange blobRange, final BlobRequestConditions requestConditions,
                                                 final Duration timeout) {
         return getPageBlobClient().getPageRangesWithResponse(blobRange, requestConditions, timeout, Context.NONE);
+    }
+
+    public String generateSas(final BlobServiceSasSignatureValues blobServiceSasSignatureValues) {
+        return client.generateSas(blobServiceSasSignatureValues);
     }
 
 

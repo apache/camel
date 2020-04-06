@@ -9,6 +9,7 @@ import com.azure.storage.blob.models.BlobItem;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
@@ -51,7 +52,7 @@ public class BlobProducer extends DefaultProducer {
         switch (operation) {
             // service operations
             case listBlobContainers:
-                setResponse(exchange, blobServiceOperations.listBlobContainers());
+                setResponse(exchange, blobServiceOperations.listBlobContainers(exchange));
                 break;
             // container operations
             case createBlobContainer:
@@ -89,12 +90,28 @@ public class BlobProducer extends DefaultProducer {
         return new BlobContainerOperations(configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
     }
 
+    private BlobOperations getBlobOperations(final Exchange exchange) {
+        final BlobClientWrapper clientWrapper = blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange))
+                .getBlobClientWrapper(determineBlobName(exchange));
+
+        return new BlobOperations(configuration, clientWrapper);
+    }
+
     private String determineContainerName(final Exchange exchange) {
         final String containerName = exchange.getIn().getHeader(BlobConstants.BLOB_CONTAINER_NAME, configuration.getContainerName(), String.class);
         if (ObjectHelper.isEmpty(containerName)) {
             throw new IllegalArgumentException("Container name must be specified");
         }
         return containerName;
+    }
+
+    public String determineBlobName(final Exchange exchange) {
+        final String blobName = ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange)) ? configuration.getBlobName() :
+                BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
+        if (ObjectHelper.isEmpty(blobName)) {
+            throw new IllegalArgumentException("Blob name must be specified");
+        }
+        return blobName;
     }
 
     private static Message getMessageForResponse(final Exchange exchange) {
