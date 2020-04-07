@@ -37,6 +37,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
@@ -483,7 +484,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..
             // catch block
-            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+            exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
             // run the fallback processor
             try {
                 LOG.debug("Running fallback: {} with exchange: {}", processor, exchange);

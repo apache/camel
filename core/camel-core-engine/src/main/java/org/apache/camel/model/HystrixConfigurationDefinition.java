@@ -112,7 +112,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
      * <p>
      * This property takes precedence over circuitBreakerForceClosed();
      */
-    public HystrixConfigurationDefinition circuitBreakerForceOpen(Boolean circuitBreakerForceOpen) {
+    public HystrixConfigurationDefinition circuitBreakerForceOpen(boolean circuitBreakerForceOpen) {
         setCircuitBreakerForceOpen(Boolean.toString(circuitBreakerForceOpen));
         return this;
     }

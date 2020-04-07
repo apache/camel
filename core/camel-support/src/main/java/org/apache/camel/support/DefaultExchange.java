@@ -66,6 +66,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean rollbackOnlyLast;
     private boolean notifyEvent;
     private boolean interrupted;
+    private boolean interruptable = true;
     private boolean redeliveryExhausted;
     private Boolean errorHandlerHandled;
 
@@ -649,7 +650,14 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public void setInterrupted(boolean interrupted) {
-        this.interrupted = interrupted;
+        if (interruptable) {
+            this.interrupted = interrupted;
+        }
+    }
+
+    @Override
+    public void setInterruptable(boolean interruptable) {
+        this.interruptable = interruptable;
     }
 
     @Override

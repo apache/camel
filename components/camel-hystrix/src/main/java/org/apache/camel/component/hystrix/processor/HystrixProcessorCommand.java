@@ -22,6 +22,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
@@ -87,7 +88,7 @@ public class HystrixProcessorCommand extends HystrixCommand {
         exchange.setRouteStop(false);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
-        exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
         // run the fallback processor
         try {
             // use fallback command if provided (fallback via network)

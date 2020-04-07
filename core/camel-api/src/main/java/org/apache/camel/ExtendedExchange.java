@@ -125,6 +125,11 @@ public interface ExtendedExchange extends Exchange {
     void setInterrupted(boolean interrupted);
 
     /**
+     * To control whether the exchange can accept being interrupted currently.
+     */
+    void setInterruptable(boolean interruptable);
+
+    /**
      * Whether the exchange has exhausted (attempted all) its redeliveries and still failed.
      * This is used internally by Camel.
      */

@@ -38,6 +38,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
+    @XmlElement
+    private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlAttribute
     private String configurationRef;
     @XmlTransient
@@ -127,6 +129,14 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         this.resilience4jConfiguration = resilience4jConfiguration;
     }
 
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration() {
+        return faultToleranceConfiguration;
+    }
+
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition faultToleranceConfiguration) {
+        this.faultToleranceConfiguration = faultToleranceConfiguration;
+    }
+
     public String getConfigurationRef() {
         return configurationRef;
     }
@@ -185,6 +195,25 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      */
     public CircuitBreakerDefinition resilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
         resilience4jConfiguration = configuration;
+        return this;
+    }
+
+    /**
+     * Configures the circuit breaker to use MicroProfile Fault Tolerance.
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the
+     * Circuit Breaker EIP.
+     */
+    public FaultToleranceConfigurationDefinition faultToleranceConfiguration() {
+        faultToleranceConfiguration = faultToleranceConfiguration == null ? new FaultToleranceConfigurationDefinition(this) : faultToleranceConfiguration;
+        return faultToleranceConfiguration;
+    }
+
+    /**
+     * Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration.
+     */
+    public CircuitBreakerDefinition faultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfiguration = configuration;
         return this;
     }
 

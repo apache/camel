@@ -229,6 +229,7 @@
 ** xref:metrics-component.adoc[Metrics Component]
 ** xref:micrometer-component.adoc[Micrometer Component]
 ** xref:microprofile-config.adoc[MicroProfile Config]
+** xref:microprofile-fault-tolerance.adoc[Microprofile Fault Tolerance Component]
 ** xref:microprofile-health.adoc[MicroProfile Health]
 ** xref:microprofile-metrics-component.adoc[MicroProfile Metrics Component]
 ** xref:mina-component.adoc[Mina Component]
