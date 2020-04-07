@@ -92,7 +92,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             target.setTimeoutEnabled(true);
         }
 
-        target.setTimeoutDuration(parseLong(config.getTimeoutDuration(),1000));
+        target.setTimeoutDuration(parseLong(config.getTimeoutDuration(), 1000));
         target.setTimeoutPoolSize(parseInt(config.getTimeoutPoolSize(), 10));
     }
 
@@ -133,7 +133,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-             () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
+            () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
             () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID, FaultToleranceConfigurationDefinition.class)));
 
         // Extract properties from referenced configuration, the one configured
