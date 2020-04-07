@@ -11,7 +11,7 @@ Below is the list of components that are provided by Apache Camel.
 == List of Components
 
 // components: START
-Number of Components: 328 in 261 JAR artifacts (1 deprecated)
+Number of Components: 329 in 262 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -206,6 +206,8 @@ Number of Components: 328 in 261 JAR artifacts (1 deprecated)
 | xref:direct-vm-component.adoc[Direct VM] (camel-directvm) | 2.10 | The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
 
 | xref:disruptor-component.adoc[Disruptor] (camel-disruptor) | 2.12 | The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+
+| xref:djl-component.adoc[DJL] (camel-djl) | 3.2 | Represents a DJL endpoint.
 
 | xref:dns-component.adoc[DNS] (camel-dns) | 2.7 | To lookup domain information and run DNS queries using DNSJava.
 
