@@ -688,7 +688,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * to using a {@link Pipeline} but derived classes could change the
      * behaviour
      */
-    protected Processor createCompositeProcessor(List<Processor> list) throws Exception {
+    protected Processor createCompositeProcessor(List<Processor> list) {
         return Pipeline.newInstance(camelContext, list);
     }
 
