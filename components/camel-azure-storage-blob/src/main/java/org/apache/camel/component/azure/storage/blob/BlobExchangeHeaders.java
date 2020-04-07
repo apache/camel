@@ -221,6 +221,14 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_NAME, String.class);
     }
 
+    public static String getBlobContainerNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_CONTAINER_NAME, String.class);
+    }
+
+    public static BlobOperationsDefinition getBlobOperationsDefinitionFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_OPERATION, BlobOperationsDefinition.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }

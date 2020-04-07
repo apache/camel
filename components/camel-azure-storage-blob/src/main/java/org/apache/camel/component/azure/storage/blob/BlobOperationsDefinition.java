@@ -33,7 +33,7 @@ public enum BlobOperationsDefinition {
     commitBlobBlockList,
     getBlobBlockList,
     createAppendBlob,
-    updateAppendBlob,
+    commitAppendBlob,
     createPageBlob,
     uploadPageBlob,
     resizePageBlob,

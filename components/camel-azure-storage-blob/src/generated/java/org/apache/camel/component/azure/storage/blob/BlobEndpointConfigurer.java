@@ -33,6 +33,11 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blobType": target.getConfiguration().setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": target.getConfiguration().setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": target.getConfiguration().setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
+        case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":
@@ -48,6 +53,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxretryrequests":
         case "maxRetryRequests": target.getConfiguration().setMaxRetryRequests(property(camelContext, int.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
+        case "serviceclient":
+        case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
@@ -63,6 +70,9 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("blobServiceClient", com.azure.storage.blob.BlobServiceClient.class);
         answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("closeStreamAfterRead", boolean.class);
+        answer.put("closeStreamAfterWrite", boolean.class);
+        answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("dataCount", java.lang.Long.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
@@ -71,6 +81,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
+        answer.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
         answer.put("synchronous", boolean.class);
         return answer;
     }
@@ -93,6 +104,11 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blobType": return target.getConfiguration().getBlobType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return target.getConfiguration().isCloseStreamAfterRead();
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return target.getConfiguration().isCloseStreamAfterWrite();
+        case "credentials": return target.getConfiguration().getCredentials();
         case "datacount":
         case "dataCount": return target.getConfiguration().getDataCount();
         case "exceptionhandler":
@@ -108,6 +124,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxretryrequests":
         case "maxRetryRequests": return target.getConfiguration().getMaxRetryRequests();
         case "operation": return target.getConfiguration().getOperation();
+        case "serviceclient":
+        case "serviceClient": return target.getConfiguration().getServiceClient();
         case "synchronous": return target.isSynchronous();
         default: return null;
         }

@@ -90,24 +90,24 @@ public class BlobComponent extends DefaultComponent {
     }
 
     private void checkCredentials(final BlobConfiguration configuration) {
-        final BlobServiceClient client = configuration.getBlobServiceClient();
+        final BlobServiceClient client = configuration.getServiceClient();
 
         //if no azureBlobClient is provided fallback to credentials
         if (client == null) {
             Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
             if (storageSharedKeyCredentials.size() == 1) {
-                configuration.setStorageSharedKeyCredential(storageSharedKeyCredentials.stream().findFirst().get());
+                configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
             }
         }
     }
 
     private void checkAndSetRegistryClient(final BlobConfiguration configuration, final BlobEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getBlobServiceClient())) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getServiceClient())) {
             LOG.debug("Looking for an BlobServiceClient instance in the registry");
             final Set<BlobServiceClient> clients = getCamelContext().getRegistry().findByType(BlobServiceClient.class);
             if (clients.size() == 1) {
                 LOG.debug("Found exactly one BlobServiceClient instance in the registry");
-                configuration.setBlobServiceClient(clients.stream().findFirst().get());
+                configuration.setServiceClient(clients.stream().findFirst().get());
             } else {
                 LOG.debug("No BlobServiceClient instance in the registry");
             }
@@ -117,7 +117,7 @@ public class BlobComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final BlobConfiguration configuration) {
-        if (configuration.getBlobServiceClient() == null && configuration.getAccessKey() == null) {
+        if (configuration.getServiceClient() == null && configuration.getAccessKey() == null && configuration.getCredentials() == null) {
             throw new IllegalArgumentException("Azure Storage accessKey or BlobServiceClient must be specified.");
         }
     }

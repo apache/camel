@@ -15,9 +15,9 @@ public class BlobConfiguration implements Cloneable {
     @UriPath
     private String containerName;
     @UriParam
-    private StorageSharedKeyCredential storageSharedKeyCredential;
+    private StorageSharedKeyCredential credentials;
     @UriParam
-    private BlobServiceClient blobServiceClient;
+    private BlobServiceClient serviceClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "producer", enums = "listContainers", defaultValue = "listBlobContainers")
@@ -66,20 +66,28 @@ public class BlobConfiguration implements Cloneable {
         this.containerName = containerName;
     }
 
-    public StorageSharedKeyCredential getStorageSharedKeyCredential() {
-        return storageSharedKeyCredential;
+    /**
+     * ddd
+     * @return
+     */
+    public StorageSharedKeyCredential getCredentials() {
+        return credentials;
     }
 
-    public void setStorageSharedKeyCredential(StorageSharedKeyCredential storageSharedKeyCredential) {
-        this.storageSharedKeyCredential = storageSharedKeyCredential;
+    public void setCredentials(StorageSharedKeyCredential credentials) {
+        this.credentials = credentials;
     }
 
-    public BlobServiceClient getBlobServiceClient() {
-        return blobServiceClient;
+    /**
+     * ddd
+     * @return
+     */
+    public BlobServiceClient getServiceClient() {
+        return serviceClient;
     }
 
-    public void setBlobServiceClient(BlobServiceClient blobServiceClient) {
-        this.blobServiceClient = blobServiceClient;
+    public void setServiceClient(BlobServiceClient serviceClient) {
+        this.serviceClient = serviceClient;
     }
 
     /**
@@ -186,6 +194,10 @@ public class BlobConfiguration implements Cloneable {
         this.maxRetryRequests = maxRetryRequests;
     }
 
+    /**
+     * jj
+     * @return
+     */
     public boolean isCloseStreamAfterRead() {
         return closeStreamAfterRead;
     }
@@ -194,6 +206,10 @@ public class BlobConfiguration implements Cloneable {
         this.closeStreamAfterRead = closeStreamAfterRead;
     }
 
+    /**
+     * dsds
+     * @return
+     */
     public boolean isCloseStreamAfterWrite() {
         return closeStreamAfterWrite;
     }

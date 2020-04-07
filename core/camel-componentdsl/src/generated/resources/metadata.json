@@ -1163,6 +1163,7 @@
   },
   "AzureStorageBlobComponentBuilderFactory": {
     "kind": "component",
+    "name": "azure-storage-blob",
     "scheme": "azure-storage-blob",
     "extendsScheme": "",
     "syntax": "azure-storage-blob:containerName",

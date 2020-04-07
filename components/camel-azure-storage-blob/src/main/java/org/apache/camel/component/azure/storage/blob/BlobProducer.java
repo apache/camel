@@ -1,16 +1,9 @@
 package org.apache.camel.component.azure.storage.blob;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.models.BlobItem;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
-import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
@@ -26,17 +19,15 @@ import org.slf4j.LoggerFactory;
  */
 public class BlobProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BlobProducer.class);
-
     private final BlobConfiguration configuration;
 
     private BlobServiceOperations blobServiceOperations;
     private BlobServiceClientWrapper blobServiceClientWrapper;
 
-    public BlobProducer(final Endpoint endpoint, final BlobServiceClientWrapper blobServiceClientWrapper) {
+    public BlobProducer(final Endpoint endpoint) {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
-        this.blobServiceClientWrapper = blobServiceClientWrapper;
+        this.blobServiceClientWrapper = new BlobServiceClientWrapper(getEndpoint().getBlobServiceClient());
         this.blobServiceOperations = new BlobServiceOperations(configuration, blobServiceClientWrapper);
     }
 
@@ -45,7 +36,6 @@ public class BlobProducer extends DefaultProducer {
         BlobOperationsDefinition operation = determineOperation(exchange);
 
         if (ObjectHelper.isEmpty(operation)) {
-            // TODO
             operation = BlobOperationsDefinition.listBlobContainers;
         }
 
@@ -65,6 +55,56 @@ public class BlobProducer extends DefaultProducer {
                 setResponse(exchange, getContainerOperations(exchange).listBlobs(exchange));
                 break;
             // blob operations
+            case getBlob:
+                setResponse(exchange, getBlobOperations(exchange).getBlob(exchange));
+                break;
+            case deleteBlob:
+                setResponse(exchange, getBlobOperations(exchange).deleteBlob(exchange));
+                break;
+            case downloadBlobToFile:
+                setResponse(exchange, getBlobOperations(exchange).downloadBlobToFile(exchange));
+                break;
+            case downloadLink:
+                setResponse(exchange, getBlobOperations(exchange).downloadLink(exchange));
+                break;
+            // block blob operations
+            case uploadBlockBlob:
+                setResponse(exchange, getBlobOperations(exchange).uploadBlockBlob(exchange));
+                break;
+            case stageBlockBlobList:
+                setResponse(exchange, getBlobOperations(exchange).stageBlockBlobList(exchange));
+                break;
+            case commitBlobBlockList:
+                setResponse(exchange, getBlobOperations(exchange).commitBlobBlockList(exchange));
+                break;
+            case getBlobBlockList:
+                setResponse(exchange, getBlobOperations(exchange).getBlobBlockList(exchange));
+                break;
+            // append blob operations
+            case createAppendBlob:
+                setResponse(exchange, getBlobOperations(exchange).createAppendBlob(exchange));
+                break;
+            case commitAppendBlob:
+                setResponse(exchange, getBlobOperations(exchange).commitAppendBlob(exchange));
+                break;
+            // page blob operations
+            case createPageBlob:
+                setResponse(exchange, getBlobOperations(exchange).createPageBlob(exchange));
+                break;
+            case uploadPageBlob:
+                setResponse(exchange, getBlobOperations(exchange).uploadPageBlob(exchange));
+                break;
+            case resizePageBlob:
+                setResponse(exchange, getBlobOperations(exchange).resizePageBlob(exchange));
+                break;
+            case clearPageBlob:
+                setResponse(exchange, getBlobOperations(exchange).clearPageBlob(exchange));
+                break;
+            case getPageBlobRanges:
+                setResponse(exchange, getBlobOperations(exchange).getPageBlobRanges(exchange));
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -79,7 +119,7 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private BlobOperationsDefinition determineOperation(final Exchange exchange) {
-        final BlobOperationsDefinition operation = exchange.getIn().getHeader(BlobConstants.BLOB_OPERATION, BlobOperationsDefinition.class);
+        final BlobOperationsDefinition operation = BlobExchangeHeaders.getBlobOperationsDefinitionFromHeaders(exchange);
         if (operation != null) {
             return operation;
         }
@@ -98,7 +138,7 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private String determineContainerName(final Exchange exchange) {
-        final String containerName = exchange.getIn().getHeader(BlobConstants.BLOB_CONTAINER_NAME, configuration.getContainerName(), String.class);
+        final String containerName = BlobUtils.getContainerName(configuration, exchange);
         if (ObjectHelper.isEmpty(containerName)) {
             throw new IllegalArgumentException("Container name must be specified");
         }
@@ -106,15 +146,11 @@ public class BlobProducer extends DefaultProducer {
     }
 
     public String determineBlobName(final Exchange exchange) {
-        final String blobName = ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange)) ? configuration.getBlobName() :
-                BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
+        final String blobName = BlobUtils.getBlobName(configuration, exchange);
+
         if (ObjectHelper.isEmpty(blobName)) {
             throw new IllegalArgumentException("Blob name must be specified");
         }
         return blobName;
-    }
-
-    private static Message getMessageForResponse(final Exchange exchange) {
-        return exchange.getMessage();
     }
 }

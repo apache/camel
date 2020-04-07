@@ -2,9 +2,7 @@ package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,29 +10,20 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
 
-import com.azure.core.exception.UnexpectedLengthException;
-import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
-import com.azure.storage.blob.sas.BlobSasPermission;
-import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobInputStream;
-import com.azure.storage.blob.specialized.BlockBlobClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
-import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
-import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
@@ -73,18 +62,11 @@ class BlobOperationsIT extends CamelTestSupport {
 
     @Test
     public void testGetBlob(@TempDir Path testDir) throws IOException {
-        // first: test with no exchange provided
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
-        final BlobOperationResponse response = operations.getBlob(null);
 
-        assertNotNull(response);
-        assertNotNull(response.getBody());
-        assertNotNull(response.getHeaders());
-        assertNotNull(response.getHeaders().get(BlobConstants.CREATION_TIME));
-
-        // second: test with exchange set but no outputstream set
+        // first: test with exchange set but no outputstream set
         final Exchange exchange = new DefaultExchange(context);
         final BlobOperationResponse response1 = operations.getBlob(exchange);
 
@@ -97,8 +79,8 @@ class BlobOperationsIT extends CamelTestSupport {
 
         assertEquals("awesome camel!", bufferedText);
 
-        // third: test with outputstream set on exchange
-        final File fileToWrite = new File(testDir.toFile(), "test_file.txt");
+        // second: test with outputstream set on exchange
+        final File fileToWrite = new File(testDir.toFile(), "write_test_file.txt");
         exchange.getIn().setBody(new FileOutputStream(fileToWrite));
 
         final BlobOperationResponse response2 = operations.getBlob(exchange);
@@ -127,7 +109,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final String fileContent = FileUtils.readFileToString(fileToWrite, Charset.defaultCharset());
 
         assertNotNull(response);
-        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getBody());
         assertNotNull(response.getHeaders());
         assertNotNull(response.getHeaders().get(BlobConstants.FILE_NAME));
         assertTrue(fileContent.contains("awesome camel!"));
@@ -241,7 +223,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(dataStream);
 
-        final BlobOperationResponse response = operations.updateAppendBlob(exchange);
+        final BlobOperationResponse response = operations.commitAppendBlob(exchange);
 
         assertNotNull(response);
         assertTrue((boolean)response.getBody());

@@ -2,10 +2,6 @@ package org.apache.camel.component.azure.storage.blob.client;
 
 import java.util.Locale;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobClientBuilder;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -24,17 +20,21 @@ public final class BlobClientFactory {
     }
 
     private static String buildAzureEndpointUri(final BlobConfiguration configuration) {
-        return String.format(Locale.ROOT, "https://%s" + SERVICE_URI_SEGMENT, configuration.getAccountName());
+        return String.format(Locale.ROOT, "https://%s" + SERVICE_URI_SEGMENT, getAccountName(configuration));
     }
 
     private static StorageSharedKeyCredential getCredentialForClient(final BlobConfiguration configuration) {
-        final StorageSharedKeyCredential storageSharedKeyCredential = configuration.getStorageSharedKeyCredential();
+        final StorageSharedKeyCredential storageSharedKeyCredential = configuration.getCredentials();
 
         if (storageSharedKeyCredential != null) {
             return storageSharedKeyCredential;
         }
 
         return new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey());
+    }
+
+    private static String getAccountName(final BlobConfiguration configuration) {
+        return !ObjectHelper.isEmpty(configuration.getCredentials()) ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
     }
 
 }

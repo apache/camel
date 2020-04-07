@@ -135,6 +135,58 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * jj.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder closeStreamAfterRead(
+                boolean closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * jj.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder closeStreamAfterRead(
+                String closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder credentials(Object credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder credentials(String credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
@@ -223,6 +275,30 @@ public interface BlobEndpointBuilderFactory {
         default BlobEndpointConsumerBuilder maxRetryRequests(
                 String maxRetryRequests) {
             doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder serviceClient(Object serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointConsumerBuilder serviceClient(String serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
             return this;
         }
         /**
@@ -503,6 +579,58 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * jj.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder closeStreamAfterRead(
+                boolean closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * jj.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder closeStreamAfterRead(
+                String closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder credentials(Object credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder credentials(String credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
@@ -594,6 +722,56 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder serviceClient(Object serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointProducerBuilder serviceClient(String serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
+         * dsds.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder closeStreamAfterWrite(
+                boolean closeStreamAfterWrite) {
+            doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
+            return this;
+        }
+        /**
+         * dsds.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default BlobEndpointProducerBuilder closeStreamAfterWrite(
+                String closeStreamAfterWrite) {
+            doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -641,6 +819,7 @@ public interface BlobEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
+         * Default: listBlobContainers
          * Group: producer
          */
         default BlobEndpointProducerBuilder operation(
@@ -654,6 +833,7 @@ public interface BlobEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
+         * Default: listBlobContainers
          * Group: producer
          */
         default BlobEndpointProducerBuilder operation(String operation) {
@@ -841,6 +1021,58 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * jj.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointBuilder closeStreamAfterRead(
+                boolean closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * jj.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobEndpointBuilder closeStreamAfterRead(
+                String closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder credentials(Object credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder credentials(String credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
@@ -926,6 +1158,30 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder maxRetryRequests(String maxRetryRequests) {
             doSetProperty("maxRetryRequests", maxRetryRequests);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder serviceClient(Object serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default BlobEndpointBuilder serviceClient(String serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
             return this;
         }
         /**
@@ -1029,10 +1285,19 @@ public interface BlobEndpointBuilderFactory {
         listBlobs,
         getBlob,
         deleteBlob,
+        downloadBlobToFile,
+        downloadLink,
         uploadBlockBlob,
-        uploadBlobBlobList,
+        stageBlockBlobList,
         commitBlobBlockList,
-        getBlockBlobList;
+        getBlobBlockList,
+        createAppendBlob,
+        commitAppendBlob,
+        createPageBlob,
+        uploadPageBlob,
+        resizePageBlob,
+        clearPageBlob,
+        getPageBlobRanges;
     }
 
     public interface BlobBuilders {

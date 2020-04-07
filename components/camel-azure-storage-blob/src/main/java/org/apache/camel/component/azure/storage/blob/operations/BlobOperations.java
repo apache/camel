@@ -1,6 +1,7 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -88,13 +89,14 @@ public class BlobOperations {
 
         try {
             final ResponseBase<BlobDownloadHeaders, Void> response =  client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
-                    configuration.isGetRangeContentMd5(), blobCommonRequestOptions.getTimeout());
+                    blobCommonRequestOptions.getContentMD5() != null, blobCommonRequestOptions.getTimeout());
 
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
                     .httpHeaders(response.getHeaders());
 
             return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
-        } finally {
+        }
+        finally {
             if (configuration.isCloseStreamAfterRead()) outputStream.close();
         }
     }
@@ -115,7 +117,7 @@ public class BlobOperations {
                     .httpHeaders(response.getHeaders())
                     .fileName(fileToDownload.toString());
 
-            return new BlobOperationResponse(true, exchangeHeaders.toMap());
+            return new BlobOperationResponse(fileToDownload, exchangeHeaders.toMap());
         }
         final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
         final BlobRange blobRange = getBlobRangeFromHeadersOrConfig(exchange, configuration);
@@ -123,13 +125,13 @@ public class BlobOperations {
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configuration);
 
         final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), blobRange, parallelTransferOptions, downloadRetryOptions,
-                commonRequestOptions.getBlobRequestConditions(), true, commonRequestOptions.getTimeout());
+                commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getContentMD5() != null, commonRequestOptions.getTimeout());
 
         final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(response.getValue())
                 .httpHeaders(response.getHeaders())
                 .fileName(fileToDownload.toString());
 
-        return new BlobOperationResponse(true, exchangeHeaders.toMap());
+        return new BlobOperationResponse(fileToDownload, exchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteBlob(final Exchange exchange) {
@@ -293,7 +295,7 @@ public class BlobOperations {
         return buildResponse(response, true);
     }
 
-    public BlobOperationResponse updateAppendBlob(final Exchange exchange) throws IOException {
+    public BlobOperationResponse commitAppendBlob(final Exchange exchange) throws IOException {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
         final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);

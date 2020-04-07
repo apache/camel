@@ -40,7 +40,12 @@ public final class BlobUtils {
         return new BlobCommonRequestOptions(blobHttpHeaders, metadata, accessTier, blobRequestConditions, contentMD5, timeout);
     }
 
-    public static String determineBlobName(final BlobConfiguration configuration, final Exchange exchange) {
+    public static String getContainerName(final BlobConfiguration configuration, final Exchange exchange) {
+        return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange)) ? configuration.getContainerName() :
+                BlobExchangeHeaders.getBlobContainerNameFromHeaders(exchange);
+    }
+
+    public static String getBlobName(final BlobConfiguration configuration, final Exchange exchange) {
         return ObjectHelper.isEmpty(BlobExchangeHeaders.getBlobNameFromHeaders(exchange)) ? configuration.getBlobName() :
                 BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
     }

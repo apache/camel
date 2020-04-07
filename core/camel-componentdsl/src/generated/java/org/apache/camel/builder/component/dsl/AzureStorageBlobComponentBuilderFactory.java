@@ -91,6 +91,19 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * jj.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder closeStreamAfterRead(
+                boolean closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
          * Config.
          * 
          * The option is a:
@@ -101,6 +114,20 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder configuration(
                 org.apache.camel.component.azure.storage.blob.BlobConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder credentials(
+                com.azure.storage.common.StorageSharedKeyCredential credentials) {
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -157,6 +184,19 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * ddd.
+         * 
+         * The option is a:
+         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * 
+         * Group: common
+         */
+        default AzureStorageBlobComponentBuilder serviceClient(
+                com.azure.storage.blob.BlobServiceClient serviceClient) {
+            doSetProperty("serviceClient", serviceClient);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -173,6 +213,19 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * dsds.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureStorageBlobComponentBuilder closeStreamAfterWrite(
+                boolean closeStreamAfterWrite) {
+            doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
             return this;
         }
         /**
@@ -202,6 +255,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
          * 
+         * Default: listBlobContainers
          * Group: producer
          */
         default AzureStorageBlobComponentBuilder operation(
@@ -262,12 +316,16 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "blobName": getOrCreateConfiguration((BlobComponent) component).setBlobName((java.lang.String) value); return true;
             case "blobOffset": getOrCreateConfiguration((BlobComponent) component).setBlobOffset((long) value); return true;
             case "blobType": getOrCreateConfiguration((BlobComponent) component).setBlobType((org.apache.camel.component.azure.storage.blob.BlobType) value); return true;
+            case "closeStreamAfterRead": getOrCreateConfiguration((BlobComponent) component).setCloseStreamAfterRead((boolean) value); return true;
             case "configuration": ((BlobComponent) component).setConfiguration((org.apache.camel.component.azure.storage.blob.BlobConfiguration) value); return true;
+            case "credentials": getOrCreateConfiguration((BlobComponent) component).setCredentials((com.azure.storage.common.StorageSharedKeyCredential) value); return true;
             case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
             case "getRangeContentMd5": getOrCreateConfiguration((BlobComponent) component).setGetRangeContentMd5((boolean) value); return true;
             case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
+            case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "closeStreamAfterWrite": getOrCreateConfiguration((BlobComponent) component).setCloseStreamAfterWrite((boolean) value); return true;
             case "lazyStartProducer": ((BlobComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;
             case "basicPropertyBinding": ((BlobComponent) component).setBasicPropertyBinding((boolean) value); return true;

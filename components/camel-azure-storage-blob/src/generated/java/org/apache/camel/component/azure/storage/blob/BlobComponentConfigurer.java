@@ -38,7 +38,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": getOrCreateConfiguration(target).setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": getOrCreateConfiguration(target).setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": getOrCreateConfiguration(target).setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobConfiguration.class, value)); return true;
+        case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":
@@ -50,6 +55,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "maxretryrequests":
         case "maxRetryRequests": getOrCreateConfiguration(target).setMaxRetryRequests(property(camelContext, int.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
+        case "serviceclient":
+        case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         default: return false;
         }
     }
@@ -63,13 +70,17 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("blobOffset", long.class);
         answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("closeStreamAfterRead", boolean.class);
+        answer.put("closeStreamAfterWrite", boolean.class);
         answer.put("configuration", org.apache.camel.component.azure.storage.blob.BlobConfiguration.class);
+        answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("dataCount", java.lang.Long.class);
         answer.put("fileDir", java.lang.String.class);
         answer.put("getRangeContentMd5", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
+        answer.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
         return answer;
     }
 
@@ -89,7 +100,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": return getOrCreateConfiguration(target).getBlobType();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return getOrCreateConfiguration(target).isCloseStreamAfterRead();
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return getOrCreateConfiguration(target).isCloseStreamAfterWrite();
         case "configuration": return target.getConfiguration();
+        case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "datacount":
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();
         case "filedir":
@@ -101,6 +117,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "maxretryrequests":
         case "maxRetryRequests": return getOrCreateConfiguration(target).getMaxRetryRequests();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "serviceclient":
+        case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         default: return null;
         }
     }
