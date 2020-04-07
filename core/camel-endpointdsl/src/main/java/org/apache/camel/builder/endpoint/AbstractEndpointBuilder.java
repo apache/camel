@@ -17,7 +17,6 @@
 package org.apache.camel.builder.endpoint;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,7 +47,7 @@ public class AbstractEndpointBuilder {
     }
 
     public Endpoint resolve(CamelContext context) throws NoSuchEndpointException {
-        Map<String, Object> remaining = new HashMap<>();
+        Map<String, Object> remaining = new LinkedHashMap<>();
         // we should not bind complex objects to registry as we create the endpoint via the properties as-is
         NormalizedEndpointUri uri = computeUri(remaining, context, false);
         ExtendedCamelContext ecc = (ExtendedCamelContext) context;
@@ -60,7 +59,7 @@ public class AbstractEndpointBuilder {
     }
 
     public String getUri() {
-        return computeUri(new HashMap<>(), null, false).getUri();
+        return computeUri(new LinkedHashMap<>(), null, false).getUri();
     }
 
     protected NormalizedUri computeUri(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry) {
@@ -113,7 +112,7 @@ public class AbstractEndpointBuilder {
 
     public Expression expr(CamelContext camelContext) {
         // need to bind complex properties so we can return an uri that includes these parameters too
-        NormalizedEndpointUri uri = computeUri(new HashMap<>(), camelContext, true);
+        NormalizedEndpointUri uri = computeUri(new LinkedHashMap<>(), camelContext, true);
         return SimpleBuilder.simple(uri.getUri());
     }
 
