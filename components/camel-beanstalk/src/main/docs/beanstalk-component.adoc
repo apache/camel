@@ -50,7 +50,7 @@ beanstalk://localhost:11300/tube1+tube2
 
 Tube name will be URL decoded, so if your tube names include special
 characters like + or ?, you need to URL-encode them appropriately, or
-use the RAW syntax, see xref:manual::faq/how-do-i-configure-endpoints.adoc[more
+use the RAW syntax, see xref:manual:faq:how-do-i-configure-endpoints.adoc[more
 details here].
 
 By the way, you cannot specify several tubes when you are writing jobs

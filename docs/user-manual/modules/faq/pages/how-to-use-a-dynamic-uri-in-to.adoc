@@ -1,0 +1,53 @@
+[[HowtouseadynamicURIinto-HowtouseadynamicURIinto]]
+= How to use a dynamic URI in `to()`
+
+A dynamic URI is an endpoint URI that varies depending on inflight
+routing information, such as Exchange properties, message headers, the
+body, the Camel Context, etc.
+
+For example, if you're using a Freemarker producer and the template
+location is provided inside the current message, you might expect the
+following code to work, *but it will not*.
+
+[WARNING]
+====
+*This is not valid code*
+
+This snippet is not valid code. Read on.
+====
+
+[source,java]
+----
+.to("freemarker://templateHome/${body.templateName}.ftl")
+----
+
+In this case, you must use an EIP (Enterprise Integration Pattern) that
+is capable of computing a dynamic URI using
+an xref:ROOT:expression.adoc[Expression], such as
+the xref:{eip-vc}:eips:toD-eip.adoc[ToD] or xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] EIP pattern.
+
+[TIP]
+====
+*This is valid code*
+
+This snippet is valid code.
+====
+
+To fix the above problem we can use either toD or recipientList.
+Using toD is easier as shown below:
+
+[source,java]
+----
+.toD("freemarker://templateHome/${body.templateName}.ftl")
+----
+
+When using recipient list:
+[source,java]
+----
+.recipientList(simple("freemarker://templateHome/${body.templateName}.ftl"))
+----
+
+
+
+
+
