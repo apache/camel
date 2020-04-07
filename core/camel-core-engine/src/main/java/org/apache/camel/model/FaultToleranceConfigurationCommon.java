@@ -40,20 +40,28 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "circuitbreaker", defaultValue = "50", javaType = "java.lang.Integer")
     private String failureRatio;
+    @XmlAttribute
     @Metadata(label = "timeout", defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
+    @XmlAttribute
     @Metadata(label = "timeout", defaultValue = "1000", javaType = "java.lang.Long")
     private String timeoutDuration;
+    @XmlAttribute
     @Metadata(label = "timeout", defaultValue = "10", javaType = "java.lang.Integer")
     private String timeoutPoolSize;
+    @XmlAttribute
     @Metadata(label = "timeout")
     private String timeoutScheduledExecutorServiceRef;
+    @XmlAttribute
     @Metadata(label = "bulkhead", defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
+    @XmlAttribute
     @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
+    @XmlAttribute
     @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadWaitingTaskQueue;
+    @XmlAttribute
     @Metadata(label = "bulkhead")
     private String bulkheadExecutorServiceRef;
 
