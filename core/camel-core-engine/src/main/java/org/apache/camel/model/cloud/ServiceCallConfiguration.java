@@ -77,7 +77,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
         return this;
     }
 
-    protected Map<String, String> getPropertiesAsMap(CamelContext camelContext) {
+    protected Map<String, String> getPropertiesAsMap(CamelContext camelContext) throws Exception {
         Map<String, String> answer;
 
         if (properties == null || properties.isEmpty()) {
