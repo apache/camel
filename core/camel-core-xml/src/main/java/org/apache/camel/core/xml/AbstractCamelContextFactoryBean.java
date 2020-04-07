@@ -62,6 +62,7 @@ import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -866,6 +867,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<Resilience4jConfigurationDefinition> getResilience4jConfigurations();
 
+    public abstract FaultToleranceConfigurationDefinition getDefaultFaultToleranceConfiguration();
+
+    public abstract List<FaultToleranceConfigurationDefinition> getFaultToleranceConfigurations();
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -988,6 +993,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getResilience4jConfigurations() != null) {
             for (Resilience4jConfigurationDefinition bean : getResilience4jConfigurations()) {
                 context.addResilience4jConfiguration(bean.getId(), bean);
+            }
+        }
+        if (getDefaultFaultToleranceConfiguration() != null) {
+            context.setFaultToleranceConfiguration(getDefaultFaultToleranceConfiguration());
+        }
+        if (getFaultToleranceConfigurations() != null) {
+            for (FaultToleranceConfigurationDefinition bean : getFaultToleranceConfigurations()) {
+                context.addFaultToleranceConfiguration(bean.getId(), bean);
             }
         }
     }

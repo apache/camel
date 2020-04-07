@@ -234,6 +234,39 @@ public interface Model {
     void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration);
 
     /**
+     * Gets the MicroProfile Fault Tolerance configuration by the given name. If no name is given the
+     * default configuration is returned, see <tt>setFaultToleranceConfigurationDefinition</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default
+     *            configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been
+     *         registered
+     */
+    FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id);
+
+    /**
+     * Sets the default MicroProfile Fault Tolerance configuration
+     *
+     * @param configuration the configuration
+     */
+    void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration);
+
+    /**
+     * Sets the MicroProfile Fault Tolerance configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations);
+
+    /**
+     * Adds the MicroProfile Fault Tolerance configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration);
+
+    /**
      * Gets the validators that can be referenced in the routes.
      *
      * @return the validators available

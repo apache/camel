@@ -400,6 +400,7 @@
         <microprofile-config-version>1.4</microprofile-config-version>
         <microprofile-metrics-version>2.3</microprofile-metrics-version>
         <microprofile-health-version>2.2</microprofile-health-version>
+        <microprofile-fault-tolerance-version>2.1</microprofile-fault-tolerance-version>
         <milo-version>0.3.7</milo-version>
         <milo-guava-version>26.0-jre</milo-guava-version>
         <mimepull-version>1.9.12</mimepull-version>
@@ -492,6 +493,7 @@
         <smallrye-config-version>1.7.0</smallrye-config-version>
         <smallrye-metrics-version>2.4.1</smallrye-metrics-version>
         <smallrye-health-version>2.2.0</smallrye-health-version>
+        <smallrye-fault-tolerance-version>4.2.0</smallrye-fault-tolerance-version>
         <snakeyaml-version>1.26</snakeyaml-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
@@ -1749,6 +1751,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-microprofile-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-microprofile-fault-tolerance</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

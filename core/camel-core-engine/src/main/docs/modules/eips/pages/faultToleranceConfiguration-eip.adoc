@@ -1,0 +1,26 @@
+[[faultToleranceConfiguration-eip]]
+= Fault Tolerance Configuration EIP
+
+
+// eip options: START
+The Fault Tolerance Configuration EIP supports 13 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *circuitBreakerRef* | Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use. |  | String
+| *delay* | Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds. | 5 | long
+| *successThreshold* | Controls the number of trial calls which are allowed when the circuit breaker is half-open. | 1 | int
+| *requestVolumeThreshold* | Controls the size of the rolling window used when the circuit breaker is closed. | 20 | int
+| *failureRatio* | Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage. | 50 | int
+| *timeoutEnabled* | Whether timeout is enabled or not on the circuit breaker. | false | boolean
+| *timeoutDuration* | Configures the thread execution timeout. Default value is 1 second. | 1000 | int
+| *timeoutPoolSize* | Configures the pool size of the thread pool when timeout is enabled. Default value is 10. | 10 | int
+| *timeoutScheduledExecutorServiceRef* | References to a custom thread pool to use when timeout is enabled | | String
+| *bulkheadEnabled* | Whether bulkhead is enabled or not on the circuit breaker. | false | boolean
+| *bulkheadMaxConcurrentCalls* | Configures the max amount of concurrent calls the bulkhead will support. | 10 | int
+| *bulkheadWaitingTaskQueue* | Configures the task queue size for holding waiting tasks to be processed by the bulkhead. | 10 | int
+| *bulkheadExecutorServiceRef* | References to a custom thread pool to use when bulkhead is enabled. |  | String
+
+|===
+// eip options: END

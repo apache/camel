@@ -228,6 +228,7 @@ public class ModelParser extends BaseParser {
             return processorDefinitionAttributeHandler().accept(def, key, val);
         }, (def, key) -> {
             switch (key) {
+                case "faultToleranceConfiguration": def.setFaultToleranceConfiguration(doParseFaultToleranceConfigurationDefinition()); break;
                 case "hystrixConfiguration": def.setHystrixConfiguration(doParseHystrixConfigurationDefinition()); break;
                 case "resilience4jConfiguration": def.setResilience4jConfiguration(doParseResilience4jConfigurationDefinition()); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
@@ -242,6 +243,10 @@ public class ModelParser extends BaseParser {
     protected Resilience4jConfigurationDefinition doParseResilience4jConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new Resilience4jConfigurationDefinition(),
             resilience4jConfigurationCommonAttributeHandler(), resilience4jConfigurationCommonElementHandler(), noValueHandler());
+    }
+    protected FaultToleranceConfigurationDefinition doParseFaultToleranceConfigurationDefinition() throws IOException, XmlPullParserException {
+        return doParse(new FaultToleranceConfigurationDefinition(),
+            faultToleranceConfigurationCommonAttributeHandler(), faultToleranceConfigurationCommonElementHandler(), noValueHandler());
     }
     protected ClaimCheckDefinition doParseClaimCheckDefinition() throws IOException, XmlPullParserException {
         return doParse(new ClaimCheckDefinition(), (def, key, val) -> {
@@ -362,6 +367,38 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, expressionNodeElementHandler(), noValueHandler());
+    }
+    protected <T extends FaultToleranceConfigurationCommon> AttributeHandler<T> faultToleranceConfigurationCommonAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "circuitBreakerRef": def.setCircuitBreakerRef(val); break;
+                case "delay": def.setDelay(val); break;
+                case "failureRatio": def.setFailureRatio(val); break;
+                case "requestVolumeThreshold": def.setRequestVolumeThreshold(val); break;
+                case "successThreshold": def.setSuccessThreshold(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        };
+    }
+    protected <T extends FaultToleranceConfigurationCommon> ElementHandler<T> faultToleranceConfigurationCommonElementHandler() {
+        return (def, key) -> {
+            switch (key) {
+                case "bulkheadEnabled": def.setBulkheadEnabled(doParseText()); break;
+                case "bulkheadExecutorServiceRef": def.setBulkheadExecutorServiceRef(doParseText()); break;
+                case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(doParseText()); break;
+                case "bulkheadWaitingTaskQueue": def.setBulkheadWaitingTaskQueue(doParseText()); break;
+                case "timeoutDuration": def.setTimeoutDuration(doParseText()); break;
+                case "timeoutEnabled": def.setTimeoutEnabled(doParseText()); break;
+                case "timeoutPoolSize": def.setTimeoutPoolSize(doParseText()); break;
+                case "timeoutScheduledExecutorServiceRef": def.setTimeoutScheduledExecutorServiceRef(doParseText()); break;
+                default: return false;
+            }
+            return true;
+        };
+    }
+    protected FaultToleranceConfigurationCommon doParseFaultToleranceConfigurationCommon() throws IOException, XmlPullParserException {
+        return doParse(new FaultToleranceConfigurationCommon(), faultToleranceConfigurationCommonAttributeHandler(), faultToleranceConfigurationCommonElementHandler(), noValueHandler());
     }
     protected FilterDefinition doParseFilterDefinition() throws IOException, XmlPullParserException {
         return doParse(new FilterDefinition(),

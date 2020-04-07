@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "faultToleranceConfiguration",
+    "title": "Fault Tolerance Configuration",
+    "description": "MicroProfile Fault Tolerance Circuit Breaker EIP configuration",
+    "javaType": "org.apache.camel.model.FaultToleranceConfigurationDefinition",
+    "label": "eip,routing,circuitbreaker",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "circuitBreakerRef": { "kind": "attribute", "displayName": "Circuit Breaker Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use." },
+    "delay": { "kind": "attribute", "displayName": "Delay", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "defaultValue": "5", "description": "Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds." },
+    "successThreshold": { "kind": "attribute", "displayName": "Success Threshold", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "1", "description": "Controls the number of trial calls which are allowed when the circuit breaker is half-open" },
+    "requestVolumeThreshold": { "kind": "attribute", "displayName": "Request Volume Threshold", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "20", "description": "Controls the size of the rolling window used when the circuit breaker is closed" },
+    "failureRatio": { "kind": "attribute", "displayName": "Failure Ratio", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "50", "description": "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}
