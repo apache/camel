@@ -16,35 +16,51 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.util.Properties;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class NormalizedUriTest extends CamelTestSupport {
+public class NormalizedUrPropertyPlaceholderTest extends CamelTestSupport {
 
-    @EndpointInject(value = "mock:result")
+    @EndpointInject(value = "mock:result?failFast=false")
     private MockEndpoint result;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        Properties initial = new Properties();
+        initial.setProperty("foo", "test");
+        initial.setProperty("bar", "result");
+        initial.setProperty("fast", "false");
+
+        CamelContext context = super.createCamelContext();
+        context.getPropertiesComponent().setInitialProperties(initial);
+        return context;
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("test")).to(mock("result"));
+                from(direct("{{foo}}")).to(mock("{{bar}}").failFast("{{fast}}"));
             }
         };
     }
 
     @Test
     public void test() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result?failFast=false");
         resultEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:test", null);
 
         assertMockEndpointsSatisfied();
+
         assertEquals(result, resultEndpoint);
     }
 }
