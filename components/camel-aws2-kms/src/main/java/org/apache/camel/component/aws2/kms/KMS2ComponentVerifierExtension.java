@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kms;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -66,6 +67,10 @@ public class KMS2ComponentVerifierExtension extends DefaultComponentVerifierExte
 
         try {
             KMS2Configuration configuration = setProperties(new KMS2Configuration(), parameters);
+            if (!KmsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             KmsClientBuilder clientBuilder = KmsClient.builder();
             KmsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
