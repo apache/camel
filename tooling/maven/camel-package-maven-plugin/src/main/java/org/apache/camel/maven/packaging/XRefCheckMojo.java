@@ -97,7 +97,12 @@ public class XRefCheckMojo extends AbstractMojo {
                     .filter(Files::isRegularFile)
                     .findFirst();
                 if (n.isPresent()) {
-                    pages.put(component + ":ROOT:" + n.get().getFileName().toString(), n.get());
+                    Path f = n.get();
+                    Path m = f.getParent();
+                    while (!m.getParent().getFileName().toString().equals("modules")) {
+                        m = m.getParent();
+                    }
+                    pages.put(component + ":" + m.getFileName().toString() + ":" + f.getFileName().toString(), n.get());
                 }
             }
             for (Path root : componentPaths.get(component)) {
