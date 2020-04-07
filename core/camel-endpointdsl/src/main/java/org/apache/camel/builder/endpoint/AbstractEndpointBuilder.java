@@ -70,7 +70,13 @@ public class AbstractEndpointBuilder {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
-            if (val instanceof String || val instanceof Number || val instanceof Boolean || val instanceof Enum<?>) {
+            if (val instanceof String) {
+                String text = val.toString();
+                if (camelContext != null) {
+                    text = camelContext.resolvePropertyPlaceholders(text);
+                }
+                params.put(key, text);
+            } else if (val instanceof Number || val instanceof Boolean || val instanceof Enum<?>) {
                 params.put(key, val.toString());
             } else if (camelContext != null && bindToRegistry) {
                 String hash = Integer.toHexString(val.hashCode());
@@ -83,12 +89,21 @@ public class AbstractEndpointBuilder {
         if (!remaining.isEmpty()) {
             params.put("hash", Integer.toHexString(remaining.hashCode()));
         }
+
+        // ensure property placeholders is also resolved on scheme and path
+        String targetScheme = scheme;
+        String targetPath = path;
+        if (camelContext != null) {
+            targetScheme = camelContext.resolvePropertyPlaceholders(scheme);
+            targetPath = camelContext.resolvePropertyPlaceholders(path);
+        }
+
         if (params.isEmpty()) {
-            answer = new NormalizedUri(scheme + "://" + path);
+            answer = new NormalizedUri(targetScheme + "://" + targetPath);
         } else {
             try {
                 String query = URISupport.createQueryString(params);
-                answer = new NormalizedUri(scheme + "://" + path + "?" + query);
+                answer = new NormalizedUri(targetScheme + "://" + targetPath + "?" + query);
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
