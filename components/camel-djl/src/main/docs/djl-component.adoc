@@ -1,7 +1,10 @@
 [[djl-component]]
-= Deep Java Library Component
+= DJL Component
 
 *Since Camel 3.2*
+
+*Since Camel 3.2*
+
 
 // HEADER START
 *Only producer is supported*
@@ -25,6 +28,19 @@ following dependency to their `pom.xml`:
 </dependency>
 ----
 
+// component options: START
+The DJL component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
 The DJL component only supports producer endpoints.
 
 // endpoint options: START
@@ -38,32 +54,26 @@ with the following path and query parameters:
 
 === Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *application* | *Required* Common deep learning application type. The value can be one of:
-`cv/image_classification`,
-`cv/object_detection`,
-`cv/semantic_segmentation`,
-`cv/instance_segmentation`,
-`cv/pose_estimation`,
-`cv/image_classification`,
-`cv/action_recognition`,
-`nlp/question_answer`,
-`nlp/text_classification`
-
-| | String
+| *application* | *Required* Application name |  | String
 |===
 
-=== Query Parameters (3 parameters):
+
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *artifactId* (producer) | The artifact id identifies Zoo inference model |  | String
-| *model* (producer) | Custom Deep Learning Model bean id. Bean should implement ai.djl.Model |  | String
-| *translator* (producer) | Custom Translator for pre-processing and postprocessing bean id. Bean should implement ai.djl.translate.Translator |  | String
+| *artifactId* (producer) | Model Artifact |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *model* (producer) | Model |  | String
+| *translator* (producer) | Translator |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 

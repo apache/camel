@@ -1205,6 +1205,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DisruptorVmComponentBuilderFactory.disruptorVm();
     }
     /**
+     * DJL (camel-djl)
+     * Represents a DJL endpoint.
+     * 
+     * Category: deeplearning
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-djl
+     */
+    static org.apache.camel.builder.component.dsl.DjlComponentBuilderFactory.DjlComponentBuilder djl() {
+        return org.apache.camel.builder.component.dsl.DjlComponentBuilderFactory.djl();
+    }
+    /**
      * DNS (camel-dns)
      * To lookup domain information and run DNS queries using DNSJava.
      * 
