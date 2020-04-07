@@ -85,11 +85,11 @@ public class AbstractEndpointBuilder {
             params.put("hash", Integer.toHexString(remaining.hashCode()));
         }
         if (params.isEmpty()) {
-            answer = new NormalizedUri(scheme + ":" + path);
+            answer = new NormalizedUri(scheme + "://" + path);
         } else {
             try {
                 String query = URISupport.createQueryString(params);
-                answer = new NormalizedUri(scheme + ":" + path + "?" + query);
+                answer = new NormalizedUri(scheme + "://" + path + "?" + query);
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
