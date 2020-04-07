@@ -73,9 +73,8 @@ public final class ThreadPoolBuilder {
      * Builds the new thread pool
      *
      * @return the created thread pool
-     * @throws Exception is thrown if error building the thread pool
      */
-    public ExecutorService build() throws Exception {
+    public ExecutorService build() {
         return build(null, null);
     }
 
@@ -84,9 +83,8 @@ public final class ThreadPoolBuilder {
      *
      * @param name name which is appended to the thread name
      * @return the created thread pool
-     * @throws Exception is thrown if error building the thread pool
      */
-    public ExecutorService build(String name) throws Exception {
+    public ExecutorService build(String name) {
         return build(null, name);
     }
 
@@ -97,9 +95,8 @@ public final class ThreadPoolBuilder {
      *            passed in as parameter
      * @param name name which is appended to the thread name
      * @return the created thread pool
-     * @throws Exception is thrown if error building the thread pool
      */
-    public ExecutorService build(Object source, String name) throws Exception {
+    public ExecutorService build(Object source, String name) {
         return context.getExecutorServiceManager().newThreadPool(source, name, profile);
     }
 
@@ -107,9 +104,8 @@ public final class ThreadPoolBuilder {
      * Builds the new scheduled thread pool
      *
      * @return the created scheduled thread pool
-     * @throws Exception is thrown if error building the scheduled thread pool
      */
-    public ScheduledExecutorService buildScheduled() throws Exception {
+    public ScheduledExecutorService buildScheduled() {
         return buildScheduled(null, null);
     }
 
@@ -118,9 +114,8 @@ public final class ThreadPoolBuilder {
      *
      * @param name name which is appended to the thread name
      * @return the created scheduled thread pool
-     * @throws Exception is thrown if error building the scheduled thread pool
      */
-    public ScheduledExecutorService buildScheduled(String name) throws Exception {
+    public ScheduledExecutorService buildScheduled(String name) {
         return buildScheduled(null, name);
     }
 
@@ -131,9 +126,8 @@ public final class ThreadPoolBuilder {
      *            passed in as parameter
      * @param name name which is appended to the thread name
      * @return the created scheduled thread pool
-     * @throws Exception is thrown if error building the scheduled thread pool
      */
-    public ScheduledExecutorService buildScheduled(Object source, String name) throws Exception {
+    public ScheduledExecutorService buildScheduled(Object source, String name) {
         return context.getExecutorServiceManager().newScheduledThreadPool(source, name, profile);
     }
 
