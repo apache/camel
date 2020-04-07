@@ -239,13 +239,19 @@ const extractExamples = function(file, enc, next) {
 }
 
 function deleteExamples(){
-    return del(['user-manual/modules/ROOT/examples/', 'components/modules/ROOT/examples/']);
+    return del(['user-manual/modules/ROOT/examples/', 'user-manual/modules/faq/examples/', 'components/modules/ROOT/examples/']);
 }
 
 function createUserManualExamples() {
     return src('user-manual/modules/ROOT/**/*.adoc')
         .pipe(through2.obj(extractExamples))
         .pipe(dest('user-manual/modules/ROOT/examples/'));
+}
+
+function createFAQExamples() {
+    return src('user-manual/modules/faq/**/*.adoc')
+        .pipe(through2.obj(extractExamples))
+        .pipe(dest('user-manual/modules/faq/examples/'));
 }
 
 function createEIPExamples() {
@@ -271,7 +277,7 @@ const symlinks = parallel(
     series(deleteComponentImageSymlinks, createComponentImageSymlinks)
 );
 const nav = parallel(createComponentNav, createComponentDataFormatsNav, createComponentLanguagesNav, createEIPNav);
-const examples = series(deleteExamples, createUserManualExamples, createEIPExamples, createUserManualLanguageExamples, createComponentExamples);
+const examples = series(deleteExamples, createUserManualExamples, createFAQExamples, createEIPExamples, createUserManualLanguageExamples, createComponentExamples);
 
 exports.symlinks = symlinks;
 exports.nav = nav;
