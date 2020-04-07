@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class NormalizedUrPropertyPlaceholderTest extends CamelTestSupport {
+public class NormalizedUriPropertyPlaceholderTest extends CamelTestSupport {
 
     @EndpointInject(value = "mock:result?failFast=false")
     private MockEndpoint result;
