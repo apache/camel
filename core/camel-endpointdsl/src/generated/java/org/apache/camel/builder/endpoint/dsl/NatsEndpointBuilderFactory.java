@@ -72,7 +72,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default NatsEndpointConsumerBuilder flushConnection(
@@ -85,7 +85,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default NatsEndpointConsumerBuilder flushConnection(
@@ -739,7 +739,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default NatsEndpointProducerBuilder flushConnection(
@@ -752,7 +752,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default NatsEndpointProducerBuilder flushConnection(
@@ -1290,7 +1290,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default NatsEndpointBuilder flushConnection(boolean flushConnection) {
@@ -1302,7 +1302,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default NatsEndpointBuilder flushConnection(String flushConnection) {
