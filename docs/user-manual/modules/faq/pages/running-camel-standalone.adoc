@@ -15,7 +15,7 @@ And the concrete walk through a plain old java main example: +
 xref:walk-through-an-example.adoc[Walk through an Example]
 
 The FAQ have some more details: +
-xref:faq.adoc[FAQ]
+xref:index.adoc[FAQ]
 
 And if you use Maven for your projects Camel has maven tools to boot up
 in standalone mode and quickly run you Camel application: +

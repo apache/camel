@@ -12,7 +12,7 @@ xref:xml-configuration.adoc[XML Configuration] files.
 This means you get smart completion of
 routing rules in your IDE, whether in a Java or XML editor.
 
-For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel.adoc[Introduction] is provided.
+For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel.adoc[Introduction] is provided.
 
 
 
@@ -28,7 +28,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel
 
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
-* xref:faq.adoc[FAQ]
+* xref:faq:index.adoc[FAQ]
 * https://github.com/apache/camel/blob/master/NOTICE.txt[Legal Notice]
 
 == Documentation
@@ -52,7 +52,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel
 * xref:camel-boot.adoc[Camel Boot]
 * xref:components::cdi.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
-* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 * xref:bean-integration.adoc[Bean Integration]
 * xref:configuring-camel.adoc[Configuring Camel]
 * xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring route startup ordering and autostartup]

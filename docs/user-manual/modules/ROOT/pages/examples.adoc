@@ -5,7 +5,7 @@ looked at the xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns], you might want to try out some examples.
 
 Before starting to work on example you may want to
-xref:faq/what-are-the-dependencies.adoc[check the requirements for working
+xref:faq:what-are-the-dependencies.adoc[check the requirements for working
 with Camel]. Then xref:running-examples.adoc[Running Examples] describes
 how to get the examples to run
 

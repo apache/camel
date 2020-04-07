@@ -14,7 +14,7 @@ xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP routing and mediatio
 between existing JBI components together with communicating with any of
 the other Camel xref:component.adoc[Components] along with defining new
 JBI components on the NMR. So Camel is similar to the
-xref:faq/how-does-camel-compare-to-servicemix-eip.adoc[ServiceMix EIP
+xref:how-does-camel-compare-to-servicemix-eip.adoc[ServiceMix EIP
 component].
 
 To work with Camel and ServiceMix you take your Camel
