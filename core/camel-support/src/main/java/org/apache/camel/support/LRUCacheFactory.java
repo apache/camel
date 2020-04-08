@@ -84,10 +84,10 @@ public abstract class LRUCacheFactory {
                 if (clazzName != null) {
                     LOG.trace("Loading class: {}", clazzName);
                     Class<?> clazz = classLoader.loadClass(clazzName);
-                    LOG.trace("Creating LURCacheFactory instance from class: {}", clazzName);
+                    LOG.trace("Creating LRUCacheFactory instance from class: {}", clazzName);
                     Object factory = clazz.getDeclaredConstructor().newInstance();
-                    LOG.trace("Created LURCacheFactory instance: {}", factory);
-                    LOG.info("Detected and using LURCacheFactory: {}", factory);
+                    LOG.trace("Created LRUCacheFactory instance: {}", factory);
+                    LOG.info("Detected and using LRUCacheFactory: {}", factory);
                     return (LRUCacheFactory) factory;
                 }
             }
