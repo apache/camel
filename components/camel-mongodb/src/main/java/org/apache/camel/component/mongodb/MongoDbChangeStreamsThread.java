@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
+import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.Exchange;
-import org.bson.BsonDocument;
-import org.bson.Document;
+import org.bson.*;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
@@ -68,7 +69,16 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
         try {
             while (cursor.hasNext() && keepRunning) {
                 ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.next();
-                Exchange exchange = endpoint.createMongoDbExchange(dbObj.getFullDocument(), dbObj.getOperationType(), dbObj.getDocumentKey().toJson());
+                Exchange exchange = endpoint.createMongoDbExchange(dbObj.getFullDocument());
+
+                String documentId = dbObj.getDocumentKey().getString(MONGO_ID).getValue();
+                OperationType operationType = dbObj.getOperationType();
+                exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
+                exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
+                if (operationType == OperationType.DELETE) {
+                    exchange.getIn().setBody(new Document(MONGO_ID, documentId));
+                }
+
                 try {
                     if (log.isTraceEnabled()) {
                         log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.getFullDocument().get(MONGO_ID));

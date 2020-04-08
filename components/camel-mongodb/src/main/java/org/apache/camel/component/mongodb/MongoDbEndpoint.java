@@ -42,6 +42,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -301,13 +302,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         } catch (IOException e) {
             throw new CamelMongoDbException("createIndex failed", e);
         }
-    }
-
-    public Exchange createMongoDbExchange(Document dbObj, OperationType operationType, String objectId) {
-        Exchange exchange = createMongoDbExchange(dbObj);
-        exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
-        exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, objectId);
-        return exchange;
     }
 
     public Exchange createMongoDbExchange(Document dbObj) {
