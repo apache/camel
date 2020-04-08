@@ -29,6 +29,7 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -300,6 +301,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         } catch (IOException e) {
             throw new CamelMongoDbException("createIndex failed", e);
         }
+    }
+
+    public Exchange createMongoDbExchange(Document dbObj, OperationType operationType) {
+        Exchange exchange = createMongoDbExchange(dbObj);
+        exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
+        return exchange;
     }
 
     public Exchange createMongoDbExchange(Document dbObj) {
