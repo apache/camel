@@ -121,7 +121,7 @@ public final class PropertyConfigurerGenerator {
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-                    String getterLambda = getterLambda(getOrSet, option.getJavaType(), option.getConfigurationField(), component);
+                    String getterLambda = getterLambda(getOrSet, option.getJavaType(), option.getGetterMethod(), option.getConfigurationField(), component);
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
@@ -166,8 +166,14 @@ public final class PropertyConfigurerGenerator {
         return String.format("%s(property(camelContext, %s.class, value))", getOrSet, type);
     }
 
-    private static String getterLambda(String getOrSet, String type, String configurationField, boolean component) {
-        String prefix = "boolean".equals(type) ? "is" : "get";
+    private static String getterLambda(String getOrSet, String type, String getterMethod, String configurationField, boolean component) {
+        String prefix;
+        if (getterMethod == null || getterMethod.isEmpty()) {
+            prefix = "boolean".equals(type) ? "is" : "get";
+        } else {
+            prefix = "";
+            getOrSet = getterMethod;
+        }
         if (configurationField != null) {
             if (component) {
                 getOrSet = "getOrCreateConfiguration(target)." + prefix + getOrSet;
