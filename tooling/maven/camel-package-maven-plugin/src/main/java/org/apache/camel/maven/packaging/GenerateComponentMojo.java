@@ -40,6 +40,8 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         invoke(TypeConverterLoaderGeneratorMojo.class);
         // generate-spi
         invoke(SpiGeneratorMojo.class);
+        // generate-configurer
+        invoke(GenerateConfigurerMojo.class);
         // generate-endpoint-schema
         invoke(EndpointSchemaGeneratorMojo.class);
         // prepare-components
