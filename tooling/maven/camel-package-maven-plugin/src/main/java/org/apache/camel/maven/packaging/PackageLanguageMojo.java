@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.maven.packaging.generics.ClassUtil;
-import org.apache.camel.tooling.model.CompilationTarget;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -211,11 +210,17 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         model.setGroupId(project.getGroupId());
         model.setArtifactId(project.getArtifactId());
         model.setVersion(project.getVersion());
-        model.setSupportLevel(
-                ClassUtil.hasAnnotation("org.apache.camel.Experimental", javaType)
-                        ? SupportLevel.Preview
-                        : SupportLevel.Stable);
-        model.setCompilationTarget(CompilationTarget.JVM);
+
+        // grab level from annotation, pom.xml or default to stable
+        String level = project.getProperties().getProperty("supportLevel");
+        boolean experimental = ClassUtil.hasAnnotation("org.apache.camel.Experimental", javaType);
+        if (experimental) {
+            model.setSupportLevel(SupportLevel.Experimental);
+        } else if (level != null) {
+            model.setSupportLevel(SupportLevel.safeValueOf(level));
+        } else {
+            model.setSupportLevel(SupportLevel.Stable);
+        }
 
         for (EipOptionModel opt : def.getOptions()) {
             LanguageOptionModel option = new LanguageOptionModel();

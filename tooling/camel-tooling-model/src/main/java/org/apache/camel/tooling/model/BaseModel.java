@@ -32,7 +32,6 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     protected String deprecationNote;
     protected final List<O> options = new ArrayList<>();
     protected SupportLevel supportLevel;
-    protected CompilationTarget compilationTarget;
 
     public static Comparator<BaseModel<?>> compareTitle() {
         return (m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle());
@@ -126,14 +125,6 @@ public abstract class BaseModel<O extends BaseOptionModel> {
 
     public void setSupportLevel(SupportLevel supportLevel) {
         this.supportLevel = supportLevel;
-    }
-
-    public CompilationTarget getCompilationTarget() {
-        return compilationTarget;
-    }
-
-    public void setCompilationTarget(CompilationTarget compilationTarget) {
-        this.compilationTarget = compilationTarget;
     }
 
 }

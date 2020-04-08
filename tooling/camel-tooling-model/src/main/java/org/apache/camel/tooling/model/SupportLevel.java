@@ -20,10 +20,29 @@ package org.apache.camel.tooling.model;
  * A level of support for some Camel entity, such as component, language, data format, etc.
  */
 public enum SupportLevel {
-    /** An experimental entity that may change or be removed in minor release */
+
+    /**
+     * An experimental entity (not feature complete) that will change API, configuration,
+     * or functionality, or even be removed in the future.
+     *
+     * Intended to be matured over time and become preview or stable.
+     *
+     * Using this entity is not recommended for production usage.
+     */
+    Experimental,
+
+    /**
+     * A preview entity that may change API, configuration, or functionality.
+     *
+     * Intended to be matured over time and become stable.
+     *
+     * Can be used in production but use with care.
+     */
     Preview,
 
-    /** A stable entity */
+    /**
+     * A stable entity.
+     */
     Stable;
 
     public static SupportLevel DEFAULT = Stable;
