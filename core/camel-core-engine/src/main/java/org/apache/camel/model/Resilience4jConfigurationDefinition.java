@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -31,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "resilience4jConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
 public class Resilience4jConfigurationDefinition extends Resilience4jConfigurationCommon {
 
     @XmlTransient
