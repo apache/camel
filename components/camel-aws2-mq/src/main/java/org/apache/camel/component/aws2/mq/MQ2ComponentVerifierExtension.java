@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.mq;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -67,6 +68,10 @@ public class MQ2ComponentVerifierExtension extends DefaultComponentVerifierExten
 
         try {
             MQ2Configuration configuration = setProperties(new MQ2Configuration(), parameters);
+            if (!MqClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             MqClientBuilder clientBuilder = MqClient.builder();
             MqClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
