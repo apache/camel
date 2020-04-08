@@ -38,9 +38,4 @@ public @interface Configurer {
      */
     boolean generateConfigurer() default true;
 
-    /**
-     * Whether this configurer is read-only (can only use getters)
-     */
-    boolean readOnly() default false;
-
 }

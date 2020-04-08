@@ -171,7 +171,9 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
         StringWriter sw = new StringWriter();
-        PropertyMainConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, options, sw);
+//        PropertyMainConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, options, sw);
+        PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
+                false, false, options, sw);
 
         String source = sw.toString();
 
