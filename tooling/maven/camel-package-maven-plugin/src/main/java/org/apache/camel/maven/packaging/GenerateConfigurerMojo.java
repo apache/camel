@@ -18,12 +18,18 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,27 +37,28 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.AnnotationTarget;
+import org.jboss.jandex.AnnotationValue;
+import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.Index;
+import org.jboss.jandex.IndexReader;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * Generate configurer classes for camel-main.
+ * Generate configurer classes from @Configuer annotated classes.
  */
-@Mojo(name = "generate-main-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
-@Deprecated
-public class MainConfigurerMojo extends AbstractGeneratorMojo {
+@Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
-    private static final String[] CLASS_NAMES = new String[]{
-        "org.apache.camel.main.MainConfigurationProperties",
-        "org.apache.camel.main.HystrixConfigurationProperties",
-        "org.apache.camel.main.Resilience4jConfigurationProperties",
-        "org.apache.camel.main.RestConfigurationProperties",
-        "org.apache.camel.ExtendedCamelContext"};
+    public static final DotName CONFIGURER = DotName.createSimple("org.apache.camel.spi.Configurer");
 
     /**
      * The output directory for generated java source code
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
-    protected File srcOutDir;
+    protected File sourcesOutputDir;
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
@@ -67,8 +74,18 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
         }
     }
 
+    public GenerateConfigurerMojo() {
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (sourcesOutputDir == null) {
+            sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+        }
+        if (resourcesOutputDir == null) {
+            resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
+        }
+
         List<String> cp = new ArrayList<>();
         cp.add(0, project.getBuild().getOutputDirectory());
         project.getDependencyArtifacts().forEach(a -> {
@@ -78,7 +95,28 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
         });
         projectClassLoader = DynamicClassLoader.createDynamicClassLoader(cp);
 
-        for (String fqn : CLASS_NAMES) {
+        Path output = Paths.get(project.getBuild().getOutputDirectory());
+        Index index;
+        try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
+            index = new IndexReader(is).read();
+        } catch (IOException e) {
+            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
+        }
+
+        Set<String> classes = new LinkedHashSet<>();
+
+        // discover all classes annotated with @Configurer
+        List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
+        annotations.stream()
+                .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
+                .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
+                .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
+                .forEach(annotation -> {
+                    String currentClass = annotation.target().asClass().name().toString();
+                    classes.add(currentClass);
+                });
+
+        for (String fqn : classes) {
             try {
                 List<Option> options = processClass(fqn);
                 generateConfigurer(fqn, options);
@@ -121,8 +159,9 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
     }
 
     private void generateConfigurer(String name, List<Option> options) throws IOException {
-        String pn = "org.apache.camel.main";
-        String cn = name.substring(name.lastIndexOf('.') + 1) + "Configurer";
+        int pos = name.lastIndexOf('.');
+        String pn = name.substring(0, pos);
+        String cn = name.substring(pos + 1) + "Configurer";
         String en = name;
         String pfqn = name;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
@@ -133,15 +172,17 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
         String source = sw.toString();
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
-        boolean updated = updateResource(srcOutDir.toPath(), fileName, source);
+        sourcesOutputDir.mkdirs();
+        boolean updated = updateResource(sourcesOutputDir.toPath(), fileName, source);
         if (updated) {
             getLog().info("Updated " + fileName);
         }
     }
 
     private void generateMetaInfConfigurer(String name) {
-        String pn = "org.apache.camel.main";
-        String en = name.substring(name.lastIndexOf('.') + 1);
+        int pos = name.lastIndexOf('.');
+        String pn = name.substring(0, pos);
+        String en = name.substring(pos + 1);
         try (Writer w = new StringWriter()) {
             w.append("# " + GENERATED_MSG + "\n");
             w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
@@ -149,6 +190,11 @@ public class MainConfigurerMojo extends AbstractGeneratorMojo {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean asBooleanDefaultTrue(AnnotationInstance ai, String name) {
+        AnnotationValue av = ai.value(name);
+        return av == null || av.asBoolean();
     }
 
 }
