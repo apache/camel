@@ -16,9 +16,12 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.spi.Configurer;
+
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
+@Configurer
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties> {
 
     private boolean autoConfigurationEnabled = true;

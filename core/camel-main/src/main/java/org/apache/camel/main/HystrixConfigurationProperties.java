@@ -21,9 +21,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.Configurer;
+
 /**
  * Global configuration for Hystrix EIP circuit breaker.
  */
+@Configurer
 public class HystrixConfigurationProperties {
 
     private final MainConfigurationProperties parent;

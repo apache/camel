@@ -18,12 +18,14 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
 
 /**
  * Global configuration for Rest DSL.
  */
+@Configurer
 public class RestConfigurationProperties extends RestConfiguration {
 
     private final MainConfigurationProperties parent;
