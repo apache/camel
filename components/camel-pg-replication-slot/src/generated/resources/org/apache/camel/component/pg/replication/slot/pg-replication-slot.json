@@ -15,6 +15,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pg.replication.slot.PgReplicationSlotComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pg-replication-slot",
     "version": "3.3.0-SNAPSHOT"

@@ -15,6 +15,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.kinesis.Kinesis2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
     "version": "3.3.0-SNAPSHOT"

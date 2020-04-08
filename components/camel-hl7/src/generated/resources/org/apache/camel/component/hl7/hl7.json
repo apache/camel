@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,hl7",
     "javaType": "org.apache.camel.component.hl7.HL7DataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.HL7DataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hl7",
     "version": "3.3.0-SNAPSHOT"

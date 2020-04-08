@@ -11,6 +11,7 @@
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.component.jsonapi.JsonApiDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.JsonApiDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsonapi",
     "version": "3.3.0-SNAPSHOT"

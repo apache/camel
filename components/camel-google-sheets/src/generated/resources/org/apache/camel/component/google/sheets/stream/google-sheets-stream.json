@@ -16,6 +16,7 @@
     "javaType": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamComponent",
     "firstVersion": "2.23.0",
     "verifiers": "parameters,connectivity",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
     "version": "3.3.0-SNAPSHOT"

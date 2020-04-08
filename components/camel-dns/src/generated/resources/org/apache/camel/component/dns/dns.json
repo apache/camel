@@ -15,6 +15,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dns.DnsComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dns",
     "version": "3.3.0-SNAPSHOT"

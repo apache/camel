@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.component.jacksonxml.JacksonXMLDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.JacksonXMLDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jacksonxml",
     "version": "3.3.0-SNAPSHOT"

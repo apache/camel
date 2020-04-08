@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,hl7,json",
     "javaType": "org.apache.camel.component.fhir.FhirJsonDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.FhirJsonDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fhir",
     "version": "3.3.0-SNAPSHOT"

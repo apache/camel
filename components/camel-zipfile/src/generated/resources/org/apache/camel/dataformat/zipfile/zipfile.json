@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,file",
     "javaType": "org.apache.camel.dataformat.zipfile.ZipFileDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.ZipFileDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zipfile",
     "version": "3.3.0-SNAPSHOT"

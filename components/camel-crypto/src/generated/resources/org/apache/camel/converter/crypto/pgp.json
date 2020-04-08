@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,security",
     "javaType": "org.apache.camel.converter.crypto.PGPDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.PGPDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
     "version": "3.3.0-SNAPSHOT"

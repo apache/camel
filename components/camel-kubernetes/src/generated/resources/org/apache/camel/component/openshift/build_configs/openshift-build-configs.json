@@ -15,6 +15,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"

@@ -5,6 +5,7 @@
     "title": "Debezium Common",
     "description": "Camel Debezium Common support",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-common",
     "version": "3.3.0-SNAPSHOT"

@@ -11,6 +11,7 @@
     "label": "language,spring",
     "javaType": "org.apache.camel.language.spel.SpelLanguage",
     "modelJavaType": "org.apache.camel.model.language.SpELExpression",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring",
     "version": "3.3.0-SNAPSHOT"

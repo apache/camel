@@ -16,6 +16,7 @@
     "javaType": "org.apache.camel.component.undertow.UndertowComponent",
     "firstVersion": "2.16.0",
     "verifiers": "parameters,connectivity",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-undertow",
     "version": "3.3.0-SNAPSHOT"

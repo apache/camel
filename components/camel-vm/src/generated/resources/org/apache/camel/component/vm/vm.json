@@ -15,6 +15,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.vm.VmComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vm",
     "version": "3.3.0-SNAPSHOT"

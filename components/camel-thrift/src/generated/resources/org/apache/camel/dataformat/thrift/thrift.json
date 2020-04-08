@@ -11,6 +11,7 @@
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.thrift.ThriftDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.ThriftDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-thrift",
     "version": "3.3.0-SNAPSHOT"

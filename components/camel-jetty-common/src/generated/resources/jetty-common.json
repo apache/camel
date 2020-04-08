@@ -5,6 +5,7 @@
     "title": "Jetty Common",
     "description": "Camel Jetty 9.x support",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jetty-common",
     "version": "3.3.0-SNAPSHOT"

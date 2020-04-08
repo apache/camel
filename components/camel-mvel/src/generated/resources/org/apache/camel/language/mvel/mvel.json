@@ -11,6 +11,7 @@
     "label": "language,java",
     "javaType": "org.apache.camel.language.mvel.MvelLanguage",
     "modelJavaType": "org.apache.camel.model.language.MvelExpression",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mvel",
     "version": "3.3.0-SNAPSHOT"

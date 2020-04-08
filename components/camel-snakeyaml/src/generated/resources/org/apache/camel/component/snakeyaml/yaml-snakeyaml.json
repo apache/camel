@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,yaml",
     "javaType": "org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.YAMLDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-snakeyaml",
     "version": "3.3.0-SNAPSHOT"
