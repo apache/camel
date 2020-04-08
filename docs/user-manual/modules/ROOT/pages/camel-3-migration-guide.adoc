@@ -301,8 +301,6 @@ The component `camel-aws` has been split into multiple components:
 - camel-aws-cw
 - camel-aws-ddb (which contains both ddb and ddbstreams components)
 - camel-aws-ec2
-- camel-aws-ecs
-- camel-aws-eks
 - camel-aws-iam
 - camel-aws-kinesis (which contains both kinesis and kinesis-firehose components)
 - camel-aws-kms
