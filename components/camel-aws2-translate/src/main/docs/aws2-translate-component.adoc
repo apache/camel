@@ -157,6 +157,20 @@ from("direct:start")
 
 As result you'll get an exchange containing the translated text.
 
+== Using a POJO as body
+
+Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In AWS Translate the only operation available is TranslateText so you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                    .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao").build())
+  .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
 Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
