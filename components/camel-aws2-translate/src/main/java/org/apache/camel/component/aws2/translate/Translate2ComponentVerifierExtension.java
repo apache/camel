@@ -68,7 +68,8 @@ public class Translate2ComponentVerifierExtension extends DefaultComponentVerifi
         try {
             Translate2Configuration configuration = setProperties(new Translate2Configuration(), parameters);
             if (!TranslateClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER,
+                                                                                            "The service is not supported in this region");
                 return builder.error(errorBuilder.build()).build();
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());

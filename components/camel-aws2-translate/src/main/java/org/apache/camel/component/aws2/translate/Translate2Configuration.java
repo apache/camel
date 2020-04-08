@@ -139,9 +139,8 @@ public class Translate2Configuration implements Cloneable {
 
     /**
      * The region in which Translate client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * parameter, the configuration will expect the lowercase name of the region
+     * (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -179,23 +178,23 @@ public class Translate2Configuration implements Cloneable {
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = targetLanguage;
     }
-    
+
     public boolean isPojoRequest() {
-		return pojoRequest;
-	}
-    
+        return pojoRequest;
+    }
+
     /**
      * If we want to use a POJO request as body or not
      */
-	public void setPojoRequest(boolean pojoRequest) {
-		this.pojoRequest = pojoRequest;
-	}
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
+    }
 
     // *************************************************
     //
     // *************************************************
 
-	public Translate2Configuration copy() {
+    public Translate2Configuration copy() {
         try {
             return (Translate2Configuration)super.clone();
         } catch (CloneNotSupportedException e) {

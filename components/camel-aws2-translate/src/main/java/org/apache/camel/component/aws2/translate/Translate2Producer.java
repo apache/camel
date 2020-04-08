@@ -82,63 +82,63 @@ public class Translate2Producer extends DefaultProducer {
     }
 
     private void translateText(TranslateClient translateClient, Exchange exchange) {
-    	if (getConfiguration().isPojoRequest()) {
-    	if (exchange.getIn().getBody() instanceof TranslateTextRequest) {
-    		Object payload = exchange.getIn().getBody();
-    	        TranslateTextResponse result;
-    	        try {
-    	            result = translateClient.translateText((TranslateTextRequest) payload);
-    	        } catch (AwsServiceException ase) {
-    	            LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
-    	            throw ase;
-    	        }
-    	        Message message = getMessageForResponse(exchange);
-    	        message.setBody(result.translatedText());
-    	}
-    	} else {
-        Builder request = TranslateTextRequest.builder();
-        if (!getConfiguration().isAutodetectSourceLanguage()) {
-            if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-                String source = exchange.getIn().getHeader(Translate2Constants.SOURCE_LANGUAGE, String.class);
-                String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
-                if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                    throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
+        if (getConfiguration().isPojoRequest()) {
+            if (exchange.getIn().getBody() instanceof TranslateTextRequest) {
+                Object payload = exchange.getIn().getBody();
+                TranslateTextResponse result;
+                try {
+                    result = translateClient.translateText((TranslateTextRequest)payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
                 }
-                request.sourceLanguageCode(source);
-                request.targetLanguageCode(target);
-            } else {
-                request.sourceLanguageCode(getConfiguration().getSourceLanguage());
-                request.targetLanguageCode(getConfiguration().getTargetLanguage());
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result.translatedText());
             }
         } else {
-            String source = "auto";
-            if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-                String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
-                if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                    throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
+            Builder request = TranslateTextRequest.builder();
+            if (!getConfiguration().isAutodetectSourceLanguage()) {
+                if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
+                    String source = exchange.getIn().getHeader(Translate2Constants.SOURCE_LANGUAGE, String.class);
+                    String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
+                    if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
+                        throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
+                    }
+                    request.sourceLanguageCode(source);
+                    request.targetLanguageCode(target);
+                } else {
+                    request.sourceLanguageCode(getConfiguration().getSourceLanguage());
+                    request.targetLanguageCode(getConfiguration().getTargetLanguage());
                 }
-                request.sourceLanguageCode(source);
-                request.targetLanguageCode(target);
             } else {
-                request.sourceLanguageCode(source);
-                request.targetLanguageCode(getConfiguration().getTargetLanguage());
+                String source = "auto";
+                if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
+                    String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
+                    if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
+                        throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
+                    }
+                    request.sourceLanguageCode(source);
+                    request.targetLanguageCode(target);
+                } else {
+                    request.sourceLanguageCode(source);
+                    request.targetLanguageCode(getConfiguration().getTargetLanguage());
+                }
             }
+            if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class))) {
+                Collection<String> terminologies = exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class);
+                request.terminologyNames(terminologies);
+            }
+            request.text(exchange.getMessage().getBody(String.class));
+            TranslateTextResponse result;
+            try {
+                result = translateClient.translateText(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result.translatedText());
         }
-        if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class))) {
-            Collection<String> terminologies = exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class);
-            request.terminologyNames(terminologies);
-        }
-        request.text(exchange.getMessage().getBody(String.class));
-        TranslateTextResponse result;
-        try {
-            result = translateClient.translateText(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result.translatedText());
-    	}
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
