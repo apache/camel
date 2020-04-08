@@ -392,6 +392,8 @@ public final class JsonMapper {
         option.setConfigurationClass(mp.getString("configurationClass"));
         option.setConfigurationField(mp.getString("configurationField"));
         option.setDescription(mp.getString("description"));
+        option.setGetterMethod(mp.getString("getterMethod"));
+        option.setSetterMethod(mp.getString("setterMethod"));
     }
 
     private static void parseGroup(JsonObject mp, MainGroupModel option) {
@@ -428,6 +430,8 @@ public final class JsonMapper {
         prop.put("configurationClass", option.getConfigurationClass());
         prop.put("configurationField", option.getConfigurationField());
         prop.put("description", option.getDescription());
+        prop.put("getterMethod", option.getGetterMethod());
+        prop.put("setterMethod", option.getSetterMethod());
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
         prop.remove("optionalPrefix", "");

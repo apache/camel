@@ -41,6 +41,8 @@ public abstract class BaseOptionModel {
     protected Object defaultValue;
     protected String defaultValueNote;
     protected boolean asPredicate;
+    protected String setterMethod; // optional and currently only used by configurer
+    protected String getterMethod; // optional and currently only used by configurer
     protected String configurationClass;
     protected String configurationField;
     protected String description;
@@ -198,6 +200,22 @@ public abstract class BaseOptionModel {
 
     public void setAsPredicate(boolean asPredicate) {
         this.asPredicate = asPredicate;
+    }
+
+    public String getSetterMethod() {
+        return setterMethod;
+    }
+
+    public void setSetterMethod(String setterMethod) {
+        this.setterMethod = setterMethod;
+    }
+
+    public String getGetterMethod() {
+        return getterMethod;
+    }
+
+    public void setGetterMethod(String getterMethod) {
+        this.getterMethod = getterMethod;
     }
 
     public String getConfigurationClass() {

@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,14 +64,27 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
+    /**
+     * Whether to discover configurer classes from classpath by scanning for @Configurer annotations.
+     */
+    @Parameter(defaultValue = "true")
+    protected boolean discoverClasses = true;
+
+    /**
+     * To generate configurer for these classes.
+     */
+    @Parameter
+    protected String[] classes;
+
     private DynamicClassLoader projectClassLoader;
 
     private static class Option extends BaseOptionModel {
 
-        public Option(String name, Class type) {
+        public Option(String name, Class type, String getter) {
             // we just use name, type
             setName(name);
             setJavaType(type.getName());
+            setGetterMethod(getter);
         }
     }
 
@@ -99,28 +113,39 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         });
         projectClassLoader = DynamicClassLoader.createDynamicClassLoader(cp);
 
-        Path output = Paths.get(project.getBuild().getOutputDirectory());
-        Index index;
-        try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-            index = new IndexReader(is).read();
-        } catch (IOException e) {
-            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
+        Set<String> set = new LinkedHashSet<>();
+
+        if (discoverClasses) {
+            Path output = Paths.get(project.getBuild().getOutputDirectory());
+            Index index;
+            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
+                index = new IndexReader(is).read();
+            } catch (IOException e) {
+                throw new MojoExecutionException("IOException: " + e.getMessage(), e);
+            }
+
+            // discover all classes annotated with @Configurer
+            List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
+            annotations.stream()
+                    .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
+                    .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
+                    .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
+                    .forEach(annotation -> {
+                        String currentClass = annotation.target().asClass().name().toString();
+                        set.add(currentClass);
+                    });
         }
 
-        Set<String> classes = new LinkedHashSet<>();
+        // additional classes
+        if (classes != null) {
+            set.addAll(Arrays.asList(classes));
+        }
 
-        // discover all classes annotated with @Configurer
-        List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
-        annotations.stream()
-                .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS)
-                .filter(annotation -> annotation.target().asClass().nestingType() == ClassInfo.NestingType.TOP_LEVEL)
-                .filter(annotation -> asBooleanDefaultTrue(annotation, "generateConfigurer"))
-                .forEach(annotation -> {
-                    String currentClass = annotation.target().asClass().name().toString();
-                    classes.add(currentClass);
-                });
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Generating configuers for the following classes: " + set);
+        }
 
-        for (String fqn : classes) {
+        for (String fqn : set) {
             try {
                 List<Option> options = processClass(fqn);
                 generateConfigurer(fqn, options);
@@ -141,8 +166,19 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
             setter &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             setter &= filterSetter(m);
             if (setter) {
+                String getter = "get" + Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4);
+                Class type = m.getParameterTypes()[0];
+                if (boolean.class == type || Boolean.class == type) {
+                    try {
+                        String isGetter = "is" + getter.substring(3);
+                        clazz.getMethod(isGetter, null);
+                        getter = isGetter;
+                    } catch (Exception e) {
+                        // ignore as its then assumed to be get
+                    }
+                }
                 String t = Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
-                answer.add(new Option(t, m.getParameterTypes()[0]));
+                answer.add(new Option(t, type, getter));
             }
         });
 
@@ -171,7 +207,6 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
         StringWriter sw = new StringWriter();
-//        PropertyMainConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, options, sw);
         PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
                 false, false, options, sw);
 
