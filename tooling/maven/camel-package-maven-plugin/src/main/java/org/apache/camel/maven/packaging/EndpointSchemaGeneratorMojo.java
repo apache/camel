@@ -56,7 +56,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.tooling.model.BaseOptionModel;
-import org.apache.camel.tooling.model.CompilationTarget;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
@@ -67,7 +66,6 @@ import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.util.json.Jsoner;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -462,11 +460,17 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (!Strings.isNullOrEmpty(firstVersion)) {
             model.setFirstVersion(firstVersion);
         }
-        model.setSupportLevel(
-                ClassUtil.hasAnnotation("org.apache.camel.Experimental", endpointClassElement)
-                        ? SupportLevel.Preview
-                        : SupportLevel.Stable);
-        model.setCompilationTarget(CompilationTarget.JVM);
+
+        // grab level from annotation, pom.xml or default to stable
+        String level = project.getProperties().getProperty("supportLevel");
+        boolean experimental = ClassUtil.hasAnnotation("org.apache.camel.Experimental", endpointClassElement);
+        if (experimental) {
+            model.setSupportLevel(SupportLevel.Experimental);
+        } else if (level != null) {
+            model.setSupportLevel(SupportLevel.safeValueOf(level));
+        } else {
+            model.setSupportLevel(SupportLevel.Stable);
+        }
 
         // get the java type class name via the @Component annotation from its
         // component class
