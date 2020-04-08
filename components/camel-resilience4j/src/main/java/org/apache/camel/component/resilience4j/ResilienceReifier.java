@@ -180,10 +180,6 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // Extract properties from local configuration
         loadProperties(properties, Optional.ofNullable(definition.getResilience4jConfiguration()));
 
-        // Extract properties from definition
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        beanIntrospection.getProperties(definition, properties, null, false);
-
         Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
 
         // Apply properties to a new configuration
