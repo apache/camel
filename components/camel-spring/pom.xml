@@ -294,7 +294,7 @@
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate schema</id>
+                        <id>generate-schema</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>schemagen</goal>
@@ -389,6 +389,7 @@
                                     <type>jar</type>
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
+                                    <excludes>**/*nDefinitionConfigurer.java</excludes>
                                     <outputDirectory>target/sources/camel-core-engine</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
