@@ -19,8 +19,13 @@ package org.apache.camel.component.couchdb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchDbComponentTest extends CamelTestSupport {
 
@@ -30,7 +35,7 @@ public class CouchDbComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testEndpointCreated() throws Exception {
+    void testEndpointCreated() throws Exception {
         Map<String, Object> params = new HashMap<>();
 
         String uri = "couchdb:http://localhost:5984/db";
@@ -41,7 +46,7 @@ public class CouchDbComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPropertiesSet() throws Exception {
+    void testPropertiesSet() throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("createDatabase", true);
         params.put("username", "coldplay");

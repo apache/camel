@@ -24,9 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.Response;
 
@@ -40,7 +40,7 @@ public class CouchDbConsumerIntegrationTest extends CamelTestSupport {
 
     private CouchDbClient client;
 
-    @Before
+    @BeforeEach
     public void before() {
         client = new CouchDbClient("camelcouchdb", true, "http", "localhost", 5984, null, null);
     }
@@ -57,7 +57,7 @@ public class CouchDbConsumerIntegrationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInsertsOnly() throws InterruptedException {
+    void testInsertsOnly() throws InterruptedException {
         to.expectedHeaderReceived(CouchDbConstants.HEADER_METHOD, "UPDATE");
         to.expectedMessageCount(1);
 
@@ -69,7 +69,7 @@ public class CouchDbConsumerIntegrationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMessages() throws InterruptedException {
+    void testMessages() throws InterruptedException {
         final int messageCount = 100;
         to.expectedMessageCount(messageCount);
 
