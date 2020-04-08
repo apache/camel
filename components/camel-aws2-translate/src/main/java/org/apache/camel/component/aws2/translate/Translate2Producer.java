@@ -83,17 +83,19 @@ public class Translate2Producer extends DefaultProducer {
 
     private void translateText(TranslateClient translateClient, Exchange exchange) {
         if (getConfiguration().isPojoRequest()) {
-            if (exchange.getIn().getBody() instanceof TranslateTextRequest) {
-                Object payload = exchange.getIn().getBody();
-                TranslateTextResponse result;
-                try {
-                    result = translateClient.translateText((TranslateTextRequest)payload);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof TranslateTextRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    TranslateTextResponse result;
+                    try {
+                        result = translateClient.translateText((TranslateTextRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result.translatedText());
                 }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result.translatedText());
             }
         } else {
             Builder request = TranslateTextRequest.builder();

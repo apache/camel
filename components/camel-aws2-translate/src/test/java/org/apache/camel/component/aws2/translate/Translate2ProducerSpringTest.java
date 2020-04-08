@@ -24,6 +24,8 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
@@ -41,6 +43,43 @@ public class Translate2ProducerSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(Translate2Constants.OPERATION, Translate2Operations.translateText);
                 exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.ITALIAN);
                 exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.ENGLISH);
+                exchange.getIn().setBody("ciao");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        String resultGet = exchange.getIn().getBody(String.class);
+        assertEquals("Hello", resultGet);
+
+    }
+    
+    @Test
+    public void translateTextPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:translatePojoText", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                    .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        String resultGet = exchange.getIn().getBody(String.class);
+        assertEquals("Hello", resultGet);
+
+    }
+    
+    @Test
+    public void translateTextTestOptions() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:translateTextOptions", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("ciao");
             }
         });
