@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.BufferedReader;
@@ -34,20 +50,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BlobConsumerIT extends CamelTestSupport {
 
-    @EndpointInject("direct:start")
-    ProducerTemplate templateStart;
-
     @TempDir
     static Path testDir;
+    @EndpointInject("direct:start")
+    private ProducerTemplate templateStart;
+    private String containerName;
+    private String blobName;
+    private String blobName2;
 
-    String containerName;
-    String blobName;
-    String blobName2;
-
-    BlobContainerClient containerClient;
+    private BlobContainerClient containerClient;
 
     @BeforeAll
-    public void prepare() throws IOException {
+    public void prepare() throws Exception {
         containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
         blobName = RandomStringUtils.randomAlphabetic(5);
         blobName2 = RandomStringUtils.randomAlphabetic(5);
@@ -132,8 +146,9 @@ public class BlobConsumerIT extends CamelTestSupport {
         };
     }
 
-    private StorageSharedKeyCredential storageSharedKeyCredential() throws IOException {
-        final Properties properties = BlobTestUtils.loadAzurePropertiesFile();
+
+    private StorageSharedKeyCredential storageSharedKeyCredential() throws Exception {
+        final Properties properties = BlobTestUtils.loadAzureAccessFromJvmEnv();
         return new StorageSharedKeyCredential(properties.getProperty("account_name"), properties.getProperty("access_key"));
     }
 }

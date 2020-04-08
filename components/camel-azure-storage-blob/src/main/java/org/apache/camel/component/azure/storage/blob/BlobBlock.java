@@ -23,9 +23,14 @@ import java.util.UUID;
 import com.azure.core.util.Base64Util;
 import com.azure.storage.blob.models.Block;
 
-public class BlobBlock {
+public final class BlobBlock {
     private final InputStream blockStream;
     private final Block blockEntry;
+
+    private BlobBlock(Block blockEntry, InputStream blockStream) {
+        this.blockStream = blockStream;
+        this.blockEntry = blockEntry;
+    }
 
     public static BlobBlock createBlobBlock(final InputStream inputStream) throws IOException {
         return createBlobBlock(Base64Util.encodeToString(UUID.randomUUID().toString().getBytes()), inputStream);
@@ -35,15 +40,10 @@ public class BlobBlock {
         return createBlobBlock(blockId, BlobUtils.getInputStreamLength(inputStream).intValue(), inputStream);
     }
 
-    public static BlobBlock createBlobBlock(final String blockId, final int size,final InputStream inputStream) {
+    public static BlobBlock createBlobBlock(final String blockId, final int size, final InputStream inputStream) {
         final Block block = new Block().setName(blockId).setSize(size);
 
         return new BlobBlock(block, inputStream);
-    }
-
-    private BlobBlock(Block blockEntry, InputStream blockStream) {
-        this.blockStream = blockStream;
-        this.blockEntry = blockEntry;
     }
 
     public InputStream getBlockStream() {

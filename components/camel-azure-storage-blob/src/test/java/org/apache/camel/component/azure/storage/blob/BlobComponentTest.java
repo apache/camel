@@ -1,98 +1,142 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.Collections;
 
-import com.azure.core.http.rest.PagedIterable;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.blob.models.BlobContainerItem;
-import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.common.StorageSharedKeyCredential;
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlobComponentTest extends CamelTestSupport {
 
-    @EndpointInject("direct:listBuckets")
-    private ProducerTemplate template;
-
-    @EndpointInject("mock:result")
-    private MockEndpoint result;
-
-    @Disabled
     @Test
-    public void playWithClient() {
-        String accountName = "cameldev";
-        String accountKey = "----";
+    public void testCreateEndpointWithMinConfigForClientOnly() {
+        final BlobConfiguration configuration = new BlobConfiguration();
+        configuration.setCredentials(storageSharedKeyCredential());
+        final BlobServiceClient serviceClient = BlobClientFactory.createBlobServiceClient(configuration);
 
-        /*
-         * Use your Storage account's name and key to create a credential object; this is used to access your account.
-         */
-        StorageSharedKeyCredential credential = new StorageSharedKeyCredential(accountName, accountKey);
+        context.getRegistry().bind("azureBlobClient", serviceClient);
 
-        /*
-         * From the Azure portal, get your Storage account blob service URL endpoint.
-         * The URL typically looks like this:
-         */
-        String endpoint = String.format(Locale.ROOT, "https://%s.blob.core.windows.net", accountName);
+        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&serviceClient=#azureBlobClient");
 
-        /*
-         * Create a BlobServiceClient object that wraps the service endpoint, credential and a request pipeline.
-         */
-        BlobServiceClient storageClient = new BlobServiceClientBuilder().endpoint(endpoint).credential(credential).buildClient();
+        doTestCreateEndpointWithMinConfig(endpoint, true);
+    }
 
-        BlobContainerClient containerClient = storageClient.getBlobContainerClient("test");
+    @Test
+    public void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
 
+        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
 
-        /*
-         * List the containers' name under the Azure storage account.
-         */
-        storageClient.listBlobContainers().forEach(containerItem -> {
-            System.out.println("Container name: " + containerItem.getName());
-        });
+        doTestCreateEndpointWithMinConfig(endpoint, false);
+    }
 
-        containerClient.listBlobs().forEach(blobItem -> {
-            System.out.println("Blob name:" + blobItem.getName());
+    private void doTestCreateEndpointWithMinConfig(BlobEndpoint endpoint, boolean clientExpected) {
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("container", endpoint.getConfiguration().getContainerName());
+        assertEquals("blob", endpoint.getConfiguration().getBlobName());
+        if (clientExpected) {
+            assertNotNull(endpoint.getConfiguration().getServiceClient());
+            assertNull(endpoint.getConfiguration().getCredentials());
+        } else {
+            assertNull(endpoint.getConfiguration().getServiceClient());
+            assertNotNull(endpoint.getConfiguration().getCredentials());
+        }
+
+        assertEquals(BlobType.blockblob, endpoint.getConfiguration().getBlobType());
+        assertNull(endpoint.getConfiguration().getFileDir());
+        assertEquals(Long.valueOf(0L), endpoint.getConfiguration().getBlobOffset());
+        assertEquals(BlobOperationsDefinition.listBlobContainers, endpoint.getConfiguration().getOperation());
+        assertTrue(endpoint.getConfiguration().isCloseStreamAfterRead());
+        assertTrue(endpoint.getConfiguration().isCloseStreamAfterWrite());
+    }
+
+    @Test
+    public void testCreateEndpointWithMaxConfig() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+        context.getRegistry().bind("metadata", Collections.emptyMap());
+
+        final BlobEndpoint endpoint =
+                (BlobEndpoint) context.getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&blobType=pageblob"
+                                + "&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataCount=1024"
+                                + "&closeStreamAfterRead=false&closeStreamAfterWrite=false");
+
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("container", endpoint.getConfiguration().getContainerName());
+        assertEquals("blob", endpoint.getConfiguration().getBlobName());
+        assertNull(endpoint.getConfiguration().getServiceClient());
+        assertNotNull(endpoint.getConfiguration().getCredentials());
+
+        assertEquals(BlobType.pageblob, endpoint.getConfiguration().getBlobType());
+        assertEquals("/tmp", endpoint.getConfiguration().getFileDir());
+        assertEquals(Long.valueOf(512L), endpoint.getConfiguration().getBlobOffset());
+        assertEquals(Long.valueOf(1024L), endpoint.getConfiguration().getDataCount());
+        assertEquals(BlobOperationsDefinition.clearPageBlob, endpoint.getConfiguration().getOperation());
+        assertFalse(endpoint.getConfiguration().isCloseStreamAfterRead());
+        assertFalse(endpoint.getConfiguration().isCloseStreamAfterWrite());
+    }
+
+    @Test
+    public void testNoBlobNameProducerWithOpThatNeedsBlobName() throws Exception {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+
+        BlobEndpoint endpointWithOp =
+                (BlobEndpoint) context.getEndpoint(
+                        "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            endpointWithOp.createProducer().process(new DefaultExchange(context));
         });
     }
 
-    @Disabled
     @Test
-    public void sendIn() throws Exception {
-        template.sendBody("direct:listBuckets", ExchangePattern.InOnly, "");
+    public void testHierarchicalBlobName() throws Exception {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        //result.expectedMessageCount(10);
-
-        final List<BlobItem> containerItems = result.getExchanges().get(0).getIn().getBody(List.class);
-
-        //result.assertIsSatisfied(1000000);
-
-        containerItems.forEach(blobContainerItem -> {
-            System.out.println(blobContainerItem.getName());
-        });
+        BlobEndpoint endpoint =
+                (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
+        assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                final String uri = "azure-storage-blob://cameldev/test?accessKey=RAW(---)";
+    @Test
+    public void testNoBlobNameConsumer() throws Exception {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-                from("direct:listBuckets").to(uri + "&operation=listBlobs").to("mock:result");
-            }
-        };
+        BlobEndpoint endpoint =
+                (BlobEndpoint) context.getEndpoint(
+                        "azure-storage-blob://camelazure/container?credentials=#creds");
+
+        assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(null));
+    }
+
+    private StorageSharedKeyCredential storageSharedKeyCredential() {
+        return new StorageSharedKeyCredential("fakeuser", "fakekey");
     }
 
 }

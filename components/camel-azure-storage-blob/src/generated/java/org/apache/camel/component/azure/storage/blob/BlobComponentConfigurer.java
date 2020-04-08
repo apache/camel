@@ -48,8 +48,6 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":
         case "fileDir": getOrCreateConfiguration(target).setFileDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "getrangecontentmd5":
-        case "getRangeContentMd5": getOrCreateConfiguration(target).setGetRangeContentMd5(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxretryrequests":
@@ -76,7 +74,6 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
         answer.put("dataCount", java.lang.Long.class);
         answer.put("fileDir", java.lang.String.class);
-        answer.put("getRangeContentMd5", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
@@ -110,8 +107,6 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();
         case "filedir":
         case "fileDir": return getOrCreateConfiguration(target).getFileDir();
-        case "getrangecontentmd5":
-        case "getRangeContentMd5": return getOrCreateConfiguration(target).isGetRangeContentMd5();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretryrequests":

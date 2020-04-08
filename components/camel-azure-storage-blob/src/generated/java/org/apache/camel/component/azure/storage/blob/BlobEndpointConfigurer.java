@@ -46,8 +46,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filedir":
         case "fileDir": target.getConfiguration().setFileDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "getrangecontentmd5":
-        case "getRangeContentMd5": target.getConfiguration().setGetRangeContentMd5(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxretryrequests":
@@ -77,7 +75,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("fileDir", java.lang.String.class);
-        answer.put("getRangeContentMd5", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxRetryRequests", int.class);
         answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
@@ -117,8 +114,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exchangePattern": return target.getExchangePattern();
         case "filedir":
         case "fileDir": return target.getConfiguration().getFileDir();
-        case "getrangecontentmd5":
-        case "getRangeContentMd5": return target.getConfiguration().isGetRangeContentMd5();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretryrequests":

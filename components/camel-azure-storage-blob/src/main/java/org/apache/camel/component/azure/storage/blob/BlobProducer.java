@@ -1,8 +1,23 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.component.azure.storage.blob.operations.BlobContainerOperations;
@@ -11,8 +26,6 @@ import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
 import org.apache.camel.component.azure.storage.blob.operations.BlobServiceOperations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Azure Storage Blob Service
@@ -28,7 +41,7 @@ public class BlobProducer extends DefaultProducer {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
         this.blobServiceClientWrapper = new BlobServiceClientWrapper(getEndpoint().getBlobServiceClient());
-        this.blobServiceOperations = new BlobServiceOperations(configuration, blobServiceClientWrapper);
+        this.blobServiceOperations = new BlobServiceOperations(blobServiceClientWrapper);
     }
 
     @Override
@@ -127,7 +140,7 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private BlobContainerOperations getContainerOperations(final Exchange exchange) {
-        return new BlobContainerOperations(configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
+        return new BlobContainerOperations(blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
     }
 
     private BlobOperations getBlobOperations(final Exchange exchange) {

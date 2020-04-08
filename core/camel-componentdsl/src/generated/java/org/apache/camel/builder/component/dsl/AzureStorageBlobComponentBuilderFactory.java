@@ -156,20 +156,6 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AzureStorageBlobComponentBuilder getRangeContentMd5(
-                boolean getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
-            return this;
-        }
-        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -321,7 +307,6 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "credentials": getOrCreateConfiguration((BlobComponent) component).setCredentials((com.azure.storage.common.StorageSharedKeyCredential) value); return true;
             case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
-            case "getRangeContentMd5": getOrCreateConfiguration((BlobComponent) component).setGetRangeContentMd5((boolean) value); return true;
             case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;

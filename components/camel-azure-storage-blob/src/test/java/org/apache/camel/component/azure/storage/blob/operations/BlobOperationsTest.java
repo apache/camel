@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.io.BufferedReader;
@@ -6,30 +22,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
-import com.azure.core.http.HttpRequest;
-import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.ResponseBase;
-import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlockBlobItem;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
-import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobType;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,20 +49,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class BlobOperationsTest {
+public class BlobOperationsTest extends CamelTestSupport {
 
     private BlobConfiguration configuration;
 
@@ -76,11 +82,7 @@ public class BlobOperationsTest {
 
         when(client.openInputStream(any(), any())).thenReturn(mockedResults);
 
-        final Exchange exchange = mock(Exchange.class);
-        final Message message = mock(Message.class);
-        when(exchange.getIn()).thenReturn(message);
-        when(BlobExchangeHeaders.getTimeoutFromHeaders(exchange)).thenReturn(null);
-        when(BlobExchangeHeaders.getBlobRequestConditionsFromHeaders(exchange)).thenReturn(null);
+        final Exchange exchange = new DefaultExchange(context);
 
         // first: test with no exchange provided
         final BlobOperations operations = new BlobOperations(configuration, client);
@@ -94,8 +96,6 @@ public class BlobOperationsTest {
         assertEquals("testInput", new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
 
         // second: test with exchange provided
-        when(exchange.getIn().getBody(OutputStream.class)).thenReturn(null);
-
         configuration.setBlobType(BlobType.blockblob);
         final BlobOperationResponse response2 = operations.getBlob(exchange);
 
@@ -108,7 +108,7 @@ public class BlobOperationsTest {
         // mocking
         final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(null, 200, new HttpHeaders().put("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
         when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any())).thenReturn(mockedResults2);
-        when(exchange.getIn().getBody(OutputStream.class)).thenReturn(new ByteArrayOutputStream());
+        exchange.getIn().setBody(new ByteArrayOutputStream());
 
         final BlobOperationResponse response3 = operations.getBlob(exchange);
 
@@ -124,18 +124,10 @@ public class BlobOperationsTest {
         final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
         final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
 
-        when(client.uploadBlockBlob(any(), anyLong(), any(), anyMap(), any(), any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
+        when(client.uploadBlockBlob(any(), anyLong(), any(), any(), any(), any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
 
-        final Exchange exchange = mock(Exchange.class);
-        final Message message = mock(Message.class);
-        when(exchange.getIn()).thenReturn(message);
-        when(exchange.getIn().getBody()).thenReturn(new ByteArrayInputStream("test".getBytes(Charset.defaultCharset())));
-        when(BlobExchangeHeaders.getBlobHttpHeadersFromHeaders(exchange)).thenReturn(null);
-        when(BlobExchangeHeaders.getMetadataFromHeaders(exchange)).thenReturn(Collections.emptyMap());
-        when(BlobExchangeHeaders.getAccessTierFromHeaders(exchange)).thenReturn(AccessTier.HOT);
-        when(BlobExchangeHeaders.getContentMd5FromHeaders(exchange)).thenReturn(null);
-        when(BlobExchangeHeaders.getBlobRequestConditionsFromHeaders(exchange)).thenReturn(null);
-        when(BlobExchangeHeaders.getTimeoutFromHeaders(exchange)).thenReturn(null);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new ByteArrayInputStream("test".getBytes(Charset.defaultCharset())));
 
         // test upload with input stream
         final BlobOperations operations = new BlobOperations(configuration, client);
@@ -146,7 +138,32 @@ public class BlobOperationsTest {
         assertTrue((boolean) operationResponse.getBody());
         assertNotNull(operationResponse.getHeaders());
         assertEquals("testTag", operationResponse.getHeaders().get(BlobConstants.E_TAG));
-        assertEquals("123", ((HttpHeaders)operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS)).get("x-test-header").getValue());
+        assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS)).get("x-test-header").getValue());
+    }
+
+    @Test
+    public void testStageBlockBlobList() throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
+        when(client.stageBlockBlob(anyString(), any(), anyLong(), any(), any(), any())).thenReturn(httpHeaders);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("test");
+        exchange.getIn().setHeader(BlobConstants.COMMIT_BLOCK_LIST_LATER, true);
+
+        // test
+        final BlobOperations operations = new BlobOperations(configuration, client);
+
+        // in case of invalid payload
+        assertThrows(IllegalArgumentException.class, () -> operations.stageBlockBlobList(exchange));
+
+        // in case of correct payload
+        exchange.getIn().setBody(BlobBlock.createBlobBlock("1", new ByteArrayInputStream("test".getBytes())));
+
+        // test again
+        final BlobOperationResponse response = operations.stageBlockBlobList(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
     }
 
     private BlobProperties createBlobProperties() {

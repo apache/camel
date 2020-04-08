@@ -222,34 +222,6 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default BlobEndpointConsumerBuilder getRangeContentMd5(
-                boolean getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
-            return this;
-        }
-        /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default BlobEndpointConsumerBuilder getRangeContentMd5(
-                String getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
-            return this;
-        }
-        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -666,34 +638,6 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default BlobEndpointProducerBuilder getRangeContentMd5(
-                boolean getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
-            return this;
-        }
-        /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default BlobEndpointProducerBuilder getRangeContentMd5(
-                String getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
-            return this;
-        }
-        /**
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
@@ -1105,33 +1049,6 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
-            return this;
-        }
-        /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default BlobEndpointBuilder getRangeContentMd5(
-                boolean getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
-            return this;
-        }
-        /**
-         * Whether the contentMD5 for the specified blob range should be
-         * returned.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default BlobEndpointBuilder getRangeContentMd5(String getRangeContentMd5) {
-            doSetProperty("getRangeContentMd5", getRangeContentMd5);
             return this;
         }
         /**

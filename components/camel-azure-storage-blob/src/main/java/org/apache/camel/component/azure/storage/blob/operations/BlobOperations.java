@@ -1,13 +1,27 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +51,9 @@ import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
+import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobStreamAndLength;
 import org.apache.camel.component.azure.storage.blob.BlobType;
-import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.util.ObjectHelper;
@@ -80,7 +94,7 @@ public class BlobOperations {
         if (outputStream == null) {
             // Then we create an input stream
             final Map<String, Object> blobInputStream = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
-            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(((BlobProperties) blobInputStream.get("properties")));
+            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
 
             return new BlobOperationResponse(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
@@ -88,16 +102,17 @@ public class BlobOperations {
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configuration);
 
         try {
-            final ResponseBase<BlobDownloadHeaders, Void> response =  client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
+            final ResponseBase<BlobDownloadHeaders, Void> response = client.downloadWithResponse(outputStream, blobRange, downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
                     blobCommonRequestOptions.getContentMD5() != null, blobCommonRequestOptions.getTimeout());
 
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
                     .httpHeaders(response.getHeaders());
 
             return new BlobOperationResponse(outputStream, blobExchangeHeaders.toMap());
-        }
-        finally {
-            if (configuration.isCloseStreamAfterRead()) outputStream.close();
+        } finally {
+            if (configuration.isCloseStreamAfterRead()) {
+                outputStream.close();
+            }
         }
     }
 
@@ -163,7 +178,7 @@ public class BlobOperations {
         final Long expirationMillis = BlobExchangeHeaders.getDownloadLinkExpirationFromHeaders(exchange);
         OffsetDateTime offsetDateTimeToSet;
         if (expirationMillis != null) {
-            offsetDateTimeToSet = offsetDateTime.plusSeconds(expirationMillis/1000);
+            offsetDateTimeToSet = offsetDateTime.plusSeconds(expirationMillis / 1000);
         } else {
             offsetDateTimeToSet = offsetDateTime.plusSeconds(defaultExpirationTime);
         }
@@ -185,7 +200,8 @@ public class BlobOperations {
         LOG.trace("Putting a block blob [{}] from exchange [{}]...", configuration.getBlobName(), exchange);
 
         try {
-            final Response<BlockBlobItem> response = client.uploadBlockBlob(blobStreamAndLength.getInputStream(), blobStreamAndLength.getStreamLength(), commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(), commonRequestOptions.getAccessTier(),
+            final Response<BlockBlobItem> response = client.uploadBlockBlob(blobStreamAndLength.getInputStream(), blobStreamAndLength.getStreamLength(), commonRequestOptions.getBlobHttpHeaders(),
+                    commonRequestOptions.getMetadata(), commonRequestOptions.getAccessTier(),
                     commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
 
             return buildResponse(response, true);
@@ -203,7 +219,7 @@ public class BlobOperations {
         if (object instanceof List) {
             blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
-            blobBlocks = Collections.singletonList((BlobBlock)object);
+            blobBlocks = Collections.singletonList((BlobBlock) object);
         }
         if (blobBlocks == null || blobBlocks.isEmpty()) {
             throw new IllegalArgumentException("Illegal storageBlocks payload");
@@ -241,7 +257,7 @@ public class BlobOperations {
         if (object instanceof List) {
             blockEntries = (List<Block>) object;
         } else if (object instanceof Block) {
-            blockEntries = Collections.singletonList((Block)object);
+            blockEntries = Collections.singletonList((Block) object);
         }
         if (blockEntries == null || blockEntries.isEmpty()) {
             throw new IllegalArgumentException("Illegal commit block list payload");
@@ -319,8 +335,7 @@ public class BlobOperations {
 
     public BlobOperationResponse createPageBlob(final Exchange exchange) {
         if (exchange == null) {
-            final Response<PageBlobItem> response = client.createPageBlob(getPageBlobSize(null), null, null, null, null
-                    , null);
+            final Response<PageBlobItem> response = client.createPageBlob(getPageBlobSize(null), null, null, null, null, null);
             return buildResponse(response, true);
         }
 

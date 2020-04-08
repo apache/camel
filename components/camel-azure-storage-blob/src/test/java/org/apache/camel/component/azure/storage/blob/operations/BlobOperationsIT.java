@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.io.BufferedReader;
@@ -24,6 +40,7 @@ import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
+import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
@@ -32,6 +49,8 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -47,22 +66,41 @@ class BlobOperationsIT extends CamelTestSupport {
     private BlobConfiguration configuration;
     private BlobContainerClientWrapper blobContainerClientWrapper;
 
+    private String randomBlobName;
+    private String randomContainerName;
+
     @BeforeAll
-    public void setup() throws IOException {
-        final Properties properties = BlobTestUtils.loadAzurePropertiesFile();
+    public void setup() throws Exception {
+        final Properties properties = BlobTestUtils.loadAzureAccessFromJvmEnv();
+
+        randomContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        randomBlobName = RandomStringUtils.randomAlphabetic(10);
 
         configuration = new BlobConfiguration();
         configuration.setAccountName(properties.getProperty("account_name"));
         configuration.setAccessKey(properties.getProperty("access_key"));
-        configuration.setContainerName("test");
+        configuration.setContainerName(randomContainerName);
 
         blobContainerClientWrapper = new BlobServiceClientWrapper(BlobClientFactory.createBlobServiceClient(configuration))
                 .getBlobContainerClientWrapper(configuration.getContainerName());
+
+        // create test container
+        blobContainerClientWrapper.createContainer(null, null, null);
+
+        // create test blob
+        final InputStream inputStream = new ByteArrayInputStream("awesome camel!".getBytes());
+        blobContainerClientWrapper.getBlobClientWrapper(randomBlobName).uploadBlockBlob(inputStream, BlobUtils.getInputStreamLength(inputStream), null, null, null, null,
+                null, null);
+    }
+
+    @AfterAll
+    public void tearDown() {
+        blobContainerClientWrapper.deleteContainer(null, null);
     }
 
     @Test
     public void testGetBlob(@TempDir Path testDir) throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
 
@@ -94,18 +132,18 @@ class BlobOperationsIT extends CamelTestSupport {
 
     @Test
     public void testDownloadToFile(@TempDir Path testDir) throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(BlobConstants.FILE_DIR, testDir.toString());
-        exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_file");
+        exchange.getIn().setHeader(BlobConstants.BLOB_NAME, randomBlobName);
 
         final BlobOperationResponse response = operations.downloadBlobToFile(exchange);
 
         // third: test with outputstream set on exchange
-        final File fileToWrite = testDir.resolve("test_file").toFile();
+        final File fileToWrite = testDir.resolve(randomBlobName).toFile();
         final String fileContent = FileUtils.readFileToString(fileToWrite, Charset.defaultCharset());
 
         assertNotNull(response);
@@ -117,7 +155,7 @@ class BlobOperationsIT extends CamelTestSupport {
 
     @Test
     public void testDownloadLink() {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final BlobOperationResponse response = operations.downloadLink(null);
@@ -140,7 +178,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response = operations.uploadBlockBlob(exchange);
 
         assertNotNull(response);
-        assertTrue((boolean)response.getBody());
+        assertTrue((boolean) response.getBody());
         // check for eTag and md5 to make sure is uploaded
         assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
         assertNotNull(response.getHeaders().get(BlobConstants.CONTENT_MD5));
@@ -160,7 +198,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response2 = operations.uploadBlockBlob(exchange);
 
         assertNotNull(response2);
-        assertTrue((boolean)response2.getBody());
+        assertTrue((boolean) response2.getBody());
         // check for eTag and md5 to make sure is uploaded
         assertNotNull(response2.getHeaders().get(BlobConstants.E_TAG));
         assertNotNull(response2.getHeaders().get(BlobConstants.CONTENT_MD5));
@@ -202,7 +240,7 @@ class BlobOperationsIT extends CamelTestSupport {
 
     @Test
     public void testGetBlobBlockList() {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final BlobOperationResponse response = operations.getBlobBlockList(null);
@@ -226,7 +264,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response = operations.commitAppendBlob(exchange);
 
         assertNotNull(response);
-        assertTrue((boolean)response.getBody());
+        assertTrue((boolean) response.getBody());
         // check for eTag and md5 to make sure is uploaded
         assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
         assertNotNull(response.getHeaders().get(BlobConstants.COMMITTED_BLOCK_COUNT));
@@ -257,13 +295,14 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response = operations.uploadPageBlob(exchange);
 
         assertNotNull(response);
-        assertTrue((boolean)response.getBody());
+        assertTrue((boolean) response.getBody());
         assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
 
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+        final String dataResponse = IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8);
 
-        assertEquals(data, IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+        assertEquals(data, dataResponse);
 
 
         blobClientWrapper.delete(null, null, null);
@@ -294,7 +333,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final BlobOperationResponse response = operations.resizePageBlob(exchange);
 
         assertNotNull(response);
-        assertTrue((boolean)response.getBody());
+        assertTrue((boolean) response.getBody());
 
         // check for content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);

@@ -1,8 +1,25 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.blob;
 
 public final class BlobConstants {
+    // constants
+    public static final Long PAGE_BLOB_DEFAULT_SIZE = 512L;
     private static final String HEADER_PREFIX = "CamelAzureStorageBlob";
-
     // header names
     public static final String BLOB_OPERATION = HEADER_PREFIX + "Operation";
     public static final String BLOB_HTTP_HEADERS = HEADER_PREFIX + "HttpHeaders";
@@ -42,7 +59,6 @@ public final class BlobConstants {
     public static final String RAW_HTTP_HEADERS = HEADER_PREFIX + "RawHttpHeaders";
     public static final String FILE_NAME = HEADER_PREFIX + "FileName";
     public static final String DOWNLOAD_LINK = HEADER_PREFIX + "DownloadLink";
-
     // headers to be retrieved
     public static final String LIST_BLOB_OPTIONS = HEADER_PREFIX + "ListBlobOptions";
     public static final String BLOB_LIST_DETAILS = HEADER_PREFIX + "BlobListDetails";
@@ -64,9 +80,6 @@ public final class BlobConstants {
     public static final String LIST_BLOB_CONTAINERS_OPTIONS = HEADER_PREFIX + "ListBlobContainersOptions";
     public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";
     public static final String DOWNLOAD_LINK_EXPIRATION = HEADER_PREFIX + "DownloadLinkExpiration";
-
-    // constants
-    public static final Long PAGE_BLOB_DEFAULT_SIZE = 512L;
 
     private BlobConstants() {
     }
