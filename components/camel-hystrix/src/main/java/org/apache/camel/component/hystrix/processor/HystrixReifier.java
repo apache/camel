@@ -232,10 +232,6 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         // Extract properties from local configuration
         loadProperties(camelContext, properties, Optional.ofNullable(definition.getHystrixConfiguration()));
 
-        // Extract properties from definition
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        beanIntrospection.getProperties(definition, properties, null, false);
-
         HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
 
         // Apply properties to a new configuration
