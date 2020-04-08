@@ -3767,7 +3767,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public boolean isJMXDisabled() {
-        return disableJMX;
+        String override = System.getProperty("org.apache.camel.jmx.disabled");
+        if (override != null) {
+            return "true".equals(override);
+        } else {
+            return disableJMX;
+        }
     }
 
     @Override
