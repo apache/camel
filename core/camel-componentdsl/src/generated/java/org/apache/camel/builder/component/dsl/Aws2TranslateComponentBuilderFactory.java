@@ -110,6 +110,18 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Translate client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -264,6 +276,7 @@ public interface Aws2TranslateComponentBuilderFactory {
             case "configuration": ((Translate2Component) component).setConfiguration((org.apache.camel.component.aws2.translate.Translate2Configuration) value); return true;
             case "lazyStartProducer": ((Translate2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Translate2Component) component).setOperation((org.apache.camel.component.aws2.translate.Translate2Operations) value); return true;
+            case "pojoRequest": getOrCreateConfiguration((Translate2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Translate2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Translate2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Translate2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;

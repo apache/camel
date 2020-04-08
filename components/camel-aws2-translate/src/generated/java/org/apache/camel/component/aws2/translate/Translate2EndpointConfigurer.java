@@ -28,6 +28,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
+        case "pojorequest":
+        case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -56,6 +58,7 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.translate.Translate2Operations.class);
+        answer.put("pojoRequest", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);
         answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
@@ -81,6 +84,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
+        case "pojorequest":
+        case "pojoRequest": return target.getConfiguration().isPojoRequest();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":

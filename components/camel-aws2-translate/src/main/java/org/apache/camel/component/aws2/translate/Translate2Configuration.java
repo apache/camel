@@ -53,6 +53,8 @@ public class Translate2Configuration implements Cloneable {
     private String region;
     @UriParam(defaultValue = "false")
     private boolean autodetectSourceLanguage;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
 
     public TranslateClient getTranslateClient() {
         return translateClient;
@@ -177,12 +179,23 @@ public class Translate2Configuration implements Cloneable {
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = targetLanguage;
     }
+    
+    public boolean isPojoRequest() {
+		return pojoRequest;
+	}
+    
+    /**
+     * If we want to use a POJO request as body or not
+     */
+	public void setPojoRequest(boolean pojoRequest) {
+		this.pojoRequest = pojoRequest;
+	}
 
     // *************************************************
     //
     // *************************************************
 
-    public Translate2Configuration copy() {
+	public Translate2Configuration copy() {
         try {
             return (Translate2Configuration)super.clone();
         } catch (CloneNotSupportedException e) {
