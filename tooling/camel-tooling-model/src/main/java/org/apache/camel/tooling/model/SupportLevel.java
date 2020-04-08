@@ -47,8 +47,18 @@ public enum SupportLevel {
 
     public static SupportLevel DEFAULT = Stable;
 
-    public static SupportLevel safeValueOf(String string) {
-        return string == null ? DEFAULT : valueOf(string);
+    public static SupportLevel safeValueOf(String level) {
+        if (level == null) {
+            return DEFAULT;
+        }
+        if (level.compareToIgnoreCase(Experimental.name()) == 0) {
+            return Experimental;
+        } else if (level.compareToIgnoreCase(Preview.name()) == 0) {
+            return Preview;
+        } else if (level.compareToIgnoreCase(Stable.name()) == 0) {
+            return Stable;
+        }
+        throw new IllegalArgumentException("Unknown supportLevel: " + level);
     }
 
 }
