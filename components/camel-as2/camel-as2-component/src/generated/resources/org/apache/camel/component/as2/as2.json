@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "as2",
     "scheme": "as2",
     "extendsScheme": "",
     "syntax": "as2:apiName\/methodName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.as2.AS2Component",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-as2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.component.as2.AS2Configuration", "deprecated": false, "secret": false, "description": "To use the shared configuration" },

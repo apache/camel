@@ -40,15 +40,15 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     @XmlAttribute(required = true)
     private String messageIdRepositoryRef;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String eager;
     @XmlAttribute
     private String completionEager;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String skipDuplicate;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String removeOnFailure;
     @XmlTransient
     private IdempotentRepository idempotentRepository;

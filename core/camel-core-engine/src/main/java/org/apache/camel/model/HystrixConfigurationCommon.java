@@ -37,94 +37,94 @@ public class HystrixConfigurationCommon extends IdentifiedType {
     @Metadata(defaultValue = "CamelHystrix")
     private String threadPoolKey;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "true")
     private String circuitBreakerEnabled;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "50")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "50")
     private String circuitBreakerErrorThresholdPercentage;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "false")
     private String circuitBreakerForceClosed;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "false")
     private String circuitBreakerForceOpen;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "20")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "20")
     private String circuitBreakerRequestVolumeThreshold;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "5000")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "5000")
     private String circuitBreakerSleepWindowInMilliseconds;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "20")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "20")
     private String executionIsolationSemaphoreMaxConcurrentRequests;
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "THREAD", enums = "THREAD,SEMAPHORE")
     private String executionIsolationStrategy;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "true")
     private String executionIsolationThreadInterruptOnTimeout;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "1000")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "1000")
     private String executionTimeoutInMilliseconds;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "true")
     private String executionTimeoutEnabled;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "10")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "10")
     private String fallbackIsolationSemaphoreMaxConcurrentRequests;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "true")
     private String fallbackEnabled;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "500")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "500")
     private String metricsHealthSnapshotIntervalInMilliseconds;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "10")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "10")
     private String metricsRollingPercentileBucketSize;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "true")
     private String metricsRollingPercentileEnabled;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "10000")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "10000")
     private String metricsRollingPercentileWindowInMilliseconds;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "6")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "6")
     private String metricsRollingPercentileWindowBuckets;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "10000")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "10000")
     private String metricsRollingStatisticalWindowInMilliseconds;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "10")
+    @Metadata(javaType = "java.lang.Integer", label = "command", defaultValue = "10")
     private String metricsRollingStatisticalWindowBuckets;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", label = "command", defaultValue = "true")
     private String requestLogEnabled;
 
     // thread-pool
 
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "10")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "10")
     private String corePoolSize;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "10")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "10")
     private String maximumSize;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "1")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "1")
     private String keepAliveTime;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "-1")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "-1")
     private String maxQueueSize;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "5")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "5")
     private String queueSizeRejectionThreshold;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "10000")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "10000")
     private String threadPoolRollingNumberStatisticalWindowInMilliseconds;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "10")
+    @Metadata(javaType = "java.lang.Integer", label = "threadpool", defaultValue = "10")
     private String threadPoolRollingNumberStatisticalWindowBuckets;
     @XmlAttribute
-    @Metadata(label = "threadpool", defaultValue = "false")
+    @Metadata(javaType = "java.lang.Boolean", label = "threadpool", defaultValue = "false")
     private String allowMaximumSizeToDivergeFromCoreSize;
 
     // Getter/Setter

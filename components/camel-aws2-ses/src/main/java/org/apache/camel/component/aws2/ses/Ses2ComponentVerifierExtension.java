@@ -66,6 +66,10 @@ public class Ses2ComponentVerifierExtension extends DefaultComponentVerifierExte
 
         try {
             Ses2Configuration configuration = setProperties(new Ses2Configuration(), parameters);
+            if (!SesClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             SesClientBuilder clientBuilder = SesClient.builder();
             SesClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-translate",
     "scheme": "aws2-translate",
     "extendsScheme": "",
     "syntax": "aws2-translate:label",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.translate.Translate2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-translate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "autodetectSourceLanguage": { "kind": "property", "displayName": "Autodetect Source Language", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "configurationClass": "org.apache.camel.component.aws2.translate.Translate2Configuration", "configurationField": "configuration", "description": "Being able to autodetect the source language" },

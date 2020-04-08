@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "lucene",
     "scheme": "lucene",
     "extendsScheme": "",
     "syntax": "lucene:host:operation",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.lucene.LuceneComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lucene",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "analyzer": { "kind": "property", "displayName": "Analyzer", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.lucene.analysis.Analyzer", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.lucene.LuceneConfiguration", "configurationField": "config", "description": "An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box" },

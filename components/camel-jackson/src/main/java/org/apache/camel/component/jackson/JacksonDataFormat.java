@@ -46,6 +46,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * to marshal to and from JSON.
  */
 @Dataformat("json-jackson")
-@Metadata(excludeProperties = "unmarshalTypeName,collectionTypeName,library,permissions,dropRootNode")
+@Metadata(excludeProperties = "library,permissions,dropRootNode")
 public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
@@ -63,10 +64,12 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
     private boolean useDefaultObjectMapper = true;
+    private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
     private String moduleClassNames;
     private String moduleRefs;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
@@ -232,12 +235,28 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.unmarshalType = unmarshalType;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public Class<? extends Collection> getCollectionType() {
         return collectionType;
     }
 
     public void setCollectionType(Class<? extends Collection> collectionType) {
         this.collectionType = collectionType;
+    }
+
+    public String getCollectionTypeName() {
+        return collectionTypeName;
+    }
+
+    public void setCollectionTypeName(String collectionTypeName) {
+        this.collectionTypeName = collectionTypeName;
     }
 
     public Class<?> getJsonView() {
@@ -492,6 +511,17 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
             disableFeatures = feature.name();
         } else {
             disableFeatures += "," + feature.name();
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+        if (collectionTypeName != null && collectionType == null) {
+            Class<?> clazz = camelContext.getClassResolver().resolveClass(collectionTypeName);
+            collectionType = CastUtils.cast(clazz);
         }
     }
 

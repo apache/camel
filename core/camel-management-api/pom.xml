@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>3.3.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -58,6 +58,7 @@
                         <link>http://download.oracle.com/javaee/7/api/</link>
                     </links>
                     <linksource>true</linksource>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
                     <maxmemory>256m</maxmemory>
                     <groups>
                         <group>
@@ -144,6 +145,7 @@
                             </links>
                             <linksource>true</linksource>
                             <maxmemory>256m</maxmemory>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <groups>
                                 <group>
                                     <title>Camel API</title>

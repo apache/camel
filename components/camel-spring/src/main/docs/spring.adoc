@@ -367,7 +367,7 @@ the above example), then you can refer to the component using
 SpringCamelContext lazily fetching components from the spring context
 for the scheme name you use for Endpoint URIs.
 
-For more detail see xref:manual::faq/how-do-i-configure-endpoints.adoc[Configuring
+For more detail see xref:manual:faq:how-do-i-configure-endpoints.adoc[Configuring
 Endpoints and Components].
 
 == CamelContextAware

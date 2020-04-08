@@ -49,7 +49,7 @@ public class S3Component extends DefaultComponent {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
         if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
         final S3Configuration configuration = this.configuration != null ? this.configuration.copy() : new S3Configuration();
         configuration.setBucketName(remaining);

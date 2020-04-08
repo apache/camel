@@ -5,8 +5,9 @@
     "title": "Salesforce Maven Plugin",
     "description": "Camel Salesforce Maven plugin",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel.maven",
     "artifactId": "camel-salesforce-maven-plugin",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   }
 }

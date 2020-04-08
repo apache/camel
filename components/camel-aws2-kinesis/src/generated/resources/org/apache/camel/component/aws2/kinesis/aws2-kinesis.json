@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-kinesis",
     "scheme": "aws2-kinesis",
     "extendsScheme": "",
     "syntax": "aws2-kinesis:streamName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.kinesis.Kinesis2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonKinesisClient": { "kind": "property", "displayName": "Amazon Kinesis Client", "group": "common", "label": "", "required": false, "type": "object", "javaType": "software.amazon.awssdk.services.kinesis.KinesisClient", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.kinesis.Kinesis2Configuration", "configurationField": "configuration", "description": "Amazon Kinesis client to use for all requests for this endpoint" },

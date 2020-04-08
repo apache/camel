@@ -31,17 +31,19 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String maximumRetries;
     @XmlAttribute
-    @Metadata(defaultValue = "50")
+    @Metadata(javaType = "java.lang.Long", defaultValue = "50")
     private String retryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "1000")
+    @Metadata(javaType = "java.lang.Long", defaultValue = "1000")
     private String maximumRetryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String exponentialBackOff;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String randomBackOff;
 
     public OptimisticLockRetryPolicyDefinition() {

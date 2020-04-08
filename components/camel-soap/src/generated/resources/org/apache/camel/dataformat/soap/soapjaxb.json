@@ -11,9 +11,10 @@
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.dataformat.soap.SoapJaxbDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.SoapJaxbDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-soap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "properties": {
     "contextPath": { "kind": "attribute", "displayName": "Context Path", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Package name where your JAXB classes are located." },

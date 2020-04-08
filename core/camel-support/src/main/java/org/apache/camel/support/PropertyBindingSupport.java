@@ -232,7 +232,10 @@ public final class PropertyBindingSupport {
             // mandatory parameters
             org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
-            org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
+
+            if (properties == null || properties.isEmpty()) {
+                return false;
+            }
 
             return doBindProperties(camelContext, target,  removeParameters ? properties : new HashMap<>(properties),
                     optionPrefix, ignoreCase, true, mandatory,
@@ -1003,7 +1006,7 @@ public final class PropertyBindingSupport {
      *
      * @param camelContext       the camel context
      * @param name               the name of the bean
-     * @param value              how to resolve the bean with a prefix of either class#:, type#: or bean#:
+     * @param value              how to resolve the bean with a prefix of either #class:, #type: or #bean:
      * @return the resolve bean
      * @throws Exception is thrown if error resolving the bean, or if the value is invalid.
      */

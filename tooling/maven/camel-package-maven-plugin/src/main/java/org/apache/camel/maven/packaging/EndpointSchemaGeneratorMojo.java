@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -59,12 +60,12 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.util.json.Jsoner;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -100,7 +101,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
-    protected ClassLoader projectClassLoader;
     protected IndexView indexView;
     protected Map<String, String> resources = new HashMap<>();
     protected List<Path> sourceRoots;
@@ -179,7 +179,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         if (parentUriEndpoint != null) {
                             String parentScheme = parentUriEndpoint.scheme().split(",")[0];
                             String superClassName = superclass.getName();
-                            String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
+                            String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
                             String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
                             String json = loadResource(fileName);
                             parentData = JsonMapper.generateComponentModel(json);
@@ -237,7 +237,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // write json schema
         String name = classElement.getName();
-        String packageName = name.substring(0, name.lastIndexOf("."));
+        String packageName = name.substring(0, name.lastIndexOf('.'));
         String fileName = scheme + PackageHelper.JSON_SUFIX;
 
         String file = packageName.replace('.', '/') + "/" + fileName;
@@ -429,6 +429,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                                      String extendsScheme, String label, String[] schemes) {
         ComponentModel model = new ComponentModel();
         model.setScheme(scheme);
+        model.setName(scheme);
         model.setExtendsScheme(extendsScheme);
         // alternative schemes
         if (schemes != null && schemes.length > 1) {
@@ -458,6 +459,17 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         if (!Strings.isNullOrEmpty(firstVersion)) {
             model.setFirstVersion(firstVersion);
+        }
+
+        // grab level from annotation, pom.xml or default to stable
+        String level = project.getProperties().getProperty("supportLevel");
+        boolean experimental = ClassUtil.hasAnnotation("org.apache.camel.Experimental", endpointClassElement);
+        if (experimental) {
+            model.setSupportLevel(SupportLevel.Experimental);
+        } else if (level != null) {
+            model.setSupportLevel(SupportLevel.safeValueOf(level));
+        } else {
+            model.setSupportLevel(SupportLevel.Stable);
         }
 
         // get the java type class name via the @Component annotation from its
@@ -1025,25 +1037,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Class<?> loadClass(String name) {
-        try {
-            return getProjectClassLoader().loadClass(name);
-        } catch (ClassNotFoundException e) {
-            throw (NoClassDefFoundError) new NoClassDefFoundError(name).initCause(e);
-        }
-    }
-
-    private ClassLoader getProjectClassLoader() {
-        if (projectClassLoader == null) {
-            try {
-                projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
-            } catch (DependencyResolutionRequiredException e) {
-                throw new RuntimeException("Unable to create project classloader", e);
-            }
-        }
-        return projectClassLoader;
     }
 
     private IndexView getIndex() {

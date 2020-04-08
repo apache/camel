@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>3.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-dozer</artifactId>
@@ -50,12 +50,12 @@
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
-            <version>${javax-el3-version}</version>
+            <version>${javax-el-api-hibernate-validator-version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>${javax-el3-version}</version>
+            <version>${javax-el-api-hibernate-validator-version}</version>
         </dependency>
 
         <!-- Testing -->

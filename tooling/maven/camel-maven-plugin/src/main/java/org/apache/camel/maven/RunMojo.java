@@ -445,7 +445,7 @@ public class RunMojo extends AbstractExecMojo {
         final ClassLoader loader = getClassLoader();
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
 
-        if (!detectBlueprintMainOnClassPath()) {
+        if (usingBlueprintMain && !detectBlueprintMainOnClassPath()) {
             throw new MojoFailureException("Cannot run OSGi Blueprint Main because camel-blueprint-main JAR is not available on classpath");
         }
 

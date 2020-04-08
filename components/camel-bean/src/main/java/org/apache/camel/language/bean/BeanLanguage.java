@@ -129,7 +129,7 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
             //first check case :: because of my.own.Bean::method
             int doubleColonIndex = expression.indexOf("::");
             //need to check that not inside params
-            int beginOfParameterDeclaration = expression.indexOf("(");
+            int beginOfParameterDeclaration = expression.indexOf('(');
             if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                 beanName = expression.substring(0, doubleColonIndex);
                 method = expression.substring(doubleColonIndex + 2);

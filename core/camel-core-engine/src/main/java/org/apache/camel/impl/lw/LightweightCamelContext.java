@@ -56,6 +56,7 @@ import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
@@ -111,6 +112,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
@@ -1379,6 +1381,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
+        getExtendedCamelContext().setRestBindingJaxbDataFormatFactory(restBindingJaxbDataFormatFactory);
+    }
+
+    @Override
+    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
+        return getExtendedCamelContext().getRestBindingJaxbDataFormatFactory();
+    }
+
+    @Override
     public RuntimeCamelCatalog getRuntimeCamelCatalog() {
         return getExtendedCamelContext().getRuntimeCamelCatalog();
     }
@@ -1562,6 +1574,26 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration) {
         getModelCamelContext().addResilience4jConfiguration(id, configuration);
+    }
+
+    @Override
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
+        return getModelCamelContext().getFaultToleranceConfiguration(id);
+    }
+
+    @Override
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        getModelCamelContext().setFaultToleranceConfiguration(configuration);
+    }
+
+    @Override
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
+        getModelCamelContext().setFaultToleranceConfigurations(configurations);
+    }
+
+    @Override
+    public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
+        getModelCamelContext().addFaultToleranceConfiguration(id, configuration);
     }
 
     @Override

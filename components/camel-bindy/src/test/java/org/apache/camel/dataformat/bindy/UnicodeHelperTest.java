@@ -167,49 +167,43 @@ public class UnicodeHelperTest {
     public void testIndexOf() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
         Assert.assertEquals(-1, lh.indexOf("b"));
-        
+
         final UnicodeHelper lh2 = new UnicodeHelper(
-            "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z",
+            "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
+            + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z", 
             Method.CODEPOINTS);
-        
+
         Assert.assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
+        Assert.assertEquals(14, lh2.indexOf(new String(Character.toChars(0x1f600)), 13));
         
         Assert.assertEquals(3, lh2.indexOf(UCSTR));
-        
+        Assert.assertEquals(16, lh2.indexOf(UCSTR, 13));
+
         Assert.assertEquals(10, lh2.indexOf("\u035f"));
-        
-        expectIllegalArgumentException(() -> {
-            lh2.indexOf(Character.toString(Character.toChars(0x1f600)[0])); // UTF-16  surrogates are no codepoints.
-        });
+        Assert.assertEquals(23, lh2.indexOf("\u035f", 13));
     }
-    
+
     @Test
     public void testIndexOf2() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
         Assert.assertEquals(-1, lh.indexOf("b"));
-        
+
         final UnicodeHelper lh2 = new UnicodeHelper(
-            "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z",
-            Method.GRAPHEME);
-        
+            "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
+            + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z", 
+            Method.GRAPHEME
+        );
+
         Assert.assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
-        
+        Assert.assertEquals(9, lh2.indexOf(new String(Character.toChars(0x1f600)), 8));
+
         Assert.assertEquals(3, lh2.indexOf(UCSTR));
+        Assert.assertEquals(11, lh2.indexOf(UCSTR), 8);
         
-        expectIllegalArgumentException(() -> {
-            lh2.indexOf("\u035f"); // Codepoint of dangling combing char is not a "unicode char".
-        });
-    }    
-    
-    private void expectIllegalArgumentException(final Runnable r) {
-        try {
-            r.run();
-            Assert.assertTrue("We do not expect to reach here -- missing IllegalArgumentException.", false);
-            
-        } catch (final IllegalArgumentException e) {
-            LOG.debug("Caught expected IllegalArgumentException", e);
-            
-        }
+        final UnicodeHelper lh3 = new UnicodeHelper("mm̂mm̂m", Method.GRAPHEME);
+        Assert.assertEquals(0, lh3.indexOf("m"));
+        Assert.assertEquals(2, lh3.indexOf("m", 1));
+        Assert.assertEquals(3, lh3.indexOf("m̂", 2));
     }
     
     private static String cps2String(final int... cps) {

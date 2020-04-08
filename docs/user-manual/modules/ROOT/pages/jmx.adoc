@@ -147,7 +147,9 @@ Spring configuration:
 == Creating JMX RMI Connector Server
 
 [CAUTION]
-Starting from Camel 3.2.0, the configuration in this section no longer applies.
+Starting from Camel 3.2.0, the configuration in this section no longer applies. For older
+releases, it is not recommended to use this functionality for security reasons. Instead,
+use the default JVM JMX remote capabilities if required.
 
 JMX connector server enables MBeans to be remotely managed by a JMX
 client such as JConsole; Camel JMX RMI connector server can be
@@ -173,7 +175,9 @@ Spring configuration:
 == JMX Service URL
 
 [CAUTION]
-Starting from Camel 3.2.0, the configuration in this section no longer applies.
+Starting from Camel 3.2.0, the configuration in this section no longer applies. For older
+releases, it is not recommended to use this functionality for security reasons. Instead,
+use the default JVM JMX remote capabilities if required.
 
 The default JMX Service URL has the format:
 

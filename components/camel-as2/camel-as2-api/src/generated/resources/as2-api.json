@@ -5,8 +5,9 @@
     "title": "As2 Api",
     "description": "Camel AS2 API",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-as2-api",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   }
 }

@@ -38,7 +38,7 @@ public abstract class ApiMethodParser<T> {
     // also used by JavadocApiMethodGeneratorMojo
     public static final Pattern ARGS_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+([^\\s,]+)\\s*,?");
 
-    private static final String METHOD_PREFIX = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<[^>]>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
+    private static final String METHOD_PREFIX = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<((?!\\sextends\\s)[^>])+>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
     private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*([^<\\s]+)?\\s*(<[^>]+>)?(<(?<genericTypeParameterName>\\S+)\\s+extends\\s+"
             + "(?<genericTypeParameterUpperBound>\\S+)>\\s+(?<returnType>\\S+))?\\s+(\\S+)\\s*\\(\\s*(?<signature>[\\S\\s,]*)\\)\\s*;?\\s*");
 
@@ -105,7 +105,7 @@ public abstract class ApiMethodParser<T> {
             }
 
             // remove all modifiers and type parameters for method
-            signature = signature.replaceAll(METHOD_PREFIX, "$4 $5(");
+            signature = signature.replaceAll(METHOD_PREFIX, "$5 $6(");
             // remove all final modifiers for arguments
             signature = signature.replaceAll("(\\(|,\\s*)final\\s+", "$1");
             // remove all redundant spaces in generic parameters

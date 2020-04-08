@@ -41,23 +41,27 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String strategyMethodAllowNull;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(defaultValue = "0")
+    @Metadata(javaType = "java.lang.Long", defaultValue = "0")
     private String timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -66,10 +70,13 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String stopOnAggregateException;
 
     public MulticastDefinition() {

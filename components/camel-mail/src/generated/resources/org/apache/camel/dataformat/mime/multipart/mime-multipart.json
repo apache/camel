@@ -11,9 +11,10 @@
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.mime.multipart.MimeMultipartDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "properties": {
     "multipartSubType": { "kind": "attribute", "displayName": "Multipart Sub Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "mixed", "description": "Specify the subtype of the MIME Multipart. Default is mixed." },

@@ -66,6 +66,10 @@ public class AWS2EC2ComponentVerifierExtension extends DefaultComponentVerifierE
 
         try {
             AWS2EC2Configuration configuration = setProperties(new AWS2EC2Configuration(), parameters);
+            if (!Ec2Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             Ec2ClientBuilder clientBuilder = Ec2Client.builder();
             Ec2Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

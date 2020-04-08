@@ -308,7 +308,7 @@ public final class XmlRouteParser {
 
     private static String endpointComponentName(String uri) {
         if (uri != null) {
-            int idx = uri.indexOf(":");
+            int idx = uri.indexOf(':');
             if (idx > 0) {
                 return uri.substring(0, idx);
             }

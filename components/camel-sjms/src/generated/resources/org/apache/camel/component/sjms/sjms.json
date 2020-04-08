@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sjms",
     "scheme": "sjms",
     "extendsScheme": "",
     "syntax": "sjms:destinationType:destinationName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms.SjmsComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "connectionCount": { "kind": "property", "displayName": "Connection Count", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "1", "description": "The maximum number of connections available to endpoints started under this component" },

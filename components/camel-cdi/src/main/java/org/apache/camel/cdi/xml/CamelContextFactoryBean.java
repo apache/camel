@@ -45,6 +45,7 @@ import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -204,6 +205,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "resilience4jConfiguration", type = Resilience4jConfigurationDefinition.class)
     private List<Resilience4jConfigurationDefinition> resilience4jConfigurations;
+
+    @XmlElement(name = "defaultFaultToleranceConfiguration")
+    private FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration;
+
+    @XmlElement(name = "faultToleranceConfiguration", type = FaultToleranceConfigurationDefinition.class)
+    private List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations;
 
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
@@ -419,6 +426,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> resilience4jConfigurations) {
         this.resilience4jConfigurations = resilience4jConfigurations;
+    }
+
+    @Override
+    public FaultToleranceConfigurationDefinition getDefaultFaultToleranceConfiguration() {
+        return defaultFaultToleranceConfiguration;
+    }
+
+    public void setDefaultFaultToleranceConfiguration(FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration) {
+        this.defaultFaultToleranceConfiguration = defaultFaultToleranceConfiguration;
+    }
+
+    @Override
+    public List<FaultToleranceConfigurationDefinition> getFaultToleranceConfigurations() {
+        return faultToleranceConfigurations;
+    }
+
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations) {
+        this.faultToleranceConfigurations = faultToleranceConfigurations;
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -122,6 +123,14 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
                 title = Strings.camelDashToTitle(name);
             }
             otherModel.setTitle(title);
+
+            // grab level from pom.xml or default to stable
+            String level = project.getProperties().getProperty("supportLevel");
+            if (level != null) {
+                otherModel.setSupportLevel(SupportLevel.safeValueOf(level));
+            } else {
+                otherModel.setSupportLevel(SupportLevel.Stable);
+            }
 
             if (log.isDebugEnabled()) {
                 log.debug("Model: " + otherModel);

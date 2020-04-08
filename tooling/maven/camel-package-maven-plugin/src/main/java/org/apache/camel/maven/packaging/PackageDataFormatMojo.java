@@ -31,16 +31,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -184,7 +184,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             excluded = metadata.excludeProperties();
                         }
 
-                        DataFormatModel dataFormatModel = extractDataFormatModel(project, json, name, javaType, included, excluded);
+                        DataFormatModel dataFormatModel = extractDataFormatModel(project, json, name, clazz, included, excluded);
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + dataFormatModel);
                         }
@@ -217,7 +217,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                                 pn.replace('.', '/') + "/" + cn + "Configurer.java",
                                 generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
                         updateResource(configurerResourceOutDir.toPath(),
-                                "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer",
+                                "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat",
                                 generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
                     }
                 } else {
@@ -241,26 +241,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return count;
     }
 
-    private Class<?> loadClass(String name) {
-        try {
-            return getProjectClassLoader().loadClass(name);
-        } catch (ClassNotFoundException e) {
-            throw (NoClassDefFoundError) new NoClassDefFoundError(name).initCause(e);
-        }
-    }
-
-    private ClassLoader getProjectClassLoader() {
-        if (projectClassLoader == null) {
-            try {
-                projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
-            } catch (DependencyResolutionRequiredException e) {
-                throw new RuntimeException("Unable to create project classloader", e);
-            }
-        }
-        return projectClassLoader;
-    }
-
-    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String name, String javaType,
+    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String name, Class<?> javaType,
                                                           String includedProperties, String excludedProperties) {
         EipModel def = JsonMapper.generateEipModel(json);
         DataFormatModel model = new DataFormatModel();
@@ -271,12 +252,23 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         model.setLabel(def.getLabel());
         model.setDeprecated(def.isDeprecated());
         model.setDeprecationNote(def.getDeprecationNote());
-        model.setJavaType(javaType);
+        model.setJavaType(javaType.getCanonicalName());
         model.setModelName(def.getName());
         model.setModelJavaType(def.getJavaType());
         model.setGroupId(project.getGroupId());
         model.setArtifactId(project.getArtifactId());
         model.setVersion(project.getVersion());
+
+        // grab level from annotation, pom.xml or default to stable
+        String level = project.getProperties().getProperty("supportLevel");
+        boolean experimental = ClassUtil.hasAnnotation("org.apache.camel.Experimental", javaType);
+        if (experimental) {
+            model.setSupportLevel(SupportLevel.Experimental);
+        } else if (level != null) {
+            model.setSupportLevel(SupportLevel.safeValueOf(level));
+        } else {
+            model.setSupportLevel(SupportLevel.Stable);
+        }
 
         for (EipOptionModel opt : def.getOptions()) {
             DataFormatOptionModel option = new DataFormatOptionModel();

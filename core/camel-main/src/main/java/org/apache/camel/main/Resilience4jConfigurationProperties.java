@@ -18,9 +18,12 @@ package org.apache.camel.main;
 
 import java.util.concurrent.ForkJoinPool;
 
+import org.apache.camel.spi.Configurer;
+
 /**
  * Global configuration for Resilience EIP circuit breaker.
  */
+@Configurer
 public class Resilience4jConfigurationProperties {
 
     private final MainConfigurationProperties parent;

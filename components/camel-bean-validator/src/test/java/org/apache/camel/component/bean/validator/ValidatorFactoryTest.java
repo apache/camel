@@ -21,9 +21,16 @@ import javax.validation.ValidatorFactory;
 import javax.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.condition.OS.AIX;
 
 public class ValidatorFactoryTest extends CamelTestSupport {
 
@@ -31,7 +38,7 @@ public class ValidatorFactoryTest extends CamelTestSupport {
     private ValidatorFactory validatorFactory;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         GenericBootstrap bootstrap = Validation.byDefaultProvider();
         bootstrap.providerResolver(new HibernateValidationProviderResolver());
@@ -41,12 +48,9 @@ public class ValidatorFactoryTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @DisabledOnOs(AIX)
     @Test
-    public void configureValidatorFactoryFromRegistry() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void configureValidatorFactoryFromRegistry() throws Exception {
 
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator:dummy?validatorFactory=#myValidatorFactory", BeanValidatorEndpoint.class);
         BeanValidatorProducer producer = (BeanValidatorProducer)endpoint.createProducer();
@@ -55,12 +59,9 @@ public class ValidatorFactoryTest extends CamelTestSupport {
         assertSame(producer.getValidatorFactory(), this.validatorFactory);
     }
 
+    @DisabledOnOs(AIX)
     @Test
-    public void configureValidatorFactory() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void configureValidatorFactory() throws Exception {
 
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator:dummy", BeanValidatorEndpoint.class);
         BeanValidatorProducer producer = (BeanValidatorProducer)endpoint.createProducer();

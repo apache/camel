@@ -53,11 +53,11 @@ public final class ThriftUtils {
     }
 
     public static String extractServiceName(String service) {
-        return service.substring(service.lastIndexOf(".") + 1);
+        return service.substring(service.lastIndexOf('.') + 1);
     }
 
     public static String extractServicePackage(String service) {
-        return service.substring(0, service.lastIndexOf("."));
+        return service.substring(0, service.lastIndexOf('.'));
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "atomix-multimap",
     "scheme": "atomix-multimap",
     "extendsScheme": "",
     "syntax": "atomix-multimap:resourceName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.multimap.AtomixMultiMapComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "atomix": { "kind": "property", "displayName": "Atomix", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "io.atomix.Atomix", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration", "configurationField": "configuration", "description": "The Atomix instance to use" },

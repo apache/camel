@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -52,6 +53,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
+        this.subscribers = new LinkedList<>();
 
         String loggerId = endpoint.getLoggerId();
 
@@ -96,20 +98,24 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            String subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
+            try {
+                String subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
 
-            if (localLog.isDebugEnabled()) {
-                localLog.debug("Subscribing to {}", subscriptionName);
+                if (localLog.isDebugEnabled()) {
+                    localLog.debug("Subscribing to {}", subscriptionName);
+                }
+
+
+                if (endpoint.isSynchronousPull()) {
+                    synchronousPull(subscriptionName);
+                } else {
+                    asynchronousPull(subscriptionName);
+                }
+
+                localLog.debug("Exit run for subscription {}", subscriptionName);
+            } catch (Exception e) {
+                localLog.error("Failure getting messages from PubSub", e);
             }
-
-
-            if (endpoint.isSynchronousPull()) {
-                synchronousPull(subscriptionName);
-            } else {
-                asynchronousPull(subscriptionName);
-            }
-
-            localLog.debug("Exit run for subscription {}", subscriptionName);
         }
 
         private void asynchronousPull(String subscriptionName) {
@@ -117,8 +123,8 @@ class GooglePubsubConsumer extends DefaultConsumer {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver);
-                subscribers.add(subscriber);
                 try {
+                    subscribers.add(subscriber);
                     subscriber.startAsync().awaitRunning();
                     subscriber.awaitTerminated();
                 } catch (Exception e) {

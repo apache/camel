@@ -3810,7 +3810,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
             }
 
             while (link.endsWith("/")) {
-                link = link.substring(0, link.lastIndexOf("/"));
+                link = link.substring(0, link.lastIndexOf('/'));
             }
 
             addArgIfNotEmpty(arguments, "-link", JavadocUtil.quotedPathArgument(link), true, false);
@@ -4007,7 +4007,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
                     continue;
                 }
 
-                int lastIndexOfSeparator = currentFile.lastIndexOf("/");
+                int lastIndexOfSeparator = currentFile.lastIndexOf('/');
                 if (lastIndexOfSeparator != -1) {
                     String packagename = currentFile.substring(0, lastIndexOfSeparator).replace('/', '.');
 
@@ -5773,7 +5773,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
 
         url = url.trim();
         while (url.endsWith("/")) {
-            url = url.substring(0, url.lastIndexOf("/"));
+            url = url.substring(0, url.lastIndexOf('/'));
         }
 
         return url;

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-ses",
     "scheme": "aws-ses",
     "extendsScheme": "",
     "syntax": "aws-ses:from",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ses.SesComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ses",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonSESClient": { "kind": "property", "displayName": "Amazon SESClient", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "com.amazonaws.services.simpleemail.AmazonSimpleEmailService", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws.ses.SesConfiguration", "configurationField": "configuration", "description": "To use the AmazonSimpleEmailService as the client" },

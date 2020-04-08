@@ -35,6 +35,7 @@ import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -219,6 +220,26 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     @Override
     public void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration) {
         model.addResilience4jConfiguration(id, configuration);
+    }
+
+    @Override
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
+        return model.getFaultToleranceConfiguration(id);
+    }
+
+    @Override
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        model.setFaultToleranceConfiguration(configuration);
+    }
+
+    @Override
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
+        model.setFaultToleranceConfigurations(configurations);
+    }
+
+    @Override
+    public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
+        model.addFaultToleranceConfiguration(id, configuration);
     }
 
     @Override

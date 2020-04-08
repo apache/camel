@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>3.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jbpm</artifactId>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <version>3.1.4.GA</version>
+            <version>${jboss-logging-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

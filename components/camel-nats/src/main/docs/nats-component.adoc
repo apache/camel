@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *connectionTimeout* (common) | Timeout for connection attempts. (in milliseconds) | 2000 | int
-| *flushConnection* (common) | Define if we want to flush connection when stopping or not | false | boolean
+| *flushConnection* (common) | Define if we want to flush connection when stopping or not | true | boolean
 | *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
 | *maxPingsOut* (common) | maximum number of pings have not received a response allowed by the client | 2 | int
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 60 | int

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jclouds",
     "scheme": "jclouds",
     "extendsScheme": "",
     "syntax": "jclouds:command:providerId",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jclouds.JcloudsComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jclouds",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "blobStores": { "kind": "property", "displayName": "Blob Stores", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.jclouds.blobstore.BlobStore>", "deprecated": false, "secret": false, "description": "To use the given BlobStore which must be configured when using blobstore." },

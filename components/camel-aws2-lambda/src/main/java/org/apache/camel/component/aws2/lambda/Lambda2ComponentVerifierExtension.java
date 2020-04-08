@@ -66,6 +66,10 @@ public class Lambda2ComponentVerifierExtension extends DefaultComponentVerifierE
 
         try {
             Lambda2Configuration configuration = setProperties(new Lambda2Configuration(), parameters);
+            if (!LambdaClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             LambdaClientBuilder clientBuilder = LambdaClient.builder();
             LambdaClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

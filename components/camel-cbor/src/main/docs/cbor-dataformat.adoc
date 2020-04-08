@@ -48,22 +48,22 @@ tag.
 
 [source,xml]
 -----------------------------------------------------------------------------------------------------------------------------
-        <dataFormats>
-            <!-- here we define a CBOR data format with the id test and that it should use the TestPojo as the class type when
-                 doing unmarshal. -->
-            <cbor id="test" unmarshalTypeName="org.apache.camel.component.cbor.TestPojo"/>
-        </dataFormats>
+<dataFormats>
+    <!-- here we define a CBOR data format with the id test and that it should use the TestPojo as the class type when
+    doing unmarshal. -->
+    <cbor id="test" unmarshalTypeName="org.apache.camel.component.cbor.TestPojo"/>
+</dataFormats>
 -----------------------------------------------------------------------------------------------------------------------------
 
 And then you can refer to this id in the route:
 
 [source,xml]
 -------------------------------------
-       <route>
-            <from uri="direct:back"/>
-            <unmarshal><custom ref="test"/></unmarshal>
-            <to uri="mock:reverse"/>
-        </route>
+<route>
+    <from uri="direct:back"/>
+    <unmarshal><custom ref="test"/></unmarshal>
+    <to uri="mock:reverse"/>
+</route>
 -------------------------------------
 
 == Dependencies
@@ -71,9 +71,9 @@ And then you can refer to this id in the route:
 [source,java]
 -------------------------------------
 <dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-cbor</artifactId>
-  <version>x.x.x</version>
+   <groupId>org.apache.camel</groupId>
+   <artifactId>camel-cbor</artifactId>
+   <version>x.x.x</version>
 </dependency>
 -------------------------------------
 

@@ -55,6 +55,7 @@ import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -866,6 +867,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<Resilience4jConfigurationDefinition> getResilience4jConfigurations();
 
+    public abstract FaultToleranceConfigurationDefinition getDefaultFaultToleranceConfiguration();
+
+    public abstract List<FaultToleranceConfigurationDefinition> getFaultToleranceConfigurations();
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -988,6 +993,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getResilience4jConfigurations() != null) {
             for (Resilience4jConfigurationDefinition bean : getResilience4jConfigurations()) {
                 context.addResilience4jConfiguration(bean.getId(), bean);
+            }
+        }
+        if (getDefaultFaultToleranceConfiguration() != null) {
+            context.setFaultToleranceConfiguration(getDefaultFaultToleranceConfiguration());
+        }
+        if (getFaultToleranceConfigurations() != null) {
+            for (FaultToleranceConfigurationDefinition bean : getFaultToleranceConfigurations()) {
+                context.addFaultToleranceConfiguration(bean.getId(), bean);
             }
         }
     }

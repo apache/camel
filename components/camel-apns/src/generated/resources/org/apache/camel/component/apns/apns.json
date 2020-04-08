@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "apns",
     "scheme": "apns",
     "extendsScheme": "",
     "syntax": "apns:name",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.apns.ApnsComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-apns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "apnsService": { "kind": "property", "displayName": "Apns Service", "group": "common", "label": "", "required": true, "type": "object", "javaType": "com.notnoop.apns.ApnsService", "deprecated": false, "secret": false, "description": "The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService" },

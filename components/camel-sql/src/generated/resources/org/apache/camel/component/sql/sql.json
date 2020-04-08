@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "sql",
     "scheme": "sql",
     "extendsScheme": "",
     "syntax": "sql:query",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sql.SqlComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "dataSource": { "kind": "property", "displayName": "Data Source", "group": "common", "label": "", "required": false, "type": "object", "javaType": "javax.sql.DataSource", "deprecated": false, "secret": false, "description": "Sets the DataSource to use to communicate with the database." },

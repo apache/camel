@@ -66,6 +66,10 @@ public class AWS2S3ComponentVerifierExtension extends DefaultComponentVerifierEx
 
         try {
             AWS2S3Configuration configuration = setProperties(new AWS2S3Configuration(), parameters);
+            if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             S3ClientBuilder clientBuilder = S3Client.builder();
             S3Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

@@ -32,6 +32,8 @@ import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
@@ -47,11 +49,13 @@ import org.apache.camel.util.IOHelper;
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
 @Dataformat("json-gson")
-@Metadata(includeProperties = "prettyPrint,contentTypeHeader")
-public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader {
+@Metadata(includeProperties = "unmarshalTypeName,prettyPrint,contentTypeHeader")
+public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
+    private CamelContext camelContext;
     private Gson gson;
     private Class<?> unmarshalType;
+    private String unmarshalTypeName;
     private Type unmarshalGenericType;
     private List<ExclusionStrategy> exclusionStrategies;
     private LongSerializationPolicy longSerializationPolicy;
@@ -123,6 +127,16 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public String getDataFormatName() {
         return "json-gson";
     }
@@ -157,6 +171,13 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
             } else {
                 return gson.fromJson(reader, unmarshalGenericType);
             }
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
     }
 
@@ -204,6 +225,14 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
     }
 
     public Type getUnmarshalGenericType() {

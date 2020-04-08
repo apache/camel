@@ -31,6 +31,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     protected boolean deprecated;
     protected String deprecationNote;
     protected final List<O> options = new ArrayList<>();
+    protected SupportLevel supportLevel;
 
     public static Comparator<BaseModel<?>> compareTitle() {
         return (m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle());
@@ -116,6 +117,14 @@ public abstract class BaseModel<O extends BaseOptionModel> {
 
     public String getFirstVersionShort() {
         return !Strings.isNullOrEmpty(firstVersion) ? Strings.cutLastZeroDigit(firstVersion) : "";
+    }
+
+    public SupportLevel getSupportLevel() {
+        return supportLevel;
+    }
+
+    public void setSupportLevel(SupportLevel supportLevel) {
+        this.supportLevel = supportLevel;
     }
 
 }

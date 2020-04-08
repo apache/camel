@@ -69,8 +69,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     @XmlAttribute(name = "onExceptionOccurredRef")
     private String onExceptionOccurredRef;
     @XmlAttribute(name = "useOriginalMessage")
+    @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalMessage;
     @XmlAttribute(name = "useOriginalBody")
+    @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalBody;
     @XmlTransient
     private Predicate handledPolicy;
