@@ -16,6 +16,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.activemq.ActiveMQComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-activemq",
     "version": "3.3.0-SNAPSHOT"
@@ -37,6 +38,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.ahc.AhcComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc",
     "version": "3.3.0-SNAPSHOT"
@@ -59,6 +61,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ahc.ws.WsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc-ws",
     "version": "3.3.0-SNAPSHOT"
@@ -81,6 +84,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ahc.ws.WsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc-ws",
     "version": "3.3.0-SNAPSHOT"
@@ -102,6 +106,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.amqp.AMQPComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-amqp",
     "version": "3.3.0-SNAPSHOT"
@@ -123,6 +128,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.apns.ApnsComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-apns",
     "version": "3.3.0-SNAPSHOT"
@@ -144,6 +150,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.as2.AS2Component",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-as2",
     "version": "3.3.0-SNAPSHOT"
@@ -165,6 +172,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.asterisk.AsteriskComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-asterisk",
     "version": "3.3.0-SNAPSHOT"
@@ -186,6 +194,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atmos.AtmosComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmos",
     "version": "3.3.0-SNAPSHOT"
@@ -207,6 +216,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atmosphere.websocket.WebsocketComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmosphere-websocket",
     "version": "3.3.0-SNAPSHOT"
@@ -228,6 +238,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.atom.AtomComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atom",
     "version": "3.3.0-SNAPSHOT"
@@ -249,6 +260,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.map.AtomixMapComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
     "version": "3.3.0-SNAPSHOT"
@@ -270,6 +282,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.messaging.AtomixMessagingComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
     "version": "3.3.0-SNAPSHOT"
@@ -291,6 +304,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.multimap.AtomixMultiMapComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
     "version": "3.3.0-SNAPSHOT"
@@ -312,6 +326,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.queue.AtomixQueueComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
     "version": "3.3.0-SNAPSHOT"
@@ -333,6 +348,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.set.AtomixSetComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
     "version": "3.3.0-SNAPSHOT"
@@ -354,6 +370,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.value.AtomixValueComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
     "version": "3.3.0-SNAPSHOT"
@@ -375,6 +392,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.avro.AvroComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro-rpc",
     "version": "3.3.0-SNAPSHOT"
@@ -396,6 +414,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.cw.Cw2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-cw",
     "version": "3.3.0-SNAPSHOT"
@@ -417,6 +436,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ddb.Ddb2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
     "version": "3.3.0-SNAPSHOT"
@@ -438,6 +458,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ddbstream.Ddb2StreamComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
     "version": "3.3.0-SNAPSHOT"
@@ -459,6 +480,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ec2.AWS2EC2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ec2",
     "version": "3.3.0-SNAPSHOT"
@@ -480,6 +502,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ecs.ECS2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ecs",
     "version": "3.3.0-SNAPSHOT"
@@ -501,6 +524,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.eks.EKS2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-eks",
     "version": "3.3.0-SNAPSHOT"
@@ -522,6 +546,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.iam.IAM2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-iam",
     "version": "3.3.0-SNAPSHOT"
@@ -543,6 +568,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.kinesis.Kinesis2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
     "version": "3.3.0-SNAPSHOT"
@@ -564,6 +590,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
     "version": "3.3.0-SNAPSHOT"
@@ -585,6 +612,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.kms.KMS2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kms",
     "version": "3.3.0-SNAPSHOT"
@@ -606,6 +634,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.lambda.Lambda2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-lambda",
     "version": "3.3.0-SNAPSHOT"
@@ -627,6 +656,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.mq.MQ2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-mq",
     "version": "3.3.0-SNAPSHOT"
@@ -648,6 +678,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.msk.MSK2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-msk",
     "version": "3.3.0-SNAPSHOT"
@@ -669,6 +700,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.s3.AWS2S3Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-s3",
     "version": "3.3.0-SNAPSHOT"
@@ -690,6 +722,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ses.Ses2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ses",
     "version": "3.3.0-SNAPSHOT"
@@ -711,6 +744,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.sns.Sns2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sns",
     "version": "3.3.0-SNAPSHOT"
@@ -732,6 +766,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.sqs.Sqs2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sqs",
     "version": "3.3.0-SNAPSHOT"
@@ -753,6 +788,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.translate.Translate2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-translate",
     "version": "3.3.0-SNAPSHOT"
@@ -774,6 +810,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.cw.CwComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-cw",
     "version": "3.3.0-SNAPSHOT"
@@ -795,6 +832,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ddb.DdbComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
     "version": "3.3.0-SNAPSHOT"
@@ -816,6 +854,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ddbstream.DdbStreamComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
     "version": "3.3.0-SNAPSHOT"
@@ -837,6 +876,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ec2.EC2Component",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ec2",
     "version": "3.3.0-SNAPSHOT"
@@ -858,6 +898,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ecs.ECSComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ecs",
     "version": "3.3.0-SNAPSHOT"
@@ -879,6 +920,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.eks.EKSComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-eks",
     "version": "3.3.0-SNAPSHOT"
@@ -900,6 +942,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.iam.IAMComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-iam",
     "version": "3.3.0-SNAPSHOT"
@@ -921,6 +964,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.kinesis.KinesisComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kinesis",
     "version": "3.3.0-SNAPSHOT"
@@ -942,6 +986,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.firehose.KinesisFirehoseComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kinesis",
     "version": "3.3.0-SNAPSHOT"
@@ -963,6 +1008,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.kms.KMSComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kms",
     "version": "3.3.0-SNAPSHOT"
@@ -984,6 +1030,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.lambda.LambdaComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-lambda",
     "version": "3.3.0-SNAPSHOT"
@@ -1005,6 +1052,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.mq.MQComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-mq",
     "version": "3.3.0-SNAPSHOT"
@@ -1026,6 +1074,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.msk.MSKComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-msk",
     "version": "3.3.0-SNAPSHOT"
@@ -1047,6 +1096,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.s3.S3Component",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-s3",
     "version": "3.3.0-SNAPSHOT"
@@ -1068,6 +1118,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.sdb.SdbComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sdb",
     "version": "3.3.0-SNAPSHOT"
@@ -1089,6 +1140,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ses.SesComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ses",
     "version": "3.3.0-SNAPSHOT"
@@ -1110,6 +1162,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.sns.SnsComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sns",
     "version": "3.3.0-SNAPSHOT"
@@ -1131,6 +1184,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.sqs.SqsComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sqs",
     "version": "3.3.0-SNAPSHOT"
@@ -1152,6 +1206,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.swf.SWFComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-swf",
     "version": "3.3.0-SNAPSHOT"
@@ -1173,6 +1228,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.translate.TranslateComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-translate",
     "version": "3.3.0-SNAPSHOT"
@@ -1194,6 +1250,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.azure.blob.BlobServiceComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
     "version": "3.3.0-SNAPSHOT"
@@ -1215,6 +1272,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.azure.queue.QueueServiceComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
     "version": "3.3.0-SNAPSHOT"
@@ -1236,6 +1294,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.bean.BeanComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
     "version": "3.3.0-SNAPSHOT"
@@ -1257,6 +1316,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.bean.validator.BeanValidatorComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean-validator",
     "version": "3.3.0-SNAPSHOT"
@@ -1278,6 +1338,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.beanstalk.BeanstalkComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-beanstalk",
     "version": "3.3.0-SNAPSHOT"
@@ -1299,6 +1360,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.bonita.BonitaComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bonita",
     "version": "3.3.0-SNAPSHOT"
@@ -1320,6 +1382,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.box.BoxComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-box",
     "version": "3.3.0-SNAPSHOT"
@@ -1341,6 +1404,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.braintree.BraintreeComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-braintree",
     "version": "3.3.0-SNAPSHOT"
@@ -1362,6 +1426,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.browse.BrowseComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-browse",
     "version": "3.3.0-SNAPSHOT"
@@ -1383,6 +1448,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.caffeine.cache.CaffeineCacheComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
     "version": "3.3.0-SNAPSHOT"
@@ -1404,6 +1470,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.caffeine.load.CaffeineLoadCacheComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
     "version": "3.3.0-SNAPSHOT"
@@ -1425,6 +1492,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.chatscript.ChatScriptComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-chatscript",
     "version": "3.3.0-SNAPSHOT"
@@ -1446,6 +1514,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.chunk.ChunkComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-chunk",
     "version": "3.3.0-SNAPSHOT"
@@ -1467,6 +1536,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.beanclass.ClassComponent",
     "firstVersion": "2.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
     "version": "3.3.0-SNAPSHOT"
@@ -1488,6 +1558,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cm.CMComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cm-sms",
     "version": "3.3.0-SNAPSHOT"
@@ -1509,6 +1580,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cmis.CMISComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cmis",
     "version": "3.3.0-SNAPSHOT"
@@ -1531,6 +1603,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
     "version": "3.3.0-SNAPSHOT"
@@ -1553,6 +1626,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
     "version": "3.3.0-SNAPSHOT"
@@ -1575,6 +1649,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
     "version": "3.3.0-SNAPSHOT"
@@ -1597,6 +1672,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
     "version": "3.3.0-SNAPSHOT"
@@ -1619,6 +1695,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cometd.CometdComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cometd",
     "version": "3.3.0-SNAPSHOT"
@@ -1641,6 +1718,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cometd.CometdComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cometd",
     "version": "3.3.0-SNAPSHOT"
@@ -1662,6 +1740,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.consul.ConsulComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-consul",
     "version": "3.3.0-SNAPSHOT"
@@ -1683,6 +1762,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.controlbus.ControlBusComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-controlbus",
     "version": "3.3.0-SNAPSHOT"
@@ -1704,6 +1784,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.corda.CordaComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-corda",
     "version": "3.3.0-SNAPSHOT"
@@ -1725,6 +1806,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.couchbase.CouchbaseComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-couchbase",
     "version": "3.3.0-SNAPSHOT"
@@ -1746,6 +1828,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.couchdb.CouchDbComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-couchdb",
     "version": "3.3.0-SNAPSHOT"
@@ -1767,6 +1850,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cassandra.CassandraComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cassandraql",
     "version": "3.3.0-SNAPSHOT"
@@ -1788,6 +1872,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cron.CronComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cron",
     "version": "3.3.0-SNAPSHOT"
@@ -1809,6 +1894,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.crypto.cms.CryptoCmsComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto-cms",
     "version": "3.3.0-SNAPSHOT"
@@ -1830,6 +1916,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.crypto.DigitalSignatureComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
     "version": "3.3.0-SNAPSHOT"
@@ -1851,6 +1938,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cxf.CxfComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf",
     "version": "3.3.0-SNAPSHOT"
@@ -1872,6 +1960,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.cxf.jaxrs.CxfRsComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf",
     "version": "3.3.0-SNAPSHOT"
@@ -1893,6 +1982,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.dataformat.DataFormatComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataformat",
     "version": "3.3.0-SNAPSHOT"
@@ -1914,6 +2004,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.dataset.DataSetComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
     "version": "3.3.0-SNAPSHOT"
@@ -1935,6 +2026,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.dataset.DataSetTestComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
     "version": "3.3.0-SNAPSHOT"
@@ -1956,6 +2048,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumMongodbComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-mongodb",
     "version": "3.3.0-SNAPSHOT"
@@ -1977,6 +2070,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumMySqlComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-mysql",
     "version": "3.3.0-SNAPSHOT"
@@ -1998,6 +2092,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumPostgresComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-postgres",
     "version": "3.3.0-SNAPSHOT"
@@ -2019,6 +2114,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumSqlserverComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-sqlserver",
     "version": "3.3.0-SNAPSHOT"
@@ -2040,6 +2136,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.digitalocean.DigitalOceanComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-digitalocean",
     "version": "3.3.0-SNAPSHOT"
@@ -2061,6 +2158,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.direct.DirectComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-direct",
     "version": "3.3.0-SNAPSHOT"
@@ -2082,6 +2180,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.directvm.DirectVmComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-directvm",
     "version": "3.3.0-SNAPSHOT"
@@ -2104,6 +2203,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.disruptor.DisruptorComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
     "version": "3.3.0-SNAPSHOT"
@@ -2126,6 +2226,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.disruptor.vm.DisruptorVmComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
     "version": "3.3.0-SNAPSHOT"
@@ -2147,6 +2248,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.djl.DJLComponent",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-djl",
     "version": "3.3.0-SNAPSHOT"
@@ -2168,6 +2270,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dns.DnsComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dns",
     "version": "3.3.0-SNAPSHOT"
@@ -2189,6 +2292,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.docker.DockerComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-docker",
     "version": "3.3.0-SNAPSHOT"
@@ -2210,6 +2314,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dozer.DozerComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dozer",
     "version": "3.3.0-SNAPSHOT"
@@ -2231,6 +2336,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.drill.DrillComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-drill",
     "version": "3.3.0-SNAPSHOT"
@@ -2252,6 +2358,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dropbox.DropboxComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dropbox",
     "version": "3.3.0-SNAPSHOT"
@@ -2273,6 +2380,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ehcache.EhcacheComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ehcache",
     "version": "3.3.0-SNAPSHOT"
@@ -2294,6 +2402,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.elasticsearch.ElasticsearchComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elasticsearch-rest",
     "version": "3.3.0-SNAPSHOT"
@@ -2315,6 +2424,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.elsql.ElsqlComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elsql",
     "version": "3.3.0-SNAPSHOT"
@@ -2336,6 +2446,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.etcd.EtcdKeysComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
     "version": "3.3.0-SNAPSHOT"
@@ -2357,6 +2468,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.etcd.EtcdStatsComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
     "version": "3.3.0-SNAPSHOT"
@@ -2378,6 +2490,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.etcd.EtcdWatchComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
     "version": "3.3.0-SNAPSHOT"
@@ -2399,6 +2512,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.exec.ExecComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-exec",
     "version": "3.3.0-SNAPSHOT"
@@ -2420,6 +2534,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.facebook.FacebookComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-facebook",
     "version": "3.3.0-SNAPSHOT"
@@ -2441,6 +2556,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.fhir.FhirComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fhir",
     "version": "3.3.0-SNAPSHOT"
@@ -2462,6 +2578,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.FileComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file",
     "version": "3.3.0-SNAPSHOT"
@@ -2483,6 +2600,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.watch.FileWatchComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file-watch",
     "version": "3.3.0-SNAPSHOT"
@@ -2504,6 +2622,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.flatpack.FlatpackComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flatpack",
     "version": "3.3.0-SNAPSHOT"
@@ -2525,6 +2644,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.flink.FlinkComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flink",
     "version": "3.3.0-SNAPSHOT"
@@ -2546,6 +2666,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.fop.FopComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fop",
     "version": "3.3.0-SNAPSHOT"
@@ -2567,6 +2688,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.freemarker.FreemarkerComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-freemarker",
     "version": "3.3.0-SNAPSHOT"
@@ -2589,6 +2711,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.remote.FtpComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
     "version": "3.3.0-SNAPSHOT"
@@ -2611,6 +2734,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.remote.FtpsComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
     "version": "3.3.0-SNAPSHOT"
@@ -2632,6 +2756,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ganglia.GangliaComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ganglia",
     "version": "3.3.0-SNAPSHOT"
@@ -2653,6 +2778,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.geocoder.GeoCoderComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-geocoder",
     "version": "3.3.0-SNAPSHOT"
@@ -2674,6 +2800,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.git.GitComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-git",
     "version": "3.3.0-SNAPSHOT"
@@ -2695,6 +2822,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.github.GitHubComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-github",
     "version": "3.3.0-SNAPSHOT"
@@ -2716,6 +2844,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.bigquery.GoogleBigQueryComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
     "version": "3.3.0-SNAPSHOT"
@@ -2737,6 +2866,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
     "version": "3.3.0-SNAPSHOT"
@@ -2758,6 +2888,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.calendar.GoogleCalendarComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-calendar",
     "version": "3.3.0-SNAPSHOT"
@@ -2779,6 +2910,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-calendar",
     "version": "3.3.0-SNAPSHOT"
@@ -2800,6 +2932,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.drive.GoogleDriveComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-drive",
     "version": "3.3.0-SNAPSHOT"
@@ -2821,6 +2954,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.mail.GoogleMailComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -2842,6 +2976,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.mail.stream.GoogleMailStreamComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -2863,6 +2998,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.pubsub.GooglePubsubComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-pubsub",
     "version": "3.3.0-SNAPSHOT"
@@ -2884,6 +3020,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.sheets.GoogleSheetsComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
     "version": "3.3.0-SNAPSHOT"
@@ -2905,6 +3042,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
     "version": "3.3.0-SNAPSHOT"
@@ -2926,6 +3064,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.gora.GoraComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-gora",
     "version": "3.3.0-SNAPSHOT"
@@ -2947,6 +3086,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.grape.GrapeComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grape",
     "version": "3.3.0-SNAPSHOT"
@@ -2968,6 +3108,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.graphql.GraphqlComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-graphql",
     "version": "3.3.0-SNAPSHOT"
@@ -2989,6 +3130,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.grpc.GrpcComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grpc",
     "version": "3.3.0-SNAPSHOT"
@@ -3010,6 +3152,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.guava.eventbus.GuavaEventBusComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-guava-eventbus",
     "version": "3.3.0-SNAPSHOT"
@@ -3031,6 +3174,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3052,6 +3196,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.instance.HazelcastInstanceComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3073,6 +3218,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.list.HazelcastListComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3094,6 +3240,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.map.HazelcastMapComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3115,6 +3262,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.multimap.HazelcastMultimapComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3136,6 +3284,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.queue.HazelcastQueueComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3157,6 +3306,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmapComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3178,6 +3328,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3199,6 +3350,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.seda.HazelcastSedaComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3220,6 +3372,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.set.HazelcastSetComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3241,6 +3394,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "3.3.0-SNAPSHOT"
@@ -3262,6 +3416,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hbase.HBaseComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hbase",
     "version": "3.3.0-SNAPSHOT"
@@ -3283,6 +3438,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hdfs.HdfsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hdfs",
     "version": "3.3.0-SNAPSHOT"
@@ -3304,6 +3460,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hipchat.HipchatComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hipchat",
     "version": "3.3.0-SNAPSHOT"
@@ -3326,6 +3483,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.http.HttpComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
     "version": "3.3.0-SNAPSHOT"
@@ -3348,6 +3506,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.http.HttpComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
     "version": "3.3.0-SNAPSHOT"
@@ -3369,6 +3528,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.iec60870.client.ClientComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
     "version": "3.3.0-SNAPSHOT"
@@ -3390,6 +3550,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.iec60870.server.ServerComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
     "version": "3.3.0-SNAPSHOT"
@@ -3411,6 +3572,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.cache.IgniteCacheComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3432,6 +3594,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.compute.IgniteComputeComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3453,6 +3616,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.events.IgniteEventsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3474,6 +3638,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.idgen.IgniteIdGenComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3495,6 +3660,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.messaging.IgniteMessagingComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3516,6 +3682,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.queue.IgniteQueueComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3537,6 +3704,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.set.IgniteSetComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
     "version": "3.3.0-SNAPSHOT"
@@ -3560,6 +3728,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -3583,6 +3752,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -3604,6 +3774,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.infinispan.InfinispanComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-infinispan",
     "version": "3.3.0-SNAPSHOT"
@@ -3625,6 +3796,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.influxdb.InfluxDbComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-influxdb",
     "version": "3.3.0-SNAPSHOT"
@@ -3646,6 +3818,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.iota.IOTAComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iota",
     "version": "3.3.0-SNAPSHOT"
@@ -3667,6 +3840,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ipfs.IPFSComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ipfs",
     "version": "3.3.0-SNAPSHOT"
@@ -3689,6 +3863,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.irc.IrcComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-irc",
     "version": "3.3.0-SNAPSHOT"
@@ -3710,6 +3885,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ironmq.IronMQComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ironmq",
     "version": "3.3.0-SNAPSHOT"
@@ -3731,6 +3907,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jbpm.JBPMComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbpm",
     "version": "3.3.0-SNAPSHOT"
@@ -3752,6 +3929,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jcache.JCacheComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcache",
     "version": "3.3.0-SNAPSHOT"
@@ -3773,6 +3951,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jclouds.JcloudsComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jclouds",
     "version": "3.3.0-SNAPSHOT"
@@ -3795,6 +3974,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jcr.JcrComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcr",
     "version": "3.3.0-SNAPSHOT"
@@ -3816,6 +3996,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jdbc.JdbcComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jdbc",
     "version": "3.3.0-SNAPSHOT"
@@ -3837,6 +4018,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.jetty9.JettyHttpComponent9",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jetty",
     "version": "3.3.0-SNAPSHOT"
@@ -3858,6 +4040,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jgroups.JGroupsComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups",
     "version": "3.3.0-SNAPSHOT"
@@ -3879,6 +4062,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jgroups.raft.JGroupsRaftComponent",
     "firstVersion": "2.24.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups-raft",
     "version": "3.3.0-SNAPSHOT"
@@ -3900,6 +4084,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.validator.jing.JingComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jing",
     "version": "3.3.0-SNAPSHOT"
@@ -3921,6 +4106,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jira.JiraComponent",
     "firstVersion": "3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jira",
     "version": "3.3.0-SNAPSHOT"
@@ -3942,6 +4128,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jms.JmsComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jms",
     "version": "3.3.0-SNAPSHOT"
@@ -3963,6 +4150,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jmx.JMXComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jmx",
     "version": "3.3.0-SNAPSHOT"
@@ -3984,6 +4172,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jolt.JoltComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jolt",
     "version": "3.3.0-SNAPSHOT"
@@ -4005,6 +4194,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jooq.JooqComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jooq",
     "version": "3.3.0-SNAPSHOT"
@@ -4026,6 +4216,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jpa.JpaComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jpa",
     "version": "3.3.0-SNAPSHOT"
@@ -4047,6 +4238,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jslt.JsltComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jslt",
     "version": "3.3.0-SNAPSHOT"
@@ -4068,6 +4260,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jsonvalidator.JsonValidatorComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-json-validator",
     "version": "3.3.0-SNAPSHOT"
@@ -4089,6 +4282,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jt400.Jt400Component",
     "firstVersion": "1.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jt400",
     "version": "3.3.0-SNAPSHOT"
@@ -4110,6 +4304,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kafka.KafkaComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",
     "version": "3.3.0-SNAPSHOT"
@@ -4131,6 +4326,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.config_maps.KubernetesConfigMapsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4152,6 +4348,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.deployments.KubernetesDeploymentsComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4173,6 +4370,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.hpa.KubernetesHPAComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4194,6 +4392,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.job.KubernetesJobComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4215,6 +4414,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4236,6 +4436,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.nodes.KubernetesNodesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4257,6 +4458,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.persistent_volumes_claims.KubernetesPersistentVolumesClaimsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4278,6 +4480,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.persistent_volumes.KubernetesPersistentVolumesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4299,6 +4502,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.pods.KubernetesPodsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4320,6 +4524,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.replication_controllers.KubernetesReplicationControllersComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4341,6 +4546,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.resources_quota.KubernetesResourcesQuotaComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4362,6 +4568,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.secrets.KubernetesSecretsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4383,6 +4590,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.service_accounts.KubernetesServiceAccountsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4404,6 +4612,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.services.KubernetesServicesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -4425,6 +4634,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kudu.KuduComponent",
     "firstVersion": "3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kudu",
     "version": "3.3.0-SNAPSHOT"
@@ -4446,6 +4656,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.language.LanguageComponent",
     "firstVersion": "2.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-language",
     "version": "3.3.0-SNAPSHOT"
@@ -4467,6 +4678,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ldap.LdapComponent",
     "firstVersion": "1.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ldap",
     "version": "3.3.0-SNAPSHOT"
@@ -4488,6 +4700,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ldif.LdifComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ldif",
     "version": "3.3.0-SNAPSHOT"
@@ -4509,6 +4722,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.log.LogComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-log",
     "version": "3.3.0-SNAPSHOT"
@@ -4530,6 +4744,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.printer.PrinterComponent",
     "firstVersion": "2.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-printer",
     "version": "3.3.0-SNAPSHOT"
@@ -4551,6 +4766,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.lucene.LuceneComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lucene",
     "version": "3.3.0-SNAPSHOT"
@@ -4572,6 +4788,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.lumberjack.LumberjackComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lumberjack",
     "version": "3.3.0-SNAPSHOT"
@@ -4593,6 +4810,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.master.MasterComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-master",
     "version": "3.3.0-SNAPSHOT"
@@ -4614,6 +4832,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.metrics.MetricsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-metrics",
     "version": "3.3.0-SNAPSHOT"
@@ -4635,6 +4854,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.micrometer.MicrometerComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-micrometer",
     "version": "3.3.0-SNAPSHOT"
@@ -4656,6 +4876,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.microprofile.metrics.MicroProfileMetricsComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-microprofile-metrics",
     "version": "3.3.0-SNAPSHOT"
@@ -4677,6 +4898,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.milo.client.MiloClientComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
     "version": "3.3.0-SNAPSHOT"
@@ -4698,6 +4920,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.milo.server.MiloServerComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
     "version": "3.3.0-SNAPSHOT"
@@ -4719,6 +4942,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mina.MinaComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mina",
     "version": "3.3.0-SNAPSHOT"
@@ -4740,6 +4964,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mllp.MllpComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mllp",
     "version": "3.3.0-SNAPSHOT"
@@ -4761,6 +4986,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.mock.MockComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mock",
     "version": "3.3.0-SNAPSHOT"
@@ -4782,6 +5008,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mongodb.MongoDbComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb",
     "version": "3.3.0-SNAPSHOT"
@@ -4803,6 +5030,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mongodb.gridfs.GridFsComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb-gridfs",
     "version": "3.3.0-SNAPSHOT"
@@ -4824,6 +5052,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.validator.msv.MsvComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-msv",
     "version": "3.3.0-SNAPSHOT"
@@ -4845,6 +5074,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mustache.MustacheComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mustache",
     "version": "3.3.0-SNAPSHOT"
@@ -4866,6 +5096,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mvel.MvelComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mvel",
     "version": "3.3.0-SNAPSHOT"
@@ -4887,6 +5118,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mybatis.MyBatisBeanComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
     "version": "3.3.0-SNAPSHOT"
@@ -4908,6 +5140,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mybatis.MyBatisComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
     "version": "3.3.0-SNAPSHOT"
@@ -4929,6 +5162,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nagios.NagiosComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nagios",
     "version": "3.3.0-SNAPSHOT"
@@ -4950,6 +5184,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nats.NatsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nats",
     "version": "3.3.0-SNAPSHOT"
@@ -4971,6 +5206,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.netty.NettyComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty",
     "version": "3.3.0-SNAPSHOT"
@@ -4992,6 +5228,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.netty.http.NettyHttpComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty-http",
     "version": "3.3.0-SNAPSHOT"
@@ -5013,6 +5250,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nitrite.NitriteComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nitrite",
     "version": "3.3.0-SNAPSHOT"
@@ -5034,6 +5272,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nsq.NsqComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nsq",
     "version": "3.3.0-SNAPSHOT"
@@ -5055,6 +5294,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.olingo2.Olingo2Component",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo2",
     "version": "3.3.0-SNAPSHOT"
@@ -5076,6 +5316,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.olingo4.Olingo4Component",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo4",
     "version": "3.3.0-SNAPSHOT"
@@ -5097,6 +5338,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -5118,6 +5360,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openshift.builds.OpenshiftBuildsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.3.0-SNAPSHOT"
@@ -5139,6 +5382,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.cinder.CinderComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
     "version": "3.3.0-SNAPSHOT"
@@ -5160,6 +5404,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.glance.GlanceComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
     "version": "3.3.0-SNAPSHOT"
@@ -5181,6 +5426,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.keystone.KeystoneComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
     "version": "3.3.0-SNAPSHOT"
@@ -5202,6 +5448,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.neutron.NeutronComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
     "version": "3.3.0-SNAPSHOT"
@@ -5223,6 +5470,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.nova.NovaComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
     "version": "3.3.0-SNAPSHOT"
@@ -5244,6 +5492,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.swift.SwiftComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
     "version": "3.3.0-SNAPSHOT"
@@ -5265,6 +5514,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.optaplanner.OptaPlannerComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-optaplanner",
     "version": "3.3.0-SNAPSHOT"
@@ -5286,6 +5536,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.paho.PahoComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-paho",
     "version": "3.3.0-SNAPSHOT"
@@ -5307,6 +5558,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pdf.PdfComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pdf",
     "version": "3.3.0-SNAPSHOT"
@@ -5328,6 +5580,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pg.replication.slot.PgReplicationSlotComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pg-replication-slot",
     "version": "3.3.0-SNAPSHOT"
@@ -5349,6 +5602,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pgevent.PgEventComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pgevent",
     "version": "3.3.0-SNAPSHOT"
@@ -5370,6 +5624,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.platform.http.PlatformHttpComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-platform-http",
     "version": "3.3.0-SNAPSHOT"
@@ -5393,6 +5648,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -5416,6 +5672,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -5437,6 +5694,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pubnub.PubNubComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pubnub",
     "version": "3.3.0-SNAPSHOT"
@@ -5458,6 +5716,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pulsar.PulsarComponent",
     "firstVersion": "2.24.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pulsar",
     "version": "3.3.0-SNAPSHOT"
@@ -5479,6 +5738,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.quartz.QuartzComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quartz",
     "version": "3.3.0-SNAPSHOT"
@@ -5500,6 +5760,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.quickfixj.QuickfixjComponent",
     "firstVersion": "2.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quickfix",
     "version": "3.3.0-SNAPSHOT"
@@ -5521,6 +5782,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rabbitmq.RabbitMQComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rabbitmq",
     "version": "3.3.0-SNAPSHOT"
@@ -5542,6 +5804,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.reactive.streams.ReactiveStreamsComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-reactive-streams",
     "version": "3.3.0-SNAPSHOT"
@@ -5563,6 +5826,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ref.RefComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ref",
     "version": "3.3.0-SNAPSHOT"
@@ -5584,6 +5848,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rest.RestApiComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
     "version": "3.3.0-SNAPSHOT"
@@ -5605,6 +5870,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rest.RestComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
     "version": "3.3.0-SNAPSHOT"
@@ -5626,6 +5892,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rest.openapi.RestOpenApiComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-openapi",
     "version": "3.3.0-SNAPSHOT"
@@ -5647,6 +5914,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rest.swagger.RestSwaggerComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-swagger",
     "version": "3.3.0-SNAPSHOT"
@@ -5668,6 +5936,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.robotframework.RobotFrameworkComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-robotframework",
     "version": "3.3.0-SNAPSHOT"
@@ -5689,6 +5958,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rss.RssComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rss",
     "version": "3.3.0-SNAPSHOT"
@@ -5710,6 +5980,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.saga.SagaComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saga",
     "version": "3.3.0-SNAPSHOT"
@@ -5731,6 +6002,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.salesforce.SalesforceComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-salesforce",
     "version": "3.3.0-SNAPSHOT"
@@ -5752,6 +6024,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sap.netweaver.NetWeaverComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sap-netweaver",
     "version": "3.3.0-SNAPSHOT"
@@ -5773,6 +6046,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.scheduler.SchedulerComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-scheduler",
     "version": "3.3.0-SNAPSHOT"
@@ -5794,6 +6068,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.schematron.SchematronComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-schematron",
     "version": "3.3.0-SNAPSHOT"
@@ -5815,6 +6090,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.scp.ScpComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsch",
     "version": "3.3.0-SNAPSHOT"
@@ -5836,6 +6112,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.seda.SedaComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-seda",
     "version": "3.3.0-SNAPSHOT"
@@ -5857,6 +6134,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.service.ServiceComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-service",
     "version": "3.3.0-SNAPSHOT"
@@ -5878,6 +6156,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.servicenow.ServiceNowComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servicenow",
     "version": "3.3.0-SNAPSHOT"
@@ -5899,6 +6178,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.servlet.ServletComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servlet",
     "version": "3.3.0-SNAPSHOT"
@@ -5920,6 +6200,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.remote.SftpComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
     "version": "3.3.0-SNAPSHOT"
@@ -5942,6 +6223,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sip.SipComponent",
     "firstVersion": "2.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sip",
     "version": "3.3.0-SNAPSHOT"
@@ -5964,6 +6246,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sip.SipComponent",
     "firstVersion": "2.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sip",
     "version": "3.3.0-SNAPSHOT"
@@ -5985,6 +6268,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms2.Sjms2Component",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms2",
     "version": "3.3.0-SNAPSHOT"
@@ -6006,6 +6290,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms.batch.SjmsBatchComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
     "version": "3.3.0-SNAPSHOT"
@@ -6027,6 +6312,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms.SjmsComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
     "version": "3.3.0-SNAPSHOT"
@@ -6048,6 +6334,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.slack.SlackComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-slack",
     "version": "3.3.0-SNAPSHOT"
@@ -6070,6 +6357,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.smpp.SmppComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
     "version": "3.3.0-SNAPSHOT"
@@ -6092,6 +6380,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.smpp.SmppComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
     "version": "3.3.0-SNAPSHOT"
@@ -6115,6 +6404,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -6138,6 +6428,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
     "version": "3.3.0-SNAPSHOT"
@@ -6159,6 +6450,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.snmp.SnmpComponent",
     "firstVersion": "2.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-snmp",
     "version": "3.3.0-SNAPSHOT"
@@ -6181,6 +6473,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.solr.SolrComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
     "version": "3.3.0-SNAPSHOT"
@@ -6203,6 +6496,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.solr.SolrComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
     "version": "3.3.0-SNAPSHOT"
@@ -6225,6 +6519,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.solr.SolrComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
     "version": "3.3.0-SNAPSHOT"
@@ -6246,6 +6541,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.soroushbot.component.SoroushBotComponent",
     "firstVersion": "3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-soroush",
     "version": "3.3.0-SNAPSHOT"
@@ -6267,6 +6563,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spark.SparkComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spark",
     "version": "3.3.0-SNAPSHOT"
@@ -6288,6 +6585,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.splunk.SplunkComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-splunk",
     "version": "3.3.0-SNAPSHOT"
@@ -6309,6 +6607,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.batch.SpringBatchComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-batch",
     "version": "3.3.0-SNAPSHOT"
@@ -6330,6 +6629,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.event.EventComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring",
     "version": "3.3.0-SNAPSHOT"
@@ -6351,6 +6651,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.integration.SpringIntegrationComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-integration",
     "version": "3.3.0-SNAPSHOT"
@@ -6372,6 +6673,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.springldap.SpringLdapComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ldap",
     "version": "3.3.0-SNAPSHOT"
@@ -6393,6 +6695,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.redis.RedisComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-redis",
     "version": "3.3.0-SNAPSHOT"
@@ -6414,6 +6717,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.ws.SpringWebserviceComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ws",
     "version": "3.3.0-SNAPSHOT"
@@ -6435,6 +6739,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sql.SqlComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
     "version": "3.3.0-SNAPSHOT"
@@ -6456,6 +6761,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sql.stored.SqlStoredComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
     "version": "3.3.0-SNAPSHOT"
@@ -6478,6 +6784,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ssh.SshComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ssh",
     "version": "3.3.0-SNAPSHOT"
@@ -6499,6 +6806,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stax.StAXComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stax",
     "version": "3.3.0-SNAPSHOT"
@@ -6520,6 +6828,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stomp.StompComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stomp",
     "version": "3.3.0-SNAPSHOT"
@@ -6541,6 +6850,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stream.StreamComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stream",
     "version": "3.3.0-SNAPSHOT"
@@ -6562,6 +6872,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stringtemplate.StringTemplateComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stringtemplate",
     "version": "3.3.0-SNAPSHOT"
@@ -6583,6 +6894,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stub.StubComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stub",
     "version": "3.3.0-SNAPSHOT"
@@ -6604,6 +6916,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.telegram.TelegramComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-telegram",
     "version": "3.3.0-SNAPSHOT"
@@ -6625,6 +6938,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.thrift.ThriftComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-thrift",
     "version": "3.3.0-SNAPSHOT"
@@ -6646,6 +6960,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.tika.TikaComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tika",
     "version": "3.3.0-SNAPSHOT"
@@ -6667,6 +6982,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.timer.TimerComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-timer",
     "version": "3.3.0-SNAPSHOT"
@@ -6688,6 +7004,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twilio.TwilioComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twilio",
     "version": "3.3.0-SNAPSHOT"
@@ -6709,6 +7026,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
     "version": "3.3.0-SNAPSHOT"
@@ -6730,6 +7048,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twitter.search.TwitterSearchComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
     "version": "3.3.0-SNAPSHOT"
@@ -6751,6 +7070,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twitter.timeline.TwitterTimelineComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
     "version": "3.3.0-SNAPSHOT"
@@ -6772,6 +7092,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.undertow.UndertowComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-undertow",
     "version": "3.3.0-SNAPSHOT"
@@ -6793,6 +7114,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.validator.ValidatorComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-validator",
     "version": "3.3.0-SNAPSHOT"
@@ -6814,6 +7136,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.velocity.VelocityComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-velocity",
     "version": "3.3.0-SNAPSHOT"
@@ -6835,6 +7158,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.vertx.VertxComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx",
     "version": "3.3.0-SNAPSHOT"
@@ -6856,6 +7180,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.vm.VmComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vm",
     "version": "3.3.0-SNAPSHOT"
@@ -6877,6 +7202,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.weather.WeatherComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-weather",
     "version": "3.3.0-SNAPSHOT"
@@ -6898,6 +7224,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.web3j.Web3jComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-web3j",
     "version": "3.3.0-SNAPSHOT"
@@ -6919,6 +7246,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.webhook.WebhookComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-webhook",
     "version": "3.3.0-SNAPSHOT"
@@ -6940,6 +7268,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.websocket.WebsocketComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket",
     "version": "3.3.0-SNAPSHOT"
@@ -6961,6 +7290,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.websocket.jsr356.JSR356WebSocketComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket-jsr356",
     "version": "3.3.0-SNAPSHOT"
@@ -6982,6 +7312,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.weka.WekaComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-weka",
     "version": "3.3.0-SNAPSHOT"
@@ -7003,6 +7334,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.wordpress.WordpressComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-wordpress",
     "version": "3.3.0-SNAPSHOT"
@@ -7024,6 +7356,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.workday.WorkdayComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-workday",
     "version": "3.3.0-SNAPSHOT"
@@ -7045,6 +7378,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xchange.XChangeComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xchange",
     "version": "3.3.0-SNAPSHOT"
@@ -7066,6 +7400,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xj.XJComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xj",
     "version": "3.3.0-SNAPSHOT"
@@ -7087,6 +7422,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xmlsecurity.XmlSignerComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
     "version": "3.3.0-SNAPSHOT"
@@ -7108,6 +7444,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xmlsecurity.XmlVerifierComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
     "version": "3.3.0-SNAPSHOT"
@@ -7130,6 +7467,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xmpp.XmppComponent",
     "firstVersion": "1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmpp",
     "version": "3.3.0-SNAPSHOT"
@@ -7151,6 +7489,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xquery.XQueryComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saxon",
     "version": "3.3.0-SNAPSHOT"
@@ -7172,6 +7511,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xslt.XsltComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt",
     "version": "3.3.0-SNAPSHOT"
@@ -7193,6 +7533,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xslt.saxon.XsltSaxonComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt-saxon",
     "version": "3.3.0-SNAPSHOT"
@@ -7214,6 +7555,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.yammer.YammerComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-yammer",
     "version": "3.3.0-SNAPSHOT"
@@ -7235,6 +7577,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.zendesk.ZendeskComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zendesk",
     "version": "3.3.0-SNAPSHOT"
@@ -7277,6 +7620,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.zookeepermaster.MasterComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zookeeper-master",
     "version": "3.3.0-SNAPSHOT"

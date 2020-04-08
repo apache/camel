@@ -16,6 +16,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jcr.JcrComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcr",
     "version": "3.3.0-SNAPSHOT"

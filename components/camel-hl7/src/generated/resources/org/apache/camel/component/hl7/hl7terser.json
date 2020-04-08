@@ -11,6 +11,7 @@
     "label": "language,hl7",
     "javaType": "org.apache.camel.component.hl7.Hl7TerserLanguage",
     "modelJavaType": "org.apache.camel.model.language.Hl7TerserExpression",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hl7",
     "version": "3.3.0-SNAPSHOT"

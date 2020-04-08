@@ -11,6 +11,7 @@
     "label": "language,xml",
     "javaType": "org.apache.camel.language.xquery.XQueryLanguage",
     "modelJavaType": "org.apache.camel.model.language.XQueryExpression",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saxon",
     "version": "3.3.0-SNAPSHOT"

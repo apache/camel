@@ -16,6 +16,7 @@
     "javaType": "org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent",
     "firstVersion": "2.10.0",
     "verifiers": "parameters,connectivity",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
     "version": "3.3.0-SNAPSHOT"

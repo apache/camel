@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,xml,security",
     "javaType": "org.apache.camel.dataformat.xmlsecurity.XMLSecurityDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.XMLSecurityDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
     "version": "3.3.0-SNAPSHOT"

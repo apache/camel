@@ -15,6 +15,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.webhook.WebhookComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-webhook",
     "version": "3.3.0-SNAPSHOT"

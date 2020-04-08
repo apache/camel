@@ -15,6 +15,7 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rest.RestApiComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
     "version": "3.3.0-SNAPSHOT"

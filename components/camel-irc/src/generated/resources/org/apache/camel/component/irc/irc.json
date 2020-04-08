@@ -16,6 +16,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.irc.IrcComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-irc",
     "version": "3.3.0-SNAPSHOT"

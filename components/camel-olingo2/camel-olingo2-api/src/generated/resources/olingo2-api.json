@@ -5,6 +5,7 @@
     "title": "Olingo2 Api",
     "description": "Camel Olingo2 API",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo2-api",
     "version": "3.3.0-SNAPSHOT"

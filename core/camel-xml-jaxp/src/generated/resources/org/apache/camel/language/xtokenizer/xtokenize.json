@@ -11,6 +11,7 @@
     "label": "language,core,xml",
     "javaType": "org.apache.camel.language.xtokenizer.XMLTokenizeLanguage",
     "modelJavaType": "org.apache.camel.model.language.XMLTokenizerExpression",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xml-jaxp",
     "version": "3.3.0-SNAPSHOT"

@@ -11,6 +11,7 @@
     "label": "dataformat,transformation,xml,json",
     "javaType": "org.apache.camel.dataformat.xstream.XStreamDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.XStreamDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xstream",
     "version": "3.3.0-SNAPSHOT"
