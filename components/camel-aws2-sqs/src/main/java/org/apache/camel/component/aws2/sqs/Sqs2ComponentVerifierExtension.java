@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.sqs;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -66,6 +67,10 @@ public class Sqs2ComponentVerifierExtension extends DefaultComponentVerifierExte
 
         try {
             Sqs2Configuration configuration = setProperties(new Sqs2Configuration(), parameters);
+            if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             SqsClientBuilder clientBuilder = SqsClient.builder();
             SqsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
