@@ -23,9 +23,7 @@ import java.io.FileInputStream;
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,11 +39,7 @@ public class BlobServiceBlockConsumerTest extends CamelTestSupport {
     @Test
     @Ignore
     public void testGetBlockBlob() throws Exception {
-        templateStart.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Block Blob");
-            }
-        });
+        templateStart.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Block Blob"));
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "facebook",
     "scheme": "facebook",
     "extendsScheme": "",
     "syntax": "facebook:methodName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.facebook.FacebookComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-facebook",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "clientURL": { "kind": "property", "displayName": "Client URL", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.facebook.config.FacebookConfiguration", "configurationField": "configuration", "description": "Facebook4J API client URL" },

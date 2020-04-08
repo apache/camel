@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "zookeeper",
     "scheme": "zookeeper",
     "extendsScheme": "",
     "syntax": "zookeeper:serverUrls\/path",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.zookeeper.ZooKeeperComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zookeeper",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "listChildren": { "kind": "property", "displayName": "List Children", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.zookeeper.ZooKeeperConfiguration", "configurationField": "configuration", "description": "Whether the children of the node should be listed" },

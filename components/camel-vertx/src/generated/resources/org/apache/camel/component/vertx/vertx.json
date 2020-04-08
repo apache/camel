@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "vertx",
     "scheme": "vertx",
     "extendsScheme": "",
     "syntax": "vertx:address",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.vertx.VertxComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "host": { "kind": "property", "displayName": "Host", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Hostname for creating an embedded clustered EventBus" },

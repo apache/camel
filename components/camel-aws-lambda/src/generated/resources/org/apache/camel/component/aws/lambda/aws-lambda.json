@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws-lambda",
     "scheme": "aws-lambda",
     "extendsScheme": "",
     "syntax": "aws-lambda:function",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.lambda.LambdaComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-lambda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.aws.lambda.LambdaConfiguration", "deprecated": false, "secret": false, "description": "The AWS Lambda default configuration" },

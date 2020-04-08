@@ -367,7 +367,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         // flatten name
         if (name != null && endpoint.isFlatten()) {
             // check for both windows and unix separators
-            int pos = Math.max(name.lastIndexOf("/"), name.lastIndexOf("\\"));
+            int pos = Math.max(name.lastIndexOf('/'), name.lastIndexOf("\\"));
             if (pos != -1) {
                 name = name.substring(pos + 1);
             }
@@ -428,7 +428,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         // check for both windows and unix separators
-        int pos = Math.max(answer.lastIndexOf("/"), answer.lastIndexOf("\\"));
+        int pos = Math.max(answer.lastIndexOf('/'), answer.lastIndexOf("\\"));
         if (pos == -1) {
             // no path so use temp name as calculated
             answer = tempName;

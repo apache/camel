@@ -125,6 +125,10 @@ The classes from `org.apache.camel.impl` that are intended to support Camel deve
 
 The `LanguageAnnotation` annotation class has been moved from package `org.apache.camel.language` to `org.apache.camel.support.language`.
 
+== Migrating DefaultShutdownStrategy
+
+The `DefaultShutdownStrategy` class has been moved from package `org.apache.camel.impl` to `org.apache.camel.impl.engine`.
+
 == Deprecated APIs and Components
 
 All deprecated APIs and components from Camel 2.x have been removed in Camel 3.
@@ -383,9 +387,9 @@ is now SHA256withRSA (before it was SHA1WithDSA).
 
 === Crypto DataFormat
 
-The default encryption algorithm has changed for the Crypto (JCE) DataFormat - 
+The default encryption algorithm has changed for the Crypto (JCE) DataFormat -
 it is now required to set a value for it (meaning that the default is null).
-Before the default value was "DES/CBC/PKCS5Padding". 
+Before the default value was "DES/CBC/PKCS5Padding".
 
 === JSon DataFormat
 

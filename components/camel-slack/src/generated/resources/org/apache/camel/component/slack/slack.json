@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "slack",
     "scheme": "slack",
     "extendsScheme": "",
     "syntax": "slack:channel",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.slack.SlackComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-slack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "webhookUrl": { "kind": "property", "displayName": "Webhook Url", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The incoming webhook URL" },

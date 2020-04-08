@@ -27,7 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.apache.camel.component.azure.blob.BlobServiceComponent.MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE;
+import static org.apache.camel.component.azure.blob.BlobServiceComponent.MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.ACCOUNT_NAME;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.BLOB_NAME;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CONTAINER_NAME;
@@ -93,7 +93,7 @@ public class MissingCredentialsTest extends CamelTestSupport {
     // Missing Credentials Blob Tests
     @Test
     public void createBlobEndpointWithoutCredentials() {
-        createEndpointWithoutCredentials(missingCredentialsBlobUriEndoint, MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsBlobUriEndoint, MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
     }
 
     @Test
@@ -105,12 +105,12 @@ public class MissingCredentialsTest extends CamelTestSupport {
 
     @Test
     public void createBlobEndpointWithoutCredentialsAccountName() {
-        createEndpointWithoutCredentials(missingCredentialsAccountNameBlobUriEndoint, MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsAccountNameBlobUriEndoint, MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
     }
 
     @Test
     public void createBlobEndpointWithoutCredentialsAccountKey() {
-        createEndpointWithoutCredentials(missingCredentialsAccountKeyBlobUriEndoint, MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsAccountKeyBlobUriEndoint, MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
     }
 
     // Missing Credentials Queue Tests
@@ -147,7 +147,7 @@ public class MissingCredentialsTest extends CamelTestSupport {
     @Test
     public void testBlobClientWithoutAnonymousCredentials() throws Exception {
         exceptionRule.expect(ResolveEndpointFailedException.class);
-        exceptionRule.expectMessage(MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
+        exceptionRule.expectMessage(MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
         CloudBlockBlob client =
                 new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
                         StorageCredentialsAnonymous.ANONYMOUS);
@@ -158,7 +158,7 @@ public class MissingCredentialsTest extends CamelTestSupport {
     @Test
     public void testBlobClientWithoutCredentials() throws Exception {
         exceptionRule.expect(ResolveEndpointFailedException.class);
-        exceptionRule.expectMessage(MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
+        exceptionRule.expectMessage(MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
         CloudBlockBlob client =
                 new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
         context.getRegistry().bind("azureBlobClient", client);

@@ -64,7 +64,7 @@ public class ModelParserTest {
         if (url.startsWith("file:")) {
             url = url.substring("file:".length(), url.indexOf("barInterceptorRoute.xml"));
         } else if (url.startsWith("jar:file:")) {
-            url = url.substring("jar:file:".length(), url.indexOf("!"));
+            url = url.substring("jar:file:".length(), url.indexOf('!'));
         }
         return Paths.get(url);
     }

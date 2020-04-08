@@ -11,9 +11,10 @@
     "label": "language,xml",
     "javaType": "org.apache.camel.language.xquery.XQueryLanguage",
     "modelJavaType": "org.apache.camel.model.language.XQueryExpression",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saxon",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },

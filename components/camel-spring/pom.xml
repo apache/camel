@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>3.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring</artifactId>
@@ -210,9 +210,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>${woodstox-version}</version>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>${woodstox-core-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -638,6 +638,7 @@
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
+                    <isOffline>${camel.javadoc.offline}</isOffline>
 
                     <groups>
                         <group>
@@ -705,6 +706,7 @@
                                 <link>http://download.oracle.com/javaee/7/api/</link>
                                 <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
                             </links>
+                            <isOffline>${camel.javadoc.offline}</isOffline>
                             <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
                             <linksource>true</linksource>
                             <source>${jdk.version}</source>

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-ddbstream",
     "scheme": "aws2-ddbstream",
     "extendsScheme": "",
     "syntax": "aws2-ddbstream:tableName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ddbstream.Ddb2StreamComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonDynamoDbStreamsClient": { "kind": "property", "displayName": "Amazon Dynamo Db Streams Client", "group": "consumer", "label": "consumer", "required": false, "type": "object", "javaType": "software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration", "configurationField": "configuration", "description": "Amazon DynamoDB client to use for all requests for this endpoint" },

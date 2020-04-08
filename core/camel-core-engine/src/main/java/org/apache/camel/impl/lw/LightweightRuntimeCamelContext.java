@@ -108,6 +108,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
@@ -1511,6 +1512,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
         throw new UnsupportedOperationException();
     }
 

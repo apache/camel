@@ -46,7 +46,7 @@ public final class HttpHelper {
             throw new ProtocolException("Invalid HTTP version string: " + s);
         }
         int i1 = "HTTP/".length();
-        int i2 = s.indexOf(".", i1);
+        int i2 = s.indexOf('.', i1);
         if (i2 == -1) {
             throw new ProtocolException("Invalid HTTP version number: " + s);
         }

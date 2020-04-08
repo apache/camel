@@ -9,21 +9,6 @@ xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
-== Upgrading Camel 3.1 to 3.1
-
-=== Rest Configuration
-
-The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
-
-The following methods have been removed:
-
-* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
-* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
-* org.apache.camel.CamelContext#getRestConfigurations
-
-
-https://issues.apache.org/jira/browse/CAMEL-13844
-
 == Upgrading Camel 3.0 to 3.1
 
 === camel-ahc, camel-netty-http, camel-undertow
@@ -553,6 +538,27 @@ should be rewritten as:
 
 == Upgrading Camel 3.1 to 3.2
 
+=== Rest Configuration
+
+The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
+
+The following methods have been removed:
+
+* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
+* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
+* org.apache.camel.CamelContext#getRestConfigurations
+
+https://issues.apache.org/jira/browse/CAMEL-13844
+
+=== Camel Cloud
+
+The following `ServiceDiscovery` implementation has been removed: 
+
+* org.apache.camel.impl.cloud.CachingServiceDiscovery
+* org.apache.camel.impl.cloud.CachingServiceDiscoveryFactory
+
+https://issues.apache.org/jira/browse/CAMEL-14813
+
 === Camel with Karaf and OSGi
 
 Camel on Apache Karaf / OSGi has been moved to its own project at: https://github.com/apache/camel-karaf
@@ -587,6 +593,179 @@ The Camel Karaf features are the same as before, you can still install Camel in 
 feature:repo-add camel 3.2.0
 feature:install camel
 ----
+
+==== Other components involved
+
+- Camel-test-blueprint
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-test-karaf
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-karaf</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-test-karaf</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-eventadmin
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-kura
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kura</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-kura</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-osgi-activator
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-osgi-activator</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-osgi-activator</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-paxlogging
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-paxlogging</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-paxlogging</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+==== Introducing a camel-karaf-bom
+
+We introduce a camel-karaf-bom too, so the end-users should be able to have all of this dependencies easier:
+
+[source,xml]
+----
+    <dependencyManagement>
+        <dependencies>
+            <!-- Add Camel BOM -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Add Camel Karaf BOM -->
+            <dependency>
+                <groupId>org.apache.camel.karaf</groupId>
+                <artifactId>camel-karaf-bom</artifactId>
+                <version>${camel.karaf.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+----
+
+In this way you'll get both the boms and all the "goodies"
+
+=== camel-elytron
+
+Transitive dependencies from org.wildfly.security:wildfly-elytron were removed.
+
+=== camel-spark-rest
+
+This component has been removed. Use any of the other REST capable components, such as `camel-jetty`, `camel-netty-http`
+or `camel-undertow`.
 
 === EIPs with cacheSize option
 
@@ -727,7 +906,7 @@ After:
 
 === camel-avro
 
-The avro component and data format has been splitup into two JARs. The dataformat is in `camel-avro` JAR
+The avro component and data format has been split up into two JARs. The dataformat is in `camel-avro` JAR
 and the component in `camel-avro-rpc` JAR.
 
 === camel-infinispan
@@ -808,7 +987,7 @@ Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
 The context scope error handling has been modified a bit.  The processors in those `onException` and
 `onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
 If there is a need to have a single set of processors involved (such as when using a loadbalancer or
-other stateful patterns), then an intermediary route needs to be used. The following exerpt:
+other stateful patterns), then an intermediary route needs to be used. The following excerpt:
 
 [source,java]
 ----
@@ -835,19 +1014,19 @@ out of `camel-core-engine` into separate JAR named `camel-cluster`.
 === Configuring milli seconds
 
 Camel was using a type converter from `String` -> `long` that accepted
-a time pattern which allowed to configure long values such as `2s` for 2 seconds, eg `2000`.
+a time pattern which allowed to configure long values such as `2s` for 2 seconds, e.g. `2000`.
 And more complex such as `8h15m` for 8 hours and 15 minutes.
 
-However as this was implemented as part of `String` -> `long` type convertion
+However as this was implemented as part of `String` -> `long` type conversion
 which then adds a little bit of overhead during routing, when converting from String to plain numbers.
 
-To make Camel routing engine as fast as possible, then this has been removed.
+To make Camel routing engine as fast as possible this feature has been removed.
 
 For example a timer with a 5 second period
 
 [source,java]
 ----
-from("timer:foo?period=5000")
+from("timer:foo?period=5s")
 ----
 
 Should now be specified as numeric only:
@@ -891,3 +1070,17 @@ Its a very slow UUID generator and its not recommended to be used.
 The `org.apache.camel.component.properties.PropertiesFunction` has been moved to `org.apache.camel.spi.PropertiesFunction`
 and its now possible to add custom functions on the `org.apache.camel.spi.PropertiesComponent` interface.
 
+====  JMX Connector configuration removed
+
+The JMX Connector configuration in camel-management has been https://issues.apache.org/jira/browse/CAMEL-14811[removed]
+in Camel 3.2.0. If you want to support the ability to use JMX with Camel remotely, then
+just use the default JVM JMX remote capabilities. For example, use the following (insecure)
+JVM settings to be able to manage Camel remotely on localhost, port 9913:
+
+[source]
+----
+-Dcom.sun.management.jmxremote.port=9913
+-Dcom.sun.management.jmxremote.authenticate=false
+-Dcom.sun.management.jmxremote.ssl=false
+-Djava.rmi.server.hostname=localhost
+----

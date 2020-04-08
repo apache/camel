@@ -67,6 +67,10 @@ public class KinesisFirehose2ComponentVerifierExtension extends DefaultComponent
 
         try {
             KinesisFirehose2Configuration configuration = setProperties(new KinesisFirehose2Configuration(), parameters);
+            if (!FirehoseClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             FirehoseClientBuilder clientBuilder = FirehoseClient.builder();
             FirehoseClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

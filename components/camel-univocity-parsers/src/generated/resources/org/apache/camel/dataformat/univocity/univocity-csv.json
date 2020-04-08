@@ -11,9 +11,10 @@
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat",
     "modelJavaType": "org.apache.camel.model.dataformat.UniVocityCsvDataFormat",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "properties": {
     "quoteAllFields": { "kind": "attribute", "displayName": "Quote All Fields", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether or not all values must be quoted when writing them." },

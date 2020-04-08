@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "servicenow",
     "scheme": "servicenow",
     "extendsScheme": "",
     "syntax": "servicenow:instanceName",
@@ -15,9 +16,10 @@
     "javaType": "org.apache.camel.component.servicenow.ServiceNowComponent",
     "firstVersion": "2.18.0",
     "verifiers": "parameters,connectivity",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servicenow",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.servicenow.ServiceNowConfiguration", "deprecated": false, "secret": false, "description": "Component configuration" },

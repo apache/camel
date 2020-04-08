@@ -97,7 +97,7 @@ public class RouteIdFactory implements NodeIdFactory {
         if (colon > 0) {
             String name = uri.substring(colon + 1);
 
-            int questionMark = name.indexOf("?");
+            int questionMark = name.indexOf('?');
 
             if (questionMark > 0) {
                 return Optional.of(name.substring(0, questionMark));

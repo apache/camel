@@ -50,7 +50,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
+        jaxbContext = (JAXBContext) context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {

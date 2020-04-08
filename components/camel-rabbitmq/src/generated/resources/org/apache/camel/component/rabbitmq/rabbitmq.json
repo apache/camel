@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "rabbitmq",
     "scheme": "rabbitmq",
     "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rabbitmq.RabbitMQComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rabbitmq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "addresses": { "kind": "property", "displayName": "Addresses", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345" },

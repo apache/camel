@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "activemq",
     "scheme": "activemq",
     "extendsScheme": "jms",
     "syntax": "activemq:destinationType:destinationName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.activemq.ActiveMQComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-activemq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "brokerURL": { "kind": "property", "displayName": "Broker URL", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the broker URL to use to connect to ActiveMQ" },

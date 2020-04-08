@@ -56,7 +56,6 @@ import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -104,7 +103,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
-    private ClassLoader projectClassLoader;
     private IndexView indexView;
     private final Map<String, JavaClassSource> sources = new HashMap<>();
 
@@ -219,32 +217,13 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // write json schema file
-        String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
+        String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf('.'));
         String json = JsonMapper.createParameterJsonSchema(eipModel);
         updateResource(
                 resourcesOutputDir.toPath(),
                 packageName.replace('.', '/') + "/" + fileName,
                 json);
 
-    }
-
-    private Class<?> loadClass(String name) {
-        try {
-            return getProjectClassLoader().loadClass(name);
-        } catch (ClassNotFoundException e) {
-            throw (NoClassDefFoundError) new NoClassDefFoundError(name).initCause(e);
-        }
-    }
-
-    private ClassLoader getProjectClassLoader() {
-        if (projectClassLoader == null) {
-            try {
-                projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
-            } catch (DependencyResolutionRequiredException e) {
-                throw new RuntimeException("Unable to create project classloader", e);
-            }
-        }
-        return projectClassLoader;
     }
 
     private IndexView getIndex() {

@@ -42,6 +42,7 @@ import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
@@ -718,6 +719,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> contextProperties = new LinkedHashMap<>();
         Map<String, Object> hystrixProperties = new LinkedHashMap<>();
         Map<String, Object> resilience4jProperties = new LinkedHashMap<>();
+        Map<String, Object> faultToleranceProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
@@ -739,6 +741,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(19);
                 validateOptionAndValue(key, option, value);
                 resilience4jProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.faulttolerance.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(21);
+                validateOptionAndValue(key, option, value);
+                faultToleranceProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.rest.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -788,6 +796,17 @@ public abstract class BaseMainSupport extends BaseService {
             setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, "camel.resilience4j.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
+        if (!faultToleranceProperties.isEmpty()) {
+            LOG.debug("Auto-configuring MicroProfile Fault Tolerance Circuit Breaker EIP from loaded properties: {}", faultToleranceProperties.size());
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            FaultToleranceConfigurationDefinition faultTolerance = model.getFaultToleranceConfiguration(null);
+            if (faultTolerance == null) {
+                faultTolerance = new FaultToleranceConfigurationDefinition();
+                model.setFaultToleranceConfiguration(faultTolerance);
+            }
+            setPropertiesOnTarget(camelContext, faultTolerance, faultToleranceProperties, "camel.faulttolerance.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+        }
         if (!restProperties.isEmpty()) {
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
             RestConfiguration rest = camelContext.getRestConfiguration();
@@ -822,6 +841,13 @@ public abstract class BaseMainSupport extends BaseService {
             Resilience4jConfigurationDefinition resilience4j = model.getResilience4jConfiguration(null);
             resilience4jProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.resilience4j.{}={} on bean: {}", k, v, resilience4j);
+            });
+        }
+        if (!faultToleranceProperties.isEmpty()) {
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            FaultToleranceConfigurationDefinition faulttolerance = model.getFaultToleranceConfiguration(null);
+            faultToleranceProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.faulttolerance.{}={} on bean: {}", k, v, faulttolerance);
             });
         }
         if (!restProperties.isEmpty()) {
@@ -874,7 +900,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.component.properties.")) {
-                int dot = key.indexOf(".", 26);
+                int dot = key.indexOf('.', 26);
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
                 validateOptionAndValue(key, option, value);
@@ -1208,7 +1234,7 @@ public abstract class BaseMainSupport extends BaseService {
                                             Function<String, Iterable<Object>> supplier) {
         if (key.startsWith(keyPrefix)) {
             // grab name
-            final int dot = key.indexOf(".", keyPrefix.length());
+            final int dot = key.indexOf('.', keyPrefix.length());
             final String name = dot == -1 ? key.substring(keyPrefix.length()) : key.substring(keyPrefix.length(), dot);
 
             // enabled is a virtual property

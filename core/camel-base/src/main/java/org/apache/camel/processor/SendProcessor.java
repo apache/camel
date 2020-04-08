@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
@@ -56,7 +58,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected ExchangePattern destinationExchangePattern;
     protected String id;
     protected String routeId;
-    protected volatile long counter;
+    protected final AtomicLong counter = new AtomicLong();
 
     public SendProcessor(Endpoint destination) {
         this(destination, null);
@@ -121,7 +123,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();
 
-        counter++;
+        counter.incrementAndGet();
 
         // if we have a producer then use that as its optimized
         if (producer != null) {
@@ -199,11 +201,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     }
 
     public long getCounter() {
-        return counter;
+        return counter.get();
     }
 
     public void reset() {
-        counter = 0;
+        counter.set(0);
     }
 
     @Override

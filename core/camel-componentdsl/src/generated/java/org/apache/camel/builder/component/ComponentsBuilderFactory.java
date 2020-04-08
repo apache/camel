@@ -1217,6 +1217,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DisruptorVmComponentBuilderFactory.disruptorVm();
     }
     /**
+     * DJL (camel-djl)
+     * Represents a DJL endpoint.
+     * 
+     * Category: deeplearning
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-djl
+     */
+    static org.apache.camel.builder.component.dsl.DjlComponentBuilderFactory.DjlComponentBuilder djl() {
+        return org.apache.camel.builder.component.dsl.DjlComponentBuilderFactory.djl();
+    }
+    /**
      * DNS (camel-dns)
      * To lookup domain information and run DNS queries using DNSJava.
      * 
@@ -3496,18 +3507,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.SparkComponentBuilder spark() {
         return org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.spark();
-    }
-    /**
-     * Spark Rest (camel-spark-rest)
-     * The spark-rest component is used for hosting REST services which has been
-     * defined using Camel rest-dsl.
-     * 
-     * Category: rest
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-spark-rest
-     */
-    static org.apache.camel.builder.component.dsl.SparkRestComponentBuilderFactory.SparkRestComponentBuilder sparkRest() {
-        return org.apache.camel.builder.component.dsl.SparkRestComponentBuilderFactory.sparkRest();
     }
     /**
      * Splunk (camel-splunk)

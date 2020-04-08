@@ -25,6 +25,7 @@ import java.lang.reflect.WildcardType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Utility classes with respect to the class operations.
@@ -80,7 +81,7 @@ public final class ClassUtil {
      * {@link ParameterizedType}, it returns the raw type otherwise it return
      * the casted {@link Class} of the type argument.
      * </p>
-     * 
+     *
      * @param type class or parametrized type
      * @return
      */
@@ -91,7 +92,7 @@ public final class ClassUtil {
     /**
      * Returns true if type is an instance of <code>ParameterizedType</code>
      * else otherwise.
-     * 
+     *
      * @param type type of the artifact
      * @return true if type is an instance of <code>ParameterizedType</code>
      */
@@ -102,7 +103,7 @@ public final class ClassUtil {
     /**
      * Returns true if type is an instance of <code>WildcardType</code> else
      * otherwise.
-     * 
+     *
      * @param type type of the artifact
      * @return true if type is an instance of <code>WildcardType</code>
      */
@@ -112,7 +113,7 @@ public final class ClassUtil {
 
     /**
      * Returns true if rhs is assignable type to the lhs, false otherwise.
-     * 
+     *
      * @param lhs left hand side class
      * @param rhs right hand side class
      * @return true if rhs is assignable to lhs
@@ -200,5 +201,19 @@ public final class ClassUtil {
         }
 
         return null;
+    }
+
+    /**
+     * @param fqAnnotationName a fully qualified runtime annotation name whose presence on the given class is to be
+     *            checked
+     * @param cl the class to check
+     * @return {@code true} if the given {@link Class} is annotated with the given <strong>runtime</strong> annotation;
+     *         {@code false} otherwise
+     */
+    public static boolean hasAnnotation(String fqAnnotationName, Class<?> cl) {
+        return Stream.of(cl.getAnnotations())
+            .map(annotation -> annotation.annotationType().getName())
+            .filter(className -> fqAnnotationName.equals(className))
+            .findFirst().isPresent();
     }
 }

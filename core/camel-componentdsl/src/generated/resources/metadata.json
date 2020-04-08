@@ -1,6 +1,7 @@
 {
   "ActivemqComponentBuilderFactory": {
     "kind": "component",
+    "name": "activemq",
     "scheme": "activemq",
     "extendsScheme": "jms",
     "syntax": "activemq:destinationType:destinationName",
@@ -15,12 +16,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.activemq.ActiveMQComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-activemq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AhcComponentBuilderFactory": {
     "kind": "component",
+    "name": "ahc",
     "scheme": "ahc",
     "extendsScheme": "",
     "syntax": "ahc:httpUri",
@@ -35,12 +38,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.ahc.AhcComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AhcWsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ahc-ws",
     "scheme": "ahc-ws",
     "extendsScheme": "ahc",
     "alternativeSchemes": "ahc-ws,ahc-wss",
@@ -56,12 +61,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ahc.ws.WsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc-ws",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AhcWssComponentBuilderFactory": {
     "kind": "component",
+    "name": "ahc-wss",
     "scheme": "ahc-wss",
     "extendsScheme": "ahc",
     "alternativeSchemes": "ahc-ws,ahc-wss",
@@ -77,12 +84,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ahc.ws.WsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ahc-ws",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AmqpComponentBuilderFactory": {
     "kind": "component",
+    "name": "amqp",
     "scheme": "amqp",
     "extendsScheme": "jms",
     "syntax": "amqp:destinationType:destinationName",
@@ -97,12 +106,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.amqp.AMQPComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-amqp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ApnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "apns",
     "scheme": "apns",
     "extendsScheme": "",
     "syntax": "apns:name",
@@ -117,12 +128,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.apns.ApnsComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-apns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "As2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "as2",
     "scheme": "as2",
     "extendsScheme": "",
     "syntax": "as2:apiName\/methodName",
@@ -137,12 +150,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.as2.AS2Component",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-as2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AsteriskComponentBuilderFactory": {
     "kind": "component",
+    "name": "asterisk",
     "scheme": "asterisk",
     "extendsScheme": "",
     "syntax": "asterisk:name",
@@ -157,12 +172,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.asterisk.AsteriskComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-asterisk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtmosComponentBuilderFactory": {
     "kind": "component",
+    "name": "atmos",
     "scheme": "atmos",
     "extendsScheme": "",
     "syntax": "atmos:name\/operation",
@@ -177,12 +194,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atmos.AtmosComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmos",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtmosphereWebsocketComponentBuilderFactory": {
     "kind": "component",
+    "name": "atmosphere-websocket",
     "scheme": "atmosphere-websocket",
     "extendsScheme": "servlet",
     "syntax": "atmosphere-websocket:servicePath",
@@ -197,12 +216,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atmosphere.websocket.WebsocketComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmosphere-websocket",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomComponentBuilderFactory": {
     "kind": "component",
+    "name": "atom",
     "scheme": "atom",
     "extendsScheme": "",
     "syntax": "atom:feedUri",
@@ -217,12 +238,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.atom.AtomComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atom",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixMapComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-map",
     "scheme": "atomix-map",
     "extendsScheme": "",
     "syntax": "atomix-map:resourceName",
@@ -237,12 +260,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.map.AtomixMapComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixMessagingComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-messaging",
     "scheme": "atomix-messaging",
     "extendsScheme": "",
     "syntax": "atomix-messaging:resourceName",
@@ -257,12 +282,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.messaging.AtomixMessagingComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixMultimapComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-multimap",
     "scheme": "atomix-multimap",
     "extendsScheme": "",
     "syntax": "atomix-multimap:resourceName",
@@ -277,12 +304,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.multimap.AtomixMultiMapComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-queue",
     "scheme": "atomix-queue",
     "extendsScheme": "",
     "syntax": "atomix-queue:resourceName",
@@ -297,12 +326,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.queue.AtomixQueueComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixSetComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-set",
     "scheme": "atomix-set",
     "extendsScheme": "",
     "syntax": "atomix-set:resourceName",
@@ -317,12 +348,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.set.AtomixSetComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AtomixValueComponentBuilderFactory": {
     "kind": "component",
+    "name": "atomix-value",
     "scheme": "atomix-value",
     "extendsScheme": "",
     "syntax": "atomix-value:resourceName",
@@ -337,12 +370,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.value.AtomixValueComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AvroComponentBuilderFactory": {
     "kind": "component",
+    "name": "avro",
     "scheme": "avro",
     "extendsScheme": "",
     "syntax": "avro:transport:host:port\/messageName",
@@ -357,12 +392,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.avro.AvroComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro-rpc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2CwComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-cw",
     "scheme": "aws2-cw",
     "extendsScheme": "",
     "syntax": "aws2-cw:namespace",
@@ -377,12 +414,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.cw.Cw2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-cw",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2DdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ddb",
     "scheme": "aws2-ddb",
     "extendsScheme": "",
     "syntax": "aws2-ddb:tableName",
@@ -397,12 +436,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ddb.Ddb2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2DdbstreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ddbstream",
     "scheme": "aws2-ddbstream",
     "extendsScheme": "",
     "syntax": "aws2-ddbstream:tableName",
@@ -417,12 +458,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ddbstream.Ddb2StreamComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2Ec2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ec2",
     "scheme": "aws2-ec2",
     "extendsScheme": "",
     "syntax": "aws2-ec2:label",
@@ -437,12 +480,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ec2.AWS2EC2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ec2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2EcsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ecs",
     "scheme": "aws2-ecs",
     "extendsScheme": "",
     "syntax": "aws2-ecs:label",
@@ -457,12 +502,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ecs.ECS2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ecs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2EksComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-eks",
     "scheme": "aws2-eks",
     "extendsScheme": "",
     "syntax": "aws2-eks:label",
@@ -477,12 +524,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.eks.EKS2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-eks",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2IamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-iam",
     "scheme": "aws2-iam",
     "extendsScheme": "",
     "syntax": "aws2-iam:label",
@@ -497,12 +546,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.iam.IAM2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-iam",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2KinesisComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-kinesis",
     "scheme": "aws2-kinesis",
     "extendsScheme": "",
     "syntax": "aws2-kinesis:streamName",
@@ -517,12 +568,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.kinesis.Kinesis2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2KinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-kinesis-firehose",
     "scheme": "aws2-kinesis-firehose",
     "extendsScheme": "",
     "syntax": "aws2-kinesis-firehose:streamName",
@@ -537,12 +590,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2KmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-kms",
     "scheme": "aws2-kms",
     "extendsScheme": "",
     "syntax": "aws2-kms:label",
@@ -557,12 +612,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.kms.KMS2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2LambdaComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-lambda",
     "scheme": "aws2-lambda",
     "extendsScheme": "",
     "syntax": "aws2-lambda:function",
@@ -577,12 +634,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.lambda.Lambda2Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-lambda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2MqComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-mq",
     "scheme": "aws2-mq",
     "extendsScheme": "",
     "syntax": "aws2-mq:label",
@@ -597,12 +656,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.mq.MQ2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-mq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2MskComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-msk",
     "scheme": "aws2-msk",
     "extendsScheme": "",
     "syntax": "aws2-msk:label",
@@ -617,12 +678,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.msk.MSK2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-msk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2S3ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-s3",
     "scheme": "aws2-s3",
     "extendsScheme": "",
     "syntax": "aws2-s3:\/\/bucketNameOrArn",
@@ -637,12 +700,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.s3.AWS2S3Component",
     "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-s3",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2SesComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-ses",
     "scheme": "aws2-ses",
     "extendsScheme": "",
     "syntax": "aws2-ses:from",
@@ -657,12 +722,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ses.Ses2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ses",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2SnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-sns",
     "scheme": "aws2-sns",
     "extendsScheme": "",
     "syntax": "aws2-sns:topicNameOrArn",
@@ -677,12 +744,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.sns.Sns2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2SqsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-sqs",
     "scheme": "aws2-sqs",
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
@@ -697,12 +766,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.sqs.Sqs2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sqs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Aws2TranslateComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws2-translate",
     "scheme": "aws2-translate",
     "extendsScheme": "",
     "syntax": "aws2-translate:label",
@@ -717,12 +788,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.translate.Translate2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-translate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsCwComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-cw",
     "scheme": "aws-cw",
     "extendsScheme": "",
     "syntax": "aws-cw:namespace",
@@ -737,12 +810,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.cw.CwComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-cw",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsDdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ddb",
     "scheme": "aws-ddb",
     "extendsScheme": "",
     "syntax": "aws-ddb:tableName",
@@ -757,12 +832,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ddb.DdbComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsDdbstreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ddbstream",
     "scheme": "aws-ddbstream",
     "extendsScheme": "",
     "syntax": "aws-ddbstream:tableName",
@@ -777,12 +854,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ddbstream.DdbStreamComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsEc2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ec2",
     "scheme": "aws-ec2",
     "extendsScheme": "",
     "syntax": "aws-ec2:label",
@@ -797,12 +876,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ec2.EC2Component",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ec2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsEcsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ecs",
     "scheme": "aws-ecs",
     "extendsScheme": "",
     "syntax": "aws-ecs:label",
@@ -817,12 +898,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ecs.ECSComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ecs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsEksComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-eks",
     "scheme": "aws-eks",
     "extendsScheme": "",
     "syntax": "aws-eks:label",
@@ -837,12 +920,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.eks.EKSComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-eks",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsIamComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-iam",
     "scheme": "aws-iam",
     "extendsScheme": "",
     "syntax": "aws-iam:label",
@@ -857,12 +942,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.iam.IAMComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-iam",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsKinesisComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-kinesis",
     "scheme": "aws-kinesis",
     "extendsScheme": "",
     "syntax": "aws-kinesis:streamName",
@@ -877,12 +964,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.kinesis.KinesisComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsKinesisFirehoseComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-kinesis-firehose",
     "scheme": "aws-kinesis-firehose",
     "extendsScheme": "",
     "syntax": "aws-kinesis-firehose:streamName",
@@ -897,12 +986,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.firehose.KinesisFirehoseComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsKmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-kms",
     "scheme": "aws-kms",
     "extendsScheme": "",
     "syntax": "aws-kms:label",
@@ -917,12 +1008,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.kms.KMSComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-kms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsLambdaComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-lambda",
     "scheme": "aws-lambda",
     "extendsScheme": "",
     "syntax": "aws-lambda:function",
@@ -937,12 +1030,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.lambda.LambdaComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-lambda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsMqComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-mq",
     "scheme": "aws-mq",
     "extendsScheme": "",
     "syntax": "aws-mq:label",
@@ -957,12 +1052,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.mq.MQComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-mq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsMskComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-msk",
     "scheme": "aws-msk",
     "extendsScheme": "",
     "syntax": "aws-msk:label",
@@ -977,12 +1074,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.msk.MSKComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-msk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsS3ComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-s3",
     "scheme": "aws-s3",
     "extendsScheme": "",
     "syntax": "aws-s3:\/\/bucketNameOrArn",
@@ -997,12 +1096,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.s3.S3Component",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-s3",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-sdb",
     "scheme": "aws-sdb",
     "extendsScheme": "",
     "syntax": "aws-sdb:domainName",
@@ -1017,12 +1118,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.sdb.SdbComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSesComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-ses",
     "scheme": "aws-ses",
     "extendsScheme": "",
     "syntax": "aws-ses:from",
@@ -1037,12 +1140,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.ses.SesComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-ses",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-sns",
     "scheme": "aws-sns",
     "extendsScheme": "",
     "syntax": "aws-sns:topicNameOrArn",
@@ -1057,12 +1162,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.sns.SnsComponent",
     "firstVersion": "2.8.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSqsComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-sqs",
     "scheme": "aws-sqs",
     "extendsScheme": "",
     "syntax": "aws-sqs:queueNameOrArn",
@@ -1077,12 +1184,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.sqs.SqsComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sqs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsSwfComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-swf",
     "scheme": "aws-swf",
     "extendsScheme": "",
     "syntax": "aws-swf:type",
@@ -1097,12 +1206,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.swf.SWFComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-swf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AwsTranslateComponentBuilderFactory": {
     "kind": "component",
+    "name": "aws-translate",
     "scheme": "aws-translate",
     "extendsScheme": "",
     "syntax": "aws-translate:label",
@@ -1117,12 +1228,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws.translate.TranslateComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-translate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AzureBlobComponentBuilderFactory": {
     "kind": "component",
+    "name": "azure-blob",
     "scheme": "azure-blob",
     "extendsScheme": "",
     "syntax": "azure-blob:containerOrBlobUri",
@@ -1137,12 +1250,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.azure.blob.BlobServiceComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AzureQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "azure-queue",
     "scheme": "azure-queue",
     "extendsScheme": "",
     "syntax": "azure-queue:containerAndQueueUri",
@@ -1157,9 +1272,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.azure.queue.QueueServiceComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "AzureStorageBlobComponentBuilderFactory": {
     "kind": "component",
@@ -1184,6 +1300,7 @@
   },
   "BeanComponentBuilderFactory": {
     "kind": "component",
+    "name": "bean",
     "scheme": "bean",
     "extendsScheme": "",
     "syntax": "bean:beanName",
@@ -1198,12 +1315,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.bean.BeanComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BeanValidatorComponentBuilderFactory": {
     "kind": "component",
+    "name": "bean-validator",
     "scheme": "bean-validator",
     "extendsScheme": "",
     "syntax": "bean-validator:label",
@@ -1218,12 +1337,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.bean.validator.BeanValidatorComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean-validator",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BeanstalkComponentBuilderFactory": {
     "kind": "component",
+    "name": "beanstalk",
     "scheme": "beanstalk",
     "extendsScheme": "",
     "syntax": "beanstalk:connectionSettings",
@@ -1238,12 +1359,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.beanstalk.BeanstalkComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-beanstalk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BonitaComponentBuilderFactory": {
     "kind": "component",
+    "name": "bonita",
     "scheme": "bonita",
     "extendsScheme": "",
     "syntax": "bonita:operation",
@@ -1258,12 +1381,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.bonita.BonitaComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bonita",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BoxComponentBuilderFactory": {
     "kind": "component",
+    "name": "box",
     "scheme": "box",
     "extendsScheme": "",
     "syntax": "box:apiName\/methodName",
@@ -1278,12 +1403,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.box.BoxComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-box",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BraintreeComponentBuilderFactory": {
     "kind": "component",
+    "name": "braintree",
     "scheme": "braintree",
     "extendsScheme": "",
     "syntax": "braintree:apiName\/methodName",
@@ -1298,12 +1425,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.braintree.BraintreeComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-braintree",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "BrowseComponentBuilderFactory": {
     "kind": "component",
+    "name": "browse",
     "scheme": "browse",
     "extendsScheme": "",
     "syntax": "browse:name",
@@ -1318,12 +1447,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.browse.BrowseComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-browse",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CaffeineCacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "caffeine-cache",
     "scheme": "caffeine-cache",
     "extendsScheme": "",
     "syntax": "caffeine-cache:cacheName",
@@ -1338,12 +1469,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.caffeine.cache.CaffeineCacheComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CaffeineLoadcacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "caffeine-loadcache",
     "scheme": "caffeine-loadcache",
     "extendsScheme": "",
     "syntax": "caffeine-loadcache:cacheName",
@@ -1358,12 +1491,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.caffeine.load.CaffeineLoadCacheComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ChatscriptComponentBuilderFactory": {
     "kind": "component",
+    "name": "chatscript",
     "scheme": "chatscript",
     "extendsScheme": "",
     "syntax": "chatscript:host:port\/botName",
@@ -1378,12 +1513,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.chatscript.ChatScriptComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-chatscript",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ChunkComponentBuilderFactory": {
     "kind": "component",
+    "name": "chunk",
     "scheme": "chunk",
     "extendsScheme": "",
     "syntax": "chunk:resourceUri",
@@ -1398,12 +1535,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.chunk.ChunkComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-chunk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ClasComponentBuilderFactory": {
     "kind": "component",
+    "name": "class",
     "scheme": "class",
     "extendsScheme": "",
     "syntax": "class:beanName",
@@ -1418,12 +1557,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.beanclass.ClassComponent",
     "firstVersion": "2.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CmSmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "cm-sms",
     "scheme": "cm-sms",
     "extendsScheme": "",
     "syntax": "cm-sms:host",
@@ -1438,12 +1579,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cm.CMComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cm-sms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CmisComponentBuilderFactory": {
     "kind": "component",
+    "name": "cmis",
     "scheme": "cmis",
     "extendsScheme": "",
     "syntax": "cmis:cmsUrl",
@@ -1458,12 +1601,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cmis.CMISComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cmis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapComponentBuilderFactory": {
     "kind": "component",
+    "name": "coap",
     "scheme": "coap",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1479,12 +1624,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapTcpComponentBuilderFactory": {
     "kind": "component",
+    "name": "coap+tcp",
     "scheme": "coap+tcp",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1500,12 +1647,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapsComponentBuilderFactory": {
     "kind": "component",
+    "name": "coaps",
     "scheme": "coaps",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1521,12 +1670,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CoapsTcpComponentBuilderFactory": {
     "kind": "component",
+    "name": "coaps+tcp",
     "scheme": "coaps+tcp",
     "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
@@ -1542,12 +1693,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.coap.CoAPComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-coap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CometdComponentBuilderFactory": {
     "kind": "component",
+    "name": "cometd",
     "scheme": "cometd",
     "extendsScheme": "",
     "alternativeSchemes": "cometd,cometds",
@@ -1563,12 +1716,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cometd.CometdComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cometd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CometdsComponentBuilderFactory": {
     "kind": "component",
+    "name": "cometds",
     "scheme": "cometds",
     "extendsScheme": "",
     "alternativeSchemes": "cometd,cometds",
@@ -1584,12 +1739,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cometd.CometdComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cometd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ConsulComponentBuilderFactory": {
     "kind": "component",
+    "name": "consul",
     "scheme": "consul",
     "extendsScheme": "",
     "syntax": "consul:apiEndpoint",
@@ -1604,12 +1761,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.consul.ConsulComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-consul",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ControlbusComponentBuilderFactory": {
     "kind": "component",
+    "name": "controlbus",
     "scheme": "controlbus",
     "extendsScheme": "",
     "syntax": "controlbus:command:language",
@@ -1624,12 +1783,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.controlbus.ControlBusComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-controlbus",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CordaComponentBuilderFactory": {
     "kind": "component",
+    "name": "corda",
     "scheme": "corda",
     "extendsScheme": "",
     "syntax": "corda:node",
@@ -1644,12 +1805,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.corda.CordaComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-corda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CouchbaseComponentBuilderFactory": {
     "kind": "component",
+    "name": "couchbase",
     "scheme": "couchbase",
     "extendsScheme": "",
     "syntax": "couchbase:protocol:hostname:port",
@@ -1664,12 +1827,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.couchbase.CouchbaseComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-couchbase",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CouchdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "couchdb",
     "scheme": "couchdb",
     "extendsScheme": "",
     "syntax": "couchdb:protocol:hostname:port\/database",
@@ -1684,12 +1849,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.couchdb.CouchDbComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-couchdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "cql",
     "scheme": "cql",
     "extendsScheme": "",
     "syntax": "cql:beanRef:hosts:port\/keyspace",
@@ -1704,12 +1871,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cassandra.CassandraComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cassandraql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CronComponentBuilderFactory": {
     "kind": "component",
+    "name": "cron",
     "scheme": "cron",
     "extendsScheme": "",
     "syntax": "cron:name",
@@ -1724,12 +1893,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cron.CronComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cron",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CryptoCmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "crypto-cms",
     "scheme": "crypto-cms",
     "extendsScheme": "",
     "syntax": "crypto-cms:cryptoOperation:name",
@@ -1744,12 +1915,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.crypto.cms.CryptoCmsComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto-cms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CryptoComponentBuilderFactory": {
     "kind": "component",
+    "name": "crypto",
     "scheme": "crypto",
     "extendsScheme": "",
     "syntax": "crypto:cryptoOperation:name",
@@ -1764,12 +1937,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.crypto.DigitalSignatureComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CxfComponentBuilderFactory": {
     "kind": "component",
+    "name": "cxf",
     "scheme": "cxf",
     "extendsScheme": "",
     "syntax": "cxf:beanId:address",
@@ -1784,12 +1959,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.cxf.CxfComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "CxfrsComponentBuilderFactory": {
     "kind": "component",
+    "name": "cxfrs",
     "scheme": "cxfrs",
     "extendsScheme": "",
     "syntax": "cxfrs:beanId:address",
@@ -1804,12 +1981,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.cxf.jaxrs.CxfRsComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DataformatComponentBuilderFactory": {
     "kind": "component",
+    "name": "dataformat",
     "scheme": "dataformat",
     "extendsScheme": "",
     "syntax": "dataformat:name:operation",
@@ -1824,12 +2003,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.dataformat.DataFormatComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataformat",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DatasetComponentBuilderFactory": {
     "kind": "component",
+    "name": "dataset",
     "scheme": "dataset",
     "extendsScheme": "",
     "syntax": "dataset:name",
@@ -1844,12 +2025,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.dataset.DataSetComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DatasetTestComponentBuilderFactory": {
     "kind": "component",
+    "name": "dataset-test",
     "scheme": "dataset-test",
     "extendsScheme": "",
     "syntax": "dataset-test:name",
@@ -1864,12 +2047,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.dataset.DataSetTestComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumMongodbComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-mongodb",
     "scheme": "debezium-mongodb",
     "extendsScheme": "",
     "syntax": "debezium-mongodb:name",
@@ -1884,12 +2069,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumMongodbComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-mongodb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumMysqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-mysql",
     "scheme": "debezium-mysql",
     "extendsScheme": "",
     "syntax": "debezium-mysql:name",
@@ -1904,12 +2091,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumMySqlComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-mysql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumPostgresComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-postgres",
     "scheme": "debezium-postgres",
     "extendsScheme": "",
     "syntax": "debezium-postgres:name",
@@ -1924,12 +2113,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumPostgresComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-postgres",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DebeziumSqlserverComponentBuilderFactory": {
     "kind": "component",
+    "name": "debezium-sqlserver",
     "scheme": "debezium-sqlserver",
     "extendsScheme": "",
     "syntax": "debezium-sqlserver:name",
@@ -1944,12 +2135,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.debezium.DebeziumSqlserverComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-sqlserver",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DigitaloceanComponentBuilderFactory": {
     "kind": "component",
+    "name": "digitalocean",
     "scheme": "digitalocean",
     "extendsScheme": "",
     "syntax": "digitalocean:operation",
@@ -1964,12 +2157,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.digitalocean.DigitalOceanComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-digitalocean",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DirectComponentBuilderFactory": {
     "kind": "component",
+    "name": "direct",
     "scheme": "direct",
     "extendsScheme": "",
     "syntax": "direct:name",
@@ -1984,12 +2179,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.direct.DirectComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-direct",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DirectVmComponentBuilderFactory": {
     "kind": "component",
+    "name": "direct-vm",
     "scheme": "direct-vm",
     "extendsScheme": "",
     "syntax": "direct-vm:name",
@@ -2004,12 +2201,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.directvm.DirectVmComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-directvm",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DisruptorComponentBuilderFactory": {
     "kind": "component",
+    "name": "disruptor",
     "scheme": "disruptor",
     "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
@@ -2025,12 +2224,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.disruptor.DisruptorComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DisruptorVmComponentBuilderFactory": {
     "kind": "component",
+    "name": "disruptor-vm",
     "scheme": "disruptor-vm",
     "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
@@ -2046,12 +2247,36 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.disruptor.vm.DisruptorVmComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
+  },
+  "DjlComponentBuilderFactory": {
+    "kind": "component",
+    "name": "djl",
+    "scheme": "djl",
+    "extendsScheme": "",
+    "syntax": "djl:application",
+    "title": "DJL",
+    "description": "Represents a DJL endpoint.",
+    "label": "deeplearning",
+    "deprecated": false,
+    "deprecationNote": "deeplearning",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.djl.DJLComponent",
+    "firstVersion": "3.2.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-djl",
+    "version": "3.3.0-SNAPSHOT"
   },
   "DnsComponentBuilderFactory": {
     "kind": "component",
+    "name": "dns",
     "scheme": "dns",
     "extendsScheme": "",
     "syntax": "dns:dnsType",
@@ -2066,12 +2291,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dns.DnsComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DockerComponentBuilderFactory": {
     "kind": "component",
+    "name": "docker",
     "scheme": "docker",
     "extendsScheme": "",
     "syntax": "docker:operation",
@@ -2086,12 +2313,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.docker.DockerComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-docker",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DozerComponentBuilderFactory": {
     "kind": "component",
+    "name": "dozer",
     "scheme": "dozer",
     "extendsScheme": "",
     "syntax": "dozer:name",
@@ -2106,12 +2335,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dozer.DozerComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dozer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DrillComponentBuilderFactory": {
     "kind": "component",
+    "name": "drill",
     "scheme": "drill",
     "extendsScheme": "",
     "syntax": "drill:host",
@@ -2126,12 +2357,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.drill.DrillComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-drill",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "DropboxComponentBuilderFactory": {
     "kind": "component",
+    "name": "dropbox",
     "scheme": "dropbox",
     "extendsScheme": "",
     "syntax": "dropbox:operation",
@@ -2146,12 +2379,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.dropbox.DropboxComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dropbox",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EhcacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "ehcache",
     "scheme": "ehcache",
     "extendsScheme": "",
     "syntax": "ehcache:cacheName",
@@ -2166,12 +2401,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ehcache.EhcacheComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ehcache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ElasticsearchRestComponentBuilderFactory": {
     "kind": "component",
+    "name": "elasticsearch-rest",
     "scheme": "elasticsearch-rest",
     "extendsScheme": "",
     "syntax": "elasticsearch-rest:clusterName",
@@ -2186,12 +2423,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.elasticsearch.ElasticsearchComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elasticsearch-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ElsqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "elsql",
     "scheme": "elsql",
     "extendsScheme": "",
     "syntax": "elsql:elsqlName:resourceUri",
@@ -2206,12 +2445,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.elsql.ElsqlComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-elsql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EtcdKeysComponentBuilderFactory": {
     "kind": "component",
+    "name": "etcd-keys",
     "scheme": "etcd-keys",
     "extendsScheme": "",
     "syntax": "etcd-keys:path",
@@ -2226,12 +2467,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.etcd.EtcdKeysComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EtcdStatsComponentBuilderFactory": {
     "kind": "component",
+    "name": "etcd-stats",
     "scheme": "etcd-stats",
     "extendsScheme": "",
     "syntax": "etcd-stats:path",
@@ -2246,12 +2489,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.etcd.EtcdStatsComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "EtcdWatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "etcd-watch",
     "scheme": "etcd-watch",
     "extendsScheme": "",
     "syntax": "etcd-watch:path",
@@ -2266,12 +2511,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.etcd.EtcdWatchComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ExecComponentBuilderFactory": {
     "kind": "component",
+    "name": "exec",
     "scheme": "exec",
     "extendsScheme": "",
     "syntax": "exec:executable",
@@ -2286,12 +2533,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.exec.ExecComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-exec",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FacebookComponentBuilderFactory": {
     "kind": "component",
+    "name": "facebook",
     "scheme": "facebook",
     "extendsScheme": "",
     "syntax": "facebook:methodName",
@@ -2306,12 +2555,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.facebook.FacebookComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-facebook",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FhirComponentBuilderFactory": {
     "kind": "component",
+    "name": "fhir",
     "scheme": "fhir",
     "extendsScheme": "",
     "syntax": "fhir:apiName\/methodName",
@@ -2326,12 +2577,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.fhir.FhirComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fhir",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FileComponentBuilderFactory": {
     "kind": "component",
+    "name": "file",
     "scheme": "file",
     "extendsScheme": "",
     "syntax": "file:directoryName",
@@ -2346,12 +2599,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.FileComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FileWatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "file-watch",
     "scheme": "file-watch",
     "extendsScheme": "",
     "syntax": "file-watch:path",
@@ -2366,12 +2621,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.watch.FileWatchComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-file-watch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FlatpackComponentBuilderFactory": {
     "kind": "component",
+    "name": "flatpack",
     "scheme": "flatpack",
     "extendsScheme": "",
     "syntax": "flatpack:type:resourceUri",
@@ -2386,12 +2643,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.flatpack.FlatpackComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flatpack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FlinkComponentBuilderFactory": {
     "kind": "component",
+    "name": "flink",
     "scheme": "flink",
     "extendsScheme": "",
     "syntax": "flink:endpointType",
@@ -2406,12 +2665,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.flink.FlinkComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flink",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FopComponentBuilderFactory": {
     "kind": "component",
+    "name": "fop",
     "scheme": "fop",
     "extendsScheme": "",
     "syntax": "fop:outputType",
@@ -2426,12 +2687,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.fop.FopComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fop",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FreemarkerComponentBuilderFactory": {
     "kind": "component",
+    "name": "freemarker",
     "scheme": "freemarker",
     "extendsScheme": "",
     "syntax": "freemarker:resourceUri",
@@ -2446,12 +2709,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.freemarker.FreemarkerComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-freemarker",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FtpComponentBuilderFactory": {
     "kind": "component",
+    "name": "ftp",
     "scheme": "ftp",
     "extendsScheme": "file",
     "syntax": "ftp:host:port\/directoryName",
@@ -2467,12 +2732,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.remote.FtpComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "FtpsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ftps",
     "scheme": "ftps",
     "extendsScheme": "file",
     "syntax": "ftps:host:port\/directoryName",
@@ -2488,12 +2755,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.remote.FtpsComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GangliaComponentBuilderFactory": {
     "kind": "component",
+    "name": "ganglia",
     "scheme": "ganglia",
     "extendsScheme": "",
     "syntax": "ganglia:host:port",
@@ -2508,12 +2777,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ganglia.GangliaComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ganglia",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GeocoderComponentBuilderFactory": {
     "kind": "component",
+    "name": "geocoder",
     "scheme": "geocoder",
     "extendsScheme": "",
     "syntax": "geocoder:address:latlng",
@@ -2528,12 +2799,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.geocoder.GeoCoderComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-geocoder",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GitComponentBuilderFactory": {
     "kind": "component",
+    "name": "git",
     "scheme": "git",
     "extendsScheme": "",
     "syntax": "git:localPath",
@@ -2548,12 +2821,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.git.GitComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-git",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GithubComponentBuilderFactory": {
     "kind": "component",
+    "name": "github",
     "scheme": "github",
     "extendsScheme": "",
     "syntax": "github:type\/branchName",
@@ -2568,12 +2843,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.github.GitHubComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-github",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleBigqueryComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-bigquery",
     "scheme": "google-bigquery",
     "extendsScheme": "",
     "syntax": "google-bigquery:projectId:datasetId:tableId",
@@ -2588,12 +2865,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.bigquery.GoogleBigQueryComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleBigquerySqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-bigquery-sql",
     "scheme": "google-bigquery-sql",
     "extendsScheme": "",
     "syntax": "google-bigquery-sql:projectId:query",
@@ -2608,12 +2887,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleCalendarComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-calendar",
     "scheme": "google-calendar",
     "extendsScheme": "",
     "syntax": "google-calendar:apiName\/methodName",
@@ -2628,12 +2909,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.calendar.GoogleCalendarComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-calendar",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleCalendarStreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-calendar-stream",
     "scheme": "google-calendar-stream",
     "extendsScheme": "",
     "syntax": "google-calendar-stream:index",
@@ -2648,12 +2931,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-calendar",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleDriveComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-drive",
     "scheme": "google-drive",
     "extendsScheme": "",
     "syntax": "google-drive:apiName\/methodName",
@@ -2668,12 +2953,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.drive.GoogleDriveComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-drive",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleMailComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-mail",
     "scheme": "google-mail",
     "extendsScheme": "",
     "syntax": "google-mail:apiName\/methodName",
@@ -2688,12 +2975,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.mail.GoogleMailComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleMailStreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-mail-stream",
     "scheme": "google-mail-stream",
     "extendsScheme": "",
     "syntax": "google-mail-stream:index",
@@ -2708,12 +2997,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.mail.stream.GoogleMailStreamComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GooglePubsubComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-pubsub",
     "scheme": "google-pubsub",
     "extendsScheme": "",
     "syntax": "google-pubsub:projectId:destinationName",
@@ -2728,12 +3019,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.pubsub.GooglePubsubComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-pubsub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleSheetsComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-sheets",
     "scheme": "google-sheets",
     "extendsScheme": "",
     "syntax": "google-sheets:apiName\/methodName",
@@ -2748,12 +3041,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.sheets.GoogleSheetsComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoogleSheetsStreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "google-sheets-stream",
     "scheme": "google-sheets-stream",
     "extendsScheme": "",
     "syntax": "google-sheets-stream:apiName",
@@ -2768,12 +3063,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GoraComponentBuilderFactory": {
     "kind": "component",
+    "name": "gora",
     "scheme": "gora",
     "extendsScheme": "",
     "syntax": "gora:name",
@@ -2788,12 +3085,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.gora.GoraComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-gora",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GrapeComponentBuilderFactory": {
     "kind": "component",
+    "name": "grape",
     "scheme": "grape",
     "extendsScheme": "",
     "syntax": "grape:defaultCoordinates",
@@ -2808,12 +3107,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.grape.GrapeComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grape",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GraphqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "graphql",
     "scheme": "graphql",
     "extendsScheme": "",
     "syntax": "graphql:httpUri",
@@ -2828,12 +3129,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.graphql.GraphqlComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-graphql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GrpcComponentBuilderFactory": {
     "kind": "component",
+    "name": "grpc",
     "scheme": "grpc",
     "extendsScheme": "",
     "syntax": "grpc:host:port\/service",
@@ -2848,12 +3151,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.grpc.GrpcComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grpc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "GuavaEventbusComponentBuilderFactory": {
     "kind": "component",
+    "name": "guava-eventbus",
     "scheme": "guava-eventbus",
     "extendsScheme": "",
     "syntax": "guava-eventbus:eventBusRef",
@@ -2868,12 +3173,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.guava.eventbus.GuavaEventBusComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-guava-eventbus",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastAtomicvalueComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-atomicvalue",
     "scheme": "hazelcast-atomicvalue",
     "extendsScheme": "",
     "syntax": "hazelcast-atomicvalue:cacheName",
@@ -2888,12 +3195,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastInstanceComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-instance",
     "scheme": "hazelcast-instance",
     "extendsScheme": "",
     "syntax": "hazelcast-instance:cacheName",
@@ -2908,12 +3217,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.instance.HazelcastInstanceComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastListComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-list",
     "scheme": "hazelcast-list",
     "extendsScheme": "",
     "syntax": "hazelcast-list:cacheName",
@@ -2928,12 +3239,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.list.HazelcastListComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastMapComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-map",
     "scheme": "hazelcast-map",
     "extendsScheme": "",
     "syntax": "hazelcast-map:cacheName",
@@ -2948,12 +3261,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.map.HazelcastMapComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastMultimapComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-multimap",
     "scheme": "hazelcast-multimap",
     "extendsScheme": "",
     "syntax": "hazelcast-multimap:cacheName",
@@ -2968,12 +3283,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.multimap.HazelcastMultimapComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-queue",
     "scheme": "hazelcast-queue",
     "extendsScheme": "",
     "syntax": "hazelcast-queue:cacheName",
@@ -2988,12 +3305,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.queue.HazelcastQueueComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastReplicatedmapComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-replicatedmap",
     "scheme": "hazelcast-replicatedmap",
     "extendsScheme": "",
     "syntax": "hazelcast-replicatedmap:cacheName",
@@ -3008,12 +3327,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmapComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastRingbufferComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-ringbuffer",
     "scheme": "hazelcast-ringbuffer",
     "extendsScheme": "",
     "syntax": "hazelcast-ringbuffer:cacheName",
@@ -3028,12 +3349,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastSedaComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-seda",
     "scheme": "hazelcast-seda",
     "extendsScheme": "",
     "syntax": "hazelcast-seda:cacheName",
@@ -3048,12 +3371,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.seda.HazelcastSedaComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastSetComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-set",
     "scheme": "hazelcast-set",
     "extendsScheme": "",
     "syntax": "hazelcast-set:cacheName",
@@ -3068,12 +3393,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.set.HazelcastSetComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HazelcastTopicComponentBuilderFactory": {
     "kind": "component",
+    "name": "hazelcast-topic",
     "scheme": "hazelcast-topic",
     "extendsScheme": "",
     "syntax": "hazelcast-topic:cacheName",
@@ -3088,12 +3415,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HbaseComponentBuilderFactory": {
     "kind": "component",
+    "name": "hbase",
     "scheme": "hbase",
     "extendsScheme": "",
     "syntax": "hbase:tableName",
@@ -3108,12 +3437,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hbase.HBaseComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hbase",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HdfsComponentBuilderFactory": {
     "kind": "component",
+    "name": "hdfs",
     "scheme": "hdfs",
     "extendsScheme": "",
     "syntax": "hdfs:hostName:port\/path",
@@ -3128,12 +3459,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hdfs.HdfsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hdfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HipchatComponentBuilderFactory": {
     "kind": "component",
+    "name": "hipchat",
     "scheme": "hipchat",
     "extendsScheme": "",
     "syntax": "hipchat:protocol:host:port",
@@ -3148,12 +3481,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.hipchat.HipchatComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hipchat",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HttpComponentBuilderFactory": {
     "kind": "component",
+    "name": "http",
     "scheme": "http",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",
@@ -3169,12 +3504,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.http.HttpComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "HttpsComponentBuilderFactory": {
     "kind": "component",
+    "name": "https",
     "scheme": "https",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",
@@ -3190,12 +3527,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.http.HttpComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Iec60870ClientComponentBuilderFactory": {
     "kind": "component",
+    "name": "iec60870-client",
     "scheme": "iec60870-client",
     "extendsScheme": "",
     "syntax": "iec60870-client:uriPath",
@@ -3210,12 +3549,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.iec60870.client.ClientComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Iec60870ServerComponentBuilderFactory": {
     "kind": "component",
+    "name": "iec60870-server",
     "scheme": "iec60870-server",
     "extendsScheme": "",
     "syntax": "iec60870-server:uriPath",
@@ -3230,12 +3571,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.iec60870.server.ServerComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteCacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-cache",
     "scheme": "ignite-cache",
     "extendsScheme": "",
     "syntax": "ignite-cache:cacheName",
@@ -3250,12 +3593,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.cache.IgniteCacheComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteComputeComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-compute",
     "scheme": "ignite-compute",
     "extendsScheme": "",
     "syntax": "ignite-compute:endpointId",
@@ -3270,12 +3615,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.compute.IgniteComputeComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteEventsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-events",
     "scheme": "ignite-events",
     "extendsScheme": "",
     "syntax": "ignite-events:endpointId",
@@ -3290,12 +3637,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.events.IgniteEventsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteIdgenComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-idgen",
     "scheme": "ignite-idgen",
     "extendsScheme": "",
     "syntax": "ignite-idgen:name",
@@ -3310,12 +3659,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.idgen.IgniteIdGenComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteMessagingComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-messaging",
     "scheme": "ignite-messaging",
     "extendsScheme": "",
     "syntax": "ignite-messaging:topic",
@@ -3330,12 +3681,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.messaging.IgniteMessagingComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteQueueComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-queue",
     "scheme": "ignite-queue",
     "extendsScheme": "",
     "syntax": "ignite-queue:name",
@@ -3350,12 +3703,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.queue.IgniteQueueComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IgniteSetComponentBuilderFactory": {
     "kind": "component",
+    "name": "ignite-set",
     "scheme": "ignite-set",
     "extendsScheme": "",
     "syntax": "ignite-set:name",
@@ -3370,12 +3725,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ignite.set.IgniteSetComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ignite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ImapComponentBuilderFactory": {
     "kind": "component",
+    "name": "imap",
     "scheme": "imap",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -3392,12 +3749,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ImapsComponentBuilderFactory": {
     "kind": "component",
+    "name": "imaps",
     "scheme": "imaps",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -3414,12 +3773,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "InfinispanComponentBuilderFactory": {
     "kind": "component",
+    "name": "infinispan",
     "scheme": "infinispan",
     "extendsScheme": "",
     "syntax": "infinispan:cacheName",
@@ -3434,12 +3795,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.infinispan.InfinispanComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-infinispan",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "InfluxdbComponentBuilderFactory": {
     "kind": "component",
+    "name": "influxdb",
     "scheme": "influxdb",
     "extendsScheme": "",
     "syntax": "influxdb:connectionBean",
@@ -3454,12 +3817,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.influxdb.InfluxDbComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-influxdb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IotaComponentBuilderFactory": {
     "kind": "component",
+    "name": "iota",
     "scheme": "iota",
     "extendsScheme": "",
     "syntax": "iota:name",
@@ -3474,12 +3839,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.iota.IOTAComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iota",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IpfsComponentBuilderFactory": {
     "kind": "component",
+    "name": "ipfs",
     "scheme": "ipfs",
     "extendsScheme": "",
     "syntax": "ipfs:ipfsCmd",
@@ -3494,12 +3861,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ipfs.IPFSComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ipfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IrcComponentBuilderFactory": {
     "kind": "component",
+    "name": "irc",
     "scheme": "irc",
     "extendsScheme": "",
     "syntax": "irc:hostname:port",
@@ -3515,12 +3884,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.irc.IrcComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-irc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "IronmqComponentBuilderFactory": {
     "kind": "component",
+    "name": "ironmq",
     "scheme": "ironmq",
     "extendsScheme": "",
     "syntax": "ironmq:queueName",
@@ -3535,12 +3906,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ironmq.IronMQComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ironmq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JbpmComponentBuilderFactory": {
     "kind": "component",
+    "name": "jbpm",
     "scheme": "jbpm",
     "extendsScheme": "",
     "syntax": "jbpm:connectionURL",
@@ -3555,12 +3928,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jbpm.JBPMComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbpm",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JcacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "jcache",
     "scheme": "jcache",
     "extendsScheme": "",
     "syntax": "jcache:cacheName",
@@ -3575,12 +3950,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jcache.JCacheComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JcloudsComponentBuilderFactory": {
     "kind": "component",
+    "name": "jclouds",
     "scheme": "jclouds",
     "extendsScheme": "",
     "syntax": "jclouds:command:providerId",
@@ -3595,12 +3972,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jclouds.JcloudsComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jclouds",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JcrComponentBuilderFactory": {
     "kind": "component",
+    "name": "jcr",
     "scheme": "jcr",
     "extendsScheme": "",
     "syntax": "jcr:host\/base",
@@ -3616,12 +3995,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jcr.JcrComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JdbcComponentBuilderFactory": {
     "kind": "component",
+    "name": "jdbc",
     "scheme": "jdbc",
     "extendsScheme": "",
     "syntax": "jdbc:dataSourceName",
@@ -3636,12 +4017,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jdbc.JdbcComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jdbc",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JettyComponentBuilderFactory": {
     "kind": "component",
+    "name": "jetty",
     "scheme": "jetty",
     "extendsScheme": "http",
     "syntax": "jetty:httpUri",
@@ -3656,12 +4039,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.jetty9.JettyHttpComponent9",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jetty",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JgroupsComponentBuilderFactory": {
     "kind": "component",
+    "name": "jgroups",
     "scheme": "jgroups",
     "extendsScheme": "",
     "syntax": "jgroups:clusterName",
@@ -3676,12 +4061,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jgroups.JGroupsComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JgroupsRaftComponentBuilderFactory": {
     "kind": "component",
+    "name": "jgroups-raft",
     "scheme": "jgroups-raft",
     "extendsScheme": "",
     "syntax": "jgroups-raft:clusterName",
@@ -3696,12 +4083,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jgroups.raft.JGroupsRaftComponent",
     "firstVersion": "2.24.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups-raft",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JingComponentBuilderFactory": {
     "kind": "component",
+    "name": "jing",
     "scheme": "jing",
     "extendsScheme": "",
     "syntax": "jing:resourceUri",
@@ -3716,12 +4105,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.validator.jing.JingComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jing",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JiraComponentBuilderFactory": {
     "kind": "component",
+    "name": "jira",
     "scheme": "jira",
     "extendsScheme": "",
     "syntax": "jira:type",
@@ -3736,12 +4127,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jira.JiraComponent",
     "firstVersion": "3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jira",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "jms",
     "scheme": "jms",
     "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",
@@ -3756,12 +4149,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jms.JmsComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JmxComponentBuilderFactory": {
     "kind": "component",
+    "name": "jmx",
     "scheme": "jmx",
     "extendsScheme": "",
     "syntax": "jmx:serverURL",
@@ -3776,12 +4171,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jmx.JMXComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jmx",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JoltComponentBuilderFactory": {
     "kind": "component",
+    "name": "jolt",
     "scheme": "jolt",
     "extendsScheme": "",
     "syntax": "jolt:resourceUri",
@@ -3796,12 +4193,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jolt.JoltComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jolt",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JooqComponentBuilderFactory": {
     "kind": "component",
+    "name": "jooq",
     "scheme": "jooq",
     "extendsScheme": "",
     "syntax": "jooq:entityType",
@@ -3816,12 +4215,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jooq.JooqComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jooq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JpaComponentBuilderFactory": {
     "kind": "component",
+    "name": "jpa",
     "scheme": "jpa",
     "extendsScheme": "",
     "syntax": "jpa:entityType",
@@ -3836,12 +4237,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jpa.JpaComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jpa",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JsltComponentBuilderFactory": {
     "kind": "component",
+    "name": "jslt",
     "scheme": "jslt",
     "extendsScheme": "",
     "syntax": "jslt:resourceUri",
@@ -3856,12 +4259,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jslt.JsltComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jslt",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "JsonValidatorComponentBuilderFactory": {
     "kind": "component",
+    "name": "json-validator",
     "scheme": "json-validator",
     "extendsScheme": "",
     "syntax": "json-validator:resourceUri",
@@ -3876,12 +4281,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jsonvalidator.JsonValidatorComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-json-validator",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Jt400ComponentBuilderFactory": {
     "kind": "component",
+    "name": "jt400",
     "scheme": "jt400",
     "extendsScheme": "",
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",
@@ -3896,12 +4303,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jt400.Jt400Component",
     "firstVersion": "1.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jt400",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KafkaComponentBuilderFactory": {
     "kind": "component",
+    "name": "kafka",
     "scheme": "kafka",
     "extendsScheme": "",
     "syntax": "kafka:topic",
@@ -3916,12 +4325,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kafka.KafkaComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesConfigMapsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-config-maps",
     "scheme": "kubernetes-config-maps",
     "extendsScheme": "",
     "syntax": "kubernetes-config-maps:masterUrl",
@@ -3936,12 +4347,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.config_maps.KubernetesConfigMapsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesDeploymentsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-deployments",
     "scheme": "kubernetes-deployments",
     "extendsScheme": "",
     "syntax": "kubernetes-deployments:masterUrl",
@@ -3956,12 +4369,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.deployments.KubernetesDeploymentsComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesHpaComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-hpa",
     "scheme": "kubernetes-hpa",
     "extendsScheme": "",
     "syntax": "kubernetes-hpa:masterUrl",
@@ -3976,12 +4391,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.hpa.KubernetesHPAComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesJobComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-job",
     "scheme": "kubernetes-job",
     "extendsScheme": "",
     "syntax": "kubernetes-job:masterUrl",
@@ -3996,12 +4413,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.job.KubernetesJobComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesNamespacesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-namespaces",
     "scheme": "kubernetes-namespaces",
     "extendsScheme": "",
     "syntax": "kubernetes-namespaces:masterUrl",
@@ -4016,12 +4435,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesNodesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-nodes",
     "scheme": "kubernetes-nodes",
     "extendsScheme": "",
     "syntax": "kubernetes-nodes:masterUrl",
@@ -4036,12 +4457,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.nodes.KubernetesNodesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesPersistentVolumesClaimsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-persistent-volumes-claims",
     "scheme": "kubernetes-persistent-volumes-claims",
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes-claims:masterUrl",
@@ -4056,12 +4479,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.persistent_volumes_claims.KubernetesPersistentVolumesClaimsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesPersistentVolumesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-persistent-volumes",
     "scheme": "kubernetes-persistent-volumes",
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes:masterUrl",
@@ -4076,12 +4501,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.persistent_volumes.KubernetesPersistentVolumesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesPodsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-pods",
     "scheme": "kubernetes-pods",
     "extendsScheme": "",
     "syntax": "kubernetes-pods:masterUrl",
@@ -4096,12 +4523,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.pods.KubernetesPodsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesReplicationControllersComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-replication-controllers",
     "scheme": "kubernetes-replication-controllers",
     "extendsScheme": "",
     "syntax": "kubernetes-replication-controllers:masterUrl",
@@ -4116,12 +4545,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.replication_controllers.KubernetesReplicationControllersComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesResourcesQuotaComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-resources-quota",
     "scheme": "kubernetes-resources-quota",
     "extendsScheme": "",
     "syntax": "kubernetes-resources-quota:masterUrl",
@@ -4136,12 +4567,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.resources_quota.KubernetesResourcesQuotaComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesSecretsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-secrets",
     "scheme": "kubernetes-secrets",
     "extendsScheme": "",
     "syntax": "kubernetes-secrets:masterUrl",
@@ -4156,12 +4589,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.secrets.KubernetesSecretsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesServiceAccountsComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-service-accounts",
     "scheme": "kubernetes-service-accounts",
     "extendsScheme": "",
     "syntax": "kubernetes-service-accounts:masterUrl",
@@ -4176,12 +4611,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.service_accounts.KubernetesServiceAccountsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KubernetesServicesComponentBuilderFactory": {
     "kind": "component",
+    "name": "kubernetes-services",
     "scheme": "kubernetes-services",
     "extendsScheme": "",
     "syntax": "kubernetes-services:masterUrl",
@@ -4196,12 +4633,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kubernetes.services.KubernetesServicesComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "KuduComponentBuilderFactory": {
     "kind": "component",
+    "name": "kudu",
     "scheme": "kudu",
     "extendsScheme": "",
     "syntax": "kudu:host:port\/tableName",
@@ -4216,12 +4655,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.kudu.KuduComponent",
     "firstVersion": "3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kudu",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LanguageComponentBuilderFactory": {
     "kind": "component",
+    "name": "language",
     "scheme": "language",
     "extendsScheme": "",
     "syntax": "language:languageName:resourceUri",
@@ -4236,12 +4677,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.language.LanguageComponent",
     "firstVersion": "2.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-language",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LdapComponentBuilderFactory": {
     "kind": "component",
+    "name": "ldap",
     "scheme": "ldap",
     "extendsScheme": "",
     "syntax": "ldap:dirContextName",
@@ -4256,12 +4699,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ldap.LdapComponent",
     "firstVersion": "1.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ldap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LdifComponentBuilderFactory": {
     "kind": "component",
+    "name": "ldif",
     "scheme": "ldif",
     "extendsScheme": "",
     "syntax": "ldif:ldapConnectionName",
@@ -4276,12 +4721,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ldif.LdifComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ldif",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LogComponentBuilderFactory": {
     "kind": "component",
+    "name": "log",
     "scheme": "log",
     "extendsScheme": "",
     "syntax": "log:loggerName",
@@ -4296,12 +4743,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.log.LogComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-log",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LprComponentBuilderFactory": {
     "kind": "component",
+    "name": "lpr",
     "scheme": "lpr",
     "extendsScheme": "",
     "syntax": "lpr:hostname:port\/printername",
@@ -4316,12 +4765,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.printer.PrinterComponent",
     "firstVersion": "2.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-printer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LuceneComponentBuilderFactory": {
     "kind": "component",
+    "name": "lucene",
     "scheme": "lucene",
     "extendsScheme": "",
     "syntax": "lucene:host:operation",
@@ -4336,12 +4787,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.lucene.LuceneComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lucene",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "LumberjackComponentBuilderFactory": {
     "kind": "component",
+    "name": "lumberjack",
     "scheme": "lumberjack",
     "extendsScheme": "",
     "syntax": "lumberjack:host:port",
@@ -4356,12 +4809,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.lumberjack.LumberjackComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-lumberjack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MasterComponentBuilderFactory": {
     "kind": "component",
+    "name": "master",
     "scheme": "master",
     "extendsScheme": "",
     "syntax": "master:namespace:delegateUri",
@@ -4376,12 +4831,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.master.MasterComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-master",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MetricsComponentBuilderFactory": {
     "kind": "component",
+    "name": "metrics",
     "scheme": "metrics",
     "extendsScheme": "",
     "syntax": "metrics:metricsType:metricsName",
@@ -4396,12 +4853,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.metrics.MetricsComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-metrics",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MicrometerComponentBuilderFactory": {
     "kind": "component",
+    "name": "micrometer",
     "scheme": "micrometer",
     "extendsScheme": "",
     "syntax": "micrometer:metricsType:metricsName",
@@ -4416,12 +4875,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.micrometer.MicrometerComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-micrometer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MicroprofileMetricsComponentBuilderFactory": {
     "kind": "component",
+    "name": "microprofile-metrics",
     "scheme": "microprofile-metrics",
     "extendsScheme": "",
     "syntax": "microprofile-metrics:metricType:metricName",
@@ -4436,12 +4897,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.microprofile.metrics.MicroProfileMetricsComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-microprofile-metrics",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MiloClientComponentBuilderFactory": {
     "kind": "component",
+    "name": "milo-client",
     "scheme": "milo-client",
     "extendsScheme": "",
     "syntax": "milo-client:endpointUri",
@@ -4456,12 +4919,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.milo.client.MiloClientComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MiloServerComponentBuilderFactory": {
     "kind": "component",
+    "name": "milo-server",
     "scheme": "milo-server",
     "extendsScheme": "",
     "syntax": "milo-server:itemId",
@@ -4476,12 +4941,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.milo.server.MiloServerComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MinaComponentBuilderFactory": {
     "kind": "component",
+    "name": "mina",
     "scheme": "mina",
     "extendsScheme": "",
     "syntax": "mina:protocol:host:port",
@@ -4496,12 +4963,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mina.MinaComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mina",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MllpComponentBuilderFactory": {
     "kind": "component",
+    "name": "mllp",
     "scheme": "mllp",
     "extendsScheme": "",
     "syntax": "mllp:hostname:port",
@@ -4516,12 +4985,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mllp.MllpComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mllp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MockComponentBuilderFactory": {
     "kind": "component",
+    "name": "mock",
     "scheme": "mock",
     "extendsScheme": "",
     "syntax": "mock:name",
@@ -4536,12 +5007,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.mock.MockComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mock",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MongodbComponentBuilderFactory": {
     "kind": "component",
+    "name": "mongodb",
     "scheme": "mongodb",
     "extendsScheme": "",
     "syntax": "mongodb:connectionBean",
@@ -4556,12 +5029,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mongodb.MongoDbComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MongodbGridfsComponentBuilderFactory": {
     "kind": "component",
+    "name": "mongodb-gridfs",
     "scheme": "mongodb-gridfs",
     "extendsScheme": "",
     "syntax": "mongodb-gridfs:connectionBean",
@@ -4576,12 +5051,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mongodb.gridfs.GridFsComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb-gridfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MsvComponentBuilderFactory": {
     "kind": "component",
+    "name": "msv",
     "scheme": "msv",
     "extendsScheme": "",
     "syntax": "msv:resourceUri",
@@ -4596,12 +5073,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.validator.msv.MsvComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-msv",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MustacheComponentBuilderFactory": {
     "kind": "component",
+    "name": "mustache",
     "scheme": "mustache",
     "extendsScheme": "",
     "syntax": "mustache:resourceUri",
@@ -4616,12 +5095,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mustache.MustacheComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mustache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MvelComponentBuilderFactory": {
     "kind": "component",
+    "name": "mvel",
     "scheme": "mvel",
     "extendsScheme": "",
     "syntax": "mvel:resourceUri",
@@ -4636,12 +5117,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mvel.MvelComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mvel",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MybatisBeanComponentBuilderFactory": {
     "kind": "component",
+    "name": "mybatis-bean",
     "scheme": "mybatis-bean",
     "extendsScheme": "",
     "syntax": "mybatis-bean:beanName:methodName",
@@ -4656,12 +5139,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mybatis.MyBatisBeanComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "MybatisComponentBuilderFactory": {
     "kind": "component",
+    "name": "mybatis",
     "scheme": "mybatis",
     "extendsScheme": "",
     "syntax": "mybatis:statement",
@@ -4676,12 +5161,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mybatis.MyBatisComponent",
     "firstVersion": "2.7.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NagiosComponentBuilderFactory": {
     "kind": "component",
+    "name": "nagios",
     "scheme": "nagios",
     "extendsScheme": "",
     "syntax": "nagios:host:port",
@@ -4696,12 +5183,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nagios.NagiosComponent",
     "firstVersion": "2.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nagios",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NatsComponentBuilderFactory": {
     "kind": "component",
+    "name": "nats",
     "scheme": "nats",
     "extendsScheme": "",
     "syntax": "nats:topic",
@@ -4716,12 +5205,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nats.NatsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nats",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NettyComponentBuilderFactory": {
     "kind": "component",
+    "name": "netty",
     "scheme": "netty",
     "extendsScheme": "",
     "syntax": "netty:protocol:host:port",
@@ -4736,12 +5227,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.netty.NettyComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NettyHttpComponentBuilderFactory": {
     "kind": "component",
+    "name": "netty-http",
     "scheme": "netty-http",
     "extendsScheme": "netty",
     "syntax": "netty-http:protocol:host:port\/path",
@@ -4756,12 +5249,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.netty.http.NettyHttpComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NitriteComponentBuilderFactory": {
     "kind": "component",
+    "name": "nitrite",
     "scheme": "nitrite",
     "extendsScheme": "",
     "syntax": "nitrite:database",
@@ -4776,12 +5271,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nitrite.NitriteComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nitrite",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "NsqComponentBuilderFactory": {
     "kind": "component",
+    "name": "nsq",
     "scheme": "nsq",
     "extendsScheme": "",
     "syntax": "nsq:topic",
@@ -4796,12 +5293,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.nsq.NsqComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nsq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Olingo2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "olingo2",
     "scheme": "olingo2",
     "extendsScheme": "",
     "syntax": "olingo2:apiName\/methodName",
@@ -4816,12 +5315,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.olingo2.Olingo2Component",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Olingo4ComponentBuilderFactory": {
     "kind": "component",
+    "name": "olingo4",
     "scheme": "olingo4",
     "extendsScheme": "",
     "syntax": "olingo4:apiName\/methodName",
@@ -4836,12 +5337,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.olingo4.Olingo4Component",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo4",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenshiftBuildConfigsComponentBuilderFactory": {
     "kind": "component",
+    "name": "openshift-build-configs",
     "scheme": "openshift-build-configs",
     "extendsScheme": "",
     "syntax": "openshift-build-configs:masterUrl",
@@ -4856,12 +5359,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenshiftBuildsComponentBuilderFactory": {
     "kind": "component",
+    "name": "openshift-builds",
     "scheme": "openshift-builds",
     "extendsScheme": "",
     "syntax": "openshift-builds:masterUrl",
@@ -4876,12 +5381,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openshift.builds.OpenshiftBuildsComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackCinderComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-cinder",
     "scheme": "openstack-cinder",
     "extendsScheme": "",
     "syntax": "openstack-cinder:host",
@@ -4896,12 +5403,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.cinder.CinderComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackGlanceComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-glance",
     "scheme": "openstack-glance",
     "extendsScheme": "",
     "syntax": "openstack-glance:host",
@@ -4916,12 +5425,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.glance.GlanceComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackKeystoneComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-keystone",
     "scheme": "openstack-keystone",
     "extendsScheme": "",
     "syntax": "openstack-keystone:host",
@@ -4936,12 +5447,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.keystone.KeystoneComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackNeutronComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-neutron",
     "scheme": "openstack-neutron",
     "extendsScheme": "",
     "syntax": "openstack-neutron:host",
@@ -4956,12 +5469,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.neutron.NeutronComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackNovaComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-nova",
     "scheme": "openstack-nova",
     "extendsScheme": "",
     "syntax": "openstack-nova:host",
@@ -4976,12 +5491,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.nova.NovaComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OpenstackSwiftComponentBuilderFactory": {
     "kind": "component",
+    "name": "openstack-swift",
     "scheme": "openstack-swift",
     "extendsScheme": "",
     "syntax": "openstack-swift:host",
@@ -4996,12 +5513,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.openstack.swift.SwiftComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-openstack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "OptaplannerComponentBuilderFactory": {
     "kind": "component",
+    "name": "optaplanner",
     "scheme": "optaplanner",
     "extendsScheme": "",
     "syntax": "optaplanner:configFile",
@@ -5016,12 +5535,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.optaplanner.OptaPlannerComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-optaplanner",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PahoComponentBuilderFactory": {
     "kind": "component",
+    "name": "paho",
     "scheme": "paho",
     "extendsScheme": "",
     "syntax": "paho:topic",
@@ -5036,12 +5557,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.paho.PahoComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-paho",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PdfComponentBuilderFactory": {
     "kind": "component",
+    "name": "pdf",
     "scheme": "pdf",
     "extendsScheme": "",
     "syntax": "pdf:operation",
@@ -5056,12 +5579,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pdf.PdfComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pdf",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PgReplicationSlotComponentBuilderFactory": {
     "kind": "component",
+    "name": "pg-replication-slot",
     "scheme": "pg-replication-slot",
     "extendsScheme": "",
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",
@@ -5076,12 +5601,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pg.replication.slot.PgReplicationSlotComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pg-replication-slot",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PgeventComponentBuilderFactory": {
     "kind": "component",
+    "name": "pgevent",
     "scheme": "pgevent",
     "extendsScheme": "",
     "syntax": "pgevent:host:port\/database\/channel",
@@ -5096,12 +5623,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pgevent.PgEventComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pgevent",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PlatformHttpComponentBuilderFactory": {
     "kind": "component",
+    "name": "platform-http",
     "scheme": "platform-http",
     "extendsScheme": "",
     "syntax": "platform-http:path",
@@ -5116,12 +5645,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.platform.http.PlatformHttpComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-platform-http",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Pop3ComponentBuilderFactory": {
     "kind": "component",
+    "name": "pop3",
     "scheme": "pop3",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5138,12 +5669,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Pop3sComponentBuilderFactory": {
     "kind": "component",
+    "name": "pop3s",
     "scheme": "pop3s",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5160,12 +5693,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PubnubComponentBuilderFactory": {
     "kind": "component",
+    "name": "pubnub",
     "scheme": "pubnub",
     "extendsScheme": "",
     "syntax": "pubnub:channel",
@@ -5180,12 +5715,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pubnub.PubNubComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pubnub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "PulsarComponentBuilderFactory": {
     "kind": "component",
+    "name": "pulsar",
     "scheme": "pulsar",
     "extendsScheme": "",
     "syntax": "pulsar:persistence:\/\/tenant\/namespace\/topic",
@@ -5200,12 +5737,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.pulsar.PulsarComponent",
     "firstVersion": "2.24.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pulsar",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "QuartzComponentBuilderFactory": {
     "kind": "component",
+    "name": "quartz",
     "scheme": "quartz",
     "extendsScheme": "",
     "syntax": "quartz:groupName\/triggerName",
@@ -5220,12 +5759,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.quartz.QuartzComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quartz",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "QuickfixComponentBuilderFactory": {
     "kind": "component",
+    "name": "quickfix",
     "scheme": "quickfix",
     "extendsScheme": "",
     "syntax": "quickfix:configurationName",
@@ -5240,12 +5781,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.quickfixj.QuickfixjComponent",
     "firstVersion": "2.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quickfix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RabbitmqComponentBuilderFactory": {
     "kind": "component",
+    "name": "rabbitmq",
     "scheme": "rabbitmq",
     "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",
@@ -5260,12 +5803,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rabbitmq.RabbitMQComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rabbitmq",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ReactiveStreamsComponentBuilderFactory": {
     "kind": "component",
+    "name": "reactive-streams",
     "scheme": "reactive-streams",
     "extendsScheme": "",
     "syntax": "reactive-streams:stream",
@@ -5280,12 +5825,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.reactive.streams.ReactiveStreamsComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-reactive-streams",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RefComponentBuilderFactory": {
     "kind": "component",
+    "name": "ref",
     "scheme": "ref",
     "extendsScheme": "",
     "syntax": "ref:name",
@@ -5300,12 +5847,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ref.RefComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ref",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestApiComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest-api",
     "scheme": "rest-api",
     "extendsScheme": "",
     "syntax": "rest-api:path\/contextIdPattern",
@@ -5320,12 +5869,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rest.RestApiComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestEndpointComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest",
     "scheme": "rest",
     "extendsScheme": "",
     "syntax": "rest:method:path:uriTemplate",
@@ -5340,12 +5891,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rest.RestComponent",
     "firstVersion": "2.14.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestOpenapiComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest-openapi",
     "scheme": "rest-openapi",
     "extendsScheme": "",
     "syntax": "rest-openapi:specificationUri#operationId",
@@ -5360,12 +5913,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rest.openapi.RestOpenApiComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-openapi",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RestSwaggerComponentBuilderFactory": {
     "kind": "component",
+    "name": "rest-swagger",
     "scheme": "rest-swagger",
     "extendsScheme": "",
     "syntax": "rest-swagger:specificationUri#operationId",
@@ -5380,12 +5935,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rest.swagger.RestSwaggerComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-swagger",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RobotframeworkComponentBuilderFactory": {
     "kind": "component",
+    "name": "robotframework",
     "scheme": "robotframework",
     "extendsScheme": "",
     "syntax": "robotframework:resourceUri",
@@ -5400,12 +5957,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.robotframework.RobotFrameworkComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-robotframework",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "RssComponentBuilderFactory": {
     "kind": "component",
+    "name": "rss",
     "scheme": "rss",
     "extendsScheme": "atom",
     "syntax": "rss:feedUri",
@@ -5420,12 +5979,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.rss.RssComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rss",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SagaComponentBuilderFactory": {
     "kind": "component",
+    "name": "saga",
     "scheme": "saga",
     "extendsScheme": "",
     "syntax": "saga:action",
@@ -5440,12 +6001,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.saga.SagaComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saga",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SalesforceComponentBuilderFactory": {
     "kind": "component",
+    "name": "salesforce",
     "scheme": "salesforce",
     "extendsScheme": "",
     "syntax": "salesforce:operationName:topicName",
@@ -5460,12 +6023,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.salesforce.SalesforceComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-salesforce",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SapNetweaverComponentBuilderFactory": {
     "kind": "component",
+    "name": "sap-netweaver",
     "scheme": "sap-netweaver",
     "extendsScheme": "",
     "syntax": "sap-netweaver:url",
@@ -5480,12 +6045,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sap.netweaver.NetWeaverComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sap-netweaver",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SchedulerComponentBuilderFactory": {
     "kind": "component",
+    "name": "scheduler",
     "scheme": "scheduler",
     "extendsScheme": "",
     "syntax": "scheduler:name",
@@ -5500,12 +6067,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.scheduler.SchedulerComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-scheduler",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SchematronComponentBuilderFactory": {
     "kind": "component",
+    "name": "schematron",
     "scheme": "schematron",
     "extendsScheme": "",
     "syntax": "schematron:path",
@@ -5520,12 +6089,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.schematron.SchematronComponent",
     "firstVersion": "2.15.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-schematron",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ScpComponentBuilderFactory": {
     "kind": "component",
+    "name": "scp",
     "scheme": "scp",
     "extendsScheme": "ftp",
     "syntax": "scp:host:port\/directoryName",
@@ -5540,12 +6111,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.scp.ScpComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SedaComponentBuilderFactory": {
     "kind": "component",
+    "name": "seda",
     "scheme": "seda",
     "extendsScheme": "",
     "syntax": "seda:name",
@@ -5560,12 +6133,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.seda.SedaComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-seda",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ServiceComponentBuilderFactory": {
     "kind": "component",
+    "name": "service",
     "scheme": "service",
     "extendsScheme": "",
     "syntax": "service:delegateUri",
@@ -5580,12 +6155,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.service.ServiceComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-service",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ServicenowComponentBuilderFactory": {
     "kind": "component",
+    "name": "servicenow",
     "scheme": "servicenow",
     "extendsScheme": "",
     "syntax": "servicenow:instanceName",
@@ -5600,12 +6177,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.servicenow.ServiceNowComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servicenow",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ServletComponentBuilderFactory": {
     "kind": "component",
+    "name": "servlet",
     "scheme": "servlet",
     "extendsScheme": "http",
     "syntax": "servlet:contextPath",
@@ -5620,12 +6199,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.servlet.ServletComponent",
     "firstVersion": "2.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servlet",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SftpComponentBuilderFactory": {
     "kind": "component",
+    "name": "sftp",
     "scheme": "sftp",
     "extendsScheme": "file",
     "syntax": "sftp:host:port\/directoryName",
@@ -5640,12 +6221,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.file.remote.SftpComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ftp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SipComponentBuilderFactory": {
     "kind": "component",
+    "name": "sip",
     "scheme": "sip",
     "extendsScheme": "",
     "alternativeSchemes": "sip,sips",
@@ -5661,12 +6244,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sip.SipComponent",
     "firstVersion": "2.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sip",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SipsComponentBuilderFactory": {
     "kind": "component",
+    "name": "sips",
     "scheme": "sips",
     "extendsScheme": "",
     "alternativeSchemes": "sip,sips",
@@ -5682,12 +6267,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sip.SipComponent",
     "firstVersion": "2.5.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sip",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Sjms2ComponentBuilderFactory": {
     "kind": "component",
+    "name": "sjms2",
     "scheme": "sjms2",
     "extendsScheme": "sjms",
     "syntax": "sjms2:destinationType:destinationName",
@@ -5702,12 +6289,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms2.Sjms2Component",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms2",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SjmsBatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "sjms-batch",
     "scheme": "sjms-batch",
     "extendsScheme": "",
     "syntax": "sjms-batch:destinationName",
@@ -5722,12 +6311,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms.batch.SjmsBatchComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SjmsComponentBuilderFactory": {
     "kind": "component",
+    "name": "sjms",
     "scheme": "sjms",
     "extendsScheme": "",
     "syntax": "sjms:destinationType:destinationName",
@@ -5742,12 +6333,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sjms.SjmsComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sjms",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SlackComponentBuilderFactory": {
     "kind": "component",
+    "name": "slack",
     "scheme": "slack",
     "extendsScheme": "",
     "syntax": "slack:channel",
@@ -5762,12 +6355,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.slack.SlackComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-slack",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmppComponentBuilderFactory": {
     "kind": "component",
+    "name": "smpp",
     "scheme": "smpp",
     "extendsScheme": "",
     "alternativeSchemes": "smpp,smpps",
@@ -5783,12 +6378,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.smpp.SmppComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmppsComponentBuilderFactory": {
     "kind": "component",
+    "name": "smpps",
     "scheme": "smpps",
     "extendsScheme": "",
     "alternativeSchemes": "smpp,smpps",
@@ -5804,12 +6401,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.smpp.SmppComponent",
     "firstVersion": "2.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmtpComponentBuilderFactory": {
     "kind": "component",
+    "name": "smtp",
     "scheme": "smtp",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5826,12 +6425,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SmtpsComponentBuilderFactory": {
     "kind": "component",
+    "name": "smtps",
     "scheme": "smtps",
     "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
@@ -5848,12 +6449,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.mail.MailComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SnmpComponentBuilderFactory": {
     "kind": "component",
+    "name": "snmp",
     "scheme": "snmp",
     "extendsScheme": "",
     "syntax": "snmp:host:port",
@@ -5868,12 +6471,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.snmp.SnmpComponent",
     "firstVersion": "2.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-snmp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SolrComponentBuilderFactory": {
     "kind": "component",
+    "name": "solr",
     "scheme": "solr",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -5889,12 +6494,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.solr.SolrComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SolrcloudComponentBuilderFactory": {
     "kind": "component",
+    "name": "solrCloud",
     "scheme": "solrCloud",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -5910,12 +6517,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.solr.SolrComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SolrsComponentBuilderFactory": {
     "kind": "component",
+    "name": "solrs",
     "scheme": "solrs",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -5931,12 +6540,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.solr.SolrComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SoroushComponentBuilderFactory": {
     "kind": "component",
+    "name": "soroush",
     "scheme": "soroush",
     "extendsScheme": "",
     "syntax": "soroush:action",
@@ -5951,12 +6562,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.soroushbot.component.SoroushBotComponent",
     "firstVersion": "3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-soroush",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SparkComponentBuilderFactory": {
     "kind": "component",
+    "name": "spark",
     "scheme": "spark",
     "extendsScheme": "",
     "syntax": "spark:endpointType",
@@ -5971,32 +6584,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spark.SparkComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spark",
-    "version": "3.2.0-SNAPSHOT"
-  },
-  "SparkRestComponentBuilderFactory": {
-    "kind": "component",
-    "scheme": "spark-rest",
-    "extendsScheme": "",
-    "syntax": "spark-rest:verb:path",
-    "title": "Spark Rest",
-    "description": "The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.",
-    "label": "rest",
-    "deprecated": false,
-    "deprecationNote": "rest",
-    "async": false,
-    "consumerOnly": true,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "javaType": "org.apache.camel.component.sparkrest.SparkRestComponent",
-    "firstVersion": "2.14.0",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-spark-rest",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SplunkComponentBuilderFactory": {
     "kind": "component",
+    "name": "splunk",
     "scheme": "splunk",
     "extendsScheme": "",
     "syntax": "splunk:name",
@@ -6011,12 +6606,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.splunk.SplunkComponent",
     "firstVersion": "2.13.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-splunk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringBatchComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-batch",
     "scheme": "spring-batch",
     "extendsScheme": "",
     "syntax": "spring-batch:jobName",
@@ -6031,12 +6628,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.batch.SpringBatchComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-batch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringEventComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-event",
     "scheme": "spring-event",
     "extendsScheme": "",
     "syntax": "spring-event:name",
@@ -6051,12 +6650,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.event.EventComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringIntegrationComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-integration",
     "scheme": "spring-integration",
     "extendsScheme": "",
     "syntax": "spring-integration:defaultChannel",
@@ -6071,12 +6672,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.integration.SpringIntegrationComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-integration",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringLdapComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-ldap",
     "scheme": "spring-ldap",
     "extendsScheme": "",
     "syntax": "spring-ldap:templateName",
@@ -6091,12 +6694,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.springldap.SpringLdapComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ldap",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringRedisComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-redis",
     "scheme": "spring-redis",
     "extendsScheme": "",
     "syntax": "spring-redis:host:port",
@@ -6111,12 +6716,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.redis.RedisComponent",
     "firstVersion": "2.11.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-redis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SpringWsComponentBuilderFactory": {
     "kind": "component",
+    "name": "spring-ws",
     "scheme": "spring-ws",
     "extendsScheme": "",
     "syntax": "spring-ws:type:lookupKey:webServiceEndpointUri",
@@ -6131,12 +6738,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.ws.SpringWebserviceComponent",
     "firstVersion": "2.6.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ws",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SqlComponentBuilderFactory": {
     "kind": "component",
+    "name": "sql",
     "scheme": "sql",
     "extendsScheme": "",
     "syntax": "sql:query",
@@ -6151,12 +6760,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sql.SqlComponent",
     "firstVersion": "1.4.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SqlStoredComponentBuilderFactory": {
     "kind": "component",
+    "name": "sql-stored",
     "scheme": "sql-stored",
     "extendsScheme": "",
     "syntax": "sql-stored:template",
@@ -6171,12 +6782,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.sql.stored.SqlStoredComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "SshComponentBuilderFactory": {
     "kind": "component",
+    "name": "ssh",
     "scheme": "ssh",
     "extendsScheme": "",
     "syntax": "ssh:host:port",
@@ -6192,12 +6805,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ssh.SshComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ssh",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StaxComponentBuilderFactory": {
     "kind": "component",
+    "name": "stax",
     "scheme": "stax",
     "extendsScheme": "",
     "syntax": "stax:contentHandlerClass",
@@ -6212,12 +6827,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stax.StAXComponent",
     "firstVersion": "2.9.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stax",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StompComponentBuilderFactory": {
     "kind": "component",
+    "name": "stomp",
     "scheme": "stomp",
     "extendsScheme": "",
     "syntax": "stomp:destination",
@@ -6232,12 +6849,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stomp.StompComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stomp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StreamComponentBuilderFactory": {
     "kind": "component",
+    "name": "stream",
     "scheme": "stream",
     "extendsScheme": "",
     "syntax": "stream:kind",
@@ -6252,12 +6871,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stream.StreamComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stream",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StringTemplateComponentBuilderFactory": {
     "kind": "component",
+    "name": "string-template",
     "scheme": "string-template",
     "extendsScheme": "",
     "syntax": "string-template:resourceUri",
@@ -6272,12 +6893,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stringtemplate.StringTemplateComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stringtemplate",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "StubComponentBuilderFactory": {
     "kind": "component",
+    "name": "stub",
     "scheme": "stub",
     "extendsScheme": "",
     "syntax": "stub:name",
@@ -6292,12 +6915,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stub.StubComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stub",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TelegramComponentBuilderFactory": {
     "kind": "component",
+    "name": "telegram",
     "scheme": "telegram",
     "extendsScheme": "",
     "syntax": "telegram:type",
@@ -6312,12 +6937,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.telegram.TelegramComponent",
     "firstVersion": "2.18.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-telegram",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ThriftComponentBuilderFactory": {
     "kind": "component",
+    "name": "thrift",
     "scheme": "thrift",
     "extendsScheme": "",
     "syntax": "thrift:host:port\/service",
@@ -6332,12 +6959,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.thrift.ThriftComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-thrift",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TikaComponentBuilderFactory": {
     "kind": "component",
+    "name": "tika",
     "scheme": "tika",
     "extendsScheme": "",
     "syntax": "tika:operation",
@@ -6352,12 +6981,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.tika.TikaComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tika",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TimerComponentBuilderFactory": {
     "kind": "component",
+    "name": "timer",
     "scheme": "timer",
     "extendsScheme": "",
     "syntax": "timer:timerName",
@@ -6372,12 +7003,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.timer.TimerComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-timer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwilioComponentBuilderFactory": {
     "kind": "component",
+    "name": "twilio",
     "scheme": "twilio",
     "extendsScheme": "",
     "syntax": "twilio:apiName\/methodName",
@@ -6392,12 +7025,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twilio.TwilioComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twilio",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwitterDirectmessageComponentBuilderFactory": {
     "kind": "component",
+    "name": "twitter-directmessage",
     "scheme": "twitter-directmessage",
     "extendsScheme": "",
     "syntax": "twitter-directmessage:user",
@@ -6412,12 +7047,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwitterSearchComponentBuilderFactory": {
     "kind": "component",
+    "name": "twitter-search",
     "scheme": "twitter-search",
     "extendsScheme": "",
     "syntax": "twitter-search:keywords",
@@ -6432,12 +7069,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twitter.search.TwitterSearchComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "TwitterTimelineComponentBuilderFactory": {
     "kind": "component",
+    "name": "twitter-timeline",
     "scheme": "twitter-timeline",
     "extendsScheme": "",
     "syntax": "twitter-timeline:timelineType",
@@ -6452,12 +7091,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.twitter.timeline.TwitterTimelineComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-twitter",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "UndertowComponentBuilderFactory": {
     "kind": "component",
+    "name": "undertow",
     "scheme": "undertow",
     "extendsScheme": "",
     "syntax": "undertow:httpURI",
@@ -6472,12 +7113,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.undertow.UndertowComponent",
     "firstVersion": "2.16.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-undertow",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ValidatorComponentBuilderFactory": {
     "kind": "component",
+    "name": "validator",
     "scheme": "validator",
     "extendsScheme": "",
     "syntax": "validator:resourceUri",
@@ -6492,12 +7135,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.validator.ValidatorComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-validator",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "VelocityComponentBuilderFactory": {
     "kind": "component",
+    "name": "velocity",
     "scheme": "velocity",
     "extendsScheme": "",
     "syntax": "velocity:resourceUri",
@@ -6512,12 +7157,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.velocity.VelocityComponent",
     "firstVersion": "1.2.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-velocity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "VertxComponentBuilderFactory": {
     "kind": "component",
+    "name": "vertx",
     "scheme": "vertx",
     "extendsScheme": "",
     "syntax": "vertx:address",
@@ -6532,12 +7179,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.vertx.VertxComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "VmComponentBuilderFactory": {
     "kind": "component",
+    "name": "vm",
     "scheme": "vm",
     "extendsScheme": "",
     "syntax": "vm:name",
@@ -6552,12 +7201,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.vm.VmComponent",
     "firstVersion": "1.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vm",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WeatherComponentBuilderFactory": {
     "kind": "component",
+    "name": "weather",
     "scheme": "weather",
     "extendsScheme": "",
     "syntax": "weather:name",
@@ -6572,12 +7223,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.weather.WeatherComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-weather",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "Web3jComponentBuilderFactory": {
     "kind": "component",
+    "name": "web3j",
     "scheme": "web3j",
     "extendsScheme": "",
     "syntax": "web3j:nodeAddress",
@@ -6592,12 +7245,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.web3j.Web3jComponent",
     "firstVersion": "2.22.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-web3j",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WebhookComponentBuilderFactory": {
     "kind": "component",
+    "name": "webhook",
     "scheme": "webhook",
     "extendsScheme": "",
     "syntax": "webhook:endpointUri",
@@ -6612,12 +7267,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.webhook.WebhookComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-webhook",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WebsocketComponentBuilderFactory": {
     "kind": "component",
+    "name": "websocket",
     "scheme": "websocket",
     "extendsScheme": "",
     "syntax": "websocket:host:port\/resourceUri",
@@ -6632,12 +7289,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.websocket.WebsocketComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WebsocketJsr356ComponentBuilderFactory": {
     "kind": "component",
+    "name": "websocket-jsr356",
     "scheme": "websocket-jsr356",
     "extendsScheme": "",
     "syntax": "websocket-jsr356:uri",
@@ -6652,12 +7311,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.websocket.jsr356.JSR356WebSocketComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket-jsr356",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WekaComponentBuilderFactory": {
     "kind": "component",
+    "name": "weka",
     "scheme": "weka",
     "extendsScheme": "",
     "syntax": "weka:command",
@@ -6672,12 +7333,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.weka.WekaComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-weka",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WordpressComponentBuilderFactory": {
     "kind": "component",
+    "name": "wordpress",
     "scheme": "wordpress",
     "extendsScheme": "",
     "syntax": "wordpress:operation",
@@ -6692,12 +7355,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.wordpress.WordpressComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-wordpress",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "WorkdayComponentBuilderFactory": {
     "kind": "component",
+    "name": "workday",
     "scheme": "workday",
     "extendsScheme": "",
     "syntax": "workday:entity:path",
@@ -6712,12 +7377,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.workday.WorkdayComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-workday",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XchangeComponentBuilderFactory": {
     "kind": "component",
+    "name": "xchange",
     "scheme": "xchange",
     "extendsScheme": "",
     "syntax": "xchange:name",
@@ -6732,12 +7399,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xchange.XChangeComponent",
     "firstVersion": "2.21.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xchange",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XjComponentBuilderFactory": {
     "kind": "component",
+    "name": "xj",
     "scheme": "xj",
     "extendsScheme": "",
     "syntax": "xj:resourceUri",
@@ -6752,12 +7421,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xj.XJComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xj",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XmlsecuritySignComponentBuilderFactory": {
     "kind": "component",
+    "name": "xmlsecurity-sign",
     "scheme": "xmlsecurity-sign",
     "extendsScheme": "",
     "syntax": "xmlsecurity-sign:name",
@@ -6772,12 +7443,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xmlsecurity.XmlSignerComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XmlsecurityVerifyComponentBuilderFactory": {
     "kind": "component",
+    "name": "xmlsecurity-verify",
     "scheme": "xmlsecurity-verify",
     "extendsScheme": "",
     "syntax": "xmlsecurity-verify:name",
@@ -6792,12 +7465,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xmlsecurity.XmlVerifierComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XmppComponentBuilderFactory": {
     "kind": "component",
+    "name": "xmpp",
     "scheme": "xmpp",
     "extendsScheme": "",
     "syntax": "xmpp:host:port\/participant",
@@ -6813,12 +7488,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xmpp.XmppComponent",
     "firstVersion": "1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmpp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XqueryComponentBuilderFactory": {
     "kind": "component",
+    "name": "xquery",
     "scheme": "xquery",
     "extendsScheme": "",
     "syntax": "xquery:resourceUri",
@@ -6833,12 +7510,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xquery.XQueryComponent",
     "firstVersion": "1.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saxon",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XsltComponentBuilderFactory": {
     "kind": "component",
+    "name": "xslt",
     "scheme": "xslt",
     "extendsScheme": "",
     "syntax": "xslt:resourceUri",
@@ -6853,12 +7532,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xslt.XsltComponent",
     "firstVersion": "1.3.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "XsltSaxonComponentBuilderFactory": {
     "kind": "component",
+    "name": "xslt-saxon",
     "scheme": "xslt-saxon",
     "extendsScheme": "",
     "syntax": "xslt-saxon:resourceUri",
@@ -6873,12 +7554,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.xslt.saxon.XsltSaxonComponent",
     "firstVersion": "3.0.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xslt-saxon",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "YammerComponentBuilderFactory": {
     "kind": "component",
+    "name": "yammer",
     "scheme": "yammer",
     "extendsScheme": "",
     "syntax": "yammer:function",
@@ -6893,12 +7576,14 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.yammer.YammerComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-yammer",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ZendeskComponentBuilderFactory": {
     "kind": "component",
+    "name": "zendesk",
     "scheme": "zendesk",
     "extendsScheme": "",
     "syntax": "zendesk:methodName",
@@ -6913,12 +7598,14 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.zendesk.ZendeskComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zendesk",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ZookeeperComponentBuilderFactory": {
     "kind": "component",
+    "name": "zookeeper",
     "scheme": "zookeeper",
     "extendsScheme": "",
     "syntax": "zookeeper:serverUrls\/path",
@@ -6935,10 +7622,11 @@
     "firstVersion": "2.9.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zookeeper",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "ZookeeperMasterComponentBuilderFactory": {
     "kind": "component",
+    "name": "zookeeper-master",
     "scheme": "zookeeper-master",
     "extendsScheme": "",
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",
@@ -6953,8 +7641,9 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.zookeepermaster.MasterComponent",
     "firstVersion": "2.19.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zookeeper-master",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   }
 }

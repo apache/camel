@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -73,49 +70,97 @@ public class XRefCheckMojo extends AbstractMojo {
         try (Reader r = Files.newBufferedReader(path.resolve(PLAYBOOK))) {
             site = (Map) yaml.loadFromReader(r);
         }
-        Map<String, Path> pages = new HashMap<>();
-        for (Map component : (List<Map>) ((Map) site.get("content")).get("sources")) {
-            String url = (String) component.get("url");
-            String startPath = (String) component.get("start_path");
+        Map<String, String> attributes = (Map) ((Map) site.get("asciidoc")).get("attributes");
+        if (attributes != null) {
+            attributes = attributes.entrySet().stream()
+                    .collect(Collectors.toMap(e -> "{" + e.getKey() + "}", e -> e.getValue()));
+        }
+        Map<String, List<Path>> componentPaths = new HashMap<>();
+        Map<String, List<String>> componentNavs = new HashMap<>();
+        Map<String, Path> pages = new TreeMap<>();
+        for (Map source : (List<Map>) ((Map) site.get("content")).get("sources")) {
+            String url = (String) source.get("url");
+            String startPath = (String) source.get("start_path");
             Path root = path.resolve(url).resolve(startPath).normalize();
             Map antora;
             try (Reader r = Files.newBufferedReader(root.resolve("antora.yml"))) {
                 antora = (Map) yaml.loadFromReader(r);
             }
             String name = (String) antora.get("name");
-            List<Path> navs = ((List<String>) antora.get("nav")).stream()
-                    .map(root::resolve)
-                    .collect(Collectors.toList());
-            for (Path nav : navs) {
-                pages.put(name + "::" + nav.getFileName().toString(), nav);
+            componentPaths.computeIfAbsent(name, n -> new ArrayList<>()).add(root);
+            componentNavs.computeIfAbsent(name, n -> new ArrayList<>()).addAll(
+                    Optional.ofNullable((List<String>) antora.get("nav")).orElse(Collections.emptyList()));
+        }
+        for (String component : componentPaths.keySet()) {
+            for (String nav : componentNavs.get(component)) {
+                Optional<Path> n = componentPaths.get(component).stream().map(p -> p.resolve(nav))
+                    .filter(Files::isRegularFile)
+                    .findFirst();
+                if (n.isPresent()) {
+                    Path f = n.get();
+                    Path m = f.getParent();
+                    while (!m.getParent().getFileName().toString().equals("modules")) {
+                        m = m.getParent();
+                    }
+                    pages.put(component + ":" + m.getFileName().toString() + ":" + f.getFileName().toString(), n.get());
+                }
             }
-            Files.list(root.resolve("modules"))
-                    .filter(Files::isDirectory)
-                    .filter(p -> Files.isDirectory(p.resolve("pages")))
-                    .forEach(module -> {
-                        Path pagesDir = module.resolve("pages");
-                        walk(pagesDir)
-                                .filter(Files::isRegularFile)
-                                .forEach(page -> {
-                                    Path rel = pagesDir.relativize(page);
-                                    pages.put(name + "::" + rel.toString(), page);
-                                });
-                    });
+            for (Path root : componentPaths.get(component)) {
+                Files.list(root.resolve("modules"))
+                        .filter(Files::isDirectory)
+                        .filter(p -> Files.isDirectory(p.resolve("pages")))
+                        .forEach(module -> {
+                            String m = module.getFileName().toString();
+                            Path pagesDir = module.resolve("pages");
+                            walk(pagesDir)
+                                    .filter(Files::isRegularFile)
+                                    .forEach(page -> {
+                                        Path rel = pagesDir.relativize(page);
+                                        pages.put(component + ":" + m + ":" + rel.toString(), page);
+                                    });
+                        });
+            }
         }
 
-        Pattern xref = Pattern.compile("\\b(?<all>xref:(?<link>[^\\[]+.adoc)\\[[^\\]]*\\])");
+        Pattern xref = Pattern.compile("\\b(?<all>xref:(?<link>[^\\[]+.adoc)[^\\]]*\\])");
         for (Map.Entry<String, Path> page : pages.entrySet()) {
+            int firstDot = page.getKey().indexOf(':');
+            int secondDot = firstDot >= 0 ? page.getKey().indexOf(':', firstDot + 1) : -1;
+            String component = secondDot >= 0 ? page.getKey().substring(0, firstDot) : "";
+            String module = secondDot >= 0 ? page.getKey().substring(firstDot + 1, secondDot) : "";
             String str = PackageHelper.loadText(page.getValue());
+            for (Map.Entry<String, String> repl : attributes.entrySet()) {
+                str = str.replace(repl.getKey(), repl.getValue());
+            }
             Matcher m = xref.matcher(str);
             while (m.find()) {
                 String link = m.group("link");
                 String all = m.group("all");
-                if (!link.contains("::")) {
-                    link = page.getKey().substring(0, page.getKey().indexOf("::")) + "::" + link;
+                String[] groups = link.split(":");
+                String cl;
+                String ml;
+                String rem;
+                if (groups.length == 3) {
+                    cl = groups[0];
+                    ml = groups[1].isEmpty() ? "ROOT" : groups[1];
+                    rem = groups[2];
+                } else if (groups.length == 2) {
+                    cl = component;
+                    ml = groups[0];
+                    rem = groups[1];
+                } else {
+                    cl = component;
+                    ml = module;
+                    rem = groups[0];
                 }
+                if (cl.startsWith("latest@")) {
+                    cl = cl.substring("latest@".length());
+                }
+                link = cl + ":" + ml + ":" + rem;
                 if (!pages.containsKey(link)) {
                     long line = str.chars().limit(m.start()).filter(c -> c == '\n').count() + 1;
-                    unresolved.add(page.getKey() + " (" + page.getValue() + ") at line " + line + ": " + all);
+                    String prnt = Stream.of(all.split("\n")).map(String::trim).collect(Collectors.joining(" "));
+                    unresolved.add(page.getKey() + " (" + page.getValue() + ") at line " + line + ": " + prnt);
                 }
             }
         }

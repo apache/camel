@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -31,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "resilience4jConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Configurer
 public class Resilience4jConfigurationDefinition extends Resilience4jConfigurationCommon {
 
     @XmlTransient
@@ -72,8 +74,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.
      */
-    public Resilience4jConfigurationDefinition failureRateThreshold(Float failureRateThreshold) {
-        setFailureRateThreshold(failureRateThreshold != null ? failureRateThreshold.toString() : null);
+    public Resilience4jConfigurationDefinition failureRateThreshold(float failureRateThreshold) {
+        setFailureRateThreshold(Float.toString(failureRateThreshold));
         return this;
     }
 
@@ -82,8 +84,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * <p>
      * The size must be greater than 0. Default size is 10.
      */
-    public Resilience4jConfigurationDefinition permittedNumberOfCallsInHalfOpenState(Integer permittedNumberOfCallsInHalfOpenState) {
-        setPermittedNumberOfCallsInHalfOpenState(permittedNumberOfCallsInHalfOpenState != null ? permittedNumberOfCallsInHalfOpenState.toString() : null);
+    public Resilience4jConfigurationDefinition permittedNumberOfCallsInHalfOpenState(int permittedNumberOfCallsInHalfOpenState) {
+        setPermittedNumberOfCallsInHalfOpenState(Integer.toString(permittedNumberOfCallsInHalfOpenState));
         return this;
     }
 
@@ -101,8 +103,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      *
      * Default slidingWindowSize is 100.
      */
-    public Resilience4jConfigurationDefinition slidingWindowSize(Integer slidingWindowSize) {
-        setSlidingWindowSize(slidingWindowSize != null ? slidingWindowSize.toString() : null);
+    public Resilience4jConfigurationDefinition slidingWindowSize(int slidingWindowSize) {
+        setSlidingWindowSize(Integer.toString(slidingWindowSize));
         return this;
     }
 
@@ -127,8 +129,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      *
      * Default minimumNumberOfCalls is 100
      */
-    public Resilience4jConfigurationDefinition minimumNumberOfCalls(Integer minimumNumberOfCalls) {
-        setMinimumNumberOfCalls(minimumNumberOfCalls != null ? minimumNumberOfCalls.toString() : null);
+    public Resilience4jConfigurationDefinition minimumNumberOfCalls(int minimumNumberOfCalls) {
+        setMinimumNumberOfCalls(Integer.toString(minimumNumberOfCalls));
         return this;
     }
 
@@ -136,8 +138,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array.
      * This may be used to reduce log spam when the circuit breaker is open as the cause of the exceptions is already known (the circuit breaker is short-circuiting calls).
      */
-    public Resilience4jConfigurationDefinition writableStackTraceEnabled(Boolean writableStackTraceEnabled) {
-        setWritableStackTraceEnabled(writableStackTraceEnabled != null ? writableStackTraceEnabled.toString() : null);
+    public Resilience4jConfigurationDefinition writableStackTraceEnabled(boolean writableStackTraceEnabled) {
+        setWritableStackTraceEnabled(Boolean.toString(writableStackTraceEnabled));
         return this;
     }
 
@@ -145,16 +147,16 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open.
      * Default value is 60 seconds.
      */
-    public Resilience4jConfigurationDefinition waitDurationInOpenState(Integer waitDurationInOpenState) {
-        setWaitDurationInOpenState(waitDurationInOpenState != null ? waitDurationInOpenState.toString() : null);
+    public Resilience4jConfigurationDefinition waitDurationInOpenState(int waitDurationInOpenState) {
+        setWaitDurationInOpenState(Integer.toString(waitDurationInOpenState));
         return this;
     }
 
     /**
      * Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed.
      */
-    public Resilience4jConfigurationDefinition automaticTransitionFromOpenToHalfOpenEnabled(Boolean automaticTransitionFromOpenToHalfOpenEnabled) {
-        setAutomaticTransitionFromOpenToHalfOpenEnabled(automaticTransitionFromOpenToHalfOpenEnabled != null ? automaticTransitionFromOpenToHalfOpenEnabled.toString() : null);
+    public Resilience4jConfigurationDefinition automaticTransitionFromOpenToHalfOpenEnabled(boolean automaticTransitionFromOpenToHalfOpenEnabled) {
+        setAutomaticTransitionFromOpenToHalfOpenEnabled(Boolean.toString(automaticTransitionFromOpenToHalfOpenEnabled));
         return this;
     }
 
@@ -165,8 +167,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * The threshold must be greater than 0 and not greater than 100.
      * Default value is 100 percentage which means that all recorded calls must be slower than slowCallDurationThreshold.
      */
-    public Resilience4jConfigurationDefinition slowCallRateThreshold(Float slowCallRateThreshold) {
-        setSlowCallRateThreshold(slowCallRateThreshold != null ? slowCallRateThreshold.toString() : null);
+    public Resilience4jConfigurationDefinition slowCallRateThreshold(float slowCallRateThreshold) {
+        setSlowCallRateThreshold(Float.toString(slowCallRateThreshold));
         return this;
     }
 
@@ -174,8 +176,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage.
      * Default value is 60 seconds.
      */
-    public Resilience4jConfigurationDefinition slowCallDurationThreshold(Integer slowCallDurationThreshold) {
-        setSlowCallDurationThreshold(slowCallDurationThreshold != null ? slowCallDurationThreshold.toString() : null);
+    public Resilience4jConfigurationDefinition slowCallDurationThreshold(int slowCallDurationThreshold) {
+        setSlowCallDurationThreshold(Integer.toString(slowCallDurationThreshold));
         return this;
     }
 
@@ -183,16 +185,16 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Whether bulkhead is enabled or not on the circuit breaker.
      * Default is false.
      */
-    public Resilience4jConfigurationDefinition bulkheadEnabled(Boolean bulkheadEnabled) {
-        setBulkheadEnabled(bulkheadEnabled != null ? bulkheadEnabled.toString() : null);
+    public Resilience4jConfigurationDefinition bulkheadEnabled(boolean bulkheadEnabled) {
+        setBulkheadEnabled(Boolean.toString(bulkheadEnabled));
         return this;
     }
 
     /**
      * Configures the max amount of concurrent calls the bulkhead will support.
      */
-    public Resilience4jConfigurationDefinition bulkheadMaxConcurrentCalls(Integer bulkheadMaxConcurrentCalls) {
-        setBulkheadMaxWaitDuration(bulkheadMaxConcurrentCalls != null ? bulkheadMaxConcurrentCalls.toString() : null);
+    public Resilience4jConfigurationDefinition bulkheadMaxConcurrentCalls(int bulkheadMaxConcurrentCalls) {
+        setBulkheadMaxWaitDuration(Integer.toString(bulkheadMaxConcurrentCalls));
         return this;
     }
 
@@ -203,8 +205,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking
      * an event-loop thread will most likely have a negative effect on application throughput.
      */
-    public Resilience4jConfigurationDefinition bulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
-        setBulkheadMaxWaitDuration(bulkheadMaxWaitDuration != null ? bulkheadMaxWaitDuration.toString() : null);
+    public Resilience4jConfigurationDefinition bulkheadMaxWaitDuration(int bulkheadMaxWaitDuration) {
+        setBulkheadMaxWaitDuration(Integer.toString(bulkheadMaxWaitDuration));
         return this;
     }
 
@@ -212,8 +214,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Whether timeout is enabled or not on the circuit breaker.
      * Default is false.
      */
-    public Resilience4jConfigurationDefinition timeoutEnabled(Boolean timeoutEnabled) {
-        setTimeoutEnabled(timeoutEnabled != null ? timeoutEnabled.toString() : null);
+    public Resilience4jConfigurationDefinition timeoutEnabled(boolean timeoutEnabled) {
+        setTimeoutEnabled(Boolean.toString(timeoutEnabled));
         return this;
     }
 
@@ -229,8 +231,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Configures the thread execution timeout (millis).
      * Default value is 1000 millis (1 second).
      */
-    public Resilience4jConfigurationDefinition timeoutDuration(Integer timeoutDuration) {
-        setTimeoutDuration(timeoutDuration != null ? timeoutDuration.toString() : null);
+    public Resilience4jConfigurationDefinition timeoutDuration(int timeoutDuration) {
+        setTimeoutDuration(Integer.toString(timeoutDuration));
         return this;
     }
 
@@ -238,8 +240,8 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      * Configures whether cancel is called on the running future.
      * Defaults to true.
      */
-    public Resilience4jConfigurationDefinition timeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
-        setTimeoutCancelRunningFuture(timeoutCancelRunningFuture != null ? timeoutCancelRunningFuture.toString() : null);
+    public Resilience4jConfigurationDefinition timeoutCancelRunningFuture(boolean timeoutCancelRunningFuture) {
+        setTimeoutCancelRunningFuture(Boolean.toString(timeoutCancelRunningFuture));
         return this;
     }
 

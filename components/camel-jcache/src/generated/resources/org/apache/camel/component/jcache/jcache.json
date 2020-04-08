@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "jcache",
     "scheme": "jcache",
     "extendsScheme": "",
     "syntax": "jcache:cacheName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.jcache.JCacheComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcache",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "cacheConfiguration": { "kind": "property", "displayName": "Cache Configuration", "group": "common", "required": false, "type": "object", "javaType": "javax.cache.configuration.Configuration", "deprecated": false, "secret": false, "description": "A Configuration for the Cache" },

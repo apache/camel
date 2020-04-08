@@ -5,8 +5,9 @@
     "title": "Box Api",
     "description": "Camel Box API",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-box-api",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   }
 }

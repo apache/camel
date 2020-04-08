@@ -49,6 +49,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.azure.blob.BlobServiceUtil.getBlobName;
+
 /**
  * A Producer which sends messages to the Azure Storage Blob Service
  */
@@ -65,58 +67,57 @@ public class BlobServiceProducer extends DefaultProducer {
         BlobServiceOperations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
             operation = BlobServiceOperations.listBlobs;
-        } else {
-            switch (operation) {
-                case getBlob:
-                    getBlob(exchange);
-                    break;
-                case deleteBlob:
-                    deleteBlob(exchange);
-                    break;
-                case listBlobs:
-                    listBlobs(exchange);
-                    break;
-                case updateBlockBlob:
-                    updateBlockBlob(exchange);
-                    break;
-                case uploadBlobBlocks:
-                    uploadBlobBlocks(exchange);
-                    break;
-                case commitBlobBlockList:
-                    commitBlobBlockList(exchange);
-                    break;
-                case getBlobBlockList:
-                    getBlobBlockList(exchange);
-                    break;
-                case createAppendBlob:
-                    createAppendBlob(exchange);
-                    break;
-                case updateAppendBlob:
-                    updateAppendBlob(exchange);
-                    break;
-                case createPageBlob:
-                    createPageBlob(exchange);
-                    break;
-                case updatePageBlob:
-                    uploadPageBlob(exchange);
-                    break;
-                case resizePageBlob:
-                    resizePageBlob(exchange);
-                    break;
-                case clearPageBlob:
-                    clearPageBlob(exchange);
-                    break;
-                case getPageBlobRanges:
-                    getPageBlobRanges(exchange);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported operation");
-            }
+        }
+        switch (operation) {
+            case getBlob:
+                getBlob(exchange);
+                break;
+            case deleteBlob:
+                deleteBlob(exchange);
+                break;
+            case listBlobs:
+                listBlobs(exchange);
+                break;
+            case updateBlockBlob:
+                updateBlockBlob(exchange);
+                break;
+            case uploadBlobBlocks:
+                uploadBlobBlocks(exchange);
+                break;
+            case commitBlobBlockList:
+                commitBlobBlockList(exchange);
+                break;
+            case getBlobBlockList:
+                getBlobBlockList(exchange);
+                break;
+            case createAppendBlob:
+                createAppendBlob(exchange);
+                break;
+            case updateAppendBlob:
+                updateAppendBlob(exchange);
+                break;
+            case createPageBlob:
+                createPageBlob(exchange);
+                break;
+            case updatePageBlob:
+                uploadPageBlob(exchange);
+                break;
+            case resizePageBlob:
+                resizePageBlob(exchange);
+                break;
+            case clearPageBlob:
+                clearPageBlob(exchange);
+                break;
+            case getPageBlobRanges:
+                getPageBlobRanges(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
     private void listBlobs(Exchange exchange) throws Exception {
-        CloudBlobContainer client = BlobServiceUtil.createBlobContainerClient(getConfiguration());
+        CloudBlobContainer client = BlobServiceUtil.createBlobContainerClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         LOG.trace("Getting the blob list from the container [{}] from exchange [{}]...",
                 getConfiguration().getContainerName(), exchange);
@@ -125,10 +126,10 @@ public class BlobServiceProducer extends DefaultProducer {
         Object detailsObject = exchange.getIn().getHeader(BlobServiceConstants.BLOB_LISTING_DETAILS);
         if (detailsObject instanceof EnumSet) {
             @SuppressWarnings("unchecked")
-            EnumSet<BlobListingDetails> theDetails = (EnumSet<BlobListingDetails>)detailsObject;
+            EnumSet<BlobListingDetails> theDetails = (EnumSet<BlobListingDetails>) detailsObject;
             details = theDetails;
         } else if (detailsObject instanceof BlobListingDetails) {
-            details = EnumSet.of((BlobListingDetails)detailsObject);
+            details = EnumSet.of((BlobListingDetails) detailsObject);
         }
         Iterable<ListBlobItem> items =
                 client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(),
@@ -137,13 +138,16 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void updateBlockBlob(Exchange exchange) throws Exception {
-        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
+        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(exchange, getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
 
         InputStream inputStream = getInputStreamFromExchange(exchange);
 
-        LOG.trace("Putting a block blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Putting a block blob [{}] from exchange [{}]...", blobName, exchange);
+        }
         try {
             client.upload(inputStream, -1,
                     opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
@@ -159,17 +163,20 @@ public class BlobServiceProducer extends DefaultProducer {
         if (object instanceof List) {
             blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
-            blobBlocks = Collections.singletonList((BlobBlock)object);
+            blobBlocks = Collections.singletonList((BlobBlock) object);
         }
         if (blobBlocks == null || blobBlocks.isEmpty()) {
             throw new IllegalArgumentException("Illegal storageBlocks payload");
         }
 
-        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
+        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(exchange, getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
 
-        LOG.trace("Putting a blob [{}] from blocks from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Putting a blob [{}] from blocks from exchange [{}]...", blobName, exchange);
+        }
         List<BlockEntry> blockEntries = new LinkedList<>();
         for (BlobBlock blobBlock : blobBlocks) {
             blockEntries.add(blobBlock.getBlockEntry());
@@ -191,16 +198,19 @@ public class BlobServiceProducer extends DefaultProducer {
         if (object instanceof List) {
             blockEntries = (List<BlockEntry>) object;
         } else if (object instanceof BlockEntry) {
-            blockEntries = Collections.singletonList((BlockEntry)object);
+            blockEntries = Collections.singletonList((BlockEntry) object);
         }
         if (blockEntries == null || blockEntries.isEmpty()) {
             throw new IllegalArgumentException("Illegal commit block list payload");
         }
 
-        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
+        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
 
-        LOG.trace("Putting a blob [{}] block list from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Putting a blob [{}] block list from exchange [{}]...", blobName, exchange);
+        }
         client.commitBlockList(blockEntries,
                 opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
     }
@@ -226,9 +236,12 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void getBlobBlockList(Exchange exchange) throws Exception {
-        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
+        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
-        LOG.trace("Getting the blob block list [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Getting the blob block list [{}] from exchange [{}]...", blobName, exchange);
+        }
         BlockListingFilter filter = exchange.getIn().getBody(BlockListingFilter.class);
         if (filter == null) {
             filter = BlockListingFilter.COMMITTED;
@@ -239,12 +252,12 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void deleteBlockBlob(Exchange exchange) throws Exception {
-        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
+        CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(exchange, getConfiguration());
         doDeleteBlock(client, exchange);
     }
 
     private void createAppendBlob(Exchange exchange) throws Exception {
-        CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(getConfiguration());
+        CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         if (opts.getAccessCond() == null) {
             // Default: do not reset the blob content if the blob already exists
@@ -255,7 +268,10 @@ public class BlobServiceProducer extends DefaultProducer {
 
     private void doCreateAppendBlob(CloudAppendBlob client, BlobServiceRequestOptions opts, Exchange exchange)
             throws Exception {
-        LOG.trace("Creating an append blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Creating an append blob [{}] from exchange [{}]...", blobName, exchange);
+        }
         try {
             client.createOrReplace(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         } catch (StorageException ex) {
@@ -268,7 +284,7 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void updateAppendBlob(Exchange exchange) throws Exception {
-        CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(getConfiguration());
+        CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(exchange, getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         if (opts.getAccessCond() == null) {
@@ -292,13 +308,13 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void deleteAppendBlob(Exchange exchange) throws Exception {
-        CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(getConfiguration());
+        CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(exchange, getConfiguration());
         doDeleteBlock(client, exchange);
     }
 
 
     private void createPageBlob(Exchange exchange) throws Exception {
-        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
+        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         if (opts.getAccessCond() == null) {
             // Default: do not reset the blob content if the blob already exists
@@ -309,7 +325,10 @@ public class BlobServiceProducer extends DefaultProducer {
 
     private void doCreatePageBlob(CloudPageBlob client, BlobServiceRequestOptions opts, Exchange exchange)
             throws Exception {
-        LOG.trace("Creating a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Creating a page blob [{}] from exchange [{}]...", blobName, exchange);
+        }
         Long pageSize = getPageBlobSize(exchange);
         try {
             client.create(pageSize,
@@ -325,9 +344,12 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void uploadPageBlob(Exchange exchange) throws Exception {
-        LOG.trace("Updating a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Updating a page blob [{}] from exchange [{}]...", blobName, exchange);
+        }
 
-        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
+        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         if (opts.getAccessCond() == null) {
@@ -346,18 +368,24 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void resizePageBlob(Exchange exchange) throws Exception {
-        LOG.trace("Resizing a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Resizing a page blob [{}] from exchange [{}]...", blobName, exchange);
+        }
 
-        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
+        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         Long pageSize = getPageBlobSize(exchange);
         client.resize(pageSize, opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
     }
 
     private void clearPageBlob(Exchange exchange) throws Exception {
-        LOG.trace("Clearing a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Clearing a page blob [{}] from exchange [{}]...", blobName, exchange);
+        }
 
-        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
+        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
 
         Long blobOffset = getConfiguration().getBlobOffset();
@@ -385,7 +413,7 @@ public class BlobServiceProducer extends DefaultProducer {
             blobDataLength = range.getEndOffset() - range.getStartOffset();
         }
         if (blobDataLength == null) {
-            blobDataLength = (long)is.available();
+            blobDataLength = (long) is.available();
         }
         try {
             client.uploadPages(is, blobOffset, blobDataLength,
@@ -397,17 +425,20 @@ public class BlobServiceProducer extends DefaultProducer {
     }
 
     private void getPageBlobRanges(Exchange exchange) throws Exception {
-        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
+        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
         BlobServiceUtil.configureCloudBlobForRead(client, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
-        LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", blobName, exchange);
+        }
         List<PageRange> ranges =
                 client.downloadPageRanges(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(ranges);
     }
 
     private void deletePageBlob(Exchange exchange) throws Exception {
-        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
+        CloudPageBlob client = BlobServiceUtil.createPageBlobClient(exchange, getConfiguration());
         doDeleteBlock(client, exchange);
     }
 
@@ -421,13 +452,11 @@ public class BlobServiceProducer extends DefaultProducer {
 
 
     private void doDeleteBlock(CloudBlob client, Exchange exchange) throws Exception {
-        LOG.trace("Deleting a blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
+        if (LOG.isTraceEnabled()) {
+            String blobName = getBlobName(exchange, getConfiguration());
+            LOG.trace("Deleting a blob [{}] from exchange [{}]...", blobName, exchange);
+        }
         client.delete();
-    }
-
-    private String getCharsetName(Exchange exchange) {
-        String charset = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
-        return charset == null ? "UTF-8" : charset;
     }
 
     private void configureCloudBlobForWrite(CloudBlob client) {
@@ -473,7 +502,7 @@ public class BlobServiceProducer extends DefaultProducer {
         if (body instanceof InputStream) {
             is = (InputStream) body;
         } else if (body instanceof File) {
-            is = new FileInputStream((File)body);
+            is = new FileInputStream((File) body);
         } else if (body instanceof byte[]) {
             is = new ByteArrayInputStream((byte[]) body);
         } else {

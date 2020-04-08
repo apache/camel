@@ -18,6 +18,8 @@ public class FastjsonDataFormatConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         FastjsonDataFormat dataformat = (FastjsonDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "unmarshaltypename":
+        case "unmarshalTypeName": dataformat.setUnmarshalTypeName(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttypeheader":
         case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;

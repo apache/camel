@@ -68,5 +68,21 @@ public class CwComponentVerifierExtensionTest extends CamelTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
+    
+    @Test
+    public void testConnectivityAndRegion() throws Exception {
+        Component component = context().getComponent("aws2-cw");
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("secretKey", "l");
+        parameters.put("accessKey", "k");
+        parameters.put("region", "test");
+        parameters.put("namespace", "test");
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+    }
 
 }

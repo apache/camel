@@ -95,6 +95,11 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
             obj = Arrays.asList(args);
         }
 
+        if (target != null) {
+            // use Object.toString as target logging
+            target = target.getClass().getName() + "@" + Integer.toHexString(target.hashCode());
+        }
+
         String line;
         if (target == null) {
             line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + "]";

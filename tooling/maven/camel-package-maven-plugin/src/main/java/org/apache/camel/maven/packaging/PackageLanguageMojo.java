@@ -25,10 +25,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -145,7 +147,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                 if (core != null) {
                     for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
                         String name = entry.getKey();
-                        String javaType = entry.getValue();
+                        Class<?> javaType = loadClass(entry.getValue());
                         String modelName = asModelName(name);
 
                         String json = PackageHelper.loadText(new File(core, "src/generated/resources/org/apache/camel/model/language/" + modelName + PackageHelper.JSON_SUFIX));
@@ -192,7 +194,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         return count;
     }
 
-    protected static LanguageModel extractLanguageModel(MavenProject project, String json, String name, String javaType) {
+    protected static LanguageModel extractLanguageModel(MavenProject project, String json, String name, Class<?> javaType) {
         EipModel def = JsonMapper.generateEipModel(json);
         LanguageModel model = new LanguageModel();
         model.setName(name);
@@ -202,12 +204,23 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         model.setLabel(def.getLabel());
         model.setDeprecated(def.isDeprecated());
         model.setDeprecationNote(def.getDeprecationNote());
-        model.setJavaType(javaType);
+        model.setJavaType(javaType.getCanonicalName());
         model.setModelName(def.getName());
         model.setModelJavaType(def.getJavaType());
         model.setGroupId(project.getGroupId());
         model.setArtifactId(project.getArtifactId());
         model.setVersion(project.getVersion());
+
+        // grab level from annotation, pom.xml or default to stable
+        String level = project.getProperties().getProperty("supportLevel");
+        boolean experimental = ClassUtil.hasAnnotation("org.apache.camel.Experimental", javaType);
+        if (experimental) {
+            model.setSupportLevel(SupportLevel.Experimental);
+        } else if (level != null) {
+            model.setSupportLevel(SupportLevel.safeValueOf(level));
+        } else {
+            model.setSupportLevel(SupportLevel.Stable);
+        }
 
         for (EipOptionModel opt : def.getOptions()) {
             LanguageOptionModel option = new LanguageOptionModel();

@@ -143,8 +143,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     @Parameter
     protected File outputResourcesDir;
 
-    DynamicClassLoader projectClassLoader;
-
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
@@ -158,11 +156,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getTestClasspathElements());
-        } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
 
         Path root = findCamelDirectory(baseDir, "core/camel-endpointdsl").toPath();
         if (sourcesOutputDir == null) {
@@ -676,7 +669,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private String getComponentNameFromType(String type) {
-        int pos = type.lastIndexOf(".");
+        int pos = type.lastIndexOf('.');
         String name = type.substring(pos + 1).replace("Component", "");
 
         switch (type) {
@@ -753,25 +746,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private static boolean isPrimitive(String type) {
         return PRIMITIVEMAP.containsKey(type);
-    }
-
-    private Class<?> loadClass(String loadClassName) {
-        Class<?> optionClass;
-        String org = loadClassName;
-        while (true) {
-            try {
-                optionClass = getProjectClassLoader().loadClass(loadClassName);
-                break;
-            } catch (ClassNotFoundException e) {
-                int dotIndex = loadClassName.lastIndexOf('.');
-                if (dotIndex == -1) {
-                    throw new IllegalArgumentException(org);
-                } else {
-                    loadClassName = loadClassName.substring(0, dotIndex) + "$" + loadClassName.substring(dotIndex + 1);
-                }
-            }
-        }
-        return optionClass;
     }
 
     private GenericType getType(JavaClass javaClass, Map<String, JavaClass> enumClasses, List<String> enums, String type) {
@@ -878,10 +852,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private Class generateDummyClass(String clazzName) {
         return getProjectClassLoader().generateDummyClass(clazzName);
-    }
-
-    private DynamicClassLoader getProjectClassLoader() {
-        return projectClassLoader;
     }
 
     private static String loadComponentJson(Map<File, Supplier<String>> jsonFiles, String componentName) {

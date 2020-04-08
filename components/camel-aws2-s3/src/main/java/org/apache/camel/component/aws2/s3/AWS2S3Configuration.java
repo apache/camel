@@ -38,6 +38,8 @@ public class AWS2S3Configuration implements Cloneable {
     private String prefix;
     @UriParam(label = "consumer")
     private String delimiter;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean includeFolders = true;
     @UriParam
     private String region;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -162,6 +164,19 @@ public class AWS2S3Configuration implements Cloneable {
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
+
+    /**
+     * If it is true, the folders/directories will be consumed.
+     * If it is false, they will be ignored, and Exchanges will not be created for those
+     */
+    public void setIncludeFolders(boolean includeFolders) {
+        this.includeFolders = includeFolders;
+    }
+
+    public boolean isIncludeFolders() {
+        return includeFolders;
+    }
+
 
     public String getBucketName() {
         return bucketName;

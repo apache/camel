@@ -24,7 +24,6 @@ import org.apache.camel.NamedNode;
 /**
  * SPI for loading routes/rests from XML input streams and parsing this to model definition classes.
  */
-// TODO: Better name? XMLtoModelLoader
 public interface XMLRoutesDefinitionLoader {
 
     /**

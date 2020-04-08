@@ -149,6 +149,7 @@
         <include>org.apache.camel:camel-direct</include>
         <include>org.apache.camel:camel-directvm</include>
         <include>org.apache.camel:camel-disruptor</include>
+        <include>org.apache.camel:camel-djl</include>
         <include>org.apache.camel:camel-dns</include>
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
@@ -251,6 +252,7 @@
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-micrometer</include>
         <include>org.apache.camel:camel-microprofile-config</include>
+        <include>org.apache.camel:camel-microprofile-fault-tolerance</include>
         <include>org.apache.camel:camel-microprofile-health</include>
         <include>org.apache.camel:camel-microprofile-metrics</include>
         <include>org.apache.camel:camel-milo</include>
@@ -325,7 +327,6 @@
         <include>org.apache.camel:camel-solr</include>
         <include>org.apache.camel:camel-soroush</include>
         <include>org.apache.camel:camel-spark</include>
-        <include>org.apache.camel:camel-spark-rest</include>
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>

@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "rest-openapi",
     "scheme": "rest-openapi",
     "extendsScheme": "",
     "syntax": "rest-openapi:specificationUri#operationId",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.rest.openapi.RestOpenApiComponent",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rest-openapi",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "basePath": { "kind": "property", "displayName": "Base Path", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "API basePath, for example \/v2. Default is unset, if set overrides the value present in OpenApi specification." },

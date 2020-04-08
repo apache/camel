@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-ddb",
     "scheme": "aws2-ddb",
     "extendsScheme": "",
     "syntax": "aws2-ddb:tableName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.ddb.Ddb2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonDDBClient": { "kind": "property", "displayName": "Amazon DDBClient", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "software.amazon.awssdk.services.dynamodb.DynamoDbClient", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.ddb.Ddb2Configuration", "configurationField": "configuration", "description": "To use the AmazonDynamoDB as the client" },

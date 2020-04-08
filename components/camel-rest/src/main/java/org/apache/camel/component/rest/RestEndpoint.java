@@ -390,8 +390,6 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
 
-        parameters.put("producerComponentName", pname);
-
         // lookup in registry
         if (factory == null) {
             Set<RestProducerFactory> factories = getCamelContext().getRegistry().findByType(RestProducerFactory.class);

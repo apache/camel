@@ -143,6 +143,9 @@ public final class JsonMapper {
         obj.put("javaType", model.getJavaType());
         obj.put("firstVersion", model.getFirstVersion());
         obj.put("verifiers", model.getVerifiers());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -196,6 +199,9 @@ public final class JsonMapper {
         obj.put("label", model.getLabel());
         obj.put("javaType", model.getJavaType());
         obj.put("modelJavaType", model.getModelJavaType());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -245,6 +251,9 @@ public final class JsonMapper {
         obj.put("deprecationNote", model.getDeprecationNote());
         obj.put("input", model.isInput());
         obj.put("output", model.isOutput());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);
@@ -294,6 +303,9 @@ public final class JsonMapper {
         obj.put("label", model.getLabel());
         obj.put("javaType", model.getJavaType());
         obj.put("modelJavaType", model.getModelJavaType());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -334,6 +346,9 @@ public final class JsonMapper {
         obj.put("deprecationNote", model.getDeprecationNote());
         obj.put("firstVersion", model.getFirstVersion());
         obj.put("label", model.getLabel());
+        if (model.getSupportLevel() != null) {
+            obj.put("supportLevel", model.getSupportLevel().name());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -352,6 +367,7 @@ public final class JsonMapper {
         model.setDeprecated(mobj.getBooleanOrDefault("deprecated", false));
         model.setDeprecationNote(mobj.getString("label"));
         model.setJavaType(mobj.getString("javaType"));
+        model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
     }
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
@@ -376,6 +392,8 @@ public final class JsonMapper {
         option.setConfigurationClass(mp.getString("configurationClass"));
         option.setConfigurationField(mp.getString("configurationField"));
         option.setDescription(mp.getString("description"));
+        option.setGetterMethod(mp.getString("getterMethod"));
+        option.setSetterMethod(mp.getString("setterMethod"));
     }
 
     private static void parseGroup(JsonObject mp, MainGroupModel option) {
@@ -412,6 +430,8 @@ public final class JsonMapper {
         prop.put("configurationClass", option.getConfigurationClass());
         prop.put("configurationField", option.getConfigurationField());
         prop.put("description", option.getDescription());
+        prop.put("getterMethod", option.getGetterMethod());
+        prop.put("setterMethod", option.getSetterMethod());
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
         prop.remove("optionalPrefix", "");

@@ -32,7 +32,7 @@ SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
 Also SQL query could be specified inside URI:
 [source,java]
 ----
-from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
+from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
 ----
 See examples below.
 

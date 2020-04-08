@@ -44,14 +44,18 @@ public class EnrichDefinition extends ExpressionNode {
     @XmlAttribute(name = "strategyMethodAllowNull")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
 
     public EnrichDefinition() {

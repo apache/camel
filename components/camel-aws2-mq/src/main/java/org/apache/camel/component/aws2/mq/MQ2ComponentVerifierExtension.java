@@ -67,6 +67,10 @@ public class MQ2ComponentVerifierExtension extends DefaultComponentVerifierExten
 
         try {
             MQ2Configuration configuration = setProperties(new MQ2Configuration(), parameters);
+            if (!MqClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             MqClientBuilder clientBuilder = MqClient.builder();
             MqClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

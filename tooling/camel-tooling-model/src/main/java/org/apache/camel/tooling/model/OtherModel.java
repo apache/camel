@@ -16,11 +16,7 @@
  */
 package org.apache.camel.tooling.model;
 
-public class OtherModel extends BaseModel<BaseOptionModel> {
-
-    protected String groupId;
-    protected String artifactId;
-    protected String version;
+public class OtherModel extends ArtifactModel<BaseOptionModel> {
 
     public OtherModel() {
     }
@@ -28,30 +24,6 @@ public class OtherModel extends BaseModel<BaseOptionModel> {
     @Override
     public String getKind() {
         return "other";
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
 }

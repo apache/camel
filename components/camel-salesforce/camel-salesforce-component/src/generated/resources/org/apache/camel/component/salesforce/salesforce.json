@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "salesforce",
     "scheme": "salesforce",
     "extendsScheme": "",
     "syntax": "salesforce:operationName:topicName",
@@ -15,9 +16,10 @@
     "javaType": "org.apache.camel.component.salesforce.SalesforceComponent",
     "firstVersion": "2.12.0",
     "verifiers": "parameters,connectivity",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-salesforce",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "apexMethod": { "kind": "property", "displayName": "Apex Method", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.salesforce.SalesforceEndpointConfig", "configurationField": "config", "description": "APEX method name" },

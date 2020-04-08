@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "aws2-sqs",
     "scheme": "aws2-sqs",
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.aws2.sqs.Sqs2Component",
     "firstVersion": "3.1.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sqs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "amazonAWSHost": { "kind": "property", "displayName": "Amazon AWSHost", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "amazonaws.com", "configurationClass": "org.apache.camel.component.aws2.sqs.Sqs2Configuration", "configurationField": "configuration", "description": "The hostname of the Amazon AWS cloud." },

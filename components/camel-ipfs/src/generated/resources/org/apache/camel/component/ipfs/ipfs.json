@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "ipfs",
     "scheme": "ipfs",
     "extendsScheme": "",
     "syntax": "ipfs:ipfsCmd",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ipfs.IPFSComponent",
     "firstVersion": "2.23.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ipfs",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "ipfsHost": { "kind": "property", "displayName": "Ipfs Host", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "127.0.0.1", "description": "The ipfs host" },

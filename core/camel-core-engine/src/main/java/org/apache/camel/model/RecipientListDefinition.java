@@ -47,35 +47,44 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String strategyMethodAllowNull;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoints;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
     @XmlAttribute
-    @Metadata(defaultValue = "0")
+    @Metadata(javaType = "java.lang.Long", defaultValue = "0")
     private String timeout;
     @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String stopOnAggregateException;
 
     public RecipientListDefinition() {

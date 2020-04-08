@@ -90,7 +90,7 @@ And the sample using Java DSL:
 
 [source,java]
 ---------------------------------------------------------------------------------
-   from("seda:foo").filter().ognl("request.headers.foo == 'bar'").to("seda:bar");
+from("seda:foo").filter().ognl("request.headers.foo == 'bar'").to("seda:bar");
 ---------------------------------------------------------------------------------
 
 == Loading script from external resource

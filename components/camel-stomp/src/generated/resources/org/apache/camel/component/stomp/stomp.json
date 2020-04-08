@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "stomp",
     "scheme": "stomp",
     "extendsScheme": "",
     "syntax": "stomp:destination",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.stomp.StompComponent",
     "firstVersion": "2.12.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stomp",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "brokerURL": { "kind": "property", "displayName": "Broker URL", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "defaultValue": "tcp:\/\/localhost:61613", "configurationClass": "org.apache.camel.component.stomp.StompConfiguration", "configurationField": "configuration", "description": "The URI of the Stomp broker to connect to" },

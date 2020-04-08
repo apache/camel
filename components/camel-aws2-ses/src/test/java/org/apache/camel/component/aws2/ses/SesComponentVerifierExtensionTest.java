@@ -69,4 +69,19 @@ public class SesComponentVerifierExtensionTest extends CamelTestSupport {
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 
+    @Test
+    public void testConnectivityAndRegion() throws Exception {
+        Component component = context().getComponent("aws2-ses");
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("secretKey", "l");
+        parameters.put("accessKey", "k");
+        parameters.put("region", "l");
+        parameters.put("from", "test@test.com");
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+    }
 }

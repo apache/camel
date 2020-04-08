@@ -14,6 +14,7 @@ DescriptionDefinition
 DynamicRouterDefinition
 EnrichDefinition
 ExpressionSubElementDefinition
+FaultToleranceConfigurationDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition

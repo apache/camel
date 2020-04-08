@@ -67,6 +67,10 @@ public class Kinesis2ComponentVerifierExtension extends DefaultComponentVerifier
 
         try {
             Kinesis2Configuration configuration = setProperties(new Kinesis2Configuration(), parameters);
+            if (!KinesisClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             KinesisClientBuilder clientBuilder = KinesisClient.builder();
             KinesisClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

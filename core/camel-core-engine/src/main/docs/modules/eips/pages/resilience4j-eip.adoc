@@ -23,12 +23,12 @@ Maven users will need to add the following dependency to their pom.xml to use th
 == Configuration options
 
 // eip options: START
-The Hystrix EIP supports 2 options which are listed below:
+The Resilience4j EIP supports 2 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resilienceConfiguration* | Configures the Resilience EIP Use end when configuration is complete, to return back to the Resilience EIP. |  | ResilienceConfigurationDefinition
+| *resilienceConfiguration* | Configures the Resilience EIP Use end when configuration is complete, to return back to the Resilience EIP. |  | Resilience4jConfigurationDefinition
 | *resilienceConfigurationRef* | Refers to a Resilience configuration to use for configuring the Resilience EIP. |  | String
 |===
 // eip options: END

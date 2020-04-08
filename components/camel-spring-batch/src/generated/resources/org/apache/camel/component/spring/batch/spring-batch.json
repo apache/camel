@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "spring-batch",
     "scheme": "spring-batch",
     "extendsScheme": "",
     "syntax": "spring-batch:jobName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.spring.batch.SpringBatchComponent",
     "firstVersion": "2.10.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-batch",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "jobLauncher": { "kind": "property", "displayName": "Job Launcher", "group": "producer", "required": false, "type": "object", "javaType": "org.springframework.batch.core.launch.JobLauncher", "deprecated": false, "secret": false, "description": "Explicitly specifies a JobLauncher to be used." },

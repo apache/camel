@@ -38,11 +38,12 @@ import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
  * using <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
  */
 @Dataformat("json-johnzon")
-@Metadata(includeProperties = "objectMapper,prettyPrint")
+@Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint")
 public class JohnzonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
     private Mapper objectMapper;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private JohnzonParameterizedType parameterizedType;
     private Comparator<String> attributeOrder;
@@ -128,6 +129,14 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.unmarshalType = unmarshalType;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public JohnzonParameterizedType getParameterizedType() {
         return parameterizedType;
     }
@@ -193,6 +202,13 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
             return this.objectMapper.readCollection(stream, parameterizedType);
         } else {
             return this.objectMapper.readObject(stream, clazz);
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
     }
 

@@ -130,10 +130,12 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             for (S3Object s3ObjectSummary : s3ObjectSummaries) {
                 ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client()
                     .getObject(GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key()).build(), ResponseTransformer.toInputStream());
-                s3Objects.add(s3Object);
 
-                Exchange exchange = getEndpoint().createExchange(s3Object, s3ObjectSummary.key());
-                answer.add(exchange);
+                if (includeS3Object(s3Object)) {
+                    s3Objects.add(s3Object);
+                    Exchange exchange = getEndpoint().createExchange(s3Object, s3ObjectSummary.key());
+                    answer.add(exchange);
+                }
             }
         } catch (Throwable e) {
             LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
@@ -144,6 +146,22 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         }
 
         return answer;
+    }
+
+    /**
+     * Decide whether to include the S3Objects in the results
+     *
+     * @param s3Object
+     * @return true to include, false to exclude
+     */
+    protected boolean includeS3Object(ResponseInputStream<GetObjectResponse> s3Object) {
+
+        if (getConfiguration().isIncludeFolders()) {
+            return true;
+        } else {
+            //Config says to ignore folders/directories
+            return !"application/x-directory".equalsIgnoreCase(s3Object.response().contentType());
+        }
     }
 
     @Override

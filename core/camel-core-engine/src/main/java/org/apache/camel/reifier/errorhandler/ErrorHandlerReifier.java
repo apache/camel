@@ -305,7 +305,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy();
+            boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalBodyPolicy();
             if (original) {
                 // ensure allow original is turned on
                 route.setAllowUseOriginalMessage(true);

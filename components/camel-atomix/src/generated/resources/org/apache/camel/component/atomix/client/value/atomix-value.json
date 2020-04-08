@@ -1,6 +1,7 @@
 {
   "component": {
     "kind": "component",
+    "name": "atomix-value",
     "scheme": "atomix-value",
     "extendsScheme": "",
     "syntax": "atomix-value:resourceName",
@@ -14,9 +15,10 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.atomix.client.value.AtomixValueComponent",
     "firstVersion": "2.20.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   },
   "componentProperties": {
     "atomix": { "kind": "property", "displayName": "Atomix", "group": "common", "label": "", "required": false, "type": "object", "javaType": "io.atomix.Atomix", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.atomix.client.value.AtomixValueConfiguration", "configurationField": "configuration", "description": "The Atomix instance to use" },

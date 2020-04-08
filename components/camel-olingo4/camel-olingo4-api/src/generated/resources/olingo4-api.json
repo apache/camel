@@ -5,8 +5,9 @@
     "title": "Olingo4 Api",
     "description": "Camel Olingo4 API",
     "deprecated": false,
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo4-api",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT"
   }
 }
