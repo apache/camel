@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>3.3.0</firstVersion>
         <label>eip,microservice</label>
+        <supportLevel>preview</supportLevel>
     </properties>
 
     <dependencies>
