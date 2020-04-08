@@ -79,6 +79,10 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if ("pom".equals(project.getPackaging())) {
+            return;
+        }
+
         if (sourcesOutputDir == null) {
             sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
         }
