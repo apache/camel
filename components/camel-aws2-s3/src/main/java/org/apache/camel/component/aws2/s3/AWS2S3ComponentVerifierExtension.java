@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.s3;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -66,6 +67,10 @@ public class AWS2S3ComponentVerifierExtension extends DefaultComponentVerifierEx
 
         try {
             AWS2S3Configuration configuration = setProperties(new AWS2S3Configuration(), parameters);
+            if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
+                return builder.error(errorBuilder.build()).build();
+            }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             S3ClientBuilder clientBuilder = S3Client.builder();
             S3Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
