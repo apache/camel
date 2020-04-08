@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,7 +55,7 @@ public class Translate2ProducerTest extends CamelTestSupport {
         assertEquals("Hello", resultGet);
 
     }
-    
+
     @Test
     public void translateTextPojoTest() throws Exception {
 
@@ -64,7 +63,8 @@ public class Translate2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translatePojoText", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString()).targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
+                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                    .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
             }
         });
 

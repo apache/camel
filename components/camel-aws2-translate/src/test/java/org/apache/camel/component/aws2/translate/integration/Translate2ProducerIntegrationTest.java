@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,7 +56,7 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
         String resultGet = (String)exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
-    
+
     @Test
     public void translateTextPojoTest() throws Exception {
 
@@ -65,8 +64,9 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translateTextPojo", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-              
-                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString()).targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao Signorina").build());
+
+                exchange.getIn().setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                    .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao Signorina").build());
             }
         });
 
@@ -103,7 +103,8 @@ public class Translate2ProducerIntegrationTest extends CamelTestSupport {
                 from("direct:translateText").to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText").to("mock:result");
                 from("direct:translateTextAuto")
                     .to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&autodetectSourceLanguage=true").to("mock:result");
-                from("direct:translateTextPojo").to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&pojoRequest=true").to("mock:result");
+                from("direct:translateTextPojo").to("aws2-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(yyyy)&region=eu-west-1&operation=translateText&pojoRequest=true")
+                    .to("mock:result");
             }
         };
     }
