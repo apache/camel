@@ -68,7 +68,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
         try {
             while (cursor.hasNext() && keepRunning) {
                 ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.next();
-                Exchange exchange = endpoint.createMongoDbExchange(dbObj.getFullDocument(), dbObj.getOperationType());
+                Exchange exchange = endpoint.createMongoDbExchange(dbObj.getFullDocument(), dbObj.getOperationType(), dbObj.getDocumentKey().toJson());
                 try {
                     if (log.isTraceEnabled()) {
                         log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.getFullDocument().get(MONGO_ID));

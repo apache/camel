@@ -303,9 +303,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         }
     }
 
-    public Exchange createMongoDbExchange(Document dbObj, OperationType operationType) {
+    public Exchange createMongoDbExchange(Document dbObj, OperationType operationType, String objectId) {
         Exchange exchange = createMongoDbExchange(dbObj);
         exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
+        exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, objectId);
         return exchange;
     }
 
