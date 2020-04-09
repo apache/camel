@@ -22,7 +22,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class CouchDbTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "couchdb:2.2";
+    public static final String CONTAINER_IMAGE = "couchdb:2.3.1"; // tested against 2.1.2, 2.2.0 & 2.3.1
     public static final String CONTAINER_NAME = "couchdb";
     public static final int BROKER_PORT = 5984;
 

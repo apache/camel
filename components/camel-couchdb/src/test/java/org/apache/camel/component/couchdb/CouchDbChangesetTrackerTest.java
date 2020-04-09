@@ -70,10 +70,7 @@ public class CouchDbChangesetTrackerTest {
     public void before() {
         when(endpoint.isUpdates()).thenReturn(true);
 
-        when(client.context()).thenReturn(context);
-        when(context.info()).thenReturn(info);
-        when(info.getUpdateSeq()).thenReturn("100");
-
+        when(client.getLatestUpdateSequence()).thenReturn("100");
         when(client.changes()).thenReturn(changes);
         when(changes.continuousChanges()).thenReturn(changes);
         when(changes.includeDocs(true)).thenReturn(changes);
