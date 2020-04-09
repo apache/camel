@@ -18,8 +18,14 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
@@ -27,6 +33,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EndpointHelperTest {
@@ -60,4 +67,31 @@ public class EndpointHelperTest {
                         .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
     }
 
+    @Test
+    public void testRE() throws Exception {
+        Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
+        Pattern attrRE = Pattern.compile(":[a-zA-Z0-9_-]*:( .*)?");
+
+        String[] lines = {
+                "[[any23-dataformat]]",
+                "//= Any23 DataFormat",
+                "= Any23 DataFormat"
+        };
+        Stream.of(lines).forEach(line -> {
+            Matcher copy = copyRE.matcher(line);
+            assertTrue(copy.matches(), line);
+        });
+        String[] attrlines = {
+                ":attribute:",
+                ":attribute: value",
+                ":attri-bute: value",
+                ":attri_bute: value",
+                ":attribute: value",
+                ":attribute: value \\"
+        };
+        Stream.of(attrlines).forEach(line -> {
+            Matcher copy = attrRE.matcher(line);
+            assertTrue(copy.matches(), line);
+        });
+    }
 }
