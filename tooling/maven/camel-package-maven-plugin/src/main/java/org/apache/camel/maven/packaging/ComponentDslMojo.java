@@ -212,7 +212,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
         if (updated) {
-            getLog().info("Updated ComponentDsl factories: " + componentCachedModels);
+            getLog().info("Updated " + componentCachedModels.size() + " ComponentDsl factories");
         }
     }
 
