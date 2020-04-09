@@ -968,6 +968,10 @@ Change Streams allow applications to access real-time data changes without the c
 Applications can use change streams to subscribe to all data changes on a collection and immediately react to them.
 Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.
 
+The exchange body will contain the full document of any change, with the operation type specified in the `CamelMongoDbStreamOperationType`
+Exchange Header and document id specified in an `_id` header. In the case of delete operations, the exchange body will instead be a Document type
+containing only the _id field of the deleted document.
+
 To configure Change Streams Consumer you need to specify `consumerType`, `database`, `collection`
 and optional JSON property `streamFilter` to filter events.
 That JSON property is standard MongoDB `$match` aggregation.
