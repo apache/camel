@@ -35,6 +35,8 @@ import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -161,11 +163,15 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     Resilience4jConfigurationDefinition buildResilience4jConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
+        final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                .getConfigurerResolver().resolvePropertyConfigurer(Resilience4jConfigurationDefinition.class.getSimpleName(), camelContext);
+
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
             () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
-            () -> lookup(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID, Resilience4jConfigurationDefinition.class)));
+            () -> lookup(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID, Resilience4jConfigurationDefinition.class)),
+            configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
@@ -174,23 +180,42 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
             loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
-                () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)));
+                () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)),
+                configurer);
         }
 
         // Extract properties from local configuration
-        loadProperties(properties, Optional.ofNullable(definition.getResilience4jConfiguration()));
-
-        Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
+        loadProperties(properties, Optional.ofNullable(definition.getResilience4jConfiguration()), configurer);
 
         // Apply properties to a new configuration
-        PropertyBindingSupport.bindProperties(camelContext, config, properties);
+        Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
+        PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withProperties(properties)
+                .withTarget(config)
+                .bind();
 
         return config;
     }
 
-    private void loadProperties(Map<String, Object> properties, Optional<?> optional) {
+    private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
+        optional.ifPresent(bean -> {
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                Map<String, Object> types = getter.getAllOptions(bean);
+                types.forEach((k, t) -> {
+                    Object value = getter.getOptionValue(bean, k, true);
+                    if (value != null) {
+                        properties.put(k, value);
+                    }
+                });
+            } else {
+                // no configurer found so use bean introspection (reflection)
+                beanIntrospection.getProperties(bean, properties, null, false);
+            }
+        });
     }
 
 }
