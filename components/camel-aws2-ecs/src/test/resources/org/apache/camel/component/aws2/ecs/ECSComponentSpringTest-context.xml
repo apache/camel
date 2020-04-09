@@ -30,6 +30,11 @@
             <to uri="mock:result"/>
         </route>
         <route>
+            <from uri="direct:listClustersPojo"/>
+            <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=listClusters&amp;pojoRequest=true"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:createCluster"/>
             <to uri="aws2-ecs://test?ecsClient=#amazonEcsClient&amp;operation=createCluster"/>
             <to uri="mock:result"/>

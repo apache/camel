@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
+import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,13 +37,32 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
     private MockEndpoint mock;
 
     @Test
-    public void kmsListClustersTest() throws Exception {
+    public void ecsListClustersTest() throws Exception {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.clusterArns().size());
+        assertEquals("Test", resultGet.clusterArns().get(0));
+    }
+    
+    @Test
+    public void ecsListClustersPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listClustersPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
+                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
             }
         });
 
