@@ -967,10 +967,7 @@ from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasing
 Change Streams allow applications to access real-time data changes without the complexity and risk of tailing the MongoDB oplog.
 Applications can use change streams to subscribe to all data changes on a collection and immediately react to them.
 Because change streams use the aggregation framework, applications can also filter for specific changes or transform the notifications at will.
-
-The exchange body will contain the full document of any change, with the operation type specified in the `CamelMongoDbStreamOperationType`
-Exchange Header and document id specified in an `_id` header. In the case of delete operations, the exchange body will instead be a Document type
-containing only the _id field of the deleted document.
+The exchange body will contain the full document of any change.
 
 To configure Change Streams Consumer you need to specify `consumerType`, `database`, `collection`
 and optional JSON property `streamFilter` to filter events.
@@ -994,6 +991,20 @@ from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=ticket
     .routeProperty("streamFilter", "{'$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]}}")
     .to("mock:test");
 -------------
+
+The `changeStreams` consumer type will also return the following OUT headers:
+
+[width="100%",cols="10%,10%,60%,20%",options="header",]
+|=======================================================================
+|Header key |Quick constant |Description (extracted from MongoDB API doc) |Data type
+
+|`CamelMongoDbStreamOperationType` |`MongoDbConstants.STREAM_OPERATION_TYPE` | The type of operation that occurred. Can
+be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate. |String
+
+|`_id` |`MongoDbConstants.MONGO_ID` |A document that contains the _id of the document created or modified by the insert,
+replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for
+the document. The _id field is not repeated if it is already a part of the shard key. |ObjectId
+|=======================================================================
 
 == Type conversions
 
