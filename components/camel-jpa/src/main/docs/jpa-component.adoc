@@ -1,11 +1,15 @@
 [[jpa-component]]
 = JPA Component
+:docTitle: JPA
+:artifactId: camel-jpa
+:description: The jpa component enables you to store and retrieve Java objects from databases using JPA.
+:since: 1.0
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The JPA component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),

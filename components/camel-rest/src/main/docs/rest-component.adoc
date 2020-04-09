@@ -1,11 +1,16 @@
 [[rest-component]]
 = REST Component
+:docTitle: REST
+:artifactId: camel-rest
+:description: The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
+:since: 2.14
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+:core:
 
-*Since Camel 2.14*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The REST component allows to define REST endpoints (consumer) using the
 Rest DSL and plugin to other Camel components as the

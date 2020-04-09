@@ -1,5 +1,8 @@
 [[circuitBreaker-eip]]
 = Circuit Breaker EIP
+:description: null
+:since: 
+:supportLevel: Stable
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
 which is used to detect excessive current draw and fail fast to protect electrical equipment.

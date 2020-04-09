@@ -1,11 +1,15 @@
 [[optaplanner-component]]
 = OptaPlanner Component
+:docTitle: OptaPlanner
+:artifactId: camel-optaplanner
+:description: Solves the planning problem contained in a message with OptaPlanner.
+:since: 2.13
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.13*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Optaplanner component solves the planning problem contained in a
 message with http://www.optaplanner.org/[OptaPlanner]. +

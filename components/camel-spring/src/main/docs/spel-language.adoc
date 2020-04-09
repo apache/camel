@@ -1,7 +1,12 @@
 [[spel-language]]
 = SpEL Language
+:docTitle: SpEL
+:artifactId: camel-spring
+:description: To use Spring Expression Language (SpEL) in Camel expressions or predicates.
+:since: 2.7
+:supportLevel: Stable
 
-*Since Camel 2.7*
+*Since Camel {since}*
 
 Camel allows
 https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions[Spring Expression Language (SpEL)]

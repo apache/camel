@@ -1,11 +1,15 @@
 [[service-component]]
 = Service Component
+:docTitle: Service
+:artifactId: camel-service
+:description: Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+:since: 2.22
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 
 == Using the service endpoint

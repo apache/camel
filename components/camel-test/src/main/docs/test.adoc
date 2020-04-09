@@ -1,5 +1,12 @@
-[[Test]]
-= Test Module
+[[test-component]]
+= Test Component
+:docTitle: Test
+:artifactId: camel-test
+:description: Camel unit testing
+:since: 2.9
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 The `camel-test` module is used for unit testing Camel.
 
@@ -44,4 +51,3 @@ public class SimpleMockTest extends CamelTestSupport {
 
 }
 ----
-

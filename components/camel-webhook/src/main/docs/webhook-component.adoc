@@ -1,11 +1,15 @@
 [[webhook-component]]
 = Webhook Component
+:docTitle: Webhook
+:artifactId: camel-webhook
+:description: The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 
 The Webhook meta component allows other Camel components to configure webhooks on a remote webhook provider and

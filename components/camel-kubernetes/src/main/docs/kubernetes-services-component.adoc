@@ -1,13 +1,17 @@
 [[kubernetes-services-component]]
 = Kubernetes Services Component
+:docTitle: Kubernetes Services
+:artifactId: camel-kubernetes
+:description: The Kubernetes Services component provides a producer to execute service operations and a consumer to consume service events.
+:since: 2.17
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
-The Kubernetes Services component is one of xref:kubernetes.adoc[Kubernetes Components] which
+The Kubernetes Services component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes service operations and a consumer to consume kubernetes
 service events.
 

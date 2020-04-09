@@ -1,11 +1,15 @@
 [[spring-integration-component]]
 = Spring Integration Component
+:docTitle: Spring Integration
+:artifactId: camel-spring-integration
+:description: Bridges Camel with Spring Integration.
+:since: 1.4
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.4*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Spring Integration component provides a bridge for Camel
 components to talk to

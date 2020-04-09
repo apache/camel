@@ -1,8 +1,13 @@
 [[bindy-dataformat]]
 = Bindy DataFormat
 :page-source: components/camel-bindy/src/main/docs/bindy-dataformat.adoc
+:docTitle: Bindy
+:artifactId: camel-bindy
+:description: The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
+:since: 2.0
+:supportLevel: Stable
 
-*Since Camel 2.0*
+*Since Camel {since}*
 
 The goal of this component is to allow the parsing/binding of
 non-structured data (or to be more precise non-XML data) +

@@ -1,6 +1,9 @@
 [[rollback-eip]]
 = Rollback EIP
-Rollback might be needed if there is a transaction or transactional pieces in your design.
+// Rollback might be needed if there is a transaction or transactional pieces in your design.
+:description: Forces a rollback by stopping routing the message
+:since: 
+:supportLevel: Stable
 
 Camel recommends supporting the
 http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactional
@@ -238,4 +241,3 @@ how we have configured the `onException` in the 2nd route to indicate in
 case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells
 Camel to only do it for the current transaction and not globally.
-

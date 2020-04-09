@@ -1,11 +1,15 @@
 [[platform-http-component]]
 = Platform HTTP Component
+:docTitle: Platform HTTP
+:artifactId: camel-platform-http
+:description: HTTP service leveraging existing runtime platform HTTP server
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 *Since Camel 3.0*
 
 

@@ -1,11 +1,15 @@
 [[jing-component]]
 = Jing Component
+:docTitle: Jing
+:artifactId: camel-jing
+:description: Validates the payload of a message using RelaxNG Syntax using Jing library.
+:since: 1.1
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Jing component uses the
 http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform

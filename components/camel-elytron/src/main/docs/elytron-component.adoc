@@ -1,11 +1,11 @@
 [[elytron-component]]
 = Undertow Elytron Security Provider
+//by hand
+:since: 3.2
 
-*Since Camel 3.2*
+*Since Camel {since}*
 
-// HEADER START
 *Replaces component camel-elytron*
-// HEADER END
 
 *OSGi is not supported*
 

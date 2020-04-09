@@ -1,11 +1,15 @@
 [[google-bigquery-component]]
 = Google BigQuery Component
+:docTitle: Google BigQuery
+:artifactId: camel-google-bigquery
+:description: Google BigQuery data warehouse for analytics.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Google Bigquery component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via

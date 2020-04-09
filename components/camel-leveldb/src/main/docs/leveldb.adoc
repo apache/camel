@@ -1,7 +1,12 @@
-[[LevelDB-LevelDB]]
-= LevelDB
+[[leveldb-component]]
+= LevelDB Component
+:docTitle: LevelDB
+:artifactId: camel-leveldb
+:description: Using LevelDB as persistent EIP store
+:since: 2.10
+:supportLevel: Stable
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
 https://code.google.com/p/leveldb/[Leveldb] is a very lightweight and
 embedable key value database. It allows together with Camel to provide
@@ -148,4 +153,3 @@ the download page for the latest versions).
   <version>x.y.z</version>
 </dependency>
 ----------------------------------------
-

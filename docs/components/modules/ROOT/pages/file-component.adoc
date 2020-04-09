@@ -1,12 +1,17 @@
 [[file-component]]
 = File Component
 :page-source: components/camel-file/src/main/docs/file-component.adoc
+:docTitle: File
+:artifactId: camel-file
+:description: The file component is used for reading or writing files.
+:since: 1.0
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+:core:
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The File component provides access to file systems, allowing files to be
 processed by any other Camel Components or
@@ -221,7 +226,7 @@ bean completes, and thus the route is completed, the file consumer will
 perform the move operation and move the file to the `.done` sub-folder.
 
 The *move* and the *preMove* options are considered as a directory name
-(though if you use an expression such as xref:components:languages:file-language.adoc[File Language], or xref:components:languages:simple-language.adoc[Simple] then the result of the expression
+(though if you use an expression such as xref:languages:file-language.adoc[File Language], or xref:languages:simple-language.adoc[Simple] then the result of the expression
 evaluation is the file name to be used - eg if you set
 
 [source]
@@ -229,7 +234,7 @@ evaluation is the file name to be used - eg if you set
 move=../backup/copy-of-${file:name}
 ----
 
-then that's using the xref:components:languages:file-language.adoc[File Language] which we
+then that's using the xref:languages:file-language.adoc[File Language] which we
 use return the file name to be used), which can be either relative or
 absolute. If relative, the directory is created as a sub-folder from
 within the folder where the file was consumed.
@@ -267,10 +272,10 @@ processed and after it's processed, it's moved to the `.done` folder.
 
 The *move* and *preMove* options
 are Expression-based, so we have the full power of
-the xref:components:languages:file-language.adoc[File Language] to do advanced configuration
+the xref:languages:file-language.adoc[File Language] to do advanced configuration
 of the directory and name pattern. +
  Camel will, in fact, internally convert the directory name you enter
-into a xref:components:languages:file-language.adoc[File Language] expression. So when we
+into a xref:languages:file-language.adoc[File Language] expression. So when we
 enter `move=.done` Camel will convert this into:
 `\${file:parent}/.done/${file:onlyname}`. This is only done if
 Camel detects that you have not provided a $\{ } in the option value
@@ -293,7 +298,7 @@ choice. For example to move the files in an error folder with a
 timestamp you can use
 `moveFailed=/error/${``file:name.noext``}-${date:now:yyyyMMddHHmmssSSS}.${``file:ext`}.
 
-See more examples at xref:components:languages:file-language.adoc[File Language]
+See more examples at xref:languages:file-language.adoc[File Language]
 
 == Message Headers
 
@@ -307,7 +312,7 @@ The following headers are supported by this component:
 
 |`CamelFileName` |Specifies the name of the file to write (relative to the endpoint
 directory). This name can be a `String`; a `String` with a
-xref:components:languages:file-language.adoc[File Language] or xref:components:languages:simple-language.adoc[Simple]
+xref:languages:file-language.adoc[File Language] or xref:languages:simple-language.adoc[Simple]
 expression; or an Expression object. If it's
 `null` then Camel will auto-generate a filename based on the message
 unique ID.
@@ -514,8 +519,8 @@ from("direct:report").to("file:target/reports/?fileName=report.txt");
 == Filename Expression
 
 Filename can be set either using the *expression* option or as a
-string-based xref:components:languages:file-language.adoc[File Language] expression in the
-`CamelFileName` header. See the xref:components:languages:file-language.adoc[File Language]
+string-based xref:languages:file-language.adoc[File Language] expression in the
+`CamelFileName` header. See the xref:languages:file-language.adoc[File Language]
 for syntax and samples.
 
 [[File2-Consumingfilesfromfolderswhereothersdropfilesdirectly]]
@@ -798,7 +803,7 @@ today's date as a sub-folder name:
 from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 ----
 
-See xref:components:languages:file-language.adoc[File Language] for more samples.
+See xref:languages:file-language.adoc[File Language] for more samples.
 
 == Avoiding reading the same file more than once (idempotent consumer)
 
@@ -999,7 +1004,7 @@ Registry for a bean with the ID, `mySorter`.
 === Sorting using sortBy
 
 Camel supports pluggable sorting strategies. This strategy it to use the
-xref:components:languages:file-language.adoc[File Language] to configure the sorting. The
+xref:languages:file-language.adoc[File Language] to configure the sorting. The
 `sortBy` option is configured as follows:
 
 [source]
@@ -1023,7 +1028,7 @@ This will sort by file name, you can reverse the order by prefixing
 sortBy=reverse:file:name
 ----
 
-As we have the full power of xref:components:languages:file-language.adoc[File Language] we
+As we have the full power of xref:languages:file-language.adoc[File Language] we
 can use some of the other parameters, so if we want to sort by file size
 we do:
 
@@ -1067,7 +1072,7 @@ sortBy=file:modified;file:name
 Now there is an issue here, can you spot it? Well the modified timestamp
 of the file is too fine as it will be in milliseconds, but what if we
 want to sort by date only and then subgroup by name? +
- Well as we have the true power of xref:components:languages:file-language.adoc[File Language] we can use its date command that supports patterns. So this
+ Well as we have the true power of xref:languages:file-language.adoc[File Language] we can use its date command that supports patterns. So this
 can be solved as:
 
 [source]

@@ -1,8 +1,13 @@
 [[flatpack-dataformat]]
 = Flatpack DataFormat
 :page-source: components/camel-flatpack/src/main/docs/flatpack-dataformat.adoc
+:docTitle: Flatpack
+:artifactId: camel-flatpack
+:description: The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
+:since: 2.1
+:supportLevel: Stable
 
-*Since Camel 2.1*
+*Since Camel {since}*
 
 The xref:ROOT:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text

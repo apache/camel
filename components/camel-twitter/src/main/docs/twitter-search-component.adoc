@@ -1,11 +1,15 @@
 [[twitter-search-component]]
 = Twitter Search Component
+:docTitle: Twitter Search
+:artifactId: camel-twitter
+:description: The Twitter Search component consumes search results.
+:since: 2.10
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Twitter Search component consumes search results.
 

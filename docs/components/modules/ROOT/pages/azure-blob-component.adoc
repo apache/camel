@@ -1,12 +1,16 @@
 [[azure-blob-component]]
 = Azure Storage Blob Service Component
 :page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
+:docTitle: Azure Storage Blob Service
+:artifactId: camel-azure
+:description: The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
+:since: 2.19
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Azure Blob component supports storing and retrieving the blobs to/from
 https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.

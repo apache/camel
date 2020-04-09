@@ -1,11 +1,15 @@
 [[mail-component]]
 = Mail Component
+:docTitle: Mail
+:artifactId: camel-mail
+:description: To send or receive emails using imap/pop3 or smtp protocols.
+:since: 1.0
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Mail component provides access to Email via Spring's Mail support
 and the underlying JavaMail system.

@@ -1,5 +1,8 @@
 [[wireTap-eip]]
 = Wire Tap EIP
+:description: Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
+:since: 
+:supportLevel: Stable
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 (from the xref:enterprise-integration-patterns.adoc[EIP patterns])

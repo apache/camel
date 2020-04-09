@@ -1,11 +1,15 @@
 [[ipfs-component]]
 = IPFS Component
+:docTitle: IPFS
+:artifactId: camel-ipfs
+:description: The camel-ipfs component provides access to the Interplanetary File System (IPFS).
+:since: 2.23
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The IPFS component provides access to the Interplanetary File System https://ipfs.io/[(IPFS)].
 

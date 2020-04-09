@@ -1,11 +1,15 @@
 [[aws-eks-component]]
 = AWS EKS Component
+:docTitle: AWS EKS
+:artifactId: camel-aws-eks
+:description: The aws-eks is used for managing Amazon EKS
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The EKS component supports create, delete, describe and list
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.

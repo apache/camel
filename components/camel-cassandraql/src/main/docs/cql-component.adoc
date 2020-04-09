@@ -1,11 +1,15 @@
 [[cql-component]]
 = Cassandra CQL Component
+:docTitle: Cassandra CQL
+:artifactId: camel-cassandraql
+:description: The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API). It's based on Cassandra Java Driver provided by DataStax.
+:since: 2.15
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 http://cassandra.apache.org[Apache Cassandra] is an open source NoSQL
 database designed to handle large amounts on commodity hardware. Like

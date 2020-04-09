@@ -1,11 +1,15 @@
 [[exec-component]]
 = Exec Component
+:docTitle: Exec
+:artifactId: camel-exec
+:description: The exec component can be used to execute OS system commands.
+:since: 2.3
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Exec component can be used to execute system commands.
 

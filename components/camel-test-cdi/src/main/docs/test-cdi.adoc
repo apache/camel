@@ -1,5 +1,12 @@
-[[CDITesting-CDITesting]]
-= CDI Testing
+[[test-cdi-component]]
+= Test CDI Component
+:docTitle: Test CDI
+:artifactId: camel-test-cdi
+:description: Camel unit testing with CDI
+:since: 2.17
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 http://camel.apache.org/testing.html[Testing] is a crucial part of any
 development or integration work. In case you're using the Camel CDI
@@ -278,7 +285,7 @@ Using ShrinkWarp Descriptors, you have a complete control over the
 configuration and kind of Camel CDI applications you want to test. For
 example, to test a Camel CDI application that uses the Camel
 REST DSL configured with the
-xref:servlet-component.adoc[Servlet component], you need to create a Web archive,
+xref:ROOT:servlet-component.adoc[Servlet component], you need to create a Web archive,
 e.g.:
 
 [source,java]
@@ -632,7 +639,7 @@ Camel context bean provided by the Camel CDI component.
 can _advice_ an existing route before its being tested. It allows to
 add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
 for testing purpose, for example using
-the xref:mock-component.adoc[Mock] component.
+the xref:ROOT:mock-component.adoc[Mock] component.
 
 It is recommended to only advice routes which are not started already.
 To meet that requirement, you can use the `CamelContextStartingEvent`
@@ -726,4 +733,3 @@ public class CamelCdiTest {
     };
 }
 ----
-

@@ -113,7 +113,7 @@ You can find an example with the source code: https://github.com/apache/camel-sp
 
 == Using Hystrix with Spring Boot
 
-See the xref:components::hystrix.adoc[Hystrix Component].
+See the xref:components:others:hystrix.adoc[Hystrix Component].
 
 == Camel's Error Handler and Circuit Breaker EIP
 

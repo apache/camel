@@ -1,12 +1,16 @@
 [[milo-server-component]]
 = OPC UA Server Component
 :page-source: components/camel-milo/src/main/docs/milo-server-component.adoc
+:docTitle: OPC UA Server
+:artifactId: camel-milo
+:description: Make telemetry data available as an OPC UA server
+:since: 2.19
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Milo Server component provides an OPC UA server using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.

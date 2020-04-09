@@ -1,8 +1,13 @@
 [[syslog-dataformat]]
 = Syslog DataFormat
 :page-source: components/camel-syslog/src/main/docs/syslog-dataformat.adoc
+:docTitle: Syslog
+:artifactId: camel-syslog
+:description: The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).
+:since: 2.6
+:supportLevel: Stable
 
-*Since Camel 2.6*
+*Since Camel {since}*
 
 The Syslog dataformat is used for working with
 http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.

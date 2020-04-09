@@ -1,12 +1,16 @@
 [[google-drive-component]]
 = Google Drive Component
 :page-source: components/camel-google-drive/src/main/docs/google-drive-component.adoc
+:docTitle: Google Drive
+:artifactId: camel-google-drive
+:description: The google-drive component provides access to Google Drive file storage service.
+:since: 2.14
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.14*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Google Drive component provides access to the
 http://drive.google.com[Google Drive file storage service] via the

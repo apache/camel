@@ -1,5 +1,8 @@
 [[validate-eip]]
 = Validate EIP
+:description: Validates a message based on an expression
+:since: 
+:supportLevel: Stable
 
 Validate uses an expression or predicates to validate the contents of a message.
 It is useful for ensuring that messages are valid before attempting to process them.

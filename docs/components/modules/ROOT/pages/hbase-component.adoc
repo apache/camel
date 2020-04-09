@@ -1,12 +1,16 @@
 [[hbase-component]]
 = HBase Component
 :page-source: components/camel-hbase/src/main/docs/hbase-component.adoc
+:docTitle: HBase
+:artifactId: camel-hbase
+:description: For reading/writing from/to an HBase store (Hadoop database).
+:since: 2.10
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component provides an idemptotent repository, producers and
 consumers for http://hbase.apache.org/[Apache HBase].

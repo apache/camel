@@ -1,11 +1,15 @@
 [[ganglia-component]]
 = Ganglia Component
+:docTitle: Ganglia
+:artifactId: camel-ganglia
+:description: The ganglia component is used for sending metrics to the Ganglia monitoring system.
+:since: 2.15
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 Provides a mechanism to send a value (the message body) as a metric to
 the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j

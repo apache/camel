@@ -1,12 +1,16 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
 :page-source: components/camel-google-mail/src/main/docs/google-mail-stream-component.adoc
+:docTitle: Google Mail Stream
+:artifactId: camel-google-mail
+:description: The google-mail component provides access to Google Mail.
+:since: 2.22
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Google Mail component provides access
 to http://gmail.com/[Gmail] via

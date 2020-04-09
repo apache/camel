@@ -1,5 +1,8 @@
 [[process-eip]]
 = Process EIP
+:description: Calls a Camel processor
+:since: 
+:supportLevel: Stable
 
 The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
 
@@ -97,4 +100,3 @@ deriving from
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
 xref:latest@manual:ROOT:writing-components.adoc[Writing Components]
-

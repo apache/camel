@@ -1,12 +1,16 @@
 [[olingo2-component]]
 = Olingo2 Component
 :page-source: components/camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc
+:docTitle: Olingo2
+:artifactId: camel-olingo2
+:description: Communicates with OData 2.0 services using Apache Olingo.
+:since: 2.14
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.14*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
 version 2.0 APIs to interact with OData 2.0 compliant services.
@@ -330,4 +334,3 @@ from("olingo2://read/Manufacturers?queryParams=#paramsBean&timeUnit=SECONDS&dela
 ---------------------------------------------------------------------------------------------------------
 
 include::camel-spring-boot::page$olingo2-starter.adoc[]
-

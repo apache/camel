@@ -1,7 +1,12 @@
 [[cbor-dataformat]]
 = CBOR DataFormat
+:docTitle: CBOR
+:artifactId: camel-cbor
+:description: CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.
+:since: 3.0
+:supportLevel: Stable
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
 CBOR is a Data Format which uses the
 http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the

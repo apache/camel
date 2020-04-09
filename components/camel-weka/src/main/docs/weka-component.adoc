@@ -1,11 +1,15 @@
 [[weka-component]]
 = Weka Component
+:docTitle: Weka
+:artifactId: camel-weka
+:description: The camel-weka component provides Data Mining functionality through Weka.
+:since: 3.1
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Weka component provides access to the https://www.cs.waikato.ac.nz/ml/weka[(Weka Data Mining)] toolset.
 

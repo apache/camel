@@ -1,5 +1,8 @@
 [[choice-eip]]
 = Choice EIP
+:description: Routes messages based on a series of predicates
+:since: 
+:supportLevel: Stable
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content

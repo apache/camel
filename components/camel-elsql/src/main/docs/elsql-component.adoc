@@ -1,11 +1,15 @@
 [[elsql-component]]
 = ElSQL Component
+:docTitle: ElSQL
+:artifactId: camel-elsql
+:description: The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
+:since: 2.16
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.16*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The ELSQL component is an extension to the existing
 xref:sql-component.adoc[SQL Component] that uses
@@ -44,7 +48,7 @@ The parameters to the SQL queries are named parameters in the elsql
 mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. from message body if xref:components:languages:simple-language.adoc[Simple]
+1. from message body if xref:languages:simple-language.adoc[Simple]
 expression.
 
 2. from message body if its a `java.util.Map`
