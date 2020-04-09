@@ -1,12 +1,16 @@
 [[weather-component]]
 = Weather Component
 :page-source: components/camel-weather/src/main/docs/weather-component.adoc
+:docTitle: Weather
+:artifactId: camel-weather
+:description: Polls the weather information from Open Weather Map.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Weather component is used for polling weather information from
 http://openweathermap.org[Open Weather Map] - a site that provides free

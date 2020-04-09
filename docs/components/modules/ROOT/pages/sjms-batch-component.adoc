@@ -1,12 +1,16 @@
 [[sjms-batch-component]]
 = Simple JMS Batch Component
 :page-source: components/camel-sjms/src/main/docs/sjms-batch-component.adoc
+:docTitle: Simple JMS Batch
+:artifactId: camel-sjms
+:description: The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
+:since: 2.16
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.16*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 SJMS Batch is a specialized component for highly performant,
 transactional batch consumption from a JMS queue. It can be thought of

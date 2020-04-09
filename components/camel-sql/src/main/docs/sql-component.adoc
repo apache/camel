@@ -1,11 +1,15 @@
 [[sql-component]]
 = SQL Component
+:docTitle: SQL
+:artifactId: camel-sql
+:description: The sql component allows you to work with databases using JDBC SQL queries.
+:since: 1.4
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.4*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The SQL component allows you to work with databases using JDBC
 queries. The difference between this component and xref:jdbc-component.adoc[JDBC]

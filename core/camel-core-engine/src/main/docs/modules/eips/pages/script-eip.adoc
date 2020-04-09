@@ -1,5 +1,8 @@
 [[script-eip]]
 = Script EIP
+:description: Executes a script from a language which does not change the message body.
+:since: 
+:supportLevel: Stable
 
 Is used to execute a script which does not change the message (by default).
 This is useful when you need to invoke some logic that are not in Java code such as JavaScript,

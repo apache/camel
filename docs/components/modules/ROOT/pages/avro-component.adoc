@@ -1,12 +1,16 @@
 [[avro-component]]
 = Avro Component
 :page-source: components/camel-avro-rpc/src/main/docs/avro-component.adoc
+:docTitle: Avro
+:artifactId: camel-avro-rpc
+:description: Working with Apache Avro for data serialization.
+:since: 2.10
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component provides a support for Apache Avro's rpc, by
 providing producers and consumers endpoint for using avro over netty or

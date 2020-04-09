@@ -1,12 +1,16 @@
 [[ignite-events-component]]
 = Ignite Events Component
 :page-source: components/camel-ignite/src/main/docs/ignite-events-component.adoc
+:docTitle: Ignite Events
+:artifactId: camel-ignite
+:description: The Ignite Events endpoint is one of camel-ignite endpoints which allows you to receive events from the Ignite cluster by creating a local event listener.
+:since: 2.17
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Ignite Events endpoint is one of camel-ignite endpoints which allows you to https://apacheignite.readme.io/docs/events[receive events] from the Ignite cluster by creating a local event listener.
 

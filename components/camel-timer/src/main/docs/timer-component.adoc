@@ -1,11 +1,16 @@
 [[timer-component]]
 = Timer Component
+:docTitle: Timer
+:artifactId: camel-timer
+:description: The timer component is used for generating message exchanges when a timer fires.
+:since: 1.0
+:supportLevel: Stable
+:component-header: Only consumer is supported
+:core:
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Timer component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.

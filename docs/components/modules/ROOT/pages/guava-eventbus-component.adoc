@@ -1,12 +1,16 @@
 [[guava-eventbus-component]]
 = Guava EventBus Component
 :page-source: components/camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc
+:docTitle: Guava EventBus
+:artifactId: camel-guava-eventbus
+:description: The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
+:since: 2.10
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The
 https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google

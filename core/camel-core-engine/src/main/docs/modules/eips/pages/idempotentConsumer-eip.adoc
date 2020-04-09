@@ -1,5 +1,8 @@
 [[idempotentConsumer-eip]]
 = Idempotent Consumer EIP
+:description: Filters out duplicate messages
+:since: 
+:supportLevel: Stable
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent
@@ -18,7 +21,7 @@ Camel provides the following Idempotent Consumer implementations:
 
 * MemoryIdempotentRepository
 * xref:components::file-component.adoc[FileIdempotentRepository]
-* xref:components::hazelcast.adoc[HazelcastIdempotentRepository]
+* xref:components::hazelcast-summary.adoc[HazelcastIdempotentRepository]
 * xref:components::sql-component.adoc[JdbcMessageIdRepository]
 * xref:components::jpa-component.adoc[JpaMessageIdRepository]
 * xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]

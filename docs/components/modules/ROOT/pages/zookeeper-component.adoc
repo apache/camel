@@ -1,12 +1,16 @@
 [[zookeeper-component]]
 = ZooKeeper Component
 :page-source: components/camel-zookeeper/src/main/docs/zookeeper-component.adoc
+:docTitle: ZooKeeper
+:artifactId: camel-zookeeper
+:description: The zookeeper component allows interaction with a ZooKeeper cluster.
+:since: 2.9
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.9*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the

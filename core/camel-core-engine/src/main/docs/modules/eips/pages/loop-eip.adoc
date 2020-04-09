@@ -1,5 +1,8 @@
 [[loop-eip]]
 = Loop EIP
+:description: Processes a message multiple times
+:since: 
+:supportLevel: Stable
 
 The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 

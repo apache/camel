@@ -1,12 +1,16 @@
 [[graphql-component]]
 = GraphQL Component
 :page-source: components/camel-graphql/src/main/docs/graphql-component.adoc
+:docTitle: GraphQL
+:artifactId: camel-graphql
+:description: A Camel GraphQL Component
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The GraphQL component is a GraphQL client that communicates over HTTP and supports queries and mutations, but not subscriptions. It uses the https://hc.apache.org/httpcomponents-client-4.5.x/index.html[Apache HttpClient] library.
 

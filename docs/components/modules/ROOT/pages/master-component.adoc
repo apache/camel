@@ -1,12 +1,16 @@
 [[master-component]]
 = Master Component
 :page-source: components/camel-master/src/main/docs/master-component.adoc
+:docTitle: Master
+:artifactId: camel-master
+:description: Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Camel-Master endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
 with automatic failover if that JVM dies.

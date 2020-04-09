@@ -1,6 +1,12 @@
-= Testcontainers
+[[testcontainers-junit5-component]]
+= Testcontainers JUnit5 Component
+:docTitle: Testcontainers JUnit5
+:artifactId: camel-testcontainers-junit5
+:description: Camel support for testcontainers with JUnit 5
+:since: 3.0
+:supportLevel: Stable
 
-*Available since 3.0.0*
+*Since Camel {since}*
 
 Testing camel components is sometime complex because the 3rd party system a component interacts with does not provide testing facilities and/or is only available as a native application. To reduce this complexity, *Camel Testcontainers JUnit 5* extends standard camel test support providing a way to create and interact with containerized applications.
 
@@ -132,5 +138,5 @@ Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side includ
 `camel-testcontainers-junit5` and `junit-vintage-engine`. This configuration allows to migrate a camel test at once.
 
 === Typical migration steps linked to JUnit 5 support in Camel Testcontainers
-* Migration steps linked to xref:components::test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
+* Migration steps linked to xref:test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
 * Imports of `org.apache.camel.test.testcontainers.\*` should be replaced with `org.apache.camel.test.testcontainers.junit5.*`

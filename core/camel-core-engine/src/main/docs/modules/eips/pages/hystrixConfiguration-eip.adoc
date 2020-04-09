@@ -1,5 +1,8 @@
 [[hystrixConfiguration-eip]]
 = Hystrix Configuration EIP
+:description: Hystrix Circuit Breaker EIP configuration
+:since: 
+:supportLevel: Stable
 
 
 // eip options: START

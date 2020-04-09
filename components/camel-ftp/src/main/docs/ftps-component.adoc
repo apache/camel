@@ -1,11 +1,15 @@
 [[ftps-component]]
 = FTPS Component
+:docTitle: FTPS
+:artifactId: camel-ftp
+:description: The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
+:since: 2.2
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.2*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component provides access to remote file systems over the FTP and
 SFTP protocols.

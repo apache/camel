@@ -1,12 +1,16 @@
 [[docker-component]]
 = Docker Component
 :page-source: components/camel-docker/src/main/docs/docker-component.adoc
+:docTitle: Docker
+:artifactId: camel-docker
+:description: The docker component is used for managing Docker containers.
+:since: 2.15
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 Camel component for communicating with Docker.
 

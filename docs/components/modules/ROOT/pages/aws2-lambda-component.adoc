@@ -1,12 +1,16 @@
 [[aws2-lambda-component]]
 = AWS Lambda Component
 :page-source: components/camel-aws2-lambda/src/main/docs/aws2-lambda-component.adoc
+:docTitle: AWS Lambda
+:artifactId: camel-aws2-lambda
+:description: The aws2-lambda is used for managing and invoking functions from Amazon Lambda.
+:since: 3.2
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Lambda component supports create, get, list, delete and invoke
 https://aws.amazon.com/lambda/[AWS Lambda] functions.

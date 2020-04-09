@@ -1,12 +1,16 @@
 [[jclouds-component]]
 = JClouds Component
 :page-source: components/camel-jclouds/src/main/docs/jclouds-component.adoc
+:docTitle: JClouds
+:artifactId: camel-jclouds
+:description: For interacting with cloud compute & blobstore service via jclouds.
+:since: 2.9
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.9*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses

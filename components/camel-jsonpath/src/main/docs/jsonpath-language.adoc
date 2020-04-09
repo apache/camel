@@ -1,7 +1,12 @@
 [[jsonpath-language]]
 = JsonPath Language
+:docTitle: JsonPath
+:artifactId: camel-jsonpath
+:description: To use JsonPath in Camel expressions or predicates.
+:since: 2.13
+:supportLevel: Stable
 
-*Since Camel 2.13*
+*Since Camel {since}*
 
 Camel supports https://code.google.com/p/json-path/[JSonPath] to allow
 using Expression or Predicate

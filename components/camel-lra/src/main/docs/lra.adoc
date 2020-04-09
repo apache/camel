@@ -1,6 +1,12 @@
+[[lra-component]]
 = LRA Component
+:docTitle: LRA
+:artifactId: camel-lra
+:description: Camel saga binding for Long-Running-Action framework
+:since: 2.21
+:supportLevel: Stable
 
-*Since Camel 2.21.0*
+*Since Camel {since}*
 
 The LRA module provides bindings of the Saga EIP with any https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA[Microprofile compatible LRA Coordinator (sandbox)].
 

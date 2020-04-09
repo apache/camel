@@ -1,12 +1,16 @@
 [[aws-s3-component]]
 = AWS S3 Storage Service Component
 :page-source: components/camel-aws-s3/src/main/docs/aws-s3-component.adoc
+:docTitle: AWS S3 Storage Service
+:artifactId: camel-aws-s3
+:description: The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
+:since: 2.8
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.8*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The S3 component supports storing and retrieving objects from/to
 https://aws.amazon.com/s3[Amazon's S3] service.

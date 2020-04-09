@@ -1,12 +1,16 @@
 [[couchdb-component]]
 = CouchDB Component
 :page-source: components/camel-couchdb/src/main/docs/couchdb-component.adoc
+:docTitle: CouchDB
+:artifactId: camel-couchdb
+:description: The couchdb component is used for integrate with CouchDB databases.
+:since: 2.11
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.11*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The *couchdb:* component allows you to treat
 http://couchdb.apache.org/[CouchDB] instances as a producer or consumer

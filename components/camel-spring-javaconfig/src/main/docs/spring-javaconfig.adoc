@@ -1,5 +1,12 @@
-[[SpringJavaConfig-SpringJavaConfig]]
-= Spring Java Config
+[[spring-javaconfig-component]]
+= Spring Java Configuration Component
+:docTitle: Spring Java Configuration
+:artifactId: camel-spring-javaconfig
+:description: Using Camel with Spring Java Configuration
+:since: 2.0
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 Spring started life using XML Config to wire beans
 together. However some folks don't like using XML and would rather use

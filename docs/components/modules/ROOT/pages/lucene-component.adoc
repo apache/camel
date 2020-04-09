@@ -1,12 +1,16 @@
 [[lucene-component]]
 = Lucene Component
 :page-source: components/camel-lucene/src/main/docs/lucene-component.adoc
+:docTitle: Lucene
+:artifactId: camel-lucene
+:description: To insert or query from Apache Lucene databases.
+:since: 2.2
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Lucene component is based on the Apache Lucene project. Apache
 Lucene is a powerful high-performance, full-featured text search engine

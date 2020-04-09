@@ -1,12 +1,16 @@
 [[jbpm-component]]
 = JBPM Component
 :page-source: components/camel-jbpm/src/main/docs/jbpm-component.adoc
+:docTitle: JBPM
+:artifactId: camel-jbpm
+:description: The jbpm component provides integration with jBPM (Business Process Management).
+:since: 2.6
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.6*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The JBPM component provides integration with Business Process
 Management http://www.jbpm.org/[jBPM]. It uses

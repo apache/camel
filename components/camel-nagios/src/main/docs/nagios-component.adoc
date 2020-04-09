@@ -1,11 +1,15 @@
 [[nagios-component]]
 = Nagios Component
+:docTitle: Nagios
+:artifactId: camel-nagios
+:description: To send passive checks to Nagios using JSendNSCA.
+:since: 2.3
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
 to http://nagios.org[Nagios].

@@ -1,7 +1,12 @@
-[[SpringSecurity-SpringSecurity]]
-= Spring Security
+[[spring-security-component]]
+= Spring Security Component
+:docTitle: Spring Security
+:artifactId: camel-spring-security
+:description: Security using Spring Security
+:since: 2.3
+:supportLevel: Stable
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
 The Camel Spring Security component provides role-based authorization
 for Camel routes. It leverages the authentication and user services
@@ -84,7 +89,7 @@ authorization is not specified by this component. You can write your own
 processors or components which get authentication information from the
 exchange depending on your needs. For example, you might create a
 processor that gets credentials from an HTTP request header originating
-in the xref:jetty-component.adoc[Jetty] component. No matter how the credentials
+in the xref:ROOT:jetty-component.adoc[Jetty] component. No matter how the credentials
 are collected, they need to be placed in the In message or the
 `SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
 Security] component can access them:
@@ -143,7 +148,7 @@ implementation of the
 `org.apache.camel.component.spring.security.AuthenticationAdapter` to
 your `<authorizationPolicy>` bean. This can be useful if you are working
 with components that do not use Spring Security but do provide a
-`Subject`. At this time, only the xref:cxf-component.adoc[CXF] component populates
+`Subject`. At this time, only the xref:ROOT:cxf-component.adoc[CXF] component populates
 the `Exchange.AUTHENTICATION` header.
 
 [[SpringSecurity-Handlingauthenticationandauthorizationerrors]]
@@ -197,4 +202,3 @@ for this component:
 This dependency will also pull in
 `org.springframework.security:spring-security-core:3.0.3.RELEASE` and
 `org.springframework.security:spring-security-config:3.0.3.RELEASE`.
-

@@ -1,12 +1,16 @@
 [[aws-translate-component]]
 = AWS Translate Component
 :page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
+:docTitle: AWS Translate
+:artifactId: camel-aws-translate
+:description: The aws-translate component is used for managing Amazon Translate
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Translate component supports translate a text in multiple languages.
 https://aws.amazon.com/translate/[AWS Translate] clusters instances.

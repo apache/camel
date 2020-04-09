@@ -1,5 +1,8 @@
 [[bean-eip]]
 = Bean EIP
+:description: Calls a java bean
+:since: 
+:supportLevel: Stable
 
 The Bean EIP binds beans to Camel message exchanges.
 
@@ -93,4 +96,3 @@ constructed from the xref:message.adoc[Message] are all defined by the
 xref:latest@manual:ROOT:bean-binding.adoc[Bean Binding] mechanism which is used throughout
 all of the various xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration]
 mechanisms in Camel.
-

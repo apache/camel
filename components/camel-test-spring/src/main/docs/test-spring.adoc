@@ -1,6 +1,12 @@
-= Test Spring
+[[test-spring-component]]
+= Test Spring Component
+:docTitle: Test Spring
+:artifactId: camel-test-spring
+:description: Camel unit testing with Spring
+:since: 2.10
+:supportLevel: Stable
 
-*Available since 2.10*
+*Since Camel {since}*
 
 Allows to test Camel with Spring applications such as Spring XML files or Spring-Boot.
 
@@ -11,7 +17,7 @@ This documentation is old and needs to be updated
 
 xref:manual::testing.adoc[Testing] is a crucial part of any development or integration work. The Spring Framework offers a number of features that makes it easy to test while using Spring for Inversion of Control which works with JUnit 3.x and JUnit 4.x.
 
-We can use Spring for IoC and the Camel xref:components::mock-component.adoc[Mock] and xref:components::test.adoc[Test] endpoints to create sophisticated integration/unit tests that are easy to run and debug inside your IDE.  There are three supported approaches for testing with Spring in Camel.
+We can use Spring for IoC and the Camel xref:ROOT:mock-component.adoc[Mock] and xref:test.adoc[Test] endpoints to create sophisticated integration/unit tests that are easy to run and debug inside your IDE.  There are three supported approaches for testing with Spring in Camel.
 [width="100%",cols="1,1,4,1",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description |Required Camel Test Dependencies
@@ -25,7 +31,7 @@ Provided by:
 * `org.apache.camel.test.CamelSpringTestSupport`
 * `org.apache.camel.test.junit4.CamelSpringTestSupport`
 
-These base classes provide feature parity with the simple `CamelTestSupport` classes from xref:components::test.adoc[Camel Test] but do not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
+These base classes provide feature parity with the simple `CamelTestSupport` classes from xref:test.adoc[Camel Test] but do not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
 
 a|
 * JUnit 3.x (deprecated) - camel-test-spring
@@ -408,5 +414,3 @@ public class Foo {
   }
 }
 ----
-
-

@@ -1,12 +1,16 @@
 [[mina-component]]
 = Mina Component
 :page-source: components/camel-mina/src/main/docs/mina-component.adoc
+:docTitle: Mina
+:artifactId: camel-mina
+:description: Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+:since: 2.10
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Mina component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]

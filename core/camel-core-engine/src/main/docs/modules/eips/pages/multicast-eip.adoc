@@ -1,5 +1,8 @@
 [[multicast-eip]]
 = Multicast EIP
+:description: Routes the same message to multiple paths either sequentially or in parallel.
+:since: 
+:supportLevel: Stable
 
 The Multicast EIP allows to route the same message to a number of endpoints
 and process them in a different way. The main difference between the

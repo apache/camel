@@ -2,7 +2,7 @@
 = JNDI
 
 Camel will use JNDI as the default xref:registry.adoc[Registry]
-implementation if you do not use xref:components::spring.adoc[Spring]. This means
+implementation if you do not use xref:components::spring-summary.adoc[Spring]. This means
 that using a DefaultCamelContext will try and create a
 https://www.javadoc.io/doc/org.apache.camel/camel-core-engine/current/org/apache/camel/impl/JndiRegistry.html[JndiRegistry]
 which uses the JNDI InitialContext as the registry.
