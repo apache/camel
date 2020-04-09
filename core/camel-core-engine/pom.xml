@@ -128,9 +128,9 @@
                         <goals>
                             <goal>generate-configurer</goal>
                         </goals>
-                        <!-- we want to have configurer for ExtendedCamelContext in camel-core-engine -->
                         <configuration>
                             <discoverClasses>false</discoverClasses>
+                            <!-- we want to have configurer for ExtendedCamelContext in camel-core-engine -->
                             <classes>org.apache.camel.ExtendedCamelContext</classes>
                         </configuration>
                     </execution>

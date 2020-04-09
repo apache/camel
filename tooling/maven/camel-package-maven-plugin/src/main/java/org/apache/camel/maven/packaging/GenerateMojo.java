@@ -46,8 +46,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(EndpointSchemaGeneratorMojo.class);
         // prepare-components
         invoke(PrepareComponentMojo.class);
-        // generate-configurer
-        invoke(GenerateConfigurerMojo.class);
         // prepare-main
         invoke(PrepareCamelMainMojo.class);
         // generate-xml-parser
