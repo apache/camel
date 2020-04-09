@@ -24,7 +24,9 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.Exchange;
-import org.bson.*;
+import org.bson.BsonDocument;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
@@ -70,7 +72,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.next();
                 Exchange exchange = endpoint.createMongoDbExchange(dbObj.getFullDocument());
 
-                String documentId = dbObj.getDocumentKey().getString(MONGO_ID).getValue();
+                ObjectId documentId = dbObj.getDocumentKey().getObjectId(MONGO_ID).getValue();
                 OperationType operationType = dbObj.getOperationType();
                 exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
                 exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
