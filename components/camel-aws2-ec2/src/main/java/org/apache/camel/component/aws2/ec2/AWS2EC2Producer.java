@@ -313,7 +313,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof StartInstancesRequest) {
+                if (exchange.getIn().getBody() instanceof TerminateInstancesRequest) {
                     Object payload = exchange.getIn().getBody();
                     TerminateInstancesResponse result;
                     try {
@@ -351,6 +351,22 @@ public class AWS2EC2Producer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void describeInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof DescribeInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    DescribeInstancesResponse result;
+                    try {
+                        result = ec2Client.describeInstances((DescribeInstancesRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Describe Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
+        } else {
         DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
             instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
@@ -365,6 +381,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     @SuppressWarnings("unchecked")
