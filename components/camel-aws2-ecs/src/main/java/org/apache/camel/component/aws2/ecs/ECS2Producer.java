@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ecs;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -95,11 +96,10 @@ public class ECS2Producer extends DefaultProducer {
         return (ECS2Endpoint)super.getEndpoint();
     }
 
-    private void listClusters(EcsClient ecsClient, Exchange exchange) {
+    private void listClusters(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof ListClustersRequest) {
-                    Object payload = exchange.getIn().getBody();
+            Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof ListClustersRequest) {
                     ListClustersResponse result;
                     try {
                         ListClustersRequest request = (ListClustersRequest)payload;
@@ -111,7 +111,6 @@ public class ECS2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             Builder builder = ListClustersRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.MAX_RESULTS))) {
@@ -131,10 +130,10 @@ public class ECS2Producer extends DefaultProducer {
         }
     }
 
-    private void createCluster(EcsClient ecsClient, Exchange exchange) {
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-            if (exchange.getIn().getBody() instanceof CreateClusterRequest) {
-                Object payload = exchange.getIn().getBody();
+    private void createCluster(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateClusterRequest) {
                 CreateClusterResponse result;
                 try {
                     CreateClusterRequest request = (CreateClusterRequest)payload;
@@ -145,7 +144,7 @@ public class ECS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-            }
+        }
         } else {
             CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
@@ -165,10 +164,10 @@ public class ECS2Producer extends DefaultProducer {
         }
     }
 
-    private void describeCluster(EcsClient ecsClient, Exchange exchange) {
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-            if (exchange.getIn().getBody() instanceof DescribeClustersRequest) {
-                Object payload = exchange.getIn().getBody();
+    private void describeCluster(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DescribeClustersRequest) {
                 DescribeClustersResponse result;
                 try {
                     DescribeClustersRequest request = (DescribeClustersRequest)payload;
@@ -179,7 +178,7 @@ public class ECS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-            }
+        }
         } else {
             DescribeClustersRequest.Builder builder = DescribeClustersRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
@@ -199,10 +198,10 @@ public class ECS2Producer extends DefaultProducer {
         }
     }
 
-    private void deleteCluster(EcsClient ecsClient, Exchange exchange) {
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-            if (exchange.getIn().getBody() instanceof DeleteClusterRequest) {
-                Object payload = exchange.getIn().getBody();
+    private void deleteCluster(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteClusterRequest) {
                 DeleteClusterResponse result;
                 try {
                     DeleteClusterRequest request = (DeleteClusterRequest)payload;
@@ -213,7 +212,7 @@ public class ECS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-            }
+        }
         } else {
             DeleteClusterRequest.Builder builder = DeleteClusterRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
