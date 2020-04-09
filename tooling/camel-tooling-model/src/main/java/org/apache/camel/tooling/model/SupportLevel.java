@@ -45,11 +45,11 @@ public enum SupportLevel {
      */
     Stable;
 
-    public static SupportLevel DEFAULT = Stable;
+    public static SupportLevel baseStability = Stable;
 
     public static SupportLevel safeValueOf(String level) {
         if (level == null) {
-            return DEFAULT;
+            return baseStability;
         }
         if (level.compareToIgnoreCase(Experimental.name()) == 0) {
             return Experimental;
