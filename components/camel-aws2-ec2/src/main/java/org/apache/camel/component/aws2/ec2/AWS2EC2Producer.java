@@ -233,7 +233,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof RunInstancesRequest) {
+                if (exchange.getIn().getBody() instanceof StartInstancesRequest) {
                     Object payload = exchange.getIn().getBody();
                     StartInstancesResponse result;
                     try {
@@ -271,23 +271,41 @@ public class AWS2EC2Producer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void stopInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof StopInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    StopInstancesResponse result;
+                    try {
+                        result = ec2Client.stopInstances((StopInstancesRequest) payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Stopping instances with Ids [{}] ", ((StopInstancesRequest) payload).instanceIds());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }    
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            StopInstancesResponse result;
+            try {
+                result = ec2Client.stopInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        StopInstancesResponse result;
-        try {
-            result = ec2Client.stopInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")

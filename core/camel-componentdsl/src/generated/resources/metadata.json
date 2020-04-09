@@ -3885,6 +3885,7 @@
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.ironmq.IronMQComponent",
     "firstVersion": "2.17.0",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ironmq",
     "version": "3.3.0-SNAPSHOT"
@@ -5227,7 +5228,6 @@
     "lenientProperties": true,
     "javaType": "org.apache.camel.component.netty.http.NettyHttpComponent",
     "firstVersion": "2.14.0",
-    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty-http",
     "version": "3.3.0-SNAPSHOT"
