@@ -72,41 +72,41 @@ public class AWS2EC2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-            case createAndRunInstances:
-                createAndRunInstance(getEndpoint().getEc2Client(), exchange);
-                break;
-            case startInstances:
-                startInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case stopInstances:
-                stopInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case terminateInstances:
-                terminateInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case describeInstances:
-                describeInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case describeInstancesStatus:
-                describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
-                break;
-            case rebootInstances:
-                rebootInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case monitorInstances:
-                monitorInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case unmonitorInstances:
-                unmonitorInstances(getEndpoint().getEc2Client(), exchange);
-                break;
-            case createTags:
-                createTags(getEndpoint().getEc2Client(), exchange);
-                break;
-            case deleteTags:
-                deleteTags(getEndpoint().getEc2Client(), exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        case createAndRunInstances:
+            createAndRunInstance(getEndpoint().getEc2Client(), exchange);
+            break;
+        case startInstances:
+            startInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case stopInstances:
+            stopInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case terminateInstances:
+            terminateInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case describeInstances:
+            describeInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case describeInstancesStatus:
+            describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
+            break;
+        case rebootInstances:
+            rebootInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case monitorInstances:
+            monitorInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case unmonitorInstances:
+            unmonitorInstances(getEndpoint().getEc2Client(), exchange);
+            break;
+        case createTags:
+            createTags(getEndpoint().getEc2Client(), exchange);
+            break;
+        case deleteTags:
+            deleteTags(getEndpoint().getEc2Client(), exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -135,7 +135,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         return (AWS2EC2Endpoint)super.getEndpoint();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) {
         String ami;
         InstanceType instanceType;
@@ -145,7 +145,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Object payload = exchange.getIn().getBody();
                     RunInstancesResponse result;
                     try {
-                        result = ec2Client.runInstances((RunInstancesRequest) payload);
+                        result = ec2Client.runInstances((RunInstancesRequest)payload);
                     } catch (AwsServiceException ase) {
                         LOG.trace("Run Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                         throw ase;
@@ -154,7 +154,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }    
+            }
         } else {
             RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID))) {
@@ -237,16 +237,16 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Object payload = exchange.getIn().getBody();
                     StartInstancesResponse result;
                     try {
-                        result = ec2Client.startInstances((StartInstancesRequest) payload);
+                        result = ec2Client.startInstances((StartInstancesRequest)payload);
                     } catch (AwsServiceException ase) {
                         LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                         throw ase;
                     }
-                    LOG.trace("Starting instances with Ids [{}] ", ((StartInstancesRequest) payload).instanceIds());
+                    LOG.trace("Starting instances with Ids [{}] ", ((StartInstancesRequest)payload).instanceIds());
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }    
+            }
         } else {
             StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -277,16 +277,16 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Object payload = exchange.getIn().getBody();
                     StopInstancesResponse result;
                     try {
-                        result = ec2Client.stopInstances((StopInstancesRequest) payload);
+                        result = ec2Client.stopInstances((StopInstancesRequest)payload);
                     } catch (AwsServiceException ase) {
                         LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                         throw ase;
                     }
-                    LOG.trace("Stopping instances with Ids [{}] ", ((StopInstancesRequest) payload).instanceIds());
+                    LOG.trace("Stopping instances with Ids [{}] ", ((StopInstancesRequest)payload).instanceIds());
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }    
+            }
         } else {
             StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -311,23 +311,41 @@ public class AWS2EC2Producer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void terminateInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        TerminateInstancesRequest.Builder builder = TerminateInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof StartInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    TerminateInstancesResponse result;
+                    try {
+                        result = ec2Client.terminateInstances((TerminateInstancesRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Terminate Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Terminating instances with Ids [{}] ", ((TerminateInstancesRequest)payload).instanceIds());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            TerminateInstancesRequest.Builder builder = TerminateInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            TerminateInstancesResponse result;
+            try {
+                result = ec2Client.terminateInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Terminate Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        TerminateInstancesResponse result;
-        try {
-            result = ec2Client.terminateInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Terminate Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
