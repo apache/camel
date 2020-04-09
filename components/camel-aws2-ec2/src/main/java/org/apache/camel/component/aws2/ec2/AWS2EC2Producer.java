@@ -393,7 +393,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Object payload = exchange.getIn().getBody();
                     DescribeInstanceStatusResponse result;
                     try {
-                        result = ec2Client.describeInstanceStatus((DescribeInstanceStatusRequest) payload);
+                        result = ec2Client.describeInstanceStatus((DescribeInstanceStatusRequest)payload);
                     } catch (AwsServiceException ase) {
                         LOG.trace("Describe Instances Status command returned the error code {}", ase.awsErrorDetails().errorCode());
                         throw ase;
@@ -423,19 +423,34 @@ public class AWS2EC2Producer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void rebootInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        RebootInstancesRequest.Builder builder = RebootInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof DescribeInstanceStatusRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    try {
+                        LOG.trace("Rebooting instances with Ids [{}] ", ((RebootInstancesRequest)payload).instanceIds());
+                        ec2Client.rebootInstances((RebootInstancesRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
-        }
-        try {
-            LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
-            ec2Client.rebootInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
+            RebootInstancesRequest.Builder builder = RebootInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            try {
+                LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+                ec2Client.rebootInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
         }
     }
 
