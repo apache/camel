@@ -33,9 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 public class BlobProducer extends DefaultProducer {
 
     private final BlobConfiguration configuration;
-
-    private BlobServiceOperations blobServiceOperations;
-    private BlobServiceClientWrapper blobServiceClientWrapper;
+    private final BlobServiceOperations blobServiceOperations;
+    private final BlobServiceClientWrapper blobServiceClientWrapper;
 
     public BlobProducer(final Endpoint endpoint) {
         super(endpoint);

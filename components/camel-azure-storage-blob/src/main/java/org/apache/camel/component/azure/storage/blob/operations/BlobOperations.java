@@ -217,6 +217,7 @@ public class BlobOperations {
 
         List<BlobBlock> blobBlocks = null;
         if (object instanceof List) {
+            //noinspection unchecked
             blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
             blobBlocks = Collections.singletonList((BlobBlock) object);
@@ -248,6 +249,7 @@ public class BlobOperations {
         return new BlobOperationResponse(true);
     }
 
+    @SuppressWarnings("unchecked")
     public BlobOperationResponse commitBlobBlockList(final Exchange exchange) throws Exception {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
@@ -426,6 +428,7 @@ public class BlobOperations {
         return new DownloadRetryOptions().setMaxRetryRequests(configuration.getMaxRetryRequests());
     }
 
+    @SuppressWarnings("rawtypes")
     private BlobOperationResponse buildResponse(final Response response, final boolean emptyBody) {
         final Object body = emptyBody ? true : response.getValue();
         BlobExchangeHeaders exchangeHeaders;

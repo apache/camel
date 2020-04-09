@@ -71,10 +71,6 @@ public class BlobClientWrapper {
         return client.getBlobUrl();
     }
 
-    public BlobProperties downloadToFile(final String fileDir, final boolean overwrite) {
-        return client.downloadToFile(fileDir, overwrite);
-    }
-
     public Response<Void> delete(final DeleteSnapshotsOptionType deleteBlobSnapshotOptions,
                                  final BlobRequestConditions requestConditions, final Duration timeout) {
         return client.deleteWithResponse(deleteBlobSnapshotOptions, requestConditions, timeout, Context.NONE);

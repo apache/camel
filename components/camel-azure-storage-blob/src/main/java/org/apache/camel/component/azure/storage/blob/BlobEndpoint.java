@@ -31,16 +31,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The azure-storage-blob component is used for storing and retrieving blobs from Azure Storage Blob Service using SDK v12.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service", syntax = "azure-storage-blob:containerName", label = "cloud,file")
 public class BlobEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BlobEndpoint.class);
 
     @UriParam
     private BlobServiceClient blobServiceClient;
@@ -54,12 +50,12 @@ public class BlobEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new BlobProducer(this);
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         // we need blobname as well as blob container in order to create it
         if (ObjectHelper.isEmpty(configuration.getContainerName())) {
             throw new IllegalArgumentException("Container name must be set.");
@@ -75,16 +71,6 @@ public class BlobEndpoint extends DefaultEndpoint {
         super.doStart();
 
         blobServiceClient = configuration.getServiceClient() != null ? configuration.getServiceClient() : BlobClientFactory.createBlobServiceClient(configuration);
-    }
-
-    public Exchange createExchange(final BlobOperationResponse response) {
-        final Exchange exchange = createExchange();
-        final Message message = exchange.getIn();
-
-        message.setHeaders(response.getHeaders());
-        message.setBody(response.getBody());
-
-        return exchange;
     }
 
     public void setResponseOnExchange(final BlobOperationResponse response, final Exchange exchange) {

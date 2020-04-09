@@ -36,6 +36,7 @@ public final class BlobStreamAndLength {
         this.streamLength = streamLength;
     }
 
+    @SuppressWarnings("rawtypes")
     public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
 
