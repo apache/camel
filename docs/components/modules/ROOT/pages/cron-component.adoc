@@ -2,12 +2,15 @@
 = Cron Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cron/src/main/docs/cron-component.adoc
+:docTitle: Cron
+:artifactId: camel-cron
+:description: Camel Cron Component
+:since: 3.1
+:component-header: Only consumer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Cron component is a generic interface component that allows triggering events at specific time interval
 specified using the Unix cron syntax (e.g. `0/2 * * * * ?` to trigger an event every two seconds).

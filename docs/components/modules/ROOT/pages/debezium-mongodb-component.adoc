@@ -2,12 +2,15 @@
 = Debezium MongoDB Connector Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-debezium-mongodb/src/main/docs/debezium-mongodb-component.adoc
+:docTitle: Debezium MongoDB Connector
+:artifactId: camel-debezium-mongodb
+:description: Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.
+:since: 3.0
+:component-header: Only consumer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Debezium MongoDB component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from MongoDB database using Debezium without the need for Kafka or Kafka Connect.
 

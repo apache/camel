@@ -1,11 +1,14 @@
 [[azure-queue-component]]
 = Azure Storage Queue Service Component
+:docTitle: Azure Storage Queue Service
+:artifactId: camel-azure
+:description: The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
+:since: 2.19
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Azure Queue component supports storing and retrieving the messages to/from
 https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service.

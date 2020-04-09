@@ -41,7 +41,7 @@ will auto-discover your component and register it.
 
 The `FooComponent` can then be auto-injected with resources using the
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/Injector.html[Injector],
-such as to support xref:components::spring.adoc[Spring] based auto-wiring, or to
+such as to support xref:components::spring-summary.adoc[Spring] based auto-wiring, or to
 support `@Resource` (EJB3 style) injection or Guice style `@Inject`
 injection.
 

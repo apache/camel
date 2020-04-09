@@ -1,11 +1,14 @@
 [[elsql-component]]
 = ElSQL Component
+:docTitle: ElSQL
+:artifactId: camel-elsql
+:description: The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
+:since: 2.16
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.16*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The ELSQL component is an extension to the existing
 xref:sql-component.adoc[SQL Component] that uses

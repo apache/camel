@@ -1,7 +1,11 @@
 [[soapjaxb-dataformat]]
 = SOAP DataFormat
+:docTitle: SOAP
+:artifactId: camel-soap
+:description: SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.
+:since: 2.3
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
 SOAP is a Data Format which uses JAXB2 and JAX-WS
 annotations to marshal and unmarshal SOAP payloads. It provides the

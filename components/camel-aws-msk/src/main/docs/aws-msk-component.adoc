@@ -1,11 +1,14 @@
 [[aws-msk-component]]
 = AWS MSK Component
+:docTitle: AWS MSK
+:artifactId: camel-aws-msk
+:description: The aws-msk is used for managing Amazon MSK
+:since: 3.0
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The AWS MSK component supports create, run, start, stop and terminate
 https://aws.amazon.com/msk/[AWS MSK] instances.

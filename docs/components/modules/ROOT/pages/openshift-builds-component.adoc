@@ -2,14 +2,17 @@
 = Openshift Builds Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/openshift-builds-component.adoc
+:docTitle: Openshift Builds
+:artifactId: camel-kubernetes
+:description: The Openshift Builds component provides a producer to execute openshift build operations.
+:since: 2.17
+:component-header: Only producer is supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
-The Kubernetes Builds component is one of xref:kubernetes.adoc[Kubernetes Components] which
+The Kubernetes Builds component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes build operations.
 
 

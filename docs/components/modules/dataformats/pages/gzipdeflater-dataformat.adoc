@@ -2,8 +2,12 @@
 = GZip Deflater DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zip-deflater/src/main/docs/gzipdeflater-dataformat.adoc
+:docTitle: GZip Deflater
+:artifactId: camel-zip-deflater
+:description: The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
+:since: 2.0
 
-*Since Camel 2.0*
+*Since Camel {since}*
 
 The GZip Deflater Data Format is a message compression and
 de-compression format. It uses the same deflate algorithm that is used

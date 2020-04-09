@@ -1,5 +1,8 @@
 [[filter-eip]]
 = Filter EIP
+:description: Filter out messages based using a predicate
+:since: 
+:supportLevel: Stable
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]

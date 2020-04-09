@@ -17,7 +17,7 @@
     "firstVersion": "2.15.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ganglia",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "dmax": { "kind": "property", "displayName": "Dmax", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": "0", "configurationClass": "org.apache.camel.component.ganglia.GangliaConfiguration", "configurationField": "configuration", "description": "Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart." },

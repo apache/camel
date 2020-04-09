@@ -1,11 +1,14 @@
 [[spring-event-component]]
 = Spring Event Component
+:docTitle: Spring Event
+:artifactId: camel-spring
+:description: The spring-event component allows to listen for Spring Application Events.
+:since: 1.4
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.4*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Spring Event component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish

@@ -1,11 +1,14 @@
 [[infinispan-component]]
 = Infinispan Component
+:docTitle: Infinispan
+:artifactId: camel-infinispan
+:description: For reading/writing from/to Infinispan distributed key/value store and data grid.
+:since: 2.13
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.13*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component allows you to interact with
 http://infinispan.org/[Infinispan] distributed data grid / cache.

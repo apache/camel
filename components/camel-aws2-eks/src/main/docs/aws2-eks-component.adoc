@@ -1,14 +1,17 @@
 [[aws2-eks-component]]
 = AWS 2 EKS Component
+:docTitle: AWS 2 EKS
+:artifactId: camel-aws2-eks
+:description: The aws2-eks is used for managing Amazon EKS
+:since: 3.1
+:component-header: Only producer is supported
+
+*Since Camel {since}*
 
 *Since Camel 3.1*
 
-*Since Camel 3.1*
 
-
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The EKS component supports create, delete, describe and list
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.

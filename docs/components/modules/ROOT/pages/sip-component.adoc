@@ -2,12 +2,15 @@
 = SIP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-sip/src/main/docs/sip-component.adoc
+:docTitle: SIP
+:artifactId: camel-sip
+:description: To send and receive messages using the SIP protocol (used in telco and mobile).
+:since: 2.5
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.5*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The SIP component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).

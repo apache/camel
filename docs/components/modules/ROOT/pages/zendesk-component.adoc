@@ -2,12 +2,15 @@
 = Zendesk Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zendesk/src/main/docs/zendesk-component.adoc
+:docTitle: Zendesk
+:artifactId: camel-zendesk
+:description: Allows producing messages to manage Zendesk ticket, user, organization, etc.
+:since: 2.19
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Zendesk component provides access to all of the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It

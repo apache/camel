@@ -1,11 +1,14 @@
 [[twilio-component]]
 = Twilio Component
+:docTitle: Twilio
+:artifactId: camel-twilio
+:description: The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
+:since: 2.20
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Twilio component provides access to Version 2010-04-01 of Twilio REST APIs accessible
 using https://github.com/twilio/twilio-java[Twilio Java SDK].

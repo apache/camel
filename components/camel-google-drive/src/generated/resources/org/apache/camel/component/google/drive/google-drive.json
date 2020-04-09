@@ -17,7 +17,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-drive",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "applicationName": { "kind": "property", "displayName": "Application Name", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.google.drive.GoogleDriveConfiguration", "configurationField": "configuration", "description": "Google drive application name. Example would be camel-google-drive\/1.0" },

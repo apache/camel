@@ -2,12 +2,15 @@
 = AWS 2 DynamoDB Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-ddb/src/main/docs/aws2-ddb-component.adoc
+:docTitle: AWS 2 DynamoDB
+:artifactId: camel-aws2-ddb
+:description: The aws2-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+:since: 3.1
+:component-header: Only producer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The DynamoDB component supports storing and retrieving data from/to
 https://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.

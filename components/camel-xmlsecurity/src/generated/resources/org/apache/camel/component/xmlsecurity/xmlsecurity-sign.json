@@ -17,7 +17,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "addKeyInfoReference": { "kind": "property", "displayName": "Add Key Info Reference", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": "true", "configurationClass": "org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration", "configurationField": "signerConfiguration", "description": "In order to protect the KeyInfo element from tampering you can add a reference to the signed info element so that it is protected via the signature value. The default value is true. Only relevant when a KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null." },

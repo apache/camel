@@ -1,5 +1,8 @@
 [[log-eip]]
 = Log EIP
+:description: Logs the defined message to the logger
+:since: 
+:supportLevel: Stable
 
 How can I log the processing of a xref:message.adoc[Message]?
 

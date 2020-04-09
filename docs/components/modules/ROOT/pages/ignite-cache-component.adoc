@@ -2,12 +2,15 @@
 = Ignite Cache Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ignite/src/main/docs/ignite-cache-component.adoc
+:docTitle: Ignite Cache
+:artifactId: camel-ignite
+:description: The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.
+:since: 2.17
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache].
 This offers both a Producer (to invoke cache operations on an Ignite cache) and a Consumer (to consume changes from a continuous query).

@@ -2,12 +2,15 @@
 = Pulsar Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pulsar/src/main/docs/pulsar-component.adoc
+:docTitle: Pulsar
+:artifactId: camel-pulsar
+:description: Camel Apache Pulsar Component
+:since: 2.24
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.24*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 Maven users will need to add the following dependency to
 their `pom.xml` for this component.

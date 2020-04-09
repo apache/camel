@@ -1,11 +1,14 @@
 [[atom-component]]
 = Atom Component
+:docTitle: Atom
+:artifactId: camel-atom
+:description: The atom component is used for consuming Atom RSS feeds.
+:since: 1.2
+:component-header: Only consumer is supported
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Atom component is used for polling Atom feeds.
 

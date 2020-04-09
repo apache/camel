@@ -1,5 +1,8 @@
 [[resilience4jConfiguration-eip]]
 = Resilience4j Configuration EIP
+:description: Resilience4j Circuit Breaker EIP configuration
+:since: 
+:supportLevel: Stable
 
 
 // eip options: START

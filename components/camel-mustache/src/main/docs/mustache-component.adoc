@@ -1,11 +1,14 @@
 [[mustache-component]]
 = Mustache Component
+:docTitle: Mustache
+:artifactId: camel-mustache
+:description: Transforms the message using a Mustache template.
+:since: 2.12
+:component-header: Only producer is supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Mustache component allows for processing a message using a
 http://mustache.github.io/[Mustache] template. This can be ideal when

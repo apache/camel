@@ -2,12 +2,16 @@
 = Control Bus Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-controlbus/src/main/docs/controlbus-component.adoc
+:docTitle: Control Bus
+:artifactId: camel-controlbus
+:description: The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+:since: 2.11
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 2.11*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 EIP patterns allows for the

@@ -2,12 +2,16 @@
 = Bean Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bean/src/main/docs/bean-component.adoc
+:docTitle: Bean
+:artifactId: camel-bean
+:description: The bean component is for invoking Java beans from Camel.
+:since: 1.0
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Bean component binds beans to Camel message exchanges.
 

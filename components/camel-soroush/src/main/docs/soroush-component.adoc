@@ -1,11 +1,14 @@
 [[soroush-component]]
 = Soroush Component
+:docTitle: Soroush
+:artifactId: camel-soroush
+:description: To integrate with the Soroush chat bot.
+:since: 3.0
+:component-header: Both producer and consumer are supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Soroush component provides access to the https://soroush-app.ir/developer.html[Soroush Bot API].
 It allows a Camel-based application to send and receive messages by acting as a Bot, i.e. participating in direct conversation with normal users and send and receive message and files

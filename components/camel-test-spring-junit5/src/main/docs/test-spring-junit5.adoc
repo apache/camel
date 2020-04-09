@@ -1,6 +1,11 @@
-= Camel Test Spring JUnit 5
+[[test-spring-junit5-component]]
+= Test Spring JUnit5 Component
+:docTitle: Test Spring JUnit5
+:artifactId: camel-test-spring-junit5
+:description: Camel unit testing with Spring and JUnit 5
+:since: 3.0
 
-*Available since 3.0*
+*Since Camel {since}*
 
 The `camel-test-spring-junit5` module makes it possible to test Camel Spring based applications with JUnit 5.
 

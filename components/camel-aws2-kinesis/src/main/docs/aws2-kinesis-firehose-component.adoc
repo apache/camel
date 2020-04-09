@@ -1,11 +1,14 @@
 [[aws2-kinesis-firehose-component]]
 = AWS 2 Kinesis Firehose Component
+:docTitle: AWS 2 Kinesis Firehose
+:artifactId: camel-aws2-kinesis
+:description: The aws2-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+:since: 3.2
+:component-header: Only producer is supported
 
-*Since Camel 3.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.
 

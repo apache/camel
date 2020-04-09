@@ -2,12 +2,15 @@
 = CM SMS Gateway Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cm-sms/src/main/docs/cm-sms-component.adoc
+:docTitle: CM SMS Gateway
+:artifactId: camel-cm-sms
+:description: The cm-sms component allows to integrate with CM SMS Gateway.
+:since: 2.18
+:component-header: Only producer is supported
 
-*Since Camel 2.18*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 *Camel-Cm-Sms* is an http://camel.apache.org/[Apache Camel] component 
 for the [CM SMS Gateway](https://www.cmtelecom.com). 

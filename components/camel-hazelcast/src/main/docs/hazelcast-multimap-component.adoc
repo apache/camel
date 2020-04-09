@@ -1,11 +1,14 @@
 [[hazelcast-multimap-component]]
 = Hazelcast Multimap Component
+:docTitle: Hazelcast Multimap
+:artifactId: camel-hazelcast
+:description: The hazelcast-multimap component is used to to access Hazelcast distributed multimap.
+:since: 2.7
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.7*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The http://www.hazelcast.com/[Hazelcast] Multimap component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed multimap.
 

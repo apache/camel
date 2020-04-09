@@ -2,12 +2,16 @@
 = Language Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-language/src/main/docs/language-component.adoc
+:docTitle: Language
+:artifactId: camel-language
+:description: The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
+:since: 2.5
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 2.5*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Language component allows you to send Exchange
 to an endpoint which executes a script by any of the supported

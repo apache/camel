@@ -1,11 +1,14 @@
 [[jmx-component]]
 = JMX Component
+:docTitle: JMX
+:artifactId: camel-jmx
+:description: The jmx component allows to receive JMX notifications.
+:since: 2.6
+:component-header: Only consumer is supported
 
-*Since Camel 2.6*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.

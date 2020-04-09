@@ -1,11 +1,14 @@
 [[aws2-ddbstream-component]]
 = AWS 2 DynamoDB Streams Component
+:docTitle: AWS 2 DynamoDB Streams
+:artifactId: camel-aws2-ddb
+:description: The aws2-ddbstream component is used for working with Amazon DynamoDB Streams.
+:since: 3.1
+:component-header: Only consumer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The DynamoDB Stream component supports receiving messages from
 Amazon DynamoDB Stream service.

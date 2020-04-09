@@ -2,12 +2,15 @@
 = AWS MQ Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-mq/src/main/docs/aws-mq-component.adoc
+:docTitle: AWS MQ
+:artifactId: camel-aws-mq
+:description: The aws-mq is used for managing Amazon MQ instances.
+:since: 2.21
+:component-header: Only producer is supported
 
-*Since Camel 2.21*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The MQ component supports create, run, start, stop and terminate
 https://aws.amazon.com/amazon-mq/[AWS MQ] instances.

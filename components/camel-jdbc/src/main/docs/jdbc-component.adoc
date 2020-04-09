@@ -1,11 +1,14 @@
 [[jdbc-component]]
 = JDBC Component
+:docTitle: JDBC
+:artifactId: camel-jdbc
+:description: The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
+:since: 1.2
+:component-header: Only producer is supported
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in

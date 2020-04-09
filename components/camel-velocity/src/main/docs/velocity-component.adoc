@@ -1,11 +1,14 @@
 [[velocity-component]]
 = Velocity Component
+:docTitle: Velocity
+:artifactId: camel-velocity
+:description: Transforms the message using a Velocity template.
+:since: 1.2
+:component-header: Only producer is supported
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Velocity component allows you to process a message using an
 http://velocity.apache.org/[Apache Velocity] template. This can be ideal

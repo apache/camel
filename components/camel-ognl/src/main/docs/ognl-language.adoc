@@ -1,7 +1,11 @@
 [[ognl-language]]
 = OGNL Language
+:docTitle: OGNL
+:artifactId: camel-ognl
+:description: To use OGNL scripts in Camel expressions or predicates.
+:since: 1.1
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
 Camel allows http://commons.apache.org/proper/commons-ognl/[OGNL] to be
 used as an Expression or

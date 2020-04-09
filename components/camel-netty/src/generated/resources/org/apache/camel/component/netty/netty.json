@@ -17,7 +17,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-netty",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.netty.NettyConfiguration", "deprecated": false, "secret": false, "description": "To use the NettyConfiguration as configuration when creating endpoints." },

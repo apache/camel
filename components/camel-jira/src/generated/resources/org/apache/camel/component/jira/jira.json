@@ -17,7 +17,7 @@
     "firstVersion": "3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jira",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "delay": { "kind": "property", "displayName": "Delay", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "6000", "configurationClass": "org.apache.camel.component.jira.JiraConfiguration", "configurationField": "configuration", "description": "Time in milliseconds to elapse for the next poll." },

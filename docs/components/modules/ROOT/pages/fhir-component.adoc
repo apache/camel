@@ -2,12 +2,15 @@
 = FHIR Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc
+:docTitle: FHIR
+:artifactId: camel-fhir
+:description: The fhir component is used for working with the FHIR protocol (health care).
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The FHIR component integrates with the
 http://hapifhir.io/[HAPI-FHIR] library which is an open-source implementation of the
@@ -167,4 +170,3 @@ with the following path and query parameters:
 // endpoint options: END
 
 include::camel-spring-boot::page$fhir-starter.adoc[]
-

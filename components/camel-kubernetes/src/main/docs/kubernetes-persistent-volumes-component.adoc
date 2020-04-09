@@ -1,13 +1,16 @@
 [[kubernetes-persistent-volumes-component]]
 = Kubernetes Persistent Volume Component
+:docTitle: Kubernetes Persistent Volume
+:artifactId: camel-kubernetes
+:description: The Kubernetes Persistent Volumes component provides a producer to execute kubernetes persistent volume operations.
+:since: 2.17
+:component-header: Only producer is supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
-The Kubernetes Persistent Volume component is one of xref:kubernetes.adoc[Kubernetes Components] which
+The Kubernetes Persistent Volume component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes persistent volume operations.
 
 

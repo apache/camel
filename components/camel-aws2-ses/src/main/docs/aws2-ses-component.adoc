@@ -1,11 +1,14 @@
 [[aws2-ses-component]]
 = AWS 2 Simple Email Service Component
+:docTitle: AWS 2 Simple Email Service
+:artifactId: camel-aws2-ses
+:description: The aws2-ses component is used for sending emails with Amazon's SES service.
+:since: 3.1
+:component-header: Only producer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The ses component supports sending emails with
 https://aws.amazon.com/ses[Amazon's SES] service.

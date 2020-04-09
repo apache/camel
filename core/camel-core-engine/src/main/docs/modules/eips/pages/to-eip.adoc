@@ -1,5 +1,8 @@
 [[to-eip]]
 = To EIP
+:description: Sends the message to a static endpoint
+:since: 
+:supportLevel: Stable
 
 See message related documentation
 

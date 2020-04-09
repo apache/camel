@@ -1,11 +1,14 @@
 [[telegram-component]]
 = Telegram Component
+:docTitle: Telegram
+:artifactId: camel-telegram
+:description: The telegram component provides access to the Telegram Bot API.
+:since: 2.18
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.18*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Telegram component provides access to the https://core.telegram.org/bots/api[Telegram Bot API].
 It allows a Camel-based application to send and receive messages by acting as a Bot, participating in

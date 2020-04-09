@@ -1,11 +1,14 @@
 [[git-component]]
 = Git Component
+:docTitle: Git
+:artifactId: camel-git
+:description: The git component is used for working with git repositories.
+:since: 2.16
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.16*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Git component allows you to work with a generic Git repository. 
 

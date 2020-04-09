@@ -1,11 +1,14 @@
 [[as2-component]]
 = AS2 Component
+:docTitle: AS2
+:artifactId: camel-as2
+:description: Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+:since: 2.22
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The AS2 component provides transport of EDI messages using the HTTP transfer protocol
 as specified in https://tools.ietf.org/html/rfc4130[RFC4130]. 
@@ -259,4 +262,3 @@ URI Options for _server_
 |===
 
 include::camel-spring-boot::page$as2-starter.adoc[]
-
