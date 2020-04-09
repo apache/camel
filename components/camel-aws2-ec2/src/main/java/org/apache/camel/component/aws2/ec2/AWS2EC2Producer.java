@@ -156,98 +156,116 @@ public class AWS2EC2Producer extends DefaultProducer {
                 }
             }    
         } else {
-        RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID))) {
-            ami = exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID, String.class);
-            builder.imageId(ami);
-        } else {
-            throw new IllegalArgumentException("AMI must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE))) {
-            instanceType = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.class);
-            builder.instanceType(instanceType.toString());
-        } else {
-            throw new IllegalArgumentException("Instance Type must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT))) {
-            int minCount = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, Integer.class);
-            builder.minCount(minCount);
-        } else {
-            throw new IllegalArgumentException("Min instances count must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT))) {
-            int maxCount = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, Integer.class);
-            builder.maxCount(maxCount);
-        } else {
-            throw new IllegalArgumentException("Max instances count must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MONITORING))) {
-            boolean monitoring = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MONITORING, Boolean.class);
-            RunInstancesMonitoringEnabled.Builder monitoringEnabled = RunInstancesMonitoringEnabled.builder();
-            monitoringEnabled.enabled(monitoring);
-            builder.monitoring(monitoringEnabled.build());
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_KERNEL_ID))) {
-            String kernelId = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_KERNEL_ID, String.class);
-            builder.kernelId(kernelId);
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_EBS_OPTIMIZED))) {
-            boolean ebsOptimized = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_EBS_OPTIMIZED, Boolean.class);
-            builder.ebsOptimized(ebsOptimized);
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS))) {
-            Collection securityGroups = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
-            builder.securityGroups(securityGroups);
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR))) {
-            String keyName = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR, String.class);
-            builder.keyName(keyName);
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_CLIENT_TOKEN))) {
-            String clientToken = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
-            builder.clientToken(clientToken);
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_PLACEMENT))) {
-            Placement placement = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_PLACEMENT, Placement.class);
-            builder.placement(placement);
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.SUBNET_ID))) {
-            String subnetId = exchange.getIn().getHeader(AWS2EC2Constants.SUBNET_ID, String.class);
-            builder.subnetId(subnetId);
-        }
-        RunInstancesResponse result;
-        try {
-            result = ec2Client.runInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Run Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType);
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID))) {
+                ami = exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID, String.class);
+                builder.imageId(ami);
+            } else {
+                throw new IllegalArgumentException("AMI must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE))) {
+                instanceType = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.class);
+                builder.instanceType(instanceType.toString());
+            } else {
+                throw new IllegalArgumentException("Instance Type must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT))) {
+                int minCount = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, Integer.class);
+                builder.minCount(minCount);
+            } else {
+                throw new IllegalArgumentException("Min instances count must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT))) {
+                int maxCount = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, Integer.class);
+                builder.maxCount(maxCount);
+            } else {
+                throw new IllegalArgumentException("Max instances count must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MONITORING))) {
+                boolean monitoring = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_MONITORING, Boolean.class);
+                RunInstancesMonitoringEnabled.Builder monitoringEnabled = RunInstancesMonitoringEnabled.builder();
+                monitoringEnabled.enabled(monitoring);
+                builder.monitoring(monitoringEnabled.build());
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_KERNEL_ID))) {
+                String kernelId = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_KERNEL_ID, String.class);
+                builder.kernelId(kernelId);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_EBS_OPTIMIZED))) {
+                boolean ebsOptimized = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_EBS_OPTIMIZED, Boolean.class);
+                builder.ebsOptimized(ebsOptimized);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS))) {
+                Collection securityGroups = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
+                builder.securityGroups(securityGroups);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR))) {
+                String keyName = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_KEY_PAIR, String.class);
+                builder.keyName(keyName);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_CLIENT_TOKEN))) {
+                String clientToken = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
+                builder.clientToken(clientToken);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_PLACEMENT))) {
+                Placement placement = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_PLACEMENT, Placement.class);
+                builder.placement(placement);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.SUBNET_ID))) {
+                String subnetId = exchange.getIn().getHeader(AWS2EC2Constants.SUBNET_ID, String.class);
+                builder.subnetId(subnetId);
+            }
+            RunInstancesResponse result;
+            try {
+                result = ec2Client.runInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Run Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
     @SuppressWarnings("unchecked")
     private void startInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof RunInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    StartInstancesResponse result;
+                    try {
+                        result = ec2Client.startInstances((StartInstancesRequest) payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Starting instances with Ids [{}] ", ((StartInstancesRequest) payload).instanceIds());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }    
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            StartInstancesResponse result;
+            try {
+                result = ec2Client.startInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        StartInstancesResponse result;
-        try {
-            result = ec2Client.startInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
