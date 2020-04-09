@@ -17,6 +17,7 @@
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +32,8 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -74,7 +77,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         target.setSuccessThreshold(parseInt(config.getSuccessThreshold(), 1));
         target.setRequestVolumeThreshold(parseInt(config.getRequestVolumeThreshold(), 20));
         if (config.getFailureRatio() != null) {
-            int num = parseInt(config.getFailureRatio(), 50);
+            float num = parseFloat(config.getFailureRatio(), 50);
             if (num < 1 || num > 100) {
                 throw new IllegalArgumentException("FailureRatio must be between 1 and 100, was: " + num);
             }
@@ -130,11 +133,15 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     FaultToleranceConfigurationDefinition buildFaultToleranceConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
+        final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                .getConfigurerResolver().resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getSimpleName(), camelContext);
+
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
             () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
-            () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID, FaultToleranceConfigurationDefinition.class)));
+            () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID, FaultToleranceConfigurationDefinition.class)),
+            configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
@@ -143,23 +150,42 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
 
             loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(ref),
-                () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)));
+                () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
+                configurer);
         }
 
         // Extract properties from local configuration
-        loadProperties(properties, Optional.ofNullable(definition.getFaultToleranceConfiguration()));
-
-        FaultToleranceConfigurationDefinition config = new FaultToleranceConfigurationDefinition();
+        loadProperties(properties, Optional.ofNullable(definition.getFaultToleranceConfiguration()), configurer);
 
         // Apply properties to a new configuration
-        PropertyBindingSupport.bindProperties(camelContext, config, properties);
+        FaultToleranceConfigurationDefinition config = new FaultToleranceConfigurationDefinition();
+        PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withProperties(properties)
+                .withTarget(config)
+                .bind();
 
         return config;
     }
 
-    private void loadProperties(Map<String, Object> properties, Optional<?> optional) {
+    private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
+        optional.ifPresent(bean -> {
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                Map<String, Object> types = getter.getAllOptions(bean);
+                types.forEach((k, t) -> {
+                    Object value = getter.getOptionValue(bean, k, true);
+                    if (value != null) {
+                        properties.put(k, value);
+                    }
+                });
+            } else {
+                // no configurer found so use bean introspection (reflection)
+                beanIntrospection.getProperties(bean, properties, null, false);
+            }
+        });
     }
 
 }

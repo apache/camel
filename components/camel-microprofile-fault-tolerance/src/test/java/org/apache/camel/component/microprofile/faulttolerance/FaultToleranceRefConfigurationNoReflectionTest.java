@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix.processor;
+package org.apache.camel.component.microprofile.faulttolerance;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HystrixRouteOkTest extends CamelTestSupport {
+public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSupport {
 
     private BeanIntrospection bi;
 
@@ -42,11 +43,19 @@ public class HystrixRouteOkTest extends CamelTestSupport {
         bi.setLoggingLevel(LoggingLevel.INFO);
         bi.resetCounters();
 
+        FaultToleranceConfigurationDefinition config = new FaultToleranceConfigurationDefinition();
+        config.setTimeoutPoolSize("5");
+        config.setFailureRatio("25");
+        config.setRequestVolumeThreshold("10");
+        config.setDelay("5000");
+
+        context.getRegistry().bind("myConfig", config);
+
         return context;
     }
 
     @Test
-    public void testHystrix() throws Exception {
+    public void testFaultTolerance() throws Exception {
         assertEquals(0, bi.getInvokedCounter());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -65,18 +74,10 @@ public class HystrixRouteOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .circuitBreaker()
-                        .to("direct:foo")
-                        .to("log:foo")
-                    .onFallback()
-                        .transform().constant("Fallback message")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                from("direct:start").circuitBreaker().configuration("myConfig").faultToleranceConfiguration().delay(2000).timeoutEnabled(true).timeoutDuration(5000).end()
+                        .to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
 
-                from("direct:foo")
-                    .transform().constant("Bye World");
+                from("direct:foo").transform().constant("Bye World");
             }
         };
     }

@@ -26,7 +26,6 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -35,6 +34,8 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -211,38 +212,59 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
     HystrixConfigurationDefinition buildHystrixConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
+        final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                .getConfigurerResolver().resolvePropertyConfigurer(HystrixConfigurationDefinition.class.getSimpleName(), camelContext);
+
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(camelContext, properties, Suppliers.firstNotNull(
+        loadProperties(properties, Suppliers.firstNotNull(
             () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
-            () -> lookup(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
-        );
+            () -> lookup(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class)),
+            configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
             final String ref = parseString(definition.getConfigurationRef());
 
-            loadProperties(camelContext, properties, Suppliers.firstNotNull(
+            loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
-                () -> mandatoryLookup(ref, HystrixConfigurationDefinition.class))
-            );
+                () -> mandatoryLookup(ref, HystrixConfigurationDefinition.class)),
+                configurer);
         }
 
         // Extract properties from local configuration
-        loadProperties(camelContext, properties, Optional.ofNullable(definition.getHystrixConfiguration()));
-
-        HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
+        loadProperties(properties, Optional.ofNullable(definition.getHystrixConfiguration()), configurer);
 
         // Apply properties to a new configuration
-        PropertyBindingSupport.bindProperties(camelContext, config, properties);
+        HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
+        PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withConfigurer(configurer)
+                .withProperties(properties)
+                .withTarget(config)
+                .bind();
 
         return config;
     }
 
-    private void loadProperties(CamelContext camelContext, Map<String, Object> properties, Optional<?> optional) {
+    private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
+        optional.ifPresent(bean -> {
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                Map<String, Object> types = getter.getAllOptions(bean);
+                types.forEach((k, t) -> {
+                    Object value = getter.getOptionValue(bean, k, true);
+                    if (value != null) {
+                        properties.put(k, value);
+                    }
+                });
+            } else {
+                // no configurer found so use bean introspection (reflection)
+                beanIntrospection.getProperties(bean, properties, null, false);
+            }
+        });
     }
 
 }
