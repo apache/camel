@@ -1,11 +1,14 @@
 [[nsq-component]]
 = NSQ Component
+:docTitle: NSQ
+:artifactId: camel-nsq
+:description: Represents a nsq endpoint.
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 http://nsq.io/[NSQ] is a realtime distributed messaging platform.
 

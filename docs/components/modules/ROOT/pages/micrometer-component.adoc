@@ -2,12 +2,15 @@
 = Micrometer Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-micrometer/src/main/docs/micrometer-component.adoc
+:docTitle: Micrometer
+:artifactId: camel-micrometer
+:description: To collect various metrics directly from Camel routes using the Micrometer library.
+:since: 2.22
+:component-header: Only producer is supported
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Micrometer component allows to collect various metrics directly
 from Camel routes. Supported metric types

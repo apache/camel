@@ -1,11 +1,14 @@
 [[irc-component]]
 = IRC Component
+:docTitle: IRC
+:artifactId: camel-irc
+:description: The irc component implements an IRC (Internet Relay Chat) transport.
+:since: 1.1
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The IRC component implements an
 http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay

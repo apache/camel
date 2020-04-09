@@ -106,7 +106,7 @@ the configuration admin service properties file.
 == Running CDI
 
 From *Camel 2.11* onwards the `camel:run` plugin also supports running a
-xref:components::cdi.adoc[CDI] application
+xref:components:others:cdi.adoc[CDI] application
 
 You would need to configure the camel:run plugin to use CDI, by setting
 useCDI to true as shown below

@@ -2,12 +2,15 @@
 = Any23 DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-any23/src/main/docs/any23-dataformat.adoc
+:docTitle: Any23
+:artifactId: camel-any23
+:description: Any23 data format is used for parsing data to RDF.
+:since: 3.0
+
+
+*Since Camel {since}*
+
 Camel Any23 is a DataFormat that uses the Apache Anything To Triples (Any23) library to extract structured data in RDF from a variety of documents on the web.
-*Since Camel 3.0*
-
-
-*Since Camel 3.0*
-
 The main functionality of this DataFormat focuses on its Unmarshal method which extracts RDF triplets from compatible pages, in a wide variety of RDF syntaxes.
 Any23 is a Data Format that is intended to convert HTML from a site (or file) into rdf.
 

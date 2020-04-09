@@ -2,12 +2,15 @@
 = JT400 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jt400/src/main/docs/jt400-component.adoc
+:docTitle: JT400
+:artifactId: camel-jt400
+:description: The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+:since: 1.5
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.5*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The JT400 component allows you to exchanges messages with an AS/400
 system using data queues.

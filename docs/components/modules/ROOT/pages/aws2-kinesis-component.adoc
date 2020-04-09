@@ -2,12 +2,15 @@
 = AWS 2 Kinesis Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
+:docTitle: AWS 2 Kinesis
+:artifactId: camel-aws2-kinesis
+:description: The aws2-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+:since: 3.2
+:component-header: Both producer and consumer are supported
 
-*Since Camel 3.2*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Kinesis component supports receiving messages from and sending messages to Amazon Kinesis
 service.

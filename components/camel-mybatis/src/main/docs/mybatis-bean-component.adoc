@@ -1,11 +1,14 @@
 [[mybatis-bean-component]]
 = MyBatis Bean Component
+:docTitle: MyBatis Bean
+:artifactId: camel-mybatis
+:description: Performs a query, insert, update or delete in a relational database using MyBatis.
+:since: 2.22
+:component-header: Only producer is supported
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The MyBatis Bean component allows you to query, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis] bean annotations.

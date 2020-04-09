@@ -2,12 +2,15 @@
 = RSS Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-rss/src/main/docs/rss-component.adoc
+:docTitle: RSS
+:artifactId: camel-rss
+:description: The rss component is used for consuming RSS feeds.
+:since: 2.0
+:component-header: Only consumer is supported
 
-*Since Camel 2.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The RSS component is used for polling RSS feeds. Camel will default
 poll the feed every 60th seconds.

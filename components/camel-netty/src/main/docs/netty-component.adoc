@@ -1,11 +1,14 @@
 [[netty-component]]
 = Netty Component
+:docTitle: Netty
+:artifactId: camel-netty
+:description: Socket level networking using TCP or UDP with the Netty 4.x library.
+:since: 2.14
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.14*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Netty component in Camel is a socket communication component,
 based on the http://netty.io/[Netty] project version 4. +

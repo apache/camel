@@ -1,11 +1,14 @@
 [[scp-component]]
 = SCP Component
+:docTitle: SCP
+:artifactId: camel-jsch
+:description: To copy files using the secure copy protocol (SCP).
+:since: 2.10
+:component-header: Only producer is supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Camel-Jsch component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client

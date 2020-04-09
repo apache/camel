@@ -2,8 +2,12 @@
 = Groovy Language
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-groovy/src/main/docs/groovy-language.adoc
+:docTitle: Groovy
+:artifactId: camel-groovy
+:description: To use Groovy scripts in Camel expressions or predicates.
+:since: 1.3
 
-*Since Camel 1.3*
+*Since Camel {since}*
 
 Camel supports http://groovy.codehaus.org/[Groovy] among other
 Scripting Languages to allow an

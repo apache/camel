@@ -2,12 +2,15 @@
 = MSV Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-msv/src/main/docs/msv-component.adoc
+:docTitle: MSV
+:artifactId: camel-msv
+:description: Validates the payload of a message using the MSV Library.
+:since: 1.1
+:component-header: Only producer is supported
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The MSV component performs XML validation of the message body using the
 https://msv.dev.java.net/[MSV Library] and any of the supported XML

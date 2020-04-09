@@ -1,11 +1,14 @@
 [[workday-component]]
 = Workday Component
+:docTitle: Workday
+:artifactId: camel-workday
+:description: Represents a Workday endpoint.
+:since: 3.1
+:component-header: Only producer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The *Workday*: components provides the ability to detect and parse documents with 
 Workday. 

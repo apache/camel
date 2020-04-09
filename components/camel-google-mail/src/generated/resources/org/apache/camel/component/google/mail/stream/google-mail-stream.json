@@ -17,7 +17,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-mail",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "accessToken": { "kind": "property", "displayName": "Access Token", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration", "configurationField": "configuration", "description": "OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage." },

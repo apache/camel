@@ -1,11 +1,14 @@
 [[string-template-component]]
 = String Template Component
+:docTitle: String Template
+:artifactId: camel-stringtemplate
+:description: Transforms the message using a String template.
+:since: 1.2
+:component-header: Only producer is supported
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The String Template component allows you to process a message using a
 http://www.stringtemplate.org/[String Template]. This can be ideal when

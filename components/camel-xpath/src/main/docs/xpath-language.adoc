@@ -1,7 +1,11 @@
 [[xpath-language]]
 = XPath Language
+:docTitle: XPath
+:artifactId: camel-xpath
+:description: To use XPath (XML) in Camel expressions or predicates.
+:since: 1.1
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
 Expression or Predicate to be

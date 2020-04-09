@@ -2,12 +2,15 @@
 = AWS 2 EC2 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-ec2/src/main/docs/aws2-ec2-component.adoc
+:docTitle: AWS 2 EC2
+:artifactId: camel-aws2-ec2
+:description: The aws2-ec2 is used for managing Amazon EC2 instances.
+:since: 3.1
+:component-header: Only producer is supported
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The EC2 component supports the ability to create, run, start, stop and terminate
 https://aws.amazon.com/ec2/[AWS EC2] instances.

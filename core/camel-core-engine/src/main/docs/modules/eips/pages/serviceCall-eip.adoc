@@ -1,5 +1,8 @@
 [[serviceCall-eip]]
 = Service Call EIP
+:description: To call remote services
+:since: 
+:supportLevel: Stable
 
 The Service Call EIP allows to call remote services in a distributed system.
 The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS.

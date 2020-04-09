@@ -1,14 +1,17 @@
 [[aws2-sns-component]]
 = AWS 2 Simple Notification System Component
+:docTitle: AWS 2 Simple Notification System
+:artifactId: camel-aws2-sns
+:description: The aws2-sns component is used for sending messages to an Amazon Simple Notification Topic.
+:since: 3.1
+:component-header: Only producer is supported
+
+*Since Camel {since}*
 
 *Since Camel 3.1*
 
-*Since Camel 3.1*
 
-
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The SNS component allows messages to be sent to an
 https://aws.amazon.com/sns[Amazon Simple Notification] Topic. The

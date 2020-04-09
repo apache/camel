@@ -2,12 +2,15 @@
 = CXF-RS Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cxf/src/main/docs/cxfrs-component.adoc
+:docTitle: CXF-RS
+:artifactId: camel-cxf
+:description: The cxfrs component is used for JAX-RS REST services using Apache CXF.
+:since: 2.0
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The CXFRS component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0

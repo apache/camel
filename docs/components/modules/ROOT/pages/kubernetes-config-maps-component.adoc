@@ -2,14 +2,17 @@
 = Kubernetes ConfigMap Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc
+:docTitle: Kubernetes ConfigMap
+:artifactId: camel-kubernetes
+:description: The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+:since: 2.17
+:component-header: Only producer is supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
-The Kubernetes ConfigMap component is one of xref:kubernetes.adoc[Kubernetes Components] which
+The Kubernetes ConfigMap component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes ConfigMap operations and a consumer to consume events related to Config maps.
 
 

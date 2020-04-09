@@ -17,7 +17,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "atomix": { "kind": "property", "displayName": "Atomix", "group": "common", "label": "", "required": false, "type": "object", "javaType": "io.atomix.Atomix", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.atomix.client.map.AtomixMapConfiguration", "configurationField": "configuration", "description": "The Atomix instance to use" },

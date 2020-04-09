@@ -17,7 +17,7 @@
     "firstVersion": "2.8.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-sns",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "amazonSNSClient": { "kind": "property", "displayName": "Amazon SNSClient", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "com.amazonaws.services.sns.AmazonSNS", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws.sns.SnsConfiguration", "configurationField": "configuration", "description": "To use the AmazonSNS as the client" },

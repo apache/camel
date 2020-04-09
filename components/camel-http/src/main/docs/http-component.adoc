@@ -1,11 +1,14 @@
 [[http-component]]
 = HTTP Component
+:docTitle: HTTP
+:artifactId: camel-http
+:description: For calling out to external HTTP servers using Apache HTTP Client 4.x.
+:since: 2.3
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The HTTP component provides HTTP based endpoints
 for calling external HTTP resources (as a client to call external

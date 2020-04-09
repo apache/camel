@@ -17,7 +17,7 @@
     "firstVersion": "2.8.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-s3",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "amazonS3Client": { "kind": "property", "displayName": "Amazon S3 Client", "group": "common", "label": "", "required": false, "type": "object", "javaType": "com.amazonaws.services.s3.AmazonS3", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws.s3.S3Configuration", "configurationField": "configuration", "description": "Reference to a com.amazonaws.services.s3.AmazonS3 in the registry." },

@@ -1,11 +1,14 @@
 [[microprofile-metrics-component]]
 = MicroProfile Metrics Component
+:docTitle: MicroProfile Metrics
+:artifactId: camel-microprofile-metrics
+:description: Camel metrics exposed with Eclipse MicroProfile Metrics
+:since: 3.0
+:component-header: Only producer is supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The MircoProfile Metrics component provides the capability to expose metrics from Camel routes.
 

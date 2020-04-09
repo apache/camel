@@ -2,12 +2,12 @@
 = Undertow Elytron Security Provider
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elytron/src/main/docs/elytron-component.adoc
+//by hand
+:since: 3.2
 
-*Since Camel 3.2*
+*Since Camel {since}*
 
-// HEADER START
 *Replaces component camel-elytron*
-// HEADER END
 
 *OSGi is not supported*
 

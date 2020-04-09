@@ -2,12 +2,15 @@
 = Couchbase Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-couchbase/src/main/docs/couchbase-component.adoc
+:docTitle: Couchbase
+:artifactId: camel-couchbase
+:description: Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
+:since: 2.19
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The *couchbase:* component allows you to treat
 https://www.couchbase.com/[CouchBase] instances as a producer or consumer

@@ -1,5 +1,8 @@
 [[removeProperties-eip]]
 = Remove Properties EIP
+:description: Removes message exchange properties whose name matches a specified pattern
+:since: 
+:supportLevel: Stable
 
 The RemoveProperties EIP allows you to remove Properties from you exchange.
 

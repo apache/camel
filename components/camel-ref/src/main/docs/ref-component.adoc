@@ -1,11 +1,15 @@
 [[ref-component]]
 = Ref Component
+:docTitle: Ref
+:artifactId: camel-ref
+:description: The ref component is used for lookup of existing endpoints bound in the Registry.
+:since: 1.2
+:component-header: Both producer and consumer are supported
+:core:
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Ref component is used for lookup of existing endpoints bound in
 the Registry.

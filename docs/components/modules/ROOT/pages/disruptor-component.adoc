@@ -2,12 +2,15 @@
 = Disruptor Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-disruptor/src/main/docs/disruptor-component.adoc
+:docTitle: Disruptor
+:artifactId: camel-disruptor
+:description: The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+:since: 2.12
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Disruptor component provides asynchronous
 https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior much as the

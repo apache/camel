@@ -2,12 +2,15 @@
 = OpenStack Neutron Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-neutron-component.adoc
+:docTitle: OpenStack Neutron
+:artifactId: camel-openstack
+:description: The openstack-neutron component allows messages to be sent to an OpenStack network services.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Openstack Neutron component allows messages to be sent to an OpenStack network services.
 

@@ -1,11 +1,14 @@
 [[bean-validator-component]]
 = Bean Validator Component
+:docTitle: Bean Validator
+:artifactId: camel-bean-validator
+:description: The Validator component performs bean validation of the message body using the Java Bean Validation API.
+:since: 2.3
+:component-header: Only producer is supported
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Validator component performs bean validation of the message body
 using the Java Bean Validation API

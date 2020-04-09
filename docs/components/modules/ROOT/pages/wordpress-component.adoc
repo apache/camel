@@ -2,12 +2,15 @@
 = Wordpress Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-wordpress/src/main/docs/wordpress-component.adoc
+:docTitle: Wordpress
+:artifactId: camel-wordpress
+:description: Integrates Camel with Wordpress.
+:since: 2.21
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.21*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 

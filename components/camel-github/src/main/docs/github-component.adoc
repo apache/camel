@@ -1,11 +1,14 @@
 [[github-component]]
 = GitHub Component
+:docTitle: GitHub
+:artifactId: camel-github
+:description: The github component is used for integrating Camel with github.
+:since: 2.15
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The GitHub component interacts with the GitHub API by
 encapsulating http://org.eclipse.egit.github.core[egit-github]. It

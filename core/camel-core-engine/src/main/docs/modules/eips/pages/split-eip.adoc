@@ -1,5 +1,8 @@
 [[split-eip]]
 = Split EIP
+:description: Splits a single message into many sub-messages.
+:since: 
+:supportLevel: Stable
 
 The http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you split a message into a number of pieces and process them individually.
 

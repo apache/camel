@@ -1,11 +1,14 @@
 [[hazelcast-atomicvalue-component]]
 = Hazelcast Atomic Number Component
+:docTitle: Hazelcast Atomic Number
+:artifactId: camel-hazelcast
+:description: The hazelcast-atomicvalue component is used to access Hazelcast atomic number, which is an object that simply provides a grid wide number (long).
+:since: 2.7
+:component-header: Only producer is supported
 
-*Since Camel 2.7*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The http://www.hazelcast.com/[Hazelcast] atomic number component is one of Camel Hazelcast Components which allows you to access Hazelcast atomic number.
 An atomic number is an object that simply provides a grid wide number (long). 

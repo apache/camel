@@ -2,12 +2,15 @@
 = Etcd Keys Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-etcd/src/main/docs/etcd-keys-component.adoc
+:docTitle: Etcd Keys
+:artifactId: camel-etcd
+:description: Camel Etcd support
+:since: 2.18
+:component-header: Only producer is supported
 
-*Since Camel 2.18*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 *Since Camel 2.18*
 

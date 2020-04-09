@@ -1,11 +1,15 @@
 [[xslt-component]]
 = XSLT Component
+:docTitle: XSLT
+:artifactId: camel-xslt
+:description: Transforms the message using a XSLT template.
+:since: 1.3
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 1.3*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The XSLT component allows you to process a message using an
 http://www.w3.org/TR/xslt[XSLT] template. This can be ideal when using

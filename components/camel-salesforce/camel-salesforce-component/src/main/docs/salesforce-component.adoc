@@ -1,11 +1,14 @@
 [[salesforce-component]]
 = Salesforce Component
+:docTitle: Salesforce
+:artifactId: camel-salesforce
+:description: The salesforce component is used for integrating Camel with the massive Salesforce API.
+:since: 2.12
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component supports producer and consumer endpoints to communicate
 with Salesforce using Java DTOs.  +
@@ -817,4 +820,3 @@ with the following path and query parameters:
 // endpoint options: END
 
 include::camel-spring-boot::page$salesforce-starter.adoc[]
-

@@ -2,12 +2,15 @@
 = Flink Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-flink/src/main/docs/flink-component.adoc
+:docTitle: Flink
+:artifactId: camel-flink
+:description: The flink component can be used to send DataSet jobs to Apache Flink cluster.
+:since: 2.18
+:component-header: Only producer is supported
 
-*Since Camel 2.18*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 *Since Camel 2.18*
 

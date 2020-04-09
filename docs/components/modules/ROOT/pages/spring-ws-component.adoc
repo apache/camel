@@ -2,12 +2,15 @@
 = Spring WebService Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-ws/src/main/docs/spring-ws-component.adoc
+:docTitle: Spring WebService
+:artifactId: camel-spring-ws
+:description: The spring-ws component is used for SOAP WebServices using Spring WebServices.
+:since: 2.6
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.6*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Spring WS component allows you to integrate with
 http://static.springsource.org/spring-ws/sites/1.5/[Spring Web

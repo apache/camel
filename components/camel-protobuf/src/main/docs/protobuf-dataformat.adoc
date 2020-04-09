@@ -1,7 +1,11 @@
 [[protobuf-dataformat]]
 = Protobuf DataFormat
-[[Protobuf-Protobuf-ProtocolBuffers]]
-*Since Camel 2.2.0*
+:docTitle: Protobuf
+:artifactId: camel-protobuf
+:description: The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.
+:since: 2.2
+
+*Since Camel {since}*
 
 Protobuf - Protocol Buffers
 ---------------------------

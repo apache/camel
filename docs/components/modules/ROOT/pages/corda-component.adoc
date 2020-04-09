@@ -2,16 +2,17 @@
 = Corda Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-corda/src/main/docs/corda-component.adoc
-*Since Camel 2.23*
-*Since Camel 2.23*
+:docTitle: Corda
+:artifactId: camel-corda
+:description: The corda component uses corda-rpc to interact with corda nodes.
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
 Camel connector for R3's https://www.corda.net/[corda] blockchain platform using corda-rpc library.
 This component uses the corda rpc client.

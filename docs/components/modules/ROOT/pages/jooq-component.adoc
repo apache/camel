@@ -2,12 +2,15 @@
 = JOOQ Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jooq/src/main/docs/jooq-component.adoc
+:docTitle: JOOQ
+:artifactId: camel-jooq
+:description: The jooq component enables you to store and retrieve entities from databases using JOOQ
+:since: 3.0
+:component-header: Both producer and consumer are supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The JOOQ component enables you to store and retrieve Java objects from persistent storage using JOOQ library.
 

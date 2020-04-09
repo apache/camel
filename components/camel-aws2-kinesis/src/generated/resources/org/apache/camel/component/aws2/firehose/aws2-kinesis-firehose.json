@@ -17,7 +17,7 @@
     "firstVersion": "3.2.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "amazonKinesisFirehoseClient": { "kind": "property", "displayName": "Amazon Kinesis Firehose Client", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "software.amazon.awssdk.services.firehose.FirehoseClient", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration", "configurationField": "configuration", "description": "Amazon Kinesis Firehose client to use for all requests for this endpoint" },

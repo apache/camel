@@ -2,12 +2,16 @@
 = Mock Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mock/src/main/docs/mock-component.adoc
+:docTitle: Mock
+:artifactId: camel-mock
+:description: The mock component is used for testing routes and mediation rules using mocks.
+:since: 1.0
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
@@ -39,7 +43,7 @@ Expression.
 
 [NOTE]
 ====
-There is also the xref:test.adoc[Test endpoint] which is a
+There is also the xref:others:test.adoc[Test endpoint] which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets

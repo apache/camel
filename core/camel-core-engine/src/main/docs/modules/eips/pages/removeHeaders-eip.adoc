@@ -1,6 +1,9 @@
 [[removeHeaders-eip]]
 = Remove Headers EIP
-The Remove Headers EIP allows you to remove headers from your exchange.
+// The Remove Headers EIP allows you to remove headers from your exchange.
+:description: Removes message headers whose name matches a specified pattern
+:since: 
+:supportLevel: Stable
 
 == Options
 

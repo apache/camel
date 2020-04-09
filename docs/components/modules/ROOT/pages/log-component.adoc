@@ -2,12 +2,16 @@
 = Log Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-log/src/main/docs/log-component.adoc
+:docTitle: Log
+:artifactId: camel-log
+:description: The log component logs message exchanges to the underlying logging mechanism.
+:since: 1.1
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Log component logs message exchanges to the underlying logging
 mechanism.

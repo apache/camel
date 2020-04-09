@@ -18,7 +18,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ssh",
-    "version": "3.2.0-SNAPSHOT"
+    "version": "3.2.1-SNAPSHOT"
   },
   "componentProperties": {
     "failOnUnknownHost": { "kind": "property", "displayName": "Fail On Unknown Host", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "configurationClass": "org.apache.camel.component.ssh.SshConfiguration", "configurationField": "configuration", "description": "Specifies whether a connection to an unknown host should fail or not. This value is only checked when the property knownHosts is set." },

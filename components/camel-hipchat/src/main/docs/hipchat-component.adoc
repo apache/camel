@@ -1,11 +1,14 @@
 [[hipchat-component]]
 = Hipchat Component
+:docTitle: Hipchat
+:artifactId: camel-hipchat
+:description: The hipchat component supports producing and consuming messages from/to Hipchat service.
+:since: 2.15
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Hipchat component supports producing and consuming messages from/to
 https://www.hipchat.com[Hipchat] service.
