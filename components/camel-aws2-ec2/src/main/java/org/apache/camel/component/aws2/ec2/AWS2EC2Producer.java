@@ -139,6 +139,23 @@ public class AWS2EC2Producer extends DefaultProducer {
     private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) {
         String ami;
         InstanceType instanceType;
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof RunInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    RunInstancesResponse result;
+                    try {
+                        result = ec2Client.runInstances((RunInstancesRequest) payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Run Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Creating and running instances requests performing");
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }    
+        } else {
         RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID))) {
             ami = exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID, String.class);
@@ -208,6 +225,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     @SuppressWarnings("unchecked")
