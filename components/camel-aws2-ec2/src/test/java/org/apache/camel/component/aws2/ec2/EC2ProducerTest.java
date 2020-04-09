@@ -33,6 +33,7 @@ import software.amazon.awssdk.services.ec2.model.InstanceStateName;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 import software.amazon.awssdk.services.ec2.model.MonitorInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.MonitoringState;
+import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.StartInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
@@ -59,6 +60,22 @@ public class EC2ProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
+            }
+        });
+
+        RunInstancesResponse resultGet = (RunInstancesResponse)exchange.getMessage().getBody();
+        assertEquals(resultGet.instances().get(0).imageId(), "test-1");
+        assertEquals(resultGet.instances().get(0).instanceType(), InstanceType.T2_MICRO);
+        assertEquals(resultGet.instances().get(0).instanceId(), "instance-1");
+    }
+    
+    @Test
+    public void createAndRunInstancesPojo() {
+
+        Exchange exchange = template.request("direct:createAndRunPojo", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
+                exchange.getIn().setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build());
             }
         });
 
@@ -244,6 +261,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:createAndRun").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances").to("mock:result");
+                from("direct:createAndRunPojo").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances&pojoRequest=true").to("mock:result");
                 from("direct:start").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=startInstances").to("mock:result");
                 from("direct:stop").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=stopInstances").to("mock:result");
                 from("direct:terminate").to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=terminateInstances").to("mock:result");
