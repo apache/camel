@@ -425,7 +425,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof DescribeInstanceStatusRequest) {
+                if (exchange.getIn().getBody() instanceof RebootInstancesRequest) {
                     Object payload = exchange.getIn().getBody();
                     try {
                         LOG.trace("Rebooting instances with Ids [{}] ", ((RebootInstancesRequest)payload).instanceIds());
@@ -457,103 +457,175 @@ public class AWS2EC2Producer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void monitorInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        MonitorInstancesRequest.Builder builder = MonitorInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof MonitorInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    MonitorInstancesResponse result;
+                    try {
+                        result = ec2Client.monitorInstances((MonitorInstancesRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Monitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Start Monitoring instances with Ids [{}] ", ((MonitorInstancesRequest)payload).instanceIds());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            MonitorInstancesRequest.Builder builder = MonitorInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            MonitorInstancesResponse result;
+            try {
+                result = ec2Client.monitorInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Monitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        MonitorInstancesResponse result;
-        try {
-            result = ec2Client.monitorInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Monitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
     private void unmonitorInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        UnmonitorInstancesRequest.Builder builder = UnmonitorInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof UnmonitorInstancesRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    UnmonitorInstancesResponse result;
+                    try {
+                        result = ec2Client.unmonitorInstances((UnmonitorInstancesRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Unmonitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Stop Monitoring instances with Ids [{}] ", ((UnmonitorInstancesRequest)payload).instanceIds());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            UnmonitorInstancesRequest.Builder builder = UnmonitorInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            UnmonitorInstancesResponse result;
+            try {
+                result = ec2Client.unmonitorInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Unmonitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        UnmonitorInstancesResponse result;
-        try {
-            result = ec2Client.unmonitorInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Unmonitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
     private void createTags(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        Collection<Tag> tags;
-        CreateTagsRequest.Builder builder = CreateTagsRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.resources(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof CreateTagsRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    CreateTagsResponse result;
+                    try {
+                        result = ec2Client.createTags((CreateTagsRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Created tags [{}] ", ((CreateTagsRequest)payload).tags());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            Collection<Tag> tags;
+            CreateTagsRequest.Builder builder = CreateTagsRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.resources(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS))) {
+                tags = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS, Collection.class);
+                builder.tags(tags);
+            } else {
+                throw new IllegalArgumentException("Tags must be specified");
+            }
+            CreateTagsResponse result;
+            try {
+                result = ec2Client.createTags(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS))) {
-            tags = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS, Collection.class);
-            builder.tags(tags);
-        } else {
-            throw new IllegalArgumentException("Tags must be specified");
-        }
-        CreateTagsResponse result;
-        try {
-            result = ec2Client.createTags(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
     private void deleteTags(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        Collection<Tag> tags;
-        DeleteTagsRequest.Builder builder = DeleteTagsRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.resources(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof DeleteTagsRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    DeleteTagsResponse result;
+                    try {
+                        result = ec2Client.deleteTags((DeleteTagsRequest)payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    LOG.trace("Delete tags [{}]  ", ((DeleteTagsRequest)payload).tags());
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Instances Ids must be specified");
+            Collection<Tag> tags;
+            DeleteTagsRequest.Builder builder = DeleteTagsRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.resources(instanceIds);
+            } else {
+                throw new IllegalArgumentException("Instances Ids must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS))) {
+                tags = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS, Collection.class);
+                builder.tags(tags);
+            } else {
+                throw new IllegalArgumentException("Tags must be specified");
+            }
+            DeleteTagsResponse result;
+            try {
+                result = ec2Client.deleteTags(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS))) {
-            tags = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_TAGS, Collection.class);
-            builder.tags(tags);
-        } else {
-            throw new IllegalArgumentException("Tags must be specified");
-        }
-        DeleteTagsResponse result;
-        try {
-            result = ec2Client.deleteTags(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
