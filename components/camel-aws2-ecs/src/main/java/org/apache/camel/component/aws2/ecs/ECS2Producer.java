@@ -99,18 +99,18 @@ public class ECS2Producer extends DefaultProducer {
     private void listClusters(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-                if (payload instanceof ListClustersRequest) {
-                    ListClustersResponse result;
-                    try {
-                        ListClustersRequest request = (ListClustersRequest)payload;
-                        result = ecsClient.listClusters(request);
-                    } catch (AwsServiceException ase) {
-                        LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
-                        throw ase;
-                    }
-                    Message message = getMessageForResponse(exchange);
-                    message.setBody(result);
+            if (payload instanceof ListClustersRequest) {
+                ListClustersResponse result;
+                try {
+                    ListClustersRequest request = (ListClustersRequest)payload;
+                    result = ecsClient.listClusters(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
                 }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
         } else {
             Builder builder = ListClustersRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.MAX_RESULTS))) {
@@ -144,7 +144,7 @@ public class ECS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-        }
+            }
         } else {
             CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
@@ -178,7 +178,7 @@ public class ECS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-        }
+            }
         } else {
             DescribeClustersRequest.Builder builder = DescribeClustersRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
@@ -212,7 +212,7 @@ public class ECS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-        }
+            }
         } else {
             DeleteClusterRequest.Builder builder = DeleteClusterRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
