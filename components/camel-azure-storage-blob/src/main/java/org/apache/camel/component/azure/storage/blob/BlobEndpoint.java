@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -35,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The azure-storage-blob component is used for storing and retrieving blobs from Azure Storage Blob Service using SDK v12.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service", syntax = "azure-storage-blob:containerName", label = "cloud,file")
+@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service", syntax = "azure-storage-blob:containerName", label = "cloud,file")
 public class BlobEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobEndpoint.class);
@@ -92,6 +94,9 @@ public class BlobEndpoint extends DefaultEndpoint {
         message.setHeaders(response.getHeaders());
     }
 
+    /**
+     * The component configurations
+     */
     public BlobConfiguration getConfiguration() {
         return configuration;
     }
@@ -101,7 +106,13 @@ public class BlobEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * client
+     * Client to a storage account. This client does not hold any state about a particular storage account
+     * but is instead a convenient way of sending off appropriate requests to the resource on the service.
+     * It may also be used to construct URLs to blobs and containers.
+     *
+     * This client contains operations on a service account. Operations on a container are available on {@link BlobContainerClient}
+     * through {@link #getBlobContainerClient(String)}, and operations on a blob are available on {@link BlobClient} through
+     * {@link #getBlobContainerClient(String).getBlobClient(String)}.
      */
     public BlobServiceClient getBlobServiceClient() {
         return blobServiceClient;

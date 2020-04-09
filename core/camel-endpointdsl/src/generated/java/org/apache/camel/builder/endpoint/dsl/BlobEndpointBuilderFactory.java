@@ -44,7 +44,8 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointConsumerBuilder) this;
         }
         /**
-         * dd.
+         * The blob name, required for consumer. However on producer, is only
+         * required for the operations on the blob level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -81,7 +82,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * client.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -94,7 +103,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * client.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -107,7 +124,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob type in order to initiate the appropriate settings for each
+         * blob type.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
@@ -121,7 +139,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob type in order to initiate the appropriate settings for each
+         * blob type.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
@@ -135,7 +154,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * jj.
+         * Close the stream after read or keep it open, default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -148,7 +167,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * jj.
+         * Close the stream after read or keep it open, default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -161,7 +180,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option is a:
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -174,7 +194,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -211,7 +232,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The file directory where the downloaded blobs will be saved to, this
+         * can be used in both, producer and consumer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -250,7 +272,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -262,7 +292,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -312,7 +350,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Access key for the associated azure account name to be used for
+         * authentication with azure blob services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -460,7 +499,8 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointProducerBuilder) this;
         }
         /**
-         * dd.
+         * The blob name, required for consumer. However on producer, is only
+         * required for the operations on the blob level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -497,7 +537,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * client.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -510,7 +558,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * client.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -523,7 +579,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob type in order to initiate the appropriate settings for each
+         * blob type.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
@@ -537,7 +594,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob type in order to initiate the appropriate settings for each
+         * blob type.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
@@ -551,7 +609,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * jj.
+         * Close the stream after read or keep it open, default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -564,7 +622,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * jj.
+         * Close the stream after read or keep it open, default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -577,7 +635,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option is a:
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -590,7 +649,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -627,7 +687,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The file directory where the downloaded blobs will be saved to, this
+         * can be used in both, producer and consumer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -666,7 +727,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -678,7 +747,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -690,7 +767,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dsds.
+         * Close the stream after write or keep it open, default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -703,7 +780,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dsds.
+         * Close the stream after write or keep it open, default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -758,7 +835,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob operation that can be used with this component on the
+         * producer.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
@@ -772,7 +850,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob operation that can be used with this component on the
+         * producer.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
@@ -785,7 +864,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Access key for the associated azure account name to be used for
+         * authentication with azure blob services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -876,7 +956,8 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointBuilder) this;
         }
         /**
-         * dd.
+         * The blob name, required for consumer. However on producer, is only
+         * required for the operations on the blob level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -913,7 +994,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * client.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -925,7 +1014,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * client.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -937,7 +1034,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob type in order to initiate the appropriate settings for each
+         * blob type.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
@@ -951,7 +1049,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The blob type in order to initiate the appropriate settings for each
+         * blob type.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
@@ -965,7 +1064,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * jj.
+         * Close the stream after read or keep it open, default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -978,7 +1077,7 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * jj.
+         * Close the stream after read or keep it open, default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -991,7 +1090,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option is a:
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -1004,7 +1104,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * StorageSharedKeyCredential can be injected to create the azure
+         * client, this holds the important authentication information.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
@@ -1041,7 +1142,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The file directory where the downloaded blobs will be saved to, this
+         * can be used in both, producer and consumer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1078,7 +1180,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -1090,7 +1200,15 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * ddd.
+         * Client to a storage account. This client does not hold any state
+         * about a particular storage account but is instead a convenient way of
+         * sending off appropriate requests to the resource on the service. It
+         * may also be used to construct URLs to blobs and containers. This
+         * client contains operations on a service account. Operations on a
+         * container are available on BlobContainerClient through
+         * getBlobContainerClient(String), and operations on a blob are
+         * available on BlobClient through
+         * getBlobContainerClient(String).getBlobClient(String).
          * 
          * The option will be converted to a
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.
@@ -1102,7 +1220,8 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * Access key for the associated azure account name to be used for
+         * authentication with azure blob services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1224,16 +1343,17 @@ public interface BlobEndpointBuilderFactory {
          * blobs from Azure Storage Blob Service using SDK v12.
          * 
          * Category: cloud,file
-         * Since: 3.2
+         * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-azure-storage-blob
          * 
          * Syntax: <code>azure-storage-blob:containerName</code>
          * 
          * Path parameter: accountName
-         * dd
+         * Azure account name to be used for authentication with azure blob
+         * services
          * 
          * Path parameter: containerName
-         * dd
+         * The blob container name
          */
         default BlobEndpointBuilder azureStorageBlob(String path) {
             return BlobEndpointBuilderFactory.azureStorageBlob(path);
@@ -1245,16 +1365,16 @@ public interface BlobEndpointBuilderFactory {
      * from Azure Storage Blob Service using SDK v12.
      * 
      * Category: cloud,file
-     * Since: 3.2
+     * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
      * 
      * Syntax: <code>azure-storage-blob:containerName</code>
      * 
      * Path parameter: accountName
-     * dd
+     * Azure account name to be used for authentication with azure blob services
      * 
      * Path parameter: containerName
-     * dd
+     * The blob container name
      */
     static BlobEndpointBuilder azureStorageBlob(String path) {
         class BlobEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobEndpointBuilder, AdvancedBlobEndpointBuilder {

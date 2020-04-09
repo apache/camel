@@ -1293,7 +1293,7 @@
     "producerOnly": false,
     "lenientProperties": false,
     "javaType": "org.apache.camel.component.azure.storage.blob.BlobComponent",
-    "firstVersion": "3.2.0",
+    "firstVersion": "3.3.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-storage-blob",
     "version": "3.3.0-SNAPSHOT"

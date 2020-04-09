@@ -79,7 +79,7 @@ public class BlobComponent extends DefaultComponent {
     }
 
     /**
-     * Config
+     * The component configurations
      */
     public BlobConfiguration getConfiguration() {
         return configuration;

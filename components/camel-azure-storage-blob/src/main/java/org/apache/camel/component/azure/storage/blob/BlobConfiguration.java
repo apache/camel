@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +39,9 @@ public class BlobConfiguration implements Cloneable {
     private BlobServiceClient serviceClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", enums = "listContainers", defaultValue = "listBlobContainers")
+    @UriParam(label = "producer", enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink," +
+            "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob," +
+            "clearPageBlob,getPageBlobRanges", defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;
@@ -57,9 +62,7 @@ public class BlobConfiguration implements Cloneable {
 
 
     /**
-     * dd
-     *
-     * @return
+     * Azure account name to be used for authentication with azure blob services
      */
     public String getAccountName() {
         return accountName;
@@ -70,9 +73,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dd
-     *
-     * @return
+     * The blob container name
      */
     public String getContainerName() {
         return containerName;
@@ -83,9 +84,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * ddd
-     *
-     * @return
+     * StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information
      */
     public StorageSharedKeyCredential getCredentials() {
         return credentials;
@@ -96,9 +95,13 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * ddd
+     * Client to a storage account. This client does not hold any state about a particular storage account
+     * but is instead a convenient way of sending off appropriate requests to the resource on the service.
+     * It may also be used to construct URLs to blobs and containers.
      *
-     * @return
+     * This client contains operations on a service account. Operations on a container are available on {@link BlobContainerClient}
+     * through {@link #getBlobContainerClient(String)}, and operations on a blob are available on {@link BlobClient} through
+     * {@link #getBlobContainerClient(String).getBlobClient(String)}.
      */
     public BlobServiceClient getServiceClient() {
         return serviceClient;
@@ -109,9 +112,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dd
-     *
-     * @return
+     * Access key for the associated azure account name to be used for authentication with azure blob services
      */
     public String getAccessKey() {
         return accessKey;
@@ -122,9 +123,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dd
-     *
-     * @return
+     * The blob operation that can be used with this component on the producer
      */
     public BlobOperationsDefinition getOperation() {
         return operation;
@@ -135,9 +134,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dd
-     *
-     * @return
+     * The blob name, required for consumer. However on producer, is only required for the operations on the blob level
      */
     public String getBlobName() {
         return blobName;
@@ -148,9 +145,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dd
-     *
-     * @return
+     * The blob type in order to initiate the appropriate settings for each blob type
      */
     public BlobType getBlobType() {
         return blobType;
@@ -161,9 +156,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dd
-     *
-     * @return
+     * The file directory where the downloaded blobs will be saved to, this can be used in both, producer and consumer
      */
     public String getFileDir() {
         return fileDir;
@@ -207,9 +200,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * jj
-     *
-     * @return
+     * Close the stream after read or keep it open, default is true
      */
     public boolean isCloseStreamAfterRead() {
         return closeStreamAfterRead;
@@ -220,9 +211,7 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * dsds
-     *
-     * @return
+     * Close the stream after write or keep it open, default is true
      */
     public boolean isCloseStreamAfterWrite() {
         return closeStreamAfterWrite;

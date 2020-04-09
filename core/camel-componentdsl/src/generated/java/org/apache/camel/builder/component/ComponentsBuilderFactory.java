@@ -698,7 +698,7 @@ public interface ComponentsBuilderFactory {
      * from Azure Storage Blob Service using SDK v12.
      * 
      * Category: cloud,file
-     * Since: 3.2
+     * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
      */
     static org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.AzureStorageBlobComponentBuilder azureStorageBlob() {
