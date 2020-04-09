@@ -367,40 +367,57 @@ public class AWS2EC2Producer extends DefaultProducer {
                 }
             }
         } else {
-        DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
-        }
-        DescribeInstancesResponse result;
-        try {
-            result = ec2Client.describeInstances(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Describe Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            }
+            DescribeInstancesResponse result;
+            try {
+                result = ec2Client.describeInstances(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Describe Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
     @SuppressWarnings("unchecked")
     private void describeInstancesStatus(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
-        DescribeInstanceStatusRequest.Builder builder = DescribeInstanceStatusRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
-            instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-            builder.instanceIds(instanceIds);
+        if (getConfiguration().isPojoRequest()) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                if (exchange.getIn().getBody() instanceof DescribeInstanceStatusRequest) {
+                    Object payload = exchange.getIn().getBody();
+                    DescribeInstanceStatusResponse result;
+                    try {
+                        result = ec2Client.describeInstanceStatus((DescribeInstanceStatusRequest) payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("Describe Instances Status command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            }
+        } else {
+            DescribeInstanceStatusRequest.Builder builder = DescribeInstanceStatusRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
+                instanceIds = exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS, Collection.class);
+                builder.instanceIds(instanceIds);
+            }
+            DescribeInstanceStatusResponse result;
+            try {
+                result = ec2Client.describeInstanceStatus(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Describe Instances Status command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
-        DescribeInstanceStatusResponse result;
-        try {
-            result = ec2Client.describeInstanceStatus(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Describe Instances Status command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
     }
 
     @SuppressWarnings("unchecked")
