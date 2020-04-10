@@ -25,20 +25,22 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CMISQueryProducerTest extends CMISTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         populateServerWithContent();
     }
 
     @Test
-    public void queryServerForDocumentWithSpecificName() throws Exception {
+    void queryServerForDocumentWithSpecificName() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -53,7 +55,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void getResultCountFromHeader() throws Exception {
+    void getResultCountFromHeader() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -68,7 +70,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void limitNumberOfResultsWithReadSizeHeader() throws Exception {
+    void limitNumberOfResultsWithReadSizeHeader() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
@@ -84,7 +86,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void retrieveAlsoDocumentContent() throws Exception {
+    void retrieveAlsoDocumentContent() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 

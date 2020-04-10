@@ -21,13 +21,15 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CBORDataFormatTest extends CamelTestSupport {
     
     @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
+    void testMarshalAndUnmarshalMap() throws Exception {
         Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
@@ -44,7 +46,7 @@ public class CBORDataFormatTest extends CamelTestSupport {
     }
     
     @Test
-    public void testMarshalAndUnmarshalAuthor() throws Exception {
+    void testMarshalAndUnmarshalAuthor() throws Exception {
         Author auth = new Author();
         auth.setName("Don");
         auth.setSurname("Winslow");
@@ -65,11 +67,11 @@ public class CBORDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CBORDataFormat format = new CBORDataFormat();
                 format.useMap();
 

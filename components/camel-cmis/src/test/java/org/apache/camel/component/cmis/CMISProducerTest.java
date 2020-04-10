@@ -35,7 +35,14 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CMISProducerTest extends CMISTestSupport {
 
@@ -43,7 +50,7 @@ public class CMISProducerTest extends CMISTestSupport {
     protected ProducerTemplate template;
 
     @Test
-    public void storeMessageBodyAsTextDocument() throws Exception {
+    void storeMessageBodyAsTextDocument() throws Exception {
         String content = "Some content to be store";
         Exchange exchange = createExchangeWithInBody(content);
         exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
@@ -63,7 +70,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void getDocumentMimeTypeFromMessageContentType() throws Exception {
+    void getDocumentMimeTypeFromMessageContentType() {
         Exchange exchange = createExchangeWithInBody("Some content to be store");
         exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain");
         exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.file");
@@ -78,7 +85,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void namePropertyIsAlwaysRequired() {
+    void namePropertyIsAlwaysRequired() {
         Exchange exchange = createExchangeWithInBody("Some content that will fail to be stored");
         exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
@@ -92,7 +99,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void createDocumentWithoutContentByExplicitlySpecifyingObjectTypeHeader() throws Exception {
+    void createDocumentWithoutContentByExplicitlySpecifyingObjectTypeHeader() {
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
         exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
@@ -109,7 +116,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void emptyBodyAndMissingObjectTypeHeaderCreatesFolderNode() throws Exception {
+    void emptyBodyAndMissingObjectTypeHeaderCreatesFolderNode() {
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.NAME, "testFolder");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
@@ -125,7 +132,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void cmisPropertiesAreStored() throws Exception {
+    void cmisPropertiesAreStored() {
         Exchange exchange = createExchangeWithInBody("Some content to be store");
         exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
         exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
@@ -142,7 +149,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void cmisSecondaryTypePropertiesAreStored() throws Exception {
+    void cmisSecondaryTypePropertiesAreStored() {
 
         List<String> secondaryTypes = Arrays.asList("MySecondaryType");
 
@@ -162,8 +169,8 @@ public class CMISProducerTest extends CMISTestSupport {
         assertEquals("secondaryTypePropValue", cmisObject.getPropertyValue("SecondaryStringProp"));
     }
 
-    @Test(expected = RuntimeCamelException.class)
-    public void failConnectingToNonExistingRepository() throws Exception {
+    @Test
+    void failConnectingToNonExistingRepository() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl()
                 + "?username=admin&password=admin&repositoryId=NON_EXISTING_ID");
         Producer producer = endpoint.createProducer();
@@ -171,11 +178,14 @@ public class CMISProducerTest extends CMISTestSupport {
         Exchange exchange = createExchangeWithInBody("Some content to be store");
         exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
-        producer.process(exchange);
+
+        assertThrows(RuntimeCamelException.class, () -> {
+            producer.process(exchange);
+        });
     }
 
     @Test
-    public void failCreatingFolderAtNonExistingParentId() throws Exception {
+    void failCreatingFolderAtNonExistingParentId() {
 
         Exchange exchange = createExchangeWithInBody(null);
         exchange.getIn().getHeaders().put(PropertyIds.NAME, "folder1");
@@ -188,7 +198,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -198,7 +208,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void renameFolder() {
+    void renameFolder() {
 
         Folder folder = createFolderWithName("New Folder");
 
@@ -218,7 +228,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void renameDocument() throws UnsupportedEncodingException {
+    void renameDocument() throws UnsupportedEncodingException {
 
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
 
@@ -238,8 +248,8 @@ public class CMISProducerTest extends CMISTestSupport {
         assertTrue(cmisObject instanceof Document);
     }
 
-    @Test (expected = CmisObjectNotFoundException.class)
-    public void deleteFolder()  {
+    @Test
+    void deleteFolder()  {
 
         Folder folder = createFolderWithName("Test");
 
@@ -253,12 +263,14 @@ public class CMISProducerTest extends CMISTestSupport {
         List<String> unsuccessfullyDeletedObjects = exchange.getMessage().getBody(List.class);
         assertTrue(unsuccessfullyDeletedObjects.isEmpty());
 
-        //Try to get already deleted object by id should throw CmisObjectNotFoundException
-        createSession().getObject(folder.getId());
+        assertThrows(CmisObjectNotFoundException.class, () -> {
+            // Try to get already deleted object by id should throw
+            createSession().getObject(folder.getId());
+        });
     }
 
     @Test 
-    public void deleteDocument() throws UnsupportedEncodingException {
+    void deleteDocument() throws UnsupportedEncodingException {
 
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
 
@@ -273,7 +285,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void moveFolder() {
+    void moveFolder() {
 
         Folder toBeMoved = createFolderWithName("Moving folder");
         Folder destinationFolder = createFolderWithName("Destination");
@@ -292,7 +304,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void moveDocument() throws UnsupportedEncodingException {
+    void moveDocument() throws UnsupportedEncodingException {
 
         Folder rootFolder = createSession().getRootFolder();
         Document toBeMoved = createTextDocument(rootFolder, "This is new test document",  "document.txt");
@@ -311,7 +323,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void copyDocument() throws UnsupportedEncodingException {
+    void copyDocument() throws UnsupportedEncodingException {
         Folder destination = createFolderWithName("Destination");
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
 
@@ -332,7 +344,7 @@ public class CMISProducerTest extends CMISTestSupport {
     }
 
     @Test
-    public void copyFolder() {
+    void copyFolder() {
         Folder folder = createFolderWithName("Folder");
         Folder destination = createFolderWithName("Destination Folder");
 
