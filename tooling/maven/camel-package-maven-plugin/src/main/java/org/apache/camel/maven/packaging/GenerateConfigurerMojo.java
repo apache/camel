@@ -66,6 +66,7 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
     /**
      * Whether to discover configurer classes from classpath by scanning for @Configurer annotations.
+     * This requires using jandex-maven-plugin.
      */
     @Parameter(defaultValue = "true")
     protected boolean discoverClasses = true;
