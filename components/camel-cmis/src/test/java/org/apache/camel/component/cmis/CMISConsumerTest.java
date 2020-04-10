@@ -26,8 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CMISConsumerTest extends CMISTestSupport {
 
@@ -35,7 +37,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     protected MockEndpoint resultEndpoint;
 
     @Test
-    public void getAllContentFromServerOrderedFromRootToLeaves() throws Exception {
+    void getAllContentFromServerOrderedFromRootToLeaves() throws Exception {
         resultEndpoint.expectedMessageCount(5);
 
         Consumer treeBasedConsumer = createConsumerFor(getUrl() + "?pageSize=50");
@@ -53,7 +55,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     }
 
     @Test
-    public void consumeDocumentsWithQuery() throws Exception {
+    void consumeDocumentsWithQuery() throws Exception {
         resultEndpoint.expectedMessageCount(2);
 
         Consumer queryBasedConsumer = createConsumerFor(
@@ -66,7 +68,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     private Consumer createConsumerFor(String path) throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + path);
         return endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 template.send("mock:result", exchange);
             }
         });
@@ -91,7 +93,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         populateRepositoryRootFolderWithTwoFoldersAndTwoDocuments();
