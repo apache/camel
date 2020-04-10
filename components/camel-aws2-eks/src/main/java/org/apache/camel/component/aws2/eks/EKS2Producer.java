@@ -127,7 +127,21 @@ public class EKS2Producer extends DefaultProducer {
         }
     }
 
-    private void createCluster(EksClient eksClient, Exchange exchange) {
+    private void createCluster(EksClient eksClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateClusterRequest) {
+                CreateClusterResponse result;
+                try {
+                    result = eksClient.createCluster((CreateClusterRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME))) {
             String name = exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME, String.class);
@@ -150,9 +164,24 @@ public class EKS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
-    private void describeCluster(EksClient eksClient, Exchange exchange) {
+    private void describeCluster(EksClient eksClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DescribeClusterRequest) {
+                DescribeClusterResponse result;
+                try {
+                    result = eksClient.describeCluster((DescribeClusterRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Describe Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DescribeClusterRequest.Builder builder = DescribeClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME))) {
             String name = exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME, String.class);
@@ -169,6 +198,7 @@ public class EKS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void deleteCluster(EksClient eksClient, Exchange exchange) {
