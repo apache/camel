@@ -141,7 +141,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listClusters").to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters").to("mock:result");
-                from("direct:listPojoClusters").to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters").to("mock:result");
+                from("direct:listPojoClusters").to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters&pojoRequest=true").to("mock:result");
                 from("direct:createCluster").to("aws2-eks://test?eksClient=#amazonEksClient&operation=createCluster").to("mock:result");
                 from("direct:deleteCluster").to("aws2-eks://test?eksClient=#amazonEksClient&operation=deleteCluster").to("mock:result");
                 from("direct:describeCluster").to("aws2-eks://test?eksClient=#amazonEksClient&operation=describeCluster").to("mock:result");
