@@ -108,6 +108,18 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2EksComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the EKS client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -221,6 +233,7 @@ public interface Aws2EksComponentBuilderFactory {
             case "eksClient": getOrCreateConfiguration((EKS2Component) component).setEksClient((software.amazon.awssdk.services.eks.EksClient) value); return true;
             case "lazyStartProducer": ((EKS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((EKS2Component) component).setOperation((org.apache.camel.component.aws2.eks.EKS2Operations) value); return true;
+            case "pojoRequest": getOrCreateConfiguration((EKS2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((EKS2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
