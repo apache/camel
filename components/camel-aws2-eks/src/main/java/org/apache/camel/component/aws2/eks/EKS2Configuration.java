@@ -47,6 +47,8 @@ public class EKS2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
 
     public EksClient getEksClient() {
         return eksClient;
@@ -137,6 +139,17 @@ public class EKS2Configuration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * If we want to use a POJO request as body or not
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
     }
 
     // *************************************************

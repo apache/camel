@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.eks;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -94,7 +95,21 @@ public class EKS2Producer extends DefaultProducer {
         return (EKS2Endpoint)super.getEndpoint();
     }
 
-    private void listClusters(EksClient eksClient, Exchange exchange) {
+    private void listClusters(EksClient eksClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListClustersRequest) {
+                ListClustersResponse result;
+                try {
+                    result = eksClient.listClusters((ListClustersRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListClustersRequest.Builder builder = ListClustersRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.MAX_RESULTS))) {
             int maxRes = exchange.getIn().getHeader(EKS2Constants.MAX_RESULTS, Integer.class);
@@ -109,6 +124,7 @@ public class EKS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void createCluster(EksClient eksClient, Exchange exchange) {
