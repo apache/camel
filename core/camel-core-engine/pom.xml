@@ -131,7 +131,7 @@
                         <configuration>
                             <discoverClasses>false</discoverClasses>
                             <!-- we want to have configurer for ExtendedCamelContext in camel-core-engine -->
-                            <classes>org.apache.camel.ExtendedCamelContext</classes>
+                            <classes>org.apache.camel.ExtendedCamelContext=org.apache.camel.impl.ExtendedCamelContext</classes>
                         </configuration>
                     </execution>
                 </executions>

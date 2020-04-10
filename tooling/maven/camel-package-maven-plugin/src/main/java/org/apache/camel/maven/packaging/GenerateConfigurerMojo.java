@@ -72,6 +72,8 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
     /**
      * To generate configurer for these classes.
+     * The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>.
+     * This allows to map source class to target class to generate the source code using a different classname.
      */
     @Parameter
     protected String[] classes;
@@ -147,19 +149,25 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
         for (String fqn : set) {
             try {
+                String targetFqn = fqn;
+                int pos = fqn.indexOf('=');
+                if (pos != -1) {
+                    targetFqn = fqn.substring(pos + 1);
+                    fqn = fqn.substring(0, pos);
+                }
                 List<Option> options = processClass(fqn);
-                generateConfigurer(fqn, options);
-                generateMetaInfConfigurer(fqn);
+                generateConfigurer(fqn, targetFqn, options);
+                generateMetaInfConfigurer(targetFqn);
             } catch (Exception e) {
                 throw new MojoExecutionException("Error processing class: " + fqn, e);
             }
         }
     }
 
-    private List<Option> processClass(String name) throws ClassNotFoundException {
+    private List<Option> processClass(String fqn) throws ClassNotFoundException {
         List<Option> answer = new ArrayList<>();
 
-        Class clazz = projectClassLoader.loadClass(name);
+        Class clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
         ReflectionUtils.doWithMethods(clazz, m -> {
             boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set") && Character.isUpperCase(m.getName().charAt(3));
@@ -198,12 +206,12 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         return true;
     }
 
-    private void generateConfigurer(String name, List<Option> options) throws IOException {
-        int pos = name.lastIndexOf('.');
-        String pn = name.substring(0, pos);
-        String cn = name.substring(pos + 1) + "Configurer";
-        String en = name;
-        String pfqn = name;
+    private void generateConfigurer(String fqn, String targetFqn, List<Option> options) throws IOException {
+        int pos = targetFqn.lastIndexOf('.');
+        String pn = targetFqn.substring(0, pos);
+        String cn = targetFqn.substring(pos + 1) + "Configurer";
+        String en = fqn;
+        String pfqn = fqn;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
         StringWriter sw = new StringWriter();
