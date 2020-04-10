@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -81,11 +82,10 @@ public class Translate2Producer extends DefaultProducer {
         return (Translate2Endpoint)super.getEndpoint();
     }
 
-    private void translateText(TranslateClient translateClient, Exchange exchange) {
+    private void translateText(TranslateClient translateClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof TranslateTextRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof TranslateTextRequest) {
                     TranslateTextResponse result;
                     try {
                         result = translateClient.translateText((TranslateTextRequest)payload);
@@ -95,7 +95,6 @@ public class Translate2Producer extends DefaultProducer {
                     }
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result.translatedText());
-                }
             }
         } else {
             Builder request = TranslateTextRequest.builder();
