@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.eks.model.CreateClusterResponse;
 import software.amazon.awssdk.services.eks.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.eks.model.DescribeClusterResponse;
+import software.amazon.awssdk.services.eks.model.ListClustersRequest;
 import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
 
@@ -37,13 +38,32 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
     private MockEndpoint mock;
 
     @Test
-    public void kmsListClustersTest() throws Exception {
+    public void eksListClustersTest() throws Exception {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EKS2Constants.OPERATION, EKS2Operations.listClusters);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.clusters().size());
+        assertEquals("Test", resultGet.clusters().get(0));
+    }
+    
+    @Test
+    public void eksListClustersPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listPojoClusters", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EKS2Constants.OPERATION, EKS2Operations.listClusters);
+                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(12).build());
             }
         });
 
