@@ -16,7 +16,7 @@
 #
 
 name: components
-title: Component reference
+title: Camel Components
 version: latest
 nav:
   - modules/ROOT/nav.adoc
