@@ -103,7 +103,7 @@ from("cron:tab?schedule=0/1+*+*+*+*+?")
 .log("${body}");
 ---------------------------------------------------------
 
-The schedule expression `0/3+10+*+*+*+?` can be also written as `0/3 10 * * * ?` and triggers an event every three seconds only in the tenth minute of each hour.
+The schedule expression `0/3{plus}10{plus}*{plus}*{plus}*{plus}?` can be also written as `0/3 10 * * * ?` and triggers an event every three seconds only in the tenth minute of each hour.
 
 Parts in the schedule expression means (in order):
 
