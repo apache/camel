@@ -32,6 +32,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -71,9 +72,9 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     private final XStream xStreamCompositeTree;
 
     public DefaultCompositeApiClient(final SalesforceEndpointConfig configuration, final PayloadFormat format, final String version, final SalesforceSession session,
-                                     final SalesforceHttpClient httpClient)
+                                     final SalesforceHttpClient httpClient, final SalesforceLoginConfig loginConfig)
         throws SalesforceException {
-        super(version, session, httpClient);
+        super(version, session, httpClient, loginConfig);
         this.format = format;
 
         if (configuration.getObjectMapper() != null) {

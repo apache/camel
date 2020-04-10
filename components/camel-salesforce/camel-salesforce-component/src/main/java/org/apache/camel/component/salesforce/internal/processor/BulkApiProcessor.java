@@ -51,7 +51,7 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
     public BulkApiProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        this.bulkClient = new DefaultBulkApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
+        this.bulkClient = new DefaultBulkApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient, loginConfig);
     }
 
     @Override

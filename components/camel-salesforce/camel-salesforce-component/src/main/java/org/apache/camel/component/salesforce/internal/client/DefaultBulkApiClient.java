@@ -38,6 +38,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
@@ -65,8 +66,8 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     private JAXBContext context;
     private ObjectFactory objectFactory;
 
-    public DefaultBulkApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient) throws SalesforceException {
-        super(version, session, httpClient);
+    public DefaultBulkApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig) throws SalesforceException {
+        super(version, session, httpClient, loginConfig);
 
         try {
             context = JAXBContext.newInstance(JobInfo.class.getPackage().getName(), getClass().getClassLoader());

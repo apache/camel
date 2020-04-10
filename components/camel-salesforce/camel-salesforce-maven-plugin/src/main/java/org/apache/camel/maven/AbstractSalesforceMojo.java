@@ -209,7 +209,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
 
             // create rest client
 
-            restClient = new DefaultRestClient(httpClient, version, PayloadFormat.JSON, session);
+            restClient = new DefaultRestClient(httpClient, version, PayloadFormat.JSON, session, new SalesforceLoginConfig());
             // remember to start the active client object
             ((DefaultRestClient)restClient).start();
 

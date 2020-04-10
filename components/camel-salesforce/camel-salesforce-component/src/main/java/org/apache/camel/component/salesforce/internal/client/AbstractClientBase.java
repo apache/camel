@@ -42,6 +42,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -76,6 +77,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected final SalesforceHttpClient httpClient;
     protected final SalesforceSession session;
+    protected final SalesforceLoginConfig loginConfig;
     protected final String version;
 
     protected String accessToken;
@@ -85,15 +87,16 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     private long terminationTimeout;
 
-    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient) throws SalesforceException {
-        this(version, session, httpClient, DEFAULT_TERMINATION_TIMEOUT);
+    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig) throws SalesforceException {
+        this(version, session, httpClient, loginConfig, DEFAULT_TERMINATION_TIMEOUT);
     }
 
-    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, int terminationTimeout) throws SalesforceException {
+    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig, int terminationTimeout) throws SalesforceException {
 
         this.version = version;
         this.session = session;
         this.httpClient = httpClient;
+        this.loginConfig = loginConfig;
         this.terminationTimeout = terminationTimeout;
     }
 
@@ -101,10 +104,9 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     public void start() {
         // local cache
         accessToken = session.getAccessToken();
-        if (accessToken == null) {
-            // lazy login here!
+        if (accessToken == null && !loginConfig.isLazyLogin()) {
             try {
-                accessToken = session.login(accessToken);
+                accessToken = session.login(null);
             } catch (SalesforceException e) {
                 throw new RuntimeException(e);
             }

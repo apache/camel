@@ -347,8 +347,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         final SalesforceSession session = component.getSession();
         // check login access token
-        if (session.getAccessToken() == null) {
-            // lazy login here!
+        if (session.getAccessToken() == null && !component.getLoginConfig().isLazyLogin()) {
             session.login(null);
         }
 
@@ -357,9 +356,16 @@ public class SubscriptionHelper extends ServiceSupport {
             protected void customize(Request request) {
                 super.customize(request);
 
-                // add current security token obtained from session
-                // replace old token
-                request.getHeaders().put(HttpHeader.AUTHORIZATION, "OAuth " + session.getAccessToken());
+                //accessToken might be null due to lazy login
+                String accessToken = session.getAccessToken();
+                if (accessToken == null) {
+                    try {
+                        accessToken = session.login(null);
+                    } catch (SalesforceException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                request.getHeaders().put(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
             }
         };
 
