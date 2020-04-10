@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -136,13 +137,12 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) {
+    private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         String ami;
         InstanceType instanceType;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof RunInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof RunInstancesRequest) {
                     RunInstancesResponse result;
                     try {
                         result = ec2Client.runInstances((RunInstancesRequest)payload);
@@ -154,7 +154,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.IMAGE_ID))) {
@@ -229,12 +228,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void startInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void startInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof StartInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof StartInstancesRequest) {
                     StartInstancesResponse result;
                     try {
                         result = ec2Client.startInstances((StartInstancesRequest)payload);
@@ -246,7 +244,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -269,12 +266,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void stopInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void stopInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof StopInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof StopInstancesRequest) {
                     StopInstancesResponse result;
                     try {
                         result = ec2Client.stopInstances((StopInstancesRequest)payload);
@@ -286,7 +282,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -309,12 +304,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void terminateInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void terminateInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof TerminateInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof TerminateInstancesRequest) {
                     TerminateInstancesResponse result;
                     try {
                         result = ec2Client.terminateInstances((TerminateInstancesRequest)payload);
@@ -326,7 +320,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             TerminateInstancesRequest.Builder builder = TerminateInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -349,12 +342,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void describeInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void describeInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof DescribeInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof DescribeInstancesRequest) {
                     DescribeInstancesResponse result;
                     try {
                         result = ec2Client.describeInstances((DescribeInstancesRequest)payload);
@@ -365,7 +357,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -385,12 +376,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void describeInstancesStatus(Ec2Client ec2Client, Exchange exchange) {
+    private void describeInstancesStatus(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof DescribeInstanceStatusRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof DescribeInstanceStatusRequest) {
                     DescribeInstanceStatusResponse result;
                     try {
                         result = ec2Client.describeInstanceStatus((DescribeInstanceStatusRequest)payload);
@@ -401,7 +391,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             DescribeInstanceStatusRequest.Builder builder = DescribeInstanceStatusRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -421,12 +410,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void rebootInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void rebootInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof RebootInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof RebootInstancesRequest) {
                     try {
                         LOG.trace("Rebooting instances with Ids [{}] ", ((RebootInstancesRequest)payload).instanceIds());
                         ec2Client.rebootInstances((RebootInstancesRequest)payload);
@@ -434,7 +422,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                         LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                         throw ase;
                     }
-                }
             }
         } else {
             RebootInstancesRequest.Builder builder = RebootInstancesRequest.builder();
@@ -455,12 +442,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void monitorInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void monitorInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof MonitorInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof MonitorInstancesRequest) {
                     MonitorInstancesResponse result;
                     try {
                         result = ec2Client.monitorInstances((MonitorInstancesRequest)payload);
@@ -472,7 +458,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             MonitorInstancesRequest.Builder builder = MonitorInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -495,12 +480,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void unmonitorInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void unmonitorInstances(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof UnmonitorInstancesRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof UnmonitorInstancesRequest) {
                     UnmonitorInstancesResponse result;
                     try {
                         result = ec2Client.unmonitorInstances((UnmonitorInstancesRequest)payload);
@@ -512,7 +496,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             UnmonitorInstancesRequest.Builder builder = UnmonitorInstancesRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -535,12 +518,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void createTags(Ec2Client ec2Client, Exchange exchange) {
+    private void createTags(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof CreateTagsRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof CreateTagsRequest) {
                     CreateTagsResponse result;
                     try {
                         result = ec2Client.createTags((CreateTagsRequest)payload);
@@ -552,7 +534,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             Collection<Tag> tags;
             CreateTagsRequest.Builder builder = CreateTagsRequest.builder();
@@ -582,12 +563,11 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void deleteTags(Ec2Client ec2Client, Exchange exchange) {
+    private void deleteTags(Ec2Client ec2Client, Exchange exchange) throws InvalidPayloadException {
         Collection<String> instanceIds;
         if (getConfiguration().isPojoRequest()) {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                if (exchange.getIn().getBody() instanceof DeleteTagsRequest) {
-                    Object payload = exchange.getIn().getBody();
+        	Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof DeleteTagsRequest) {
                     DeleteTagsResponse result;
                     try {
                         result = ec2Client.deleteTags((DeleteTagsRequest)payload);
@@ -599,7 +579,6 @@ public class AWS2EC2Producer extends DefaultProducer {
                     Message message = getMessageForResponse(exchange);
                     message.setBody(result);
                 }
-            }
         } else {
             Collection<Tag> tags;
             DeleteTagsRequest.Builder builder = DeleteTagsRequest.builder();
