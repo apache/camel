@@ -24,6 +24,8 @@ or all (default).
 * Headers set for sequenceId, document revision, document id, and HTTP
 method type.
 
+*Caveat: CouchDB 3.x is not supported.*
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
