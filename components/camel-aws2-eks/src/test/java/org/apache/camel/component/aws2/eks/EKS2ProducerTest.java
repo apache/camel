@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eks.model.CreateClusterResponse;
 import software.amazon.awssdk.services.eks.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.eks.model.DescribeClusterResponse;
+import software.amazon.awssdk.services.eks.model.ListClustersRequest;
 import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
 
@@ -41,13 +42,32 @@ public class EKS2ProducerTest extends CamelTestSupport {
     private MockEndpoint mock;
 
     @Test
-    public void kmsListClustersTest() throws Exception {
+    public void eksListClustersTest() throws Exception {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EKS2Constants.OPERATION, EKS2Operations.listClusters);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.clusters().size());
+        assertEquals("Test", resultGet.clusters().get(0));
+    }
+    
+    @Test
+    public void eksListClustersPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listPojoClusters", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EKS2Constants.OPERATION, EKS2Operations.listClusters);
+                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(12).build());
             }
         });
 
@@ -121,6 +141,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listClusters").to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters").to("mock:result");
+                from("direct:listPojoClusters").to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters").to("mock:result");
                 from("direct:createCluster").to("aws2-eks://test?eksClient=#amazonEksClient&operation=createCluster").to("mock:result");
                 from("direct:deleteCluster").to("aws2-eks://test?eksClient=#amazonEksClient&operation=deleteCluster").to("mock:result");
                 from("direct:describeCluster").to("aws2-eks://test?eksClient=#amazonEksClient&operation=describeCluster").to("mock:result");
