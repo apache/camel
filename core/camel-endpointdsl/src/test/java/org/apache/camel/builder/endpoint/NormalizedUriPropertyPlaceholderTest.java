@@ -61,6 +61,6 @@ public class NormalizedUriPropertyPlaceholderTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(result, resultEndpoint);
+        assertSame(result, resultEndpoint);
     }
 }
