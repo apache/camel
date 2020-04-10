@@ -45,6 +45,6 @@ public class NormalizedUriTest extends CamelTestSupport {
         template.sendBody("direct:test", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(result, resultEndpoint);
+        assertSame(result, resultEndpoint);
     }
 }
