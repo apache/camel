@@ -33,10 +33,9 @@ import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.Event;
 import org.apache.ignite.events.EventType;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Test;
-
-import static com.google.common.truth.Truth.assert_;
 
 public class IgniteEventsTest extends AbstractIgniteTest {
 
@@ -77,9 +76,8 @@ public class IgniteEventsTest extends AbstractIgniteTest {
 
         List<Integer> eventTypes = receivedEventTypes("mock:test1");
 
-        assert_().that(eventTypes).containsAllOf(EventType.EVT_CACHE_STARTED, EventType.EVT_CACHE_ENTRY_CREATED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_READ,
-                                                 EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED)
-            .inOrder();
+        Assertions.assertThat(eventTypes).containsSubsequence(EventType.EVT_CACHE_STARTED, EventType.EVT_CACHE_ENTRY_CREATED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_READ,
+                                                 EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED);
 
     }
 
@@ -107,7 +105,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
 
         List<Integer> eventTypes = receivedEventTypes("mock:test3");
 
-        assert_().that(eventTypes).containsExactly(EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_PUT).inOrder();
+        Assertions.assertThat(eventTypes).containsExactly(EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_PUT);
 
     }
 

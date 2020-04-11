@@ -216,7 +216,6 @@
         <google-http-jackson2-version>1.32.1</google-http-jackson2-version>
         <google-j2objc-version>1.3</google-j2objc-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
-        <google-truth-version>0.30</google-truth-version>
         <google-proto-common-version>1.17.0</google-proto-common-version>
         <google-proto-pubsub-version>1.84.0</google-proto-pubsub-version>
         <google-proto-iam-version>0.13.0</google-proto-iam-version>
@@ -3360,11 +3359,6 @@
                 <version>${junit-jupiter-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.truth</groupId>
-                <artifactId>truth</artifactId>
-                <version>${google-truth-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
