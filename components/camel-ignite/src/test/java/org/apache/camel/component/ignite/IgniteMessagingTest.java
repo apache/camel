@@ -31,10 +31,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.ignite.messaging.IgniteMessagingComponent;
 import org.apache.ignite.lang.IgniteBiPredicate;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Test;
 
-import static com.google.common.truth.Truth.assert_;
 import static org.awaitility.Awaitility.await;
 
 public class IgniteMessagingTest extends AbstractIgniteTest implements Serializable {
@@ -63,7 +63,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBody("ignite-messaging:" + TOPIC1, 1);
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 1);
-        assert_().that(messages.get(0)).isEqualTo(1);
+        Assertions.assertThat(messages.get(0)).isEqualTo(1);
     }
 
     @Test
@@ -77,8 +77,8 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBodyAndHeader("ignite-messaging:" + TOPIC1, 1, IgniteConstants.IGNITE_MESSAGING_TOPIC, "TOPIC2");
 
         Thread.sleep(1000);
-        assert_().that(messages1.size()).isEqualTo(0);
-        assert_().that(messages2.size()).isEqualTo(1);
+        Assertions.assertThat(messages1.size()).isEqualTo(0);
+        Assertions.assertThat(messages2.size()).isEqualTo(1);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBody("ignite-messaging:" + TOPIC1, request);
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
-        assert_().that(messages).containsAllIn(request);
+        Assertions.assertThat(messages).containsAll(request);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         }
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
-        assert_().that(messages).containsAllIn(set);
+        Assertions.assertThat(messages).containsAll(set);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         template.requestBody("ignite-messaging:" + TOPIC1 + "?treatCollectionsAsCacheObjects=true", request);
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 1);
-        assert_().that(messages.get(0)).isEqualTo(request);
+        Assertions.assertThat(messages.get(0)).isEqualTo(request);
     }
 
     @Test

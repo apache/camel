@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.google.common.truth.Truth;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.flink.annotations.AnnotatedDataSetCallback;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -30,6 +29,7 @@ import org.apache.flink.api.java.operators.DataSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 public class FlinkProducerTest extends CamelTestSupport {
@@ -75,7 +75,7 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         }, Long.class);
 
-        Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile);
+        Assertions.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         }, Long.class);
 
-        Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10);
+        Assertions.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10);
     }
 
     @Test
@@ -107,13 +107,13 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         }, Long.class);
 
-        Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
+        Assertions.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
     @Test
     public void shouldUseTransformationFromRegistry() {
         Long linesCount = template.requestBody(flinkDataSetUri + "&dataSetCallback=#countLinesContaining", null, Long.class);
-        Truth.assertThat(linesCount).isGreaterThan(0L);
+        Assertions.assertThat(linesCount).isGreaterThan(0L);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        Truth.assertThat(output.length()).isAtLeast(0L);
+        Assertions.assertThat(output.length()).isGreaterThanOrEqualTo(0L);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
         long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
 
-        Truth.assertThat(pomLinesCount).isEqualTo(19);
+        Assertions.assertThat(pomLinesCount).isEqualTo(19);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
         template.sendBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback);
 
-        Truth.assertThat(output.length()).isAtLeast(0L);
+        Assertions.assertThat(output.length()).isGreaterThanOrEqualTo(0L);
     }
 
     @Test
@@ -181,7 +181,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
         long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer> asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback,
                                                            Long.class);
-        Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
+        Assertions.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
     @Test
@@ -196,6 +196,6 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        Truth.assertThat(output.length()).isAtLeast(0L);
+        Assertions.assertThat(output.length()).isGreaterThanOrEqualTo(0L);
     }
 }
