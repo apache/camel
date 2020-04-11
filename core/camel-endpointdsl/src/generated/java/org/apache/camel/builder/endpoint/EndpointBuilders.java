@@ -46,6 +46,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory,
