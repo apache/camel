@@ -30,7 +30,6 @@ import org.junit.Assert;
 public class IntegrationKuduConfiguration extends KuduTestHarness {
 
     public IntegrationKuduConfiguration() {
-        super();
     }
 
     /**

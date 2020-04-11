@@ -32,7 +32,6 @@ public class AMQPConfiguration extends JmsConfiguration {
     private boolean includeAmqpAnnotations;
 
     public AMQPConfiguration() {
-        super();
     }
 
     public AMQPConfiguration(ConnectionFactory connectionFactory) {
