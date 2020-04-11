@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,7 +76,7 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
      * This allows to map source class to target class to generate the source code using a different classname.
      */
     @Parameter
-    protected String[] classes;
+    protected List<String> classes;
 
     private DynamicClassLoader projectClassLoader;
 
@@ -140,8 +139,8 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         }
 
         // additional classes
-        if (classes != null) {
-            set.addAll(Arrays.asList(classes));
+        if (classes != null && !classes.isEmpty()) {
+            set.addAll(classes);
         }
 
         if (getLog().isDebugEnabled()) {
