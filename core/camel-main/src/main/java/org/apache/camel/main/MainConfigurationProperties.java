@@ -39,6 +39,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // extended configuration
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
     private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
+    private final FaultToleranceConfigurationProperties faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
     private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
 
     // extended
@@ -56,6 +57,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public Resilience4jConfigurationProperties resilience4j() {
         return resilience4jConfigurationProperties;
+    }
+
+    /**
+     * To configure Circuit Breaker EIP with MicroProfile Fault Tolerance
+     */
+    public FaultToleranceConfigurationProperties faultTolerance() {
+        return faultToleranceConfigurationProperties;
     }
 
     /**
