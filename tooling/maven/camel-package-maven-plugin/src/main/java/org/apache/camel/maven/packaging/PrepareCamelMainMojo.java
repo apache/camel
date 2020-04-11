@@ -208,9 +208,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             MainModel model = new MainModel();
             model.getOptions().addAll(data);
             model.getGroups().add(new MainGroupModel("camel.main", "camel-main configurations.", "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel("camel.faulttolerance", "camel-fault-tolerance configurations.", "org.apache.camel.main.FaultToleranceConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.hystrix", "camel-hystrix configurations.", "org.apache.camel.main.HystrixConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.resilience4j", "camel-resilience4j configurations.", "org.apache.camel.main.Resilience4jConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.faulttolerance", "camel-fault-tolerance configurations.", "org.apache.camel.main.FaultToleranceConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.rest", "camel-rest configurations.", "org.apache.camel.spi.RestConfiguration"));
 
             String json = JsonMapper.createJsonSchema(model);
