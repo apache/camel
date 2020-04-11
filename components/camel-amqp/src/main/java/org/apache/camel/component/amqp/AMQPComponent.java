@@ -39,7 +39,6 @@ public class AMQPComponent extends JmsComponent {
     // Constructors
 
     public AMQPComponent() {
-        super();
     }
 
     public AMQPComponent(JmsConfiguration configuration) {
