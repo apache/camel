@@ -130,8 +130,13 @@
                         </goals>
                         <configuration>
                             <discoverClasses>false</discoverClasses>
-                            <!-- we want to have configurer for ExtendedCamelContext in camel-core-engine -->
-                            <classes>org.apache.camel.ExtendedCamelContext=org.apache.camel.impl.ExtendedCamelContext</classes>
+                            <classes>
+                                <!-- we want to have configurer for ExtendedCamelContext in camel-core-engine -->
+                                <class>org.apache.camel.ExtendedCamelContext=org.apache.camel.impl.ExtendedCamelContext</class>
+                                <class>org.apache.camel.model.FaultToleranceConfigurationDefinition</class>
+                                <class>org.apache.camel.model.Resilience4jConfigurationDefinition</class>
+                                <class>org.apache.camel.model.HystrixConfigurationDefinition</class>
+                            </classes>
                         </configuration>
                     </execution>
                 </executions>
