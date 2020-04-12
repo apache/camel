@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-import org.apache.camel.catalog.Pair;
-
 /**
  * Encoder for unsafe URI characters.
  * <p/>
