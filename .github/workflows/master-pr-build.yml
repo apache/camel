@@ -26,12 +26,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '1.8', '11' ]
+        java: [ '1.8' ]
     steps:
     - uses: actions/checkout@v1
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
+    - name: Cache Maven Repository
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
     - name: mvn sourcecheck
-      run: ./mvnw -V --no-transfer-progress clean install -DskipTests --projects org.apache.camel:camel-buildtools  && ./mvnw -V --no-transfer-progress -Psourcecheck -DskipTests -Dcheckstyle.failOnViolation=true -pl '!org.apache.camel:apache-camel' clean verify
+      run: ./mvnw -V --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
