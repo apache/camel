@@ -60,6 +60,7 @@
 ** xref:aws-xray.adoc[AWS XRay Component]
 ** xref:aws2-s3-component.adoc[AWS2 S3 Storage Service Component]
 ** xref:azure-blob-component.adoc[Azure Storage Blob Service Component]
+** xref:azure-storage-blob-component.adoc[Azure Storage Blob Service Component]
 ** xref:azure-queue-component.adoc[Azure Storage Queue Service Component]
 ** xref:bean-component.adoc[Bean Component]
 ** xref:bean-validator-component.adoc[Bean Validator Component]
