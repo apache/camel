@@ -34,4 +34,4 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: mvn sourcecheck
-      run: ./mvnw -V --no-transfer-progress clean install -DskipTests --projects org.apache.camel:camel-buildtools  && ./mvnw -V --no-transfer-progress -Psourcecheck -DskipTests -Dcheckstyle.failOnViolation=true -pl '!org.apache.camel:apache-camel' clean verify
+      run: ./mvnw -V --no-transfer-progress clean install -DskipTests --projects org.apache.camel:camel-buildtools  && ./mvnw -V --no-transfer-progress -Psourcecheck -Dmaven.wagon.rto=60000 -Dmaven.wagon.http.retryhandler.requestSentEnabled=true -Dmaven.wagon.http.retryhandler.class=default -Dmaven.wagon.http.retryhandler.nonRetryableClasses=java.net.UnknownHostException -DskipTests -Dcheckstyle.failOnViolation=true -pl '!org.apache.camel:apache-camel' clean verify
