@@ -11,7 +11,7 @@ Below is the list of components that are provided by Apache Camel.
 == List of Components
 
 // components: START
-Number of Components: 329 in 262 JAR artifacts (1 deprecated)
+Number of Components: 330 in 263 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -128,6 +128,8 @@ Number of Components: 329 in 262 JAR artifacts (1 deprecated)
 | xref:aws2-s3-component.adoc[AWS2 S3 Storage Service] (camel-aws2-s3) | 3.2 | The aws2-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
 
 | xref:azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
+
+| xref:azure-storage-blob-component.adoc[Azure Storage Blob Service] (camel-azure-storage-blob) | 3.3 | The azure-storage-blob component is used for storing and retrieving blobs from Azure Storage Blob Service using SDK v12.
 
 | xref:azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
