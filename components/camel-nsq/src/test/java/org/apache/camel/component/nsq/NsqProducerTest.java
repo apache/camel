@@ -50,7 +50,7 @@ public class NsqProducerTest extends NsqTestSupport {
         });
         consumer.start();
 
-        lock.await(30, TimeUnit.SECONDS);
+        lock.await(60, TimeUnit.SECONDS);
 
         assertEquals(1, counter.get());
         consumer.shutdown();
