@@ -1466,8 +1466,6 @@ public class JmsConfiguration implements Cloneable {
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) throws Exception {
         container.setConnectionFactory(getOrCreateListenerConnectionFactory());
-        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
-        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
         } else if (destinationResolver != null) {
