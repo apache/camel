@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kms;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -110,7 +111,7 @@ public class KMS2Producer extends DefaultProducer {
         return (KMS2Endpoint)super.getEndpoint();
     }
 
-    private void listKeys(KmsClient kmsClient, Exchange exchange) {
+    private void listKeys(KmsClient kmsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListKeysRequest) {
@@ -142,7 +143,21 @@ public class KMS2Producer extends DefaultProducer {
         }
     }
 
-    private void createKey(KmsClient kmsClient, Exchange exchange) {
+    private void createKey(KmsClient kmsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateKeyRequest) {
+                CreateKeyResponse result;
+                try {
+                    result = kmsClient.createKey((CreateKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateKeyRequest.Builder builder = CreateKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.DESCRIPTION))) {
             String description = exchange.getIn().getHeader(KMS2Constants.DESCRIPTION, String.class);
@@ -157,6 +172,7 @@ public class KMS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void disableKey(KmsClient kmsClient, Exchange exchange) {
