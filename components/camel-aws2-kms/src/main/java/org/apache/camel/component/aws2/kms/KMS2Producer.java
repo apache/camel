@@ -26,8 +26,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
-import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
@@ -281,7 +279,21 @@ public class KMS2Producer extends DefaultProducer {
         }
     }
 
-    private void enableKey(KmsClient kmsClient, Exchange exchange) {
+    private void enableKey(KmsClient kmsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof EnableKeyRequest) {
+                EnableKeyResponse result;
+                try {
+                    result = kmsClient.enableKey((EnableKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         EnableKeyRequest.Builder builder = EnableKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
             String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
@@ -298,6 +310,7 @@ public class KMS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
