@@ -1221,7 +1221,7 @@ public interface ComponentsBuilderFactory {
      * The Deep Java Library component is used to infer deep learning models.
      * 
      * Category: ai,deeplearning
-     * Since: 3.2
+     * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-djl
      */
     static org.apache.camel.builder.component.dsl.DjlComponentBuilderFactory.DjlComponentBuilder djl() {

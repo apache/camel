@@ -1,6 +1,8 @@
+[[djl-component]]
 = Deep Java Library Component
 
-*Since Camel 3.2*
+*Since Camel 3.3*
+
 *Since Camel 3.2*
 
 

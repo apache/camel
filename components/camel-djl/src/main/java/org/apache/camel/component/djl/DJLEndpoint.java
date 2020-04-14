@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * The Deep Java Library component is used to infer deep learning models.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "djl", title = "Deep Java Library", syntax = "djl:application", label = "ai,deeplearning", producerOnly = true)
+@UriEndpoint(firstVersion = "3.3.0", scheme = "djl", title = "Deep Java Library", syntax = "djl:application", label = "ai,deeplearning", producerOnly = true)
 public class DJLEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true, description = "Application name")
