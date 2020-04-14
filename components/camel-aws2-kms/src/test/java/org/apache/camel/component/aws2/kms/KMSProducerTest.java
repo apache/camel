@@ -26,6 +26,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
+import software.amazon.awssdk.services.kms.model.ListKeysRequest;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
 
@@ -48,6 +49,25 @@ public class KMSProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.listKeys);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListKeysResponse resultGet = (ListKeysResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.keys().size());
+        assertEquals("keyId", resultGet.keys().get(0).keyId());
+    }
+    
+    @Test
+    public void kmsListKeysPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listKeysPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.listKeys);
+                exchange.getIn().setBody(ListKeysRequest.builder().limit(10).build());
             }
         });
 
@@ -152,6 +172,7 @@ public class KMSProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listKeys").to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys").to("mock:result");
+                from("direct:listKeysPojo").to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys&pojoRequest=true").to("mock:result");
                 from("direct:createKey").to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=createKey").to("mock:result");
                 from("direct:disableKey").to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=disableKey").to("mock:result");
                 from("direct:enableKey").to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=enableKey").to("mock:result");
