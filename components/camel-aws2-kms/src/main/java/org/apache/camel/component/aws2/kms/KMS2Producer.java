@@ -209,7 +209,7 @@ public class KMS2Producer extends DefaultProducer {
         }
     }
 
-    private void scheduleKeyDeletion(KmsClient kmsClient, Exchange exchange) {
+    private void scheduleKeyDeletion(KmsClient kmsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ScheduleKeyDeletionRequest) {
@@ -247,7 +247,21 @@ public class KMS2Producer extends DefaultProducer {
         }
     }
 
-    private void describeKey(KmsClient kmsClient, Exchange exchange) {
+    private void describeKey(KmsClient kmsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DescribeKeyRequest) {
+                DescribeKeyResponse result;
+                try {
+                    result = kmsClient.describeKey((DescribeKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DescribeKeyRequest.Builder builder = DescribeKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
             String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
@@ -264,6 +278,7 @@ public class KMS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void enableKey(KmsClient kmsClient, Exchange exchange) {
