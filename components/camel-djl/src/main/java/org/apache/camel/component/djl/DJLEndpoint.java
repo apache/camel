@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.djl;
 
 import org.apache.camel.Consumer;
@@ -27,24 +26,18 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents a DJL endpoint.
+ * The Deep Java Library component is used to infer deep learning models.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "djl", title = "DJL", syntax = "djl:application", label = "deeplearning", producerOnly = true)
+@UriEndpoint(firstVersion = "3.2.0", scheme = "djl", title = "Deep Java Library", syntax = "djl:application", label = "ai,deeplearning", producerOnly = true)
 public class DJLEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true, description = "Application name")
     private String application;
-
-    @Metadata(required = false)
-    @UriParam(label = "producer", description = "Model Artifact")
+    @UriParam(description = "Model Artifact")
     private String artifactId;
-
-    @Metadata(required = false)
-    @UriParam(label = "producer", description = "Model")
+    @UriParam(description = "Model")
     private String model;
-
-    @Metadata(required = false)
-    @UriParam(label = "producer", description = "Translator")
+    @UriParam(description = "Translator")
     private String translator;
 
     public DJLEndpoint(String uri, DJLComponent component, String application) {

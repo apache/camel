@@ -1217,10 +1217,10 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DisruptorVmComponentBuilderFactory.disruptorVm();
     }
     /**
-     * DJL (camel-djl)
-     * Represents a DJL endpoint.
+     * Deep Java Library (camel-djl)
+     * The Deep Java Library component is used to infer deep learning models.
      * 
-     * Category: deeplearning
+     * Category: ai,deeplearning
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-djl
      */
