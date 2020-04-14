@@ -176,6 +176,20 @@ public class KMS2Producer extends DefaultProducer {
     }
 
     private void disableKey(KmsClient kmsClient, Exchange exchange) {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DisableKeyRequest) {
+                DisableKeyResponse result;
+                try {
+                    result = kmsClient.disableKey((DisableKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DisableKeyRequest.Builder builder = DisableKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
             String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
@@ -192,6 +206,7 @@ public class KMS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void scheduleKeyDeletion(KmsClient kmsClient, Exchange exchange) {
