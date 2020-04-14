@@ -30,6 +30,11 @@
             <to uri="mock:result"/>
         </route>
         <route>
+            <from uri="direct:listKeysPojo"/>
+            <to uri="aws2-kms://Test?kmsClient=#amazonKmsClient&amp;operation=listKeys&amp;pojoRequest=true"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:createKey"/>
             <to uri="aws2-kms://Test?kmsClient=#amazonKmsClient&amp;operation=createKey"/>
             <to uri="mock:result"/>
