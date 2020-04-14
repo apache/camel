@@ -115,7 +115,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof ListKeysRequest) {
                 ListKeysResponse result;
                 try {
-                    result = kmsClient.listKeys((ListKeysRequest) payload);
+                    result = kmsClient.listKeys((ListKeysRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -124,20 +124,20 @@ public class KMS2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListKeysRequest.Builder builder = ListKeysRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.LIMIT))) {
-            int limit = exchange.getIn().getHeader(KMS2Constants.LIMIT, Integer.class);
-            builder.limit(limit);
-        }
-        ListKeysResponse result;
-        try {
-            result = kmsClient.listKeys(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ListKeysRequest.Builder builder = ListKeysRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.LIMIT))) {
+                int limit = exchange.getIn().getHeader(KMS2Constants.LIMIT, Integer.class);
+                builder.limit(limit);
+            }
+            ListKeysResponse result;
+            try {
+                result = kmsClient.listKeys(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -147,7 +147,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof CreateKeyRequest) {
                 CreateKeyResponse result;
                 try {
-                    result = kmsClient.createKey((CreateKeyRequest) payload);
+                    result = kmsClient.createKey((CreateKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -156,20 +156,20 @@ public class KMS2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        CreateKeyRequest.Builder builder = CreateKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.DESCRIPTION))) {
-            String description = exchange.getIn().getHeader(KMS2Constants.DESCRIPTION, String.class);
-            builder.description(description);
-        }
-        CreateKeyResponse result;
-        try {
-            result = kmsClient.createKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            CreateKeyRequest.Builder builder = CreateKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.DESCRIPTION))) {
+                String description = exchange.getIn().getHeader(KMS2Constants.DESCRIPTION, String.class);
+                builder.description(description);
+            }
+            CreateKeyResponse result;
+            try {
+                result = kmsClient.createKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Create Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -179,7 +179,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof DisableKeyRequest) {
                 DisableKeyResponse result;
                 try {
-                    result = kmsClient.disableKey((DisableKeyRequest) payload);
+                    result = kmsClient.disableKey((DisableKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -188,22 +188,22 @@ public class KMS2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DisableKeyRequest.Builder builder = DisableKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
-            String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
-            builder.keyId(keyId);
-        } else {
-            throw new IllegalArgumentException("Key Id must be specified");
-        }
-        DisableKeyResponse result;
-        try {
-            result = kmsClient.disableKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DisableKeyRequest.Builder builder = DisableKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
+                String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
+                builder.keyId(keyId);
+            } else {
+                throw new IllegalArgumentException("Key Id must be specified");
+            }
+            DisableKeyResponse result;
+            try {
+                result = kmsClient.disableKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Disable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -213,7 +213,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof ScheduleKeyDeletionRequest) {
                 ScheduleKeyDeletionResponse result;
                 try {
-                    result = kmsClient.scheduleKeyDeletion((ScheduleKeyDeletionRequest) payload);
+                    result = kmsClient.scheduleKeyDeletion((ScheduleKeyDeletionRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Schedule Key Deletion command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -222,26 +222,26 @@ public class KMS2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ScheduleKeyDeletionRequest.Builder builder = ScheduleKeyDeletionRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
-            String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
-            builder.keyId(keyId);
-        } else {
-            throw new IllegalArgumentException("Key Id must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.PENDING_WINDOW_IN_DAYS))) {
-            int pendingWindows = exchange.getIn().getHeader(KMS2Constants.PENDING_WINDOW_IN_DAYS, Integer.class);
-            builder.pendingWindowInDays(pendingWindows);
-        }
-        ScheduleKeyDeletionResponse result;
-        try {
-            result = kmsClient.scheduleKeyDeletion(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Schedule Key Deletion command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ScheduleKeyDeletionRequest.Builder builder = ScheduleKeyDeletionRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
+                String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
+                builder.keyId(keyId);
+            } else {
+                throw new IllegalArgumentException("Key Id must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.PENDING_WINDOW_IN_DAYS))) {
+                int pendingWindows = exchange.getIn().getHeader(KMS2Constants.PENDING_WINDOW_IN_DAYS, Integer.class);
+                builder.pendingWindowInDays(pendingWindows);
+            }
+            ScheduleKeyDeletionResponse result;
+            try {
+                result = kmsClient.scheduleKeyDeletion(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Schedule Key Deletion command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -251,7 +251,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof DescribeKeyRequest) {
                 DescribeKeyResponse result;
                 try {
-                    result = kmsClient.describeKey((DescribeKeyRequest) payload);
+                    result = kmsClient.describeKey((DescribeKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -260,22 +260,22 @@ public class KMS2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DescribeKeyRequest.Builder builder = DescribeKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
-            String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
-            builder.keyId(keyId);
-        } else {
-            throw new IllegalArgumentException("Key Id must be specified");
-        }
-        DescribeKeyResponse result;
-        try {
-            result = kmsClient.describeKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DescribeKeyRequest.Builder builder = DescribeKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
+                String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
+                builder.keyId(keyId);
+            } else {
+                throw new IllegalArgumentException("Key Id must be specified");
+            }
+            DescribeKeyResponse result;
+            try {
+                result = kmsClient.describeKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Describe Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -285,7 +285,7 @@ public class KMS2Producer extends DefaultProducer {
             if (payload instanceof EnableKeyRequest) {
                 EnableKeyResponse result;
                 try {
-                    result = kmsClient.enableKey((EnableKeyRequest) payload);
+                    result = kmsClient.enableKey((EnableKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -294,22 +294,22 @@ public class KMS2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        EnableKeyRequest.Builder builder = EnableKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
-            String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
-            builder.keyId(keyId);
-        } else {
-            throw new IllegalArgumentException("Key Id must be specified");
-        }
-        EnableKeyResponse result;
-        try {
-            result = kmsClient.enableKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            EnableKeyRequest.Builder builder = EnableKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
+                String keyId = exchange.getIn().getHeader(KMS2Constants.KEY_ID, String.class);
+                builder.keyId(keyId);
+            } else {
+                throw new IllegalArgumentException("Key Id must be specified");
+            }
+            EnableKeyResponse result;
+            try {
+                result = kmsClient.enableKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Enable Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
