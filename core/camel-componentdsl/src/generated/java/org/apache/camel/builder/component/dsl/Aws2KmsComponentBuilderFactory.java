@@ -108,6 +108,18 @@ public interface Aws2KmsComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2KmsComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the KMS client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -221,6 +233,7 @@ public interface Aws2KmsComponentBuilderFactory {
             case "kmsClient": getOrCreateConfiguration((KMS2Component) component).setKmsClient((software.amazon.awssdk.services.kms.KmsClient) value); return true;
             case "lazyStartProducer": ((KMS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((KMS2Component) component).setOperation((org.apache.camel.component.aws2.kms.KMS2Operations) value); return true;
+            case "pojoRequest": getOrCreateConfiguration((KMS2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((KMS2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((KMS2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KMS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
