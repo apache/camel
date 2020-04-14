@@ -1,10 +1,9 @@
-[[djl-component]]
-= DJL Component
+= Deep Java Library Component
 :page-source: components/camel-djl/src/main/docs/djl-component.adoc
 
 *Since Camel 3.2*
-
 *Since Camel 3.2*
+
 
 
 // HEADER START
@@ -30,7 +29,7 @@ following dependency to their `pom.xml`:
 ----
 
 // component options: START
-The DJL component supports 2 options, which are listed below.
+The Deep Java Library component supports 2 options, which are listed below.
 
 
 
@@ -45,7 +44,7 @@ The DJL component supports 2 options, which are listed below.
 The DJL component only supports producer endpoints.
 
 // endpoint options: START
-The DJL endpoint is configured using URI syntax:
+The Deep Java Library endpoint is configured using URI syntax:
 
 ----
 djl:application
@@ -79,7 +78,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Model Zoo
+== Model Zoo
 
 The following table contains supported models in the model zoo:
 
@@ -105,13 +104,13 @@ The following table contains supported models in the model zoo:
 |===
 
 
-=== DJL Engine implementation
+== DJL Engine implementation
 
 Because DJL is deep learning framework agnostic, you don't have to make a choice between frameworks when creating your projects.
 You can switch frameworks at any point.
 To ensure the best performance, DJL also provides automatic CPU/GPU choice based on hardware configuration.
 
-==== MxNet engine
+=== MxNet engine
 
 You can pull the MXNet engine from the central Maven repository by including the following dependency:
 
@@ -140,7 +139,7 @@ It will automatically determine the appropriate jars for your system based on th
 
 More information about https://github.com/awslabs/djl/blob/master/mxnet/mxnet-engine/README.md#installation[MxNet engine installation]
 
-==== PyTorch engine
+=== PyTorch engine
 
 You can pull the PyTorch engine from the central Maven repository by including the following dependency:
 
@@ -169,28 +168,29 @@ It will automatically determine the appropriate jars for your system based on th
 
 More information about https://github.com/awslabs/djl/blob/master/pytorch/pytorch-engine/README.md#installation[PyTorch engine installation]
 
-==== Tensorflow engine
+=== Tensorflow engine
 
 Right now, the TensorFlow Engine is still experimental.
 
 
-=== Examples
+== Examples
 
-==== MNIST image classification from file
+=== MNIST image classification from file
+
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
-==== Object detection
+=== Object detection
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
-==== Custom deep learning model
+=== Custom deep learning model
 [source,java]
 ----
 // create deep learning model

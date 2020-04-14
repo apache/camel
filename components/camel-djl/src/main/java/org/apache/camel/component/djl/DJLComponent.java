@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.djl;
 
 import java.util.Map;
@@ -23,10 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-
-/**
- * Represents the component that manages {@link DJLEndpoint}.
- */
 
 @Component("djl")
 public class DJLComponent extends DefaultComponent {

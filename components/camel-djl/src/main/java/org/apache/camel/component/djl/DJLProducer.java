@@ -14,21 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.djl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 import org.apache.camel.component.djl.model.ModelPredictorProducer;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * The DJL producer.
- */
 public class DJLProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(DJLProducer.class);
     private AbstractPredictor abstractPredictor;
 
     public DJLProducer(DJLEndpoint endpoint) throws Exception {
