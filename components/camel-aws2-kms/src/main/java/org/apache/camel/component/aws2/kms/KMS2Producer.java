@@ -25,6 +25,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
+import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
@@ -109,6 +111,20 @@ public class KMS2Producer extends DefaultProducer {
     }
 
     private void listKeys(KmsClient kmsClient, Exchange exchange) {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListKeysRequest) {
+                ListKeysResponse result;
+                try {
+                    result = kmsClient.listKeys((ListKeysRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Keys command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListKeysRequest.Builder builder = ListKeysRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.LIMIT))) {
             int limit = exchange.getIn().getHeader(KMS2Constants.LIMIT, Integer.class);
@@ -123,6 +139,7 @@ public class KMS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void createKey(KmsClient kmsClient, Exchange exchange) {
