@@ -78,7 +78,7 @@ public class ComponentsDslMetadataRegistry {
 
     public boolean addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
         // put the component into the cache
-        componentsCache.put(key, new ModifiedComponentModel(componentModel));
+        componentsCache.put(key, componentModel);
 
         return syncMetadataFile();
     }
@@ -123,31 +123,4 @@ public class ComponentsDslMetadataRegistry {
             throw new IOError(e);
         }
     }
-
-    private static class ModifiedComponentModel extends ComponentModel {
-        public ModifiedComponentModel(final ComponentModel componentModel) {
-            name = componentModel.getName();
-            title = componentModel.getTitle();
-            description = componentModel.getDescription();
-            firstVersion = componentModel.getFirstVersion();
-            javaType = componentModel.getJavaType();
-            label = componentModel.getLabel();
-            deprecated = componentModel.isDeprecated();
-            deprecationNote = componentModel.getDeprecationNote();
-            scheme = componentModel.getScheme();
-            extendsScheme = componentModel.getExtendsScheme();
-            alternativeSchemes = componentModel.getAlternativeSchemes();
-            syntax = componentModel.getSyntax();
-            alternativeSyntax = componentModel.getAlternativeSyntax();
-            async = componentModel.isAsync();
-            consumerOnly = componentModel.isConsumerOnly();
-            producerOnly = componentModel.isProducerOnly();
-            lenientProperties = componentModel.isLenientProperties();
-            verifiers = componentModel.getVerifiers();
-            groupId = componentModel.getGroupId();
-            artifactId = componentModel.getArtifactId();
-            version = componentModel.getVersion();
-        }
-    }
-
 }
