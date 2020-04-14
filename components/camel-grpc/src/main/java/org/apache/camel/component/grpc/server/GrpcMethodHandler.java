@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import javassist.util.proxy.MethodHandler;
 import org.apache.camel.Exchange;
@@ -64,14 +65,25 @@ public class GrpcMethodHandler implements MethodHandler {
             }
             
             StreamObserver<Object> responseObserver = (StreamObserver<Object>)args[1];
-            Object responseBody = exchange.getIn().getBody();
-            if (responseBody instanceof List) {
-                List<Object> responseList = (List<Object>)responseBody;
-                responseList.forEach(responseObserver::onNext);
+            
+            if (exchange.isFailed()) {
+                responseObserver.onError(Status.INTERNAL
+                        .withDescription(exchange.getException().getMessage())
+                        // This can be attached to the Status locally, but NOT transmitted to the client!
+                        .withCause(exchange.getException())
+                        .asRuntimeException());
             } else {
-                responseObserver.onNext(responseBody);
+                Object responseBody = exchange.getIn().getBody();
+                if (responseBody instanceof List) {
+                    List<Object> responseList = (List<Object>) responseBody;
+                    responseList.forEach(responseItem -> {
+                        responseObserver.onNext(responseItem);
+                    });
+                } else {
+                    responseObserver.onNext(responseBody);
+                }
+                responseObserver.onCompleted();
             }
-            responseObserver.onCompleted();
         } else if (args.length == 1 && args[0] instanceof StreamObserver) {
             // Single incoming parameter is instance of the io.grpc.stub.StreamObserver
             final StreamObserver<Object> responseObserver = (StreamObserver<Object>)args[0];
