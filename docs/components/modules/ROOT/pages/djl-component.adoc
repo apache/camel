@@ -1,9 +1,9 @@
 [[djl-component]]
-= DJL Component
+= Deep Java Library Component
 :page-source: components/camel-djl/src/main/docs/djl-component.adoc
-:docTitle: DJL
+:docTitle: Deep Java Library
 :artifactId: camel-djl
-:description: Represents a DJL endpoint.
+:description: The Deep Java Library component is used to infer deep learning models.
 :since: 3.3
 :supportLevel: Stable
 :component-header: Only producer is supported
