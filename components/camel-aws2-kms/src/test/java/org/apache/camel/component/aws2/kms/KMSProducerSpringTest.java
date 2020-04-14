@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
+import software.amazon.awssdk.services.kms.model.ListKeysRequest;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
 
@@ -140,6 +141,25 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("test", resultGet.keyMetadata().keyId());
         assertEquals("MyCamelKey", resultGet.keyMetadata().description());
         assertFalse(resultGet.keyMetadata().enabled());
+    }
+    
+    @Test
+    public void kmsListKeysPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listKeysPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.listKeys);
+                exchange.getIn().setBody(ListKeysRequest.builder().limit(10).build());
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListKeysResponse resultGet = (ListKeysResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.keys().size());
+        assertEquals("keyId", resultGet.keys().get(0).keyId());
     }
 
     @Override
