@@ -108,9 +108,9 @@ public interface AmqpComponentBuilderFactory {
         }
         /**
          * Whether to include AMQP annotations when mapping from AMQP to Camel
-         * Message. Setting this to true will map AMQP message annotations to
-         * message headers. Due to limitations in Apache Qpid JMS API, currently
-         * delivery annotations are ignored.
+         * Message. Setting this to true maps AMQP message annotations that
+         * contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations
+         * in Apache Qpid JMS API, currently delivery annotations are ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 

@@ -106,7 +106,7 @@ public class AMQPComponent extends JmsComponent {
 
     /**
      * Whether to include AMQP annotations when mapping from AMQP to Camel Message.
-     * Setting this to true will map AMQP message annotations to message headers.
+     * Setting this to true maps AMQP message annotations that contain a JMS_AMQP_MA_ prefix to message headers.
      * Due to limitations in Apache Qpid JMS API, currently delivery annotations
      * are ignored.
      */
