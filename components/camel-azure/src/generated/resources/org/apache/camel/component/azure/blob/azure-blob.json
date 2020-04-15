@@ -5,7 +5,7 @@
     "scheme": "azure-blob",
     "extendsScheme": "",
     "syntax": "azure-blob:containerOrBlobUri",
-    "title": "Azure Storage Blob Service",
+    "title": "Azure Storage Blob Service (Legacy)",
     "description": "The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.",
     "label": "cloud,database,nosql",
     "deprecated": false,
