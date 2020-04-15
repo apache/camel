@@ -345,7 +345,7 @@ Use of the global configuration in other Blueprint XML files with route definiti
 <reference id="sslContextParameters" interface="org.apache.camel.support.jsse.SSLContextParameters" ext:proxy-method="classes" />
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <route id="WEBISP001">
+    <route>
      <from uri="jetty:https://0.0.0.0/path?sslContextParameters=#sslContextParameters"/>
 ...
 ----
