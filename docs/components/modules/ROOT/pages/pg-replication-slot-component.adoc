@@ -1,5 +1,6 @@
 [[pg-replication-slot-component]]
 = PostgresSQL Replication Slot Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc
 
 *Since Camel 3.0*

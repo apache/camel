@@ -1,5 +1,6 @@
 [[fhir-component]]
 = FHIR Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc
 
 *Since Camel 2.23*

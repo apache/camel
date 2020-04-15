@@ -1,5 +1,6 @@
 [[debezium-mysql-component]]
 = Debezium MySQL Connector Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-debezium-mysql/src/main/docs/debezium-mysql-component.adoc
 
 *Since Camel 3.0*

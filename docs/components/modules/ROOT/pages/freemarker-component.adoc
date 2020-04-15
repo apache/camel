@@ -1,5 +1,6 @@
 [[freemarker-component]]
 = Freemarker Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-freemarker/src/main/docs/freemarker-component.adoc
 
 *Since Camel 2.10*

@@ -1,5 +1,6 @@
 [[weka-component]]
 = Weka Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-weka/src/main/docs/weka-component.adoc
 
 *Since Camel 3.1*

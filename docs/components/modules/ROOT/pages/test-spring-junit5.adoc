@@ -1,4 +1,5 @@
 = Camel Test Spring JUnit 5
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-spring-junit5/src/main/docs/test-spring-junit5.adoc
 
 *Available since 3.0*

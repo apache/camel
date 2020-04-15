@@ -1,5 +1,6 @@
 [[beanio-dataformat]]
 = BeanIO DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-beanio/src/main/docs/beanio-dataformat.adoc
 
 *Since Camel 2.10*

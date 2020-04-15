@@ -1,5 +1,6 @@
 [[aws-translate-component]]
 = AWS Translate Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
 
 *Since Camel 3.0*

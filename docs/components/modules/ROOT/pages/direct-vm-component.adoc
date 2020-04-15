@@ -1,5 +1,6 @@
 [[direct-vm-component]]
 = Direct VM Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-directvm/src/main/docs/direct-vm-component.adoc
 
 *Since Camel 2.10*

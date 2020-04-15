@@ -1,5 +1,6 @@
 [[jpa-component]]
 = JPA Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jpa/src/main/docs/jpa-component.adoc
 
 *Since Camel 1.0*

@@ -1,5 +1,6 @@
 [[service-component]]
 = Service Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-service/src/main/docs/service-component.adoc
 
 *Since Camel 2.22*

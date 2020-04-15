@@ -1,5 +1,6 @@
 [[spring-ldap-component]]
 = Spring LDAP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc
 
 *Since Camel 2.11*

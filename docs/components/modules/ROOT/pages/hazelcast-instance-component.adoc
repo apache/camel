@@ -1,5 +1,6 @@
 [[hazelcast-instance-component]]
 = Hazelcast Instance Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-instance-component.adoc
 
 *Since Camel 2.7*

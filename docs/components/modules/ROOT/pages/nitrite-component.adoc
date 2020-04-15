@@ -1,5 +1,6 @@
 [[nitrite-component]]
 = Nitrite Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-nitrite/src/main/docs/nitrite-component.adoc
 
 *Since Camel 3.0*

@@ -1,5 +1,6 @@
 [[geocoder-component]]
 = Geocoder Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-geocoder/src/main/docs/geocoder-component.adoc
 
 *Since Camel 2.12*

@@ -1,5 +1,6 @@
 [[etcd-stats-component]]
 = Etcd Stats Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-etcd/src/main/docs/etcd-stats-component.adoc
 
 *Since Camel 2.18*

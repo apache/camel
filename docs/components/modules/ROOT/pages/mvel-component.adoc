@@ -1,5 +1,6 @@
 [[mvel-component]]
 = MVEL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mvel/src/main/docs/mvel-component.adoc
 
 *Since Camel 2.12*

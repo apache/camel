@@ -1,5 +1,6 @@
 [[jms-component]]
 = JMS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jms/src/main/docs/jms-component.adoc
 
 *Since Camel 1.0*

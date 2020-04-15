@@ -1,5 +1,6 @@
 [[http-component]]
 = HTTP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-http/src/main/docs/http-component.adoc
 
 *Since Camel 2.3*

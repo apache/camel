@@ -1,4 +1,5 @@
 = ReactiveExecutor VertX
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc
 
 *Since Camel 3.0*

@@ -1,5 +1,6 @@
 [[jbpm-component]]
 = JBPM Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jbpm/src/main/docs/jbpm-component.adoc
 
 *Since Camel 2.6*

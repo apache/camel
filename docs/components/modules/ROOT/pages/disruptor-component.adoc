@@ -1,5 +1,6 @@
 [[disruptor-component]]
 = Disruptor Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-disruptor/src/main/docs/disruptor-component.adoc
 
 *Since Camel 2.12*

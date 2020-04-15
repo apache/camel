@@ -1,5 +1,6 @@
 [[couchbase-component]]
 = Couchbase Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-couchbase/src/main/docs/couchbase-component.adoc
 
 *Since Camel 2.19*

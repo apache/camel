@@ -1,5 +1,6 @@
 [[sftp-component]]
 = SFTP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ftp/src/main/docs/sftp-component.adoc
 
 *Since Camel 1.1*

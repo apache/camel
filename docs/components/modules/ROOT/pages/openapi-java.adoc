@@ -1,4 +1,5 @@
 = OpenApi Java Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openapi-java/src/main/docs/openapi-java.adoc
 
 *Available as of Camel 3.1.0*

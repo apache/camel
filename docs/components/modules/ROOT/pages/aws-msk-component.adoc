@@ -1,5 +1,6 @@
 [[aws-msk-component]]
 = AWS MSK Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-msk/src/main/docs/aws-msk-component.adoc
 
 *Since Camel 3.0*

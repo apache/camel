@@ -1,5 +1,6 @@
 [[bean-validator-component]]
 = Bean Validator Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bean-validator/src/main/docs/bean-validator-component.adoc
 
 *Since Camel 2.3*

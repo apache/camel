@@ -1,5 +1,6 @@
 [[chatscript-component]]
 = ChatScript Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-chatscript/src/main/docs/chatscript-component.adoc
 
 *Since Camel 3.0*
