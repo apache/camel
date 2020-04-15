@@ -34,3 +34,15 @@ It further allows leveraging the Java editor code completion to access the list 
 
 The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual 
 `RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `EndpointRouteBuilder`.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+.pom.xml
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-endpointdsl</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
