@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -27,6 +28,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.services.kms.model.ListKeysRequest;
+import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.model.ConfigurationId;
 import software.amazon.awssdk.services.mq.model.CreateBrokerRequest;
@@ -110,7 +113,21 @@ public class MQ2Producer extends DefaultProducer {
         return (MQ2Endpoint)super.getEndpoint();
     }
 
-    private void listBrokers(MqClient mqClient, Exchange exchange) {
+    private void listBrokers(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListBrokersRequest) {
+                ListBrokersResponse result;
+                try {
+                    result = mqClient.listBrokers((ListBrokersRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Brokers command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListBrokersRequest.Builder builder = ListBrokersRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.MAX_RESULTS))) {
             int maxResults = exchange.getIn().getHeader(MQ2Constants.MAX_RESULTS, Integer.class);
@@ -125,6 +142,7 @@ public class MQ2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     @SuppressWarnings("unchecked")
