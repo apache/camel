@@ -44,7 +44,6 @@
         <include>org.apache.camel:camel-main</include>
         <include>org.apache.camel:camel-tooling-model</include>
         <include>org.apache.camel:camel-tooling-util</include>
-        <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-caffeine-lrucache</include>
         <include>org.apache.camel:camel-xml-io</include>
         <include>org.apache.camel:camel-xml-jaxb</include>
@@ -193,6 +192,7 @@
         <include>org.apache.camel:camel-hazelcast</include>
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs</include>
+        <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http</include>

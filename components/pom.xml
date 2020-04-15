@@ -214,6 +214,7 @@
         <module>camel-hazelcast</module>
         <module>camel-hbase</module>
         <module>camel-hdfs</module>
+        <module>camel-headersmap</module>
         <module>camel-hipchat</module>
         <module>camel-hl7</module>
         <module>camel-ical</module>
