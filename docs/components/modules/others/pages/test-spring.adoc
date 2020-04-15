@@ -1,5 +1,6 @@
 [[test-spring-component]]
 = Test Spring Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-spring/src/main/docs/test-spring.adoc
 :docTitle: Test Spring
 :artifactId: camel-test-spring

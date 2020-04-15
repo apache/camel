@@ -1,5 +1,6 @@
 [[thrift-dataformat]]
 = Thrift DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-thrift/src/main/docs/thrift-dataformat.adoc
 :docTitle: Thrift
 :artifactId: camel-thrift

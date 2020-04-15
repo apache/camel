@@ -1,5 +1,6 @@
 [[rest-openapi-component]]
 = REST OpenApi Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-rest-openapi/src/main/docs/rest-openapi-component.adoc
 :docTitle: REST OpenApi
 :artifactId: camel-rest-openapi

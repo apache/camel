@@ -1,5 +1,6 @@
 [[avro-component]]
 = Avro Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-avro-rpc/src/main/docs/avro-component.adoc
 :docTitle: Avro
 :artifactId: camel-avro-rpc

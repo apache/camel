@@ -1,5 +1,6 @@
 [[testcontainers-junit5-component]]
 = Testcontainers JUnit5 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc
 :docTitle: Testcontainers JUnit5
 :artifactId: camel-testcontainers-junit5

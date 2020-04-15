@@ -1,4 +1,5 @@
 = Hazelcast Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-summary.adoc
 //attributes written by hand, not generated
 :docTitle: Hazelcast

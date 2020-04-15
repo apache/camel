@@ -1,5 +1,6 @@
 [[aws2-kinesis-component]]
 = AWS 2 Kinesis Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-component.adoc
 :docTitle: AWS 2 Kinesis
 :artifactId: camel-aws2-kinesis

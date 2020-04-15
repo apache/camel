@@ -1,5 +1,6 @@
 [[platform-http-vertx-component]]
 = Platform Http Vertx Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-platform-http-vertx/src/main/docs/platform-http-vertx.adoc
 :docTitle: Platform Http Vertx
 :artifactId: camel-platform-http-vertx

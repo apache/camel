@@ -1,5 +1,6 @@
 [[google-calendar-stream-component]]
 = Google Calendar Stream Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc
 :docTitle: Google Calendar Stream
 :artifactId: camel-google-calendar

@@ -1,5 +1,6 @@
 [[debezium-postgres-component]]
 = Debezium PostgresSQL Connector Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-debezium-postgres/src/main/docs/debezium-postgres-component.adoc
 :docTitle: Debezium PostgresSQL Connector
 :artifactId: camel-debezium-postgres

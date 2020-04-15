@@ -1,5 +1,6 @@
 [[direct-component]]
 = Direct Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-direct/src/main/docs/direct-component.adoc
 :docTitle: Direct
 :artifactId: camel-direct

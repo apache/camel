@@ -1,5 +1,6 @@
 [[attachments-component]]
 = Attachments Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-attachments/src/main/docs/attachments.adoc
 :docTitle: Attachments
 :artifactId: camel-attachments

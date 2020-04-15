@@ -1,5 +1,6 @@
 [[leveldb-component]]
 = LevelDB Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-leveldb/src/main/docs/leveldb.adoc
 :docTitle: LevelDB
 :artifactId: camel-leveldb

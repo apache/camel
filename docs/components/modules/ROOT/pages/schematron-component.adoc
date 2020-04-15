@@ -1,5 +1,6 @@
 [[schematron-component]]
 = Schematron Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-schematron/src/main/docs/schematron-component.adoc
 :docTitle: Schematron
 :artifactId: camel-schematron

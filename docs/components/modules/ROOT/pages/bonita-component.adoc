@@ -1,5 +1,6 @@
 [[bonita-component]]
 = Bonita Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bonita/src/main/docs/bonita-component.adoc
 :docTitle: Bonita
 :artifactId: camel-bonita

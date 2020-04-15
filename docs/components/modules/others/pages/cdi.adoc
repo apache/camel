@@ -1,5 +1,6 @@
 [[cdi-component]]
 = CDI Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cdi/src/main/docs/cdi.adoc
 :docTitle: CDI
 :artifactId: camel-cdi
