@@ -5,11 +5,27 @@ Component references are references used to place a component in an assembly. Ap
 provides various references that offers services for messaging, sending data, notifcations and various other 
 services that can not only resolve easy messaging and transferring data but also provide securing of data.
 
-Below is the list of components that are provided by Apache Camel.
+== Core Components
+
+Below is the list of core components that are provided by Apache Camel.
+
+Number of Core Components: indexCount:[attributes=core] in indexUniqueCount:[attributes=core,unique=artifactid] JAR artifacts (indexCount:[attributes="core,deprecated"] deprecated)
 
 [{index-table-format}]
 |===
 | Component | Artifact | Support Level | Since | Description
 |===
-indexTable::[cells="$xref,artifactid,supportlevel,since,description"]
+indexTable::[attributes=core,cells="$xref,artifactid,supportlevel,since,description"]
+
+== Components
+
+Below is the list of non-core components that are provided by Apache Camel.
+
+Number of Non-Core Components: indexCount:[attributes=!core] in indexUniqueCount:[attributes=!core,unique=artifactid] JAR artifacts (indexCount:[attributes="!core,deprecated"] deprecated)
+
+[{index-table-format}]
+|===
+| Component | Artifact | Support Level | Since | Description
+|===
+indexTable::[attributes=!core,cells="$xref,artifactid,supportlevel,since,description"]
 
