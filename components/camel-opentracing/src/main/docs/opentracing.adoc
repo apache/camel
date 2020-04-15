@@ -1,7 +1,12 @@
-[[OpenTracing-OpenTracingComponent]]
+[[opentracing-component]]
 = OpenTracing Component
+:docTitle: OpenTracing
+:artifactId: camel-opentracing
+:description: Distributed tracing using OpenTracing
+:since: 2.19
+:supportLevel: Stable
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
 The OpenTracing component is used for tracing and timing incoming and
 outgoing Camel messages using http://opentracing.io/[OpenTracing].

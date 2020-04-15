@@ -1,14 +1,16 @@
 [[rest-openapi-component]]
 = REST OpenApi Component
-= REST OpenApi Component
-*Since Camel 3.1*
+:docTitle: REST OpenApi
+:artifactId: camel-rest-openapi
+:description: An awesome REST endpoint backed by OpenApi specifications.
+:since: 3.1
+:supportLevel: Stable
+:component-header: Only producer is supported
 
 
-*Since Camel 3.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The REST OpenApi* configures rest producers from
 https://www.openapis.org/[OpenApi] (Open API) specification document and

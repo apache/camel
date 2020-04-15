@@ -1,8 +1,13 @@
 [[mvel-language]]
 = MVEL Language
 :page-source: components/camel-mvel/src/main/docs/mvel-language.adoc
+:docTitle: MVEL
+:artifactId: camel-mvel
+:description: To use MVEL scripts in Camel expressions or predicates.
+:since: 2.0
+:supportLevel: Stable
 
-*Since Camel 2.0*
+*Since Camel {since}*
 
 Camel allows Mvel to be used as an Expression or
 Predicate the DSL or

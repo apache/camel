@@ -1,12 +1,16 @@
 [[chunk-component]]
 = Chunk Component
 :page-source: components/camel-chunk/src/main/docs/chunk-component.adoc
+:docTitle: Chunk
+:artifactId: camel-chunk
+:description: Transforms the message using a Chunk template.
+:since: 2.15
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Chunk component allows for processing a message using a
 http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.

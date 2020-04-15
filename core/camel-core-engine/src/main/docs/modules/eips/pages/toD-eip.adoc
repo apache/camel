@@ -1,5 +1,8 @@
 [[toD-eip]]
 = To D EIP
+:description: Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:/order/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.
+:since: 
+:supportLevel: Stable
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed xref:latest@manual:ROOT:endpoint.adoc[Endpoint] using one or
@@ -216,5 +219,3 @@ during startup if `toD` was optimised, or if there was a failure loading the opt
 ----
 Detected SendDynamicAware component: http optimising toD: http:myloginserver:8080/login?userid=${header.userName}
 ----
-
-

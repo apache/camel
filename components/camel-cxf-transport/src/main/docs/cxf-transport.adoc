@@ -1,4 +1,12 @@
+[[cxf-transport-component]]
 = CXF Transport Component
+:docTitle: CXF Transport
+:artifactId: camel-cxf-transport
+:description: Camel Transport for Apache CXF
+:since: 2.8
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 [[CamelTransportforCXF-WhatstheCamelTransportforCXF]]
 == What's the Camel Transport for CXF
@@ -252,4 +260,3 @@ context in the camel destination.
 This example shows how to use the camel load balancing feature in CXF.
 You need to load the configuration file in CXF and publish the endpoints
 on the address "camel://direct:EndpointA" and "camel://direct:EndpointB"
-

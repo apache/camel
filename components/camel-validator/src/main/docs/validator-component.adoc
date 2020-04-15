@@ -1,11 +1,16 @@
 [[validator-component]]
 = Validator Component
+:docTitle: Validator
+:artifactId: camel-validator
+:description: Validates the payload of a message using XML Schema and JAXP Validation.
+:since: 1.1
+:supportLevel: Stable
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML

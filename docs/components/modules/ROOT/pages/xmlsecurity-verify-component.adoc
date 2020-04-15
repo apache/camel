@@ -1,16 +1,18 @@
 [[xmlsecurity-verify-component]]
 = XML Security Verify Component
 :page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-verify-component.adoc
-*Since Camel 2.12*
-*Since Camel 2.12*
+:docTitle: XML Security Verify
+:artifactId: camel-xmlsecurity
+:description: Used to verify exchanges using the XML signature specification.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Only producer is supported
 
 
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 With this Apache Camel component, you can generate and validate XML
 signatures as described in the W3C standard

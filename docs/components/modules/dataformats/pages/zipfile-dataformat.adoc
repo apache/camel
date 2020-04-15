@@ -1,8 +1,13 @@
 [[zipfile-dataformat]]
 = Zip File DataFormat
 :page-source: components/camel-zipfile/src/main/docs/zipfile-dataformat.adoc
+:docTitle: Zip File
+:artifactId: camel-zipfile
+:description: The Zip File data format is a message compression and de-compression format of zip files.
+:since: 2.11
+:supportLevel: Stable
 
-*Since Camel 2.11*
+*Since Camel {since}*
 
 The Zip File Data Format is a message compression
 and de-compression format. Messages can be marshalled (compressed) to

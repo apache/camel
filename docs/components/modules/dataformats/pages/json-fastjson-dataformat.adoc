@@ -1,8 +1,13 @@
 [[json-fastjson-dataformat]]
 = JSon Fastjson DataFormat
 :page-source: components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
+:docTitle: JSon Fastjson
+:artifactId: camel-fastjson
+:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:since: 2.20
+:supportLevel: Stable
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
 Fastjson is a Data Format which uses the
 https://github.com/alibaba/fastjson[Fastjson Library]

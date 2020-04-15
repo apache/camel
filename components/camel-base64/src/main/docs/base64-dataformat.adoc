@@ -1,7 +1,12 @@
 [[base64-dataformat]]
 = Base64 DataFormat
+:docTitle: Base64
+:artifactId: camel-base64
+:description: The Base64 data format is used for base64 encoding and decoding.
+:since: 2.11
+:supportLevel: Stable
 
-*Since Camel 2.11*
+*Since Camel {since}*
 
 The Base64 data format is used for base64 encoding and decoding.
 

@@ -1,5 +1,8 @@
 [[setBody-eip]]
 = Set Body EIP
+:description: Sets the contents of the message body
+:since: 
+:supportLevel: Stable
 
 The SetBody EIP allows you to set the body of your exchange.
 

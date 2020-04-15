@@ -1,5 +1,8 @@
 [[pollEnrich-eip]]
 = Poll Enrich EIP
+:description: Enriches messages with data polled from a secondary resource
+:since: 
+:supportLevel: Stable
 
 Camel comes with flavor `pollEnrich` as a choice of content enricher in the DSL.
 The other one is `enrich`

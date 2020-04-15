@@ -1,7 +1,12 @@
 [[xstream-dataformat]]
 = XStream DataFormat
+:docTitle: XStream
+:artifactId: camel-xstream
+:description: XStream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+:since: 1.3
+:supportLevel: Stable
 
-*Since Camel 1.3*
+*Since Camel {since}*
 
 XStream is a Data Format which uses the
 http://x-stream.github.io/[XStream library] to marshal and unmarshal

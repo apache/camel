@@ -1,12 +1,17 @@
 [[djl-component]]
 = Deep Java Library Component
+:docTitle: Deep Java Library
+:artifactId: camel-djl
+:description: The Deep Java Library component is used to infer deep learning models.
+:since: 3.3
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 3.3*
+*Since Camel {since}*
 
+*{component-header}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+== Deep Java Library
 
 The *Deep Java Library* component is used to infer Deep Learning models from message exchanges data.
 This component uses https://djl.ai/[Deep Java Library] as underlying library.

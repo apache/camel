@@ -1,12 +1,16 @@
 [[milo-client-component]]
 = OPC UA Client Component
 :page-source: components/camel-milo/src/main/docs/milo-client-component.adoc
+:docTitle: OPC UA Client
+:artifactId: camel-milo
+:description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data
+:since: 2.19
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.

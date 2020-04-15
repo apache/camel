@@ -1,11 +1,15 @@
 [[metrics-component]]
 = Metrics Component
+:docTitle: Metrics
+:artifactId: camel-metrics
+:description: To collect various metrics directly from Camel routes using the DropWizard metrics library.
+:since: 2.14
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.14*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Metrics component allows to collect various metrics directly
 from Camel routes. Supported metric types

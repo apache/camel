@@ -1,11 +1,15 @@
 [[activemq-component]]
 = ActiveMQ Component
+:docTitle: ActiveMQ
+:artifactId: camel-activemq
+:description: The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.
+:since: 1.0
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The ActiveMQ component is an extension to the JMS component and has been pre-configured for using Apache ActiveMQ 5.x (not Artemis).
 Users of Apache ActiveMQ Artemis should use the JMS component.

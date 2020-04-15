@@ -1,11 +1,15 @@
 [[caffeine-cache-component]]
 = Caffeine Cache Component
+:docTitle: Caffeine Cache
+:artifactId: camel-caffeine
+:description: The caffeine-cache component is used for integration with Caffeine Cache.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.20*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Caffeine Cache component enables you to perform caching operations using
 the simple cache from Caffeine.

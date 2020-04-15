@@ -1,12 +1,17 @@
 [[xslt-saxon-component]]
 = XSLT Saxon Component
 :page-source: components/camel-xslt-saxon/src/main/docs/xslt-saxon-component.adoc
+:docTitle: XSLT Saxon
+:artifactId: camel-xslt-saxon
+:description: Transforms the message using a XSLT template using Saxon.
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The XSLT Saxon component allows you to process a message using an
 http://www.w3.org/TR/xslt[XSLT] template using Saxon. This can be ideal when using

@@ -1,15 +1,19 @@
 [[aws2-kms-component]]
 = AWS 2 KMS Component
 :page-source: components/camel-aws2-kms/src/main/docs/aws2-kms-component.adoc
+:docTitle: AWS 2 KMS
+:artifactId: camel-aws2-kms
+:description: The aws2-kms is used for managing Amazon KMS
+:since: 3.1
+:supportLevel: Stable
+:component-header: Only producer is supported
+
+*Since Camel {since}*
 
 *Since Camel 3.1*
 
-*Since Camel 3.1*
 
-
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The KMS component supports the ability to work with keys stored in
 https://aws.amazon.com/kms/[AWS KMS] instances.

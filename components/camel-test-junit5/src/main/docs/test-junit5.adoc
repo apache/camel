@@ -1,5 +1,12 @@
-[[Test]]
-= Test Module
+[[test-junit5-component]]
+= Test JUnit5 Component
+:docTitle: Test JUnit5
+:artifactId: camel-test-junit5
+:description: Camel unit testing with JUnit 5
+:since: 3.0
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 The `camel-test-junit5` module is used for unit testing Camel.
 

@@ -1,11 +1,15 @@
 [[mybatis-component]]
 = MyBatis Component
+:docTitle: MyBatis
+:artifactId: camel-mybatis
+:description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
+:since: 2.7
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.7*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The MyBatis component allows you to query, poll, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis].

@@ -1,6 +1,9 @@
 [[delay-eip]]
 = Delay EIP
-The Delayer Pattern allows you to delay the delivery of messages to some destination.
+// The Delayer Pattern allows you to delay the delivery of messages to some destination.
+:description: Delays processing for a specified length of time
+:since: 
+:supportLevel: Stable
 
 == Options
 
@@ -169,4 +172,3 @@ public class SomeBean {
  }
 }
 ----
-

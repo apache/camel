@@ -1,11 +1,15 @@
 [[jira-component]]
 = Jira Component
+:docTitle: Jira
+:artifactId: camel-jira
+:description: The jira component interacts with the JIRA issue tracker.
+:since: 3.0
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The JIRA component interacts with the JIRA API by encapsulating
 Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST

@@ -1,7 +1,12 @@
 [[barcode-dataformat]]
 = Barcode DataFormat
+:docTitle: Barcode
+:artifactId: camel-barcode
+:description: The Barcode data format is used for creating barccode images (such as QR-Code)
+:since: 2.14
+:supportLevel: Stable
 
-*Since Camel 2.14*
+*Since Camel {since}*
 
 The Barcode data format is based on the
 https://github.com/zxing/zxing[zxing library]. The goal of this

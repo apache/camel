@@ -1,6 +1,12 @@
+[[hystrix-component]]
 = Hystrix Component
+:docTitle: Hystrix
+:artifactId: camel-hystrix
+:description: Circuit Breaker EIP using Netflix Hystrix
+:since: 2.18
+:supportLevel: Stable
 
-*Since Camel 2.18*
+*Since Camel {since}*
 
 The Hystrix component integrates Netflix Hystrix circuit breaker in Camel routes.
 

@@ -1,6 +1,9 @@
 [[threads-eip]]
 = Threads EIP
-The Threads Pattern allows you to introduce a thread pool into a route.
+// The Threads Pattern allows you to introduce a thread pool into a route.
+:description: Specifies that all steps after this node are processed asynchronously
+:since: 
+:supportLevel: Stable
 
 == Options
 

@@ -1,11 +1,16 @@
 [[saga-component]]
 = Saga Component
+:docTitle: Saga
+:artifactId: camel-saga
+:description: The saga component provides access to advanced options for managing the flow in the Saga EIP.
+:since: 2.21
+:supportLevel: Stable
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 2.21*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Saga component provides a bridge to execute custom actions within a route using the Saga EIP.
 

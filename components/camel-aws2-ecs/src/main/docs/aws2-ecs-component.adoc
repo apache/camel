@@ -1,14 +1,18 @@
 [[aws2-ecs-component]]
 = AWS 2 ECS Component
+:docTitle: AWS 2 ECS
+:artifactId: camel-aws2-ecs
+:description: The aws2-ecs is used for managing Amazon ECS
+:since: 3.1
+:supportLevel: Stable
+:component-header: Only producer is supported
+
+*Since Camel {since}*
 
 *Since Camel 3.1*
 
-*Since Camel 3.1*
 
-
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The ECS component supports create, delete, describe and list
 https://aws.amazon.com/ecs/[AWS ECS] clusters instances.

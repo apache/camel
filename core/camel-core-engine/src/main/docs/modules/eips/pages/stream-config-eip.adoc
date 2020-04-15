@@ -1,5 +1,8 @@
 [[stream-config-eip]]
 = Stream-config EIP
+:description: Configures stream-processing resequence eip.
+:since: 
+:supportLevel: Stable
 
 Stream-processing resequence EIP
 

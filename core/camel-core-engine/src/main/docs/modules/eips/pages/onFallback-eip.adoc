@@ -1,5 +1,8 @@
 [[onFallback-eip]]
 = On Fallback EIP
+:description: Route to be executed when Hystrix EIP executes fallback
+:since: 
+:supportLevel: Stable
 
 If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback.
 

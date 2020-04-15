@@ -1,12 +1,16 @@
 [[amqp-component]]
 = AMQP Component
 :page-source: components/camel-amqp/src/main/docs/amqp-component.adoc
+:docTitle: AMQP
+:artifactId: camel-amqp
+:description: Messaging with AMQP protocol using Apache QPid Client.
+:since: 1.2
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 1.2*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The AMQP component supports the
 http://www.amqp.org/[AMQP 1.0 protocol]

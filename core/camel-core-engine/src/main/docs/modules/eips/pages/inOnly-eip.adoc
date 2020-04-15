@@ -1,5 +1,8 @@
 [[inOnly-eip]]
 = In Only EIP
+:description: Marks the exchange pattern for the route to one way
+:since: 
+:supportLevel: Stable
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 
