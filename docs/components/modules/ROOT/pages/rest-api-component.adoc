@@ -1,5 +1,6 @@
 [[rest-api-component]]
 = REST API Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-rest/src/main/docs/rest-api-component.adoc
 
 *Since Camel 2.16*

@@ -1,5 +1,6 @@
 [[atomix-queue-component]]
 = Atomix Queue Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atomix/src/main/docs/atomix-queue-component.adoc
 
 *Since Camel 2.20*

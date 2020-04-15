@@ -1,5 +1,6 @@
 [[dataformat-component]]
 = Data Format Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-dataformat/src/main/docs/dataformat-component.adoc
 
 *Since Camel 2.12*

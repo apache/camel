@@ -1,5 +1,6 @@
 [[aws2-mq-component]]
 = AWS 2 MQ Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-mq/src/main/docs/aws2-mq-component.adoc
 
 *Since Camel 3.1*

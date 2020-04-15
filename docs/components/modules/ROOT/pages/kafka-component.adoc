@@ -1,5 +1,6 @@
 [[kafka-component]]
 = Kafka Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kafka/src/main/docs/kafka-component.adoc
 
 *Since Camel 2.13*

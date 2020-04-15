@@ -1,5 +1,6 @@
 [[beanstalk-component]]
 = Beanstalk Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-beanstalk/src/main/docs/beanstalk-component.adoc
 
 *Since Camel 2.15*

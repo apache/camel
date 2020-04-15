@@ -1,5 +1,6 @@
 [[debezium-mongodb-component]]
 = Debezium MongoDB Connector Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-debezium-mongodb/src/main/docs/debezium-mongodb-component.adoc
 
 *Since Camel 3.0*

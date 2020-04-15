@@ -1,5 +1,6 @@
 [[saga-component]]
 = Saga Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-saga/src/main/docs/saga-component.adoc
 
 *Since Camel 2.21*

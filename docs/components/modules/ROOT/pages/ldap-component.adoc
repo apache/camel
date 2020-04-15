@@ -1,5 +1,6 @@
 [[ldap-component]]
 = LDAP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ldap/src/main/docs/ldap-component.adoc
 
 *Since Camel 1.5*

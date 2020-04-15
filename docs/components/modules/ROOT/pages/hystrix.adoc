@@ -1,4 +1,5 @@
 = Hystrix Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hystrix/src/main/docs/hystrix.adoc
 
 *Since Camel 2.18*

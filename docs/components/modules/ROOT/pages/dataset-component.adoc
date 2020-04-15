@@ -1,5 +1,6 @@
 [[dataset-component]]
 = Dataset Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-dataset/src/main/docs/dataset-component.adoc
 
 *Since Camel 1.3*

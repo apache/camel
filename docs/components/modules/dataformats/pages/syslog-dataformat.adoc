@@ -1,5 +1,6 @@
 [[syslog-dataformat]]
 = Syslog DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-syslog/src/main/docs/syslog-dataformat.adoc
 
 *Since Camel 2.6*

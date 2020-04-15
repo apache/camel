@@ -1,5 +1,6 @@
 [[elsql-component]]
 = ElSQL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elsql/src/main/docs/elsql-component.adoc
 
 *Since Camel 2.16*

@@ -1,5 +1,6 @@
 [[dozer-component]]
 = Dozer Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-dozer/src/main/docs/dozer-component.adoc
 
 *Since Camel 2.15*

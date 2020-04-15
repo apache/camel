@@ -1,5 +1,6 @@
 [[xstream-dataformat]]
 = XStream DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xstream/src/main/docs/xstream-dataformat.adoc
 
 *Since Camel 1.3*

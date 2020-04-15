@@ -1,5 +1,6 @@
 [[optaplanner-component]]
 = OptaPlanner Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-optaplanner/src/main/docs/optaplanner-component.adoc
 
 *Since Camel 2.13*

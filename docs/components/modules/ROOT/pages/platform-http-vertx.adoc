@@ -1,4 +1,5 @@
 = PlatformHttp VertX
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-platform-http-vertx/src/main/docs/platform-http-vertx.adoc
 
 *Since Camel 3.2*

@@ -1,5 +1,6 @@
 [[MicroProfileHealth-MicroProfileHealthComponent]]
 = MicroProfile Health
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-health/src/main/docs/microprofile-health.adoc
 
 *Since Camel 3.0*

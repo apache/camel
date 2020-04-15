@@ -1,5 +1,6 @@
 [[bindy-dataformat]]
 = Bindy DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bindy/src/main/docs/bindy-dataformat.adoc
 
 *Since Camel 2.0*

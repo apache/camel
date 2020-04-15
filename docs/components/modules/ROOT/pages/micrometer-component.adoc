@@ -1,5 +1,6 @@
 [[micrometer-component]]
 = Micrometer Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-micrometer/src/main/docs/micrometer-component.adoc
 
 *Since Camel 2.22*

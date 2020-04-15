@@ -1,5 +1,6 @@
 [[hazelcast-list-component]]
 = Hazelcast List Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-list-component.adoc
 
 *Since Camel 2.7*

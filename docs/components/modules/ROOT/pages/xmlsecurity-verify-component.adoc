@@ -1,5 +1,6 @@
 [[xmlsecurity-verify-component]]
 = XML Security Verify Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-verify-component.adoc
 *Since Camel 2.12*
 *Since Camel 2.12*

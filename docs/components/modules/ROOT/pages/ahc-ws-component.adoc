@@ -1,5 +1,6 @@
 [[ahc-ws-component]]
 = AHC Websocket Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ahc-ws/src/main/docs/ahc-ws-component.adoc
 
 *Since Camel 2.14*

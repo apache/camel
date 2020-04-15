@@ -1,5 +1,6 @@
 [[LevelDB-LevelDB]]
 = LevelDB
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-leveldb/src/main/docs/leveldb.adoc
 
 *Since Camel 2.10*

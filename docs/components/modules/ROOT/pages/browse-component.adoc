@@ -1,5 +1,6 @@
 [[browse-component]]
 = Browse Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-browse/src/main/docs/browse-component.adoc
 
 *Since Camel 1.3*

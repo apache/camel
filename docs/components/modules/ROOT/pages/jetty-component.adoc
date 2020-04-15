@@ -1,5 +1,6 @@
 [[jetty-component]]
 = Jetty Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jetty/src/main/docs/jetty-component.adoc
 
 *Since Camel 1.2*

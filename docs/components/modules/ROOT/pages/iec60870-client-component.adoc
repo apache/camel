@@ -1,5 +1,6 @@
 [[iec60870-client-component]]
 = IEC 60870 Client Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-iec60870/src/main/docs/iec60870-client-component.adoc
 
 *Since Camel 2.20*

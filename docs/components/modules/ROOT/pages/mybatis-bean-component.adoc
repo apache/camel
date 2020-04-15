@@ -1,5 +1,6 @@
 [[mybatis-bean-component]]
 = MyBatis Bean Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mybatis/src/main/docs/mybatis-bean-component.adoc
 
 *Since Camel 2.22*

@@ -1,5 +1,6 @@
 [[openstack-keystone-component]]
 = OpenStack Keystone Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-keystone-component.adoc
 
 *Since Camel 2.19*

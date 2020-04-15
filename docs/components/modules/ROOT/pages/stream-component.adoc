@@ -1,5 +1,6 @@
 [[stream-component]]
 = Stream Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-stream/src/main/docs/stream-component.adoc
 
 *Since Camel 1.3*

@@ -1,5 +1,6 @@
 [[debezium-sqlserver-component]]
 = Debezium SQL Server Connector Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-debezium-sqlserver/src/main/docs/debezium-sqlserver-component.adoc
 
 *Since Camel 3.0*

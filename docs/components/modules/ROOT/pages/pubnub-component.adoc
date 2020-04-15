@@ -1,5 +1,6 @@
 [[pubnub-component]]
 = PubNub Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pubnub/src/main/docs/pubnub-component.adoc
 
 *Since Camel 2.19*

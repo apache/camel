@@ -1,5 +1,6 @@
 [[openstack-neutron-component]]
 = OpenStack Neutron Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-neutron-component.adoc
 
 *Since Camel 2.19*

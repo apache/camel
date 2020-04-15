@@ -1,5 +1,6 @@
 [[json-validator-component]]
 = JSON Schema Validator Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-json-validator/src/main/docs/json-validator-component.adoc
 
 *Since Camel 2.20*

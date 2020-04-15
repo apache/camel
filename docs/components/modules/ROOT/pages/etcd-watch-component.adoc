@@ -1,5 +1,6 @@
 [[etcd-watch-component]]
 = Etcd Watch Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-etcd/src/main/docs/etcd-watch-component.adoc
 
 *Since Camel 2.18*

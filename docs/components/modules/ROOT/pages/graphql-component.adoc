@@ -1,5 +1,6 @@
 [[graphql-component]]
 = GraphQL Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-graphql/src/main/docs/graphql-component.adoc
 
 *Since Camel 3.0*

@@ -1,5 +1,6 @@
 [[aws2-ecs-component]]
 = AWS 2 ECS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-ecs/src/main/docs/aws2-ecs-component.adoc
 
 *Since Camel 3.1*

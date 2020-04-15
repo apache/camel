@@ -1,5 +1,6 @@
 [[ganglia-component]]
 = Ganglia Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ganglia/src/main/docs/ganglia-component.adoc
 
 *Since Camel 2.15*

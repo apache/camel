@@ -1,5 +1,6 @@
 [[jgroups-component]]
 = JGroups Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jgroups/src/main/docs/jgroups-component.adoc
 
 *Since Camel 2.13*

@@ -1,5 +1,6 @@
 [[salesforce-component]]
 = Salesforce Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-component.adoc
 
 *Since Camel 2.12*

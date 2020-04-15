@@ -1,5 +1,6 @@
 [[jooq-component]]
 = JOOQ Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jooq/src/main/docs/jooq-component.adoc
 
 *Since Camel 3.0*

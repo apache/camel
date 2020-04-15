@@ -1,5 +1,6 @@
 [[asterisk-component]]
 = Asterisk Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-asterisk/src/main/docs/asterisk-component.adoc
 
 *Since Camel 2.18*

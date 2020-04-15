@@ -1,5 +1,6 @@
 [[xquery-language]]
 = XQuery Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-saxon/src/main/docs/xquery-language.adoc
 
 *Since Camel 1.0*
