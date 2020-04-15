@@ -291,9 +291,23 @@ public class MQ2Producer extends DefaultProducer {
         }
     }
 
-    private void updateBroker(MqClient mqClient, Exchange exchange) {
+    private void updateBroker(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
         String brokerId;
         ConfigurationId configurationId;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof UpdateBrokerRequest) {
+                UpdateBrokerResponse result;
+                try {
+                    result = mqClient.updateBroker((UpdateBrokerRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Update Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         UpdateBrokerRequest.Builder builder = UpdateBrokerRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.BROKER_ID))) {
             brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
@@ -316,6 +330,7 @@ public class MQ2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void describeBroker(MqClient mqClient, Exchange exchange) {
