@@ -1,5 +1,6 @@
 [[BAM-BusinessActivityMonitoring]]
 = Business Activity Monitoring
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bam/src/main/docs/bam.adoc
 
 The *Camel BAM* module provides a Business Activity Monitoring (BAM)

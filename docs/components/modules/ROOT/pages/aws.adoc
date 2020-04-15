@@ -1,4 +1,5 @@
 = Camel Components for Amazon Web Services
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/src/main/docs/aws.adoc
 
 The Camel Components for http://aws.amazon.com[Amazon Web Services]

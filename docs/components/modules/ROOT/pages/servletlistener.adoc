@@ -1,5 +1,6 @@
 [[ServletListenerComponent-ServletListenerComponent]]
 = ServletListener Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-servletlistener/src/main/docs/servletlistener.adoc
 
 *Available as of Camel 2.11*

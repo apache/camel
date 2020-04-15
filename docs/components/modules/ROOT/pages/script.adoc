@@ -1,5 +1,6 @@
 [[Script-Script]]
 = Script
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-script/src/main/docs/script.adoc
 
 *Available as of Camel 2.16*

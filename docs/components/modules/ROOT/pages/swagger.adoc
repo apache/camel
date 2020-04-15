@@ -1,5 +1,6 @@
 [[Swagger-SwaggerScalaComponent]]
 = Swagger Scala Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-swagger/src/main/docs/swagger.adoc
 
 *Available as of Camel 2.14*

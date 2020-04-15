@@ -1,5 +1,6 @@
 [[quartz2-component]]
 = Quartz2 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-quartz2/src/main/docs/quartz2-component.adoc
 
 *Available as of Camel version 2.12*

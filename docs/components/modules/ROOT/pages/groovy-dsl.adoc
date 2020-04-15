@@ -1,5 +1,6 @@
 [[GroovyDSL-AbouttheGroovyDSL]]
 = About the Groovy DSL (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-groovy-dsl/src/main/docs/groovy-dsl.adoc
 
 The Groovy DSL implementation is built on top of the existing Java-based

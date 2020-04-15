@@ -1,5 +1,6 @@
 [[barcode-dataformat]]
 = Barcode DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-barcode/src/main/docs/barcode-dataformat.adoc
 
 *Available as of Camel version 2.14*

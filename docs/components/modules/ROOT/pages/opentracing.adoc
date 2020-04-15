@@ -1,5 +1,6 @@
 [[OpenTracing-OpenTracingComponent]]
 = OpenTracing Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-opentracing/src/main/docs/opentracing.adoc
 
 *Available as of Camel 2.19*

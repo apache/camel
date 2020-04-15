@@ -1,4 +1,5 @@
 = Using OSGi blueprint with Camel
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-blueprint/src/main/docs/blueprint.adoc
 
 A custom XML namespace for Blueprint has been created to let you leverage the nice XML dialect.

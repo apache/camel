@@ -1,5 +1,6 @@
 [[CDITesting-CDITesting]]
 = CDI Testing
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-cdi/src/main/docs/test-cdi.adoc
 
 http://camel.apache.org/testing.html[Testing] is a crucial part of any

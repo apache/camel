@@ -1,5 +1,6 @@
 [[php-language]]
 = PHP Language (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-script/src/main/docs/php-language.adoc
 
 *Available as of Camel version 1.0*

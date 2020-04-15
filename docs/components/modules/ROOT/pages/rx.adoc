@@ -1,5 +1,6 @@
 [[RX-CamelRX]]
 = Camel RX (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-rx/src/main/docs/rx.adoc
 
 *Available as of Camel 2.11*

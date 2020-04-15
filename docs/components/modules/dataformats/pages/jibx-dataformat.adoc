@@ -1,5 +1,6 @@
 [[jibx-dataformat]]
 = JiBX DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jibx/src/main/docs/jibx-dataformat.adoc
 
 *Available as of Camel version 2.6*

@@ -1,5 +1,6 @@
 [[Zipkin-ZipkinComponent]]
 = Zipkin Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zipkin/src/main/docs/zipkin.adoc
 
 *Available as of Camel 2.18*
