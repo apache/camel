@@ -1,8 +1,8 @@
 [[azure-blob-component]]
-= Azure Storage Blob Service Component
+= Azure Storage Blob Service (Legacy) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
-:docTitle: Azure Storage Blob Service
+:docTitle: Azure Storage Blob Service (Legacy)
 :artifactId: camel-azure
 :description: The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 :since: 2.19
@@ -15,6 +15,9 @@
 
 The Azure Blob component supports storing and retrieving the blobs to/from
 https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.
+
+*Note:* This component uses the legacy https://github.com/azure/azure-storage-java/tree/legacy-master[Azure SDK v8]. There is another component
+xref:components::azure-storage-blob-component.adoc[Azure Storage Blob Component] that uses the latest *12+* Azure SDK version.
 
 Prerequisites
 
@@ -45,7 +48,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 21 options, which are listed below.
+The Azure Storage Blob Service (Legacy) component supports 21 options, which are listed below.
 
 
 
@@ -87,7 +90,7 @@ The Azure Storage Blob Service component supports 21 options, which are listed b
 
 
 // endpoint options: START
-The Azure Storage Blob Service endpoint is configured using URI syntax:
+The Azure Storage Blob Service (Legacy) endpoint is configured using URI syntax:
 
 ----
 azure-blob:containerOrBlobUri
