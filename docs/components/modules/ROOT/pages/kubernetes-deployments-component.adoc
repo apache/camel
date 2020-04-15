@@ -1,5 +1,6 @@
 [[kubernetes-deployments-component]]
 = Kubernetes Deployments Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-deployments-component.adoc
 :docTitle: Kubernetes Deployments
 :artifactId: camel-kubernetes

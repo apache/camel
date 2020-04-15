@@ -1,5 +1,6 @@
 [[aws-s3-component]]
 = AWS S3 Storage Service Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-s3/src/main/docs/aws-s3-component.adoc
 :docTitle: AWS S3 Storage Service
 :artifactId: camel-aws-s3

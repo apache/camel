@@ -1,5 +1,6 @@
 [[json-johnzon-dataformat]]
 = JSon Johnzon DataFormat
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
 :docTitle: JSon Johnzon
 :artifactId: camel-johnzon

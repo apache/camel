@@ -1,5 +1,6 @@
 [[cmis-component]]
 = CMIS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cmis/src/main/docs/cmis-component.adoc
 :docTitle: CMIS
 :artifactId: camel-cmis

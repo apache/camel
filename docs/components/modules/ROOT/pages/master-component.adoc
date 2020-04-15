@@ -1,5 +1,6 @@
 [[master-component]]
 = Master Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-master/src/main/docs/master-component.adoc
 :docTitle: Master
 :artifactId: camel-master

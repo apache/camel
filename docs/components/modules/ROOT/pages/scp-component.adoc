@@ -1,5 +1,6 @@
 [[scp-component]]
 = SCP Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsch/src/main/docs/scp-component.adoc
 :docTitle: SCP
 :artifactId: camel-jsch

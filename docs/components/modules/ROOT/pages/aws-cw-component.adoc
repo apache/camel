@@ -1,5 +1,6 @@
 [[aws-cw-component]]
 = AWS CloudWatch Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-cw/src/main/docs/aws-cw-component.adoc
 :docTitle: AWS CloudWatch
 :artifactId: camel-aws-cw

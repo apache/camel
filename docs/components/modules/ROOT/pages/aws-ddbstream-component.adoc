@@ -1,5 +1,6 @@
 [[aws-ddbstream-component]]
 = AWS DynamoDB Streams Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ddb/src/main/docs/aws-ddbstream-component.adoc
 :docTitle: AWS DynamoDB Streams
 :artifactId: camel-aws-ddb

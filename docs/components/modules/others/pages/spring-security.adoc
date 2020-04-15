@@ -1,5 +1,6 @@
 [[spring-security-component]]
 = Spring Security Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-security/src/main/docs/spring-security.adoc
 :docTitle: Spring Security
 :artifactId: camel-spring-security

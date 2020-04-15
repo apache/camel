@@ -1,5 +1,6 @@
 [[couchdb-component]]
 = CouchDB Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-couchdb/src/main/docs/couchdb-component.adoc
 :docTitle: CouchDB
 :artifactId: camel-couchdb

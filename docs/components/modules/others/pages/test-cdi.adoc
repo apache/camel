@@ -1,5 +1,6 @@
 [[test-cdi-component]]
 = Test CDI Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-cdi/src/main/docs/test-cdi.adoc
 :docTitle: Test CDI
 :artifactId: camel-test-cdi

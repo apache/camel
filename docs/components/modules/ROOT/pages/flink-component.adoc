@@ -1,5 +1,6 @@
 [[flink-component]]
 = Flink Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-flink/src/main/docs/flink-component.adoc
 :docTitle: Flink
 :artifactId: camel-flink

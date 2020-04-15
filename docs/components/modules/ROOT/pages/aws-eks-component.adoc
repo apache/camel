@@ -1,5 +1,6 @@
 [[aws-eks-component]]
 = AWS EKS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-eks/src/main/docs/aws-eks-component.adoc
 :docTitle: AWS EKS
 :artifactId: camel-aws-eks

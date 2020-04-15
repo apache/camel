@@ -1,5 +1,6 @@
 [[aws2-kms-component]]
 = AWS 2 KMS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-kms/src/main/docs/aws2-kms-component.adoc
 :docTitle: AWS 2 KMS
 :artifactId: camel-aws2-kms

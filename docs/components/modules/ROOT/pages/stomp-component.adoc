@@ -1,5 +1,6 @@
 [[stomp-component]]
 = Stomp Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-stomp/src/main/docs/stomp-component.adoc
 :docTitle: Stomp
 :artifactId: camel-stomp

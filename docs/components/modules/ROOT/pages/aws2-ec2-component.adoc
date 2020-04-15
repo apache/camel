@@ -1,5 +1,6 @@
 [[aws2-ec2-component]]
 = AWS 2 EC2 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-ec2/src/main/docs/aws2-ec2-component.adoc
 :docTitle: AWS 2 EC2
 :artifactId: camel-aws2-ec2

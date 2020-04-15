@@ -1,5 +1,6 @@
 [[paho-component]]
 = Paho Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-paho/src/main/docs/paho-component.adoc
 :docTitle: Paho
 :artifactId: camel-paho

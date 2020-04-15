@@ -1,5 +1,6 @@
 [[jsonpath-language]]
 = JsonPath Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsonpath/src/main/docs/jsonpath-language.adoc
 :docTitle: JsonPath
 :artifactId: camel-jsonpath

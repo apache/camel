@@ -1,5 +1,6 @@
 [[aws-mq-component]]
 = AWS MQ Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-mq/src/main/docs/aws-mq-component.adoc
 :docTitle: AWS MQ
 :artifactId: camel-aws-mq

@@ -1,5 +1,6 @@
 [[dataset-test-component]]
 = DataSet Test Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-dataset/src/main/docs/dataset-test-component.adoc
 :docTitle: DataSet Test
 :artifactId: camel-dataset

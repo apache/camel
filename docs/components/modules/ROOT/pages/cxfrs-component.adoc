@@ -1,5 +1,6 @@
 [[cxfrs-component]]
 = CXF-RS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cxf/src/main/docs/cxfrs-component.adoc
 :docTitle: CXF-RS
 :artifactId: camel-cxf
