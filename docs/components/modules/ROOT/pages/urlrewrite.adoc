@@ -1,5 +1,6 @@
 [[UrlRewrite-UrlRewriteComponent]]
 = UrlRewrite Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-urlrewrite/src/main/docs/urlrewrite.adoc
 
 *Available as of Camel 2.11*

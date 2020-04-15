@@ -1,5 +1,6 @@
 [[ScalaDSL-AbouttheScalaDSL]]
 = About the Scala DSL
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-scala/src/main/docs/scala.adoc
 
 **Deprecated**

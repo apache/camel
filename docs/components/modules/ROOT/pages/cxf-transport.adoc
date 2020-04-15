@@ -1,5 +1,6 @@
 [[CamelTransportforCXF-WhatstheCamelTransportforCXF]]
 = What's the Camel Transport for CXF
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cxf-transport/src/main/docs/cxf-transport.adoc
 
 In CXF you offer or consume a webservice by defining its address. The

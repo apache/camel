@@ -1,5 +1,6 @@
 [[chronicle-engine-component]]
 = Chronicle Engine Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-chronicle/src/main/docs/chronicle-engine-component.adoc
 
 *Available as of Camel version 2.18*

@@ -1,5 +1,6 @@
 [[ScalaDSL-SupportedLanguages]]
 = Scala DSL Supported Languages
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-scala/src/main/docs/scala-supported-languages.adoc
 
 Support for other languages inside the Scala DSL

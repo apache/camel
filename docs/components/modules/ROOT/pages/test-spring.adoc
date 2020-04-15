@@ -1,4 +1,5 @@
 = Test Spring
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-spring/src/main/docs/test-spring.adoc
 
 *Available since 2.10*

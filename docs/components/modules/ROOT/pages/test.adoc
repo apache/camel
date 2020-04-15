@@ -1,5 +1,6 @@
 [[Test-TestComponent]]
 = Test Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test/src/main/docs/test.adoc
 
 Testing of distributed and asynchronous processing is

@@ -1,5 +1,6 @@
 [[solr-component]]
 = Solr Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-solr/src/main/docs/solr-component.adoc
 
 *Available as of Camel version 2.9*

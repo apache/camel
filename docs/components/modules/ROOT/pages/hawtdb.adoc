@@ -1,5 +1,6 @@
 [[HawtDB-HawtDB]]
 = HawtDB (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hawtdb/src/main/docs/hawtdb.adoc
 
 *Available as of Camel 2.3*

@@ -1,5 +1,6 @@
 [[ScalaDSL-SupportedDSL]]
 = Scala Supported DSL
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-scala/src/main/docs/scala-eip.adoc
 
 The Scala DSL supports *every* DSL from the

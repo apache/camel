@@ -1,5 +1,6 @@
 [[Ruby-Ruby]]
 = Ruby
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ruby/src/main/docs/ruby.adoc
 
 Camel supports http://www.ruby-lang.org/en/[Ruby] among other

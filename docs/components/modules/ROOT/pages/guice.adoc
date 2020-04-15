@@ -1,5 +1,6 @@
 [[Guice-CamelGuice]]
 = Camel Guice
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-guice/src/main/docs/guice.adoc
 
 We have support for http://code.google.com/p/google-guice/[Google Guice]

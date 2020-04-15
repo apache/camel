@@ -1,5 +1,6 @@
 [[crypto-cms-component]]
 = Crypto CMS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-crypto-cms/src/main/docs/crypto-cms-component.adoc
 
 *Available as of Camel version 2.20*
