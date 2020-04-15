@@ -6,6 +6,7 @@
 ** xref:aws-xray.adoc[AWS XRay]
 ** xref:cdi.adoc[CDI]
 ** xref:cxf-transport.adoc[CXF Transport]
+** xref:headersmap.adoc[Headersmap]
 ** xref:hystrix.adoc[Hystrix]
 ** xref:jasypt.adoc[Jasypt]
 ** xref:leveldb.adoc[LevelDB]
