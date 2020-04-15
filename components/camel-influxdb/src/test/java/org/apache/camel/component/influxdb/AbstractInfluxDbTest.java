@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 
 public class AbstractInfluxDbTest extends CamelTestSupport {
 
-    private InfluxDB mockedDbConnection = mock(InfluxDBImpl.class);
+    InfluxDB mockedDbConnection = mock(InfluxDBImpl.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
