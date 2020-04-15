@@ -146,7 +146,7 @@ function insertGeneratedNotice() {
 
 function insertSourceAttribute() {
     return replace(/^= .+/m, function(match) {
-        return `${match}\n:page-source: ${path.relative('..', this.file.path)}`;
+        return `${match}\n//THIS FILE IS COPIED: EDIT THE SOURCE FILE:\n:page-source: ${path.relative('..', this.file.path)}`;
     });
 }
 
