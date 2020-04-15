@@ -1,5 +1,6 @@
 [[aws2-iam-component]]
 = AWS 2 IAM Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-iam/src/main/docs/aws2-iam-component.adoc
 :docTitle: AWS 2 IAM
 :artifactId: camel-aws2-iam

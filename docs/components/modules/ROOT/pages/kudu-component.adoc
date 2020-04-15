@@ -1,5 +1,6 @@
 [[kudu-component]]
 = Kudu Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kudu/src/main/docs/kudu-component.adoc
 :docTitle: Kudu
 :artifactId: camel-kudu

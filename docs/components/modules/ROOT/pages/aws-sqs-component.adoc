@@ -1,5 +1,6 @@
 [[aws-sqs-component]]
 = AWS Simple Queue Service Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-sqs/src/main/docs/aws-sqs-component.adoc
 :docTitle: AWS Simple Queue Service
 :artifactId: camel-aws-sqs

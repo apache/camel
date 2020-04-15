@@ -1,5 +1,6 @@
 [[activemq-component]]
 = ActiveMQ Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-activemq/src/main/docs/activemq-component.adoc
 :docTitle: ActiveMQ
 :artifactId: camel-activemq

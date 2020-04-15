@@ -1,5 +1,6 @@
 [[jt400-component]]
 = JT400 Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jt400/src/main/docs/jt400-component.adoc
 :docTitle: JT400
 :artifactId: camel-jt400

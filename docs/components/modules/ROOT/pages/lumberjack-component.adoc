@@ -1,5 +1,6 @@
 [[lumberjack-component]]
 = Lumberjack Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-lumberjack/src/main/docs/lumberjack-component.adoc
 :docTitle: Lumberjack
 :artifactId: camel-lumberjack

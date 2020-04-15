@@ -1,5 +1,6 @@
 [[elasticsearch-rest-component]]
 = Elastichsearch Rest Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
 :docTitle: Elastichsearch Rest
 :artifactId: camel-elasticsearch-rest

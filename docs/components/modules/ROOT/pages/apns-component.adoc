@@ -1,5 +1,6 @@
 [[apns-component]]
 = APNS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-apns/src/main/docs/apns-component.adoc
 :docTitle: APNS
 :artifactId: camel-apns

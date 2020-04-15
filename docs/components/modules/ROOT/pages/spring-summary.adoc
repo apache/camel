@@ -1,5 +1,6 @@
 [[SpringSupport-SpringSupport]]
 = Spring Support
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring/src/main/docs/spring-summary.adoc
 //attributes written by hand, not generated
 :docTitle: Spring

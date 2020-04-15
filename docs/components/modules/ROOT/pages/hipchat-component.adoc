@@ -1,5 +1,6 @@
 [[hipchat-component]]
 = Hipchat Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hipchat/src/main/docs/hipchat-component.adoc
 :docTitle: Hipchat
 :artifactId: camel-hipchat

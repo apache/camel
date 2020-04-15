@@ -1,5 +1,6 @@
 [[testcontainers-spring-component]]
 = Testcontainers Spring Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc
 :docTitle: Testcontainers Spring
 :artifactId: camel-testcontainers-spring

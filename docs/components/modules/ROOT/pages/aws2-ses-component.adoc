@@ -1,5 +1,6 @@
 [[aws2-ses-component]]
 = AWS 2 Simple Email Service Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-ses/src/main/docs/aws2-ses-component.adoc
 :docTitle: AWS 2 Simple Email Service
 :artifactId: camel-aws2-ses

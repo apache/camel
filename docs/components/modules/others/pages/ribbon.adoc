@@ -1,5 +1,6 @@
 [[ribbon-component]]
 = Ribbon Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ribbon/src/main/docs/ribbon.adoc
 :docTitle: Ribbon
 :artifactId: camel-ribbon

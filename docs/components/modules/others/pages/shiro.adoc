@@ -1,5 +1,6 @@
 [[shiro-component]]
 = Shiro Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-shiro/src/main/docs/shiro.adoc
 :docTitle: Shiro
 :artifactId: camel-shiro

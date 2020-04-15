@@ -1,5 +1,6 @@
 [[reactor-component]]
 = Reactor Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-reactor/src/main/docs/reactor.adoc
 :docTitle: Reactor
 :artifactId: camel-reactor
