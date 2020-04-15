@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -53,6 +54,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     private static final Logger LOG = LoggerFactory.getLogger(SendDynamicProcessor.class);
 
     protected SendDynamicAware dynamicAware;
+    protected volatile String scheme;
     protected CamelContext camelContext;
     protected final String uri;
     protected final Expression expression;
@@ -63,6 +65,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     protected boolean ignoreInvalidEndpoint;
     protected int cacheSize;
     protected boolean allowOptimisedComponents = true;
+    protected boolean autoStartupComponents = true;
 
     public SendDynamicProcessor(String uri, Expression expression) {
         this.uri = uri;
@@ -92,11 +95,6 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        expression.init(camelContext);
     }
 
     @Override
@@ -299,23 +297,18 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     }
 
     @Override
-    protected void doStart() throws Exception {
-        if (producerCache == null) {
-            if (cacheSize < 0) {
-                producerCache = new EmptyProducerCache(this, camelContext);
-                LOG.debug("DynamicSendTo {} is not using ProducerCache", this);
-            } else {
-                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-                LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, cacheSize);
-            }
+    protected void doInit() throws Exception {
+        expression.init(camelContext);
+
+        if ((isAllowOptimisedComponents() || isAutoStartupComponents()) && uri != null) {
+            // in case path has property placeholders then try to let property component resolve those
+            String u = camelContext.resolvePropertyPlaceholders(uri);
+            // find out which component it is
+            scheme = ExchangeHelper.resolveScheme(u);
         }
 
         if (isAllowOptimisedComponents() && uri != null) {
             try {
-                // in case path has property placeholders then try to let property component resolve those
-                String u = camelContext.resolvePropertyPlaceholders(uri);
-                // find out which component it is
-                String scheme = ExchangeHelper.resolveScheme(u);
                 if (scheme != null) {
                     // find out if the component can be optimised for send-dynamic
                     SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
@@ -330,8 +323,26 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 // ignore
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: " + URISupport.sanitizeUri(uri)
-                        + " due to " + e.getMessage() + ". This exception is ignored", e);
+                            + " due to " + e.getMessage() + ". This exception is ignored", e);
                 }
+            }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // ensure the component is started
+        if (autoStartupComponents && scheme != null) {
+            camelContext.getComponent(scheme);
+        }
+
+        if (producerCache == null) {
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("DynamicSendTo {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, cacheSize);
             }
         }
 
@@ -399,5 +410,13 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
 
     public void setAllowOptimisedComponents(boolean allowOptimisedComponents) {
         this.allowOptimisedComponents = allowOptimisedComponents;
+    }
+
+    public boolean isAutoStartupComponents() {
+        return autoStartupComponents;
+    }
+
+    public void setAutoStartupComponents(boolean autoStartupComponents) {
+        this.autoStartupComponents = autoStartupComponents;
     }
 }
