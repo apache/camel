@@ -221,8 +221,22 @@ public class MQ2Producer extends DefaultProducer {
         }
     }
 
-    private void deleteBroker(MqClient mqClient, Exchange exchange) {
+    private void deleteBroker(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
         String brokerId;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteBrokerRequest) {
+                DeleteBrokerResponse result;
+                try {
+                    result = mqClient.deleteBroker((DeleteBrokerRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Delete Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DeleteBrokerRequest.Builder builder = DeleteBrokerRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.BROKER_ID))) {
             brokerId = exchange.getIn().getHeader(MQ2Constants.BROKER_ID, String.class);
@@ -239,6 +253,7 @@ public class MQ2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void rebootBroker(MqClient mqClient, Exchange exchange) {
