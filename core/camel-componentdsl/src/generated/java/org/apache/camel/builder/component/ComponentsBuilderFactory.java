@@ -669,7 +669,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2TranslateComponentBuilderFactory.aws2Translate();
     }
     /**
-     * Azure Storage Blob Service (camel-azure)
+     * Azure Storage Blob Service (Legacy) (camel-azure)
      * The azure-blob component is used for storing and retrieving blobs from
      * Azure Storage Blob Service.
      * 

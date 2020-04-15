@@ -36,7 +36,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint consumers for the Azure Storage Blob Service
-     * component.
+     * (Legacy) component.
      */
     public interface BlobServiceEndpointConsumerBuilder
             extends
@@ -325,7 +325,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint consumers for the Azure Storage Blob
-     * Service component.
+     * Service (Legacy) component.
      */
     public interface AdvancedBlobServiceEndpointConsumerBuilder
             extends
@@ -450,7 +450,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint producers for the Azure Storage Blob Service
-     * component.
+     * (Legacy) component.
      */
     public interface BlobServiceEndpointProducerBuilder
             extends
@@ -884,7 +884,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint producers for the Azure Storage Blob
-     * Service component.
+     * Service (Legacy) component.
      */
     public interface AdvancedBlobServiceEndpointProducerBuilder
             extends
@@ -951,7 +951,8 @@ public interface BlobServiceEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Azure Storage Blob Service component.
+     * Builder for endpoint for the Azure Storage Blob Service (Legacy)
+     * component.
      */
     public interface BlobServiceEndpointBuilder
             extends
@@ -1196,7 +1197,7 @@ public interface BlobServiceEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Azure Storage Blob Service
+     * Advanced builder for endpoint for the Azure Storage Blob Service (Legacy)
      * component.
      */
     public interface AdvancedBlobServiceEndpointBuilder
@@ -1298,7 +1299,7 @@ public interface BlobServiceEndpointBuilderFactory {
 
     public interface BlobServiceBuilders {
         /**
-         * Azure Storage Blob Service (camel-azure)
+         * Azure Storage Blob Service (Legacy) (camel-azure)
          * The azure-blob component is used for storing and retrieving blobs
          * from Azure Storage Blob Service.
          * 
@@ -1316,7 +1317,7 @@ public interface BlobServiceEndpointBuilderFactory {
         }
     }
     /**
-     * Azure Storage Blob Service (camel-azure)
+     * Azure Storage Blob Service (Legacy) (camel-azure)
      * The azure-blob component is used for storing and retrieving blobs from
      * Azure Storage Blob Service.
      * 
