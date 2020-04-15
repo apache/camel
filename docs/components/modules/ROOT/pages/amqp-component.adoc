@@ -8,6 +8,16 @@
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+:artifactId: camel-amqp
+:description: Messaging with AMQP protocol using Apache QPid Client.
+:since: 1.2
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+
 *Since Camel {since}*
 
 *{component-header}*
@@ -56,7 +66,7 @@ The AMQP component supports 97 options, which are listed below.
 | *connectionFactory* (common) | The connection factory to be use. A connection factory must be configured either on the component or endpoint. |  | ConnectionFactory
 | *disableReplyTo* (common) | Specifies whether Camel ignores the JMSReplyTo header in messages. If true, Camel does not send a reply back to the destination specified in the JMSReplyTo header. You can use this option if you want Camel to consume from a route and you do not want Camel to automatically send back a reply message because another component in your code handles the reply message. You can also use this option if you want to use Camel as a proxy between different message brokers and you want to route message from one system to another. | false | boolean
 | *durableSubscriptionName* (common) | The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well. |  | String
-| *includeAmqpAnnotations* (common) | Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true will map AMQP message annotations to message headers. Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored. | false | boolean
+| *includeAmqpAnnotations* (common) | Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true maps AMQP message annotations that contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored. | false | boolean
 | *jmsMessageType* (common) | Allows you to force the use of a specific javax.jms.Message implementation for sending JMS messages. Possible values are: Bytes, Map, Object, Stream, Text. By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it. The value can be one of: Bytes, Map, Object, Stream, Text |  | JmsMessageType
 | *testConnectionOnStartup* (common) | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | boolean
 | *acknowledgementModeName* (consumer) | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE. The value can be one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ACKNOWLEDGE | String
