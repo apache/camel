@@ -146,7 +146,7 @@ public class MQ2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void createBroker(MqClient mqClient, Exchange exchange) {
+    private void createBroker(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
         String brokerName;
         String brokerEngine;
         String brokerEngineVersion;
@@ -154,6 +154,20 @@ public class MQ2Producer extends DefaultProducer {
         String instanceType;
         Boolean publiclyAccessible;
         List<User> users;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateBrokerRequest) {
+                CreateBrokerResponse result;
+                try {
+                    result = mqClient.createBroker((CreateBrokerRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateBrokerRequest.Builder builder = CreateBrokerRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.BROKER_NAME))) {
             brokerName = exchange.getIn().getHeader(MQ2Constants.BROKER_NAME, String.class);
@@ -206,6 +220,7 @@ public class MQ2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void deleteBroker(MqClient mqClient, Exchange exchange) {
