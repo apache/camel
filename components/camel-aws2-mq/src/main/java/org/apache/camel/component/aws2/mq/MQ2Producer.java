@@ -28,8 +28,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.services.kms.model.ListKeysRequest;
-import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.model.ConfigurationId;
 import software.amazon.awssdk.services.mq.model.CreateBrokerRequest;
