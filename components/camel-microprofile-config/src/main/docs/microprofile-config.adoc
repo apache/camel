@@ -1,7 +1,12 @@
-[[MicroProfileConfig]]
-= MicroProfile Config
+[[microprofile-config-component]]
+= Microprofile Config Component
+:docTitle: Microprofile Config
+:artifactId: camel-microprofile-config
+:description: Bridging Eclipse MicroProfile Config with Camel properties
+:since: 3.0
+:supportLevel: Stable
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
 The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
 properties component. This allows to use configuration management from Eclipse MicroProfile with Camel.

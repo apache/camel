@@ -1,6 +1,12 @@
+[[rxjava-component]]
 = RxJava Component
+:docTitle: RxJava
+:artifactId: camel-rxjava
+:description: RxJava based back-end for Camel's reactive streams component
+:since: 2.22
+:supportLevel: Stable
 
-*Since Camel 2.22*
+*Since Camel {since}*
 
 RxJava based back-end for Camel's reactive streams component.
 

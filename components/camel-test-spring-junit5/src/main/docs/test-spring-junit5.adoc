@@ -1,6 +1,12 @@
-= Camel Test Spring JUnit 5
+[[test-spring-junit5-component]]
+= Test Spring JUnit5 Component
+:docTitle: Test Spring JUnit5
+:artifactId: camel-test-spring-junit5
+:description: Camel unit testing with Spring and JUnit 5
+:since: 3.0
+:supportLevel: Stable
 
-*Available since 3.0*
+*Since Camel {since}*
 
 The `camel-test-spring-junit5` module makes it possible to test Camel Spring based applications with JUnit 5.
 
@@ -34,7 +40,7 @@ public class SimpleMockTest extends CamelSpringTestSupport {
 }
 ----
 
-This approach provides feature parity with `org.apache.camel.test.junit5.CamelTestSupport` from xref:components::test-junit5.adoc[camel-test-junit5] but does not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
+This approach provides feature parity with `org.apache.camel.test.junit5.CamelTestSupport` from xref:test-junit5.adoc[camel-test-junit5] but does not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
 
 Instead of instantiating the `CamelContext` and routes programmatically, this class relies on a Spring context to wire the needed components together. If your test extends this class, you must provide the Spring context by implementing the following method.
 [source,java]
@@ -134,7 +140,7 @@ Tips: It's possible to run JUnit 4 & JUnit 5 based Camel Spring tests side by si
 `camel-test-spring-junit5` and `junit-vintage-engine`. This configuration allows to migrate a Camel Spring test at once.
 
 === Typical migration steps linked to JUnit 5 support in Camel Test Spring
-* Migration steps linked to xref:components::test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
+* Migration steps linked to xref:test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
 * Imports of `org.apache.camel.test.spring.\*` should be replaced with `org.apache.camel.test.spring.junit5.*`
 * Usage of `@RunWith(CamelSpringRunner.class)` should be replaced with `@CamelSpringTest`
 * Usage of `@BootstrapWith(CamelTestContextBootstrapper.class)` should be replaced with `@CamelSpringTest`

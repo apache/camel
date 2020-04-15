@@ -1,5 +1,8 @@
 [[batch-config-eip]]
 = Batch-config EIP
+:description: Configures batch-processing resequence eip.
+:since: 
+:supportLevel: Stable
 
 Batch-processing resequence EIP
 

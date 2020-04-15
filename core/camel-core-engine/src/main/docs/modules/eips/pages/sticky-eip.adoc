@@ -1,5 +1,8 @@
 [[sticky-eip]]
 = Sticky EIP
+:description: Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
+:since: 
+:supportLevel: Stable
 
 Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
 

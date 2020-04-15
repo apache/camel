@@ -1,8 +1,13 @@
 [[jsonApi-dataformat]]
 = JSonApi DataFormat
 :page-source: components/camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc
+:docTitle: JSonApi
+:artifactId: camel-jsonapi
+:description: JSonApi data format is used for marshal and unmarshal Json API object.
+:since: 3.0
+:supportLevel: Stable
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
 // dataformat options: START
 The JSonApi dataformat supports 3 options, which are listed below.

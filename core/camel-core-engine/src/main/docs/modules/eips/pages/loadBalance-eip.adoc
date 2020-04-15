@@ -1,5 +1,8 @@
 [[loadBalance-eip]]
 = Load Balance EIP
+:description: Balances message processing among a number of nodes
+:since: 
+:supportLevel: Stable
 
 The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
 

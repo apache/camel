@@ -1,4 +1,11 @@
-[[SpringMain-SpringMain]]
-= Spring Main
+[[spring-main-component]]
+= Spring Main Component
+:docTitle: Spring Main
+:artifactId: camel-spring-main
+:description: Camel Spring Main support
+:since: 3.2
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 This module is used for running Spring standalone via a main class extended from `camel-main`.

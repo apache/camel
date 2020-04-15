@@ -1,7 +1,12 @@
-[[ShiroSecurity-ShiroSecurityComponent]]
-= Shiro Security Component
+[[shiro-component]]
+= Shiro Component
+:docTitle: Shiro
+:artifactId: camel-shiro
+:description: Security using Shiro
+:since: 2.5
+:supportLevel: Stable
 
-*Since Camel 2.5*
+*Since Camel {since}*
 
 The Shiro Security component in Camel is a security focused component,
 based on the Apache Shiro security project.
@@ -131,7 +136,7 @@ of the roles in the list are applicable.
 these or pass in your own Cipher implementation
 
 |`base64` |`false` |`boolean` |To use base64 encoding for the security token header,
-which allows transferring the header over xref:jms-component.adoc[JMS] etc. This
+which allows transferring the header over xref:ROOT:jms-component.adoc[JMS] etc. This
 option must also be set on `ShiroSecurityTokenInjector` as well.
 
 |`allPermissionsRequired` |`false` |`boolean` |The default is that authorization is granted if any of the

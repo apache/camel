@@ -1,8 +1,13 @@
 [[xquery-language]]
 = XQuery Language
 :page-source: components/camel-saxon/src/main/docs/xquery-language.adoc
+:docTitle: XQuery
+:artifactId: camel-saxon
+:description: To use XQuery (XML) in Camel expressions or predicates.
+:since: 1.0
+:supportLevel: Stable
 
-*Since Camel 1.0*
+*Since Camel {since}*
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 Expression or Predicate to be

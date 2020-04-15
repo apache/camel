@@ -1,12 +1,16 @@
 [[quartz-component]]
 = Quartz Component
 :page-source: components/camel-quartz/src/main/docs/quartz-component.adoc
+:docTitle: Quartz
+:artifactId: camel-quartz
+:description: Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Quartz component provides a scheduled delivery of messages using
 the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].  +

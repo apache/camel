@@ -1,8 +1,13 @@
 [[hl7terser-language]]
 = HL7 Terser Language
 :page-source: components/camel-hl7/src/main/docs/hl7terser-language.adoc
+:docTitle: HL7 Terser
+:artifactId: camel-hl7
+:description: To use HL7 terser scripts in Camel expressions or predicates.
+:since: 2.11
+:supportLevel: Stable
 
-*Since Camel 2.11*
+*Since Camel {since}*
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]

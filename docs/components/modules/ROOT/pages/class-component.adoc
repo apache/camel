@@ -1,12 +1,17 @@
 [[class-component]]
 = Class Component
 :page-source: components/camel-bean/src/main/docs/class-component.adoc
+:docTitle: Class
+:artifactId: camel-bean
+:description: The Class component is for invoking Java classes (Java beans) from Camel.
+:since: 2.4
+:supportLevel: Stable
+:component-header: Only producer is supported
+:core:
 
-*Since Camel 2.4*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Class component binds beans to Camel message exchanges. It works
 in the same way as the xref:bean-component.adoc[Bean] component but instead of

@@ -1,11 +1,15 @@
 [[rabbitmq-component]]
 = RabbitMQ Component
+:docTitle: RabbitMQ
+:artifactId: camel-rabbitmq
+:description: The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
+:since: 2.12
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.12*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The RabbitMQ component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP

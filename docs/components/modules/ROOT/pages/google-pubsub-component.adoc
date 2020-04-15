@@ -1,12 +1,16 @@
 [[google-pubsub-component]]
 = Google Pubsub Component
 :page-source: components/camel-google-pubsub/src/main/docs/google-pubsub-component.adoc
+:docTitle: Google Pubsub
+:artifactId: camel-google-pubsub
+:description: Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub/Sub libraries.
+:since: 2.19
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Google Pubsub component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via

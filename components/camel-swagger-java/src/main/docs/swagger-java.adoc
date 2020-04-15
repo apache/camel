@@ -1,6 +1,12 @@
+[[swagger-java-component]]
 = Swagger Java Component
+:docTitle: Swagger Java
+:artifactId: camel-swagger-java
+:description: Rest-dsl support for using swagger api-doc
+:since: 2.16
+:supportLevel: Stable
 
-*Since Camel 2.16*
+*Since Camel {since}*
 
 The  Rest DSL can be integrated with
 the `camel-swagger-java` module which is used for exposing the REST

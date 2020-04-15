@@ -1,11 +1,15 @@
 [[beanstalk-component]]
 = Beanstalk Component
+:docTitle: Beanstalk
+:artifactId: camel-beanstalk
+:description: The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
+:since: 2.15
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.15*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 Camel Beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.

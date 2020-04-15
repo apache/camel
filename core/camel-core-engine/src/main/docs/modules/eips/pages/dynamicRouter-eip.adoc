@@ -1,5 +1,8 @@
 [[dynamicRouter-eip]]
 = Dynamic Router EIP
+:description: Routes messages based on dynamic rules
+:since: 
+:supportLevel: Stable
 
 The http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
 

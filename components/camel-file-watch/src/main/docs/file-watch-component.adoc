@@ -1,14 +1,18 @@
 [[file-watch-component]]
 = File Watch Component
+:docTitle: File Watch
+:artifactId: camel-file-watch
+:description: The file-watch is used to monitor file events in directory using java.nio.file.WatchService
+:since: 3.0
+:supportLevel: Stable
+:component-header: Only consumer is supported
+
+*Since Camel {since}*
 
 *Since Camel 3.0*
 
-*Since Camel 3.0*
 
-
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 This component can be used to watch file modification events in folder. It is based on https://github.com/gmethvin/directory-watcher[gmethvin/directory-watcher].
 

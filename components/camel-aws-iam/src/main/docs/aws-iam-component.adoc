@@ -1,11 +1,15 @@
 [[aws-iam-component]]
 = AWS IAM Component
+:docTitle: AWS IAM
+:artifactId: camel-aws-iam
+:description: The aws-iam is used for managing Amazon IAM
+:since: 2.23
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.23*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The KMS component supports create, run, start, stop and terminate
 https://aws.amazon.com/iam/[AWS IAM] instances.

@@ -1,12 +1,16 @@
 [[lpr-component]]
 = Printer Component
 :page-source: components/camel-printer/src/main/docs/lpr-component.adoc
+:docTitle: Printer
+:artifactId: camel-printer
+:description: The printer component is used for sending messages to printers as print jobs.
+:since: 2.1
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.1*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Printer component provides a way to direct payloads on a route to
 a printer. Obviously the payload has to be a formatted piece of payload

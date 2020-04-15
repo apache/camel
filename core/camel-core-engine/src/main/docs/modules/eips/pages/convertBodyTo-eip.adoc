@@ -1,5 +1,8 @@
 [[convertBodyTo-eip]]
 = Convert Body To EIP
+:description: Converts the message body to another type
+:since: 
+:supportLevel: Stable
 
 The ConvertBodyTo EIP allows you to transform your body to a different type.
 

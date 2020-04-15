@@ -1,7 +1,12 @@
 [[file-language]]
 = File Language
+:docTitle: File
+:artifactId: camel-core-languages
+:description: For expressions and predicates using the file/simple language.
+:since: 1.1
+:supportLevel: Stable
 
-*Since Camel 1.1*
+*Since Camel {since}*
 
 The file language is merged with
 xref:simple-language.adoc[Simple] language which means you can use all the file

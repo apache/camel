@@ -1,6 +1,12 @@
-= OpenApi Java Component
+[[openapi-java-component]]
+= Openapi Java Component
+:docTitle: Openapi Java
+:artifactId: camel-openapi-java
+:description: Rest-dsl support for using openapi doc
+:since: 3.1
+:supportLevel: Stable
 
-*Available as of Camel 3.1.0*
+*Since Camel {since}*
 
 The  Rest DSL can be integrated with
 the `camel-openapi-java` module which is used for exposing the REST

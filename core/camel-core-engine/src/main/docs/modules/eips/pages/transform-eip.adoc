@@ -1,5 +1,8 @@
 [[transform-eip]]
 = Transform EIP
+:description: Transforms the message body based on an expression
+:since: 
+:supportLevel: Stable
 
 See below for details
 

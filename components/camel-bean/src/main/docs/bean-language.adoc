@@ -1,12 +1,17 @@
 [[bean-language]]
 = Bean method Language
-== Bean Language
-*Since Camel 1.3*
+:docTitle: Bean method
+:artifactId: camel-bean
+:description: To use a Java bean (aka method call) in Camel expressions or predicates.
+:since: 1.3
+:supportLevel: Stable
+
+*Since Camel {since}*
 
 The purpose of the Bean Language is to be able to implement an
 xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] using
 a simple method on a bean. The bean name is resolved using a xref:manual::registry.adoc[Registry], such as the
-xref:manual::spring.adoc[Spring] *`ApplicationContext`*, then a method is
+xref:ROOT:spring-summary.adoc[Spring] *`ApplicationContext`*, then a method is
 invoked to evaluate the xref:manual::expression.adoc[Expression] or
 xref:manual::predicate.adoc[Predicate]. If no method name is provided then one
 is chosen using the rules for xref:manual::bean-binding.adoc[Bean Binding];
@@ -116,7 +121,7 @@ The xref:bean-language.adoc[Bean Language] also supports invoking beans
 that isn't registered in the xref:manual::registry.adoc[Registry]. This is
 usable for quickly to invoke a bean from Java DSL where you don't need
 to register the bean in the xref:manual::registry.adoc[Registry] such as the
-xref:ROOT:spring.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
+xref:ROOT:spring-summary.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
 the bean and invoke the method if given a class or invoke an already
 existing instance.
 

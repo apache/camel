@@ -1,11 +1,15 @@
 [[ignite-set-component]]
 = Ignite Sets Component
+:docTitle: Ignite Sets
+:artifactId: camel-ignite
+:description: The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to interact with Ignite Set data structures.
+:since: 2.17
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.17*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Set data structures].
 

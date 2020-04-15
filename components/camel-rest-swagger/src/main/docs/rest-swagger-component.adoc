@@ -1,11 +1,15 @@
 [[rest-swagger-component]]
 = REST Swagger Component
+:docTitle: REST Swagger
+:artifactId: camel-rest-swagger
+:description: An awesome REST endpoint backed by Swagger specifications.
+:since: 2.19
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.19*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The REST Swagger* configures rest producers from
 http://swagger.io/[Swagger] (Open API) specification document and

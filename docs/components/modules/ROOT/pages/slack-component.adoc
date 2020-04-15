@@ -1,12 +1,16 @@
 [[slack-component]]
 = Slack Component
 :page-source: components/camel-slack/src/main/docs/slack-component.adoc
+:docTitle: Slack
+:artifactId: camel-slack
+:description: The slack component allows you to send messages to Slack.
+:since: 2.16
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.16*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Slack component allows you to connect to an instance
 of http://www.slack.com/[Slack] and delivers a message contained in the

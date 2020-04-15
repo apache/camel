@@ -28,7 +28,7 @@ out-of-box.
 
 Apache Camel provides support for xref:ROOT:bean-binding.adoc[Bean Binding]
 and seamless integration with popular frameworks such as
-xref:components::cdi.adoc[CDI], xref:ROOT:spring.adoc[Spring] and
+xref:components:others:cdi.adoc[CDI], xref:ROOT:spring.adoc[Spring] and
 xref:ROOT:using-osgi-blueprint-with-camel.adoc[Blueprint].
 Camel also has extensive support for
 xref:ROOT:testing.adoc[unit testing] your routes.

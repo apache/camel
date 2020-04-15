@@ -1,11 +1,16 @@
 [[browse-component]]
 = Browse Component
+:docTitle: Browse
+:artifactId: camel-browse
+:description: The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
+:since: 1.3
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+:core:
 
-*Since Camel 1.3*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Browse component provides a simple
 BrowsableEndpoint which can be useful for

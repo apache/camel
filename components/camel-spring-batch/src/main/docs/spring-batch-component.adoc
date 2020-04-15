@@ -1,11 +1,15 @@
 [[spring-batch-component]]
 = Spring Batch Component
+:docTitle: Spring Batch
+:artifactId: camel-spring-batch
+:description: The spring-batch component allows to send messages to Spring Batch for further processing.
+:since: 2.10
+:supportLevel: Stable
+:component-header: Only producer is supported
 
-*Since Camel 2.10*
+*Since Camel {since}*
 
-// HEADER START
-*Only producer is supported*
-// HEADER END
+*{component-header}*
 
 The Spring Batch component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring

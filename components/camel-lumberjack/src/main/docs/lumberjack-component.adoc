@@ -1,11 +1,15 @@
 [[lumberjack-component]]
 = Lumberjack Component
+:docTitle: Lumberjack
+:artifactId: camel-lumberjack
+:description: The lumberjack retrieves logs sent over the network using the Lumberjack protocol.
+:since: 2.18
+:supportLevel: Stable
+:component-header: Only consumer is supported
 
-*Since Camel 2.18*
+*Since Camel {since}*
 
-// HEADER START
-*Only consumer is supported*
-// HEADER END
+*{component-header}*
 
 The Lumberjack component retrieves logs sent over the network using the Lumberjack protocol,
 from https://www.elastic.co/fr/products/beats/filebeat[Filebeat] for instance.

@@ -1,11 +1,15 @@
 [[apns-component]]
 = APNS Component
+:docTitle: APNS
+:artifactId: camel-apns
+:description: For sending notifications to Apple iOS devices.
+:since: 2.8
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
 
-*Since Camel 2.8*
+*Since Camel {since}*
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
+*{component-header}*
 
 The APNS component is used for sending notifications to iOS devices.
 The APNS components use https://github.com/notnoop/java-apns[javapns]

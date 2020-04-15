@@ -1,6 +1,12 @@
+[[resilience4j-component]]
 = Resilience4j Component
+:docTitle: Resilience4j
+:artifactId: camel-resilience4j
+:description: Circuit Breaker EIP using Resilience4j
+:since: 3.0
+:supportLevel: Stable
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
 This component supports the Circuit Breaker EIP with the Resilience4j library.
 
@@ -18,4 +24,3 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ----
-

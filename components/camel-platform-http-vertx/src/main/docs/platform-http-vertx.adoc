@@ -1,6 +1,12 @@
-= PlatformHttp VertX
+[[platform-http-vertx-component]]
+= Platform Http Vertx Component
+:docTitle: Platform Http Vertx
+:artifactId: camel-platform-http-vertx
+:description: Implementation of the Platform HTTP Engine based on Vert.x Web
+:since: 3.2
+:supportLevel: Stable
 
-*Since Camel 3.2*
+*Since Camel {since}*
 
 The camel-platform-http-vertx is a Vert.x based implementation of the `PlatformHttp` SPI.
 

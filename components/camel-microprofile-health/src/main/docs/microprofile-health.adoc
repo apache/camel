@@ -1,7 +1,12 @@
-[[MicroProfileHealth-MicroProfileHealthComponent]]
-= MicroProfile Health
+[[microprofile-health-component]]
+= Microprofile Health Component
+:docTitle: Microprofile Health
+:artifactId: camel-microprofile-health
+:description: Bridging Eclipse MicroProfile Health with Camel health checks
+:since: 3.0
+:supportLevel: Stable
 
-*Since Camel 3.0*
+*Since Camel {since}*
 
 The microprofile-health component is used for bridging https://microprofile.io/project/eclipse/microprofile-health[Eclipse MicroProfile Health] checks with Camel's own Health Check API.
 

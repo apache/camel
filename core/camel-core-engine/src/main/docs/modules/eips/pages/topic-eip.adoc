@@ -1,5 +1,8 @@
 [[topic-eip]]
 = Topic EIP
+:description: Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
+:since: 
+:supportLevel: Stable
 
 Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
 
