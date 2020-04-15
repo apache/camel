@@ -544,13 +544,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
 
         if (disabled) {
-            LOG.info("JMXAgent disabled");
+            LOG.debug("JMXAgent disabled");
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
             getContext().getLifecycleStrategies().clear();
             // no need to add a lifecycle strategy as we do not need one as JMX is disabled
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
-            LOG.info("JMXAgent enabled: {}", camelJMXAgent);
+            LOG.debug("JMXAgent enabled: {}", camelJMXAgent);
 
             Map<String, Object> properties = new HashMap<>();
             if (camelJMXAgent.getMbeanObjectDomainName() != null) {
