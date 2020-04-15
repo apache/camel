@@ -32,7 +32,7 @@ import org.apache.camel.component.azure.blob.BlobServiceComponent;
 public interface AzureBlobComponentBuilderFactory {
 
     /**
-     * Azure Storage Blob Service (camel-azure)
+     * Azure Storage Blob Service (Legacy) (camel-azure)
      * The azure-blob component is used for storing and retrieving blobs from
      * Azure Storage Blob Service.
      * 
@@ -45,7 +45,7 @@ public interface AzureBlobComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Azure Storage Blob Service component.
+     * Builder for the Azure Storage Blob Service (Legacy) component.
      */
     interface AzureBlobComponentBuilder
             extends

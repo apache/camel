@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-blob",
-             title = "Azure Storage Blob Service", 
+             title = "Azure Storage Blob Service (Legacy)",
              syntax = "azure-blob:containerOrBlobUri", 
              label = "cloud,database,nosql")
 public class BlobServiceEndpoint extends DefaultEndpoint {
