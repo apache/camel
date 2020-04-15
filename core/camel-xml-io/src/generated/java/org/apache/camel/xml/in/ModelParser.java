@@ -1244,6 +1244,7 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); break;
+                case "autoStartComponents": def.setAutoStartComponents(val); break;
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "pattern": def.setPattern(val); break;

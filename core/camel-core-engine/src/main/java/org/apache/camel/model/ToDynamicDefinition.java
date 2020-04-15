@@ -60,6 +60,9 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String autoStartComponents;
 
     public ToDynamicDefinition() {
     }
@@ -206,6 +209,16 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         return this;
     }
 
+    /**
+     * Whether to auto startup components when toD is starting up.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition autoStartComponents(String autoStartComponents) {
+        setAutoStartComponents(autoStartComponents);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -261,4 +274,11 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         this.allowOptimisedComponents = allowOptimisedComponents;
     }
 
+    public String getAutoStartComponents() {
+        return autoStartComponents;
+    }
+
+    public void setAutoStartComponents(String autoStartComponents) {
+        this.autoStartComponents = autoStartComponents;
+    }
 }

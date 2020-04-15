@@ -63,6 +63,9 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         if  (definition.getAllowOptimisedComponents() != null) {
             processor.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
         }
+        if  (definition.getAutoStartComponents() != null) {
+            processor.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));
+        }
         return processor;
     }
 
