@@ -99,7 +99,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().warn("UpdateReadmeMojo execute");
+        getLog().debug("UpdateReadmeMojo execute");
         executeComponent();
         executeOther();
         executeDataFormat();
@@ -185,7 +185,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles);
-        getLog().warn("UpdateReadmeMojo jsonFiles: " + jsonFiles);
+        getLog().debug("UpdateReadmeMojo jsonFiles: " + jsonFiles);
 
         // only if there is components we should update the documentation files
         if (!jsonFiles.isEmpty()) {
@@ -446,7 +446,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
     Pattern attrRE = Pattern.compile(":([a-zA-Z0-9_-]*):( .*)?");
     private boolean updateHeader(String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix, String linkSuffix) throws MojoExecutionException {
-        getLog().warn("updateHeader " + file);
+        getLog().debug("updateHeader " + file);
 
         if (model == null || !file.exists()) {
             return false;
@@ -500,16 +500,13 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     break;
                 }
             }
-//            getLog().warn("updateHeader updated: " + updated);
 
             boolean copy = false;
             if (updated) {
                 for (int i = 0; i < lines.length; i++) {
                     if (!copy && lines[i].isEmpty()) {
-//                        getLog().warn("updateHeader empty line found: " + i);
                         copy = true;
                     } else if (copy) {
-//                        getLog().warn("updateHeader copying line " + i);
                         newLines.add(lines[i]);
                     }
                 }
@@ -522,7 +519,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 // build the new updated text
                 if (!newLines.get(newLines.size() - 1).isEmpty()) newLines.add("");
                 String newText = String.join("\n", newLines);
-//                getLog().warn("updateHeader newText:\n\n" + newText + "\n\n");
                 PackageHelper.writeText(file, newText);
             }
         } catch (Exception e) {
@@ -694,28 +690,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private OtherModel generateOtherModel(String json) {
         OtherModel other = JsonMapper.generateOtherModel(json);
-//        Stream.concat(other.getComponentOptions().stream(), other.getEndpointOptions().stream()).filter(BaseOptionModel::isRequired).forEach(option -> {
-//            String desc = "*Required* " + option.getDescription();
-//            option.setDescription(desc);
-//        });
-//        Stream.concat(other.getComponentOptions().stream(), other.getEndpointOptions().stream()).filter(BaseOptionModel::isDeprecated).forEach(option -> {
-//            String desc = "*Deprecated* " + option.getDescription();
-//            if (!Strings.isEmpty(option.getDeprecationNote())) {
-//                if (!desc.endsWith(".")) {
-//                    desc += ".";
-//                }
-//                desc = desc + " Deprecation note: " + option.getDeprecationNote();
-//            }
-//            option.setDescription(desc);
-//        });
-//        Stream.concat(other.getComponentOptions().stream(), other.getEndpointOptions().stream()).filter(o -> o.getEnums() != null).forEach(option -> {
-//            String desc = option.getDescription();
-//            if (!desc.endsWith(".")) {
-//                desc = desc + ".";
-//            }
-//            desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
-//            option.setDescription(desc);
-//        });
         return other;
     }
 
