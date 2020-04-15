@@ -21,11 +21,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import org.apache.camel.tooling.model.*;
+import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -85,6 +93,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
      */
     @Parameter
     protected Boolean failFast;
+    
+    Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
+    Pattern attrRE = Pattern.compile(":([a-zA-Z0-9_-]*):( .*)?");
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
@@ -443,8 +454,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         return title;
     }
 
-    Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
-    Pattern attrRE = Pattern.compile(":([a-zA-Z0-9_-]*):( .*)?");
     private boolean updateHeader(String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix, String linkSuffix) throws MojoExecutionException {
         getLog().debug("updateHeader " + file);
 
@@ -483,8 +492,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());
             //TODO put the deprecation into the actual support level.
-            newLines.add(":supportLevel: " + model.getSupportLevel().toString() + (model.isDeprecated()? "-deprecated": ""));
-            if (model.isDeprecated()) newLines.add(":deprecated: *deprecated*");
+            newLines.add(":supportLevel: " + model.getSupportLevel().toString() + (model.isDeprecated() ? "-deprecated" : ""));
+            if (model.isDeprecated()) {
+                newLines.add(":deprecated: *deprecated*");
+            }
             if (model instanceof ComponentModel) {
                 newLines.add(":component-header: " + generateComponentHeader((ComponentModel)model));
                 if (Arrays.asList(model.getLabel().split(",")).contains("core")) {
@@ -517,7 +528,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             if (updated) {
                 // build the new updated text
-                if (!newLines.get(newLines.size() - 1).isEmpty()) newLines.add("");
+                if (!newLines.get(newLines.size() - 1).isEmpty()) {
+                    newLines.add("");
+                }
                 String newText = String.join("\n", newLines);
                 PackageHelper.writeText(file, newText);
             }
