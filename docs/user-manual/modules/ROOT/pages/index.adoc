@@ -132,31 +132,9 @@ camel routes without them knowing
 * xref:rest-dsl.adoc[Rest DSL]
 
 
-=== Components
+=== Components, Data Formats, Languages and Enterprise Integration Patterns
 
-* Core Components
-
-indexList::[component=components,version=latest,module=ROOT,attributes=core,level=2]
-
-* Components
-
-indexList::[component=components,version=latest,module=ROOT,attributes="!core",level=2]
-
-* Miscellaneous Components
-
-indexList::[component=components,version=latest,module=others,level=2]
-
-=== Data Formats
-
-* Data Formats
-
-indexList::[component=components,version=latest,module=dataformats,level=2]
-
-=== xref:languages.adoc[Languages]
-
-* Expression Languages
-
-indexList::[component=components,version=latest,module=languages,level=2]
+Consult the xref:components::index.adoc[components] documentation.
 
 == Community
 
