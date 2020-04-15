@@ -133,5 +133,5 @@ Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side includ
 `camel-testcontainers-junit5` and `junit-vintage-engine`. This configuration allows to migrate a camel test at once.
 
 === Typical migration steps linked to JUnit 5 support in Camel Testcontainers
-* Migration steps linked to xref:components::test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
+* Migration steps linked to xref:test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
 * Imports of `org.apache.camel.test.testcontainers.\*` should be replaced with `org.apache.camel.test.testcontainers.junit5.*`
