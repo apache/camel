@@ -33,7 +33,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.dump.MessageDump;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -228,10 +227,7 @@ public class MessageHelperTest extends Assert {
     }
 
     @Test
-    public void testMessageDump() throws Exception {
-        JAXBContext jaxb = JAXBContext.newInstance(MessageDump.class);
-        Unmarshaller unmarshaller = jaxb.createUnmarshaller();
-
+    public void testMessageDumpBody() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -242,17 +238,8 @@ public class MessageHelperTest extends Assert {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message, true);
-
-        MessageDump dump = (MessageDump)unmarshaller.unmarshal(new StringReader(out));
-        assertNotNull(dump);
-
-        assertEquals("java.lang.String", dump.getBody().getType());
-        assertEquals("Hello World", dump.getBody().getValue());
-
-        assertEquals(1, dump.getHeaders().size());
-        assertEquals("foo", dump.getHeaders().get(0).getKey());
-        assertEquals("java.lang.Integer", dump.getHeaders().get(0).getType());
-        assertEquals("123", dump.getHeaders().get(0).getValue());
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World"));
     }
 
 }
