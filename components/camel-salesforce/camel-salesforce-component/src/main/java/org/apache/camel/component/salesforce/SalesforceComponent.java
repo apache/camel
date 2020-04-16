@@ -686,7 +686,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final String version = endpointConfig.getApiVersion();
         final PayloadFormat format = endpointConfig.getFormat();
 
-        return new DefaultRestClient(httpClient, version, format, session);
+        return new DefaultRestClient(httpClient, version, format, session, loginConfig);
     }
 
     RestClient createRestClient(final Map<String, Object> properties) throws Exception {
@@ -721,7 +721,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final SalesforceSession session = new SalesforceSession(camelContext, httpClient, httpClient.getTimeout(), loginConfig);
         httpClient.setSession(session);
 
-        return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session);
+        return new DefaultRestClient(httpClient, config.getApiVersion(), config.getFormat(), session, loginConfig);
     }
 
     static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) throws Exception {

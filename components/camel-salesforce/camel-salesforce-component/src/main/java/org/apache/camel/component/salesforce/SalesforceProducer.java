@@ -18,9 +18,11 @@ package org.apache.camel.component.salesforce;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.processor.AnalyticsApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
@@ -113,7 +115,17 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        LOG.debug("Processing {}", ((SalesforceEndpoint)getEndpoint()).getOperationName());
+        SalesforceEndpoint endpoint = (SalesforceEndpoint) getEndpoint();
+        SalesforceSession session = endpoint.getComponent().getSession();
+        if (session != null && session.getAccessToken() == null) {
+            try {
+                session.login(null);
+            } catch (SalesforceException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        LOG.debug("Processing {}", endpoint.getOperationName());
         return processor.process(exchange, callback);
     }
 
