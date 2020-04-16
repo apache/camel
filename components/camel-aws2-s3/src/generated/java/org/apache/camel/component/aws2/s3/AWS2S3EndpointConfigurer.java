@@ -73,6 +73,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "partsize":
         case "partSize": target.getConfiguration().setPartSize(property(camelContext, long.class, value)); return true;
+        case "pojorequest":
+        case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
@@ -148,6 +150,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("operation", org.apache.camel.component.aws2.s3.AWS2S3Operations.class);
         answer.put("overrideEndpoint", boolean.class);
         answer.put("partSize", long.class);
+        answer.put("pojoRequest", boolean.class);
         answer.put("policy", java.lang.String.class);
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         answer.put("prefix", java.lang.String.class);
@@ -231,6 +234,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "partsize":
         case "partSize": return target.getConfiguration().getPartSize();
+        case "pojorequest":
+        case "pojoRequest": return target.getConfiguration().isPojoRequest();
         case "policy": return target.getConfiguration().getPolicy();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();

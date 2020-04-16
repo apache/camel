@@ -63,6 +63,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "partsize":
         case "partSize": getOrCreateConfiguration(target).setPartSize(property(camelContext, long.class, value)); return true;
+        case "pojorequest":
+        case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -109,6 +111,7 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("operation", org.apache.camel.component.aws2.s3.AWS2S3Operations.class);
         answer.put("overrideEndpoint", boolean.class);
         answer.put("partSize", long.class);
+        answer.put("pojoRequest", boolean.class);
         answer.put("policy", java.lang.String.class);
         answer.put("prefix", java.lang.String.class);
         answer.put("proxyHost", java.lang.String.class);
@@ -164,6 +167,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "partsize":
         case "partSize": return getOrCreateConfiguration(target).getPartSize();
+        case "pojorequest":
+        case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "policy": return getOrCreateConfiguration(target).getPolicy();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "proxyhost":
