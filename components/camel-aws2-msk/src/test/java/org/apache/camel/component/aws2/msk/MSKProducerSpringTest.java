@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.kafka.model.ClusterState;
 import software.amazon.awssdk.services.kafka.model.CreateClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
+import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,6 +45,24 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.clusterInfoList().size());
+        assertEquals("test-kafka", resultGet.clusterInfoList().get(0).clusterName());
+    }
+    
+    @Test
+    public void mskListKeysPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listClustersPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
             }
         });
 
