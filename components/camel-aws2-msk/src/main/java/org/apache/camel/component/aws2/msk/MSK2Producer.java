@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.msk;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -95,7 +96,21 @@ public class MSK2Producer extends DefaultProducer {
         return (MSK2Endpoint)super.getEndpoint();
     }
 
-    private void listClusters(KafkaClient mskClient, Exchange exchange) {
+    private void listClusters(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListClustersRequest) {
+                ListClustersResponse result;
+                try {
+                    result = mskClient.listClusters((ListClustersRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListClustersRequest.Builder builder = ListClustersRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.CLUSTERS_FILTER))) {
             String filter = exchange.getIn().getHeader(MSK2Constants.CLUSTERS_FILTER, String.class);
@@ -110,6 +125,7 @@ public class MSK2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void createCluster(KafkaClient mskClient, Exchange exchange) {
