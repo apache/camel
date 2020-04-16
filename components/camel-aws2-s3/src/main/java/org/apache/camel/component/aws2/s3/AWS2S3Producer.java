@@ -303,33 +303,33 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CopyObjectRequest) {
-            	CopyObjectResponse result;
-                result = s3Client.copyObject((CopyObjectRequest) payload);
+                CopyObjectResponse result;
+                result = s3Client.copyObject((CopyObjectRequest)payload);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
         } else {
-        if (ObjectHelper.isEmpty(bucketNameDestination)) {
-            throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
-        }
-        if (ObjectHelper.isEmpty(destinationKey)) {
-            throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
-        }
-        CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder();
-        copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination).destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
-
-        if (getConfiguration().isUseAwsKMS()) {
-            if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
-                copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
+            if (ObjectHelper.isEmpty(bucketNameDestination)) {
+                throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
             }
-        }
+            if (ObjectHelper.isEmpty(destinationKey)) {
+                throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
+            }
+            CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder();
+            copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination).destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
 
-        CopyObjectResponse copyObjectResult = s3Client.copyObject(copyObjectRequest.build());
+            if (getConfiguration().isUseAwsKMS()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
+                    copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
+                }
+            }
 
-        Message message = getMessageForResponse(exchange);
-        if (copyObjectResult.versionId() != null) {
-            message.setHeader(AWS2S3Constants.VERSION_ID, copyObjectResult.versionId());
-        }
+            CopyObjectResponse copyObjectResult = s3Client.copyObject(copyObjectRequest.build());
+
+            Message message = getMessageForResponse(exchange);
+            if (copyObjectResult.versionId() != null) {
+                message.setHeader(AWS2S3Constants.VERSION_ID, copyObjectResult.versionId());
+            }
         }
     }
 
@@ -339,17 +339,17 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteObjectRequest) {
-                s3Client.deleteObject((DeleteObjectRequest) payload);
+                s3Client.deleteObject((DeleteObjectRequest)payload);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
             }
         } else {
 
-        DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(sourceKey);
-        s3Client.deleteObject(deleteObjectRequest.build());
+            DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(sourceKey);
+            s3Client.deleteObject(deleteObjectRequest.build());
 
-        Message message = getMessageForResponse(exchange);
-        message.setBody(true);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(true);
         }
     }
 
@@ -362,42 +362,42 @@ public class AWS2S3Producer extends DefaultProducer {
 
     private void deleteBucket(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
-        
+
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteBucketRequest) {
-            	DeleteBucketResponse resp = s3Client.deleteBucket((DeleteBucketRequest) payload);
+                DeleteBucketResponse resp = s3Client.deleteBucket((DeleteBucketRequest)payload);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(resp);
             }
         } else {
 
-        DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
-        DeleteBucketResponse resp = s3Client.deleteBucket(deleteBucketRequest.build());
+            DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
+            DeleteBucketResponse resp = s3Client.deleteBucket(deleteBucketRequest.build());
 
-        Message message = getMessageForResponse(exchange);
-        message.setBody(resp);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(resp);
         }
     }
 
     private void getObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
-        
+
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetObjectRequest) {
-            	ResponseInputStream<GetObjectResponse> res = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> res = s3Client.getObject((GetObjectRequest)payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
             }
         } else {
 
-        GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
-        ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
+            GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
+            ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
-        Message message = getMessageForResponse(exchange);
-        message.setBody(res);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(res);
         }
     }
 
@@ -406,44 +406,45 @@ public class AWS2S3Producer extends DefaultProducer {
         final String sourceKey = determineKey(exchange);
         final String rangeStart = exchange.getIn().getHeader(AWS2S3Constants.RANGE_START, String.class);
         final String rangeEnd = exchange.getIn().getHeader(AWS2S3Constants.RANGE_END, String.class);
-        
+
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetObjectRequest) {
-            	ResponseInputStream<GetObjectResponse> res = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> res = s3Client.getObject((GetObjectRequest)payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
             }
         } else {
 
-        if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
-            throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
-        }
+            if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
+                throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
+            }
 
-        GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey).range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
-        ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
+            GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey)
+                .range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
+            ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
-        Message message = getMessageForResponse(exchange);
-        message.setBody(res);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(res);
         }
     }
 
     private void listObjects(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
-        
+
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListObjectsRequest) {
-            	ListObjectsResponse objectList = s3Client.listObjects((ListObjectsRequest) payload);
+                ListObjectsResponse objectList = s3Client.listObjects((ListObjectsRequest)payload);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList.contents());
             }
         } else {
 
-        ListObjectsResponse objectList = s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+            ListObjectsResponse objectList = s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
 
-        Message message = getMessageForResponse(exchange);
-        message.setBody(objectList.contents());
+            Message message = getMessageForResponse(exchange);
+            message.setBody(objectList.contents());
         }
     }
 
