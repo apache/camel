@@ -29,6 +29,12 @@
             <to uri="aws2-msk://Test?mskClient=#amazonMskClient&amp;operation=listClusters"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:listClustersPojo"/>
+            <to uri="aws2-msk://Test?mskClient=#amazonMskClient&amp;operation=listClusters&amp;pojoRequest=true"/>
+            <to uri="mock:result"/>
+        </route>
 
         <route>
             <from uri="direct:createCluster"/>
