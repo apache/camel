@@ -138,10 +138,6 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
 
         boolean cors = config.isEnableCORS();
-        if (cors) {
-            // allow HTTP Options as we want to handle CORS in rest-dsl
-            map.put("optionsEnabled", "true");
-        }
 
         if (api) {
             map.put("matchOnUriPrefix", "true");
