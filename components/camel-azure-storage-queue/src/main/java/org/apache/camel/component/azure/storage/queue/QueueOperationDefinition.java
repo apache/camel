@@ -6,10 +6,11 @@ public enum QueueOperationDefinition {
     // Operations on the queue level
     createQueue,
     deleteQueue,
+    clearQueue,
     sendMessage,
     sendBatchMessages,
+    deleteMessage,
     receiveMessages,
     peekMessages,
-    updateMessage,
-    deleteMessage
+    updateMessage
 }

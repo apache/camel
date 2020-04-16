@@ -1,5 +1,7 @@
 package org.apache.camel.component.azure.storage.queue;
 
+import java.time.Duration;
+
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.queue.QueueServiceClient;
 import org.apache.camel.RuntimeCamelException;
@@ -22,6 +24,10 @@ public class QueueConfiguration {
     private String accessKey;
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
+    @UriParam(label = "producer")
+    private Duration timeToLive;
+    @UriParam(label = "consumer, producer")
+    private Duration visibilityTimeout;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -76,6 +82,28 @@ public class QueueConfiguration {
 
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
+    }
+
+    /**
+     * dd
+     */
+    public Duration getTimeToLive() {
+        return timeToLive;
+    }
+
+    public void setTimeToLive(Duration timeToLive) {
+        this.timeToLive = timeToLive;
+    }
+
+    /**
+     * dd
+     */
+    public Duration getVisibilityTimeout() {
+        return visibilityTimeout;
+    }
+
+    public void setVisibilityTimeout(Duration visibilityTimeout) {
+        this.visibilityTimeout = visibilityTimeout;
     }
 
     /**

@@ -23,4 +23,11 @@ public class QueueServiceClientWrapper {
     public List<QueueItem> listQueues(QueuesSegmentOptions options, Duration timeout) {
         return client.listQueues(options, timeout, Context.NONE).stream().collect(Collectors.toList());
     }
+
+    public QueueClientWrapper getQueueClientWrapper(final String queueName) {
+        if (!ObjectHelper.isEmpty(queueName)) {
+            return new QueueClientWrapper(client.getQueueClient(queueName));
+        }
+        throw new IllegalArgumentException("Cannot initialize a queue since no queue name was provided.");
+    }
 }

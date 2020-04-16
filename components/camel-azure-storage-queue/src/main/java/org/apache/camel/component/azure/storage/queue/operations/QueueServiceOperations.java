@@ -7,15 +7,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.queue.QueueExchangeHeaders;
 import org.apache.camel.component.azure.storage.queue.client.QueueServiceClientWrapper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * All operations related to {@link com.azure.storage.queue.QueueServiceClient}. This is at the service level
  */
 public class QueueServiceOperations {
-
-    private static final Logger LOG = LoggerFactory.getLogger(QueueServiceOperations.class);
 
     private QueueServiceClientWrapper client;
 

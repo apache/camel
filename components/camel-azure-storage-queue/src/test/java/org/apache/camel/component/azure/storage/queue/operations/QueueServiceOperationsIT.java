@@ -10,7 +10,6 @@ import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.component.azure.storage.queue.QueueTestUtils;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.component.azure.storage.queue.client.QueueServiceClientWrapper;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QueueServiceOperationsIT extends CamelTestSupport {
+class QueueServiceOperationsIT {
 
     private QueueConfiguration configuration;
     private QueueServiceClientWrapper clientWrapper;
