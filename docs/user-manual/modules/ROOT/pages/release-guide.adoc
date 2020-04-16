@@ -82,13 +82,13 @@ http://maven.apache.org/guides/mini/guide-encryption.html[password encryption re
 
 Complete the following steps to create a new Camel release:
 
-. Grab the latest source from Git and checkout the target branch (`BRANCH_NAME`) to build from:
+. Grab the latest source from Git, checkout the target branch (`BRANCH_NAME`) to build from, and create a release branch off of that branch:
 
   
   $ git clone https://git-wip-us.apache.org/repos/asf/camel.git
   $ cd camel
   $ git checkout BRANCH_NAME
-  
+  $ git checkout -b release/NEW-VERSION
 
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
 
@@ -107,7 +107,7 @@ Complete the following steps to create a new Camel release:
   ./mvnw release:prepare -DdryRun -Prelease
   
 
- * The release plugin will prompt for a release version, an SCM tag and next release version.
+* The release plugin will prompt for a release version, an SCM tag and next release version.
 
 *  Use a three digit release version of the form: `MAJOR.MINOR.PATCH`, e.g. `3.0.0`.
 
@@ -162,7 +162,7 @@ This will make it easier to identify it later.
 * If you click on your repository, a tree view will appear below.
 You can then browse the contents to ensure the artifacts are as you expect them.
 Pay particular attention to the existence of *.asc (signature) files.
-If the you don't like the content of the repository, right click your repository and choose "Drop".
+If you don't like the content of the repository, right click your repository and choose "Drop".
 You can then rollback your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
 
@@ -244,13 +244,47 @@ If the you don't like the content of the repository, right click your repository
 You can then rollback your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
 
-. Once the release has been voted
+[[ReleaseGuide-PublishingTheRelease-Camel]]
+== Publishing the Release
+
+. Once the release has been voted:
 
 * Login to https://repository.apache.org using your Apache LDAP credentials.
 Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
-your username and ip.
+your username and IP.
 Click "Release" on the tool bar above.
 This will release the artifacts.
+
+. Perform a release in JIRA:
+
+* Release the version in JIRA: https://issues.apache.org/jira/plugins/servlet/project-config/CAMEL/versions
+
+. Copy distribution to Apache website:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-distro.sh <Camel version>
+
+. Remove the old distribution version from the Apache webstie:
+
+  svn rm https://dist.apache.org/repos/dist/release/camel/apache-camel/OLD_CAMEL_VERSION -m "Removed the old release"
+
+. Upload the new schema files (and the manual):
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-website.sh <Camel version>
+
+. Merge the release branch back into the corresponding base branch (e.g. merge `release/3.2.0` into `camel-3.2.x`)
+
+  git checkout BASE_BRANCH
+  git pull
+  git merge --no-ff release/VERSION
+  git push
+
+. Delete the local and remote release branch:
+
+  git branch -D release/VERSION
+  git push origin --delete release/VERSION
+
 
 [[ReleaseGuide-CreatingTheRelease-Camel-karaf]]
 == Creating the Release for camel-karaf
