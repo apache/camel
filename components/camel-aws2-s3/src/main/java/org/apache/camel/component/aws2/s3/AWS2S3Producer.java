@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
@@ -38,10 +39,14 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
+import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.BucketCannedACL;
@@ -292,12 +297,20 @@ public class AWS2S3Producer extends DefaultProducer {
         }
     }
 
-    private void copyObject(S3Client s3Client, Exchange exchange) {
+    private void copyObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         final String destinationKey = exchange.getIn().getHeader(AWS2S3Constants.DESTINATION_KEY, String.class);
         final String bucketNameDestination = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, String.class);
-
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CopyObjectRequest) {
+            	CopyObjectResponse result;
+                result = s3Client.copyObject((CopyObjectRequest) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         if (ObjectHelper.isEmpty(bucketNameDestination)) {
             throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
         }
@@ -318,6 +331,7 @@ public class AWS2S3Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         if (copyObjectResult.versionId() != null) {
             message.setHeader(AWS2S3Constants.VERSION_ID, copyObjectResult.versionId());
+        }
         }
     }
 

@@ -81,6 +81,8 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
 
     public long getPartSize() {
         return partSize;
@@ -424,6 +426,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+    
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * If we want to use a POJO request as body or not
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
     }
 
     // *************************************************
