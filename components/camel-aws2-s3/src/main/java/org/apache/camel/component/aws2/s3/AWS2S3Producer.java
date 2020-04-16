@@ -362,25 +362,45 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setBody(bucketsList.buckets());
     }
 
-    private void deleteBucket(S3Client s3Client, Exchange exchange) {
+    private void deleteBucket(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
+        
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteBucketRequest) {
+            	DeleteBucketResponse resp = s3Client.deleteBucket((DeleteBucketRequest) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(resp);
+            }
+        } else {
 
         DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
         DeleteBucketResponse resp = s3Client.deleteBucket(deleteBucketRequest.build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(resp);
+        }
     }
 
-    private void getObject(S3Client s3Client, Exchange exchange) {
+    private void getObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
+        
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetObjectRequest) {
+            	ResponseInputStream<GetObjectResponse> res = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+                Message message = getMessageForResponse(exchange);
+                message.setBody(res);
+            }
+        } else {
 
         GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
         ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(res);
+        }
     }
 
     private void getObjectRange(S3Client s3Client, Exchange exchange) {
