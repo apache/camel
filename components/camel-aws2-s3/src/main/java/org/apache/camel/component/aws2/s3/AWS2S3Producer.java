@@ -335,15 +335,24 @@ public class AWS2S3Producer extends DefaultProducer {
         }
     }
 
-    private void deleteObject(S3Client s3Client, Exchange exchange) {
+    private void deleteObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteObjectRequest) {
+                s3Client.deleteObject((DeleteObjectRequest) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(true);
+            }
+        } else {
 
         DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(sourceKey);
         s3Client.deleteObject(deleteObjectRequest.build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(true);
+        }
     }
 
     private void listBuckets(S3Client s3Client, Exchange exchange) {
