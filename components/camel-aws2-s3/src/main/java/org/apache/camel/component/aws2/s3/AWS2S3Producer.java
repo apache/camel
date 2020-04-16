@@ -45,8 +45,6 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
-import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
-import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.BucketCannedACL;
@@ -403,11 +401,20 @@ public class AWS2S3Producer extends DefaultProducer {
         }
     }
 
-    private void getObjectRange(S3Client s3Client, Exchange exchange) {
+    private void getObjectRange(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         final String rangeStart = exchange.getIn().getHeader(AWS2S3Constants.RANGE_START, String.class);
         final String rangeEnd = exchange.getIn().getHeader(AWS2S3Constants.RANGE_END, String.class);
+        
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetObjectRequest) {
+            	ResponseInputStream<GetObjectResponse> res = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+                Message message = getMessageForResponse(exchange);
+                message.setBody(res);
+            }
+        } else {
 
         if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
             throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
@@ -418,15 +425,26 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(res);
+        }
     }
 
-    private void listObjects(S3Client s3Client, Exchange exchange) {
+    private void listObjects(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
         final String bucketName = determineBucketName(exchange);
+        
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListObjectsRequest) {
+            	ListObjectsResponse objectList = s3Client.listObjects((ListObjectsRequest) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(objectList.contents());
+            }
+        } else {
 
         ListObjectsResponse objectList = s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(objectList.contents());
+        }
     }
 
     private AWS2S3Operations determineOperation(Exchange exchange) {
