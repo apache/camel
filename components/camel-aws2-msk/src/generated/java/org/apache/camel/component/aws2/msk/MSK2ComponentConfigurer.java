@@ -36,6 +36,8 @@ public class MSK2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "mskclient":
         case "mskClient": getOrCreateConfiguration(target).setMskClient(property(camelContext, software.amazon.awssdk.services.kafka.KafkaClient.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.msk.MSK2Operations.class, value)); return true;
+        case "pojorequest":
+        case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -58,6 +60,7 @@ public class MSK2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("lazyStartProducer", boolean.class);
         answer.put("mskClient", software.amazon.awssdk.services.kafka.KafkaClient.class);
         answer.put("operation", org.apache.camel.component.aws2.msk.MSK2Operations.class);
+        answer.put("pojoRequest", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);
         answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
@@ -80,6 +83,8 @@ public class MSK2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "mskclient":
         case "mskClient": return getOrCreateConfiguration(target).getMskClient();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "pojorequest":
+        case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":

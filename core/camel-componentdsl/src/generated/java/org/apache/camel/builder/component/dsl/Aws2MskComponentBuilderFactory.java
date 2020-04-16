@@ -108,6 +108,18 @@ public interface Aws2MskComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2MskComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the MSK client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -221,6 +233,7 @@ public interface Aws2MskComponentBuilderFactory {
             case "lazyStartProducer": ((MSK2Component) component).setLazyStartProducer((boolean) value); return true;
             case "mskClient": getOrCreateConfiguration((MSK2Component) component).setMskClient((software.amazon.awssdk.services.kafka.KafkaClient) value); return true;
             case "operation": getOrCreateConfiguration((MSK2Component) component).setOperation((org.apache.camel.component.aws2.msk.MSK2Operations) value); return true;
+            case "pojoRequest": getOrCreateConfiguration((MSK2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((MSK2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((MSK2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((MSK2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
