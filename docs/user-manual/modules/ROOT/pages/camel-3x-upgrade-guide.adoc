@@ -1084,3 +1084,10 @@ JVM settings to be able to manage Camel remotely on localhost, port 9913:
 -Dcom.sun.management.jmxremote.ssl=false
 -Djava.rmi.server.hostname=localhost
 ----
+
+== Upgrading Camel 3.2 to 3.3
+
+=== API changes
+
+The dump model classes in package `org.apache.camel.support.dump` has been removed
+as they were not in use by Camel.
