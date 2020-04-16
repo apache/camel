@@ -214,7 +214,21 @@ public class MSK2Producer extends DefaultProducer {
         }
     }
 
-    private void describeCluster(KafkaClient mskClient, Exchange exchange) {
+    private void describeCluster(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DescribeClusterRequest) {
+                DescribeClusterResponse result;
+                try {
+                    result = mskClient.describeCluster((DescribeClusterRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DescribeClusterRequest.Builder builder = DescribeClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.CLUSTER_ARN))) {
             String arn = exchange.getIn().getHeader(MSK2Constants.CLUSTER_ARN, String.class);
@@ -231,6 +245,7 @@ public class MSK2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
