@@ -49,7 +49,7 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
     public AnalyticsApiProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        this.analyticsClient = new DefaultAnalyticsApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
+        this.analyticsClient = new DefaultAnalyticsApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient, loginConfig);
     }
 
     @Override

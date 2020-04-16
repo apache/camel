@@ -27,6 +27,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
@@ -58,8 +59,8 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     private static final String INCLUDE_DETAILS_QUERY_PARAM = "?includeDetails=";
     private ObjectMapper objectMapper;
 
-    public DefaultAnalyticsApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient) throws SalesforceException {
-        super(version, session, httpClient);
+    public DefaultAnalyticsApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig) throws SalesforceException {
+        super(version, session, httpClient, loginConfig);
 
         objectMapper = JsonUtils.createObjectMapper();
     }

@@ -25,6 +25,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
@@ -46,6 +47,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected final OperationName operationName;
     protected final SalesforceSession session;
     protected final SalesforceHttpClient httpClient;
+    protected final SalesforceLoginConfig loginConfig;
     protected final boolean rawPayload;
 
     public AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
@@ -55,6 +57,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
         final SalesforceComponent component = endpoint.getComponent();
         session = component.getSession();
+        loginConfig = component.getLoginConfig();
         httpClient = endpoint.getConfiguration().getHttpClient();
         rawPayload = endpoint.getConfiguration().isRawPayload();
     }

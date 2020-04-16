@@ -64,7 +64,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException("Unsupported format: " + format, 0);
         }
 
-        compositeClient = new DefaultCompositeApiClient(configuration, format, apiVersion, session, httpClient);
+        compositeClient = new DefaultCompositeApiClient(configuration, format, apiVersion, session, httpClient, loginConfig);
 
     }
 
