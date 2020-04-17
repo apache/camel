@@ -77,6 +77,19 @@ public interface AzureQueueComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AzureQueueComponentBuilder validateClientURI(
+                boolean validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -243,6 +256,7 @@ public interface AzureQueueComponentBuilderFactory {
             switch (name) {
             case "azureQueueClient": getOrCreateConfiguration((QueueServiceComponent) component).setAzureQueueClient((com.microsoft.azure.storage.queue.CloudQueue) value); return true;
             case "credentials": getOrCreateConfiguration((QueueServiceComponent) component).setCredentials((com.microsoft.azure.storage.StorageCredentials) value); return true;
+            case "validateClientURI": getOrCreateConfiguration((QueueServiceComponent) component).setValidateClientURI((boolean) value); return true;
             case "bridgeErrorHandler": ((QueueServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((QueueServiceComponent) component).setLazyStartProducer((boolean) value); return true;
             case "messageTimeToLive": getOrCreateConfiguration((QueueServiceComponent) component).setMessageTimeToLive((int) value); return true;

@@ -163,6 +163,19 @@ public interface AzureBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AzureBlobComponentBuilder validateClientURI(
+                boolean validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -360,6 +373,7 @@ public interface AzureBlobComponentBuilderFactory {
             case "fileDir": getOrCreateConfiguration((BlobServiceComponent) component).setFileDir((java.lang.String) value); return true;
             case "publicForRead": getOrCreateConfiguration((BlobServiceComponent) component).setPublicForRead((boolean) value); return true;
             case "streamReadSize": getOrCreateConfiguration((BlobServiceComponent) component).setStreamReadSize((int) value); return true;
+            case "validateClientURI": getOrCreateConfiguration((BlobServiceComponent) component).setValidateClientURI((boolean) value); return true;
             case "bridgeErrorHandler": ((BlobServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "blobMetadata": getOrCreateConfiguration((BlobServiceComponent) component).setBlobMetadata((java.util.Map) value); return true;
             case "blobPrefix": getOrCreateConfiguration((BlobServiceComponent) component).setBlobPrefix((java.lang.String) value); return true;

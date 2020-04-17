@@ -166,6 +166,7 @@ public final class BlobServiceUtil {
 
     public static CloudBlob getConfiguredClient(Exchange exchange, BlobServiceConfiguration cfg) {
         CloudBlob client = cfg.getAzureBlobClient();
+        boolean validateURI = cfg.isValidateClientURI();
         if (client != null) {
             Class<?> expectedCls = null;
             if (cfg.getBlobType() == BlobType.blockblob) {
@@ -178,7 +179,7 @@ public final class BlobServiceUtil {
             if (client.getClass() != expectedCls) {
                 throw new IllegalArgumentException("Invalid Client Type");
             }
-            if (!client.getUri().equals(prepareStorageBlobUri(exchange, cfg))) {
+            if (validateURI && !client.getUri().equals(prepareStorageBlobUri(exchange, cfg))) {
                 throw new IllegalArgumentException("Invalid Client URI");
             }
         }

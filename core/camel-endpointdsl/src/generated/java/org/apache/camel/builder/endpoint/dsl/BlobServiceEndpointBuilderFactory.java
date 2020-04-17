@@ -260,6 +260,32 @@ public interface BlobServiceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobServiceEndpointConsumerBuilder validateClientURI(
+                boolean validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
+            return this;
+        }
+        /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobServiceEndpointConsumerBuilder validateClientURI(
+                String validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -671,6 +697,32 @@ public interface BlobServiceEndpointBuilderFactory {
         default BlobServiceEndpointProducerBuilder streamReadSize(
                 String streamReadSize) {
             doSetProperty("streamReadSize", streamReadSize);
+            return this;
+        }
+        /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobServiceEndpointProducerBuilder validateClientURI(
+                boolean validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
+            return this;
+        }
+        /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobServiceEndpointProducerBuilder validateClientURI(
+                String validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
             return this;
         }
         /**
@@ -1168,6 +1220,32 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointBuilder streamReadSize(String streamReadSize) {
             doSetProperty("streamReadSize", streamReadSize);
+            return this;
+        }
+        /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobServiceEndpointBuilder validateClientURI(
+                boolean validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
+            return this;
+        }
+        /**
+         * Whether to validate the Azure client URI.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default BlobServiceEndpointBuilder validateClientURI(
+                String validateClientURI) {
+            doSetProperty("validateClientURI", validateClientURI);
             return this;
         }
         /**
