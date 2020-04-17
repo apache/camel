@@ -146,6 +146,9 @@ public final class JsonMapper {
         if (model.getSupportLevel() != null) {
             obj.put("supportLevel", model.getSupportLevel().name());
         }
+        if (model.isNativeSupported()) {
+            obj.put("nativeSupported", model.isNativeSupported());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -202,6 +205,9 @@ public final class JsonMapper {
         if (model.getSupportLevel() != null) {
             obj.put("supportLevel", model.getSupportLevel().name());
         }
+        if (model.isNativeSupported()) {
+            obj.put("nativeSupported", model.isNativeSupported());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -253,6 +259,9 @@ public final class JsonMapper {
         obj.put("output", model.isOutput());
         if (model.getSupportLevel() != null) {
             obj.put("supportLevel", model.getSupportLevel().name());
+        }
+        if (model.isNativeSupported()) {
+            obj.put("nativeSupported", model.isNativeSupported());
         }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
@@ -306,6 +315,9 @@ public final class JsonMapper {
         if (model.getSupportLevel() != null) {
             obj.put("supportLevel", model.getSupportLevel().name());
         }
+        if (model.isNativeSupported()) {
+            obj.put("nativeSupported", model.isNativeSupported());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -349,6 +361,9 @@ public final class JsonMapper {
         if (model.getSupportLevel() != null) {
             obj.put("supportLevel", model.getSupportLevel().name());
         }
+        if (model.isNativeSupported()) {
+            obj.put("nativeSupported", model.isNativeSupported());
+        }
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
@@ -368,6 +383,7 @@ public final class JsonMapper {
         model.setDeprecationNote(mobj.getString("label"));
         model.setJavaType(mobj.getString("javaType"));
         model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
+        model.setNativeSupported(mobj.getBooleanOrDefault("nativeSupported", false));
     }
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
