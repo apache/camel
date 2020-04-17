@@ -261,7 +261,8 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Move objects from S3 bucket to a different bucket after they have been retrieved. 
+     * Move objects from S3 bucket to a different bucket after they have been retrieved. To accomplish the operation 
+     * the destinationBucket option must be set.
      * The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object
      * is not moved.
      */
