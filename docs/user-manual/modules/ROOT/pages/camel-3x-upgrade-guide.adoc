@@ -1091,3 +1091,5 @@ JVM settings to be able to manage Camel remotely on localhost, port 9913:
 
 The dump model classes in package `org.apache.camel.support.dump` has been removed
 as they were not in use by Camel.
+
+In relation to the dump model classes removal, in camel-karaf the following commands were removed: `context-info`, `route-info`, `route-profile` and `route-step`.
