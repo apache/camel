@@ -1117,5 +1117,5 @@ context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
 context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES, JaxbAnnotationModule.class.getName());
 ----
 
-this change affects also the Java DSL and as conseguence the `enableJaxbAnnotationModule` option for the Json 
-DataFormat definiton has been removed.
+this change affects also the Java DSL and as consequence the `enableJaxbAnnotationModule` option for the Json 
+DataFormat definition has been removed.
