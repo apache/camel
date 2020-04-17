@@ -20,6 +20,7 @@ public final class JacksonConstants {
 
     public static final String ENABLE_TYPE_CONVERTER = "CamelJacksonEnableTypeConverter";
     public static final String TYPE_CONVERTER_TO_POJO = "CamelJacksonTypeConverterToPojo";
+    public static final String TYPE_CONVERTER_MODULE_CLASS_NAMES = "CamelJacksonTypeConverterModuleClassNames";
 
     public static final String UNMARSHAL_TYPE = "CamelJacksonUnmarshalType";
 

@@ -38,11 +38,6 @@ public class ListJacksonDataFormat extends JacksonDataFormat {
         useList();
     }
 
-    public ListJacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
-        super(unmarshalType, jsonView, enableJaxbAnnotationModule);
-        useList();
-    }
-
     public ListJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType) {
         super(mapper, unmarshalType);
         useList();

@@ -39,8 +39,6 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "allowJmsType": dataformat.setAllowJmsType(property(camelContext, boolean.class, value)); return true;
         case "uselist":
         case "useList": dataformat.setUseList(property(camelContext, boolean.class, value)); return true;
-        case "enablejaxbannotationmodule":
-        case "enableJaxbAnnotationModule": dataformat.setEnableJaxbAnnotationModule(property(camelContext, boolean.class, value)); return true;
         case "enablefeatures":
         case "enableFeatures": dataformat.setEnableFeatures(property(camelContext, java.lang.String.class, value)); return true;
         case "disablefeatures":

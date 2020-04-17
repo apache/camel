@@ -1974,7 +1974,6 @@ public class ModelParser extends BaseParser {
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
-                case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
                 case "include": def.setInclude(val); break;
                 case "jsonView": def.setJsonView(asClass(val)); break;
                 case "library": def.setLibrary(JsonLibrary.valueOf(val)); break;
