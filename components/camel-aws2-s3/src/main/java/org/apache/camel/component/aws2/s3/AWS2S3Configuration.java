@@ -44,6 +44,10 @@ public class AWS2S3Configuration implements Cloneable {
     private String region;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+    @UriParam(label = "consumer")
+    private boolean moveAfterRead;
+    @UriParam(label = "consumer")
+    private String destinationBucket;
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
     @UriParam(label = "producer")
@@ -250,6 +254,30 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
+    }
+
+    public boolean isMoveAfterRead() {
+        return moveAfterRead;
+    }
+
+    /**
+     * Move objects from S3 bucket to a different bucket after they have been retrieved. 
+     * The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object
+     * is not moved.
+     */
+    public void setMoveAfterRead(boolean moveAfterRead) {
+        this.moveAfterRead = moveAfterRead;
+    }
+
+    public String getDestinationBucket() {
+        return destinationBucket;
+    }
+
+    /**
+     * Define the destination bucket where an object must be moved when moveAfterRead is set to true. 
+     */
+    public void setDestinationBucket(String destinationBucket) {
+        this.destinationBucket = destinationBucket;
     }
 
     public boolean isDeleteAfterWrite() {

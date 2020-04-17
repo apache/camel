@@ -255,6 +255,19 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the destination bucket where an object must be moved when
+         * moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Aws2S3ComponentBuilder destinationBucket(
+                java.lang.String destinationBucket) {
+            doSetProperty("destinationBucket", destinationBucket);
+            return this;
+        }
+        /**
          * To get the object from the bucket with the given file name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -295,6 +308,20 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder includeFolders(boolean includeFolders) {
             doSetProperty("includeFolders", includeFolders);
+            return this;
+        }
+        /**
+         * Move objects from S3 bucket to a different bucket after they have
+         * been retrieved. The copy bucket operation is only performed if the
+         * Exchange is committed. If a rollback occurs, the object is not moved.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Aws2S3ComponentBuilder moveAfterRead(boolean moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
             return this;
         }
         /**
@@ -523,9 +550,11 @@ public interface Aws2S3ComponentBuilderFactory {
             case "bridgeErrorHandler": ((AWS2S3Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
+            case "destinationBucket": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucket((java.lang.String) value); return true;
             case "fileName": getOrCreateConfiguration((AWS2S3Component) component).setFileName((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
+            case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((AWS2S3Component) component).setPrefix((java.lang.String) value); return true;
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
             case "deleteAfterWrite": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterWrite((boolean) value); return true;

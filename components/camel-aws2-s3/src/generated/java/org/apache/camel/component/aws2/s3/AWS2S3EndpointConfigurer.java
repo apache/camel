@@ -45,6 +45,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": target.getConfiguration().setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationbucket":
+        case "destinationBucket": target.getConfiguration().setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -66,6 +68,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxConnections": target.setMaxConnections(property(camelContext, int.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "moveafterread":
+        case "moveAfterRead": target.getConfiguration().setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "multipartupload":
         case "multiPartUpload": target.getConfiguration().setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
@@ -135,6 +139,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("deleteAfterRead", boolean.class);
         answer.put("deleteAfterWrite", boolean.class);
         answer.put("delimiter", java.lang.String.class);
+        answer.put("destinationBucket", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("fileName", java.lang.String.class);
@@ -146,6 +151,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxConnections", int.class);
         answer.put("maxMessagesPerPoll", int.class);
+        answer.put("moveAfterRead", boolean.class);
         answer.put("multiPartUpload", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.s3.AWS2S3Operations.class);
         answer.put("overrideEndpoint", boolean.class);
@@ -206,6 +212,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": return target.getConfiguration().isDeleteAfterWrite();
         case "delimiter": return target.getConfiguration().getDelimiter();
+        case "destinationbucket":
+        case "destinationBucket": return target.getConfiguration().getDestinationBucket();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -227,6 +235,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxConnections": return target.getMaxConnections();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "moveafterread":
+        case "moveAfterRead": return target.getConfiguration().isMoveAfterRead();
         case "multipartupload":
         case "multiPartUpload": return target.getConfiguration().isMultiPartUpload();
         case "operation": return target.getConfiguration().getOperation();
