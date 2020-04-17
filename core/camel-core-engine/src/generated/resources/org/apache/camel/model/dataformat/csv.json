@@ -4,10 +4,10 @@
     "name": "csv",
     "title": "CSV",
     "description": "The CSV data format is used for handling CSV payloads.",
-    "firstVersion": "1.3.0",
-    "javaType": "org.apache.camel.model.dataformat.CsvDataFormat",
-    "label": "dataformat,transformation,csv",
     "deprecated": false,
+    "firstVersion": "1.3.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.CsvDataFormat",
     "input": false,
     "output": false
   },

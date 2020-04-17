@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "defaultLoadBalancer",
     "title": "Default Load Balancer",
-    "javaType": "org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration",
-    "label": "routing,cloud,load-balancing",
     "deprecated": false,
+    "label": "routing,cloud,load-balancing",
+    "javaType": "org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration",
     "input": false,
     "output": false
   },

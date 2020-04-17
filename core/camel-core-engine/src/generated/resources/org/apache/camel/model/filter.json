@@ -4,9 +4,9 @@
     "name": "filter",
     "title": "Filter",
     "description": "Filter out messages based using a predicate",
-    "javaType": "org.apache.camel.model.FilterDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.FilterDefinition",
     "input": true,
     "output": true
   },

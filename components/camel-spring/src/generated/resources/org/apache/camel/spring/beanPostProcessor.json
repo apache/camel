@@ -4,9 +4,9 @@
     "name": "beanPostProcessor",
     "title": "Bean Post Processor",
     "description": "Spring specific DefaultCamelBeanPostProcessor which uses Spring BeanPostProcessor to post process beans.",
-    "javaType": "org.apache.camel.spring.CamelBeanPostProcessor",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelBeanPostProcessor",
     "input": false,
     "output": false
   },

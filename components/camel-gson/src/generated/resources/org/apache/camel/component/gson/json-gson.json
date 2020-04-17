@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "json-gson",
-    "modelName": "json",
     "title": "JSon GSon",
     "description": "JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.10.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.gson.GsonDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-gson",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "json",
+    "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat"
   },
   "properties": {
     "prettyPrint": { "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." },

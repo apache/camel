@@ -4,9 +4,9 @@
     "name": "head",
     "title": "Head",
     "description": "Rest HEAD command",
-    "javaType": "org.apache.camel.model.rest.HeadVerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.HeadVerbDefinition",
     "input": true,
     "output": false
   },

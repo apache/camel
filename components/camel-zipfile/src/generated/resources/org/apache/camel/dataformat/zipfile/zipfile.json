@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "zipfile",
-    "modelName": "zipfile",
     "title": "Zip File",
     "description": "The Zip File data format is a message compression and de-compression format of zip files.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.11.0",
     "label": "dataformat,transformation,file",
     "javaType": "org.apache.camel.dataformat.zipfile.ZipFileDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.ZipFileDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zipfile",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "zipfile",
+    "modelJavaType": "org.apache.camel.model.dataformat.ZipFileDataFormat"
   },
   "properties": {
     "usingIterator": { "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode." },

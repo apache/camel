@@ -4,9 +4,9 @@
     "name": "patch",
     "title": "Patch",
     "description": "Rest PATCH command",
-    "javaType": "org.apache.camel.model.rest.PatchVerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.PatchVerbDefinition",
     "input": true,
     "output": false
   },

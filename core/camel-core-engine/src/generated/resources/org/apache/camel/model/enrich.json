@@ -4,9 +4,9 @@
     "name": "enrich",
     "title": "Enrich",
     "description": "Enriches a message with data from a secondary resource",
-    "javaType": "org.apache.camel.model.EnrichDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.EnrichDefinition",
     "input": true,
     "output": false
   },

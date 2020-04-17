@@ -4,10 +4,10 @@
     "name": "barcode",
     "title": "Barcode",
     "description": "The Barcode data format is used for creating barccode images (such as QR-Code)",
-    "firstVersion": "2.14.0",
-    "javaType": "org.apache.camel.model.dataformat.BarcodeDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.14.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.BarcodeDataFormat",
     "input": false,
     "output": false
   },

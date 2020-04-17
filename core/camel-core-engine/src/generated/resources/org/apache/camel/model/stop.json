@@ -4,9 +4,9 @@
     "name": "stop",
     "title": "Stop",
     "description": "Stops the processing of the current message",
-    "javaType": "org.apache.camel.model.StopDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.StopDefinition",
     "input": true,
     "output": false
   },

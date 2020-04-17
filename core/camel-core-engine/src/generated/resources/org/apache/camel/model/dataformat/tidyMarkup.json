@@ -4,10 +4,10 @@
     "name": "tidyMarkup",
     "title": "TidyMarkup",
     "description": "TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.",
-    "firstVersion": "2.0.0",
-    "javaType": "org.apache.camel.model.dataformat.TidyMarkupDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.TidyMarkupDataFormat",
     "input": false,
     "output": false
   },

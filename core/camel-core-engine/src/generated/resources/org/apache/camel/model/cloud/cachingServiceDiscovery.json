@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "cachingServiceDiscovery",
     "title": "Caching Service Discovery",
-    "javaType": "org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration",
-    "label": "routing,cloud,service-discovery",
     "deprecated": false,
+    "label": "routing,cloud,service-discovery",
+    "javaType": "org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "aggregate",
     "title": "Aggregate",
     "description": "Aggregates many messages into a single message",
-    "javaType": "org.apache.camel.model.AggregateDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.AggregateDefinition",
     "input": true,
     "output": false
   },

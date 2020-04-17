@@ -4,9 +4,9 @@
     "name": "bean",
     "title": "Bean",
     "description": "Calls a java bean",
-    "javaType": "org.apache.camel.model.BeanDefinition",
-    "label": "eip,endpoint",
     "deprecated": false,
+    "label": "eip,endpoint",
+    "javaType": "org.apache.camel.model.BeanDefinition",
     "input": true,
     "output": false
   },

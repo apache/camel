@@ -4,9 +4,9 @@
     "name": "validators",
     "title": "Validations",
     "description": "To configure validators.",
-    "javaType": "org.apache.camel.model.validator.ValidatorsDefinition",
-    "label": "validation",
     "deprecated": false,
+    "label": "validation",
+    "javaType": "org.apache.camel.model.validator.ValidatorsDefinition",
     "input": false,
     "output": false
   },

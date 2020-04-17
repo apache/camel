@@ -4,9 +4,9 @@
     "name": "pipeline",
     "title": "Pipeline",
     "description": "Routes the message to a sequence of processors.",
-    "javaType": "org.apache.camel.model.PipelineDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.PipelineDefinition",
     "input": true,
     "output": false
   },

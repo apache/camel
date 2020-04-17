@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "etcdServiceDiscovery",
     "title": "Etcd Service Discovery",
-    "javaType": "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration",
-    "label": "routing,cloud,service-discovery",
     "deprecated": false,
+    "label": "routing,cloud,service-discovery",
+    "javaType": "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration",
     "input": false,
     "output": false
   },

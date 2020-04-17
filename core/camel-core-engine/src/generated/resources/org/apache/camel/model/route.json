@@ -4,9 +4,9 @@
     "name": "route",
     "title": "Route",
     "description": "A Camel route",
-    "javaType": "org.apache.camel.model.RouteDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RouteDefinition",
     "input": true,
     "output": true
   },

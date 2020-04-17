@@ -4,9 +4,9 @@
     "name": "post",
     "title": "Post",
     "description": "Rest POST command",
-    "javaType": "org.apache.camel.model.rest.PostVerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.PostVerbDefinition",
     "input": true,
     "output": false
   },

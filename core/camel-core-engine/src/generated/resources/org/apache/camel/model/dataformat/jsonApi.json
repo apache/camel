@@ -4,10 +4,10 @@
     "name": "jsonApi",
     "title": "JSonApi",
     "description": "JSonApi data format is used for marshal and unmarshal Json API object.",
-    "firstVersion": "3.0.0",
-    "javaType": "org.apache.camel.model.dataformat.JsonApiDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.JsonApiDataFormat",
     "input": false,
     "output": false
   },

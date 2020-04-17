@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "typeFilter",
     "title": "YAML Type Filter",
-    "javaType": "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition",
-    "label": "dataformat,transformation,yaml",
     "deprecated": false,
+    "label": "dataformat,transformation,yaml",
+    "javaType": "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition",
     "input": false,
     "output": false
   },

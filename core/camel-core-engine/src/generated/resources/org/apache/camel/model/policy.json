@@ -4,9 +4,9 @@
     "name": "policy",
     "title": "Policy",
     "description": "Defines a policy the route will use",
-    "javaType": "org.apache.camel.model.PolicyDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.PolicyDefinition",
     "input": true,
     "output": false
   },

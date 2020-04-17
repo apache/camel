@@ -2,7 +2,6 @@
   "language": {
     "kind": "language",
     "name": "constant",
-    "modelName": "constant",
     "title": "Constant",
     "description": "To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "1.5.0",
     "label": "language,core",
     "javaType": "org.apache.camel.language.constant.ConstantLanguage",
-    "modelJavaType": "org.apache.camel.model.language.ConstantExpression",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-languages",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "constant",
+    "modelJavaType": "org.apache.camel.model.language.ConstantExpression"
   },
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },

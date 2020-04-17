@@ -4,9 +4,9 @@
     "name": "restContext",
     "title": "Rest Context",
     "description": "Configuration of REST services using rest-dsl using XML",
-    "javaType": "org.apache.camel.spring.CamelRestContextFactoryBean",
-    "label": "spring,configuration,rest",
     "deprecated": false,
+    "label": "spring,configuration,rest",
+    "javaType": "org.apache.camel.spring.CamelRestContextFactoryBean",
     "input": false,
     "output": false
   },

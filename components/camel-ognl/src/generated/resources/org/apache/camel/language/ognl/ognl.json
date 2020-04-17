@@ -2,7 +2,6 @@
   "language": {
     "kind": "language",
     "name": "ognl",
-    "modelName": "ognl",
     "title": "OGNL",
     "description": "To use OGNL scripts in Camel expressions or predicates.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "1.1.0",
     "label": "language,java",
     "javaType": "org.apache.camel.language.ognl.OgnlLanguage",
-    "modelJavaType": "org.apache.camel.model.language.OgnlExpression",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ognl",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "ognl",
+    "modelJavaType": "org.apache.camel.model.language.OgnlExpression"
   },
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },

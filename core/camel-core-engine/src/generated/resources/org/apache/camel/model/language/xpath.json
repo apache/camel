@@ -4,10 +4,10 @@
     "name": "xpath",
     "title": "XPath",
     "description": "To use XPath (XML) in Camel expressions or predicates.",
-    "firstVersion": "1.1.0",
-    "javaType": "org.apache.camel.model.language.XPathExpression",
-    "label": "language,core,xml",
     "deprecated": false,
+    "firstVersion": "1.1.0",
+    "label": "language,core,xml",
+    "javaType": "org.apache.camel.model.language.XPathExpression",
     "input": false,
     "output": false
   },

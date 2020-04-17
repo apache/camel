@@ -4,9 +4,9 @@
     "name": "threadPoolProfile",
     "title": "Thread Pool Profile",
     "description": "To configure thread pools",
-    "javaType": "org.apache.camel.model.ThreadPoolProfileDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.ThreadPoolProfileDefinition",
     "input": false,
     "output": false
   },

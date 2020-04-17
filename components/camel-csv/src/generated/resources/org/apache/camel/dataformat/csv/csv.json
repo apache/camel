@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "csv",
-    "modelName": "csv",
     "title": "CSV",
     "description": "The CSV data format is used for handling CSV payloads.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "1.3.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.csv.CsvDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.CsvDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-csv",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "csv",
+    "modelJavaType": "org.apache.camel.model.dataformat.CsvDataFormat"
   },
   "properties": {
     "formatRef": { "kind": "attribute", "displayName": "Format Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT" },

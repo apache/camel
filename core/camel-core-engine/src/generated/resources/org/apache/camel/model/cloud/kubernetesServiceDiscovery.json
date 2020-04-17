@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "kubernetesServiceDiscovery",
     "title": "Kubernetes Service Discovery",
-    "javaType": "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration",
-    "label": "routing,cloud,service-discovery",
     "deprecated": false,
+    "label": "routing,cloud,service-discovery",
+    "javaType": "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration",
     "input": false,
     "output": false
   },

@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "blacklistServiceFilter",
     "title": "Blacklist Service Filter",
-    "javaType": "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration",
-    "label": "routing,cloud,service-filter",
     "deprecated": false,
+    "label": "routing,cloud,service-filter",
+    "javaType": "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration",
     "input": false,
     "output": false
   },

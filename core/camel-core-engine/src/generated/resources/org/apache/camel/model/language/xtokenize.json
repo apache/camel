@@ -4,10 +4,10 @@
     "name": "xtokenize",
     "title": "XML Tokenize",
     "description": "To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.",
-    "firstVersion": "2.14.0",
-    "javaType": "org.apache.camel.model.language.XMLTokenizerExpression",
-    "label": "language,core,xml",
     "deprecated": false,
+    "firstVersion": "2.14.0",
+    "label": "language,core,xml",
+    "javaType": "org.apache.camel.model.language.XMLTokenizerExpression",
     "input": false,
     "output": false
   },

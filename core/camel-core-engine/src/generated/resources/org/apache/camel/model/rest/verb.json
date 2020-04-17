@@ -4,9 +4,9 @@
     "name": "verb",
     "title": "Verb",
     "description": "Rest command",
-    "javaType": "org.apache.camel.model.rest.VerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.VerbDefinition",
     "input": true,
     "output": false
   },

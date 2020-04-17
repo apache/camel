@@ -4,10 +4,10 @@
     "name": "xquery",
     "title": "XQuery",
     "description": "To use XQuery (XML) in Camel expressions or predicates.",
-    "firstVersion": "1.0.0",
-    "javaType": "org.apache.camel.model.language.XQueryExpression",
-    "label": "language,xml",
     "deprecated": false,
+    "firstVersion": "1.0.0",
+    "label": "language,xml",
+    "javaType": "org.apache.camel.model.language.XQueryExpression",
     "input": false,
     "output": false
   },

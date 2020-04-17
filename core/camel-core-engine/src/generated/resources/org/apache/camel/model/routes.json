@@ -4,9 +4,9 @@
     "name": "routes",
     "title": "Routes",
     "description": "A series of Camel routes",
-    "javaType": "org.apache.camel.model.RoutesDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RoutesDefinition",
     "input": false,
     "output": false
   },

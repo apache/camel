@@ -4,9 +4,9 @@
     "name": "responseHeader",
     "title": "Response Header",
     "description": "To specify the rest operation response headers using Swagger. This maps to the Swagger Response Header Object.",
-    "javaType": "org.apache.camel.model.rest.RestOperationResponseHeaderDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestOperationResponseHeaderDefinition",
     "input": false,
     "output": false
   },

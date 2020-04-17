@@ -4,9 +4,9 @@
     "name": "basicAuth",
     "title": "Basic Auth",
     "description": "Rest security basic auth definition",
-    "javaType": "org.apache.camel.model.rest.RestSecurityBasicAuth",
-    "label": "rest,security",
     "deprecated": false,
+    "label": "rest,security",
+    "javaType": "org.apache.camel.model.rest.RestSecurityBasicAuth",
     "input": false,
     "output": false
   },

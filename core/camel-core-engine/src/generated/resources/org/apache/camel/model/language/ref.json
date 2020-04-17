@@ -4,10 +4,10 @@
     "name": "ref",
     "title": "Ref",
     "description": "Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.",
-    "firstVersion": "2.8.0",
-    "javaType": "org.apache.camel.model.language.RefExpression",
-    "label": "language,core",
     "deprecated": false,
+    "firstVersion": "2.8.0",
+    "label": "language,core",
+    "javaType": "org.apache.camel.model.language.RefExpression",
     "input": false,
     "output": false
   },

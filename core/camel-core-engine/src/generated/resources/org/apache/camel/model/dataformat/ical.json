@@ -4,10 +4,10 @@
     "name": "ical",
     "title": "iCal",
     "description": "The iCal dataformat is used for working with iCalendar messages.",
-    "firstVersion": "2.12.0",
-    "javaType": "org.apache.camel.model.dataformat.IcalDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.12.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.IcalDataFormat",
     "input": false,
     "output": false
   },

@@ -4,10 +4,10 @@
     "name": "fhirJson",
     "title": "FHIR JSon",
     "description": "The FHIR JSon data format is used to marshall\/unmarshall to\/from FHIR objects to\/from JSON.",
-    "firstVersion": "2.21.0",
-    "javaType": "org.apache.camel.model.dataformat.FhirJsonDataFormat",
-    "label": "dataformat,transformation,hl7,json",
     "deprecated": false,
+    "firstVersion": "2.21.0",
+    "label": "dataformat,transformation,hl7,json",
+    "javaType": "org.apache.camel.model.dataformat.FhirJsonDataFormat",
     "input": false,
     "output": false
   },

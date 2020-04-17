@@ -4,10 +4,10 @@
     "name": "xstream",
     "title": "XStream",
     "description": "XStream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
-    "firstVersion": "1.3.0",
-    "javaType": "org.apache.camel.model.dataformat.XStreamDataFormat",
-    "label": "dataformat,transformation,xml,json",
     "deprecated": false,
+    "firstVersion": "1.3.0",
+    "label": "dataformat,transformation,xml,json",
+    "javaType": "org.apache.camel.model.dataformat.XStreamDataFormat",
     "input": false,
     "output": false
   },

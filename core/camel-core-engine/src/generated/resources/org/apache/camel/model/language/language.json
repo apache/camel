@@ -4,9 +4,9 @@
     "name": "language",
     "title": "Language",
     "description": "To use the specified language in Camel expressions or predicates.",
-    "javaType": "org.apache.camel.model.language.LanguageExpression",
-    "label": "language,core",
     "deprecated": false,
+    "label": "language,core",
+    "javaType": "org.apache.camel.model.language.LanguageExpression",
     "input": false,
     "output": false
   },

@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "combinedServiceDiscovery",
     "title": "Combined Service Discovery",
-    "javaType": "org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration",
-    "label": "routing,cloud,service-discovery",
     "deprecated": false,
+    "label": "routing,cloud,service-discovery",
+    "javaType": "org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration",
     "input": false,
     "output": false
   },

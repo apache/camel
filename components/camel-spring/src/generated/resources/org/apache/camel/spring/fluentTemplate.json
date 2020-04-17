@@ -4,9 +4,9 @@
     "name": "fluentTemplate",
     "title": "Fluent Template",
     "description": "Configures a org.apache.camel.FluentProducerTemplate",
-    "javaType": "org.apache.camel.spring.CamelFluentProducerTemplateFactoryBean",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelFluentProducerTemplateFactoryBean",
     "input": false,
     "output": false
   },

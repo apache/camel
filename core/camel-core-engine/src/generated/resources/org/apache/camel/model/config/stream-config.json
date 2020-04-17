@@ -4,9 +4,9 @@
     "name": "stream-config",
     "title": "Stream-config",
     "description": "Configures stream-processing resequence eip.",
-    "javaType": "org.apache.camel.model.config.StreamResequencerConfig",
-    "label": "eip,routing,resequence",
     "deprecated": false,
+    "label": "eip,routing,resequence",
+    "javaType": "org.apache.camel.model.config.StreamResequencerConfig",
     "input": false,
     "output": false
   },

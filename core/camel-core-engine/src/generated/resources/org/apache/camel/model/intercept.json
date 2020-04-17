@@ -4,9 +4,9 @@
     "name": "intercept",
     "title": "Intercept",
     "description": "Intercepts a message at each step in the route",
-    "javaType": "org.apache.camel.model.InterceptDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.InterceptDefinition",
     "input": true,
     "output": false
   },

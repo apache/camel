@@ -4,10 +4,10 @@
     "name": "groovy",
     "title": "Groovy",
     "description": "To use Groovy scripts in Camel expressions or predicates.",
-    "firstVersion": "1.3.0",
-    "javaType": "org.apache.camel.model.language.GroovyExpression",
-    "label": "language,script",
     "deprecated": false,
+    "firstVersion": "1.3.0",
+    "label": "language,script",
+    "javaType": "org.apache.camel.model.language.GroovyExpression",
     "input": false,
     "output": false
   },

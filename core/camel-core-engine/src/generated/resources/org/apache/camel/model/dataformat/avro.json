@@ -4,10 +4,10 @@
     "name": "avro",
     "title": "Avro",
     "description": "The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.",
-    "firstVersion": "2.14.0",
-    "javaType": "org.apache.camel.model.dataformat.AvroDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.14.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.AvroDataFormat",
     "input": false,
     "output": false
   },

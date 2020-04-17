@@ -4,9 +4,9 @@
     "name": "claimCheck",
     "title": "Claim Check",
     "description": "The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.",
-    "javaType": "org.apache.camel.model.ClaimCheckDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.ClaimCheckDefinition",
     "input": true,
     "output": false
   },

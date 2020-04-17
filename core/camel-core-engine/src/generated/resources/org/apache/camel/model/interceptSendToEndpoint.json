@@ -4,9 +4,9 @@
     "name": "interceptSendToEndpoint",
     "title": "Intercept Send To Endpoint",
     "description": "Intercepts messages being sent to an endpoint",
-    "javaType": "org.apache.camel.model.InterceptSendToEndpointDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.InterceptSendToEndpointDefinition",
     "input": true,
     "output": false
   },

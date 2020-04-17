@@ -4,9 +4,9 @@
     "name": "step",
     "title": "Step",
     "description": "Routes the message to a sequence of processors which is grouped together as one logical name",
-    "javaType": "org.apache.camel.model.StepDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.StepDefinition",
     "input": true,
     "output": false
   },

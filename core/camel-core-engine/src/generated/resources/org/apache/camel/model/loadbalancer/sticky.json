@@ -4,9 +4,9 @@
     "name": "sticky",
     "title": "Sticky",
     "description": "Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.",
-    "javaType": "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition",
-    "label": "eip,routing,loadbalance",
     "deprecated": false,
+    "label": "eip,routing,loadbalance",
+    "javaType": "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition",
     "input": false,
     "output": false
   },

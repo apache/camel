@@ -4,9 +4,9 @@
     "name": "pollEnrich",
     "title": "Poll Enrich",
     "description": "Enriches messages with data polled from a secondary resource",
-    "javaType": "org.apache.camel.model.PollEnrichDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.PollEnrichDefinition",
     "input": true,
     "output": false
   },

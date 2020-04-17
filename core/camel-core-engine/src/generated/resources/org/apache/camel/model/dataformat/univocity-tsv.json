@@ -4,10 +4,10 @@
     "name": "univocity-tsv",
     "title": "uniVocity TSV",
     "description": "The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.",
-    "firstVersion": "2.15.0",
-    "javaType": "org.apache.camel.model.dataformat.UniVocityTsvDataFormat",
-    "label": "dataformat,transformation,csv",
     "deprecated": false,
+    "firstVersion": "2.15.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.UniVocityTsvDataFormat",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "onException",
     "title": "On Exception",
     "description": "Route to be executed when an exception is thrown",
-    "javaType": "org.apache.camel.model.OnExceptionDefinition",
-    "label": "error",
     "deprecated": false,
+    "label": "error",
+    "javaType": "org.apache.camel.model.OnExceptionDefinition",
     "input": true,
     "output": false
   },

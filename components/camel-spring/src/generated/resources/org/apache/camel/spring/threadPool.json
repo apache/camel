@@ -4,9 +4,9 @@
     "name": "threadPool",
     "title": "Thread Pool",
     "description": "Configuration of thread pools",
-    "javaType": "org.apache.camel.spring.CamelThreadPoolFactoryBean",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelThreadPoolFactoryBean",
     "input": false,
     "output": false
   },

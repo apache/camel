@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "avro",
-    "modelName": "avro",
     "title": "Avro",
     "description": "The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.avro.AvroDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.AvroDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-avro",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "avro",
+    "modelJavaType": "org.apache.camel.model.dataformat.AvroDataFormat"
   },
   "properties": {
     "instanceClassName": { "kind": "attribute", "displayName": "Instance Class Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" },

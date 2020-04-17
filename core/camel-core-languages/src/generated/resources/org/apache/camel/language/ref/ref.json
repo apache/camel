@@ -2,7 +2,6 @@
   "language": {
     "kind": "language",
     "name": "ref",
-    "modelName": "ref",
     "title": "Ref",
     "description": "Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.8.0",
     "label": "language,core",
     "javaType": "org.apache.camel.language.ref.RefLanguage",
-    "modelJavaType": "org.apache.camel.model.language.RefExpression",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-languages",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "ref",
+    "modelJavaType": "org.apache.camel.model.language.RefExpression"
   },
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },

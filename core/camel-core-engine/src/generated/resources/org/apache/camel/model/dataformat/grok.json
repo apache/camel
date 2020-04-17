@@ -4,10 +4,10 @@
     "name": "grok",
     "title": "Grok",
     "description": "The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.",
-    "firstVersion": "3.0.0",
-    "javaType": "org.apache.camel.model.dataformat.GrokDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.GrokDataFormat",
     "input": false,
     "output": false
   },
