@@ -75,7 +75,8 @@ The process can be used in routes as an anonymous inner class such:
 
 This is usable for quickly whirling up some code. If the code in the
 inner class gets a bit more complicated it is of course advised to
-refactor it into a separate class.
+refactor it into a separate class. This approach is better if you do not want to use this processor again.
+From reusability perspective, it is not recommended to follow this approach.
 
 [[Processor-TurningyourprocessorintoafullComponent]]
 == Turning your processor into a full Component
