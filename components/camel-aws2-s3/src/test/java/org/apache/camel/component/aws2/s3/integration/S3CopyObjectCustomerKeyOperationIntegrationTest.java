@@ -125,7 +125,7 @@ public class S3CopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSu
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false&useCustomerKey=true&customerKeyId=RAW(" + b64Key + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
                 String awsEndpoint1 = "aws2-s3://mycamel1?autoCreateBucket=false&pojoRequest=true";
-                from("direct:putObject").to(awsEndpoint);
+                from("direct:putObject").setHeader(AWS2S3Constants.KEY, constant("test.txt")).setBody(constant("Test")).to(awsEndpoint);
 
                 from("direct:copyObject").to(awsEndpoint);
                 
