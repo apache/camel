@@ -1093,3 +1093,29 @@ The dump model classes in package `org.apache.camel.support.dump` has been remov
 as they were not in use by Camel.
 
 In relation to the dump model classes removal, in camel-karaf the following commands were removed: `context-info`, `route-info`, `route-profile` and `route-step`.
+
+=== camel-jackson
+
+The dependency on `jackson-module-jaxb-annotations` and the option `enableJaxbAnnotationModule` have been removed. To
+enable support for JAXB annotations, users have to:
+
+* explicit add `jackson-module-jaxb-annotations`
+* configure the `JacksonDataFormat` and/or the `JacksonTypeConverters` module classes, example:
++
+.JacksonDataFormat
+[source,java]
+----
+JacksonDataFormat formatPojo = new JacksonDataFormat(TestJAXBPojo.class);
+formatPojo.setModuleClassNames(JaxbAnnotationModule.class.getName());
+----
++
+.JacksonTypeConverters
+[source,java]
+----
+context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES, JaxbAnnotationModule.class.getName());
+----
+
+this change affects also the Java DSL and as conseguence the `enableJaxbAnnotationModule` option for the Json 
+DataFormat definiton has been removed.

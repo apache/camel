@@ -59,7 +59,6 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             }
         }
         properties.put("useList", definition.getUseList());
-        properties.put("enableJaxbAnnotationModule", definition.getEnableJaxbAnnotationModule());
         properties.put("moduleClassNames", definition.getModuleClassNames());
         properties.put("moduleRefs", definition.getModuleRefs());
         properties.put("enableFeatures", definition.getEnableFeatures());
