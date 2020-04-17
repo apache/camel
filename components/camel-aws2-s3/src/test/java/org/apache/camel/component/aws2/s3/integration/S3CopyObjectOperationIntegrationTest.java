@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,10 +49,17 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.utils.Md5Utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static software.amazon.awssdk.services.s3.model.ServerSideEncryption.AES256;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
+    
+    String key = UUID.randomUUID().toString();
+    byte[] secretKey = generateSecretKey();
+    String b64Key = Base64.getEncoder().encodeToString(secretKey);
+    String b64KeyMd5 = Md5Utils.md5AsBase64(secretKey);
 
     @BindToRegistry("amazonS3Client")
     S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
@@ -65,11 +69,6 @@ public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
-    String key = UUID.randomUUID().toString();
-    byte[] secretKey = generateSecretKey();
-    String b64Key = Base64.getEncoder().encodeToString(secretKey);
-    String b64KeyMd5 = Md5Utils.md5AsBase64(secretKey);
 
     @Test
     public void sendIn() throws Exception {
@@ -114,7 +113,7 @@ public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
         ResponseInputStream<GetObjectResponse> s3 = res.getIn().getBody(ResponseInputStream.class);
         
 
-        assertEquals("Test", (readInputStream(s3)));
+        assertEquals("Test", readInputStream(s3));
 
         assertMockEndpointsSatisfied();
     }
