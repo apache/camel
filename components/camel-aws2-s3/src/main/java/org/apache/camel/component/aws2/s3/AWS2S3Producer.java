@@ -321,6 +321,18 @@ public class AWS2S3Producer extends DefaultProducer {
                     copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
                 }
             }
+            
+            if (getConfiguration().isUseCustomerKey()) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                    copyObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                    copyObjectRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+                }
+                if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                    copyObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+                }
+            }
 
             CopyObjectResponse copyObjectResult = s3Client.copyObject(copyObjectRequest.build());
 

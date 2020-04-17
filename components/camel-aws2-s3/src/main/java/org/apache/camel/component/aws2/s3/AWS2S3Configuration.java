@@ -77,6 +77,14 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
     private String awsKMSKeyId;
+    @UriParam(label = "producer,advanced", defaultValue = "false")
+    private boolean useCustomerKey;
+    @UriParam(label = "producer,advanced")
+    private String customerKeyId;
+    @UriParam(label = "producer,advanced")
+    private String customerKeyMD5;
+    @UriParam(label = "producer,advanced")
+    private String customerAlgorithm;
     @UriParam(defaultValue = "false")
     private boolean useIAMCredentials;
     @UriParam(label = "producer")
@@ -396,6 +404,52 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setAwsKMSKeyId(String awsKMSKeyId) {
         this.awsKMSKeyId = awsKMSKeyId;
+    }
+
+    public boolean isUseCustomerKey() {
+        return useCustomerKey;
+    }
+
+    /**
+     * Define if Customer Key must be used or not
+     */
+    public void setUseCustomerKey(boolean useCustomerKey) {
+        this.useCustomerKey = useCustomerKey;
+    }
+
+    public String getCustomerKeyId() {
+        return customerKeyId;
+    }
+
+    /**
+     * Define the id of Customer key to use in case CustomerKey is enabled
+     */
+    public void setCustomerKeyId(String customerKeyId) {
+        this.customerKeyId = customerKeyId;
+    }
+    
+    
+
+    public String getCustomerKeyMD5() {
+        return customerKeyMD5;
+    }
+
+    /**
+     * Define the MD5 of Customer key to use in case CustomerKey is enabled
+     */
+    public void setCustomerKeyMD5(String customerKeyMD5) {
+        this.customerKeyMD5 = customerKeyMD5;
+    }
+
+    public String getCustomerAlgorithm() {
+        return customerAlgorithm;
+    }
+
+    /**
+     * Define the customer algorithm to use in case CustomerKey is enabled
+     */
+    public void setCustomerAlgorithm(String customerAlgorithm) {
+        this.customerAlgorithm = customerAlgorithm;
     }
 
     /**
