@@ -30,9 +30,9 @@ import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.DefaultSecurityPolicy;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Run this test manually")
+@Disabled("Run this test manually")
 public class CometdProducerConsumerInteractiveAuthenticatedMain {
 
     private static final String URI = "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
