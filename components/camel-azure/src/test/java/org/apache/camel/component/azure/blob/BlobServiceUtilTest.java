@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.blob;
 import java.net.URI;
 
 import com.microsoft.azure.storage.blob.CloudAppendBlob;
+import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -82,5 +83,20 @@ public class BlobServiceUtilTest extends CamelTestSupport {
         } catch (IllegalArgumentException ex) {
             assertEquals("Invalid Client URI", ex.getMessage());
         }
+    }
+
+    @Test
+    public void testGetConfiguredClientWithClientUriValidationDisabled() throws Exception {
+        URI uri = URI.create("https://custom/azure/service/url/container/blob");
+        CloudAppendBlob client = new CloudAppendBlob(uri);
+
+        context.getRegistry().bind("azureBlobClient", client);
+
+        BlobServiceEndpoint endpoint =
+                (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true"
+                        + "&blobType=appendBlob&validateClientURI=false");
+
+        CloudBlob configuredClient = BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
+        assertEquals(uri, configuredClient.getUri());
     }
 }

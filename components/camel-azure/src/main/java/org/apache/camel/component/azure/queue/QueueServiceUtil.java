@@ -53,7 +53,8 @@ public final class QueueServiceUtil {
 
     public static CloudQueue getConfiguredClient(QueueServiceConfiguration cfg) {
         CloudQueue client = cfg.getAzureQueueClient();
-        if (client != null && !client.getUri().equals(prepareStorageQueueUri(cfg))) {
+        boolean validateURI = cfg.isValidateClientURI();
+        if (validateURI && client != null && !client.getUri().equals(prepareStorageQueueUri(cfg))) {
             throw new IllegalArgumentException("Invalid Client URI");
         }
         return client;

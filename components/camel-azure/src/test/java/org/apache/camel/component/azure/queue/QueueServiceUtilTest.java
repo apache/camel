@@ -61,4 +61,18 @@ public class QueueServiceUtilTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    public void testGetConfiguredClientWithClientUriValidationDisabled() throws Exception {
+        URI uri = URI.create("https://custom/azure/service/url/container/testqueue");
+        CloudQueue client = new CloudQueue(uri, newAccountKeyCredentials());
+
+        context.getRegistry().bind("azureQueueClient", client);
+
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint("azure-queue://camelazure/testqueue?azureQueueClient=#azureQueueClient&validateClientURI=false");
+
+
+        CloudQueue configuredClient = QueueServiceUtil.getConfiguredClient(endpoint.getConfiguration());
+        assertEquals(uri, configuredClient.getUri());
+    }
+
 }

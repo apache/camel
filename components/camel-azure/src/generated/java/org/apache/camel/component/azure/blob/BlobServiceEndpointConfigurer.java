@@ -62,6 +62,8 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "useflatlisting":
         case "useFlatListing": target.getConfiguration().setUseFlatListing(property(camelContext, boolean.class, value)); return true;
+        case "validateclienturi":
+        case "validateClientURI": target.getConfiguration().setValidateClientURI(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -92,6 +94,7 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         answer.put("streamWriteSize", int.class);
         answer.put("synchronous", boolean.class);
         answer.put("useFlatListing", boolean.class);
+        answer.put("validateClientURI", boolean.class);
         return answer;
     }
 
@@ -142,6 +145,8 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         case "synchronous": return target.isSynchronous();
         case "useflatlisting":
         case "useFlatListing": return target.getConfiguration().isUseFlatListing();
+        case "validateclienturi":
+        case "validateClientURI": return target.getConfiguration().isValidateClientURI();
         default: return null;
         }
     }

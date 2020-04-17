@@ -47,6 +47,8 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceOperations.class, value)); return true;
         case "queueprefix":
         case "queuePrefix": getOrCreateConfiguration(target).setQueuePrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "validateclienturi":
+        case "validateClientURI": getOrCreateConfiguration(target).setValidateClientURI(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -66,6 +68,7 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
         answer.put("messageVisibilityDelay", int.class);
         answer.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
         answer.put("queuePrefix", java.lang.String.class);
+        answer.put("validateClientURI", boolean.class);
         return answer;
     }
 
@@ -94,6 +97,8 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "queueprefix":
         case "queuePrefix": return getOrCreateConfiguration(target).getQueuePrefix();
+        case "validateclienturi":
+        case "validateClientURI": return getOrCreateConfiguration(target).isValidateClientURI();
         default: return null;
         }
     }
