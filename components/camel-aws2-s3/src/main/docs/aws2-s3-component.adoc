@@ -526,6 +526,25 @@ This will require specifying the destinationBucket option. As example:
 
 In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
 
+== Using customer key as encryption
+
+We introduced also the customer key support (an alternative of using KMS). The following code shows an example.
+
+[source,java]
+--------------------------------------------------------------------------------
+String key = UUID.randomUUID().toString();
+byte[] secretKey = generateSecretKey();
+String b64Key = Base64.getEncoder().encodeToString(secretKey);
+String b64KeyMd5 = Md5Utils.md5AsBase64(secretKey);
+
+String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false&useCustomerKey=true&customerKeyId=RAW(" + b64Key + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
+
+from("direct:putObject")
+    .setHeader(AWS2S3Constants.KEY, constant("test.txt"))
+    .setBody(constant("Test"))
+    .to(awsEndpoint);
+--------------------------------------------------------------------------------
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
