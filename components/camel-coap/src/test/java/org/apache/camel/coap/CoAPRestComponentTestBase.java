@@ -26,14 +26,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     static int coapport = AvailablePortFinder.getNextAvailable();
@@ -42,7 +44,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     protected ProducerTemplate sender;
 
     @Test
-    public void testCoAP() throws Exception {
+    void testCoAP() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client;
         CoapResponse rsp;
@@ -69,7 +71,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testCoAPMethodNotAllowedResponse() throws Exception {
+    void testCoAPMethodNotAllowedResponse() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/TestResource/Ducky");
         decorateClient(client);
@@ -79,7 +81,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testCoAPNotFoundResponse() throws Exception {
+    void testCoAPNotFoundResponse() throws Exception {
         NetworkConfig.createStandardWithoutFile();
         CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/foo/bar/cheese");
         decorateClient(client);
@@ -89,7 +91,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testPOSTClientRoute() throws Exception {
+    void testPOSTClientRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello some-id: xyz");
@@ -99,7 +101,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testGETClientRoute() throws Exception {
+    void testGETClientRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello some-id");
@@ -119,10 +121,10 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 RestConfigurationDefinition restConfig = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport);
                 decorateRestConfiguration(restConfig);
 

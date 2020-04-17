@@ -35,13 +35,13 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
 import org.eclipse.californium.scandium.dtls.pskstore.StaticPskStore;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
@@ -55,7 +55,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     private static final int PORT8 = AvailablePortFinder.getNextAvailable();
 
     @Test
-    public void testSuccessfulCall() throws Exception {
+    void testSuccessfulCall() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
@@ -66,7 +66,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testNoTruststore() throws Exception {
+    void testNoTruststore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         sendBodyAndHeader("direct:notruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
@@ -74,7 +74,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testTrustValidationFailed() throws Exception {
+    void testTrustValidationFailed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         sendBodyAndHeader("direct:failedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
@@ -82,7 +82,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testSelfSigned() throws Exception {
+    void testSelfSigned() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
@@ -93,7 +93,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testClientAuthentication() throws Exception {
+    void testClientAuthentication() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
@@ -104,7 +104,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testFailedClientAuthentication() throws Exception {
+    void testFailedClientAuthentication() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         sendBodyAndHeader("direct:failedclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
@@ -112,7 +112,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testCipherSuites() throws Exception {
+    void testCipherSuites() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
@@ -123,7 +123,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testRawPublicKey() throws Exception {
+    void testRawPublicKey() throws Exception {
         if (isRPKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
@@ -136,7 +136,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testRawPublicKeyNoTruststore() throws Exception {
+    void testRawPublicKeyNoTruststore() throws Exception {
         if (isRPKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(0);
@@ -146,7 +146,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testRawPublicKeyFailedTrust() throws Exception {
+    void testRawPublicKeyFailedTrust() throws Exception {
         if (isRPKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(0);
@@ -156,7 +156,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testRawPublicKeyClientAuth() throws Exception {
+    void testRawPublicKeyClientAuth() throws Exception {
         if (isRPKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
@@ -169,7 +169,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testPreSharedKey() throws Exception {
+    void testPreSharedKey() throws Exception {
         if (isPSKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
@@ -182,7 +182,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testPreSharedKeyCipherSuite() throws Exception {
+    void testPreSharedKeyCipherSuite() throws Exception {
         if (isPSKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
@@ -195,7 +195,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     @Test
-    public void testPreSharedKeyX509() throws Exception {
+    void testPreSharedKeyX509() throws Exception {
         if (isPSKSupported()) {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMinimumMessageCount(1);
@@ -220,7 +220,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters", PORT).transform(body().prepend("Hello "));
 

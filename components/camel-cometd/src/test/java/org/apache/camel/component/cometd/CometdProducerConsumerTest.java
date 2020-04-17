@@ -24,14 +24,18 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
@@ -43,7 +47,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     private String uri;
 
     @Test
-    public void testProducer() throws Exception {
+    void testProducer() {
         Person person = new Person("David", "Greco");
         //act
         template.requestBodyAndHeader("direct:input", person, "testHeading", "value");
@@ -60,7 +64,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHeadersSupported() throws Exception {
+    void testHeadersSupported() {
         //setup
         String headerName = "testHeading";
         String headerValue = "value";
@@ -80,7 +84,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     }
     
     @Test
-    public void testSessionHeaderArgumentSet() throws Exception {
+    void testSessionHeaderArgumentSet() throws Exception {
         // setup
         CometdComponent component = context.getComponent("cometd", CometdComponent.class);
 
@@ -98,7 +102,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     }
     
     @Test
-    public void testSessionInformationTransferred() throws Exception {
+    void testSessionInformationTransferred() {
         // act
         template.sendBody("direct:input", "message");
 
@@ -112,9 +116,8 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         }
     }
 
-
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
@@ -124,10 +127,10 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CometdComponent component = context.getComponent("cometd", CometdComponent.class);
                 // The security policy is used to set session attributes.
                 component.setSecurityPolicy(createTestSecurityPolicy());
