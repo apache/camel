@@ -285,6 +285,18 @@ public class AWS2S3Producer extends DefaultProducer {
                 putObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
             }
         }
+        
+        if (getConfiguration().isUseCustomerKey()) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                putObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                putObjectRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                putObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+            }
+        }        
 
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
 
