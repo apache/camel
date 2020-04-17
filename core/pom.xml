@@ -74,6 +74,13 @@
                         </goals>
                         <phase>process-classes</phase>
                     </execution>
+                    <execution>
+                        <id>generate-postcompile</id>
+                        <goals>
+                            <goal>generate-postcompile</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
