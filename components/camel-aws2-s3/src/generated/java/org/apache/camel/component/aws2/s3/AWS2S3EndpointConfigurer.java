@@ -39,6 +39,12 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "customeralgorithm":
+        case "customerAlgorithm": target.getConfiguration().setCustomerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "customerkeyid":
+        case "customerKeyId": target.getConfiguration().setCustomerKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "customerkeymd5":
+        case "customerKeyMD5": target.getConfiguration().setCustomerKeyMD5(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": target.getConfiguration().setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
@@ -114,6 +120,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": target.getConfiguration().setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
+        case "usecustomerkey":
+        case "useCustomerKey": target.getConfiguration().setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "useiamcredentials":
@@ -135,6 +143,9 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("backoffMultiplier", int.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("customerAlgorithm", java.lang.String.class);
+        answer.put("customerKeyId", java.lang.String.class);
+        answer.put("customerKeyMD5", java.lang.String.class);
         answer.put("delay", long.class);
         answer.put("deleteAfterRead", boolean.class);
         answer.put("deleteAfterWrite", boolean.class);
@@ -177,6 +188,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
         answer.put("uriEndpointOverride", java.lang.String.class);
         answer.put("useAwsKMS", boolean.class);
+        answer.put("useCustomerKey", boolean.class);
         answer.put("useFixedDelay", boolean.class);
         answer.put("useIAMCredentials", boolean.class);
         return answer;
@@ -206,6 +218,12 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "customeralgorithm":
+        case "customerAlgorithm": return target.getConfiguration().getCustomerAlgorithm();
+        case "customerkeyid":
+        case "customerKeyId": return target.getConfiguration().getCustomerKeyId();
+        case "customerkeymd5":
+        case "customerKeyMD5": return target.getConfiguration().getCustomerKeyMD5();
         case "delay": return target.getDelay();
         case "deleteafterread":
         case "deleteAfterRead": return target.getConfiguration().isDeleteAfterRead();
@@ -281,6 +299,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "useawskms":
         case "useAwsKMS": return target.getConfiguration().isUseAwsKMS();
+        case "usecustomerkey":
+        case "useCustomerKey": return target.getConfiguration().isUseCustomerKey();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useiamcredentials":

@@ -466,6 +466,42 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the customer algorithm to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default Aws2S3ComponentBuilder customerAlgorithm(
+                java.lang.String customerAlgorithm) {
+            doSetProperty("customerAlgorithm", customerAlgorithm);
+            return this;
+        }
+        /**
+         * Define the id of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default Aws2S3ComponentBuilder customerKeyId(
+                java.lang.String customerKeyId) {
+            doSetProperty("customerKeyId", customerKeyId);
+            return this;
+        }
+        /**
+         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default Aws2S3ComponentBuilder customerKeyMD5(
+                java.lang.String customerKeyMD5) {
+            doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
          * Define if KMS must be used or not.
          * 
          * The option is a: <code>boolean</code> type.
@@ -475,6 +511,18 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder useAwsKMS(boolean useAwsKMS) {
             doSetProperty("useAwsKMS", useAwsKMS);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default Aws2S3ComponentBuilder useCustomerKey(boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**
@@ -567,7 +615,11 @@ public interface Aws2S3ComponentBuilderFactory {
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
+            case "customerAlgorithm": getOrCreateConfiguration((AWS2S3Component) component).setCustomerAlgorithm((java.lang.String) value); return true;
+            case "customerKeyId": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyId((java.lang.String) value); return true;
+            case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
+            case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
             case "basicPropertyBinding": ((AWS2S3Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((AWS2S3Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWS2S3Component) component).setSecretKey((java.lang.String) value); return true;

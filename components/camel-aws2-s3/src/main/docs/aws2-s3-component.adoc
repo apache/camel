@@ -47,7 +47,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS2 S3 Storage Service component supports 34 options, which are listed below.
+The AWS2 S3 Storage Service component supports 38 options, which are listed below.
 
 
 
@@ -84,7 +84,11 @@ The AWS2 S3 Storage Service component supports 34 options, which are listed belo
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
+| *customerAlgorithm* (producer) | Define the customer algorithm to use in case CustomerKey is enabled |  | String
+| *customerKeyId* (producer) | Define the id of Customer key to use in case CustomerKey is enabled |  | String
+| *customerKeyMD5* (producer) | Define the MD5 of Customer key to use in case CustomerKey is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
+| *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -120,7 +124,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (54 parameters):
+=== Query Parameters (58 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -161,7 +165,11 @@ with the following path and query parameters:
 | *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
+| *customerAlgorithm* (producer) | Define the customer algorithm to use in case CustomerKey is enabled |  | String
+| *customerKeyId* (producer) | Define the id of Customer key to use in case CustomerKey is enabled |  | String
+| *customerKeyMD5* (producer) | Define the MD5 of Customer key to use in case CustomerKey is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
+| *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
