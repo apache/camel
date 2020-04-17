@@ -371,6 +371,19 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the destination bucket where an object must be moved when
+         * moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder destinationBucket(
+                String destinationBucket) {
+            doSetProperty("destinationBucket", destinationBucket);
+            return this;
+        }
+        /**
          * To get the object from the bucket with the given file name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -502,6 +515,35 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Move objects from S3 bucket to a different bucket after they have
+         * been retrieved. The copy bucket operation is only performed if the
+         * Exchange is committed. If a rollback occurs, the object is not moved.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder moveAfterRead(
+                boolean moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
+            return this;
+        }
+        /**
+         * Move objects from S3 bucket to a different bucket after they have
+         * been retrieved. The copy bucket operation is only performed if the
+         * Exchange is committed. If a rollback occurs, the object is not moved.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder moveAfterRead(String moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
             return this;
         }
         /**

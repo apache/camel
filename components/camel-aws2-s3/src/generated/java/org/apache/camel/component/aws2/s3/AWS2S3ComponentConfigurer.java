@@ -46,6 +46,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deleteafterwrite":
         case "deleteAfterWrite": getOrCreateConfiguration(target).setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "delimiter": getOrCreateConfiguration(target).setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationbucket":
+        case "destinationBucket": getOrCreateConfiguration(target).setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
@@ -56,6 +58,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "keyName": getOrCreateConfiguration(target).setKeyName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "moveafterread":
+        case "moveAfterRead": getOrCreateConfiguration(target).setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "multipartupload":
         case "multiPartUpload": getOrCreateConfiguration(target).setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
@@ -102,11 +106,13 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("deleteAfterRead", boolean.class);
         answer.put("deleteAfterWrite", boolean.class);
         answer.put("delimiter", java.lang.String.class);
+        answer.put("destinationBucket", java.lang.String.class);
         answer.put("fileName", java.lang.String.class);
         answer.put("includeBody", boolean.class);
         answer.put("includeFolders", boolean.class);
         answer.put("keyName", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("moveAfterRead", boolean.class);
         answer.put("multiPartUpload", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.s3.AWS2S3Operations.class);
         answer.put("overrideEndpoint", boolean.class);
@@ -150,6 +156,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deleteafterwrite":
         case "deleteAfterWrite": return getOrCreateConfiguration(target).isDeleteAfterWrite();
         case "delimiter": return getOrCreateConfiguration(target).getDelimiter();
+        case "destinationbucket":
+        case "destinationBucket": return getOrCreateConfiguration(target).getDestinationBucket();
         case "filename":
         case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "includebody":
@@ -160,6 +168,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "keyName": return getOrCreateConfiguration(target).getKeyName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "moveafterread":
+        case "moveAfterRead": return getOrCreateConfiguration(target).isMoveAfterRead();
         case "multipartupload":
         case "multiPartUpload": return getOrCreateConfiguration(target).isMultiPartUpload();
         case "operation": return getOrCreateConfiguration(target).getOperation();

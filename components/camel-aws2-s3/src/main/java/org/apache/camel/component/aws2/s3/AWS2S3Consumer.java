@@ -39,6 +39,7 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -218,6 +219,21 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
                 String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
 
+                LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
+
+                getAmazonS3Client().deleteObject(DeleteObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(key).build());
+
+                LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
+            } else if (getConfiguration().isMoveAfterRead()) {
+                String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
+                String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
+
+                LOG.trace("Moving object from bucket {} with key {} to bucket {}...", bucketName, key, getConfiguration().getDestinationBucket());
+
+                getAmazonS3Client().copyObject(CopyObjectRequest.builder().destinationKey(key).destinationBucket(getConfiguration().getDestinationBucket()).copySource(bucketName + "/" + key).build());
+
+                LOG.trace("Moved object from bucket {} with key {} to bucket {}...", bucketName, key, getConfiguration().getDestinationBucket());
+                
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
 
                 getAmazonS3Client().deleteObject(DeleteObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(key).build());
