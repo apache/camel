@@ -392,7 +392,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doBuild() throws Exception {
         org.apache.camel.spi.annotations.Component ann = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
         if (ann != null) {
             String name = ann.value();
