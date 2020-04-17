@@ -31,7 +31,7 @@ public class Order {
     private String partName;
     @XmlAttribute
     private int amount;
-    @XmlAttribute
+    @XmlAttribute(name = "customer_name")
     private String customerName;
 
     public int getId() {

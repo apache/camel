@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -58,7 +57,6 @@ import org.slf4j.LoggerFactory;
 @Dataformat("json-jackson")
 @Metadata(excludeProperties = "library,permissions,dropRootNode")
 public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
-
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
     private CamelContext camelContext;
@@ -76,7 +74,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     private boolean prettyPrint;
     private boolean allowJmsType;
     private boolean useList;
-    private boolean enableJaxbAnnotationModule;
     private String enableFeatures;
     private String disableFeatures;
     private boolean enableJacksonTypeConverter;
@@ -112,24 +109,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
      *            http://wiki.fasterxml.com/JacksonJsonViews
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
-        this(unmarshalType, jsonView, true);
-    }
-
-    /**
-     * Use the default Jackson {@link ObjectMapper} and with a custom unmarshal
-     * type and JSON view
-     *
-     * @param unmarshalType the custom unmarshal type
-     * @param jsonView marker class to specify properties to be included during
-     *            marshalling. See also
-     *            http://wiki.fasterxml.com/JacksonJsonViews
-     * @param enableJaxbAnnotationModule if it is true, will enable the
-     *            JaxbAnnotationModule.
-     */
-    public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
-        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
     /**
@@ -293,14 +274,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setUseList(boolean useList) {
         this.useList = useList;
-    }
-
-    public boolean isEnableJaxbAnnotationModule() {
-        return enableJaxbAnnotationModule;
-    }
-
-    public void setEnableJaxbAnnotationModule(boolean enableJaxbAnnotationModule) {
-        this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
     public List<Module> getModules() {
@@ -541,7 +514,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                         LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
                     }
                 } else {
-                    LOG.warn("The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
+                    LOG.info("The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
                 }
             }
             if (objectMapper == null) {
@@ -551,13 +524,6 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         }
 
         if (!objectMapperFoundRegistry) {
-            if (enableJaxbAnnotationModule) {
-                // Enables JAXB processing
-                JaxbAnnotationModule module = new JaxbAnnotationModule();
-                LOG.debug("Registering JaxbAnnotationModule: {}", module);
-                objectMapper.registerModule(module);
-            }
-
             if (useList) {
                 setCollectionType(ArrayList.class);
             }
