@@ -1636,6 +1636,42 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the customer algorithm to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder customerAlgorithm(
+                String customerAlgorithm) {
+            doSetProperty("customerAlgorithm", customerAlgorithm);
+            return this;
+        }
+        /**
+         * Define the id of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder customerKeyId(
+                String customerKeyId) {
+            doSetProperty("customerKeyId", customerKeyId);
+            return this;
+        }
+        /**
+         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder customerKeyMD5(
+                String customerKeyMD5) {
+            doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
          * Define if KMS must be used or not.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1658,6 +1694,32 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AdvancedAWS2S3EndpointProducerBuilder useAwsKMS(String useAwsKMS) {
             doSetProperty("useAwsKMS", useAwsKMS);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(
+                boolean useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
+            return this;
+        }
+        /**
+         * Define if Customer Key must be used or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useCustomerKey(
+                String useCustomerKey) {
+            doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
         /**

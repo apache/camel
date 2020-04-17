@@ -391,8 +391,6 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void getObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
-        final String sourceKey = determineKey(exchange);
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -402,7 +400,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(res);
             }
         } else {
-
+            final String bucketName = determineBucketName(exchange);
+            final String sourceKey = determineKey(exchange);
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey);
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 

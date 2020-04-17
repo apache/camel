@@ -41,6 +41,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Configuration.class, value)); return true;
+        case "customeralgorithm":
+        case "customerAlgorithm": getOrCreateConfiguration(target).setCustomerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "customerkeyid":
+        case "customerKeyId": getOrCreateConfiguration(target).setCustomerKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "customerkeymd5":
+        case "customerKeyMD5": getOrCreateConfiguration(target).setCustomerKeyMD5(property(camelContext, java.lang.String.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "deleteafterwrite":
@@ -86,6 +92,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": getOrCreateConfiguration(target).setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
+        case "usecustomerkey":
+        case "useCustomerKey": getOrCreateConfiguration(target).setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
         case "useiamcredentials":
         case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -103,6 +111,9 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("configuration", org.apache.camel.component.aws2.s3.AWS2S3Configuration.class);
+        answer.put("customerAlgorithm", java.lang.String.class);
+        answer.put("customerKeyId", java.lang.String.class);
+        answer.put("customerKeyMD5", java.lang.String.class);
         answer.put("deleteAfterRead", boolean.class);
         answer.put("deleteAfterWrite", boolean.class);
         answer.put("delimiter", java.lang.String.class);
@@ -128,6 +139,7 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("storageClass", java.lang.String.class);
         answer.put("uriEndpointOverride", java.lang.String.class);
         answer.put("useAwsKMS", boolean.class);
+        answer.put("useCustomerKey", boolean.class);
         answer.put("useIAMCredentials", boolean.class);
         return answer;
     }
@@ -151,6 +163,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
+        case "customeralgorithm":
+        case "customerAlgorithm": return getOrCreateConfiguration(target).getCustomerAlgorithm();
+        case "customerkeyid":
+        case "customerKeyId": return getOrCreateConfiguration(target).getCustomerKeyId();
+        case "customerkeymd5":
+        case "customerKeyMD5": return getOrCreateConfiguration(target).getCustomerKeyMD5();
         case "deleteafterread":
         case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
         case "deleteafterwrite":
@@ -196,6 +214,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "useawskms":
         case "useAwsKMS": return getOrCreateConfiguration(target).isUseAwsKMS();
+        case "usecustomerkey":
+        case "useCustomerKey": return getOrCreateConfiguration(target).isUseCustomerKey();
         case "useiamcredentials":
         case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
         default: return null;
