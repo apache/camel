@@ -112,6 +112,10 @@ public final class JsonMapper {
         model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
         model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
+        parseArtifact(mobj, model);
+    }
+
+    private static void parseArtifact(JsonObject mobj, ArtifactModel<?> model) {
         model.setGroupId(mobj.getString("groupId"));
         model.setArtifactId(mobj.getString("artifactId"));
         model.setVersion(mobj.getString("version"));
@@ -124,34 +128,18 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(ComponentModel model) {
         JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
         obj.put("scheme", model.getScheme());
         obj.put("extendsScheme", model.getExtendsScheme());
         obj.put("alternativeSchemes", model.getAlternativeSchemes());
         obj.put("syntax", model.getSyntax());
         obj.put("alternativeSyntax", model.getAlternativeSyntax());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("label", model.getLabel());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
         obj.put("async", model.isAsync());
         obj.put("consumerOnly", model.isConsumerOnly());
         obj.put("producerOnly", model.isProducerOnly());
         obj.put("lenientProperties", model.isLenientProperties());
-        obj.put("javaType", model.getJavaType());
-        obj.put("firstVersion", model.getFirstVersion());
         obj.put("verifiers", model.getVerifiers());
-        if (model.getSupportLevel() != null) {
-            obj.put("supportLevel", model.getSupportLevel().name());
-        }
-        if (model.isNativeSupported()) {
-            obj.put("nativeSupported", model.isNativeSupported());
-        }
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("component", obj);
@@ -169,11 +157,9 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("dataformat");
         DataFormatModel model = new DataFormatModel();
         parseModel(mobj, model);
+        parseArtifact(mobj, model);
         model.setModelName(mobj.getString("modelName"));
         model.setModelJavaType(mobj.getString("modelJavaType"));
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
         JsonObject mprp = (JsonObject) obj.get("properties");
         for (Map.Entry<String, Object> entry : mprp.entrySet()) {
             JsonObject mp = (JsonObject) entry.getValue();
@@ -191,26 +177,11 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(DataFormatModel model) {
         JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+
         obj.put("modelName", model.getModelName());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("label", model.getLabel());
-        obj.put("javaType", model.getJavaType());
         obj.put("modelJavaType", model.getModelJavaType());
-        if (model.getSupportLevel() != null) {
-            obj.put("supportLevel", model.getSupportLevel().name());
-        }
-        if (model.isNativeSupported()) {
-            obj.put("nativeSupported", model.isNativeSupported());
-        }
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("dataformat", obj);
@@ -246,23 +217,9 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(EipModel model) {
         JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("javaType", model.getJavaType());
-        obj.put("label", model.getLabel());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
+        baseToJson(model, obj);
         obj.put("input", model.isInput());
         obj.put("output", model.isOutput());
-        if (model.getSupportLevel() != null) {
-            obj.put("supportLevel", model.getSupportLevel().name());
-        }
-        if (model.isNativeSupported()) {
-            obj.put("nativeSupported", model.isNativeSupported());
-        }
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("model", obj);
@@ -281,9 +238,7 @@ public final class JsonMapper {
         parseModel(mobj, model);
         model.setModelName(mobj.getString("modelName"));
         model.setModelJavaType(mobj.getString("modelJavaType"));
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
+        parseArtifact(mobj, model);
         JsonObject mprp = (JsonObject) obj.get("properties");
         for (Map.Entry<String, Object> entry : mprp.entrySet()) {
             JsonObject mp = (JsonObject) entry.getValue();
@@ -301,26 +256,10 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(LanguageModel model) {
         JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
         obj.put("modelName", model.getModelName());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("label", model.getLabel());
-        obj.put("javaType", model.getJavaType());
         obj.put("modelJavaType", model.getModelJavaType());
-        if (model.getSupportLevel() != null) {
-            obj.put("supportLevel", model.getSupportLevel().name());
-        }
-        if (model.isNativeSupported()) {
-            obj.put("nativeSupported", model.isNativeSupported());
-        }
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("language", obj);
@@ -337,9 +276,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("other");
         OtherModel model = new OtherModel();
         parseModel(mobj, model);
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
+        parseArtifact(mobj, model);
         return model;
     }
 
@@ -350,6 +287,15 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(OtherModel model) {
         JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("other", obj);
+        return wrapper;
+    }
+
+    private static void baseToJson(BaseModel<?> model, JsonObject obj) {
         obj.put("kind", model.getKind());
         obj.put("name", model.getName());
         obj.put("title", model.getTitle());
@@ -358,19 +304,19 @@ public final class JsonMapper {
         obj.put("deprecationNote", model.getDeprecationNote());
         obj.put("firstVersion", model.getFirstVersion());
         obj.put("label", model.getLabel());
+        obj.put("javaType", model.getJavaType());
         if (model.getSupportLevel() != null) {
             obj.put("supportLevel", model.getSupportLevel().name());
         }
         if (model.isNativeSupported()) {
             obj.put("nativeSupported", model.isNativeSupported());
         }
+    }
+
+    private static void artifactToJson(ArtifactModel<?> model, JsonObject obj) {
         obj.put("groupId", model.getGroupId());
         obj.put("artifactId", model.getArtifactId());
         obj.put("version", model.getVersion());
-        obj.entrySet().removeIf(e -> e.getValue() == null);
-        JsonObject wrapper = new JsonObject();
-        wrapper.put("other", obj);
-        return wrapper;
     }
 
     private static void parseModel(JsonObject mobj, BaseModel<?> model) {
