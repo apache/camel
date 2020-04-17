@@ -519,8 +519,10 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Move objects from S3 bucket to a different bucket after they have
-         * been retrieved. The copy bucket operation is only performed if the
-         * Exchange is committed. If a rollback occurs, the object is not moved.
+         * been retrieved. To accomplish the operation the destinationBucket
+         * option must be set. The copy bucket operation is only performed if
+         * the Exchange is committed. If a rollback occurs, the object is not
+         * moved.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -534,8 +536,10 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Move objects from S3 bucket to a different bucket after they have
-         * been retrieved. The copy bucket operation is only performed if the
-         * Exchange is committed. If a rollback occurs, the object is not moved.
+         * been retrieved. To accomplish the operation the destinationBucket
+         * option must be set. The copy bucket operation is only performed if
+         * the Exchange is committed. If a rollback occurs, the object is not
+         * moved.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
