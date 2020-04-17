@@ -505,6 +505,19 @@ Some users like to consume stuff from a bucket and move the content in a differe
 If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will be always overwritten on the same 
 original bucket.
 
+== MoveAfterRead consumer option
+
+In addition to deleteAfterRead it has been added another option, moveAfterRead. With this option enabled the consumed object will be moved to a target destinationBucket instead of being only deleted.
+This will require specifying the destinationBucket option. As example:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true&destinationBucket=myothercamelbucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
