@@ -46,7 +46,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service (Legacy) component supports 21 options, which are listed below.
+The Azure Storage Blob Service (Legacy) component supports 22 options, which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The Azure Storage Blob Service (Legacy) component supports 21 options, which are
 | *fileDir* (common) | Set the file directory where the downloaded blobs will be saved to |  | String
 | *publicForRead* (common) | Storage resources can be public for reading their content, if this property is enabled then the credentials do not have to be set | false | boolean
 | *streamReadSize* (common) | Set the minimum read size in bytes when reading the blob content |  | int
+| *validateClientURI* (common) | Whether to validate the Azure client URI | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *blobMetadata* (producer) | Set the blob meta-data |  | Map
 | *blobPrefix* (producer) | Set a prefix which can be used for listing the blobs |  | String
@@ -106,7 +107,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (23 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -121,6 +122,7 @@ with the following path and query parameters:
 | *fileDir* (common) | Set the file directory where the downloaded blobs will be saved to |  | String
 | *publicForRead* (common) | Storage resources can be public for reading their content, if this property is enabled then the credentials do not have to be set | false | boolean
 | *streamReadSize* (common) | Set the minimum read size in bytes when reading the blob content |  | int
+| *validateClientURI* (common) | Whether to validate the Azure client URI | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern

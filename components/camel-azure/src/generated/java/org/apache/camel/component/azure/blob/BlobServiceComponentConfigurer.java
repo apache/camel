@@ -65,6 +65,8 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         case "streamWriteSize": getOrCreateConfiguration(target).setStreamWriteSize(property(camelContext, int.class, value)); return true;
         case "useflatlisting":
         case "useFlatListing": getOrCreateConfiguration(target).setUseFlatListing(property(camelContext, boolean.class, value)); return true;
+        case "validateclienturi":
+        case "validateClientURI": getOrCreateConfiguration(target).setValidateClientURI(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -93,6 +95,7 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         answer.put("streamReadSize", int.class);
         answer.put("streamWriteSize", int.class);
         answer.put("useFlatListing", boolean.class);
+        answer.put("validateClientURI", boolean.class);
         return answer;
     }
 
@@ -139,6 +142,8 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         case "streamWriteSize": return getOrCreateConfiguration(target).getStreamWriteSize();
         case "useflatlisting":
         case "useFlatListing": return getOrCreateConfiguration(target).isUseFlatListing();
+        case "validateclienturi":
+        case "validateClientURI": return getOrCreateConfiguration(target).isValidateClientURI();
         default: return null;
         }
     }

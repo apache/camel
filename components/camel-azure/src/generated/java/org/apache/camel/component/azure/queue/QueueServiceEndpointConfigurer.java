@@ -44,6 +44,8 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         case "queueprefix":
         case "queuePrefix": target.getConfiguration().setQueuePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "validateclienturi":
+        case "validateClientURI": target.getConfiguration().setValidateClientURI(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -65,6 +67,7 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         answer.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
         answer.put("queuePrefix", java.lang.String.class);
         answer.put("synchronous", boolean.class);
+        answer.put("validateClientURI", boolean.class);
         return answer;
     }
 
@@ -97,6 +100,8 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         case "queueprefix":
         case "queuePrefix": return target.getConfiguration().getQueuePrefix();
         case "synchronous": return target.isSynchronous();
+        case "validateclienturi":
+        case "validateClientURI": return target.getConfiguration().isValidateClientURI();
         default: return null;
         }
     }

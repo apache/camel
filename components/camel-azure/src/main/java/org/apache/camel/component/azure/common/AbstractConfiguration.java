@@ -30,7 +30,10 @@ public abstract class AbstractConfiguration implements Cloneable {
 
     @UriParam(label = "security", secret = true)
     private String credentialsAccountName;
-    
+
+    @UriParam(defaultValue = "true")
+    private boolean validateClientURI = true;
+
     private String accountName;
     
     public String getAccountName() {
@@ -88,5 +91,16 @@ public abstract class AbstractConfiguration implements Cloneable {
         }
         return creds;
 
+    }
+
+    public boolean isValidateClientURI() {
+        return validateClientURI;
+    }
+
+    /**
+     * Whether to validate the Azure client URI
+     */
+    public void setValidateClientURI(boolean validateClientURI) {
+        this.validateClientURI = validateClientURI;
     }
 }
