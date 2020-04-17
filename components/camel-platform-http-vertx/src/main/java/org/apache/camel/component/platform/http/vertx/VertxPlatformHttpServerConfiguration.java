@@ -17,6 +17,8 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.math.BigInteger;
+import java.time.Duration;
+import java.util.List;
 
 import org.apache.camel.support.jsse.SSLContextParameters;
 
@@ -30,9 +32,11 @@ public class VertxPlatformHttpServerConfiguration {
     private String path = DEFAULT_PATH;
     private BigInteger maxBodySize;
 
-    private BodyHandler bodyHandler = new BodyHandler();
     private SSLContextParameters sslContextParameters;
     private boolean useGlobalSslContextParameters;
+
+    private BodyHandler bodyHandler = new BodyHandler();
+    private Cors cors = new Cors();
 
     public String getBindHost() {
         return bindHost;
@@ -66,14 +70,6 @@ public class VertxPlatformHttpServerConfiguration {
         this.maxBodySize = maxBodySize;
     }
 
-    public BodyHandler getBodyHandler() {
-        return bodyHandler;
-    }
-
-    public void setBodyHandler(BodyHandler bodyHandler) {
-        this.bodyHandler = bodyHandler;
-    }
-
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
@@ -88,6 +84,79 @@ public class VertxPlatformHttpServerConfiguration {
 
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public Cors getCors() {
+        return cors;
+    }
+
+    public void setCors(Cors corsConfiguration) {
+        this.cors = corsConfiguration;
+    }
+
+    public BodyHandler getBodyHandler() {
+        return bodyHandler;
+    }
+
+    public void setBodyHandler(BodyHandler bodyHandler) {
+        this.bodyHandler = bodyHandler;
+    }
+
+    public static class Cors {
+        private boolean enabled;
+        private List<String> origins;
+        private List<String> methods;
+        private List<String> headers;
+        private List<String> exposedHeaders;
+        private Duration accessControlMaxAge;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public List<String> getOrigins() {
+            return origins;
+        }
+
+        public void setOrigins(List<String> origins) {
+            this.origins = origins;
+        }
+
+        public List<String> getMethods() {
+            return methods;
+        }
+
+        public void setMethods(List<String> methods) {
+            this.methods = methods;
+        }
+
+        public List<String> getHeaders() {
+            return headers;
+        }
+
+        public List<String> getExposedHeaders() {
+            return exposedHeaders;
+        }
+
+        public void setExposedHeaders(List<String> exposedHeaders) {
+            this.exposedHeaders = exposedHeaders;
+        }
+
+        public void setHeaders(List<String> headers) {
+            this.headers = headers;
+        }
+
+        public Duration getAccessControlMaxAge() {
+            return accessControlMaxAge;
+        }
+
+        public void setAccessControlMaxAge(Duration accessControlMaxAge) {
+            this.accessControlMaxAge = accessControlMaxAge;
+        }
     }
 
     public static class BodyHandler {
