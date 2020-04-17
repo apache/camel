@@ -24,10 +24,13 @@ public class QueueConfiguration {
     private String accessKey;
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
-    @UriParam(label = "producer")
+    // queue properties
+    @UriParam(label = "queue")
     private Duration timeToLive;
-    @UriParam(label = "consumer, producer")
+    @UriParam(label = "queue")
     private Duration visibilityTimeout;
+    @UriParam(label = "queue", defaultValue = "5")
+    private Integer maxMessages = 5;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -111,6 +114,17 @@ public class QueueConfiguration {
      */
     public QueueOperationDefinition getOperation() {
         return operation;
+    }
+
+    /**
+     * as
+     */
+    public Integer getMaxMessages() {
+        return maxMessages;
+    }
+
+    public void setMaxMessages(Integer maxMessages) {
+        this.maxMessages = maxMessages;
     }
 
     public void setOperation(QueueOperationDefinition operation) {

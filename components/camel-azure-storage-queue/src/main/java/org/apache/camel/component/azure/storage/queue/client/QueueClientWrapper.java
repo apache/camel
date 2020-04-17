@@ -42,15 +42,16 @@ public class QueueClientWrapper {
         return client.sendMessageWithResponse(messageText, visibilityTimeout, timeToLive, timeout, Context.NONE);
     }
 
-    public List<QueueMessageItem> receiveMessages(Integer maxMessages, Duration visibilityTimeout, Duration timeout) {
-        return client.receiveMessages(maxMessages, visibilityTimeout, timeout, Context.NONE).stream().collect(Collectors.toList());
-    }
-
     public Response<Void> deleteMessage(String messageId, String popReceipt, Duration timeout) {
         return client.deleteMessageWithResponse(messageId, popReceipt, timeout, Context.NONE);
     }
 
+    public List<QueueMessageItem> receiveMessages(Integer maxMessages, Duration visibilityTimeout, Duration timeout) {
+        return client.receiveMessages(maxMessages, visibilityTimeout, timeout, Context.NONE).stream().collect(Collectors.toList());
+    }
+
     public List<PeekedMessageItem> peekMessages(Integer maxMessages, Duration timeout) {
+        //client.peekMessages(10, null, Context.NONE).stream().collect(Collectors.toList()).forEach(peekedMessageItem -> System.out.println(peekedMessageItem.getMessageText()));
         return client.peekMessages(maxMessages, timeout, Context.NONE).stream().collect(Collectors.toList());
     }
 

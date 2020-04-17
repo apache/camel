@@ -1,9 +1,12 @@
 package org.apache.camel.component.azure.storage.queue.operations;
 
+import java.time.Duration;
+import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 import com.azure.storage.queue.QueueServiceClient;
+import com.azure.storage.queue.models.PeekedMessageItem;
 import com.azure.storage.queue.models.QueueItem;
 import com.azure.storage.queue.models.QueueMessageItem;
 import org.apache.camel.Exchange;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -90,8 +94,9 @@ class QueueOperationsIT extends CamelTestSupport {
         assertTrue((boolean) response.getBody());
         assertNotNull(response.getHeaders().get(QueueConstants.MESSAGE_ID));
         assertNotNull(response.getHeaders().get(QueueConstants.EXPIRATION_TIME));
+        assertNotNull(response.getHeaders().get(QueueConstants.POP_RECEIPT));
 
-        final QueueMessageItem messageItem = clientWrapper.receiveMessages(1, null, null).stream().findFirst().get();
+        final QueueMessageItem messageItem = clientWrapper.receiveMessages(1, Duration.ofSeconds(30), null).stream().findFirst().get();
 
         assertEquals("testing message", messageItem.getMessageText());
 
@@ -102,5 +107,81 @@ class QueueOperationsIT extends CamelTestSupport {
 
         // delete testing queue
         operations.deleteQueue(exchange);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testReceiveAndPeekMessages() {
+        final QueueOperations operations = getQueueOperations();
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-1");
+        operations.sendMessage(exchange);
+
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-2");
+        operations.sendMessage(exchange);
+
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-3");
+        operations.sendMessage(exchange);
+
+        // test peek messages
+        final QueueOperationResponse peekResponse = operations.peekMessages(exchange);
+        final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
+
+        assertEquals(3, peekedMessageItems.size());
+        assertEquals("testing message-1", peekedMessageItems.get(0).getMessageText());
+        assertEquals("testing message-2", peekedMessageItems.get(1).getMessageText());
+        assertEquals("testing message-3", peekedMessageItems.get(2).getMessageText());
+
+        // test receive message
+        exchange.getIn().setHeader(QueueConstants.MAX_MESSAGES, 1);
+        final QueueOperationResponse receiveResponse = operations.receiveMessages(exchange);
+        final List<QueueMessageItem> receivedMessageItems = (List<QueueMessageItem>) receiveResponse.getBody();
+
+        assertEquals(1, receivedMessageItems.size());
+        assertEquals("testing message-1", receivedMessageItems.get(0).getMessageText());
+
+        // make sure the message has been deQueued
+        assertEquals(2, ((List<PeekedMessageItem>) operations.peekMessages(null).getBody()).size());
+
+        // delete testing queue
+        operations.deleteQueue(exchange);
+    }
+
+    @Test
+    public void testDeleteMessages() {
+        final QueueOperations operations = getQueueOperations();
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-1");
+        final QueueOperationResponse sentMessage1 = operations.sendMessage(exchange);
+
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-2");
+        final QueueOperationResponse sentMessage2 = operations.sendMessage(exchange);
+
+        // test delete message
+        assertThrows(IllegalArgumentException.class, () -> operations.deleteMessage(exchange));
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, sentMessage1.getHeaders().get(QueueConstants.MESSAGE_ID));
+        // we still need pop receipt
+        assertThrows(IllegalArgumentException.class, () -> operations.deleteMessage(exchange));
+        // delete message now
+        exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, sentMessage1.getHeaders().get(QueueConstants.POP_RECEIPT));
+        operations.deleteMessage(exchange);
+
+        // check the what we have in the queue
+        final QueueOperationResponse peekResponse = operations.peekMessages(exchange);
+        @SuppressWarnings("unchecked") final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
+
+        assertEquals(1, peekedMessageItems.size());
+        assertEquals(sentMessage2.getHeaders().get(QueueConstants.MESSAGE_ID), peekedMessageItems.get(0).getMessageId());
+
+        // delete testing queue
+        operations.deleteQueue(exchange);
+    }
+
+    private QueueOperations getQueueOperations() {
+        final String queueName = RandomStringUtils.randomAlphabetic(10).toLowerCase();
+        final QueueClientWrapper clientWrapper = serviceClientWrapper.getQueueClientWrapper(queueName);
+        return new QueueOperations(configuration, clientWrapper);
     }
 }

@@ -15,6 +15,7 @@ public final class QueueConstants {
     public static final String QUEUES_SEGMENT_OPTIONS = HEADER_PREFIX + "QueuesSegmentOptions";
     public static final String TIMEOUT = HEADER_PREFIX + "Timeout";
     public static final String MESSAGE_TEXT = HEADER_PREFIX + "MessageText";
+    public static final String MAX_MESSAGES = HEADER_PREFIX + "MaxMessages";
     public static final String VISIBILITY_TIMEOUT = HEADER_PREFIX + "VisibilityTimeout";
     public static final String TIME_TO_LIVE = HEADER_PREFIX + "TimeToLive";
     public static final String QUEUE_CREATED = HEADER_PREFIX + "QueueCreated";

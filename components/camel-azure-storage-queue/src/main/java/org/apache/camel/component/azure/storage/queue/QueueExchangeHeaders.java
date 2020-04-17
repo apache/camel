@@ -56,6 +56,18 @@ public class QueueExchangeHeaders {
         return getObjectFromHeaders(exchange, QueueConstants.QUEUE_CREATED, boolean.class);
     }
 
+    public static String getPopReceiptFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, QueueConstants.POP_RECEIPT, String.class);
+    }
+
+    public static String getMessageIdFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, QueueConstants.MESSAGE_ID, String.class);
+    }
+
+    public static Integer getMaxMessagesFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, QueueConstants.MAX_MESSAGES, Integer.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }

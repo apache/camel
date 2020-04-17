@@ -8,7 +8,6 @@ public enum QueueOperationDefinition {
     deleteQueue,
     clearQueue,
     sendMessage,
-    sendBatchMessages,
     deleteMessage,
     receiveMessages,
     peekMessages,

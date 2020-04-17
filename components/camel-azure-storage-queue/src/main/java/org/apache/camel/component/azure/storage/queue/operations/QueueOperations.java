@@ -1,12 +1,14 @@
 package org.apache.camel.component.azure.storage.queue.operations;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 import com.azure.core.http.rest.Response;
 import com.azure.storage.queue.models.SendMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
+import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.component.azure.storage.queue.QueueExchangeHeaders;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
 import org.apache.camel.util.ObjectHelper;
@@ -78,6 +80,49 @@ public class QueueOperations {
         return buildResponseWithEmptyBody(client.sendMessage(text, visibilityTimeout, timeToLive, timeout));
     }
 
+    public QueueOperationResponse deleteMessage(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, "exchange cannot be null");
+
+        final String messageId = QueueExchangeHeaders.getMessageIdFromHeaders(exchange);
+        final String popReceipt = QueueExchangeHeaders.getPopReceiptFromHeaders(exchange);
+        final Duration timeout = QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
+
+        if (ObjectHelper.isEmpty(messageId)) {
+            throw new IllegalArgumentException(String.format("Message ID must be specified in camel headers '%s' for deleteMessage " +
+                    "operation.", QueueConstants.MESSAGE_ID));
+        }
+
+        if (ObjectHelper.isEmpty(popReceipt)) {
+            throw new IllegalArgumentException(String.format("Message Pop Receipt must be specified in camel headers '%s' for deleteMessage " +
+                    "operation.", QueueConstants.POP_RECEIPT));
+        }
+
+        return buildResponseWithEmptyBody(client.deleteMessage(messageId, popReceipt, timeout));
+    }
+
+    public QueueOperationResponse receiveMessages(final Exchange exchange) {
+        if (exchange == null) {
+            return new QueueOperationResponse(client.receiveMessages(configuration.getMaxMessages(), configuration.getVisibilityTimeout(), null));
+        }
+
+        final Integer maxMessages = getMaxMessages(exchange);
+        final Duration visibilityTimeout = getVisibilityTimeout(exchange);
+        final Duration timeout = QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
+
+        return new QueueOperationResponse(client.receiveMessages(maxMessages, visibilityTimeout, timeout));
+    }
+
+    public QueueOperationResponse peekMessages(final Exchange exchange) {
+        if (exchange == null) {
+            return new QueueOperationResponse(client.peekMessages(configuration.getMaxMessages(), null));
+        }
+
+        final Integer maxMessages = getMaxMessages(exchange);
+        final Duration timeout = QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
+
+        return new QueueOperationResponse(client.peekMessages(maxMessages, timeout));
+    }
+
     @SuppressWarnings("rawtypes")
     private QueueOperationResponse buildResponseWithEmptyBody(final Response response) {
         return buildResponse(response, true);
@@ -112,6 +157,11 @@ public class QueueOperations {
     private Duration getTimeToLive(final Exchange exchange) {
         return ObjectHelper.isEmpty(QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange)) ? configuration.getTimeToLive()
                 : QueueExchangeHeaders.getTimeToLiveFromHeaders(exchange);
+    }
+
+    private Integer getMaxMessages(final Exchange exchange) {
+        return ObjectHelper.isEmpty(QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange)) ? configuration.getMaxMessages()
+                : QueueExchangeHeaders.getMaxMessagesFromHeaders(exchange);
     }
 
 }
