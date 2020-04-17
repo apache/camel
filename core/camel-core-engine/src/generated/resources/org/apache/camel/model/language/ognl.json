@@ -4,10 +4,10 @@
     "name": "ognl",
     "title": "OGNL",
     "description": "To use OGNL scripts in Camel expressions or predicates.",
-    "firstVersion": "1.1.0",
-    "javaType": "org.apache.camel.model.language.OgnlExpression",
-    "label": "language,java",
     "deprecated": false,
+    "firstVersion": "1.1.0",
+    "label": "language,java",
+    "javaType": "org.apache.camel.model.language.OgnlExpression",
     "input": false,
     "output": false
   },

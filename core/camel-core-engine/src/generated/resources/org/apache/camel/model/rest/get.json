@@ -4,9 +4,9 @@
     "name": "get",
     "title": "Get",
     "description": "Rest GET command",
-    "javaType": "org.apache.camel.model.rest.GetVerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.GetVerbDefinition",
     "input": true,
     "output": false
   },

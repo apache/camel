@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "ribbonLoadBalancer",
     "title": "Ribbon Load Balancer",
-    "javaType": "org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration",
-    "label": "routing,cloud,load-balancing",
     "deprecated": false,
+    "label": "routing,cloud,load-balancing",
+    "javaType": "org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration",
     "input": false,
     "output": false
   },

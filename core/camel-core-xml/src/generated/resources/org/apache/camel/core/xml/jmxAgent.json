@@ -4,9 +4,9 @@
     "name": "jmxAgent",
     "title": "Jmx Agent",
     "description": "JMX configuration.",
-    "javaType": "org.apache.camel.core.xml.CamelJMXAgentDefinition",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelJMXAgentDefinition",
     "input": false,
     "output": false
   },

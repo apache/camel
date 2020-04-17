@@ -4,10 +4,10 @@
     "name": "base64",
     "title": "Base64",
     "description": "The Base64 data format is used for base64 encoding and decoding.",
-    "firstVersion": "2.11.0",
-    "javaType": "org.apache.camel.model.dataformat.Base64DataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.11.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.Base64DataFormat",
     "input": false,
     "output": false
   },

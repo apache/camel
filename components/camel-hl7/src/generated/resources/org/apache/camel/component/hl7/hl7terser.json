@@ -2,7 +2,6 @@
   "language": {
     "kind": "language",
     "name": "hl7terser",
-    "modelName": "hl7terser",
     "title": "HL7 Terser",
     "description": "To use HL7 terser scripts in Camel expressions or predicates.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.11.0",
     "label": "language,hl7",
     "javaType": "org.apache.camel.component.hl7.Hl7TerserLanguage",
-    "modelJavaType": "org.apache.camel.model.language.Hl7TerserExpression",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hl7",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "hl7terser",
+    "modelJavaType": "org.apache.camel.model.language.Hl7TerserExpression"
   },
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },

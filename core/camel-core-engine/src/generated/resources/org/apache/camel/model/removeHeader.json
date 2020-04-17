@@ -4,9 +4,9 @@
     "name": "removeHeader",
     "title": "Remove Header",
     "description": "Removes a named header from the message",
-    "javaType": "org.apache.camel.model.RemoveHeaderDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.RemoveHeaderDefinition",
     "input": true,
     "output": false
   },

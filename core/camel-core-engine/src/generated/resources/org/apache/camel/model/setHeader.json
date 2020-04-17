@@ -4,9 +4,9 @@
     "name": "setHeader",
     "title": "Set Header",
     "description": "Sets the value of a message header",
-    "javaType": "org.apache.camel.model.SetHeaderDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.SetHeaderDefinition",
     "input": true,
     "output": false
   },

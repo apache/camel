@@ -4,9 +4,9 @@
     "name": "endpoint",
     "title": "Endpoint",
     "description": "Camel endpoint configuration",
-    "javaType": "org.apache.camel.spring.CamelEndpointFactoryBean",
-    "label": "spring,configuration,endpoint",
     "deprecated": false,
+    "label": "spring,configuration,endpoint",
+    "javaType": "org.apache.camel.spring.CamelEndpointFactoryBean",
     "input": false,
     "output": false
   },

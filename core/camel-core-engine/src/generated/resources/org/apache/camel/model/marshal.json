@@ -4,9 +4,9 @@
     "name": "marshal",
     "title": "Marshal",
     "description": "Marshals data into a specified format for transmission over a transport or component",
-    "javaType": "org.apache.camel.model.MarshalDefinition",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.MarshalDefinition",
     "input": true,
     "output": false
   },

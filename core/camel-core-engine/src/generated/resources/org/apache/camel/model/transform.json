@@ -4,9 +4,9 @@
     "name": "transform",
     "title": "Transform",
     "description": "Transforms the message body based on an expression",
-    "javaType": "org.apache.camel.model.TransformDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.TransformDefinition",
     "input": true,
     "output": false
   },

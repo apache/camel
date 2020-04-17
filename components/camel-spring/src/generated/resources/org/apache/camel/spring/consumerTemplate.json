@@ -4,9 +4,9 @@
     "name": "consumerTemplate",
     "title": "Consumer Template",
     "description": "Configures a ConsumerTemplate",
-    "javaType": "org.apache.camel.spring.CamelConsumerTemplateFactoryBean",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelConsumerTemplateFactoryBean",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "loop",
     "title": "Loop",
     "description": "Processes a message multiple times",
-    "javaType": "org.apache.camel.model.LoopDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.LoopDefinition",
     "input": true,
     "output": true
   },

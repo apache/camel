@@ -4,9 +4,9 @@
     "name": "wireTap",
     "title": "Wire Tap",
     "description": "Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.",
-    "javaType": "org.apache.camel.model.WireTapDefinition",
-    "label": "eip,endpoint,routing",
     "deprecated": false,
+    "label": "eip,endpoint,routing",
+    "javaType": "org.apache.camel.model.WireTapDefinition",
     "input": true,
     "output": false
   },

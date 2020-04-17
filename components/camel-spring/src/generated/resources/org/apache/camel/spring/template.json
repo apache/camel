@@ -4,9 +4,9 @@
     "name": "template",
     "title": "Template",
     "description": "Configures a ProducerTemplate",
-    "javaType": "org.apache.camel.spring.CamelProducerTemplateFactoryBean",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelProducerTemplateFactoryBean",
     "input": false,
     "output": false
   },

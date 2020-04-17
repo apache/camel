@@ -4,9 +4,9 @@
     "name": "loadBalance",
     "title": "Load Balance",
     "description": "Balances message processing among a number of nodes",
-    "javaType": "org.apache.camel.model.LoadBalanceDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.LoadBalanceDefinition",
     "input": true,
     "output": false
   },

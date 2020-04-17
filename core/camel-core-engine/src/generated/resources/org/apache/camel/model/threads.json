@@ -4,9 +4,9 @@
     "name": "threads",
     "title": "Threads",
     "description": "Specifies that all steps after this node are processed asynchronously",
-    "javaType": "org.apache.camel.model.ThreadsDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.ThreadsDefinition",
     "input": true,
     "output": false
   },

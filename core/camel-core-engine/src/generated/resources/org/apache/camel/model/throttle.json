@@ -4,9 +4,9 @@
     "name": "throttle",
     "title": "Throttle",
     "description": "Controls the rate at which messages are passed to the next node in the route",
-    "javaType": "org.apache.camel.model.ThrottleDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.ThrottleDefinition",
     "input": true,
     "output": false
   },

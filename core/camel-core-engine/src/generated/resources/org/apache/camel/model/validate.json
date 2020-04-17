@@ -4,9 +4,9 @@
     "name": "validate",
     "title": "Validate",
     "description": "Validates a message based on an expression",
-    "javaType": "org.apache.camel.model.ValidateDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.ValidateDefinition",
     "input": true,
     "output": false
   },

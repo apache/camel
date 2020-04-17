@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "thrift",
-    "modelName": "thrift",
     "title": "Thrift",
     "description": "The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.thrift.ThriftDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.ThriftDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-thrift",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "thrift",
+    "modelJavaType": "org.apache.camel.model.dataformat.ThriftDataFormat"
   },
   "properties": {
     "instanceClass": { "kind": "attribute", "displayName": "Instance Class", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of class to use when unmarshalling" },

@@ -4,9 +4,9 @@
     "name": "propertiesLocation",
     "title": "Properties Location",
     "description": "Properties to use with properties placeholder",
-    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderLocationDefinition",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderLocationDefinition",
     "input": false,
     "output": false
   },

@@ -4,10 +4,10 @@
     "name": "pgp",
     "title": "PGP",
     "description": "PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.",
-    "firstVersion": "2.9.0",
-    "javaType": "org.apache.camel.model.dataformat.PGPDataFormat",
-    "label": "dataformat,transformation,security",
     "deprecated": false,
+    "firstVersion": "2.9.0",
+    "label": "dataformat,transformation,security",
+    "javaType": "org.apache.camel.model.dataformat.PGPDataFormat",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "doCatch",
     "title": "Do Catch",
     "description": "Catches exceptions as part of a try, catch, finally block",
-    "javaType": "org.apache.camel.model.CatchDefinition",
-    "label": "error",
     "deprecated": false,
+    "label": "error",
+    "javaType": "org.apache.camel.model.CatchDefinition",
     "input": true,
     "output": false
   },

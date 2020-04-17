@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "univocity-csv",
-    "modelName": "univocity-csv",
     "title": "uniVocity CSV",
     "description": "The uniVocity CSV data format is used for working with CSV (Comma Separated Values) flat payloads.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.15.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityCsvDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "univocity-csv",
+    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
   },
   "properties": {
     "quoteAllFields": { "kind": "attribute", "displayName": "Quote All Fields", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether or not all values must be quoted when writing them." },

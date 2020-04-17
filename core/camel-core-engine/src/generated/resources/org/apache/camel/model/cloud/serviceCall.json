@@ -4,9 +4,9 @@
     "name": "serviceCall",
     "title": "Service Call",
     "description": "To call remote services",
-    "javaType": "org.apache.camel.model.cloud.ServiceCallDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.cloud.ServiceCallDefinition",
     "input": true,
     "output": false
   },

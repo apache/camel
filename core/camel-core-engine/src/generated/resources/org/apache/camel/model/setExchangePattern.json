@@ -4,9 +4,9 @@
     "name": "setExchangePattern",
     "title": "Set Exchange Pattern",
     "description": "Sets the exchange pattern on the message exchange",
-    "javaType": "org.apache.camel.model.SetExchangePatternDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.SetExchangePatternDefinition",
     "input": true,
     "output": false
   },

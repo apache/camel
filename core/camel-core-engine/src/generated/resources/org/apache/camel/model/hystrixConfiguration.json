@@ -4,9 +4,9 @@
     "name": "hystrixConfiguration",
     "title": "Hystrix Configuration",
     "description": "Hystrix Circuit Breaker EIP configuration",
-    "javaType": "org.apache.camel.model.HystrixConfigurationDefinition",
-    "label": "eip,routing,circuitbreaker",
     "deprecated": false,
+    "label": "eip,routing,circuitbreaker",
+    "javaType": "org.apache.camel.model.HystrixConfigurationDefinition",
     "input": false,
     "output": false
   },

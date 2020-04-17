@@ -4,10 +4,10 @@
     "name": "mvel",
     "title": "MVEL",
     "description": "To use MVEL scripts in Camel expressions or predicates.",
-    "firstVersion": "2.0.0",
-    "javaType": "org.apache.camel.model.language.MvelExpression",
-    "label": "language,java",
     "deprecated": false,
+    "firstVersion": "2.0.0",
+    "label": "language,java",
+    "javaType": "org.apache.camel.model.language.MvelExpression",
     "input": false,
     "output": false
   },

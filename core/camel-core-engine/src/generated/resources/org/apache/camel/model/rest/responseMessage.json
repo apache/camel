@@ -4,9 +4,9 @@
     "name": "responseMessage",
     "title": "Response Message",
     "description": "To specify the rest operation response messages using Swagger. This maps to the Swagger Response Message Object.",
-    "javaType": "org.apache.camel.model.rest.RestOperationResponseMsgDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestOperationResponseMsgDefinition",
     "input": false,
     "output": false
   },

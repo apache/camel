@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "univocity-fixed",
-    "modelName": "univocity-fixed",
     "title": "uniVocity Fixed Length",
     "description": "The uniVocity Fixed Length data format is used for working with fixed length flat payloads.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.15.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.univocity.UniVocityFixedWidthDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "univocity-fixed",
+    "modelJavaType": "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat"
   },
   "properties": {
     "skipTrailingCharsUntilNewline": { "kind": "attribute", "displayName": "Skip Trailing Chars Until Newline", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether or not the trailing characters until new line must be ignored. The default value is false" },

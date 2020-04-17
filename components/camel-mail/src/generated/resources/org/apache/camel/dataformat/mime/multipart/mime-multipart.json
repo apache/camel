@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "mime-multipart",
-    "modelName": "mime-multipart",
     "title": "MIME Multipart",
     "description": "The MIME Multipart data format is used for marshalling Camel messages with attachments into MIME-Multipart message, and vise-versa.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.17.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.mime.multipart.MimeMultipartDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mail",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "mime-multipart",
+    "modelJavaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat"
   },
   "properties": {
     "multipartSubType": { "kind": "attribute", "displayName": "Multipart Sub Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "mixed", "description": "Specify the subtype of the MIME Multipart. Default is mixed." },

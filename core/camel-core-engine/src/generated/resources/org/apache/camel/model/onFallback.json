@@ -4,9 +4,9 @@
     "name": "onFallback",
     "title": "On Fallback",
     "description": "Route to be executed when Hystrix EIP executes fallback",
-    "javaType": "org.apache.camel.model.OnFallbackDefinition",
-    "label": "eip,routing,circuitbreaker",
     "deprecated": false,
+    "label": "eip,routing,circuitbreaker",
+    "javaType": "org.apache.camel.model.OnFallbackDefinition",
     "input": true,
     "output": false
   },

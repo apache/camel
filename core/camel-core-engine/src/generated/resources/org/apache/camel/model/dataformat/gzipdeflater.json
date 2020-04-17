@@ -4,10 +4,10 @@
     "name": "gzipdeflater",
     "title": "GZip Deflater",
     "description": "The GZip data format is a message compression and de-compression format (which works with the popular gzip\/gunzip tools).",
-    "firstVersion": "2.0.0",
-    "javaType": "org.apache.camel.model.dataformat.GzipDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.GzipDataFormat",
     "input": false,
     "output": false
   },

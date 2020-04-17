@@ -4,9 +4,9 @@
     "name": "rollback",
     "title": "Rollback",
     "description": "Forces a rollback by stopping routing the message",
-    "javaType": "org.apache.camel.model.RollbackDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.RollbackDefinition",
     "input": true,
     "output": false
   },

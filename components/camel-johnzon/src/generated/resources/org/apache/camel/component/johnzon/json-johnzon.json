@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "json-johnzon",
-    "modelName": "json",
     "title": "JSon Johnzon",
     "description": "JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.18.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.johnzon.JohnzonDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-johnzon",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "json",
+    "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat"
   },
   "properties": {
     "objectMapper": { "kind": "attribute", "displayName": "Object Mapper", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Lookup and use the existing ObjectMapper with the given id when using Jackson." },

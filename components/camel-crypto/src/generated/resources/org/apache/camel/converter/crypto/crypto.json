@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "crypto",
-    "modelName": "crypto",
     "title": "Crypto (Java Cryptographic Extension)",
     "description": "Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.3.0",
     "label": "dataformat,transformation,security",
     "javaType": "org.apache.camel.converter.crypto.CryptoDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.CryptoDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "crypto",
+    "modelJavaType": "org.apache.camel.model.dataformat.CryptoDataFormat"
   },
   "properties": {
     "algorithm": { "kind": "attribute", "displayName": "Algorithm", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The JCE algorithm name indicating the cryptographic algorithm that will be used." },

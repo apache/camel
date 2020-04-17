@@ -4,9 +4,9 @@
     "name": "multicast",
     "title": "Multicast",
     "description": "Routes the same message to multiple paths either sequentially or in parallel.",
-    "javaType": "org.apache.camel.model.MulticastDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.MulticastDefinition",
     "input": true,
     "output": false
   },

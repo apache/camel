@@ -4,9 +4,9 @@
     "name": "restConfiguration",
     "title": "Rest Configuration",
     "description": "To configure rest",
-    "javaType": "org.apache.camel.model.rest.RestConfigurationDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestConfigurationDefinition",
     "input": false,
     "output": false
   },

@@ -4,10 +4,10 @@
     "name": "univocity-fixed",
     "title": "uniVocity Fixed Length",
     "description": "The uniVocity Fixed Length data format is used for working with fixed length flat payloads.",
-    "firstVersion": "2.15.0",
-    "javaType": "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat",
-    "label": "dataformat,transformation,csv",
     "deprecated": false,
+    "firstVersion": "2.15.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat",
     "input": false,
     "output": false
   },

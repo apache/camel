@@ -4,9 +4,9 @@
     "name": "property",
     "title": "Property",
     "description": "A key value pair",
-    "javaType": "org.apache.camel.model.PropertyDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.PropertyDefinition",
     "input": false,
     "output": false
   },

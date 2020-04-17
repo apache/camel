@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "staticServiceDiscovery",
     "title": "Static Service Discovery",
-    "javaType": "org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration",
-    "label": "routing,cloud,service-discovery",
     "deprecated": false,
+    "label": "routing,cloud,service-discovery",
+    "javaType": "org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration",
     "input": false,
     "output": false
   },

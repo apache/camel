@@ -4,9 +4,9 @@
     "name": "otherwise",
     "title": "Otherwise",
     "description": "Route to be executed when all other choices evaluate to false",
-    "javaType": "org.apache.camel.model.OtherwiseDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.OtherwiseDefinition",
     "input": true,
     "output": false
   },

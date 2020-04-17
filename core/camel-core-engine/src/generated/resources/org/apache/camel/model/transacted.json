@@ -4,9 +4,9 @@
     "name": "transacted",
     "title": "Transacted",
     "description": "Enables transaction on the route",
-    "javaType": "org.apache.camel.model.TransactedDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.TransactedDefinition",
     "input": true,
     "output": false
   },

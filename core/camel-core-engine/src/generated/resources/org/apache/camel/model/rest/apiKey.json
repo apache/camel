@@ -4,9 +4,9 @@
     "name": "apiKey",
     "title": "Api Key",
     "description": "Rest security basic auth definition",
-    "javaType": "org.apache.camel.model.rest.RestSecurityApiKey",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestSecurityApiKey",
     "input": false,
     "output": false
   },

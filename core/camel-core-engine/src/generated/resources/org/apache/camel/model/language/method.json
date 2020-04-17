@@ -4,10 +4,10 @@
     "name": "method",
     "title": "Bean method",
     "description": "To use a Java bean (aka method call) in Camel expressions or predicates.",
-    "firstVersion": "1.3.0",
-    "javaType": "org.apache.camel.model.language.MethodCallExpression",
-    "label": "language,core,java",
     "deprecated": false,
+    "firstVersion": "1.3.0",
+    "label": "language,core,java",
+    "javaType": "org.apache.camel.model.language.MethodCallExpression",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "redeliveryPolicy",
     "title": "Redelivery Policy",
     "description": "To configure re-delivery for error handling",
-    "javaType": "org.apache.camel.model.RedeliveryPolicyDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RedeliveryPolicyDefinition",
     "input": false,
     "output": false
   },

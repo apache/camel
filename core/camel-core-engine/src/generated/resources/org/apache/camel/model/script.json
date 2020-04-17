@@ -4,9 +4,9 @@
     "name": "script",
     "title": "Script",
     "description": "Executes a script from a language which does not change the message body.",
-    "javaType": "org.apache.camel.model.ScriptDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.ScriptDefinition",
     "input": true,
     "output": false
   },

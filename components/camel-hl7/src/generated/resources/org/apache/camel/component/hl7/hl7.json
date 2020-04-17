@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "hl7",
-    "modelName": "hl7",
     "title": "HL7",
     "description": "The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,hl7",
     "javaType": "org.apache.camel.component.hl7.HL7DataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.HL7DataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hl7",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "hl7",
+    "modelJavaType": "org.apache.camel.model.dataformat.HL7DataFormat"
   },
   "properties": {
     "validate": { "kind": "attribute", "displayName": "Validate", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to validate the HL7 message Is by default true." },

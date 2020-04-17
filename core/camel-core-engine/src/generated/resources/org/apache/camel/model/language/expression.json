@@ -4,9 +4,9 @@
     "name": "expression",
     "title": "Expression",
     "description": "A useful base class for an expression",
-    "javaType": "org.apache.camel.model.language.ExpressionDefinition",
-    "label": "language",
     "deprecated": false,
+    "label": "language",
+    "javaType": "org.apache.camel.model.language.ExpressionDefinition",
     "input": false,
     "output": false
   },
