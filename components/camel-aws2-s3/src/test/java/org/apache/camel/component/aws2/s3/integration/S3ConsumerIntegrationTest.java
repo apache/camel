@@ -46,7 +46,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(3);
 
         template.send("direct:putObject", new Processor() {
 
@@ -56,8 +56,26 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("Test");
             }
         });
+        
+        template.send("direct:putObject", new Processor() {
 
-        Thread.sleep(5000);
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
+                exchange.getIn().setBody("Test1");
+            }
+        });
+        
+        template.send("direct:putObject", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "test2.txt");
+                exchange.getIn().setBody("Test2");
+            }
+        });
+
+        Thread.sleep(10000);
         assertMockEndpointsSatisfied();
     }
 
@@ -70,7 +88,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
-                from("aws2-s3://mycamel?moveAfterRead=true&deleteAfterRead=false&destinationBucket=camel-kafka-connector").startupOrder(2).log("${header.key}");
+                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector").startupOrder(2).log("${body}");
 
             }
         };
