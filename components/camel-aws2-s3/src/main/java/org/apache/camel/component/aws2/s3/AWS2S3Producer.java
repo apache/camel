@@ -166,6 +166,18 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isUseAwsKMS()) {
             createMultipartUploadRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
         }
+        
+        if (getConfiguration().isUseCustomerKey()) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
+                createMultipartUploadRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyMD5())) {
+                createMultipartUploadRequest.sseCustomerKeyMD5(getConfiguration().getCustomerKeyMD5());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
+                createMultipartUploadRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
+            }
+        }
 
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
 
