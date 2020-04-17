@@ -4,9 +4,9 @@
     "name": "removeProperty",
     "title": "Remove Property",
     "description": "Removes a named property from the message exchange",
-    "javaType": "org.apache.camel.model.RemovePropertyDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.RemovePropertyDefinition",
     "input": true,
     "output": false
   },

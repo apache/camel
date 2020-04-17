@@ -4,9 +4,9 @@
     "name": "interceptFrom",
     "title": "Intercept From",
     "description": "Intercepts incoming messages",
-    "javaType": "org.apache.camel.model.InterceptFromDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.InterceptFromDefinition",
     "input": true,
     "output": false
   },

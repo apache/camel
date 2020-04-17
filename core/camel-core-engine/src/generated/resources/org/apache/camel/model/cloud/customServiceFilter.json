@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "customServiceFilter",
     "title": "Custom Service Filter",
-    "javaType": "org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration",
-    "label": "routing,cloud,service-filter",
     "deprecated": false,
+    "label": "routing,cloud,service-filter",
+    "javaType": "org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration",
     "input": false,
     "output": false
   },

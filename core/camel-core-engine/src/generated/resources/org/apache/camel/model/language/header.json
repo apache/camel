@@ -4,10 +4,10 @@
     "name": "header",
     "title": "Header",
     "description": "To use a Camel Message header in expressions or predicates.",
-    "firstVersion": "1.5.0",
-    "javaType": "org.apache.camel.model.language.HeaderExpression",
-    "label": "language,core",
     "deprecated": false,
+    "firstVersion": "1.5.0",
+    "label": "language,core",
+    "javaType": "org.apache.camel.model.language.HeaderExpression",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "rest",
     "title": "Rest",
     "description": "Defines a rest service using the rest-dsl",
-    "javaType": "org.apache.camel.model.rest.RestDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestDefinition",
     "input": false,
     "output": true
   },

@@ -4,10 +4,10 @@
     "name": "bindy",
     "title": "Bindy",
     "description": "The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
-    "firstVersion": "2.0.0",
-    "javaType": "org.apache.camel.model.dataformat.BindyDataFormat",
-    "label": "dataformat,transformation,csv",
     "deprecated": false,
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.BindyDataFormat",
     "input": false,
     "output": false
   },

@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "soapjaxb",
-    "modelName": "soapjaxb",
     "title": "SOAP",
     "description": "SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.3.0",
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.dataformat.soap.SoapJaxbDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.SoapJaxbDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-soap",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "soapjaxb",
+    "modelJavaType": "org.apache.camel.model.dataformat.SoapJaxbDataFormat"
   },
   "properties": {
     "contextPath": { "kind": "attribute", "displayName": "Context Path", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Package name where your JAXB classes are located." },

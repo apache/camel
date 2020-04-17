@@ -4,9 +4,9 @@
     "name": "doTry",
     "title": "Do Try",
     "description": "Marks the beginning of a try, catch, finally block",
-    "javaType": "org.apache.camel.model.TryDefinition",
-    "label": "error",
     "deprecated": false,
+    "label": "error",
+    "javaType": "org.apache.camel.model.TryDefinition",
     "input": true,
     "output": false
   },

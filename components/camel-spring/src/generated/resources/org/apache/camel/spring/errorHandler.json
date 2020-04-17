@@ -4,9 +4,9 @@
     "name": "errorHandler",
     "title": "Error Handler",
     "description": "Error handler settings",
-    "javaType": "org.apache.camel.spring.ErrorHandlerDefinition",
-    "label": "spring,configuration,error",
     "deprecated": false,
+    "label": "spring,configuration,error",
+    "javaType": "org.apache.camel.spring.ErrorHandlerDefinition",
     "input": false,
     "output": false
   },

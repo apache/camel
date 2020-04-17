@@ -4,10 +4,10 @@
     "name": "soapjaxb",
     "title": "SOAP",
     "description": "SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.",
-    "firstVersion": "2.3.0",
-    "javaType": "org.apache.camel.model.dataformat.SoapJaxbDataFormat",
-    "label": "dataformat,transformation,xml",
     "deprecated": false,
+    "firstVersion": "2.3.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.model.dataformat.SoapJaxbDataFormat",
     "input": false,
     "output": false
   },

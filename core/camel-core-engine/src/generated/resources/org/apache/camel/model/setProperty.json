@@ -4,9 +4,9 @@
     "name": "setProperty",
     "title": "Set Property",
     "description": "Sets a named property on the message exchange",
-    "javaType": "org.apache.camel.model.SetPropertyDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.SetPropertyDefinition",
     "input": true,
     "output": false
   },

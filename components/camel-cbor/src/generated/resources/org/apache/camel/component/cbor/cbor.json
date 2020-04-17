@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "cbor",
-    "modelName": "cbor",
     "title": "CBOR",
     "description": "CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.cbor.CBORDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.CBORDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cbor",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "cbor",
+    "modelJavaType": "org.apache.camel.model.dataformat.CBORDataFormat"
   },
   "properties": {
     "objectMapper": { "kind": "attribute", "displayName": "Object Mapper", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson." },

@@ -4,10 +4,10 @@
     "name": "tarfile",
     "title": "Tar File",
     "description": "The Tar File data format is a message compression and de-compression format of tar files.",
-    "firstVersion": "2.16.0",
-    "javaType": "org.apache.camel.model.dataformat.TarFileDataFormat",
-    "label": "dataformat,transformation,file",
     "deprecated": false,
+    "firstVersion": "2.16.0",
+    "label": "dataformat,transformation,file",
+    "javaType": "org.apache.camel.model.dataformat.TarFileDataFormat",
     "input": false,
     "output": false
   },

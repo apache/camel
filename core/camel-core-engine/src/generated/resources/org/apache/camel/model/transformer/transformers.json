@@ -4,9 +4,9 @@
     "name": "transformers",
     "title": "Transformations",
     "description": "To configure transformers.",
-    "javaType": "org.apache.camel.model.transformer.TransformersDefinition",
-    "label": "transformation",
     "deprecated": false,
+    "label": "transformation",
+    "javaType": "org.apache.camel.model.transformer.TransformersDefinition",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "convertBodyTo",
     "title": "Convert Body To",
     "description": "Converts the message body to another type",
-    "javaType": "org.apache.camel.model.ConvertBodyDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.ConvertBodyDefinition",
     "input": true,
     "output": false
   },

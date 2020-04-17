@@ -4,9 +4,9 @@
     "name": "propertyPlaceholder",
     "title": "Property Placeholder",
     "description": "Properties placeholder",
-    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition",
     "input": false,
     "output": false
   },

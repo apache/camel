@@ -4,9 +4,9 @@
     "name": "routingSlip",
     "title": "Routing Slip",
     "description": "Routes a message through a series of steps that are pre-determined (the slip)",
-    "javaType": "org.apache.camel.model.RoutingSlipDefinition",
-    "label": "eip,endpoint,routing",
     "deprecated": false,
+    "label": "eip,endpoint,routing",
+    "javaType": "org.apache.camel.model.RoutingSlipDefinition",
     "input": true,
     "output": false
   },

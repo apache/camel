@@ -4,9 +4,9 @@
     "name": "sample",
     "title": "Sample",
     "description": "Extract a sample of the messages passing through a route",
-    "javaType": "org.apache.camel.model.SamplingDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.SamplingDefinition",
     "input": true,
     "output": false
   },

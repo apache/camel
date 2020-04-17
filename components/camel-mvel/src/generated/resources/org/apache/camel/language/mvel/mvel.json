@@ -2,7 +2,6 @@
   "language": {
     "kind": "language",
     "name": "mvel",
-    "modelName": "mvel",
     "title": "MVEL",
     "description": "To use MVEL scripts in Camel expressions or predicates.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.0.0",
     "label": "language,java",
     "javaType": "org.apache.camel.language.mvel.MvelLanguage",
-    "modelJavaType": "org.apache.camel.model.language.MvelExpression",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mvel",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "mvel",
+    "modelJavaType": "org.apache.camel.model.language.MvelExpression"
   },
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },

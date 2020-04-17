@@ -4,9 +4,9 @@
     "name": "delete",
     "title": "Delete",
     "description": "Rest DELETE command",
-    "javaType": "org.apache.camel.model.rest.DeleteVerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.DeleteVerbDefinition",
     "input": true,
     "output": false
   },

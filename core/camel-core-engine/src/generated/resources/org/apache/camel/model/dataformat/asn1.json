@@ -4,10 +4,10 @@
     "name": "asn1",
     "title": "ASN.1 File",
     "description": "The ASN.1 data format is used for file transfer with telecommunications protocols.",
-    "firstVersion": "2.20.0",
-    "javaType": "org.apache.camel.model.dataformat.ASN1DataFormat",
-    "label": "dataformat,transformation,file",
     "deprecated": false,
+    "firstVersion": "2.20.0",
+    "label": "dataformat,transformation,file",
+    "javaType": "org.apache.camel.model.dataformat.ASN1DataFormat",
     "input": false,
     "output": false
   },

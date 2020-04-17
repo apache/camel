@@ -2,7 +2,6 @@
   "language": {
     "kind": "language",
     "name": "bean",
-    "modelName": "method",
     "title": "Bean method",
     "description": "To use a Java bean (aka method call) in Camel expressions or predicates.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "1.3.0",
     "label": "language,core,java",
     "javaType": "org.apache.camel.language.bean.BeanLanguage",
-    "modelJavaType": "org.apache.camel.model.language.MethodCallExpression",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "method",
+    "modelJavaType": "org.apache.camel.model.language.MethodCallExpression"
   },
   "properties": {
     "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to bean to lookup in the registry" },

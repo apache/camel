@@ -4,9 +4,9 @@
     "name": "topic",
     "title": "Topic",
     "description": "Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)",
-    "javaType": "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition",
-    "label": "eip,routing,loadbalance",
     "deprecated": false,
+    "label": "eip,routing,loadbalance",
+    "javaType": "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition",
     "input": false,
     "output": false
   },

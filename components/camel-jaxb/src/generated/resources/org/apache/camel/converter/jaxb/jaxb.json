@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "jaxb",
-    "modelName": "jaxb",
     "title": "JAXB",
     "description": "JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "1.0.0",
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.converter.jaxb.JaxbDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.JaxbDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jaxb",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "jaxb",
+    "modelJavaType": "org.apache.camel.model.dataformat.JaxbDataFormat"
   },
   "properties": {
     "contextPath": { "kind": "attribute", "displayName": "Context Path", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Package name where your JAXB classes are located." },

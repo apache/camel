@@ -4,9 +4,9 @@
     "name": "restProperty",
     "title": "Rest Property",
     "description": "A key value pair",
-    "javaType": "org.apache.camel.model.rest.RestPropertyDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestPropertyDefinition",
     "input": false,
     "output": false
   },

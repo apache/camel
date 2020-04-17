@@ -4,9 +4,9 @@
     "name": "proxy",
     "title": "Proxy",
     "description": "To proxy a service call using a interface",
-    "javaType": "org.apache.camel.core.xml.CamelProxyFactoryDefinition",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelProxyFactoryDefinition",
     "input": false,
     "output": false
   },

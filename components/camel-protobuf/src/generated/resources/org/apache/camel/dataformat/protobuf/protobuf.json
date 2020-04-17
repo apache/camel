@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "protobuf",
-    "modelName": "protobuf",
     "title": "Protobuf",
     "description": "The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.2.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.protobuf.ProtobufDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.ProtobufDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-protobuf",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "protobuf",
+    "modelJavaType": "org.apache.camel.model.dataformat.ProtobufDataFormat"
   },
   "properties": {
     "instanceClass": { "kind": "attribute", "displayName": "Instance Class", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of class to use when unmarshalling" },

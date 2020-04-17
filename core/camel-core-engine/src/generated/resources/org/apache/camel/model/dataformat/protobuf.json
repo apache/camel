@@ -4,10 +4,10 @@
     "name": "protobuf",
     "title": "Protobuf",
     "description": "The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.",
-    "firstVersion": "2.2.0",
-    "javaType": "org.apache.camel.model.dataformat.ProtobufDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.2.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.ProtobufDataFormat",
     "input": false,
     "output": false
   },

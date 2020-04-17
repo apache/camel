@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "circuitBreaker",
     "title": "Circuit Breaker",
-    "javaType": "org.apache.camel.model.CircuitBreakerDefinition",
-    "label": "eip,routing,circuitbreaker",
     "deprecated": false,
+    "label": "eip,routing,circuitbreaker",
+    "javaType": "org.apache.camel.model.CircuitBreakerDefinition",
     "input": true,
     "output": false
   },

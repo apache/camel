@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "yaml-snakeyaml",
-    "modelName": "yaml",
     "title": "YAML SnakeYAML",
     "description": "YAML is a data format to marshal and unmarshal Java objects to and from YAML.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.17.0",
     "label": "dataformat,transformation,yaml",
     "javaType": "org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.YAMLDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-snakeyaml",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "yaml",
+    "modelJavaType": "org.apache.camel.model.dataformat.YAMLDataFormat"
   },
   "properties": {
     "library": { "kind": "attribute", "displayName": "Library", "required": false, "type": "enum", "javaType": "org.apache.camel.model.dataformat.YAMLLibrary", "enum": [ "SnakeYAML" ], "deprecated": false, "secret": false, "defaultValue": "SnakeYAML", "description": "Which yaml library to use. By default it is SnakeYAML" },

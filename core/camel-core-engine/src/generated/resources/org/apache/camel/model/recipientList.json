@@ -4,9 +4,9 @@
     "name": "recipientList",
     "title": "Recipient List",
     "description": "Routes messages to a number of dynamically specified recipients (dynamic to)",
-    "javaType": "org.apache.camel.model.RecipientListDefinition",
-    "label": "eip,endpoint,routing",
     "deprecated": false,
+    "label": "eip,endpoint,routing",
+    "javaType": "org.apache.camel.model.RecipientListDefinition",
     "input": true,
     "output": false
   },

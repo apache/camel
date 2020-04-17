@@ -4,9 +4,9 @@
     "name": "customDataFormat",
     "title": "Custom",
     "description": "To use a custom data format implementation that does not come out of the box from Apache Camel.",
-    "javaType": "org.apache.camel.model.dataformat.CustomDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.CustomDataFormat",
     "input": false,
     "output": false
   },

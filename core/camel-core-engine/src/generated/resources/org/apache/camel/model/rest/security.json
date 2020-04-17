@@ -4,9 +4,9 @@
     "name": "security",
     "title": "Security",
     "description": "Rest security definition",
-    "javaType": "org.apache.camel.model.rest.SecurityDefinition",
-    "label": "rest,security",
     "deprecated": false,
+    "label": "rest,security",
+    "javaType": "org.apache.camel.model.rest.SecurityDefinition",
     "input": false,
     "output": false
   },

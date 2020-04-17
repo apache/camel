@@ -4,9 +4,9 @@
     "name": "routeContextRef",
     "title": "Route Context Ref",
     "description": "To refer to an XML file with routes defined using the xml-dsl",
-    "javaType": "org.apache.camel.model.RouteContextRefDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.RouteContextRefDefinition",
     "input": false,
     "output": false
   },

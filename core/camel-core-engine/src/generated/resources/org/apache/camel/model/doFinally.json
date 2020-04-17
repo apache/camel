@@ -4,9 +4,9 @@
     "name": "doFinally",
     "title": "Do Finally",
     "description": "Path traversed when a try, catch, finally block exits",
-    "javaType": "org.apache.camel.model.FinallyDefinition",
-    "label": "error",
     "deprecated": false,
+    "label": "error",
+    "javaType": "org.apache.camel.model.FinallyDefinition",
     "input": true,
     "output": false
   },

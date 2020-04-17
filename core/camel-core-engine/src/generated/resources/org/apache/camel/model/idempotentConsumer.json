@@ -4,9 +4,9 @@
     "name": "idempotentConsumer",
     "title": "Idempotent Consumer",
     "description": "Filters out duplicate messages",
-    "javaType": "org.apache.camel.model.IdempotentConsumerDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.IdempotentConsumerDefinition",
     "input": true,
     "output": true
   },

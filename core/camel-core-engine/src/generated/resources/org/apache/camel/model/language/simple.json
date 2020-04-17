@@ -4,10 +4,10 @@
     "name": "simple",
     "title": "Simple",
     "description": "To use Camels built-in Simple language in Camel expressions or predicates.",
-    "firstVersion": "1.1.0",
-    "javaType": "org.apache.camel.model.language.SimpleExpression",
-    "label": "language,core,java",
     "deprecated": false,
+    "firstVersion": "1.1.0",
+    "label": "language,core,java",
+    "javaType": "org.apache.camel.model.language.SimpleExpression",
     "input": false,
     "output": false
   },

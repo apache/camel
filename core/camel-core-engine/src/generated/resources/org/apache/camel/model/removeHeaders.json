@@ -4,9 +4,9 @@
     "name": "removeHeaders",
     "title": "Remove Headers",
     "description": "Removes message headers whose name matches a specified pattern",
-    "javaType": "org.apache.camel.model.RemoveHeadersDefinition",
-    "label": "eip,transformation",
     "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.RemoveHeadersDefinition",
     "input": true,
     "output": false
   },

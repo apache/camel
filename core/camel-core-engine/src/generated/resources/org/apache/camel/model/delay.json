@@ -4,9 +4,9 @@
     "name": "delay",
     "title": "Delay",
     "description": "Delays processing for a specified length of time",
-    "javaType": "org.apache.camel.model.DelayDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.DelayDefinition",
     "input": true,
     "output": false
   },

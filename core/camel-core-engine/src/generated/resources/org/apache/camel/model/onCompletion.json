@@ -4,9 +4,9 @@
     "name": "onCompletion",
     "title": "On Completion",
     "description": "Route to be executed when normal route processing completes",
-    "javaType": "org.apache.camel.model.OnCompletionDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.OnCompletionDefinition",
     "input": true,
     "output": false
   },

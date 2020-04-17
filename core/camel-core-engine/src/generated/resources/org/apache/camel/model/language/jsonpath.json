@@ -4,10 +4,10 @@
     "name": "jsonpath",
     "title": "JsonPath",
     "description": "To use JsonPath in Camel expressions or predicates.",
-    "firstVersion": "2.13.0",
-    "javaType": "org.apache.camel.model.language.JsonPathExpression",
-    "label": "language,json",
     "deprecated": false,
+    "firstVersion": "2.13.0",
+    "label": "language,json",
+    "javaType": "org.apache.camel.model.language.JsonPathExpression",
     "input": false,
     "output": false
   },

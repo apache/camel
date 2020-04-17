@@ -4,10 +4,10 @@
     "name": "cbor",
     "title": "CBOR",
     "description": "CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.",
-    "firstVersion": "3.0.0",
-    "javaType": "org.apache.camel.model.dataformat.CBORDataFormat",
-    "label": "dataformat,transformation,json",
     "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "dataformat,transformation,json",
+    "javaType": "org.apache.camel.model.dataformat.CBORDataFormat",
     "input": false,
     "output": false
   },

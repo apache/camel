@@ -4,9 +4,9 @@
     "name": "dataFormats",
     "title": "Data formats",
     "description": "To configure data formats",
-    "javaType": "org.apache.camel.model.dataformat.DataFormatsDefinition",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.DataFormatsDefinition",
     "input": false,
     "output": false
   },

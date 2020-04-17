@@ -4,9 +4,9 @@
     "name": "camelContext",
     "title": "Camel Context",
     "description": "CamelContext using XML configuration.",
-    "javaType": "org.apache.camel.spring.CamelContextFactoryBean",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelContextFactoryBean",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "streamCaching",
     "title": "Stream Caching",
     "description": "Stream caching configuration.",
-    "javaType": "org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition",
     "input": false,
     "output": false
   },

@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "tidyMarkup",
-    "modelName": "tidyMarkup",
     "title": "TidyMarkup",
     "description": "TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.tagsoup.TidyMarkupDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.TidyMarkupDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tagsoup",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "tidyMarkup",
+    "modelJavaType": "org.apache.camel.model.dataformat.TidyMarkupDataFormat"
   },
   "properties": {
     "dataObjectType": { "kind": "attribute", "displayName": "Data Object Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "org.w3c.dom.Node", "description": "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node" },

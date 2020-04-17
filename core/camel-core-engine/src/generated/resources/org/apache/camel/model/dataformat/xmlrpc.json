@@ -4,10 +4,10 @@
     "name": "xmlrpc",
     "title": "XML RPC",
     "description": "The XML RPC data format is used for working with the XML RPC protocol.",
-    "firstVersion": "2.11.0",
-    "javaType": "org.apache.camel.model.dataformat.XmlRpcDataFormat",
-    "label": "dataformat,transformation,xml",
     "deprecated": false,
+    "firstVersion": "2.11.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.model.dataformat.XmlRpcDataFormat",
     "input": false,
     "output": false
   },

@@ -4,9 +4,9 @@
     "name": "split",
     "title": "Split",
     "description": "Splits a single message into many sub-messages.",
-    "javaType": "org.apache.camel.model.SplitDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.SplitDefinition",
     "input": true,
     "output": true
   },

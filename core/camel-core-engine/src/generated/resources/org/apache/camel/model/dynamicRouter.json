@@ -4,9 +4,9 @@
     "name": "dynamicRouter",
     "title": "Dynamic Router",
     "description": "Routes messages based on dynamic rules",
-    "javaType": "org.apache.camel.model.DynamicRouterDefinition",
-    "label": "eip,endpoint,routing",
     "deprecated": false,
+    "label": "eip,endpoint,routing",
+    "javaType": "org.apache.camel.model.DynamicRouterDefinition",
     "input": true,
     "output": false
   },

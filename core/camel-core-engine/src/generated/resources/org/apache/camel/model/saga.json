@@ -4,9 +4,9 @@
     "name": "saga",
     "title": "Saga",
     "description": "Enables sagas on the route",
-    "javaType": "org.apache.camel.model.SagaDefinition",
-    "label": "eip,routing",
     "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.SagaDefinition",
     "input": true,
     "output": false
   },

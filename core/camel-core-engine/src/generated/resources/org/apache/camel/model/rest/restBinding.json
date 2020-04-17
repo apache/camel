@@ -4,9 +4,9 @@
     "name": "restBinding",
     "title": "Rest Binding",
     "description": "To configure rest binding",
-    "javaType": "org.apache.camel.model.rest.RestBindingDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestBindingDefinition",
     "input": false,
     "output": false
   },

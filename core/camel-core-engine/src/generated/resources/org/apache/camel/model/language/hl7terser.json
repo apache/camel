@@ -4,10 +4,10 @@
     "name": "hl7terser",
     "title": "HL7 Terser",
     "description": "To use HL7 terser scripts in Camel expressions or predicates.",
-    "firstVersion": "2.11.0",
-    "javaType": "org.apache.camel.model.language.Hl7TerserExpression",
-    "label": "language,hl7",
     "deprecated": false,
+    "firstVersion": "2.11.0",
+    "label": "language,hl7",
+    "javaType": "org.apache.camel.model.language.Hl7TerserExpression",
     "input": false,
     "output": false
   },

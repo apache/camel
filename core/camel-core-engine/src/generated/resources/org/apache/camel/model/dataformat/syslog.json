@@ -4,10 +4,10 @@
     "name": "syslog",
     "title": "Syslog",
     "description": "The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).",
-    "firstVersion": "2.6.0",
-    "javaType": "org.apache.camel.model.dataformat.SyslogDataFormat",
-    "label": "dataformat,transformation,monitoring",
     "deprecated": false,
+    "firstVersion": "2.6.0",
+    "label": "dataformat,transformation,monitoring",
+    "javaType": "org.apache.camel.model.dataformat.SyslogDataFormat",
     "input": false,
     "output": false
   },

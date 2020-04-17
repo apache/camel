@@ -4,10 +4,10 @@
     "name": "thrift",
     "title": "Thrift",
     "description": "The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.",
-    "firstVersion": "2.20.0",
-    "javaType": "org.apache.camel.model.dataformat.ThriftDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.20.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.ThriftDataFormat",
     "input": false,
     "output": false
   },

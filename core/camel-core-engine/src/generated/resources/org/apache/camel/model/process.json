@@ -4,9 +4,9 @@
     "name": "process",
     "title": "Process",
     "description": "Calls a Camel processor",
-    "javaType": "org.apache.camel.model.ProcessDefinition",
-    "label": "eip,endpoint",
     "deprecated": false,
+    "label": "eip,endpoint",
+    "javaType": "org.apache.camel.model.ProcessDefinition",
     "input": true,
     "output": false
   },

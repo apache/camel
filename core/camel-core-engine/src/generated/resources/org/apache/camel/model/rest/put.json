@@ -4,9 +4,9 @@
     "name": "put",
     "title": "Put",
     "description": "Rest PUT command",
-    "javaType": "org.apache.camel.model.rest.PutVerbDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.PutVerbDefinition",
     "input": true,
     "output": false
   },

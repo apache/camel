@@ -4,9 +4,9 @@
     "name": "param",
     "title": "Param",
     "description": "To specify the rest operation parameters using Swagger. This maps to the Swagger Parameter Message Object.",
-    "javaType": "org.apache.camel.model.rest.RestOperationParamDefinition",
-    "label": "rest",
     "deprecated": false,
+    "label": "rest",
+    "javaType": "org.apache.camel.model.rest.RestOperationParamDefinition",
     "input": false,
     "output": false
   },

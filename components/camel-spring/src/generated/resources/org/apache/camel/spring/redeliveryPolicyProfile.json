@@ -4,9 +4,9 @@
     "name": "redeliveryPolicyProfile",
     "title": "Redelivery Policy Profile",
     "description": "Configuration of redelivery policy.",
-    "javaType": "org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.spring.CamelRedeliveryPolicyFactoryBean",
     "input": false,
     "output": false
   },

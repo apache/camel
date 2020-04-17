@@ -4,10 +4,10 @@
     "name": "flatpack",
     "title": "Flatpack",
     "description": "The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).",
-    "firstVersion": "2.1.0",
-    "javaType": "org.apache.camel.model.dataformat.FlatpackDataFormat",
-    "label": "dataformat,transformation,csv",
     "deprecated": false,
+    "firstVersion": "2.1.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.model.dataformat.FlatpackDataFormat",
     "input": false,
     "output": false
   },

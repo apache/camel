@@ -3,9 +3,9 @@
     "kind": "model",
     "name": "combinedServiceFilter",
     "title": "Combined Service Filter",
-    "javaType": "org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration",
-    "label": "routing,cloud,service-filter",
     "deprecated": false,
+    "label": "routing,cloud,service-filter",
+    "javaType": "org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration",
     "input": false,
     "output": false
   },

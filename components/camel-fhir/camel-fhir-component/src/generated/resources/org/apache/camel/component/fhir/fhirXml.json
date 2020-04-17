@@ -2,7 +2,6 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "fhirXml",
-    "modelName": "fhirXml",
     "title": "FHIR XML",
     "description": "The FHIR XML data format is used to marshall\/unmarshall from\/to FHIR objects to\/from XML.",
     "deprecated": false,
@@ -10,11 +9,12 @@
     "firstVersion": "2.21.0",
     "label": "dataformat,transformation,hl7,xml",
     "javaType": "org.apache.camel.component.fhir.FhirXmlDataFormat",
-    "modelJavaType": "org.apache.camel.model.dataformat.FhirXmlDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fhir",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.3.0-SNAPSHOT",
+    "modelName": "fhirXml",
+    "modelJavaType": "org.apache.camel.model.dataformat.FhirXmlDataFormat"
   },
   "properties": {
     "fhirVersion": { "kind": "attribute", "displayName": "Fhir Version", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "DSTU2", "DSTU2_1", "DSTU2_HL7ORG", "DSTU3", "R4" ], "deprecated": false, "secret": false, "defaultValue": "DSTU3", "description": "The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4" },

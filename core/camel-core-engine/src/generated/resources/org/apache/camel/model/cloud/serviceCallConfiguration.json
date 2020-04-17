@@ -4,9 +4,9 @@
     "name": "serviceCallConfiguration",
     "title": "Service Call Configuration",
     "description": "Remote service call configuration",
-    "javaType": "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition",
-    "label": "routing,cloud",
     "deprecated": false,
+    "label": "routing,cloud",
+    "javaType": "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition",
     "input": false,
     "output": false
   },

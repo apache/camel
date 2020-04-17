@@ -4,10 +4,10 @@
     "name": "rss",
     "title": "RSS",
     "description": "RSS data format is used for working with RSS sync feed Java Objects and transforming to XML and vice-versa.",
-    "firstVersion": "2.1.0",
-    "javaType": "org.apache.camel.model.dataformat.RssDataFormat",
-    "label": "dataformat,transformation",
     "deprecated": false,
+    "firstVersion": "2.1.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.model.dataformat.RssDataFormat",
     "input": false,
     "output": false
   },

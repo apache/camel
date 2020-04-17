@@ -4,9 +4,9 @@
     "name": "propertiesFunction",
     "title": "Properties Function",
     "description": "Function to use with properties placeholder",
-    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderFunctionDefinition",
-    "label": "spring,configuration",
     "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderFunctionDefinition",
     "input": false,
     "output": false
   },

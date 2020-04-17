@@ -4,9 +4,9 @@
     "name": "optimisticLockRetryPolicy",
     "title": "Optimistic Lock Retry Policy",
     "description": "To configure optimistic locking",
-    "javaType": "org.apache.camel.model.OptimisticLockRetryPolicyDefinition",
-    "label": "configuration",
     "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.OptimisticLockRetryPolicyDefinition",
     "input": false,
     "output": false
   },

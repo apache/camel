@@ -4,9 +4,9 @@
     "name": "routeContext",
     "title": "Route Context",
     "description": "Configuration of routes using XML",
-    "javaType": "org.apache.camel.spring.CamelRouteContextFactoryBean",
-    "label": "spring,configuration,routing",
     "deprecated": false,
+    "label": "spring,configuration,routing",
+    "javaType": "org.apache.camel.spring.CamelRouteContextFactoryBean",
     "input": false,
     "output": false
   },

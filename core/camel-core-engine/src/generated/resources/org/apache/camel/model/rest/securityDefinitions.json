@@ -4,9 +4,9 @@
     "name": "securityDefinitions",
     "title": "Security Definitions",
     "description": "To configure rest security definitions.",
-    "javaType": "org.apache.camel.model.rest.RestSecuritiesDefinition",
-    "label": "rest,security",
     "deprecated": false,
+    "label": "rest,security",
+    "javaType": "org.apache.camel.model.rest.RestSecuritiesDefinition",
     "input": false,
     "output": false
   },

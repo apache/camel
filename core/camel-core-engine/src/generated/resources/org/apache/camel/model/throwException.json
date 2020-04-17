@@ -4,9 +4,9 @@
     "name": "throwException",
     "title": "Throw Exception",
     "description": "Throws an exception",
-    "javaType": "org.apache.camel.model.ThrowExceptionDefinition",
-    "label": "error",
     "deprecated": false,
+    "label": "error",
+    "javaType": "org.apache.camel.model.ThrowExceptionDefinition",
     "input": true,
     "output": false
   },

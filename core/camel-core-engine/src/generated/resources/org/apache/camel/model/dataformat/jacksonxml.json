@@ -4,10 +4,10 @@
     "name": "jacksonxml",
     "title": "JacksonXML",
     "description": "JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
-    "firstVersion": "2.16.0",
-    "javaType": "org.apache.camel.model.dataformat.JacksonXMLDataFormat",
-    "label": "dataformat,transformation,xml",
     "deprecated": false,
+    "firstVersion": "2.16.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.model.dataformat.JacksonXMLDataFormat",
     "input": false,
     "output": false
   },

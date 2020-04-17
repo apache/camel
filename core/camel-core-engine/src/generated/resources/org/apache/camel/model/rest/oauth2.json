@@ -4,9 +4,9 @@
     "name": "oauth2",
     "title": "Oauth2",
     "description": "Rest security OAuth2 definition",
-    "javaType": "org.apache.camel.model.rest.RestSecurityOAuth2",
-    "label": "rest,security",
     "deprecated": false,
+    "label": "rest,security",
+    "javaType": "org.apache.camel.model.rest.RestSecurityOAuth2",
     "input": false,
     "output": false
   },
