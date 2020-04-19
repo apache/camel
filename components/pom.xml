@@ -330,6 +330,7 @@
         <module>camel-soroush</module>
         <module>camel-spark</module>
         <module>camel-splunk</module>
+        <module>camel-splunk-hec</module>
         <module>camel-spring-batch</module>
         <module>camel-spring-integration</module>
         <module>camel-spring-javaconfig</module>
