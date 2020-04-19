@@ -21,6 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
+
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
  */
@@ -189,6 +196,27 @@ public interface CamelCatalog {
      * Find all the other (miscellaneous) names from the Camel catalog
      */
     List<String> findOtherNames();
+
+    /**
+     * @param kind the kind to look for
+     * @return the list of part names of the given {@link Kind} available in this {@link CamelCatalog}
+     */
+    default List<String> findNames(Kind kind) {
+        switch (kind) {
+            case component:
+                return findComponentNames();
+            case dataformat:
+                return findDataFormatNames();
+            case language:
+                return findLanguageNames();
+            case other:
+                return findOtherNames();
+            case eip:
+                return findModelNames();
+            default:
+                throw new IllegalArgumentException("Unexpected kind " + kind);
+        }
+    }
 
     /**
      * Find all the component names from the Camel catalog that matches the label
@@ -530,5 +558,57 @@ public interface CamelCatalog {
      * Reports a summary what the catalog contains in JSon
      */
     String summaryAsJson();
+
+    /**
+     * @param name the component name to look up
+     * @return the requested component or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    ComponentModel componentModel(String name);
+
+    /**
+     * @param name the data format name to look up
+     * @return the requested data format or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    DataFormatModel dataFormatModel(String name);
+
+    /**
+     * @param name the language name to look up
+     * @return the requested language or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    LanguageModel languageModel(String name);
+
+    /**
+     * @param name the other name to look up
+     * @return the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    OtherModel otherModel(String name);
+
+    /**
+     * @param name the EIP model name to look up
+     * @return the requested EIP model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    EipModel eipModel(String name);
+
+    /**
+     * @param kind the requested kind
+     * @param name the name to look up
+     * @return the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    default BaseModel<?> model(Kind kind, String name) {
+        switch (kind) {
+            case component:
+                return componentModel(name);
+            case dataformat:
+                return dataFormatModel(name);
+            case language:
+                return languageModel(name);
+            case other:
+                return otherModel(name);
+            case eip:
+                return eipModel(name);
+            default:
+                throw new IllegalArgumentException("Unexpected kind " + kind);
+        }
+    }
 
 }
