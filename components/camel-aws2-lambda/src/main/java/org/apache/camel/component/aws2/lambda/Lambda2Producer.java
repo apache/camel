@@ -447,7 +447,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) {
+    private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateEventSourceMappingRequest) {
+                CreateEventSourceMappingResponse result;
+                try {
+                    result = lambdaClient.createEventSourceMapping((CreateEventSourceMappingRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateEventSourceMappingResponse result;
         try {
             CreateEventSourceMappingRequest.Builder request = CreateEventSourceMappingRequest.builder().functionName(getEndpoint().getFunction());
@@ -467,6 +481,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void deleteEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) {
