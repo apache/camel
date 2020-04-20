@@ -405,6 +405,21 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof UpdateFunctionCodeRequest) {
+            	UpdateFunctionCodeResponse result;
+                try {
+                    result = lambdaClient.updateFunctionCode((UpdateFunctionCodeRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         UpdateFunctionCodeResponse result;
 
         try {
@@ -429,6 +444,7 @@ public class Lambda2Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void createEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) {
