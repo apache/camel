@@ -661,7 +661,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void publishVersion(LambdaClient lambdaClient, Exchange exchange) {
+    private void publishVersion(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof PublishVersionRequest) {
+                PublishVersionResponse result;
+                try {
+                    result = lambdaClient.publishVersion((PublishVersionRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         PublishVersionResponse result;
         try {
             PublishVersionRequest.Builder request = PublishVersionRequest.builder().functionName(getEndpoint().getFunction());
@@ -680,6 +694,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void listVersions(LambdaClient lambdaClient, Exchange exchange) {
