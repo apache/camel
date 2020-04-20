@@ -545,7 +545,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void listTags(LambdaClient lambdaClient, Exchange exchange) {
+    private void listTags(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListTagsRequest) {
+                ListTagsResponse result;
+                try {
+                    result = lambdaClient.listTags((ListTagsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListTagsResponse result;
         try {
             ListTagsRequest.Builder request = ListTagsRequest.builder();
@@ -562,6 +576,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     @SuppressWarnings("unchecked")
