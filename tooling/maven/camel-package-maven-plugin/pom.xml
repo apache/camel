@@ -124,10 +124,6 @@
             <artifactId>roaster-jdt</artifactId>
             <version>${roaster-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
 
         <!-- jandex for annotation processing -->
         <dependency>

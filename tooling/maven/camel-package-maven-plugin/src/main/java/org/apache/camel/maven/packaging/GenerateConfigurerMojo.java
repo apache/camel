@@ -44,7 +44,8 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
-import org.springframework.util.ReflectionUtils;
+
+import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
 
 /**
  * Generate configurer classes from @Configuer annotated classes.
@@ -169,7 +170,7 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
         Class clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
-        ReflectionUtils.doWithMethods(clazz, m -> {
+        doWithMethods(clazz, m -> {
             boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set") && Character.isUpperCase(m.getName().charAt(3));
             setter &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             setter &= filterSetter(m);
