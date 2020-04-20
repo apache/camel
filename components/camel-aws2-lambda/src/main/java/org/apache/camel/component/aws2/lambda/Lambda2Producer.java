@@ -764,7 +764,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void deleteAlias(LambdaClient lambdaClient, Exchange exchange) {
+    private void deleteAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteAliasRequest) {
+                DeleteAliasResponse result;
+                try {
+                    result = lambdaClient.deleteAlias((DeleteAliasRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DeleteAliasResponse result;
         try {
             DeleteAliasRequest.Builder request = DeleteAliasRequest.builder().functionName(getEndpoint().getFunction());
@@ -780,6 +794,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void getAlias(LambdaClient lambdaClient, Exchange exchange) {
