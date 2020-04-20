@@ -139,7 +139,7 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-tree</artifactId>
-            <version>8.0.1</version>
+            <version>${asm-version}</version>
         </dependency>
 
         <!-- camel -->
@@ -159,7 +159,7 @@
         <dependency>
             <groupId>org.snakeyaml</groupId>
             <artifactId>snakeyaml-engine</artifactId>
-            <version>2.1</version>
+            <version>${snakeyaml-engine-version}</version>
         </dependency>
 
         <!-- logging -->
