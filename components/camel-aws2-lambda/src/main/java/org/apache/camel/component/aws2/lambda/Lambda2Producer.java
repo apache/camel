@@ -830,7 +830,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void listAliases(LambdaClient lambdaClient, Exchange exchange) {
+    private void listAliases(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListAliasesRequest) {
+                ListAliasesResponse result;
+                try {
+                    result = lambdaClient.listAliases((ListAliasesRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListAliasesResponse result;
         try {
             ListAliasesRequest.Builder request = ListAliasesRequest.builder().functionName(getEndpoint().getFunction());
@@ -846,6 +860,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private Lambda2Operations determineOperation(Exchange exchange) {
