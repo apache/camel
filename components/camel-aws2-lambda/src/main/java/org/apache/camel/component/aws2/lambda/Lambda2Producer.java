@@ -517,7 +517,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void listEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) {
+    private void listEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListEventSourceMappingsRequest) {
+                ListEventSourceMappingsResponse result;
+                try {
+                    result = lambdaClient.listEventSourceMappings((ListEventSourceMappingsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListEventSourceMappingsResponse result;
         try {
             ListEventSourceMappingsRequest.Builder request = ListEventSourceMappingsRequest.builder().functionName(getEndpoint().getFunction());
@@ -528,6 +542,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void listTags(LambdaClient lambdaClient, Exchange exchange) {
