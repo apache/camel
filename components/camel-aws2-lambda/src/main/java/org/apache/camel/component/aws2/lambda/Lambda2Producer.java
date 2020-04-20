@@ -181,7 +181,7 @@ public class Lambda2Producer extends DefaultProducer {
     private void deleteFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetFunctionRequest) {
+            if (payload instanceof DeleteFunctionRequest) {
                 DeleteFunctionResponse result;
                 try {
                     result = lambdaClient.deleteFunction((DeleteFunctionRequest) payload);
@@ -208,7 +208,7 @@ public class Lambda2Producer extends DefaultProducer {
     private void listFunctions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetFunctionRequest) {
+            if (payload instanceof ListFunctionsRequest) {
                 ListFunctionsResponse result;
                 try {
                     result = lambdaClient.listFunctions((ListFunctionsRequest) payload);
