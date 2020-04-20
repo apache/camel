@@ -157,7 +157,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof GetFunctionRequest) {
                 GetFunctionResponse result;
                 try {
-                    result = lambdaClient.getFunction((GetFunctionRequest) payload);
+                    result = lambdaClient.getFunction((GetFunctionRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -166,15 +166,15 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        GetFunctionResponse result;
-        try {
-            result = lambdaClient.getFunction(GetFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            GetFunctionResponse result;
+            try {
+                result = lambdaClient.getFunction(GetFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -184,7 +184,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof DeleteFunctionRequest) {
                 DeleteFunctionResponse result;
                 try {
-                    result = lambdaClient.deleteFunction((DeleteFunctionRequest) payload);
+                    result = lambdaClient.deleteFunction((DeleteFunctionRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -193,15 +193,15 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DeleteFunctionResponse result;
-        try {
-            result = lambdaClient.deleteFunction(DeleteFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DeleteFunctionResponse result;
+            try {
+                result = lambdaClient.deleteFunction(DeleteFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -211,7 +211,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof ListFunctionsRequest) {
                 ListFunctionsResponse result;
                 try {
-                    result = lambdaClient.listFunctions((ListFunctionsRequest) payload);
+                    result = lambdaClient.listFunctions((ListFunctionsRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -220,15 +220,15 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListFunctionsResponse result;
-        try {
-            result = lambdaClient.listFunctions();
-        } catch (AwsServiceException ase) {
-            LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ListFunctionsResponse result;
+            try {
+                result = lambdaClient.listFunctions();
+            } catch (AwsServiceException ase) {
+                LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -238,7 +238,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof InvokeRequest) {
                 InvokeResponse result;
                 try {
-                    result = lambdaClient.invoke((InvokeRequest) payload);
+                    result = lambdaClient.invoke((InvokeRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -247,17 +247,17 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result.payload().asUtf8String());
             }
         } else {
-        InvokeResponse result;
-        try {
-            InvokeRequest request = InvokeRequest.builder().functionName(getEndpoint().getFunction())
-                .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
-            result = lambdaClient.invoke(request);
-        } catch (AwsServiceException ase) {
-            LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result.payload().asUtf8String());
+            InvokeResponse result;
+            try {
+                InvokeRequest request = InvokeRequest.builder().functionName(getEndpoint().getFunction())
+                    .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
+                result = lambdaClient.invoke(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result.payload().asUtf8String());
         }
     }
 
@@ -266,141 +266,141 @@ public class Lambda2Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CreateFunctionRequest) {
-            CreateFunctionResponse result;
-            try {
-            result = lambdaClient.createFunction((CreateFunctionRequest) payload);
+                CreateFunctionResponse result;
+                try {
+                    result = lambdaClient.createFunction((CreateFunctionRequest)payload);
 
-            } catch (AwsServiceException ase) {
-                LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        } else {
-        CreateFunctionResponse result;
-
-        try {
-            CreateFunctionRequest.Builder request = CreateFunctionRequest.builder().functionName(getEndpoint().getFunction());
-
-            FunctionCode.Builder functionCode = FunctionCode.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
-                String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
-                functionCode.s3Bucket(s3Bucket);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
-                String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
-                functionCode.s3Key(s3Key);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
-                String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
-                functionCode.s3ObjectVersion(s3ObjectVersion);
-            }
-
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
-                String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
-                File fileLocalPath = new File(zipFile);
-                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
-                    functionCode.zipFile(SdkBytes.fromInputStream(inputStream));
+                } catch (AwsServiceException ase) {
+                    LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
                 }
-            }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
-                functionCode.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
-            }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody()) || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                                                                        && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
-                request.code(functionCode.build());
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
             } else {
-                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
-            }
+                CreateFunctionResponse result;
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ROLE))) {
-                request.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
-            } else {
-                throw new IllegalArgumentException("Role must be specified");
-            }
+                try {
+                    CreateFunctionRequest.Builder request = CreateFunctionRequest.builder().functionName(getEndpoint().getFunction());
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RUNTIME))) {
-                request.runtime(exchange.getIn().getHeader(Lambda2Constants.RUNTIME, String.class));
-            } else {
-                throw new IllegalArgumentException("Runtime must be specified");
-            }
+                    FunctionCode.Builder functionCode = FunctionCode.builder();
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
+                        String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
+                        functionCode.s3Bucket(s3Bucket);
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.HANDLER))) {
-                request.handler(exchange.getIn().getHeader(Lambda2Constants.HANDLER, String.class));
-            } else {
-                throw new IllegalArgumentException("Handler must be specified");
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
+                        String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
+                        functionCode.s3Key(s3Key);
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION))) {
-                String description = exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION, String.class);
-                request.description(description);
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
+                        String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
+                        functionCode.s3ObjectVersion(s3ObjectVersion);
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN))) {
-                String targetArn = exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN, String.class);
-                request.deadLetterConfig(DeadLetterConfig.builder().targetArn(targetArn).build());
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
+                        String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
+                        File fileLocalPath = new File(zipFile);
+                        try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
+                            functionCode.zipFile(SdkBytes.fromInputStream(inputStream));
+                        }
+                    }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                        functionCode.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE))) {
-                Integer memorySize = exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE, Integer.class);
-                request.memorySize(memorySize);
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getBody()) || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                                                                                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                        request.code(functionCode.build());
+                    } else {
+                        throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN))) {
-                String kmsKeyARN = exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN, String.class);
-                request.kmsKeyArn(kmsKeyARN);
-            }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
-                Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
-                request.publish(publish);
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ROLE))) {
+                        request.role(exchange.getIn().getHeader(Lambda2Constants.ROLE, String.class));
+                    } else {
+                        throw new IllegalArgumentException("Role must be specified");
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TIMEOUT))) {
-                Integer timeout = exchange.getIn().getHeader(Lambda2Constants.TIMEOUT, Integer.class);
-                request.timeout(timeout);
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RUNTIME))) {
+                        request.runtime(exchange.getIn().getHeader(Lambda2Constants.RUNTIME, String.class));
+                    } else {
+                        throw new IllegalArgumentException("Runtime must be specified");
+                    }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG))) {
-                String tracingConfigMode = exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG, String.class);
-                request.tracingConfig(TracingConfig.builder().mode(tracingConfigMode).build());
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.HANDLER))) {
+                        request.handler(exchange.getIn().getHeader(Lambda2Constants.HANDLER, String.class));
+                    } else {
+                        throw new IllegalArgumentException("Handler must be specified");
+                    }
 
-            Map<String, String> environmentVariables = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
-            if (environmentVariables != null) {
-                request.environment(Environment.builder().variables(environmentVariables).build());
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION))) {
+                        String description = exchange.getIn().getHeader(Lambda2Constants.DESCRIPTION, String.class);
+                        request.description(description);
+                    }
 
-            Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
-            if (tags != null) {
-                request.tags(tags);
-            }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN))) {
+                        String targetArn = exchange.getIn().getHeader(Lambda2Constants.TARGET_ARN, String.class);
+                        request.deadLetterConfig(DeadLetterConfig.builder().targetArn(targetArn).build());
+                    }
 
-            List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS, (Class<List<String>>)(Object)List.class));
-            List<String> subnetIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>)(Object)List.class));
-            if (securityGroupIds != null || subnetIds != null) {
-                VpcConfig.Builder vpcConfig = VpcConfig.builder();
-                if (securityGroupIds != null) {
-                    vpcConfig.securityGroupIds(securityGroupIds);
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE))) {
+                        Integer memorySize = exchange.getIn().getHeader(Lambda2Constants.MEMORY_SIZE, Integer.class);
+                        request.memorySize(memorySize);
+                    }
+
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN))) {
+                        String kmsKeyARN = exchange.getIn().getHeader(Lambda2Constants.KMS_KEY_ARN, String.class);
+                        request.kmsKeyArn(kmsKeyARN);
+                    }
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
+                        Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
+                        request.publish(publish);
+                    }
+
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TIMEOUT))) {
+                        Integer timeout = exchange.getIn().getHeader(Lambda2Constants.TIMEOUT, Integer.class);
+                        request.timeout(timeout);
+                    }
+
+                    if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG))) {
+                        String tracingConfigMode = exchange.getIn().getHeader(Lambda2Constants.TRACING_CONFIG, String.class);
+                        request.tracingConfig(TracingConfig.builder().mode(tracingConfigMode).build());
+                    }
+
+                    Map<String, String> environmentVariables = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
+                    if (environmentVariables != null) {
+                        request.environment(Environment.builder().variables(environmentVariables).build());
+                    }
+
+                    Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
+                    if (tags != null) {
+                        request.tags(tags);
+                    }
+
+                    List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS, (Class<List<String>>)(Object)List.class));
+                    List<String> subnetIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>)(Object)List.class));
+                    if (securityGroupIds != null || subnetIds != null) {
+                        VpcConfig.Builder vpcConfig = VpcConfig.builder();
+                        if (securityGroupIds != null) {
+                            vpcConfig.securityGroupIds(securityGroupIds);
+                        }
+                        if (subnetIds != null) {
+                            vpcConfig.subnetIds(subnetIds);
+                        }
+                        request.vpcConfig(vpcConfig.build());
+                    }
+                    result = lambdaClient.createFunction(request.build());
+
+                } catch (AwsServiceException ase) {
+                    LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
                 }
-                if (subnetIds != null) {
-                    vpcConfig.subnetIds(subnetIds);
-                }
-                request.vpcConfig(vpcConfig.build());
+
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
             }
-            result = lambdaClient.createFunction(request.build());
-
-        } catch (AwsServiceException ase) {
-            LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
-        }
         }
     }
 
@@ -408,9 +408,9 @@ public class Lambda2Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof UpdateFunctionCodeRequest) {
-            	UpdateFunctionCodeResponse result;
+                UpdateFunctionCodeResponse result;
                 try {
-                    result = lambdaClient.updateFunctionCode((UpdateFunctionCodeRequest) payload);
+                    result = lambdaClient.updateFunctionCode((UpdateFunctionCodeRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -420,30 +420,30 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        UpdateFunctionCodeResponse result;
+            UpdateFunctionCodeResponse result;
 
-        try {
-            UpdateFunctionCodeRequest.Builder request = UpdateFunctionCodeRequest.builder().functionName(getEndpoint().getFunction());
+            try {
+                UpdateFunctionCodeRequest.Builder request = UpdateFunctionCodeRequest.builder().functionName(getEndpoint().getFunction());
 
-            if (ObjectHelper.isEmpty(exchange.getIn().getBody())
-                && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET)) && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
-                throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
+                if (ObjectHelper.isEmpty(exchange.getIn().getBody()) && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                                                                         && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                    throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
+                }
+
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
+                    Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
+                    request.publish(publish);
+                }
+
+                result = lambdaClient.updateFunctionCode(request.build());
+
+            } catch (AwsServiceException ase) {
+                LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
-                Boolean publish = exchange.getIn().getHeader(Lambda2Constants.PUBLISH, Boolean.class);
-                request.publish(publish);
-            }
-
-            result = lambdaClient.updateFunctionCode(request.build());
-
-        } catch (AwsServiceException ase) {
-            LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -453,7 +453,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof CreateEventSourceMappingRequest) {
                 CreateEventSourceMappingResponse result;
                 try {
-                    result = lambdaClient.createEventSourceMapping((CreateEventSourceMappingRequest) payload);
+                    result = lambdaClient.createEventSourceMapping((CreateEventSourceMappingRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -462,25 +462,25 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        CreateEventSourceMappingResponse result;
-        try {
-            CreateEventSourceMappingRequest.Builder request = CreateEventSourceMappingRequest.builder().functionName(getEndpoint().getFunction());
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN))) {
-                request.eventSourceArn(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN, String.class));
-            } else {
-                throw new IllegalArgumentException("Event Source Arn must be specified");
+            CreateEventSourceMappingResponse result;
+            try {
+                CreateEventSourceMappingRequest.Builder request = CreateEventSourceMappingRequest.builder().functionName(getEndpoint().getFunction());
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN))) {
+                    request.eventSourceArn(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_ARN, String.class));
+                } else {
+                    throw new IllegalArgumentException("Event Source Arn must be specified");
+                }
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE))) {
+                    Integer batchSize = exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
+                    request.batchSize(batchSize);
+                }
+                result = lambdaClient.createEventSourceMapping(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE))) {
-                Integer batchSize = exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
-                request.batchSize(batchSize);
-            }
-            result = lambdaClient.createEventSourceMapping(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -490,7 +490,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof DeleteEventSourceMappingRequest) {
                 DeleteEventSourceMappingResponse result;
                 try {
-                    result = lambdaClient.deleteEventSourceMapping((DeleteEventSourceMappingRequest) payload);
+                    result = lambdaClient.deleteEventSourceMapping((DeleteEventSourceMappingRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -499,21 +499,21 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DeleteEventSourceMappingResponse result;
-        try {
-            DeleteEventSourceMappingRequest.Builder request = DeleteEventSourceMappingRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID))) {
-                request.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
-            } else {
-                throw new IllegalArgumentException("Event Source Arn must be specified");
+            DeleteEventSourceMappingResponse result;
+            try {
+                DeleteEventSourceMappingRequest.Builder request = DeleteEventSourceMappingRequest.builder();
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID))) {
+                    request.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
+                } else {
+                    throw new IllegalArgumentException("Event Source Arn must be specified");
+                }
+                result = lambdaClient.deleteEventSourceMapping(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            result = lambdaClient.deleteEventSourceMapping(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -523,7 +523,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof ListEventSourceMappingsRequest) {
                 ListEventSourceMappingsResponse result;
                 try {
-                    result = lambdaClient.listEventSourceMappings((ListEventSourceMappingsRequest) payload);
+                    result = lambdaClient.listEventSourceMappings((ListEventSourceMappingsRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -532,16 +532,16 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListEventSourceMappingsResponse result;
-        try {
-            ListEventSourceMappingsRequest.Builder request = ListEventSourceMappingsRequest.builder().functionName(getEndpoint().getFunction());
-            result = lambdaClient.listEventSourceMappings(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ListEventSourceMappingsResponse result;
+            try {
+                ListEventSourceMappingsRequest.Builder request = ListEventSourceMappingsRequest.builder().functionName(getEndpoint().getFunction());
+                result = lambdaClient.listEventSourceMappings(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -551,7 +551,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof ListTagsRequest) {
                 ListTagsResponse result;
                 try {
-                    result = lambdaClient.listTags((ListTagsRequest) payload);
+                    result = lambdaClient.listTags((ListTagsRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -560,22 +560,22 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListTagsResponse result;
-        try {
-            ListTagsRequest.Builder request = ListTagsRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
-                String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                request.resource(resource);
-            } else {
-                throw new IllegalArgumentException("The resource ARN must be specified");
+            ListTagsResponse result;
+            try {
+                ListTagsRequest.Builder request = ListTagsRequest.builder();
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
+                    String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
+                    request.resource(resource);
+                } else {
+                    throw new IllegalArgumentException("The resource ARN must be specified");
+                }
+                result = lambdaClient.listTags(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            result = lambdaClient.listTags(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -586,7 +586,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof TagResourceRequest) {
                 TagResourceResponse result;
                 try {
-                    result = lambdaClient.tagResource((TagResourceRequest) payload);
+                    result = lambdaClient.tagResource((TagResourceRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -595,28 +595,28 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        TagResourceResponse result;
-        try {
-            TagResourceRequest.Builder request = TagResourceRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
-                String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                request.resource(resource);
-            } else {
-                throw new IllegalArgumentException("The resource ARN must be specified");
+            TagResourceResponse result;
+            try {
+                TagResourceRequest.Builder request = TagResourceRequest.builder();
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
+                    String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
+                    request.resource(resource);
+                } else {
+                    throw new IllegalArgumentException("The resource ARN must be specified");
+                }
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS))) {
+                    Map<String, String> tags = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS, Map.class);
+                    request.tags(tags);
+                } else {
+                    throw new IllegalArgumentException("The tags must be specified");
+                }
+                result = lambdaClient.tagResource(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS))) {
-                Map<String, String> tags = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAGS, Map.class);
-                request.tags(tags);
-            } else {
-                throw new IllegalArgumentException("The tags must be specified");
-            }
-            result = lambdaClient.tagResource(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -627,7 +627,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof UntagResourceRequest) {
                 UntagResourceResponse result;
                 try {
-                    result = lambdaClient.untagResource((UntagResourceRequest) payload);
+                    result = lambdaClient.untagResource((UntagResourceRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -636,28 +636,28 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        UntagResourceResponse result;
-        try {
-            UntagResourceRequest.Builder request = UntagResourceRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
-                String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
-                request.resource(resource);
-            } else {
-                throw new IllegalArgumentException("The resource ARN must be specified");
+            UntagResourceResponse result;
+            try {
+                UntagResourceRequest.Builder request = UntagResourceRequest.builder();
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN))) {
+                    String resource = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_ARN, String.class);
+                    request.resource(resource);
+                } else {
+                    throw new IllegalArgumentException("The resource ARN must be specified");
+                }
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS))) {
+                    List<String> tagKeys = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS, List.class);
+                    request.tagKeys(tagKeys);
+                } else {
+                    throw new IllegalArgumentException("The tag keys must be specified");
+                }
+                result = lambdaClient.untagResource(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS))) {
-                List<String> tagKeys = exchange.getIn().getHeader(Lambda2Constants.RESOURCE_TAG_KEYS, List.class);
-                request.tagKeys(tagKeys);
-            } else {
-                throw new IllegalArgumentException("The tag keys must be specified");
-            }
-            result = lambdaClient.untagResource(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -667,7 +667,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof PublishVersionRequest) {
                 PublishVersionResponse result;
                 try {
-                    result = lambdaClient.publishVersion((PublishVersionRequest) payload);
+                    result = lambdaClient.publishVersion((PublishVersionRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -676,24 +676,24 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        PublishVersionResponse result;
-        try {
-            PublishVersionRequest.Builder request = PublishVersionRequest.builder().functionName(getEndpoint().getFunction());
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION))) {
-                String description = exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION, String.class);
-                request.description(description);
+            PublishVersionResponse result;
+            try {
+                PublishVersionRequest.Builder request = PublishVersionRequest.builder().functionName(getEndpoint().getFunction());
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION))) {
+                    String description = exchange.getIn().getHeader(Lambda2Constants.VERSION_DESCRIPTION, String.class);
+                    request.description(description);
+                }
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID))) {
+                    String revisionId = exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID, String.class);
+                    request.revisionId(revisionId);
+                }
+                result = lambdaClient.publishVersion(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID))) {
-                String revisionId = exchange.getIn().getHeader(Lambda2Constants.VERSION_REVISION_ID, String.class);
-                request.revisionId(revisionId);
-            }
-            result = lambdaClient.publishVersion(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -703,7 +703,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof ListVersionsByFunctionRequest) {
                 ListVersionsByFunctionResponse result;
                 try {
-                    result = lambdaClient.listVersionsByFunction((ListVersionsByFunctionRequest) payload);
+                    result = lambdaClient.listVersionsByFunction((ListVersionsByFunctionRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -712,16 +712,16 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListVersionsByFunctionResponse result;
-        try {
-            ListVersionsByFunctionRequest request = ListVersionsByFunctionRequest.builder().functionName(getEndpoint().getFunction()).build();
-            result = lambdaClient.listVersionsByFunction(request);
-        } catch (AwsServiceException ase) {
-            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ListVersionsByFunctionResponse result;
+            try {
+                ListVersionsByFunctionRequest request = ListVersionsByFunctionRequest.builder().functionName(getEndpoint().getFunction()).build();
+                result = lambdaClient.listVersionsByFunction(request);
+            } catch (AwsServiceException ase) {
+                LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -731,7 +731,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof CreateAliasRequest) {
                 CreateAliasResponse result;
                 try {
-                	result = lambdaClient.createAlias((CreateAliasRequest) payload);
+                    result = lambdaClient.createAlias((CreateAliasRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -740,27 +740,27 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        CreateAliasResponse result;
-        try {
-            CreateAliasRequest.Builder request = CreateAliasRequest.builder().functionName(getEndpoint().getFunction());
-            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-            if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
-                throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
+            CreateAliasResponse result;
+            try {
+                CreateAliasRequest.Builder request = CreateAliasRequest.builder().functionName(getEndpoint().getFunction());
+                String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
+                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+                if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
+                    throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
+                }
+                request.functionVersion(version);
+                request.name(aliasName);
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION))) {
+                    String aliasDescription = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, String.class);
+                    request.description(aliasDescription);
+                }
+                result = lambdaClient.createAlias(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            request.functionVersion(version);
-            request.name(aliasName);
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION))) {
-                String aliasDescription = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, String.class);
-                request.description(aliasDescription);
-            }
-            result = lambdaClient.createAlias(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -770,7 +770,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof DeleteAliasRequest) {
                 DeleteAliasResponse result;
                 try {
-                    result = lambdaClient.deleteAlias((DeleteAliasRequest) payload);
+                    result = lambdaClient.deleteAlias((DeleteAliasRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -779,21 +779,21 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DeleteAliasResponse result;
-        try {
-            DeleteAliasRequest.Builder request = DeleteAliasRequest.builder().functionName(getEndpoint().getFunction());
-            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-            if (ObjectHelper.isEmpty(aliasName)) {
-                throw new IllegalArgumentException("Function alias must be specified to delete an alias");
+            DeleteAliasResponse result;
+            try {
+                DeleteAliasRequest.Builder request = DeleteAliasRequest.builder().functionName(getEndpoint().getFunction());
+                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+                if (ObjectHelper.isEmpty(aliasName)) {
+                    throw new IllegalArgumentException("Function alias must be specified to delete an alias");
+                }
+                request.name(aliasName);
+                result = lambdaClient.deleteAlias(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            request.name(aliasName);
-            result = lambdaClient.deleteAlias(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -803,7 +803,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof GetAliasRequest) {
                 GetAliasResponse result;
                 try {
-                    result = lambdaClient.getAlias((GetAliasRequest) payload);
+                    result = lambdaClient.getAlias((GetAliasRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -812,21 +812,21 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        GetAliasResponse result;
-        try {
-            GetAliasRequest.Builder request = GetAliasRequest.builder().functionName(getEndpoint().getFunction());
-            String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
-            if (ObjectHelper.isEmpty(aliasName)) {
-                throw new IllegalArgumentException("Function alias must be specified to get an alias");
+            GetAliasResponse result;
+            try {
+                GetAliasRequest.Builder request = GetAliasRequest.builder().functionName(getEndpoint().getFunction());
+                String aliasName = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, String.class);
+                if (ObjectHelper.isEmpty(aliasName)) {
+                    throw new IllegalArgumentException("Function alias must be specified to get an alias");
+                }
+                request.name(aliasName);
+                result = lambdaClient.getAlias(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            request.name(aliasName);
-            result = lambdaClient.getAlias(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -836,7 +836,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (payload instanceof ListAliasesRequest) {
                 ListAliasesResponse result;
                 try {
-                    result = lambdaClient.listAliases((ListAliasesRequest) payload);
+                    result = lambdaClient.listAliases((ListAliasesRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -845,21 +845,21 @@ public class Lambda2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListAliasesResponse result;
-        try {
-            ListAliasesRequest.Builder request = ListAliasesRequest.builder().functionName(getEndpoint().getFunction());
-            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-            if (ObjectHelper.isEmpty(version)) {
-                throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
+            ListAliasesResponse result;
+            try {
+                ListAliasesRequest.Builder request = ListAliasesRequest.builder().functionName(getEndpoint().getFunction());
+                String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
+                if (ObjectHelper.isEmpty(version)) {
+                    throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
+                }
+                request.functionVersion(version);
+                result = lambdaClient.listAliases(request.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
             }
-            request.functionVersion(version);
-            result = lambdaClient.listAliases(request.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
