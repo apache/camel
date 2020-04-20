@@ -6619,7 +6619,7 @@
     "description": "The splunk component allows to publish events in Splunk using the HTTP Event Collector.",
     "deprecated": false,
     "deprecationNote": "log,monitoring",
-    "firstVersion": "3.2.0",
+    "firstVersion": "3.3.0",
     "label": "log,monitoring",
     "javaType": "org.apache.camel.component.splunkhec.SplunkHECComponent",
     "supportLevel": "Stable",

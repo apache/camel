@@ -42,7 +42,7 @@ public class SplunkHECIntegrationTest extends CamelTestSupport {
         CamelContext ctx = new DefaultCamelContext();
 
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
-        configuration.setSkiptlsverify(true);
+        configuration.setSkipTlsVerify(true);
         configuration.setIndex("camel");
         configuration.setSource("camel");
         configuration.setSourceType("camel");
@@ -88,7 +88,7 @@ public class SplunkHECIntegrationTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:hec").to("splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd?source=camelsource&skiptlsverify=true").to("mock:hec-result");
+                from("direct:hec").to("splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd?source=camelsource&skipTlsVerify=true").to("mock:hec-result");
             }
         };
     }

@@ -57,7 +57,7 @@ public class SplunkHECConfigurationTest {
     @Test
     public void testDefaultSkipTlsVerifyIsFalse() {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
-        assertEquals(false, config.isSkiptlsverify());
+        assertEquals(false, config.isSkipTlsVerify());
     }
 
     @Test

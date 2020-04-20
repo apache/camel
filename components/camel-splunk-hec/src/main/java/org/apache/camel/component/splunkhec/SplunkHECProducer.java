@@ -57,7 +57,7 @@ public class SplunkHECProducer extends DefaultProducer {
         HttpClientBuilder builder = HttpClients.custom().
                 setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion()).
                 setMaxConnTotal(10);
-        if (endpoint.getConfiguration().isSkiptlsverify()) {
+        if (endpoint.getConfiguration().isSkipTlsVerify()) {
             SSLContextBuilder sslbuilder = new SSLContextBuilder();
             sslbuilder.loadTrustMaterial(null, (chain, authType) -> true);
             SSLConnectionSocketFactory sslsf = new

@@ -34,11 +34,11 @@ public class SplunkHECConfiguration {
     private String sourceType = "camel";
     @UriParam(label = "producer")
     private String source = "camel";
-    @UriParam(label = "host")
+    @UriParam(label = "producer")
     private String host;
-    @UriParam(label = "skiptlsverify")
-    private boolean skiptlsverify;
-    @UriParam(label = "https")
+    @UriParam(label = "producer")
+    private boolean skipTlsVerify;
+    @UriParam(label = "producer")
     private boolean https = true;
 
     public String getSourceType() {
@@ -93,15 +93,15 @@ public class SplunkHECConfiguration {
         this.host = host;
     }
 
-    public boolean isSkiptlsverify() {
-        return skiptlsverify;
+    public boolean isSkipTlsVerify() {
+        return skipTlsVerify;
     }
 
     /**
      * Splunk HEC TLS verification.
      */
-    public void setSkiptlsverify(boolean skiptlsverify) {
-        this.skiptlsverify = skiptlsverify;
+    public void setSkipTlsVerify(boolean skipTlsVerify) {
+        this.skipTlsVerify = skipTlsVerify;
     }
 
     public boolean isHttps() {
