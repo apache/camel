@@ -232,7 +232,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) {
+    private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof InvokeRequest) {
+                InvokeResponse result;
+                try {
+                    result = lambdaClient.invoke((InvokeRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result.payload().asUtf8String());
+            }
+        } else {
         InvokeResponse result;
         try {
             InvokeRequest request = InvokeRequest.builder().functionName(getEndpoint().getFunction())
@@ -244,6 +258,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result.payload().asUtf8String());
+        }
     }
 
     @SuppressWarnings("unchecked")
