@@ -34,6 +34,11 @@
             <from uri="direct:getFunction"/>
             <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=getFunction"/>
         </route>
+        
+        <route>
+            <from uri="direct:getFunctionPojo"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=getFunction&amp;pojoRequest=true"/>
+        </route>
 
         <route>
             <from uri="direct:listFunctions"/>
