@@ -263,6 +263,21 @@ public class Lambda2Producer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateFunctionRequest) {
+            CreateFunctionResponse result;
+            try {
+            result = lambdaClient.createFunction((CreateFunctionRequest) payload);
+
+            } catch (AwsServiceException ase) {
+                LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
         CreateFunctionResponse result;
 
         try {
@@ -385,6 +400,8 @@ public class Lambda2Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
+        }
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
