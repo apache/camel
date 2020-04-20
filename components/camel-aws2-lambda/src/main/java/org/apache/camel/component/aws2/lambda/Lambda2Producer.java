@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.CastUtils;
@@ -149,7 +150,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void getFunction(LambdaClient lambdaClient, Exchange exchange) {
+    private void getFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetFunctionRequest) {
+                GetFunctionResponse result;
+                try {
+                    result = lambdaClient.getFunction((GetFunctionRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         GetFunctionResponse result;
         try {
             result = lambdaClient.getFunction(GetFunctionRequest.builder().functionName(getEndpoint().getFunction()).build());
@@ -159,6 +174,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void deleteFunction(LambdaClient lambdaClient, Exchange exchange) {

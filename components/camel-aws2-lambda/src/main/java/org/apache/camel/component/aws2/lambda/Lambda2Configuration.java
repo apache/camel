@@ -41,6 +41,8 @@ public class Lambda2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "advanced")
     private LambdaClient awsLambdaClient;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
 
     public LambdaClient getAwsLambdaClient() {
         return awsLambdaClient;
@@ -132,6 +134,17 @@ public class Lambda2Configuration implements Cloneable {
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * If we want to use a POJO request as body or not
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
     }
 
     // *************************************************
