@@ -797,7 +797,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void getAlias(LambdaClient lambdaClient, Exchange exchange) {
+    private void getAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetAliasRequest) {
+                GetAliasResponse result;
+                try {
+                    result = lambdaClient.getAlias((GetAliasRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         GetAliasResponse result;
         try {
             GetAliasRequest.Builder request = GetAliasRequest.builder().functionName(getEndpoint().getFunction());
@@ -813,6 +827,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void listAliases(LambdaClient lambdaClient, Exchange exchange) {
