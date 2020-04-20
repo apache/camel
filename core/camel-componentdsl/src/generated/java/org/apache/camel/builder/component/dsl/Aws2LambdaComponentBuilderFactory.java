@@ -101,6 +101,18 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2LambdaComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * The region in which ECS client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -227,6 +239,7 @@ public interface Aws2LambdaComponentBuilderFactory {
             case "configuration": ((Lambda2Component) component).setConfiguration((org.apache.camel.component.aws2.lambda.Lambda2Configuration) value); return true;
             case "lazyStartProducer": ((Lambda2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
+            case "pojoRequest": getOrCreateConfiguration((Lambda2Component) component).setPojoRequest((boolean) value); return true;
             case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "basicPropertyBinding": ((Lambda2Component) component).setBasicPropertyBinding((boolean) value); return true;

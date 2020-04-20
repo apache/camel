@@ -111,6 +111,30 @@ public interface Lambda2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Lambda2EndpointBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Lambda2EndpointBuilder pojoRequest(String pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * The region in which ECS client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
