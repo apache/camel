@@ -39,6 +39,7 @@ import software.amazon.awssdk.services.lambda.model.DeleteAliasResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
@@ -105,6 +106,19 @@ public class LambdaProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
 
+            }
+        });
+        GetFunctionResponse result = (GetFunctionResponse)exchange.getMessage().getBody();
+        assertEquals(result.configuration().functionName(), "GetHelloWithName");
+    }
+    
+    @Test
+    public void lambdaGetFunctionPojoTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getFunctionPojo", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(GetFunctionRequest.builder().functionName("GetHelloWithName").build());
             }
         });
         GetFunctionResponse result = (GetFunctionResponse)exchange.getMessage().getBody();
@@ -344,6 +358,8 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:createFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createFunction").to("mock:result");
 
                 from("direct:getFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction").to("mock:result");
+                
+                from("direct:getFunctionPojo").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction&pojoRequest=true").to("mock:result");
 
                 from("direct:listFunctions").to("aws2-lambda://myFunction?awsLambdaClient=#awsLambdaClient&operation=listFunctions").to("mock:result");
 

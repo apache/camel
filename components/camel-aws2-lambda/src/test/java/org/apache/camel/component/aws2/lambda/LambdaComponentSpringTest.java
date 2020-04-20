@@ -36,6 +36,7 @@ import software.amazon.awssdk.services.lambda.model.DeleteAliasResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
@@ -96,6 +97,19 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
 
+            }
+        });
+        GetFunctionResponse result = (GetFunctionResponse)exchange.getMessage().getBody();
+        assertEquals(result.configuration().functionName(), "GetHelloWithName");
+    }
+    
+    @Test
+    public void lambdaGetFunctionPojoTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getFunctionPojo", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(GetFunctionRequest.builder().functionName("GetHelloWithName").build());
             }
         });
         GetFunctionResponse result = (GetFunctionResponse)exchange.getMessage().getBody();
