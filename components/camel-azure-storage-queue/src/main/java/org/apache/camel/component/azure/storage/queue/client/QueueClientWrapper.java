@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.azure.core.http.HttpHeaders;
-import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.storage.queue.QueueClient;
@@ -51,7 +49,6 @@ public class QueueClientWrapper {
     }
 
     public List<PeekedMessageItem> peekMessages(Integer maxMessages, Duration timeout) {
-        //client.peekMessages(10, null, Context.NONE).stream().collect(Collectors.toList()).forEach(peekedMessageItem -> System.out.println(peekedMessageItem.getMessageText()));
         return client.peekMessages(maxMessages, timeout, Context.NONE).stream().collect(Collectors.toList());
     }
 
