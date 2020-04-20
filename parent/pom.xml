@@ -60,7 +60,7 @@
         <arquillian-container-se-managed-version>1.0.2.Final</arquillian-container-se-managed-version>
         <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
-        <asm-version>5.0.4</asm-version>
+        <asm-version>8.0.1</asm-version>
         <aspectj-version>1.9.5</aspectj-version>
         <assertj-version>3.15.0</assertj-version>
         <asterisk-java-version>1.0.0-final</asterisk-java-version>
@@ -497,6 +497,7 @@
         <smallrye-health-version>2.2.0</smallrye-health-version>
         <smallrye-fault-tolerance-version>4.2.0</smallrye-fault-tolerance-version>
         <snakeyaml-version>1.26</snakeyaml-version>
+        <snakeyaml-engine-version>2.1</snakeyaml-engine-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
         <solr-version>8.4.1</solr-version>
