@@ -277,6 +277,7 @@ public class Lambda2Producer extends DefaultProducer {
 
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            }
             } else {
                 CreateFunctionResponse result;
 
@@ -401,7 +402,6 @@ public class Lambda2Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
-        }
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
