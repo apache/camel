@@ -484,7 +484,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void deleteEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) {
+    private void deleteEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteEventSourceMappingRequest) {
+                DeleteEventSourceMappingResponse result;
+                try {
+                    result = lambdaClient.deleteEventSourceMapping((DeleteEventSourceMappingRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DeleteEventSourceMappingResponse result;
         try {
             DeleteEventSourceMappingRequest.Builder request = DeleteEventSourceMappingRequest.builder();
@@ -500,6 +514,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void listEventSourceMapping(LambdaClient lambdaClient, Exchange exchange) {
