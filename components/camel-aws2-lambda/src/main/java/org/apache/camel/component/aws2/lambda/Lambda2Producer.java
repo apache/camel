@@ -621,7 +621,21 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void untagResource(LambdaClient lambdaClient, Exchange exchange) {
+    private void untagResource(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof UntagResourceRequest) {
+                UntagResourceResponse result;
+                try {
+                    result = lambdaClient.untagResource((UntagResourceRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         UntagResourceResponse result;
         try {
             UntagResourceRequest.Builder request = UntagResourceRequest.builder();
@@ -644,6 +658,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void publishVersion(LambdaClient lambdaClient, Exchange exchange) {
