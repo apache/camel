@@ -60,6 +60,7 @@ import software.amazon.awssdk.services.lambda.model.ListAliasesRequest;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsRequest;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
+import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.ListTagsRequest;
 import software.amazon.awssdk.services.lambda.model.ListTagsResponse;
@@ -204,7 +205,21 @@ public class Lambda2Producer extends DefaultProducer {
         }
     }
 
-    private void listFunctions(LambdaClient lambdaClient, Exchange exchange) {
+    private void listFunctions(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetFunctionRequest) {
+                ListFunctionsResponse result;
+                try {
+                    result = lambdaClient.listFunctions((ListFunctionsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListFunctionsResponse result;
         try {
             result = lambdaClient.listFunctions();
@@ -214,6 +229,7 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) {
