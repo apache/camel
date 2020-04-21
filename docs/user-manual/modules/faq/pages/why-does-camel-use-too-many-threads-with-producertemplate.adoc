@@ -2,7 +2,7 @@
 = Why does Camel use too many threads with `ProducerTemplate`?
 
 A common reason is creating a new `ProducerTemplate` inside a `Processor` or
-xref:bean-integration.adoc[bean method invocation].
+xref:ROOT:bean-integration.adoc[bean method invocation].
 
 You are not meant to create a `ProducerTemplate` for each message
 invocation; you are meant to create a single instance on startup and

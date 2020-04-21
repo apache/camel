@@ -10,6 +10,6 @@ inside JBI such as
 xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router], routing messages
 between your existing JBI endpoints.
 
-You can also reuse any of the Camel xref:component.adoc[Components]
+You can also reuse any of the Camel xref:ROOT:component.adoc[Components]
 within JBI or expose Camel endpoints as JBI endpoints.
 
