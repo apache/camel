@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.jcraft.jsch.JSch;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.annotations.Component;
@@ -30,7 +29,6 @@ import org.apache.camel.spi.annotations.Component;
  * Component providing secure messaging using JSch
  */
 @Component("scp")
-@FileProcessStrategy(ScpProcessStrategyFactory.class)
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
     private boolean verboseLogging;
