@@ -21,9 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
@@ -34,7 +32,6 @@ import org.apache.commons.net.ftp.FTPFile;
  * FTP Component
  */
 @Component("ftp")
-@FileProcessStrategy(FtpProcessStrategyFactory.class)
 public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
     public FtpComponent() {

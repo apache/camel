@@ -60,7 +60,7 @@ public class DefaultFactoryFinderTest {
 
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
 
-        assertFalse(factoryFinder.findClass("TestImplA", null).isPresent());
+        assertFalse(factoryFinder.findClass("TestImplA").isPresent());
     }
 
     @Test
@@ -103,30 +103,6 @@ public class DefaultFactoryFinderTest {
     @Test
     public void shouldFindSingleClass() throws ClassNotFoundException, IOException {
         final Class<?> clazz = factoryFinder.findClass("TestImplA").orElse(null);
-
-        assertEquals(TestImplA.class, clazz);
-    }
-
-    @Test
-    public void shouldFindSingleClassFromClassMap() throws ClassNotFoundException, IOException {
-        final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(null, null);
-        factoryFinder.addToClassMap("prefixkey", () -> TestImplA.class);
-
-        final Class<?> clazz = factoryFinder.findClass("key", "prefix").orElse(null);
-
-        assertEquals(TestImplA.class, clazz);
-    }
-
-    @Test
-    public void shouldFindSingleClassWithPropertyPrefix() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.").orElse(null);
-
-        assertEquals(TestImplA.class, clazz);
-    }
-
-    @Test
-    public void shouldFindSingleClassWithPropertyPrefixAndExpectedType() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.", TestType.class).orElse(null);
 
         assertEquals(TestImplA.class, clazz);
     }

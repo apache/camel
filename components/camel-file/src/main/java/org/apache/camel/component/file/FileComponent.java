@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -30,7 +29,6 @@ import org.apache.camel.util.StringHelper;
  * access to file systems.
  */
 @Component("file")
-@FileProcessStrategy(FileProcessStrategyFactory.class)
 public class FileComponent extends GenericFileComponent<File> {
     /**
      * GenericFile property on Camel Exchanges.

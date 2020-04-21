@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.file;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Map;
 
-import org.apache.camel.spi.annotations.SubServiceFactory;
+import org.apache.camel.CamelContext;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Target({ElementType.TYPE})
-@SubServiceFactory("strategy.factory")
-public @interface FileProcessStrategy {
+/**
+ * Factory to create {@link GenericFileProcessStrategy}
+ */
+public interface GenericFileProcessStrategyFactory<T> {
 
-    Class value();
+    GenericFileProcessStrategy<T> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params);
 
 }
