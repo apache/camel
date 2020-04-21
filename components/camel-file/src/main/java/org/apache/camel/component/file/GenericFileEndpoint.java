@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint implements BrowsableEndpoint {
 
-    protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
     protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
 
@@ -486,46 +485,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     /**
      * A strategy method to lazily create the file strategy
      */
-    @SuppressWarnings("unchecked")
-    protected GenericFileProcessStrategy<T> createGenericFileStrategy() {
-        FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/component/");
-        LOG.trace("Using FactoryFinder: {}", finder);
-        Class<?> factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class).orElse(null);
-
-        if (factory == null) {
-            // use default
-            try {
-                LOG.trace("Using ClassResolver to resolve class: {}", DEFAULT_STRATEGYFACTORY_CLASS);
-                factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS);
-            } catch (Exception e) {
-                LOG.trace("Cannot load class: {}", DEFAULT_STRATEGYFACTORY_CLASS, e);
-            }
-            // fallback and us this class loader
-            try {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using classloader: {} to resolve class: {}", this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS);
-                }
-                factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS, this.getClass().getClassLoader());
-            } catch (Exception e) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot load class: {} using classloader: " + this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS, e);
-                }
-            }
-
-            if (factory == null) {
-                throw new TypeNotPresentException(DEFAULT_STRATEGYFACTORY_CLASS + " class not found", null);
-            }
-        }
-
-        try {
-            Method factoryMethod = factory.getMethod("createGenericFileProcessStrategy", CamelContext.class, Map.class);
-            Map<String, Object> params = getParamsAsMap();
-            LOG.debug("Parameters for Generic file process strategy {}", params);
-            return (GenericFileProcessStrategy<T>)ObjectHelper.invokeMethod(factoryMethod, null, getCamelContext(), params);
-        } catch (NoSuchMethodException e) {
-            throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy method not found", e);
-        }
-    }
+    protected abstract GenericFileProcessStrategy<T> createGenericFileStrategy();
 
     public boolean isNoop() {
         return noop;

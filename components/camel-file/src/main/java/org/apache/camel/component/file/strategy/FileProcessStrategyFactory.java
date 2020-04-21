@@ -25,16 +25,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.component.file.GenericFileProcessStrategyFactory;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
-public final class FileProcessStrategyFactory {
+public final class FileProcessStrategyFactory implements GenericFileProcessStrategyFactory<File> {
 
-    private FileProcessStrategyFactory() {
-    }
-
-    public static GenericFileProcessStrategy<File> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public GenericFileProcessStrategy<File> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String
         // and 'true' for boolean

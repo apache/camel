@@ -31,6 +31,7 @@ import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
+import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -215,6 +216,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return new GenericFileDefaultMoveExistingFileStrategy();
     }
 
+    @Override
+    protected GenericFileProcessStrategy<File> createGenericFileStrategy() {
+        return new FileProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
+    }
+
     public File getFile() {
         return file;
     }
@@ -367,13 +373,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
             return false;
         }
-        String permissionsString = chmod.trim().substring(chmod.length() - 3); // if
-                                                                               // 4
-                                                                               // digits
-                                                                               // chop
-                                                                               // off
-                                                                               // leading
-                                                                               // one
+        // if 4 digits chop off leading one
+        String permissionsString = chmod.trim().substring(chmod.length() - 3);
         for (int i = 0; i < permissionsString.length(); i++) {
             char c = permissionsString.charAt(i);
             if (!Character.isDigit(c) || Integer.parseInt(Character.toString(c)) > 7) {
@@ -453,13 +454,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             return permissions;
         }
 
-        String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3); // if
-                                                                                    // 4
-                                                                                    // digits
-                                                                                    // chop
-                                                                                    // off
-                                                                                    // leading
-                                                                                    // one
+        // if 4 digits chop off leading one
+        String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3);
 
         int ownerValue = Integer.parseInt(chmodString.substring(0, 1));
         int groupValue = Integer.parseInt(chmodString.substring(1, 2));
