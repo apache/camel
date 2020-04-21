@@ -58,13 +58,13 @@ public class FileOperations implements GenericFileOperations<File> {
     public FileOperations() {
     }
 
+    public FileOperations(FileEndpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
     @Override
     public GenericFile<File> newGenericFile() {
         return new GenericFile<>();
-    }
-
-    public FileOperations(FileEndpoint endpoint) {
-        this.endpoint = endpoint;
     }
 
     @Override
