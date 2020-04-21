@@ -1124,3 +1124,4 @@ DataFormat definition has been removed.
 
 - In Camel 3.3.0, camel-undertow is not supported in OSGi anymore.
 - In Camel 3.3.0, camel-jgroups and camel-jgroups-raft are not supported in OSGi anymore.
+- In Camel 3.3.0, camel-infinispan is not supported in OSGi anymore.
