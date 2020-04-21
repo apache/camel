@@ -18,6 +18,7 @@ package org.apache.camel.component.scp;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
@@ -70,6 +71,11 @@ public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
         ScpOperations operations = new ScpOperations();
         operations.setEndpoint(this);
         return operations;
+    }
+
+    @Override
+    protected GenericFileProcessStrategy<ScpFile> createGenericFileStrategy() {
+        return new ScpProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
     }
 
     @Override
