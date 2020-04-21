@@ -39,6 +39,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     private static class MyGenericFileOperations implements GenericFileOperations<Object> {
 
         @Override
+        public GenericFile<Object> newGenericFile() {
+            return null;
+        }
+
+        @Override
         public void setEndpoint(GenericFileEndpoint<Object> endpoint) {
         }
 

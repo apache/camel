@@ -80,6 +80,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     @Override
+    public GenericFile<FTPFile> newGenericFile() {
+        return new RemoteFile<>();
+    }
+
+    @Override
     public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         client.setCopyStreamListener(clientActivityListener);
 

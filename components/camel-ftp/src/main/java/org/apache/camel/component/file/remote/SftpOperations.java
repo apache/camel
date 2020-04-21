@@ -59,6 +59,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     @Override
     public void setEndpoint(GenericFileEndpoint<SftpRemoteFile> endpoint) {
         this.endpoint = (SftpEndpoint)endpoint;
+    }
+
+    @Override
+    public GenericFile<SftpRemoteFile> newGenericFile() {
+        return new RemoteFile<>();
     }
 
     @Override

@@ -23,6 +23,11 @@ import org.apache.camel.Exchange;
 public interface GenericFileOperations<T> {
 
     /**
+     * Creates a new instance of {@link GenericFile}
+     */
+    GenericFile<T> newGenericFile();
+
+    /**
      * Sets the endpoint as some implementations need access to the endpoint and
      * how its configured.
      *
@@ -138,4 +143,5 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     List<T> listFiles(String path) throws GenericFileOperationFailedException;
+
 }

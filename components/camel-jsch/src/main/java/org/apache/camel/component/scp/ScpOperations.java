@@ -34,8 +34,10 @@ import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.support.ResourceHelper;
@@ -54,6 +56,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     private Session session;
     private ChannelExec channel;
     private String userKnownHostFile;
+
+    @Override
+    public GenericFile<ScpFile> newGenericFile() {
+        return new RemoteFile<>();
+    }
 
     @Override
     public void setEndpoint(GenericFileEndpoint<ScpFile> endpoint) {
