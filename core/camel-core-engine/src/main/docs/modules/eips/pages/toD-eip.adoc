@@ -138,12 +138,12 @@ for each different userid. To avoid having too many dynamic endpoints you can co
 [source,java]
 ----
 from("direct:login")
-  .toD("http:myloginserver:8080/login?cacheSize=10&userid=${header.userName}");
+  .toD("http:myloginserver:8080/login?userid=${header.userName}", 10);
 ----
 
 where the cache is 10. *Important* this will only reduce the endpoint cache of the `toD` that has a chance
 of being reused in case a message is routed with the same `userName` header. Therefore reducing the cache size
-will not solve the _endless dynamic endoints_ problem. Instead you should use static endpoints with `to` and
+will not solve the _endless dynamic endpoints_ problem. Instead you should use static endpoints with `to` and
 provide the dynamic parts in Camel message headers (if possible).
 
 === Using static endpoints
