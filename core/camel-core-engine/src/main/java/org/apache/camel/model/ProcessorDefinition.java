@@ -224,6 +224,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sends the exchange to the given dynamic endpoint
      *
+     * @return the builder
+     */
+    public ToDynamicDefinition toD() {
+        ToDynamicDefinition answer = new ToDynamicDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Sends the exchange to the given dynamic endpoint
+     *
      * @param uri the dynamic endpoint to send to (resolved using simple
      *            language by default)
      * @return the builder

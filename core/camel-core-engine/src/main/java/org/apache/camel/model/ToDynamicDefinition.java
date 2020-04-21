@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointProducerBuilder;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -88,6 +89,26 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * The uri of the endpoint to send to. The uri can be dynamic computed using
+     * the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     */
+    public ToDynamicDefinition uri(@AsEndpointUri String uri) {
+        setUri(uri);
+        return this;
+    }
+
+    /**
+     * The uri of the endpoint to send to.
+     *
+     * @param endpointProducerBuilder the dynamic endpoint to send to (resolved
+     *            using simple language by default)
+     */
+    public ToDynamicDefinition uri(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder) {
+        setEndpointProducerBuilder(endpointProducerBuilder);
+        return this;
+    }
 
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
