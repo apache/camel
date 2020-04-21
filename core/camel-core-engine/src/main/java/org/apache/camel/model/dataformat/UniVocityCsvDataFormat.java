@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The uniVocity CSV data format is used for working with CSV (Comma Separated
- * Values) flat payloads.
+ * Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using univocity-parsers.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV")
 @XmlRootElement(name = "univocity-csv")

@@ -33,7 +33,7 @@ import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Any23 data format is used for parsing data to RDF.
+ * Extract RDF data from HTML documents.
  */
 @Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "Any23")
 @XmlRootElement(name = "any23")

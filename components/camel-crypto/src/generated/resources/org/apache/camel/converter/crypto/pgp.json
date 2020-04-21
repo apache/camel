@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "pgp",
     "title": "PGP",
-    "description": "PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.",
+    "description": "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,security",
     "firstVersion": "2.9.0",

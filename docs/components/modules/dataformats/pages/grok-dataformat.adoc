@@ -4,7 +4,7 @@
 :page-source: components/camel-grok/src/main/docs/grok-dataformat.adoc
 :docTitle: Grok
 :artifactId: camel-grok
-:description: The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.
+:description: Unmarshal unstructured data to objects using Logstash based Grok patterns.
 :since: 3.0
 :supportLevel: Stable
 

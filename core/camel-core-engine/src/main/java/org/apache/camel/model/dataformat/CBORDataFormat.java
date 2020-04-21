@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal
- * POJO back to CBOR payload.
+ * Unmarshal a CBOR payload to POJO and back.
  */
 @Metadata(firstVersion = "3.0.0", label = "dataformat,transformation,json", title = "CBOR")
 @XmlRootElement(name = "cbor")

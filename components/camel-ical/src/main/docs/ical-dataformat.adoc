@@ -2,7 +2,7 @@
 = iCal DataFormat
 :docTitle: iCal
 :artifactId: camel-ical
-:description: The iCal dataformat is used for working with iCalendar messages.
+:description: Marshal and unmarshal iCal (.ics) documents to/from model objects provided by the iCal4j library.
 :since: 2.12
 :supportLevel: Stable
 

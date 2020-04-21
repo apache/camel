@@ -29,8 +29,8 @@ public interface ComponentsBuilderFactory {
 
     /**
      * ActiveMQ (camel-activemq)
-     * The activemq component allows messages to be sent to (or consumed from)
-     * Apache ActiveMQ. This component extends the Camel JMS component.
+     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * extends the Camel JMS component.
      * 
      * Category: messaging
      * Since: 1.0
@@ -41,7 +41,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AHC (camel-ahc)
-     * To call external HTTP services using Async Http Client.
+     * Call external HTTP services using Async Http Client.
      * 
      * Category: http
      * Since: 2.8
@@ -52,7 +52,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AHC Websocket (camel-ahc-ws)
-     * To exchange data with external Websocket servers using Async Http Client.
+     * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
      * Since: 2.14
@@ -63,7 +63,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AHC Secure Websocket (Secure) (camel-ahc-ws)
-     * To exchange data with external Websocket servers using Async Http Client.
+     * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
      * Since: 2.14

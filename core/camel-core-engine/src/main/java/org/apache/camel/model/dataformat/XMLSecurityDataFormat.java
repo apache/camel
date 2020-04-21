@@ -31,8 +31,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
- * The XML Security data format facilitates encryption and decryption of XML
- * payloads.
+ * Encrypt and decrypt XML payloads using Apache Santuario.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")

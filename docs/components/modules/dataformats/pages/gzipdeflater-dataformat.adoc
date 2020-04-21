@@ -4,7 +4,7 @@
 :page-source: components/camel-zip-deflater/src/main/docs/gzipdeflater-dataformat.adoc
 :docTitle: GZip Deflater
 :artifactId: camel-zip-deflater
-:description: The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
+:description: Compress and de-compress messages using java.util.zip.GZIPStream.
 :since: 2.0
 :supportLevel: Stable
 

@@ -2,7 +2,7 @@
 = BeanIO DataFormat
 :docTitle: BeanIO
 :artifactId: camel-beanio
-:description: The BeanIO data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
+:description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats).
 :since: 2.10
 :supportLevel: Stable
 

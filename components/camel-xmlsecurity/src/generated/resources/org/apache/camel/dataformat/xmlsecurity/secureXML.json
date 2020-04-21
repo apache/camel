@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "secureXML",
     "title": "XML Security",
-    "description": "The XML Security data format facilitates encryption and decryption of XML payloads.",
+    "description": "Encrypt and decrypt XML payloads using Apache Santuario.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,xml,security",
     "firstVersion": "2.0.0",

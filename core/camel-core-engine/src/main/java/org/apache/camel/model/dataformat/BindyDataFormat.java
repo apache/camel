@@ -28,7 +28,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Bindy data format is used for working with flat payloads (such as CSV,
+ * Marshal and unmarshal Java beans from and to flat payloads (such as CSV,
  * delimited, fixed length formats, or FIX messages).
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
@@ -135,7 +135,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     public String getAllowEmptyStream() {
         return allowEmptyStream;
     }
-    
+
     /**
    * Whether to allow empty streams in the unmarshal process. If true, no
    * exception will be thrown when a body without records is provided.

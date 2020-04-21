@@ -2,7 +2,7 @@
 = Protobuf DataFormat
 :docTitle: Protobuf
 :artifactId: camel-protobuf
-:description: The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.
+:description: Serialize and deserialize Java objects using Google's Protocol buffers.
 :since: 2.2
 :supportLevel: Stable
 

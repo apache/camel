@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "bindy-fixed",
     "title": "Bindy Fixed Length",
-    "description": "The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
+    "description": "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.0.0",

@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The MIME Multipart data format is used for marshalling Camel messages with attachments
- * into MIME-Multipart message, and vise-versa.
+ * Marshal Camel messages with attachments into MIME-Multipart messages and back.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "MIME Multipart")
 @XmlRootElement(name = "mime-multipart")

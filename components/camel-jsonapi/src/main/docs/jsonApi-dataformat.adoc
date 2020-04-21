@@ -2,7 +2,7 @@
 = JSonApi DataFormat
 :docTitle: JSonApi
 :artifactId: camel-jsonapi
-:description: JSonApi data format is used for marshal and unmarshal Json API object.
+:description: Marshal and unmarshal JSON:API resources.
 :since: 3.0
 :supportLevel: Stable
 

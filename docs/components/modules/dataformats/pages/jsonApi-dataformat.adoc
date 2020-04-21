@@ -4,7 +4,7 @@
 :page-source: components/camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc
 :docTitle: JSonApi
 :artifactId: camel-jsonapi
-:description: JSonApi data format is used for marshal and unmarshal Json API object.
+:description: Marshal and unmarshal JSON:API resources.
 :since: 3.0
 :supportLevel: Stable
 

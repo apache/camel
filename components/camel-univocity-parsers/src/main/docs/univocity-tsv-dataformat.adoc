@@ -2,7 +2,7 @@
 = uniVocity TSV DataFormat
 :docTitle: uniVocity TSV
 :artifactId: camel-univocity-parsers
-:description: The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.
+:description: Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using univocity-parsers.
 :since: 2.15
 :supportLevel: Stable
 

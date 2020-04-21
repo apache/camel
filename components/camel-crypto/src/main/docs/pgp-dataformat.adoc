@@ -2,7 +2,7 @@
 = PGP DataFormat
 :docTitle: PGP
 :artifactId: camel-crypto
-:description: PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.
+:description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
 :since: 2.9
 :supportLevel: Stable
 

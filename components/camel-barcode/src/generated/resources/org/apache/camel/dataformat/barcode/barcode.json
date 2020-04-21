@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "barcode",
     "title": "Barcode",
-    "description": "The Barcode data format is used for creating barccode images (such as QR-Code)",
+    "description": "Transform strings to various 1D\/2D barcode bitmap formats and back.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.14.0",

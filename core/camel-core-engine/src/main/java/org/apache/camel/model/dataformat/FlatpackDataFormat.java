@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Flatpack data format is used for working with flat payloads (such as CSV,
- * delimited, or fixed length formats).
+ * Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats).
  */
 @Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,csv", title = "Flatpack")
 @XmlRootElement(name = "flatpack")

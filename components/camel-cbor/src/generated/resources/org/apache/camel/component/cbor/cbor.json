@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "cbor",
     "title": "CBOR",
-    "description": "CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.",
+    "description": "Unmarshal a CBOR payload to POJO and back.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,json",
     "firstVersion": "3.0.0",
