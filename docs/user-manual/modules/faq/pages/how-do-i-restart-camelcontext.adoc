@@ -1,8 +1,8 @@
 [[HowdoIrestartCamelContext-HowdoIrestartCamelContext]]
 = How do I restart CamelContext?
 
-A xref:camelcontext.adoc[CamelContext] provides operations to control
-its lifecycle, see more at xref:camelcontext.adoc[CamelContext].
+A xref:ROOT:camelcontext.adoc[CamelContext] provides operations to control
+its lifecycle, see more at xref:ROOT:camelcontext.adoc[CamelContext].
 
 [NOTE]
 ====

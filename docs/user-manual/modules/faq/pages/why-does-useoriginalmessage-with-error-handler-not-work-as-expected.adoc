@@ -1,8 +1,8 @@
 [[WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected-WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected]]
 = Why does useOriginalMessage with error handler not work as expected?
 
-If you use the xref:exception-clause.adoc[useOriginalMessage] option
-from the Camel xref:exception-clause.adoc[Error Handler] then it matters
+If you use the xref:ROOT:exception-clause.adoc[useOriginalMessage] option
+from the Camel xref:ROOT:exception-clause.adoc[Error Handler] then it matters
 if you use this with xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s such as:
 
 * xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List]

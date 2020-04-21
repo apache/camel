@@ -5,7 +5,7 @@ You can use Camel to do smart routing and implement the
 xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] inside of the JBI container, routing between existing JBI
 components together with communicating with any of the other Camel
-xref:component.adoc[Components].
+xref:ROOT:component.adoc[Components].
 
 To do this you take your Camel xref:ROOT:spring.adoc[Spring] configuration
 and turn it into a JBI Service Unit using the maven plugin or archetype.

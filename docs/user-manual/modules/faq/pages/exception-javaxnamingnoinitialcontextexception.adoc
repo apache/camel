@@ -24,7 +24,7 @@ You might get an exception like this:
 ----
 
 This is because if you are not using Spring then the default
-xref:registry.adoc[Registry] implementation uses xref:jndi.adoc[JNDI].
+xref:ROOT:registry.adoc[Registry] implementation uses xref:ROOT:jndi.adoc[JNDI].
 
 A simple workaround for this is to specify a JNDI provider. An easy fix
 is to create a file called `jndi.properties` on the classpath and give

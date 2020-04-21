@@ -12,7 +12,7 @@ they are both designed to work great together.
 Camel can be deployed as a component within ServiceMix to provide
 xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP routing and mediation]
 between existing JBI components together with communicating with any of
-the other Camel xref:component.adoc[Components] along with defining new
+the other Camel xref:ROOT:component.adoc[Components] along with defining new
 JBI components on the NMR. So Camel is similar to the
 xref:how-does-camel-compare-to-servicemix-eip.adoc[ServiceMix EIP
 component].

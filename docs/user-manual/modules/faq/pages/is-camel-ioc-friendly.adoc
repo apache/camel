@@ -16,12 +16,12 @@ can be configured in Spring using Spring custom XML namespaces or
 traditional bean/property elements
 * we implement a spring BeanPostProcessor to allow POJOs to be injected
 with Camel resources along with powerful
-xref:bean-integration.adoc[Bean Integration] which allows any
+xref:ROOT:bean-integration.adoc[Bean Integration] which allows any
 spring-injected POJO to be used inside Camel along with full support
 for Spring Remoting.
 
 What we've tried to do is implement the
-xref:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control With Smart Defaults]
+xref:ROOT:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control With Smart Defaults]
 pattern; namely that you can configure Camel in a
 single XML element (or very small amont of XML) to get going, then you
 can overload default configurations to add more explicit configuration
@@ -41,11 +41,11 @@ We hope to have closer integration to other IoC containers.
 The current mechanism for hooking into other IoC containers
 are:
 
-* xref:injector.adoc[Injector] is used to perform dependency injection
+* xref:ROOT:injector.adoc[Injector] is used to perform dependency injection
 on a type when sing the
-xref:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control
+xref:ROOT:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control
 With Smart Defaults] pattern
-* xref:registry.adoc[Registry] this strategy is used to abstract away
+* xref:ROOT:registry.adoc[Registry] this strategy is used to abstract away
 the ApplicationContext such as to use JNDI or OSGi to lookup services on
 demand
 
