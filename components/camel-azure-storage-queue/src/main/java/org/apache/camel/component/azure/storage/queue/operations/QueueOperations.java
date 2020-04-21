@@ -1,26 +1,22 @@
 package org.apache.camel.component.azure.storage.queue.operations;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 import com.azure.core.http.rest.Response;
 import com.azure.storage.queue.models.SendMessageResult;
+import com.azure.storage.queue.models.UpdateMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.component.azure.storage.queue.QueueConstants;
 import org.apache.camel.component.azure.storage.queue.QueueExchangeHeaders;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * All operations related to {@link com.azure.storage.queue.QueueClient}. This is at the queue level
  */
 public class QueueOperations {
-
-    private static final Logger LOG = LoggerFactory.getLogger(QueueOperations.class);
 
     private final QueueConfiguration configuration;
     private final QueueClientWrapper client;
@@ -123,14 +119,42 @@ public class QueueOperations {
         return new QueueOperationResponse(client.peekMessages(maxMessages, timeout));
     }
 
-    @SuppressWarnings("rawtypes")
-    private QueueOperationResponse buildResponseWithEmptyBody(final Response response) {
-        return buildResponse(response, true);
+    public QueueOperationResponse updateMessage(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, "exchange cannot be null");
+
+        final String updatedText = QueueExchangeHeaders.getMessageTextFromHeaders(exchange);
+        final String messageId = QueueExchangeHeaders.getMessageIdFromHeaders(exchange);
+        final String popReceipt = QueueExchangeHeaders.getPopReceiptFromHeaders(exchange);
+        final Duration visibilityTimeout = getVisibilityTimeout(exchange);
+        final Duration timeout = QueueExchangeHeaders.getTimeoutFromHeaders(exchange);
+
+        if (ObjectHelper.isEmpty(messageId)) {
+            throw new IllegalArgumentException(String.format("Message ID must be specified in camel headers '%s' for updateMessage " +
+                    "operation.", QueueConstants.MESSAGE_ID));
+        }
+
+        if (ObjectHelper.isEmpty(popReceipt)) {
+            throw new IllegalArgumentException(String.format("Message Pop Receipt must be specified in camel headers '%s' for updateMessage " +
+                    "operation.", QueueConstants.POP_RECEIPT));
+        }
+
+        if (ObjectHelper.isEmpty(visibilityTimeout)) {
+            throw new IllegalArgumentException(String.format("Visibility Timeout must be specified in camel headers '%s' for updateMessage " +
+                    "operation.", QueueConstants.VISIBILITY_TIMEOUT));
+        }
+
+        final Response<UpdateMessageResult> response = client.updateMessage(messageId, popReceipt, updatedText, visibilityTimeout, timeout);
+        final QueueExchangeHeaders headers = new QueueExchangeHeaders()
+                .timeNextVisible(response.getValue().getTimeNextVisible())
+                .popReceipt(response.getValue().getPopReceipt())
+                .httpHeaders(response.getHeaders());
+
+        return new QueueOperationResponse(true, headers.toMap());
     }
 
     @SuppressWarnings("rawtypes")
-    private QueueOperationResponse buildResponseWithBody(final Response response) {
-        return buildResponse(response, false);
+    private QueueOperationResponse buildResponseWithEmptyBody(final Response response) {
+        return buildResponse(response, true);
     }
 
     @SuppressWarnings("rawtypes")

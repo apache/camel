@@ -19,6 +19,7 @@ import org.apache.camel.component.azure.storage.queue.client.QueueServiceClientW
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -177,6 +178,49 @@ class QueueOperationsIT extends CamelTestSupport {
 
         // delete testing queue
         operations.deleteQueue(exchange);
+    }
+
+    @Test
+    public void testUpdateMessage() {
+        final QueueOperations operations = getQueueOperations();
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "testing message-1");
+        final QueueOperationResponse sentMessage = operations.sendMessage(exchange);
+
+        // let's do our update
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "updated message-1");
+        exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, sentMessage.getHeaders().get(QueueConstants.POP_RECEIPT));
+        exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, sentMessage.getHeaders().get(QueueConstants.MESSAGE_ID));
+        exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMillis(10));
+
+        final QueueOperationResponse updatedMessage = operations.updateMessage(exchange);
+
+        assertNotNull(updatedMessage);
+        assertNotNull(updatedMessage.getHeaders());
+        assertTrue((boolean) updatedMessage.getBody());
+        assertNotNull(updatedMessage.getHeaders().get(QueueConstants.POP_RECEIPT));
+        assertNotNull(updatedMessage.getHeaders().get(QueueConstants.TIME_NEXT_VISIBLE));
+
+        // check the what we have in the queue
+        final QueueOperationResponse peekResponse = operations.peekMessages(exchange);
+        @SuppressWarnings("unchecked") final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
+
+        assertEquals(1, peekedMessageItems.size());
+        assertEquals("updated message-1", peekedMessageItems.get(0).getMessageText());
+
+        // delete testing queue
+        operations.deleteQueue(exchange);
+    }
+
+    @AfterAll
+    public void tearDown() {
+        // make sure to clean everything
+        final List<QueueItem> queues = serviceClientWrapper.listQueues(null, null);
+
+        if (queues.size() > 0) {
+           queues.forEach(queueItem -> serviceClientWrapper.getQueueClientWrapper(queueItem.getName()).delete(null));
+        }
     }
 
     private QueueOperations getQueueOperations() {

@@ -68,6 +68,14 @@ public class QueueExchangeHeaders {
         return getObjectFromHeaders(exchange, QueueConstants.MAX_MESSAGES, Integer.class);
     }
 
+    public static QueueOperationDefinition getQueueOperationsDefinitionFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, QueueConstants.QUEUE_OPERATION, QueueOperationDefinition.class);
+    }
+
+    public static String getQueueNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, QueueConstants.QUEUE_NAME, String.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }

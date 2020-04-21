@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
+import com.azure.storage.queue.QueueServiceClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -61,12 +62,12 @@ public class QueueComponent extends DefaultComponent {
         // only account name is being set
         configuration.setAccountName(parts[0]);
 
-        // also container name is being set
+        // also queue name is being set
         if (parts.length > 1) {
-            //configuration.setContainerName(parts[1]);
+            configuration.setQueueName(parts[1]);
         }
 
-        /*final BlobEndpoint endpoint = new BlobEndpoint(uri, this, configuration);
+        final QueueEndpoint endpoint = new QueueEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
         checkAndSetRegistryClient(configuration, endpoint);
@@ -74,9 +75,7 @@ public class QueueComponent extends DefaultComponent {
 
         validateConfigurations(configuration);
 
-        return endpoint;*
-         */
-        return null;
+        return endpoint;
     }
 
     /**
@@ -90,36 +89,36 @@ public class QueueComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    /*private void checkCredentials(final QueueConfiguration configuration) {
-        final BlobServiceClient client = configuration.getServiceClient();
+    private void checkCredentials(final QueueConfiguration configuration) {
+        final QueueServiceClient client = configuration.getServiceClient();
 
-        //if no azureBlobClient is provided fallback to credentials
+        //if no QueueServiceClient is provided fallback to credentials
         if (client == null) {
             Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
             if (storageSharedKeyCredentials.size() == 1) {
                 configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
             }
         }
-    }*/
+    }
 
-    /*private void checkAndSetRegistryClient(final QueueConfiguration configuration, final BlobEndpoint endpoint) {
+    private void checkAndSetRegistryClient(final QueueConfiguration configuration, final QueueEndpoint endpoint) {
         if (ObjectHelper.isEmpty(endpoint.getConfiguration().getServiceClient())) {
-            LOG.debug("Looking for an BlobServiceClient instance in the registry");
-            final Set<BlobServiceClient> clients = getCamelContext().getRegistry().findByType(BlobServiceClient.class);
+            LOG.debug("Looking for an QueueServiceClient instance in the registry");
+            final Set<QueueServiceClient> clients = getCamelContext().getRegistry().findByType(QueueServiceClient.class);
             if (clients.size() == 1) {
-                LOG.debug("Found exactly one BlobServiceClient instance in the registry");
+                LOG.debug("Found exactly one QueueServiceClient instance in the registry");
                 configuration.setServiceClient(clients.stream().findFirst().get());
             } else {
-                LOG.debug("No BlobServiceClient instance in the registry");
+                LOG.debug("No QueueServiceClient instance in the registry");
             }
         } else {
-            LOG.debug("BlobServiceClient instance is already set at endpoint level: skipping the check in the registry");
+            LOG.debug("QueueServiceClient instance is already set at endpoint level: skipping the check in the registry");
         }
-    }*/
+    }
 
-    /*private void validateConfigurations(final BlobConfiguration configuration) {
+    private void validateConfigurations(final QueueConfiguration configuration) {
         if (configuration.getServiceClient() == null && configuration.getAccessKey() == null && configuration.getCredentials() == null) {
-            throw new IllegalArgumentException("Azure Storage accessKey or BlobServiceClient must be specified.");
+            throw new IllegalArgumentException("Azure Storage accessKey or QueueServiceClient must be specified.");
         }
-    }*/
+    }
 }

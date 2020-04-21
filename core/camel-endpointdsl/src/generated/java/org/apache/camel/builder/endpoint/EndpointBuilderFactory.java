@@ -269,6 +269,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.PubNubBuilders,
             org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.PulsarBuilders,
             org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.QuartzBuilders,
+            org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueBuilders,
             org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceBuilders,
             org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.QuickfixjBuilders,
             org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQBuilders,

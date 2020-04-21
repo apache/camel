@@ -16,12 +16,12 @@ public class QueueConfiguration {
     private String accountName;
     @UriPath
     private String queueName;
-    @UriParam
+    @UriParam(label = "security")
     private StorageSharedKeyCredential credentials;
-    @UriParam
-    private QueueServiceClient serviceClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
+    @UriParam(label = "common")
+    private QueueServiceClient serviceClient;
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
     // queue properties
