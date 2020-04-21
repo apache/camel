@@ -70,16 +70,11 @@ public class GenericFile<T> implements WrappedFile<T> {
      * Creates a copy based on the source
      *
      * @param source the source
-     * @return a copy of the source
+     * @param result the result
      */
     @SuppressWarnings("unchecked")
-    public GenericFile<T> copyFrom(GenericFile<T> source) {
-        GenericFile<T> result;
-        try {
-            result = source.getClass().newInstance();
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+    @Deprecated
+    public void copyFrom(GenericFile source, GenericFile result) {
         result.setCopyFromAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
@@ -96,7 +91,6 @@ public class GenericFile<T> implements WrappedFile<T> {
         result.setCharset(source.getCharset());
 
         copyFromPopulateAdditional(source, result);
-        return result;
     }
 
     /**

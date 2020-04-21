@@ -43,7 +43,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
         // okay we got the file then execute the begin renamer
         if (beginRenamer != null) {
-            GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
+            GenericFile<T> newName = beginRenamer.renameFile(operations, exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
             if (to != null) {
                 to.bindToExchange(exchange);
@@ -119,7 +119,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
-                GenericFile<T> newName = failureRenamer.renameFile(copy, file);
+                GenericFile<T> newName = failureRenamer.renameFile(operations, copy, file);
                 renameFile(operations, file, newName);
             }
         } finally {

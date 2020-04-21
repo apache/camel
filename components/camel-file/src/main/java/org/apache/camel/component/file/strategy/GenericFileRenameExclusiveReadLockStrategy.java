@@ -57,7 +57,8 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         String newName = file.getFileName() + ".camelExclusiveReadLock";
 
         // make a copy as result and change its file name
-        GenericFile<T> newFile = file.copyFrom(file);
+        GenericFile<T> newFile = operations.newGenericFile();
+        file.copyFrom(file, newFile);
         newFile.changeFileName(newName);
         StopWatch watch = new StopWatch();
 
