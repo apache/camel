@@ -1119,3 +1119,7 @@ context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAME
 
 this change affects also the Java DSL and as consequence the `enableJaxbAnnotationModule` option for the Json 
 DataFormat definition has been removed.
+
+=== Camel-Karaf
+
+In Camel 3.3.0, camel-undertow is not supported in OSGi anymore
