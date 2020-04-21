@@ -483,7 +483,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());
             //TODO put the deprecation into the actual support level.
-            newLines.add(":supportLevel: " + model.getSupportLevel().toString() + (model.isDeprecated()? "-deprecated": ""));
+//            newLines.add(":supportLevel: " + model.getSupportLevel().toString() + (model.isDeprecated()? "-deprecated": ""));
             if (model.isDeprecated()) newLines.add(":deprecated: *deprecated*");
             if (model instanceof ComponentModel) {
                 newLines.add(":component-header: " + generateComponentHeader((ComponentModel)model));
