@@ -10,7 +10,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class QueueConfiguration {
+public class QueueConfiguration implements Cloneable {
 
     @UriPath
     private String accountName;

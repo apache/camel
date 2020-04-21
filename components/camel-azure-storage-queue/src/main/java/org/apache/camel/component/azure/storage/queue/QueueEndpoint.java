@@ -3,11 +3,16 @@ package org.apache.camel.component.azure.storage.queue;
 import com.azure.storage.queue.QueueServiceClient;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
+import org.apache.camel.component.azure.storage.queue.operations.QueueOperationResponse;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using Azure SDK v12.
@@ -33,7 +38,24 @@ public class QueueEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return null;
+        if (ObjectHelper.isEmpty(configuration.getQueueName())) {
+            throw new IllegalArgumentException("QueueName must be set.");
+        }
+        return new QueueConsumer(this, processor);
+    }
+
+    @Override
+    public void doStart() throws Exception {
+        super.doStart();
+
+        queueServiceClient = configuration.getServiceClient() != null ? configuration.getServiceClient() : QueueClientFactory.createQueueServiceClient(configuration);
+    }
+
+    public void setResponseOnExchange(final QueueOperationResponse response, final Exchange exchange) {
+        final Message message = exchange.getIn();
+
+        message.setBody(response.getBody());
+        message.setHeaders(response.getHeaders());
     }
 
     /**
