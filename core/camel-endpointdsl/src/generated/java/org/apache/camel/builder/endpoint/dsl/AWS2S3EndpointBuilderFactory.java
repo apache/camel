@@ -39,7 +39,8 @@ public interface AWS2S3EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS2 S3 Storage Service component.
+     * Builder for endpoint consumers for the AWS 2 S3 Storage Service
+     * component.
      */
     public interface AWS2S3EndpointConsumerBuilder
             extends
@@ -983,7 +984,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AWS2 S3 Storage Service
+     * Advanced builder for endpoint consumers for the AWS 2 S3 Storage Service
      * component.
      */
     public interface AdvancedAWS2S3EndpointConsumerBuilder
@@ -1176,7 +1177,8 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS2 S3 Storage Service component.
+     * Builder for endpoint producers for the AWS 2 S3 Storage Service
+     * component.
      */
     public interface AWS2S3EndpointProducerBuilder
             extends
@@ -1614,7 +1616,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AWS2 S3 Storage Service
+     * Advanced builder for endpoint producers for the AWS 2 S3 Storage Service
      * component.
      */
     public interface AdvancedAWS2S3EndpointProducerBuilder
@@ -1781,7 +1783,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS2 S3 Storage Service component.
+     * Builder for endpoint for the AWS 2 S3 Storage Service component.
      */
     public interface AWS2S3EndpointBuilder
             extends
@@ -2039,7 +2041,7 @@ public interface AWS2S3EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS2 S3 Storage Service component.
+     * Advanced builder for endpoint for the AWS 2 S3 Storage Service component.
      */
     public interface AdvancedAWS2S3EndpointBuilder
             extends
@@ -2128,7 +2130,7 @@ public interface AWS2S3EndpointBuilderFactory {
 
     public interface AWS2S3Builders {
         /**
-         * AWS2 S3 Storage Service (camel-aws2-s3)
+         * AWS 2 S3 Storage Service (camel-aws2-s3)
          * The aws2-s3 component is used for storing and retrieving object from
          * Amazon S3 Storage Service.
          * 
@@ -2146,7 +2148,7 @@ public interface AWS2S3EndpointBuilderFactory {
         }
     }
     /**
-     * AWS2 S3 Storage Service (camel-aws2-s3)
+     * AWS 2 S3 Storage Service (camel-aws2-s3)
      * The aws2-s3 component is used for storing and retrieving object from
      * Amazon S3 Storage Service.
      * 
