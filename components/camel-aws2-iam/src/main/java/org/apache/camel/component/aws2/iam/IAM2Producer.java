@@ -549,7 +549,21 @@ public class IAM2Producer extends DefaultProducer {
         }
     }
 
-    private void removeUserFromGroup(IamClient iamClient, Exchange exchange) {
+    private void removeUserFromGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof RemoveUserFromGroupRequest) {
+                RemoveUserFromGroupResponse result;
+                try {
+                    result = iamClient.removeUserFromGroup((RemoveUserFromGroupRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         RemoveUserFromGroupRequest.Builder builder = RemoveUserFromGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
@@ -572,6 +586,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
