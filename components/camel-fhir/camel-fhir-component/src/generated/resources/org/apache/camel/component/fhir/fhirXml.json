@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "fhirXml",
     "title": "FHIR XML",
-    "description": "The FHIR XML data format is used to marshall\/unmarshall from\/to FHIR objects to\/from XML.",
+    "description": "Marshall\/unmarshall FHIR objects to\/from XML.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,hl7,xml",
     "firstVersion": "2.21.0",

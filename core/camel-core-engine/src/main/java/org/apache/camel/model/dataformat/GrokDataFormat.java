@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Grok data format is used for unmarshalling unstructured data to objects
- * using Logstash based Grok patterns.
+ * Unmarshal unstructured data to objects using Logstash based Grok patterns.
  */
 @Metadata(label = "dataformat,transformation", title = "Grok", firstVersion = "3.0.0")
 @XmlRootElement(name = "grok")

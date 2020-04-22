@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML
- * payload into Java objects or to marshal Java objects into an XML payload.
+ * Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
  */
 @Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB")
 @XmlRootElement(name = "jaxb")

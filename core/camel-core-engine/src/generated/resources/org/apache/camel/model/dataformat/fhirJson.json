@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "fhirJson",
     "title": "FHIR JSon",
-    "description": "The FHIR JSon data format is used to marshall\/unmarshall to\/from FHIR objects to\/from JSON.",
+    "description": "Marshall\/unmarshall FHIR objects to\/from JSON.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "dataformat,transformation,hl7,json",

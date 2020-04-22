@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "soapjaxb",
     "title": "SOAP",
-    "description": "SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.",
+    "description": "Marshal Java objects to SOAP messages and back.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,xml",
     "firstVersion": "2.3.0",

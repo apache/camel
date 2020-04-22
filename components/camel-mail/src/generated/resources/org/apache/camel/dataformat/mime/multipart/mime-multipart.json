@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "mime-multipart",
     "title": "MIME Multipart",
-    "description": "The MIME Multipart data format is used for marshalling Camel messages with attachments into MIME-Multipart message, and vise-versa.",
+    "description": "Marshal Camel messages with attachments into MIME-Multipart messages and back.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.17.0",

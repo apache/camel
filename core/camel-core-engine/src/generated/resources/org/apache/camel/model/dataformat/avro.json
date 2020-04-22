@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "avro",
     "title": "Avro",
-    "description": "The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.",
+    "description": "Serialize and deserialize messages using Apache Avro binary dataformat.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",

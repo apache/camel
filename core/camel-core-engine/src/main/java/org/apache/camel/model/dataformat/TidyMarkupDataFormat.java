@@ -28,8 +28,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * TidyMarkup data format is used for parsing HTML and return it as pretty
- * well-formed HTML.
+ * Parse (potentially invalid) HTML into valid HTML or DOM.
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")

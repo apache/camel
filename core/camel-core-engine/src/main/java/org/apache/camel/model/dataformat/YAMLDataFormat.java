@@ -29,7 +29,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
+ * Marshal and unmarshal Java objects to and from YAML.
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")

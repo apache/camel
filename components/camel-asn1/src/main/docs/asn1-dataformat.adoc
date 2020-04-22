@@ -2,7 +2,7 @@
 = ASN.1 File DataFormat
 :docTitle: ASN.1 File
 :artifactId: camel-asn1
-:description: The ASN.1 data format is used for file transfer with telecommunications protocols.
+:description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1).
 :since: 2.20
 :supportLevel: Stable
 

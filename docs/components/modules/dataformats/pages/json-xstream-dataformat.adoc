@@ -4,7 +4,7 @@
 :page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
 :docTitle: JSon XStream
 :artifactId: camel-xstream
-:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:description: Marshal POJOs to JSON and back.
 :since: 2.0
 :supportLevel: Stable
 

@@ -2,7 +2,7 @@
 = CBOR DataFormat
 :docTitle: CBOR
 :artifactId: camel-cbor
-:description: CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.
+:description: Unmarshal a CBOR payload to POJO and back.
 :since: 3.0
 :supportLevel: Stable
 

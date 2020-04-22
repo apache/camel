@@ -2,7 +2,7 @@
 = MIME Multipart DataFormat
 :docTitle: MIME Multipart
 :artifactId: camel-mail
-:description: The MIME Multipart data format is used for marshalling Camel messages with attachments into MIME-Multipart message, and vise-versa.
+:description: Marshal Camel messages with attachments into MIME-Multipart messages and back.
 :since: 2.17
 :supportLevel: Stable
 

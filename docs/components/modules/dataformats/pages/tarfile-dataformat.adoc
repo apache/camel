@@ -4,7 +4,7 @@
 :page-source: components/camel-tarfile/src/main/docs/tarfile-dataformat.adoc
 :docTitle: Tar File
 :artifactId: camel-tarfile
-:description: The Tar File data format is a message compression and de-compression format of tar files.
+:description: Archive/extract files into/from tarballs.
 :since: 2.16
 :supportLevel: Stable
 

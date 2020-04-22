@@ -2,7 +2,7 @@
 = Avro DataFormat
 :docTitle: Avro
 :artifactId: camel-avro
-:description: The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.
+:description: Serialize and deserialize messages using Apache Avro binary dataformat.
 :since: 2.14
 :supportLevel: Stable
 

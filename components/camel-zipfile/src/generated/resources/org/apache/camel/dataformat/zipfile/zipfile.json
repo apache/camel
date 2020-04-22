@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "zipfile",
     "title": "Zip File",
-    "description": "The Zip File data format is a message compression and de-compression format of zip files.",
+    "description": "Compression and decompress streams using java.util.zip.ZipStream.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,file",
     "firstVersion": "2.11.0",

@@ -2,7 +2,7 @@
 = Syslog DataFormat
 :docTitle: Syslog
 :artifactId: camel-syslog
-:description: The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).
+:description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.
 :since: 2.6
 :supportLevel: Stable
 

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "json",
     "title": "JSon",
-    "description": "JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.",
+    "description": "Marshal POJOs to JSON and back.",
     "deprecated": false,
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.model.dataformat.JsonDataFormat",

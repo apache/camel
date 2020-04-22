@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "univocity-csv",
     "title": "uniVocity CSV",
-    "description": "The uniVocity CSV data format is used for working with CSV (Comma Separated Values) flat payloads.",
+    "description": "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using univocity-parsers.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.15.0",

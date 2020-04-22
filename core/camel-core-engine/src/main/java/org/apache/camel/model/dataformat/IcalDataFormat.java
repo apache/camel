@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The iCal dataformat is used for working with iCalendar messages.
+ * Marshal and unmarshal iCal (*.ics) documents to/from model objects provided by the iCal4j library.
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
 @XmlRootElement(name = "ical")

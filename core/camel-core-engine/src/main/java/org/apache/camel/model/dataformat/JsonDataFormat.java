@@ -27,8 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * JSon data format is used for unmarshal a JSon payload to POJO or to marshal
- * POJO back to JSon payload.
+ * Marshal POJOs to JSON and back.
  */
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")

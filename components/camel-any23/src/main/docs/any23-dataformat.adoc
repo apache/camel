@@ -2,7 +2,7 @@
 = Any23 DataFormat
 :docTitle: Any23
 :artifactId: camel-any23
-:description: Any23 data format is used for parsing data to RDF.
+:description: Extract RDF data from HTML documents.
 :since: 3.0
 :supportLevel: Stable
 
@@ -53,7 +53,7 @@ to unmarshal using Spring
 -----------------------------------------------------------------------
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <dataFormats>
-      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" > 
+      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
         <configurations>
           <entry>
             <key>any23.extraction.metadata.nesting</key>

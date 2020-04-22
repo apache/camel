@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "csv",
     "title": "CSV",
-    "description": "The CSV data format is used for handling CSV payloads.",
+    "description": "Handle CSV (Comma Separated Values) payloads.",
     "deprecated": false,
     "firstVersion": "1.3.0",
     "label": "dataformat,transformation,csv",

@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "gzipdeflater",
     "title": "GZip Deflater",
-    "description": "The GZip data format is a message compression and de-compression format (which works with the popular gzip\/gunzip tools).",
+    "description": "Compress and de-compress messages using java.util.zip.GZIPStream.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.0.0",

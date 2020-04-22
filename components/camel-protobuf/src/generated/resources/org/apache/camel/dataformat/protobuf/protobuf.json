@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "protobuf",
     "title": "Protobuf",
-    "description": "The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.",
+    "description": "Serialize and deserialize Java objects using Google's Protocol buffers.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.2.0",

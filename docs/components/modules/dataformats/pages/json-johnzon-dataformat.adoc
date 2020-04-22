@@ -4,7 +4,7 @@
 :page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
 :docTitle: JSon Johnzon
 :artifactId: camel-johnzon
-:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:description: Marshal POJOs to JSON and back.
 :since: 2.18
 :supportLevel: Stable
 

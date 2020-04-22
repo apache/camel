@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "json-gson",
     "title": "JSon GSon",
-    "description": "JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.",
+    "description": "Marshal POJOs to JSON and back.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,json",
     "firstVersion": "2.10.0",

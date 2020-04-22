@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "jsonApi",
     "title": "JSonApi",
-    "description": "JSonApi data format is used for marshal and unmarshal Json API object.",
+    "description": "Marshal and unmarshal JSON:API resources.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "3.0.0",
