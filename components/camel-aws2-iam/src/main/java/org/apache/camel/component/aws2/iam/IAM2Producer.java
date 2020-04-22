@@ -146,7 +146,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof ListAccessKeysRequest) {
                 ListAccessKeysResponse response;
                 try {
-                    response = iamClient.listAccessKeys((ListAccessKeysRequest) payload);
+                    response = iamClient.listAccessKeys((ListAccessKeysRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
                     throw ase;
@@ -155,15 +155,15 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(response);
             }
         } else {
-        ListAccessKeysResponse response;
-        try {
-            response = iamClient.listAccessKeys();
-        } catch (AwsServiceException ase) {
-            LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(response);
+            ListAccessKeysResponse response;
+            try {
+                response = iamClient.listAccessKeys();
+            } catch (AwsServiceException ase) {
+                LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(response);
         }
     }
 
@@ -173,7 +173,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateUserRequest) {
                 CreateUserResponse result;
                 try {
-                    result = iamClient.createUser((CreateUserRequest) payload);
+                    result = iamClient.createUser((CreateUserRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -182,22 +182,22 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        CreateUserRequest.Builder builder = CreateUserRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        } else {
-            throw new IllegalArgumentException("User Name must be specified");
-        }
-        CreateUserResponse result;
-        try {
-            result = iamClient.createUser(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            CreateUserRequest.Builder builder = CreateUserRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            } else {
+                throw new IllegalArgumentException("User Name must be specified");
+            }
+            CreateUserResponse result;
+            try {
+                result = iamClient.createUser(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -207,7 +207,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof DeleteUserRequest) {
                 DeleteUserResponse result;
                 try {
-                    result = iamClient.deleteUser((DeleteUserRequest) payload);
+                    result = iamClient.deleteUser((DeleteUserRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -216,22 +216,22 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DeleteUserRequest.Builder builder = DeleteUserRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        } else {
-            throw new IllegalArgumentException("User Name must be specified");
-        }
-        DeleteUserResponse result;
-        try {
-            result = iamClient.deleteUser(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DeleteUserRequest.Builder builder = DeleteUserRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            } else {
+                throw new IllegalArgumentException("User Name must be specified");
+            }
+            DeleteUserResponse result;
+            try {
+                result = iamClient.deleteUser(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -241,7 +241,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof GetUserRequest) {
                 GetUserResponse result;
                 try {
-                    result = iamClient.getUser((GetUserRequest) payload);
+                    result = iamClient.getUser((GetUserRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -250,22 +250,22 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        GetUserRequest.Builder builder = GetUserRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        } else {
-            throw new IllegalArgumentException("User Name must be specified");
-        }
-        GetUserResponse result;
-        try {
-            result = iamClient.getUser(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            GetUserRequest.Builder builder = GetUserRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            } else {
+                throw new IllegalArgumentException("User Name must be specified");
+            }
+            GetUserResponse result;
+            try {
+                result = iamClient.getUser(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -275,7 +275,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof ListUsersRequest) {
                 ListUsersResponse result;
                 try {
-                    result = iamClient.listUsers((ListUsersRequest) payload);
+                    result = iamClient.listUsers((ListUsersRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -284,15 +284,15 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListUsersResponse result;
-        try {
-            result = iamClient.listUsers();
-        } catch (AwsServiceException ase) {
-            LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ListUsersResponse result;
+            try {
+                result = iamClient.listUsers();
+            } catch (AwsServiceException ase) {
+                LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -302,7 +302,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateAccessKeyRequest) {
                 CreateAccessKeyResponse result;
                 try {
-                    result = iamClient.createAccessKey((CreateAccessKeyRequest) payload);
+                    result = iamClient.createAccessKey((CreateAccessKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -311,20 +311,20 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        CreateAccessKeyRequest.Builder builder = CreateAccessKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        }
-        CreateAccessKeyResponse result;
-        try {
-            result = iamClient.createAccessKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            CreateAccessKeyRequest.Builder builder = CreateAccessKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            }
+            CreateAccessKeyResponse result;
+            try {
+                result = iamClient.createAccessKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -334,7 +334,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof DeleteAccessKeyRequest) {
                 DeleteAccessKeyResponse result;
                 try {
-                    result = iamClient.deleteAccessKey((DeleteAccessKeyRequest) payload);
+                    result = iamClient.deleteAccessKey((DeleteAccessKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -343,26 +343,26 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DeleteAccessKeyRequest.Builder builder = DeleteAccessKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
-            String accessKeyId = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID, String.class);
-            builder.accessKeyId(accessKeyId);
-        } else {
-            throw new IllegalArgumentException("Key Id must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        }
-        DeleteAccessKeyResponse result;
-        try {
-            result = iamClient.deleteAccessKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DeleteAccessKeyRequest.Builder builder = DeleteAccessKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
+                String accessKeyId = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID, String.class);
+                builder.accessKeyId(accessKeyId);
+            } else {
+                throw new IllegalArgumentException("Key Id must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            }
+            DeleteAccessKeyResponse result;
+            try {
+                result = iamClient.deleteAccessKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -372,7 +372,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof UpdateAccessKeyRequest) {
                 UpdateAccessKeyResponse result;
                 try {
-                    result = iamClient.updateAccessKey((UpdateAccessKeyRequest) payload);
+                    result = iamClient.updateAccessKey((UpdateAccessKeyRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -381,32 +381,32 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        UpdateAccessKeyRequest.Builder builder = UpdateAccessKeyRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
-            String accessKeyId = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID, String.class);
-            builder.accessKeyId(accessKeyId);
-        } else {
-            throw new IllegalArgumentException("Key Id must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_STATUS))) {
-            String status = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_STATUS, String.class);
-            builder.status(StatusType.fromValue(status));
-        } else {
-            throw new IllegalArgumentException("Access Key status must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        }
-        UpdateAccessKeyResponse result;
-        try {
-            result = iamClient.updateAccessKey(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            UpdateAccessKeyRequest.Builder builder = UpdateAccessKeyRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
+                String accessKeyId = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID, String.class);
+                builder.accessKeyId(accessKeyId);
+            } else {
+                throw new IllegalArgumentException("Key Id must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_STATUS))) {
+                String status = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_STATUS, String.class);
+                builder.status(StatusType.fromValue(status));
+            } else {
+                throw new IllegalArgumentException("Access Key status must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            }
+            UpdateAccessKeyResponse result;
+            try {
+                result = iamClient.updateAccessKey(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -416,7 +416,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateGroupRequest) {
                 CreateGroupResponse result;
                 try {
-                    result = iamClient.createGroup((CreateGroupRequest) payload);
+                    result = iamClient.createGroup((CreateGroupRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -425,26 +425,26 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        CreateGroupRequest.Builder builder = CreateGroupRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
-            String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
-            builder.groupName(groupName);
-        } else {
-            throw new IllegalArgumentException("Group Name must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_PATH))) {
-            String groupPath = exchange.getIn().getHeader(IAM2Constants.GROUP_PATH, String.class);
-            builder.path(groupPath);
-        }
-        CreateGroupResponse result;
-        try {
-            result = iamClient.createGroup(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            CreateGroupRequest.Builder builder = CreateGroupRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
+                String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
+                builder.groupName(groupName);
+            } else {
+                throw new IllegalArgumentException("Group Name must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_PATH))) {
+                String groupPath = exchange.getIn().getHeader(IAM2Constants.GROUP_PATH, String.class);
+                builder.path(groupPath);
+            }
+            CreateGroupResponse result;
+            try {
+                result = iamClient.createGroup(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -454,7 +454,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof CreateGroupRequest) {
                 DeleteGroupResponse result;
                 try {
-                    result = iamClient.deleteGroup((DeleteGroupRequest) payload);
+                    result = iamClient.deleteGroup((DeleteGroupRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -463,22 +463,22 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        DeleteGroupRequest.Builder builder = DeleteGroupRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
-            String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
-            builder.groupName(groupName);
-        } else {
-            throw new IllegalArgumentException("Group Name must be specified");
-        }
-        DeleteGroupResponse result;
-        try {
-            result = iamClient.deleteGroup(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            DeleteGroupRequest.Builder builder = DeleteGroupRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
+                String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
+                builder.groupName(groupName);
+            } else {
+                throw new IllegalArgumentException("Group Name must be specified");
+            }
+            DeleteGroupResponse result;
+            try {
+                result = iamClient.deleteGroup(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -488,7 +488,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof ListGroupsRequest) {
                 ListGroupsResponse result;
                 try {
-                    result = iamClient.listGroups((ListGroupsRequest) payload);
+                    result = iamClient.listGroups((ListGroupsRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -497,15 +497,15 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        ListGroupsResponse result;
-        try {
-            result = iamClient.listGroups();
-        } catch (AwsServiceException ase) {
-            LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            ListGroupsResponse result;
+            try {
+                result = iamClient.listGroups();
+            } catch (AwsServiceException ase) {
+                LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -515,7 +515,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof AddUserToGroupRequest) {
                 AddUserToGroupResponse result;
                 try {
-                    result = iamClient.addUserToGroup((AddUserToGroupRequest) payload);
+                    result = iamClient.addUserToGroup((AddUserToGroupRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -524,28 +524,28 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        AddUserToGroupRequest.Builder builder = AddUserToGroupRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
-            String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
-            builder.groupName(groupName);
-        } else {
-            throw new IllegalArgumentException("Group Name must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        } else {
-            throw new IllegalArgumentException("User Name must be specified");
-        }
-        AddUserToGroupResponse result;
-        try {
-            result = iamClient.addUserToGroup(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            AddUserToGroupRequest.Builder builder = AddUserToGroupRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
+                String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
+                builder.groupName(groupName);
+            } else {
+                throw new IllegalArgumentException("Group Name must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            } else {
+                throw new IllegalArgumentException("User Name must be specified");
+            }
+            AddUserToGroupResponse result;
+            try {
+                result = iamClient.addUserToGroup(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
@@ -555,7 +555,7 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof RemoveUserFromGroupRequest) {
                 RemoveUserFromGroupResponse result;
                 try {
-                    result = iamClient.removeUserFromGroup((RemoveUserFromGroupRequest) payload);
+                    result = iamClient.removeUserFromGroup((RemoveUserFromGroupRequest)payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -564,28 +564,28 @@ public class IAM2Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        RemoveUserFromGroupRequest.Builder builder = RemoveUserFromGroupRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
-            String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
-            builder.groupName(groupName);
-        } else {
-            throw new IllegalArgumentException("Group Name must be specified");
-        }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
-            String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
-            builder.userName(userName);
-        } else {
-            throw new IllegalArgumentException("User Name must be specified");
-        }
-        RemoveUserFromGroupResponse result;
-        try {
-            result = iamClient.removeUserFromGroup(builder.build());
-        } catch (AwsServiceException ase) {
-            LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
-            throw ase;
-        }
-        Message message = getMessageForResponse(exchange);
-        message.setBody(result);
+            RemoveUserFromGroupRequest.Builder builder = RemoveUserFromGroupRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
+                String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
+                builder.groupName(groupName);
+            } else {
+                throw new IllegalArgumentException("Group Name must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
+                String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
+                builder.userName(userName);
+            } else {
+                throw new IllegalArgumentException("User Name must be specified");
+            }
+            RemoveUserFromGroupResponse result;
+            try {
+                result = iamClient.removeUserFromGroup(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
         }
     }
 
