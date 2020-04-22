@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-map",
     "title": "Atomix Map",
-    "description": "The atomix-map component is used to access Atomix's distributed map.",
+    "description": "Access Atomix's distributed map.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

@@ -2,7 +2,7 @@
 = Drill Component
 :docTitle: Drill
 :artifactId: camel-drill
-:description: The drill component gives you the ability to quering into apache drill cluster.
+:description: Perform queries against an Apache Drill cluster.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "crypto",
     "title": "Crypto (JCE)",
-    "description": "The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).",
+    "description": "Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).",
     "deprecated": false,
     "firstVersion": "2.3.0",
     "label": "security,transformation",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atom",
     "title": "Atom",
-    "description": "The atom component is used for consuming Atom RSS feeds.",
+    "description": "Poll Atom RSS feeds.",
     "deprecated": false,
     "firstVersion": "1.2.0",
     "label": "rss",

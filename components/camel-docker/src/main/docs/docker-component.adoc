@@ -2,7 +2,7 @@
 = Docker Component
 :docTitle: Docker
 :artifactId: camel-docker
-:description: The docker component is used for managing Docker containers.
+:description: Manage Docker containers.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

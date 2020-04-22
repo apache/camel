@@ -85,7 +85,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * APNS (camel-apns)
-     * For sending notifications to Apple iOS devices.
+     * Send notifications to Apple iOS devices.
      * 
      * Category: eventbus,mobile
      * Since: 2.8
@@ -96,8 +96,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AS2 (camel-as2)
-     * Component used for transferring data secure and reliable over the
-     * internet using the AS2 protocol.
+     * Transfer data securely and reliably using the AS2 protocol (RFC4130).
      * 
      * Category: file
      * Since: 2.22
@@ -108,7 +107,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Asterisk (camel-asterisk)
-     * The asterisk component is used to interact with Asterisk PBX Server.
+     * Interact with Asterisk PBX Server.
      * 
      * Category: voip
      * Since: 2.18
@@ -119,7 +118,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atmos (camel-atmos)
-     * The atmos component is used for integrating with EMC's Atomos Storage.
+     * Integract with EMC's ViPR object data services using the Atmos Client.
      * 
      * Category: file,cloud
      * Since: 2.15
@@ -130,7 +129,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
-     * To exchange data with external Websocket clients using Atmosphere.
+     * Expose WebSocket endpoints using the Atmosphere framework.
      * 
      * Category: websocket
      * Since: 2.14
@@ -141,7 +140,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atom (camel-atom)
-     * The atom component is used for consuming Atom RSS feeds.
+     * Poll Atom RSS feeds.
      * 
      * Category: rss
      * Since: 1.2
@@ -152,7 +151,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atomix Map (camel-atomix)
-     * The atomix-map component is used to access Atomix's distributed map.
+     * Access Atomix's distributed map.
      * 
      * Category: clustering
      * Since: 2.20
@@ -163,8 +162,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atomix Messaging (camel-atomix)
-     * The atomix-messaging component is used to access Atomix's group
-     * messaging.
+     * Access Atomix's group messaging.
      * 
      * Category: clustering
      * Since: 2.20
@@ -175,8 +173,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atomix MultiMap (camel-atomix)
-     * The atomix-multimap component is used to access Atomix's distributed
-     * multi map.
+     * Access Atomix's distributed multi map.
      * 
      * Category: clustering
      * Since: 2.20
@@ -187,7 +184,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atomix Queue (camel-atomix)
-     * The atomix-queue component is used to access Atomix's distributed queue.
+     * Access Atomix's distributed queue.
      * 
      * Category: clustering
      * Since: 2.20
@@ -198,7 +195,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atomix Set (camel-atomix)
-     * The atomix-set component is used to access Atomix's distributed set.
+     * Access Atomix's distributed set.
      * 
      * Category: clustering
      * Since: 2.20
@@ -209,7 +206,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atomix Value (camel-atomix)
-     * The atomix-value component is used to access Atomix's distributed value.
+     * Access Atomix's distributed value.
      * 
      * Category: clustering
      * Since: 2.20
@@ -220,7 +217,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Avro (camel-avro-rpc)
-     * Working with Apache Avro for data serialization.
+     * Produce or consume Apache Avro RPC services.
      * 
      * Category: messaging,transformation
      * Since: 2.10
@@ -231,7 +228,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS CloudWatch (camel-aws-cw)
-     * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+     * Send metrics to AWS CloudWatch.
      * 
      * Category: cloud,monitoring
      * Since: 2.11
@@ -242,8 +239,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS DynamoDB (camel-aws-ddb)
-     * The aws-ddb component is used for storing and retrieving data from
-     * Amazon's DynamoDB service.
+     * Store and retrieve data from AWS DynamoDB service.
      * 
      * Category: cloud,database,nosql
      * Since: 2.10
@@ -254,8 +250,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS DynamoDB Streams (camel-aws-ddb)
-     * The aws-ddbstream component is used for working with Amazon DynamoDB
-     * Streams.
+     * Receive messages from AWS DynamoDB Stream service.
      * 
      * Category: cloud,messaging,streams
      * Since: 2.17
@@ -266,7 +261,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS EC2 (camel-aws-ec2)
-     * The aws-ec2 is used for managing Amazon EC2 instances.
+     * Manage AWS EC2 instances.
      * 
      * Category: cloud,management
      * Since: 2.16
@@ -277,7 +272,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS ECS (camel-aws-ecs)
-     * The aws-ecs is used for managing Amazon ECS
+     * Manage AWS ECS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.0
@@ -288,7 +283,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS EKS (camel-aws-eks)
-     * The aws-eks is used for managing Amazon EKS
+     * Manage AWS EKS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.0
@@ -299,7 +294,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS IAM (camel-aws-iam)
-     * The aws-iam is used for managing Amazon IAM
+     * Manage AWS IAM instances.
      * 
      * Category: cloud,management
      * Since: 2.23
@@ -310,8 +305,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Kinesis (camel-aws-kinesis)
-     * The aws-kinesis component is for consuming and producing records from
-     * Amazon Kinesis Streams.
+     * Consume and produce records from AWS Kinesis Streams.
      * 
      * Category: cloud,messaging
      * Since: 2.17
@@ -322,8 +316,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Kinesis Firehose (camel-aws-kinesis)
-     * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
-     * Firehose streams.
+     * Consume data from AWS Kinesis Firehose streams.
      * 
      * Category: cloud,messaging
      * Since: 2.19
@@ -334,7 +327,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS KMS (camel-aws-kms)
-     * The aws-kms is used for managing Amazon KMS
+     * Manage keys stored in AWS KMS instances.
      * 
      * Category: cloud,management
      * Since: 2.21
@@ -345,8 +338,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Lambda (camel-aws-lambda)
-     * The aws-lambda is used for managing and invoking functions from Amazon
-     * Lambda.
+     * Manage and invoke AWS Lambda functions.
      * 
      * Category: cloud,computing,serverless
      * Since: 2.20
@@ -357,7 +349,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS MQ (camel-aws-mq)
-     * The aws-mq is used for managing Amazon MQ instances.
+     * Manage AWS MQ instances.
      * 
      * Category: cloud,management
      * Since: 2.21
@@ -368,7 +360,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS MSK (camel-aws-msk)
-     * The aws-msk is used for managing Amazon MSK
+     * Manage AWS MSK instances.
      * 
      * Category: cloud,management
      * Since: 3.0
@@ -379,8 +371,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)
-     * The aws-s3 component is used for storing and retrieving object from
-     * Amazon S3 Storage Service.
+     * Store and retrie objects from AWS S3 Storage Service.
      * 
      * Category: cloud,file
      * Since: 2.8
@@ -391,8 +382,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS SimpleDB (camel-aws-sdb)
-     * The aws-sdb component is for storing and retrieving data from/to Amazon's
-     * SDB service.
+     * Store and Retrieve data from/to AWS SDB service.
      * 
      * Category: cloud,database,nosql
      * Since: 2.9
@@ -403,8 +393,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Email Service (camel-aws-ses)
-     * The aws-ses component is used for sending emails with Amazon's SES
-     * service.
+     * Send e-mails through AWS SES service.
      * 
      * Category: cloud,mail
      * Since: 2.9
@@ -415,8 +404,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Notification System (camel-aws-sns)
-     * The aws-sns component is used for sending messages to an Amazon Simple
-     * Notification Topic.
+     * Send messages to an AWS Simple Notification Topic.
      * 
      * Category: cloud,mobile,messaging
      * Since: 2.8
@@ -427,8 +415,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Queue Service (camel-aws-sqs)
-     * The aws-sqs component is used for sending and receiving messages to
-     * Amazon's SQS service.
+     * Sending and receive messages to/from AWS SQS service.
      * 
      * Category: cloud,messaging
      * Since: 2.6
@@ -439,8 +426,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Workflow (camel-aws-swf)
-     * The aws-swf component is used for managing workflows from Amazon Simple
-     * Workflow.
+     * Manage workflows in the AWS Simple Workflow service.
      * 
      * Category: cloud,workflow
      * Since: 2.13
@@ -451,7 +437,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Translate (camel-aws-translate)
-     * The aws-translate component is used for managing Amazon Translate
+     * Translate texts using AWS Translate.
      * 
      * Category: cloud,management
      * Since: 3.0
@@ -462,8 +448,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 CloudWatch (camel-aws2-cw)
-     * The aws2-cw component is used for sending metrics to an Amazon
-     * CloudWatch.
+     * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
      * Category: cloud,monitoring
      * Since: 3.1
@@ -474,8 +459,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 DynamoDB (camel-aws2-ddb)
-     * The aws2-ddb component is used for storing and retrieving data from
-     * Amazon's DynamoDB service.
+     * Store and retrieve data from AWS DynamoDB service using AWS SDK version
+     * 2.x.
      * 
      * Category: cloud,database,nosql
      * Since: 3.1
@@ -486,8 +471,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 DynamoDB Streams (camel-aws2-ddb)
-     * The aws2-ddbstream component is used for working with Amazon DynamoDB
-     * Streams.
+     * Receive messages from AWS DynamoDB Stream service using AWS SDK version
+     * 2.x.
      * 
      * Category: cloud,messaging,streams
      * Since: 3.1
@@ -498,7 +483,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 EC2 (camel-aws2-ec2)
-     * The aws2-ec2 is used for managing Amazon EC2 instances.
+     * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -509,7 +494,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 ECS (camel-aws2-ecs)
-     * The aws2-ecs is used for managing Amazon ECS
+     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -520,7 +505,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 EKS (camel-aws2-eks)
-     * The aws2-eks is used for managing Amazon EKS
+     * Manage AWS EKS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -531,7 +516,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 IAM (camel-aws2-iam)
-     * The aws2-iam is used for managing Amazon IAM
+     * Manage AWS IAM instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -542,8 +527,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Kinesis (camel-aws2-kinesis)
-     * The aws2-kinesis component is for consuming and producing records from
-     * Amazon Kinesis Streams.
+     * Consume and produce records from AWS Kinesis Streams using AWS SDK
+     * version 2.x.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -554,8 +539,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
-     * The aws2-kinesis-firehose component is used for producing Amazon's
-     * Kinesis Firehose streams.
+     * Consume data from AWS Kinesis Firehose streams using AWS SDK version 2.x.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -566,7 +550,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 KMS (camel-aws2-kms)
-     * The aws2-kms is used for managing Amazon KMS
+     * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -577,8 +561,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Lambda (camel-aws2-lambda)
-     * The aws2-lambda is used for managing and invoking functions from Amazon
-     * Lambda.
+     * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
      * 
      * Category: cloud,computing,serverless
      * Since: 3.2
@@ -589,7 +572,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 MQ (camel-aws2-mq)
-     * The aws2-mq is used for managing Amazon MQ instances.
+     * Manage AWS MQ instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -600,7 +583,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 MSK (camel-aws2-msk)
-     * The aws2-msk is used for managing Amazon MSK
+     * Manage AWS MSK instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -611,8 +594,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 S3 Storage Service (camel-aws2-s3)
-     * The aws2-s3 component is used for storing and retrieving object from
-     * Amazon S3 Storage Service.
+     * Store and retrie objects from AWS S3 Storage Service using AWS SDK
+     * version 2.x.
      * 
      * Category: cloud,file
      * Since: 3.2
@@ -623,8 +606,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Simple Email Service (camel-aws2-ses)
-     * The aws2-ses component is used for sending emails with Amazon's SES
-     * service.
+     * Send e-mails through AWS SES service using AWS SDK version 2.x.
      * 
      * Category: cloud,mail
      * Since: 3.1
@@ -635,8 +617,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Simple Notification System (camel-aws2-sns)
-     * The aws2-sns component is used for sending messages to an Amazon Simple
-     * Notification Topic.
+     * Send messages to an AWS Simple Notification Topic using AWS SDK version
+     * 2.x.
      * 
      * Category: cloud,mobile,messaging
      * Since: 3.1
@@ -647,8 +629,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Simple Queue Service (camel-aws2-sqs)
-     * The aws2-sqs component is used for sending and receiving messages to
-     * Amazon's SQS service.
+     * Sending and receive messages to/from AWS SQS service using AWS SDK
+     * version 2.x.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -659,7 +641,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Translate (camel-aws2-translate)
-     * The aws2-translate component is used for managing Amazon Translate
+     * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -670,8 +652,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Storage Blob Service (Legacy) (camel-azure)
-     * The azure-blob component is used for storing and retrieving blobs from
-     * Azure Storage Blob Service.
+     * Store and retrieve blobs from Azure Storage Blob Service.
      * 
      * Category: cloud,database,nosql
      * Since: 2.19
@@ -682,8 +663,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Storage Queue Service (camel-azure)
-     * The azure-queue component is used for storing and retrieving messages
-     * from Azure Storage Queue Service.
+     * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,queue,azure
      * Since: 2.19
@@ -694,8 +674,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
-     * The azure-storage-blob component is used for storing and retrieving blobs
-     * from Azure Storage Blob Service using SDK v12.
+     * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
      * 
      * Category: cloud,file
      * Since: 3.3
@@ -706,7 +685,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bean (camel-bean)
-     * The bean component is for invoking Java beans from Camel.
+     * Invoke methods of Java beans stored in Camel registry.
      * 
      * Category: core,java
      * Since: 1.0
@@ -717,8 +696,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bean Validator (camel-bean-validator)
-     * The Validator component performs bean validation of the message body
-     * using the Java Bean Validation API.
+     * Validate the message body using the Java Bean Validation API.
      * 
      * Category: validation
      * Since: 2.3
@@ -729,8 +707,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Beanstalk (camel-beanstalk)
-     * The beanstalk component is used for job retrieval and post-processing of
-     * Beanstalk jobs.
+     * Retrieve and post-process Beanstalk jobs.
      * 
      * Category: messaging
      * Since: 2.15
@@ -741,7 +718,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bonita (camel-bonita)
-     * Used for communicating with a remote Bonita BPM process engine.
+     * Communicate with a remote Bonita BPM process engine.
      * 
      * Category: process
      * Since: 2.19
@@ -752,8 +729,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Box (camel-box)
-     * For uploading downloading and managing files folders groups
-     * collaborations etc on box DOT com.
+     * Upload, download and manage files, folders, groups, collaborations, etc.
+     * on box.com.
      * 
      * Category: api,file,cloud
      * Since: 2.14
@@ -764,8 +741,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Braintree (camel-braintree)
-     * The braintree component is used for integrating with the Braintree
-     * Payment System.
+     * Process payments using Braintree Payments.
      * 
      * Category: api,cloud,payment
      * Since: 2.17
@@ -776,8 +752,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Browse (camel-browse)
-     * The browse component is used for viewing the messages received on
-     * endpoints that supports BrowsableEndpoint.
+     * Inspect the messages received on endpoints supporting BrowsableEndpoint.
      * 
      * Category: core,monitoring
      * Since: 1.3
@@ -788,7 +763,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Caffeine Cache (camel-caffeine)
-     * The caffeine-cache component is used for integration with Caffeine Cache.
+     * Perform caching operations using Caffeine Cache.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.20
@@ -799,8 +774,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Caffeine LoadCache (camel-caffeine)
-     * The caffeine-loadcache component is used for integration with Caffeine
-     * Load Cache.
+     * Perform caching operations using Caffeine Cache with an attached
+     * CacheLoader.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.20
@@ -811,7 +786,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ChatScript (camel-chatscript)
-     * Represents a ChatScript endpoint.
+     * Chat with a ChatScript Server.
      * 
      * Category: ai,chatscript
      * Since: 3.0
@@ -822,7 +797,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Chunk (camel-chunk)
-     * Transforms the message using a Chunk template.
+     * Transform messages using Chunk templating engine.
      * 
      * Category: transformation
      * Since: 2.15
@@ -833,7 +808,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Class (camel-bean)
-     * The Class component is for invoking Java classes (Java beans) from Camel.
+     * Invoke methods of Java beans specified by class name.
      * 
      * Category: core,java
      * Since: 2.4
@@ -844,7 +819,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CM SMS Gateway (camel-cm-sms)
-     * The cm-sms component allows to integrate with CM SMS Gateway.
+     * Send SMS messages via CM SMS Gateway.
      * 
      * Category: mobile
      * Since: 2.18
@@ -855,8 +830,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CMIS (camel-cmis)
-     * The cmis component uses the Apache Chemistry client API and allows you to
-     * add/read nodes to/from a CMIS compliant content repositories.
+     * Read and write data from to/from a CMIS compliant content repositories.
      * 
      * Category: cms,database
      * Since: 2.11
@@ -867,8 +841,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CoAP (camel-coap)
-     * The coap component is used for sending and receiving messages from COAP
-     * capable devices.
+     * Send and receive messages to/from COAP capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -879,8 +852,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CoAP (camel-coap)
-     * The coap component is used for sending and receiving messages from COAP
-     * capable devices.
+     * Send and receive messages to/from COAP capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -891,8 +863,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CoAP (Secure) (camel-coap)
-     * The coap component is used for sending and receiving messages from COAP
-     * capable devices.
+     * Send and receive messages to/from COAP capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -903,8 +874,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CoAP (camel-coap)
-     * The coap component is used for sending and receiving messages from COAP
-     * capable devices.
+     * Send and receive messages to/from COAP capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -915,8 +885,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CometD (camel-cometd)
-     * The cometd component is a transport for working with the Jetty
-     * implementation of the cometd/bayeux protocol.
+     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
+     * messaging using the CometD/Bayeux protocol.
      * 
      * Category: websocket
      * Since: 2.0
@@ -927,8 +897,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CometD (Secure) (camel-cometd)
-     * The cometd component is a transport for working with the Jetty
-     * implementation of the cometd/bayeux protocol.
+     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
+     * messaging using the CometD/Bayeux protocol.
      * 
      * Category: websocket
      * Since: 2.0
@@ -939,9 +909,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Consul (camel-consul)
-     * The camel consul component allows you to work with Consul, a distributed,
-     * highly available, datacenter-aware, service discovery and configuration
-     * system.
+     * Integrate with Consul service discovery and configuration store.
      * 
      * Category: api,cloud
      * Since: 2.18
@@ -952,8 +920,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Control Bus (camel-controlbus)
-     * The controlbus component provides easy management of Camel applications
-     * based on the Control Bus EIP pattern.
+     * Manage and monitor Camel routes.
      * 
      * Category: core,monitoring
      * Since: 2.11
@@ -964,7 +931,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Corda (camel-corda)
-     * The corda component uses corda-rpc to interact with corda nodes.
+     * Perform operations against Corda blockchain platform using corda-rpc
+     * library.
      * 
      * Category: corda,blockchain
      * Since: 2.23
@@ -975,8 +943,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Represents a Couchbase endpoint that can query Views with a Poll strategy
-     * and/or produce various type of operations.
+     * Query Couchbase Views with a poll strategy and/or perform various
+     * operations against Couchbase databases.
      * 
      * Category: database,nosql
      * Since: 2.19
@@ -987,7 +955,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CouchDB (camel-couchdb)
-     * The couchdb component is used for integrate with CouchDB databases.
+     * Consume changesets for inserts, updates and deletes in a CouchDB
+     * database, as well as get, save, update and delete documents from a
+     * CouchDB database.
      * 
      * Category: database,nosql
      * Since: 2.11
@@ -998,9 +968,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * The cql component aims at integrating Cassandra 2.0 using the CQL3 API
-     * (not the Thrift API). It's based on Cassandra Java Driver provided by
-     * DataStax.
+     * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
      * 
      * Category: database,nosql
      * Since: 2.15
@@ -1011,7 +979,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Cron (camel-cron)
-     * Camel Cron Component
+     * A generic interface for triggering events at times specified through the
+     * Unix cron syntax.
      * 
      * Category: scheduling
      * Since: 3.1
@@ -1022,8 +991,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Crypto (JCE) (camel-crypto)
-     * The crypto component is used for signing and verifying exchanges using
-     * the Signature Service of the Java Cryptographic Extension (JCE).
+     * Sign and verify exchanges using the Signature Service of the Java
+     * Cryptographic Extension (JCE).
      * 
      * Category: security,transformation
      * Since: 2.3
@@ -1034,9 +1003,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Crypto CMS (camel-crypto-cms)
-     * The crypto cms component is used for encrypting data in CMS Enveloped
-     * Data format, decrypting CMS Enveloped Data, signing data in CMS Signed
-     * Data format, and verifying CMS Signed Data.
+     * Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
      * 
      * Category: security,transformation
      * Since: 2.20
@@ -1048,7 +1015,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CXF (camel-cxf)
-     * The cxf component is used for SOAP WebServices using Apache CXF.
+     * Expose SOAP WebServices using Apache CXF or connect to external
+     * WebServices using CXF WS client.
      * 
      * Category: soap,webservice
      * Since: 1.0
@@ -1059,7 +1027,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CXF-RS (camel-cxf)
-     * The cxfrs component is used for JAX-RS REST services using Apache CXF.
+     * Expose JAX-RS REST services using Apache CXF or connect to external REST
+     * services using CXF REST client.
      * 
      * Category: rest
      * Since: 2.0
@@ -1070,8 +1039,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Data Format (camel-dataformat)
-     * The dataformat component is used for working with Data Formats as if it
-     * was a regular Component supporting Endpoints and URIs.
+     * Use a Camel Data Format as a regular Camel Component.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -1082,8 +1050,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Dataset (camel-dataset)
-     * The dataset component provides a mechanism to easily perform load & soak
-     * testing of your system.
+     * Provide data for load & soak testing of your Camel application.
      * 
      * Category: core,testing
      * Since: 1.3
@@ -1094,8 +1061,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * DataSet Test (camel-dataset)
-     * The dataset-test component extends the mock component by on startup to
-     * pull messages from another endpoint to set the expected message bodies.
+     * Extends the mock component by pulling messages from another endpoint on
+     * startup to set the expected message bodies.
      * 
      * Category: core,testing
      * Since: 1.3
@@ -1106,9 +1073,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
-     * Represents a Debezium MongoDB endpoint which is used to capture changes
-     * in MongoDB database so that that applications can see those changes and
-     * respond to them.
+     * Capture changes from a MongoDB database.
      * 
      * Category: database,nosql,mongodb
      * Since: 3.0
@@ -1119,9 +1084,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
-     * Represents a Debezium MySQL endpoint which is used to capture changes in
-     * MySQL database so that that applications can see those changes and
-     * respond to them.
+     * Capture changes from a MySQL database.
      * 
      * Category: database,sql,mysql
      * Since: 3.0
@@ -1132,9 +1095,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Represents a Debezium PostgresSQL endpoint which is used to capture
-     * changes in PostgresSQL database so that that applications can see those
-     * changes and respond to them.
+     * Capture changes from a PostgresSQL database.
      * 
      * Category: database,sql,postgres
      * Since: 3.0
@@ -1145,9 +1106,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
-     * Represents a Debezium SQL Server endpoint which is used to capture
-     * changes in SQL Server database so that that applications can see those
-     * changes and respond to them.
+     * Capture changes from an SQL Server database.
      * 
      * Category: database,sql,sqlserver
      * Since: 3.0
@@ -1158,8 +1117,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * DigitalOcean (camel-digitalocean)
-     * The DigitalOcean component allows you to manage Droplets and resources
-     * within the DigitalOcean cloud.
+     * Manage Droplets and resources within the DigitalOcean cloud.
      * 
      * Category: cloud,management
      * Since: 2.19
@@ -1170,8 +1128,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Direct (camel-direct)
-     * The direct component provides direct, synchronous call to another
-     * endpoint from the same CamelContext.
+     * Provides a direct, synchronous call to another endpoint from the same
+     * CamelContext.
      * 
      * Category: core,endpoint
      * Since: 1.0
@@ -1182,8 +1140,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Direct VM (camel-directvm)
-     * The direct-vm component provides direct, synchronous call to another
-     * endpoint from any CamelContext in the same JVM.
+     * Provides direct, synchronous call to another endpoint from any
+     * CamelContext in the same JVM.
      * 
      * Category: core,endpoint
      * Since: 2.10
@@ -1194,8 +1152,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Disruptor (camel-disruptor)
-     * The disruptor component provides asynchronous SEDA behavior using LMAX
-     * Disruptor.
+     * Provides asynchronous SEDA behavior using LMAX Disruptor.
      * 
      * Category: endpoint
      * Since: 2.12
@@ -1206,8 +1163,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Disruptor VM (camel-disruptor)
-     * The disruptor component provides asynchronous SEDA behavior using LMAX
-     * Disruptor.
+     * Provides asynchronous SEDA behavior using LMAX Disruptor.
      * 
      * Category: endpoint
      * Since: 2.12
@@ -1218,7 +1174,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Deep Java Library (camel-djl)
-     * The Deep Java Library component is used to infer deep learning models.
+     * Infer Deep Learning models from message exchanges data using Deep Java
+     * Library (DJL).
      * 
      * Category: ai,deeplearning
      * Since: 3.3
@@ -1229,7 +1186,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * DNS (camel-dns)
-     * To lookup domain information and run DNS queries using DNSJava.
+     * Perform DNS queries using DNSJava.
      * 
      * Category: networking
      * Since: 2.7
@@ -1240,7 +1197,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Docker (camel-docker)
-     * The docker component is used for managing Docker containers.
+     * Manage Docker containers.
      * 
      * Category: container,cloud,paas
      * Since: 2.15
@@ -1251,8 +1208,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Dozer (camel-dozer)
-     * The dozer component provides the ability to map between Java beans using
-     * the Dozer mapping library.
+     * Map between Java beans using the Dozer mapping library.
      * 
      * Category: transformation
      * Since: 2.15
@@ -1263,8 +1219,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Drill (camel-drill)
-     * The drill component gives you the ability to quering into apache drill
-     * cluster.
+     * Perform queries against an Apache Drill cluster.
      * 
      * Category: database,sql
      * Since: 2.19
@@ -1275,8 +1230,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Dropbox (camel-dropbox)
-     * For uploading, downloading and managing files, folders, groups,
-     * collaborations, etc on dropbox DOT com.
+     * Upload, download and manage files, folders, groups, collaborations, etc
+     * on Dropbox.
      * 
      * Category: api,file
      * Since: 2.14
@@ -1287,8 +1242,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Ehcache (camel-ehcache)
-     * The ehcache component enables you to perform caching operations using
-     * Ehcache as cache implementation.
+     * Perform caching operations using Ehcache.
      * 
      * Category: cache,datagrid,clustering
      * Since: 2.18
@@ -1299,8 +1253,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Elastichsearch Rest (camel-elasticsearch-rest)
-     * The elasticsearch component is used for interfacing with ElasticSearch
-     * server using REST API.
+     * Send requests to with an ElasticSearch via REST API.
      * 
      * Category: monitoring,search
      * Since: 2.21
@@ -1311,8 +1264,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ElSQL (camel-elsql)
-     * The elsql component is an extension to the existing SQL Component that
-     * uses ElSql to define the SQL queries.
+     * Use ElSql to define SQL queries. Extends the SQL Component.
      * 
      * Category: database,sql
      * Since: 2.16
@@ -1323,7 +1275,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Etcd Keys (camel-etcd)
-     * Camel Etcd support
+     * Get, set or delete keys in etcd key-value store.
      * 
      * Category: clustering,database
      * Since: 2.18
@@ -1334,8 +1286,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Etcd Stats (camel-etcd)
-     * The camel etcd component allows you to work with Etcd, a distributed
-     * reliable key-value store.
+     * Access etcd cluster statistcs.
      * 
      * Category: clustering,database
      * Since: 2.18
@@ -1346,8 +1297,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Etcd Watch (camel-etcd)
-     * The camel etcd component allows you to work with Etcd, a distributed
-     * reliable key-value store.
+     * Watch specific etcd keys or directories for changes.
      * 
      * Category: clustering,database
      * Since: 2.18

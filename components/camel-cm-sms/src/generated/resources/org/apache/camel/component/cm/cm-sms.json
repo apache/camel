@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cm-sms",
     "title": "CM SMS Gateway",
-    "description": "The cm-sms component allows to integrate with CM SMS Gateway.",
+    "description": "Send SMS messages via CM SMS Gateway.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "mobile",

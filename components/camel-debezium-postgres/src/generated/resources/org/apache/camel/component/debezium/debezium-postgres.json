@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "debezium-postgres",
     "title": "Debezium PostgresSQL Connector",
-    "description": "Represents a Debezium PostgresSQL endpoint which is used to capture changes in PostgresSQL database so that that applications can see those changes and respond to them.",
+    "description": "Capture changes from a PostgresSQL database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database,sql,postgres",

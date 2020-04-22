@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "drill",
     "title": "Drill",
-    "description": "The drill component gives you the ability to quering into apache drill cluster.",
+    "description": "Perform queries against an Apache Drill cluster.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "database,sql",

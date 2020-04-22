@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-ecs",
     "title": "AWS 2 ECS",
-    "description": "The aws2-ecs is used for managing Amazon ECS",
+    "description": "Manage AWS ECS cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,management",

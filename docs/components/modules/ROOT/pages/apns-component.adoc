@@ -4,7 +4,7 @@
 :page-source: components/camel-apns/src/main/docs/apns-component.adoc
 :docTitle: APNS
 :artifactId: camel-apns
-:description: For sending notifications to Apple iOS devices.
+:description: Send notifications to Apple iOS devices.
 :since: 2.8
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

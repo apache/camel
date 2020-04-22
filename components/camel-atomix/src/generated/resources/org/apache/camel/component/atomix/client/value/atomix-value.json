@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-value",
     "title": "Atomix Value",
-    "description": "The atomix-value component is used to access Atomix's distributed value.",
+    "description": "Access Atomix's distributed value.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

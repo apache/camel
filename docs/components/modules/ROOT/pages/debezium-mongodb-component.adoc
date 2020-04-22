@@ -4,7 +4,7 @@
 :page-source: components/camel-debezium-mongodb/src/main/docs/debezium-mongodb-component.adoc
 :docTitle: Debezium MongoDB Connector
 :artifactId: camel-debezium-mongodb
-:description: Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.
+:description: Capture changes from a MongoDB database.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

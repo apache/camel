@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-sns",
     "title": "AWS Simple Notification System",
-    "description": "The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.",
+    "description": "Send messages to an AWS Simple Notification Topic.",
     "deprecated": false,
     "firstVersion": "2.8.0",
     "label": "cloud,mobile,messaging",

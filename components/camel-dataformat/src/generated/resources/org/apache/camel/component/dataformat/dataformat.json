@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "dataformat",
     "title": "Data Format",
-    "description": "The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.",
+    "description": "Use a Camel Data Format as a regular Camel Component.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "core,transformation",

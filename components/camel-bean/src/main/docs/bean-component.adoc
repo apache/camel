@@ -2,7 +2,7 @@
 = Bean Component
 :docTitle: Bean
 :artifactId: camel-bean
-:description: The bean component is for invoking Java beans from Camel.
+:description: Invoke methods of Java beans stored in Camel registry.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Only producer is supported

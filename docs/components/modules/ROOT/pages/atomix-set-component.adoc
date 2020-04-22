@@ -4,7 +4,7 @@
 :page-source: components/camel-atomix/src/main/docs/atomix-set-component.adoc
 :docTitle: Atomix Set
 :artifactId: camel-atomix
-:description: The atomix-set component is used to access Atomix's distributed set.
+:description: Access Atomix's distributed set.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

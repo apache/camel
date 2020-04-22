@@ -4,7 +4,7 @@
 :page-source: components/camel-dataformat/src/main/docs/dataformat-component.adoc
 :docTitle: Data Format
 :artifactId: camel-dataformat
-:description: The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+:description: Use a Camel Data Format as a regular Camel Component.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

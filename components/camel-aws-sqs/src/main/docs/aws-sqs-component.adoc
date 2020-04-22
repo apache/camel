@@ -2,7 +2,7 @@
 = AWS Simple Queue Service Component
 :docTitle: AWS Simple Queue Service
 :artifactId: camel-aws-sqs
-:description: The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
+:description: Sending and receive messages to/from AWS SQS service.
 :since: 2.6
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

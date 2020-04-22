@@ -2,7 +2,7 @@
 = Debezium MySQL Connector Component
 :docTitle: Debezium MySQL Connector
 :artifactId: camel-debezium-mysql
-:description: Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.
+:description: Capture changes from a MySQL database.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "caffeine-cache",
     "title": "Caffeine Cache",
-    "description": "The caffeine-cache component is used for integration with Caffeine Cache.",
+    "description": "Perform caching operations using Caffeine Cache.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "cache,datagrid,clustering",

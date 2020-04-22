@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "debezium-sqlserver",
     "title": "Debezium SQL Server Connector",
-    "description": "Represents a Debezium SQL Server endpoint which is used to capture changes in SQL Server database so that that applications can see those changes and respond to them.",
+    "description": "Capture changes from an SQL Server database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database,sql,sqlserver",

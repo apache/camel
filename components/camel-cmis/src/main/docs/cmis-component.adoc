@@ -2,7 +2,7 @@
 = CMIS Component
 :docTitle: CMIS
 :artifactId: camel-cmis
-:description: The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+:description: Read and write data from to/from a CMIS compliant content repositories.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

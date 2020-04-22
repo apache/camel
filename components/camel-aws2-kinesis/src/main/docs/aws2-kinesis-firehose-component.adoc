@@ -2,7 +2,7 @@
 = AWS 2 Kinesis Firehose Component
 :docTitle: AWS 2 Kinesis Firehose
 :artifactId: camel-aws2-kinesis
-:description: The aws2-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+:description: Consume data from AWS Kinesis Firehose streams using AWS SDK version 2.x.
 :since: 3.2
 :supportLevel: Stable
 :component-header: Only producer is supported

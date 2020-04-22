@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "box",
     "title": "Box",
-    "description": "For uploading downloading and managing files folders groups collaborations etc on box DOT com.",
+    "description": "Upload, download and manage files, folders, groups, collaborations, etc. on box.com.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "api,file,cloud",

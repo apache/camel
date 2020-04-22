@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-mq",
     "title": "AWS 2 MQ",
-    "description": "The aws2-mq is used for managing Amazon MQ instances.",
+    "description": "Manage AWS MQ instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,management",

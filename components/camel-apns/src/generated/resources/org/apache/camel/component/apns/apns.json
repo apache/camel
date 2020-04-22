@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "apns",
     "title": "APNS",
-    "description": "For sending notifications to Apple iOS devices.",
+    "description": "Send notifications to Apple iOS devices.",
     "deprecated": false,
     "firstVersion": "2.8.0",
     "label": "eventbus,mobile",

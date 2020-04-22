@@ -2,7 +2,7 @@
 = AWS EC2 Component
 :docTitle: AWS EC2
 :artifactId: camel-aws-ec2
-:description: The aws-ec2 is used for managing Amazon EC2 instances.
+:description: Manage AWS EC2 instances.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported

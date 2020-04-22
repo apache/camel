@@ -4,7 +4,7 @@
 :page-source: components/camel-consul/src/main/docs/consul-component.adoc
 :docTitle: Consul
 :artifactId: camel-consul
-:description: The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
+:description: Integrate with Consul service discovery and configuration store.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

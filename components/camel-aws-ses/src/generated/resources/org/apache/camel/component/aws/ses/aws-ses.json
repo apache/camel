@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-ses",
     "title": "AWS Simple Email Service",
-    "description": "The aws-ses component is used for sending emails with Amazon's SES service.",
+    "description": "Send e-mails through AWS SES service.",
     "deprecated": false,
     "firstVersion": "2.9.0",
     "label": "cloud,mail",

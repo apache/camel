@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-ddb/src/main/docs/aws2-ddb-component.adoc
 :docTitle: AWS 2 DynamoDB
 :artifactId: camel-aws2-ddb
-:description: The aws2-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+:description: Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

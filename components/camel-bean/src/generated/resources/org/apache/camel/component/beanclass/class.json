@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "class",
     "title": "Class",
-    "description": "The Class component is for invoking Java classes (Java beans) from Camel.",
+    "description": "Invoke methods of Java beans specified by class name.",
     "deprecated": false,
     "firstVersion": "2.4.0",
     "label": "core,java",

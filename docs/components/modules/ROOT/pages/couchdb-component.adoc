@@ -4,7 +4,7 @@
 :page-source: components/camel-couchdb/src/main/docs/couchdb-component.adoc
 :docTitle: CouchDB
 :artifactId: camel-couchdb
-:description: The couchdb component is used for integrate with CouchDB databases.
+:description: Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete documents from a CouchDB database.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

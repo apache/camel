@@ -2,7 +2,7 @@
 = Etcd Keys Component
 :docTitle: Etcd Keys
 :artifactId: camel-etcd
-:description: Camel Etcd support
+:description: Get, set or delete keys in etcd key-value store.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported

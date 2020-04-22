@@ -2,7 +2,7 @@
 = AWS Kinesis Component
 :docTitle: AWS Kinesis
 :artifactId: camel-aws-kinesis
-:description: The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+:description: Consume and produce records from AWS Kinesis Streams.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

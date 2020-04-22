@@ -2,7 +2,7 @@
 = Beanstalk Component
 :docTitle: Beanstalk
 :artifactId: camel-beanstalk
-:description: The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
+:description: Retrieve and post-process Beanstalk jobs.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

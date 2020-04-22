@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-storage-blob",
     "title": "Azure Storage Blob Service",
-    "description": "The azure-storage-blob component is used for storing and retrieving blobs from Azure Storage Blob Service using SDK v12.",
+    "description": "Store and retrieve blobs from Azure Storage Blob Service using SDK v12.",
     "deprecated": false,
     "firstVersion": "3.3.0",
     "label": "cloud,file",

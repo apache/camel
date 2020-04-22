@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-iam/src/main/docs/aws2-iam-component.adoc
 :docTitle: AWS 2 IAM
 :artifactId: camel-aws2-iam
-:description: The aws2-iam is used for managing Amazon IAM
+:description: Manage AWS IAM instances using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

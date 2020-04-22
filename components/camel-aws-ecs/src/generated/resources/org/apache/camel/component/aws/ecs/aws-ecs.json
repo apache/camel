@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-ecs",
     "title": "AWS ECS",
-    "description": "The aws-ecs is used for managing Amazon ECS",
+    "description": "Manage AWS ECS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "cloud,management",

@@ -2,7 +2,7 @@
 = CometD Component
 :docTitle: CometD
 :artifactId: camel-cometd
-:description: The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+:description: Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
 :since: 2.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

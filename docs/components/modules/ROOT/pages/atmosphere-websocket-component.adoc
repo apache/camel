@@ -4,7 +4,7 @@
 :page-source: components/camel-atmosphere-websocket/src/main/docs/atmosphere-websocket-component.adoc
 :docTitle: Atmosphere Websocket
 :artifactId: camel-atmosphere-websocket
-:description: To exchange data with external Websocket clients using Atmosphere.
+:description: Expose WebSocket endpoints using the Atmosphere framework.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

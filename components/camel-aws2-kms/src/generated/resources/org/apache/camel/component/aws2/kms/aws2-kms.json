@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-kms",
     "title": "AWS 2 KMS",
-    "description": "The aws2-kms is used for managing Amazon KMS",
+    "description": "Manage keys stored in AWS KMS instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,management",

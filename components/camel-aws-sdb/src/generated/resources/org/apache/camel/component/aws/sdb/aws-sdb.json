@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-sdb",
     "title": "AWS SimpleDB",
-    "description": "The aws-sdb component is for storing and retrieving data from\/to Amazon's SDB service.",
+    "description": "Store and Retrieve data from\/to AWS SDB service.",
     "deprecated": false,
     "firstVersion": "2.9.0",
     "label": "cloud,database,nosql",

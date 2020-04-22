@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "elasticsearch-rest",
     "title": "Elastichsearch Rest",
-    "description": "The elasticsearch component is used for interfacing with ElasticSearch server using REST API.",
+    "description": "Send requests to with an ElasticSearch via REST API.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "monitoring,search",

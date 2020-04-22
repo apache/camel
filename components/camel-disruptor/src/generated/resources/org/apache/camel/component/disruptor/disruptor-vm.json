@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "disruptor-vm",
     "title": "Disruptor VM",
-    "description": "The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.",
+    "description": "Provides asynchronous SEDA behavior using LMAX Disruptor.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "endpoint",

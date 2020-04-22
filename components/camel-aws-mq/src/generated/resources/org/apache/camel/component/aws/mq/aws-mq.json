@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-mq",
     "title": "AWS MQ",
-    "description": "The aws-mq is used for managing Amazon MQ instances.",
+    "description": "Manage AWS MQ instances.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "cloud,management",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "as2",
     "title": "AS2",
-    "description": "Component used for transferring data secure and reliable over the internet using the AS2 protocol.",
+    "description": "Transfer data securely and reliably using the AS2 protocol (RFC4130).",
     "deprecated": false,
     "firstVersion": "2.22.0",
     "label": "file",

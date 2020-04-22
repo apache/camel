@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "debezium-mongodb",
     "title": "Debezium MongoDB Connector",
-    "description": "Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.",
+    "description": "Capture changes from a MongoDB database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database,nosql,mongodb",
