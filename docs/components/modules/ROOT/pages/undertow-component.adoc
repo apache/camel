@@ -226,4 +226,8 @@ Java SPI (Service Provider Interfaces). If there is an object passed to componen
 as parameter `securityConfiguration` and provider accepts it. Provider will be used
 for authentication of all requests.
 
+Property `requireServletContext` of security providers forces udertow server to start
+with servlet context. There will be no servlet actually handled. This feature is meant only
+for use with servlet filters, which needs servlet context for their functionality.
+
 include::camel-spring-boot::page$undertow-starter.adoc[]
