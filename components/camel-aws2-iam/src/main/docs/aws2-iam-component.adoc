@@ -180,7 +180,7 @@ In AWS IAM there are multiple operations you can submit, as an example for Creat
 ------------------------------------------------------------------------------------------------------
 from("direct:createUser")
      .setBody(CreateUserRequest.builder().userName("camel").build())
-    .to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser")
+    .to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
