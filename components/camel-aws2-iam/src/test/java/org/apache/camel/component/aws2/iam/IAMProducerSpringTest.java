@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.iam.model.AddUserToGroupResponse;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.CreateGroupResponse;
+import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.CreateUserResponse;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.DeleteGroupResponse;
@@ -82,6 +83,24 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("test", resultGet.user().userName());
     }
 
+    @Test
+    public void iamCreateUserPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createUserPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
+                exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        CreateUserResponse resultGet = (CreateUserResponse)exchange.getIn().getBody();
+        assertEquals("test", resultGet.user().userName());
+    }    
+    
     @Test
     public void iamDeleteUserTest() throws Exception {
 

@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.iam.model.AddUserToGroupResponse;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.CreateGroupResponse;
+import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.CreateUserResponse;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.DeleteGroupResponse;
@@ -77,6 +78,24 @@ public class IAMProducerTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        CreateUserResponse resultGet = (CreateUserResponse)exchange.getIn().getBody();
+        assertEquals("test", resultGet.user().userName());
+    }
+    
+    @Test
+    public void iamCreateUserPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createUserPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
+                exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
             }
         });
 
@@ -296,6 +315,7 @@ public class IAMProducerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:listKeys").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys").to("mock:result");
                 from("direct:createUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser").to("mock:result");
+                from("direct:createUserPojo").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true").to("mock:result");
                 from("direct:deleteUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteUser").to("mock:result");
                 from("direct:listUsers").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listUsers").to("mock:result");
                 from("direct:getUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getUser").to("mock:result");

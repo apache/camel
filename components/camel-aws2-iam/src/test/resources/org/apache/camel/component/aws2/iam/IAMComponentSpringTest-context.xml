@@ -35,6 +35,11 @@
             <to uri="mock:result"/>
         </route>
         <route>
+            <from uri="direct:createUserPojo"/>
+            <to uri="aws2-iam://Test?iamClient=#amazonIAMClient&amp;operation=createUser&amp;pojoRequest=true"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:deleteUser"/>
             <to uri="aws2-iam://Test?iamClient=#amazonIAMClient&amp;operation=deleteUser"/>
             <to uri="mock:result"/>
