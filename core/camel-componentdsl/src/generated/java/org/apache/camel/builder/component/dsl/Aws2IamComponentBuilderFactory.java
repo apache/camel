@@ -108,6 +108,18 @@ public interface Aws2IamComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2IamComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the IAM client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -221,6 +233,7 @@ public interface Aws2IamComponentBuilderFactory {
             case "iamClient": getOrCreateConfiguration((IAM2Component) component).setIamClient((software.amazon.awssdk.services.iam.IamClient) value); return true;
             case "lazyStartProducer": ((IAM2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((IAM2Component) component).setOperation((org.apache.camel.component.aws2.iam.IAM2Operations) value); return true;
+            case "pojoRequest": getOrCreateConfiguration((IAM2Component) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((IAM2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((IAM2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((IAM2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;

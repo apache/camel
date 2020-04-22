@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 IAM component supports 11 options, which are listed below.
+The AWS 2 IAM component supports 12 options, which are listed below.
 
 
 
@@ -53,6 +53,7 @@ The AWS 2 IAM component supports 11 options, which are listed below.
 | *iamClient* (producer) | To use a existing configured AWS IAM as client |  | IamClient
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. The value can be one of: listAccessKeys, createUser, deleteUser, getUser, listUsers, createAccessKey, deleteAccessKey, updateAccessKey, createGroup, deleteGroup, listGroups, addUserToGroup, removeUserFromGroup |  | IAM2Operations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the IAM client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the IAM client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the IAM client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
@@ -85,7 +86,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,6 +95,7 @@ with the following path and query parameters:
 | *iamClient* (producer) | To use a existing configured AWS IAM as client |  | IamClient
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. The value can be one of: listAccessKeys, createUser, deleteUser, getUser, listUsers, createAccessKey, deleteAccessKey, updateAccessKey, createGroup, deleteGroup, listGroups, addUserToGroup, removeUserFromGroup |  | IAM2Operations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the IAM client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the IAM client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the IAM client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol

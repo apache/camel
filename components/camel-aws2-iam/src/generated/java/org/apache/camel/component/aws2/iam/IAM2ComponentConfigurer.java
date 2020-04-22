@@ -36,6 +36,8 @@ public class IAM2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.iam.IAM2Operations.class, value)); return true;
+        case "pojorequest":
+        case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -58,6 +60,7 @@ public class IAM2ComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("iamClient", software.amazon.awssdk.services.iam.IamClient.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.iam.IAM2Operations.class);
+        answer.put("pojoRequest", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);
         answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
@@ -80,6 +83,8 @@ public class IAM2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "pojorequest":
+        case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":

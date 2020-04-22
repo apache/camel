@@ -128,6 +128,30 @@ public interface IAM2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default IAM2EndpointBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default IAM2EndpointBuilder pojoRequest(String pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the IAM client.
          * 
          * The option is a: <code>java.lang.String</code> type.
