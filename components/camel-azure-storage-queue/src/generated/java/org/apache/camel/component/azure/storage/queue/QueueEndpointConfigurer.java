@@ -35,8 +35,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxmessages":
         case "maxMessages": target.getConfiguration().setMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class, value)); return true;
-        case "queueserviceclient":
-        case "queueServiceClient": target.setQueueServiceClient(property(camelContext, com.azure.storage.queue.QueueServiceClient.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.queue.QueueServiceClient.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -60,7 +58,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("lazyStartProducer", boolean.class);
         answer.put("maxMessages", java.lang.Integer.class);
         answer.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
-        answer.put("queueServiceClient", com.azure.storage.queue.QueueServiceClient.class);
         answer.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeToLive", java.time.Duration.class);
@@ -88,8 +85,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxmessages":
         case "maxMessages": return target.getConfiguration().getMaxMessages();
         case "operation": return target.getConfiguration().getOperation();
-        case "queueserviceclient":
-        case "queueServiceClient": return target.getQueueServiceClient();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
         case "synchronous": return target.isSynchronous();

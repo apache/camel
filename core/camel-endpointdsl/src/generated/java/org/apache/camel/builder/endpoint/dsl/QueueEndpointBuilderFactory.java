@@ -59,46 +59,6 @@ public interface QueueEndpointBuilderFactory {
          * 
          * Group: common
          */
-        default QueueEndpointConsumerBuilder queueServiceClient(
-                Object queueServiceClient) {
-            doSetProperty("queueServiceClient", queueServiceClient);
-            return this;
-        }
-        /**
-         * Service client to a storage account to interact with the queue
-         * service. This client does not hold any state about a particular
-         * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. This client
-         * contains all the operations for interacting with a queue account in
-         * Azure Storage. Operations allowed by the client are creating,
-         * listing, and deleting queues, retrieving and updating properties of
-         * the account, and retrieving statistics of the account.
-         * 
-         * The option will be converted to a
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
-         * 
-         * Group: common
-         */
-        default QueueEndpointConsumerBuilder queueServiceClient(
-                String queueServiceClient) {
-            doSetProperty("queueServiceClient", queueServiceClient);
-            return this;
-        }
-        /**
-         * Service client to a storage account to interact with the queue
-         * service. This client does not hold any state about a particular
-         * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. This client
-         * contains all the operations for interacting with a queue account in
-         * Azure Storage. Operations allowed by the client are creating,
-         * listing, and deleting queues, retrieving and updating properties of
-         * the account, and retrieving statistics of the account.
-         * 
-         * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
-         * 
-         * Group: common
-         */
         default QueueEndpointConsumerBuilder serviceClient(Object serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
@@ -455,46 +415,6 @@ public interface QueueEndpointBuilderFactory {
          * 
          * Group: common
          */
-        default QueueEndpointProducerBuilder queueServiceClient(
-                Object queueServiceClient) {
-            doSetProperty("queueServiceClient", queueServiceClient);
-            return this;
-        }
-        /**
-         * Service client to a storage account to interact with the queue
-         * service. This client does not hold any state about a particular
-         * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. This client
-         * contains all the operations for interacting with a queue account in
-         * Azure Storage. Operations allowed by the client are creating,
-         * listing, and deleting queues, retrieving and updating properties of
-         * the account, and retrieving statistics of the account.
-         * 
-         * The option will be converted to a
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
-         * 
-         * Group: common
-         */
-        default QueueEndpointProducerBuilder queueServiceClient(
-                String queueServiceClient) {
-            doSetProperty("queueServiceClient", queueServiceClient);
-            return this;
-        }
-        /**
-         * Service client to a storage account to interact with the queue
-         * service. This client does not hold any state about a particular
-         * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. This client
-         * contains all the operations for interacting with a queue account in
-         * Azure Storage. Operations allowed by the client are creating,
-         * listing, and deleting queues, retrieving and updating properties of
-         * the account, and retrieving statistics of the account.
-         * 
-         * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
-         * 
-         * Group: common
-         */
         default QueueEndpointProducerBuilder serviceClient(Object serviceClient) {
             doSetProperty("serviceClient", serviceClient);
             return this;
@@ -807,46 +727,6 @@ public interface QueueEndpointBuilderFactory {
                 QueueEndpointProducerBuilder {
         default AdvancedQueueEndpointBuilder advanced() {
             return (AdvancedQueueEndpointBuilder) this;
-        }
-        /**
-         * Service client to a storage account to interact with the queue
-         * service. This client does not hold any state about a particular
-         * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. This client
-         * contains all the operations for interacting with a queue account in
-         * Azure Storage. Operations allowed by the client are creating,
-         * listing, and deleting queues, retrieving and updating properties of
-         * the account, and retrieving statistics of the account.
-         * 
-         * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
-         * 
-         * Group: common
-         */
-        default QueueEndpointBuilder queueServiceClient(
-                Object queueServiceClient) {
-            doSetProperty("queueServiceClient", queueServiceClient);
-            return this;
-        }
-        /**
-         * Service client to a storage account to interact with the queue
-         * service. This client does not hold any state about a particular
-         * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. This client
-         * contains all the operations for interacting with a queue account in
-         * Azure Storage. Operations allowed by the client are creating,
-         * listing, and deleting queues, retrieving and updating properties of
-         * the account, and retrieving statistics of the account.
-         * 
-         * The option will be converted to a
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
-         * 
-         * Group: common
-         */
-        default QueueEndpointBuilder queueServiceClient(
-                String queueServiceClient) {
-            doSetProperty("queueServiceClient", queueServiceClient);
-            return this;
         }
         /**
          * Service client to a storage account to interact with the queue

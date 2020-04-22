@@ -36,7 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service", syntax = "azure-storage-queue:queueName", label = "cloud,messaging")
 public class QueueEndpoint extends DefaultEndpoint {
 
-    @UriParam
     private QueueServiceClient queueServiceClient;
 
     @UriParam
@@ -85,19 +84,7 @@ public class QueueEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    /**
-     * Service client to a storage account to interact with the queue service. This client does not hold any state about a particular storage account
-     * but is instead a convenient way of sending off appropriate requests to the resource on the service.
-     *
-     * This client contains all the operations for interacting with a queue account in Azure Storage.
-     * Operations allowed by the client are creating, listing, and deleting queues, retrieving and updating properties of
-     * the account, and retrieving statistics of the account.
-     */
     public QueueServiceClient getQueueServiceClient() {
         return queueServiceClient;
-    }
-
-    public void setQueueServiceClient(QueueServiceClient queueServiceClient) {
-        this.queueServiceClient = queueServiceClient;
     }
 }
