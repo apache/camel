@@ -4,7 +4,7 @@
 :page-source: components/camel-aws-msk/src/main/docs/aws-msk-component.adoc
 :docTitle: AWS MSK
 :artifactId: camel-aws-msk
-:description: The aws-msk is used for managing Amazon MSK
+:description: Manage AWS MSK instances.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

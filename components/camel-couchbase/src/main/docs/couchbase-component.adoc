@@ -2,7 +2,7 @@
 = Couchbase Component
 :docTitle: Couchbase
 :artifactId: camel-couchbase
-:description: Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
+:description: Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

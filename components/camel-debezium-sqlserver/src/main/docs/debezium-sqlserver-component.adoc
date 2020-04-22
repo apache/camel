@@ -2,7 +2,7 @@
 = Debezium SQL Server Connector Component
 :docTitle: Debezium SQL Server Connector
 :artifactId: camel-debezium-sqlserver
-:description: Represents a Debezium SQL Server endpoint which is used to capture changes in SQL Server database so that that applications can see those changes and respond to them.
+:description: Capture changes from an SQL Server database.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

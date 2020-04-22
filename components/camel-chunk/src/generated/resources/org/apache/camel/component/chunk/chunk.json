@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "chunk",
     "title": "Chunk",
-    "description": "Transforms the message using a Chunk template.",
+    "description": "Transform messages using Chunk templating engine.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "transformation",

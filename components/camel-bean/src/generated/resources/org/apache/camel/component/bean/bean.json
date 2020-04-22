@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "bean",
     "title": "Bean",
-    "description": "The bean component is for invoking Java beans from Camel.",
+    "description": "Invoke methods of Java beans stored in Camel registry.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "core,java",

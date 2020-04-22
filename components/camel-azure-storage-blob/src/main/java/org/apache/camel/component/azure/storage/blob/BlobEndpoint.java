@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The azure-storage-blob component is used for storing and retrieving blobs from Azure Storage Blob Service using SDK v12.
+ * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service", syntax = "azure-storage-blob:containerName", label = "cloud,file")
 public class BlobEndpoint extends DefaultEndpoint {

@@ -56,8 +56,7 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
 /**
- * The aws2-sqs component is used for sending and receiving messages to Amazon's
- * SQS service.
+ * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service", syntax = "aws2-sqs:queueNameOrArn", label = "cloud,messaging")
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
@@ -325,7 +324,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     /**
      * Provide the possibility to override this method for an mock
      * implementation
-     * 
+     *
      * @return AmazonSQSClient
      */
     SqsClient createClient() {

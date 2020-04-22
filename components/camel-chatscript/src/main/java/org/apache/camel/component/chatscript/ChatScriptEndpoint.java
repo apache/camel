@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
 
 /**
- * Represents a ChatScript endpoint.
+ * Chat with a ChatScript Server.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",  producerOnly = true, label = "ai,chatscript")
 public class ChatScriptEndpoint extends DefaultEndpoint {
@@ -66,7 +66,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         host = remainingUri.getHost();
-        if (ObjectHelper.isEmpty(host)) { 
+        if (ObjectHelper.isEmpty(host)) {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         botName = remainingUri.getPath();

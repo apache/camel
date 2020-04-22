@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "beanstalk",
     "title": "Beanstalk",
-    "description": "The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.",
+    "description": "Retrieve and post-process Beanstalk jobs.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "messaging",

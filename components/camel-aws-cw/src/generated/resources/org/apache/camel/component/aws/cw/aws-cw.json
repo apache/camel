@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-cw",
     "title": "AWS CloudWatch",
-    "description": "The aws-cw component is used for sending metrics to an Amazon CloudWatch.",
+    "description": "Send metrics to AWS CloudWatch.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "cloud,monitoring",

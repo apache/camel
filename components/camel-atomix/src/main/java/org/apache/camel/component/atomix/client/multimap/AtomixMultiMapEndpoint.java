@@ -22,7 +22,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The atomix-multimap component is used to access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmultimap">distributed multi map</a>.
+ * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmultimap">distributed multi map</a>.
  */
 @UriEndpoint(
     firstVersion = "2.20.0",

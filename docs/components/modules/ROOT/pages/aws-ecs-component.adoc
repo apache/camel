@@ -4,7 +4,7 @@
 :page-source: components/camel-aws-ecs/src/main/docs/aws-ecs-component.adoc
 :docTitle: AWS ECS
 :artifactId: camel-aws-ecs
-:description: The aws-ecs is used for managing Amazon ECS
+:description: Manage AWS ECS cluster instances.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

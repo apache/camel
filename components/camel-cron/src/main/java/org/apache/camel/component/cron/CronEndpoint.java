@@ -29,6 +29,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * A generic interface for triggering events at times specified through the Unix cron syntax.
+ */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "cron", title = "Cron", syntax = "cron:name", consumerOnly = true, label = "scheduling")
 public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 

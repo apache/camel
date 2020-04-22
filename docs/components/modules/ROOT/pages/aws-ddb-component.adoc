@@ -4,7 +4,7 @@
 :page-source: components/camel-aws-ddb/src/main/docs/aws-ddb-component.adoc
 :docTitle: AWS DynamoDB
 :artifactId: camel-aws-ddb
-:description: The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+:description: Store and retrieve data from AWS DynamoDB service.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported

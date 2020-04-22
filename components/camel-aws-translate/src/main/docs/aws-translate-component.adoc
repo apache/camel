@@ -2,7 +2,7 @@
 = AWS Translate Component
 :docTitle: AWS Translate
 :artifactId: camel-aws-translate
-:description: The aws-translate component is used for managing Amazon Translate
+:description: Translate texts using AWS Translate.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

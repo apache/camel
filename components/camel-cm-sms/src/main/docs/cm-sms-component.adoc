@@ -2,7 +2,7 @@
 = CM SMS Gateway Component
 :docTitle: CM SMS Gateway
 :artifactId: camel-cm-sms
-:description: The cm-sms component allows to integrate with CM SMS Gateway.
+:description: Send SMS messages via CM SMS Gateway.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Used for communicating with a remote Bonita BPM process engine.
+ * Communicate with a remote Bonita BPM process engine.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true, label = "process")
 public class BonitaEndpoint extends DefaultEndpoint {

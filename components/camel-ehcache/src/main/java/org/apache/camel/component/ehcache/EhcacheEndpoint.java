@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ehcache component enables you to perform caching operations using <a href="http://www.ehcache.org">Ehcache</a> as cache implementation.
+ * Perform caching operations using <a href="http://www.ehcache.org">Ehcache</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName", label = "cache,datagrid,clustering")
 public class EhcacheEndpoint extends DefaultEndpoint {

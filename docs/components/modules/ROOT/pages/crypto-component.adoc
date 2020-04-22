@@ -4,7 +4,7 @@
 :page-source: components/camel-crypto/src/main/docs/crypto-component.adoc
 :docTitle: Crypto (JCE)
 :artifactId: camel-crypto
-:description: The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+:description: Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported

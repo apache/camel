@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * For sending notifications to Apple iOS devices.
+ * Send notifications to Apple iOS devices.
  */
 @UriEndpoint(firstVersion = "2.8.0", scheme = "apns", title = "APNS", syntax = "apns:name", label = "eventbus,mobile")
 public class ApnsEndpoint extends ScheduledPollEndpoint {

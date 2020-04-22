@@ -4,7 +4,7 @@
 :page-source: components/camel-atomix/src/main/docs/atomix-map-component.adoc
 :docTitle: Atomix Map
 :artifactId: camel-atomix
-:description: The atomix-map component is used to access Atomix's distributed map.
+:description: Access Atomix's distributed map.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-ec2",
     "title": "AWS EC2",
-    "description": "The aws-ec2 is used for managing Amazon EC2 instances.",
+    "description": "Manage AWS EC2 instances.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "cloud,management",

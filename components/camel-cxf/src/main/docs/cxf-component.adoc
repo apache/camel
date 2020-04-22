@@ -2,7 +2,7 @@
 = CXF Component
 :docTitle: CXF
 :artifactId: camel-cxf
-:description: The cxf component is used for SOAP WebServices using Apache CXF.
+:description: Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

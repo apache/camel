@@ -4,7 +4,7 @@
 :page-source: components/camel-bean/src/main/docs/class-component.adoc
 :docTitle: Class
 :artifactId: camel-bean
-:description: The Class component is for invoking Java classes (Java beans) from Camel.
+:description: Invoke methods of Java beans specified by class name.
 :since: 2.4
 :supportLevel: Stable
 :component-header: Only producer is supported

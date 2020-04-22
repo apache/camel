@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "dropbox",
     "title": "Dropbox",
-    "description": "For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.",
+    "description": "Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "api,file",

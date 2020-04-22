@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-ses component is used for sending emails with Amazon's SES service.
+ * Send e-mails through AWS SES service.
  */
 @UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
 public class SesEndpoint extends DefaultEndpoint {
@@ -48,7 +48,7 @@ public class SesEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
     }
-    
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
@@ -56,7 +56,7 @@ public class SesEndpoint extends DefaultEndpoint {
             ? configuration.getAmazonSESClient()
             : createSESClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSESClient())) {

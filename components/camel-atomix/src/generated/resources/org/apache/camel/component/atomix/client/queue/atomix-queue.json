@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-queue",
     "title": "Atomix Queue",
-    "description": "The atomix-queue component is used to access Atomix's distributed queue.",
+    "description": "Access Atomix's distributed queue.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

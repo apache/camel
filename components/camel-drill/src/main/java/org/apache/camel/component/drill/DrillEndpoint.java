@@ -34,8 +34,7 @@ import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 /**
- * The drill component gives you the ability to quering into apache drill
- * cluster.
+ * Perform queries against an Apache Drill cluster.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true, label = "database,sql")
 public class DrillEndpoint extends DefaultPollingEndpoint {
@@ -82,7 +81,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
             if (StringUtils.isNotBlank(clusterId)) {
                 url += "/" + clusterId;
             }
-        } 
+        }
 
         return url;
     }
@@ -101,7 +100,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     /**
      * ZooKeeper host name or IP address. Use local instead of a host name or IP
      * address to connect to the local Drillbit
-     * 
+     *
      * @param host
      */
     public void setHost(String host) {
@@ -114,7 +113,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
 
     /**
      * ZooKeeper port number
-     * 
+     *
      * @param port
      */
     public void setPort(Integer port) {
@@ -127,7 +126,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Drill directory in ZooKeeper
-     * 
+     *
      * @param directory
      */
     public void setDirectory(String directory) {
@@ -141,7 +140,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     /**
      * Cluster ID
      * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id
-     * 
+     *
      * @param clusterId
      */
     public void setClusterId(String clusterId) {
@@ -151,7 +150,7 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     /**
      * Connection mode: zk: Zookeeper drillbit: Drillbit direct connection
      * https://drill.apache.org/docs/using-the-jdbc-driver/
-     * 
+     *
      * @return
      */
     public DrillConnectionMode getMode() {

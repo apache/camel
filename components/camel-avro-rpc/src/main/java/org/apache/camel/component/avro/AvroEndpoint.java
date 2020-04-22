@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Working with Apache Avro for data serialization.
+ * Produce or consume Apache Avro RPC services.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro", syntax = "avro:transport:host:port/messageName", label = "messaging,transformation")
 public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
@@ -62,7 +62,7 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
         exchange.getIn().setHeader(AvroConstants.AVRO_MESSAGE_NAME, message.getName());
         return exchange;
     }
-    
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         AvroConsumer consumer = new AvroConsumer(this, processor);

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "djl",
     "title": "Deep Java Library",
-    "description": "The Deep Java Library component is used to infer deep learning models.",
+    "description": "Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).",
     "deprecated": false,
     "firstVersion": "3.3.0",
     "label": "ai,deeplearning",

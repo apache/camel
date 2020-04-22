@@ -4,7 +4,7 @@
 :page-source: components/camel-aws-eks/src/main/docs/aws-eks-component.adoc
 :docTitle: AWS EKS
 :artifactId: camel-aws-eks
-:description: The aws-eks is used for managing Amazon EKS
+:description: Manage AWS EKS cluster instances.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

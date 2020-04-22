@@ -38,7 +38,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+ * Manage workflows in the AWS Simple Workflow service.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "aws-swf", title = "AWS Simple Workflow", syntax = "aws-swf:type",
     label = "cloud,workflow")

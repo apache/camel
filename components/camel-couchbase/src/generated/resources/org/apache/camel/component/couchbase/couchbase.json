@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "couchbase",
     "title": "Couchbase",
-    "description": "Represents a Couchbase endpoint that can query Views with a Poll strategy and\/or produce various type of operations.",
+    "description": "Query Couchbase Views with a poll strategy and\/or perform various operations against Couchbase databases.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "database,nosql",

@@ -2,7 +2,7 @@
 = DigitalOcean Component
 :docTitle: DigitalOcean
 :artifactId: camel-digitalocean
-:description: The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
+:description: Manage Droplets and resources within the DigitalOcean cloud.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

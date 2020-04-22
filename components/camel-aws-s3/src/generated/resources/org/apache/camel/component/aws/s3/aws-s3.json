@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-s3",
     "title": "AWS S3 Storage Service",
-    "description": "The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.",
+    "description": "Store and retrie objects from AWS S3 Storage Service.",
     "deprecated": false,
     "firstVersion": "2.8.0",
     "label": "cloud,file",

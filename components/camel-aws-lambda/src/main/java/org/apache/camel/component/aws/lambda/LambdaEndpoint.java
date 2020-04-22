@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-lambda is used for managing and invoking functions from Amazon Lambda.
+ * Manage and invoke AWS Lambda functions.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "aws-lambda", title = "AWS Lambda",
     syntax = "aws-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
@@ -80,7 +80,7 @@ public class LambdaEndpoint extends DefaultEndpoint {
         super.doStart();
         awsLambdaClient = configuration.getAwsLambdaClient() != null ? configuration.getAwsLambdaClient() : createLambdaClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAwsLambdaClient())) {

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "asterisk",
     "title": "Asterisk",
-    "description": "The asterisk component is used to interact with Asterisk PBX Server.",
+    "description": "Interact with Asterisk PBX Server.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "voip",

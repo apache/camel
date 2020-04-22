@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "corda",
     "title": "Corda",
-    "description": "The corda component uses corda-rpc to interact with corda nodes.",
+    "description": "Perform operations against Corda blockchain platform using corda-rpc library.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "corda,blockchain",

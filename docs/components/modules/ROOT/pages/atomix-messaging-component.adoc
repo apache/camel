@@ -4,7 +4,7 @@
 :page-source: components/camel-atomix/src/main/docs/atomix-messaging-component.adoc
 :docTitle: Atomix Messaging
 :artifactId: camel-atomix
-:description: The atomix-messaging component is used to access Atomix's group messaging.
+:description: Access Atomix's group messaging.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

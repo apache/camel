@@ -4,7 +4,7 @@
 :page-source: components/camel-djl/src/main/docs/djl-component.adoc
 :docTitle: Deep Java Library
 :artifactId: camel-djl
-:description: The Deep Java Library component is used to infer deep learning models.
+:description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
 :supportLevel: Stable
 :component-header: Only producer is supported

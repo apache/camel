@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "dataset",
     "title": "Dataset",
-    "description": "The dataset component provides a mechanism to easily perform load & soak testing of your system.",
+    "description": "Provide data for load & soak testing of your Camel application.",
     "deprecated": false,
     "firstVersion": "1.3.0",
     "label": "core,testing",

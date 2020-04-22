@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-kinesis",
     "title": "AWS Kinesis",
-    "description": "The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.",
+    "description": "Consume and produce records from AWS Kinesis Streams.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "cloud,messaging",

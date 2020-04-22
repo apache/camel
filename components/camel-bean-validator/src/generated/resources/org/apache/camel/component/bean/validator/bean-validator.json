@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "bean-validator",
     "title": "Bean Validator",
-    "description": "The Validator component performs bean validation of the message body using the Java Bean Validation API.",
+    "description": "Validate the message body using the Java Bean Validation API.",
     "deprecated": false,
     "firstVersion": "2.3.0",
     "label": "validation",

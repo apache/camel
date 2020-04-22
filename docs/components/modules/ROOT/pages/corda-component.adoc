@@ -4,7 +4,7 @@
 :page-source: components/camel-corda/src/main/docs/corda-component.adoc
 :docTitle: Corda
 :artifactId: camel-corda
-:description: The corda component uses corda-rpc to interact with corda nodes.
+:description: Perform operations against Corda blockchain platform using corda-rpc library.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

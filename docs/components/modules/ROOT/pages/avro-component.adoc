@@ -4,7 +4,7 @@
 :page-source: components/camel-avro-rpc/src/main/docs/avro-component.adoc
 :docTitle: Avro
 :artifactId: camel-avro-rpc
-:description: Working with Apache Avro for data serialization.
+:description: Produce or consume Apache Avro RPC services.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

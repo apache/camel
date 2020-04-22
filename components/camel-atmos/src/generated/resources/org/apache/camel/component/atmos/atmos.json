@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atmos",
     "title": "Atmos",
-    "description": "The atmos component is used for integrating with EMC's Atomos Storage.",
+    "description": "Integract with EMC's ViPR object data services using the Atmos Client.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "file,cloud",

@@ -2,7 +2,7 @@
 = AWS Lambda Component
 :docTitle: AWS Lambda
 :artifactId: camel-aws2-lambda
-:description: The aws2-lambda is used for managing and invoking functions from Amazon Lambda.
+:description: Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
 :since: 3.2
 :supportLevel: Stable
 :component-header: Only producer is supported

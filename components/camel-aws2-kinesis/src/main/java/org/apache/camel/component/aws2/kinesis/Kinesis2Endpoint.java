@@ -37,8 +37,7 @@ import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 /**
- * The aws2-kinesis component is for consuming and producing records from Amazon
- * Kinesis Streams.
+ * Consume and produce records from AWS Kinesis Streams using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS 2 Kinesis", syntax = "aws2-kinesis:streamName", label = "cloud,messaging")
 public class Kinesis2Endpoint extends ScheduledPollEndpoint {

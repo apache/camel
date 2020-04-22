@@ -4,7 +4,7 @@
 :page-source: components/camel-dns/src/main/docs/dns-component.adoc
 :docTitle: DNS
 :artifactId: camel-dns
-:description: To lookup domain information and run DNS queries using DNSJava.
+:description: Perform DNS queries using DNSJava.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Only producer is supported

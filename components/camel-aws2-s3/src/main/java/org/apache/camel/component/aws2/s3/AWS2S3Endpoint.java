@@ -51,8 +51,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 
 /**
- * The aws2-s3 component is used for storing and retrieving object from Amazon
- * S3 Storage Service.
+ * Store and retrie objects from AWS S3 Storage Service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS 2 S3 Storage Service", syntax = "aws2-s3://bucketNameOrArn", label = "cloud,file")
 public class AWS2S3Endpoint extends ScheduledPollEndpoint {

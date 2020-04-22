@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-swf",
     "title": "AWS Simple Workflow",
-    "description": "The aws-swf component is used for managing workflows from Amazon Simple Workflow.",
+    "description": "Manage workflows in the AWS Simple Workflow service.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "cloud,workflow",

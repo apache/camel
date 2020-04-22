@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "etcd-watch",
     "title": "Etcd Watch",
-    "description": "The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.",
+    "description": "Watch specific etcd keys or directories for changes.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "clustering,database",

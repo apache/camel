@@ -4,7 +4,7 @@
 :page-source: components/camel-dozer/src/main/docs/dozer-component.adoc
 :docTitle: Dozer
 :artifactId: camel-dozer
-:description: The dozer component provides the ability to map between Java beans using the Dozer mapping library.
+:description: Map between Java beans using the Dozer mapping library.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported

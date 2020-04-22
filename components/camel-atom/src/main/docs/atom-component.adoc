@@ -2,7 +2,7 @@
 = Atom Component
 :docTitle: Atom
 :artifactId: camel-atom
-:description: The atom component is used for consuming Atom RSS feeds.
+:description: Poll Atom RSS feeds.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only consumer is supported

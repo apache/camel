@@ -2,7 +2,7 @@
 = AWS IAM Component
 :docTitle: AWS IAM
 :artifactId: camel-aws-iam
-:description: The aws-iam is used for managing Amazon IAM
+:description: Manage AWS IAM instances.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only producer is supported

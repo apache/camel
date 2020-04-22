@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * The browse component is used for viewing the messages received on endpoints that supports {@link BrowsableEndpoint}.
+ * Inspect the messages received on endpoints supporting {@link BrowsableEndpoint}.
  *
  * This can be useful for testing, visualisation tools or debugging. The exchanges sent to the endpoint are all available to be browsed.
  */

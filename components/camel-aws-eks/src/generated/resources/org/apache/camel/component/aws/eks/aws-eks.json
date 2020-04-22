@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-eks",
     "title": "AWS EKS",
-    "description": "The aws-eks is used for managing Amazon EKS",
+    "description": "Manage AWS EKS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "cloud,management",

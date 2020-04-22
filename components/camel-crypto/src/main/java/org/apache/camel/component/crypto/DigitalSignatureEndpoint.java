@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+ * Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name", producerOnly = true, label = "security,transformation")
 public class DigitalSignatureEndpoint extends DefaultEndpoint {

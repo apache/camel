@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-ecs/src/main/docs/aws2-ecs-component.adoc
 :docTitle: AWS 2 ECS
 :artifactId: camel-aws2-ecs
-:description: The aws2-ecs is used for managing Amazon ECS
+:description: Manage AWS ECS cluster instances using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -2,7 +2,7 @@
 = AWS KMS Component
 :docTitle: AWS KMS
 :artifactId: camel-aws-kms
-:description: The aws-kms is used for managing Amazon KMS
+:description: Manage keys stored in AWS KMS instances.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported

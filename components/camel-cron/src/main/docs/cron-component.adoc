@@ -2,7 +2,7 @@
 = Cron Component
 :docTitle: Cron
 :artifactId: camel-cron
-:description: Camel Cron Component
+:description: A generic interface for triggering events at times specified through the Unix cron syntax.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only consumer is supported

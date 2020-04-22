@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "elsql",
     "title": "ElSQL",
-    "description": "The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.",
+    "description": "Use ElSql to define SQL queries. Extends the SQL Component.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "database,sql",

@@ -4,7 +4,7 @@
 :page-source: components/camel-atomix/src/main/docs/atomix-multimap-component.adoc
 :docTitle: Atomix MultiMap
 :artifactId: camel-atomix
-:description: The atomix-multimap component is used to access Atomix's distributed multi map.
+:description: Access Atomix's distributed multi map.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported

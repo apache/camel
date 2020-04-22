@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-lambda",
     "title": "AWS Lambda",
-    "description": "The aws-lambda is used for managing and invoking functions from Amazon Lambda.",
+    "description": "Manage and invoke AWS Lambda functions.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "cloud,computing,serverless",

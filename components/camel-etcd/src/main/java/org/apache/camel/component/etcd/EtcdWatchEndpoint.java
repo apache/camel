@@ -22,7 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
+ * Watch specific etcd keys or directories for changes.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-watch", title = "Etcd Watch", consumerOnly = true,
         syntax = "etcd-watch:path", label = "clustering,database")

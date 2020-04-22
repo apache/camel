@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-kinesis-firehose",
     "title": "AWS Kinesis Firehose",
-    "description": "The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.",
+    "description": "Consume data from AWS Kinesis Firehose streams.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,messaging",

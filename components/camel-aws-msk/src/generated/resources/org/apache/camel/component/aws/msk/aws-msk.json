@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-msk",
     "title": "AWS MSK",
-    "description": "The aws-msk is used for managing Amazon MSK",
+    "description": "Manage AWS MSK instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "cloud,management",

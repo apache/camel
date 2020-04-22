@@ -4,7 +4,7 @@
 :page-source: components/camel-caffeine/src/main/docs/caffeine-cache-component.adoc
 :docTitle: Caffeine Cache
 :artifactId: camel-caffeine
-:description: The caffeine-cache component is used for integration with Caffeine Cache.
+:description: Perform caching operations using Caffeine Cache.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported

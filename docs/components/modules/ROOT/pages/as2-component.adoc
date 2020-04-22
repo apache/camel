@@ -4,7 +4,7 @@
 :page-source: components/camel-as2/camel-as2-component/src/main/docs/as2-component.adoc
 :docTitle: AS2
 :artifactId: camel-as2
-:description: Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+:description: Transfer data securely and reliably using the AS2 protocol (RFC4130).
 :since: 2.22
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

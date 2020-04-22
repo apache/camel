@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cxf",
     "title": "CXF",
-    "description": "The cxf component is used for SOAP WebServices using Apache CXF.",
+    "description": "Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "soap,webservice",

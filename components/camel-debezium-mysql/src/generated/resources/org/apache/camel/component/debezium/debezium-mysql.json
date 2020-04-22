@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "debezium-mysql",
     "title": "Debezium MySQL Connector",
-    "description": "Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.",
+    "description": "Capture changes from a MySQL database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database,sql,mysql",

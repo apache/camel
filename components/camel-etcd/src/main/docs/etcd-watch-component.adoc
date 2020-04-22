@@ -2,7 +2,7 @@
 = Etcd Watch Component
 :docTitle: Etcd Watch
 :artifactId: camel-etcd
-:description: The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+:description: Watch specific etcd keys or directories for changes.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only consumer is supported
