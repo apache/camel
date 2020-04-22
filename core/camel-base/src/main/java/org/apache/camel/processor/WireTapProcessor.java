@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
@@ -168,17 +169,23 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
-        executorService.submit(() -> {
-            taskCount.increment();
-            LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-            asyncProcessor.process(wireTapExchange, doneSync -> {
-                if (wireTapExchange.getException() != null) {
-                    String u = URISupport.sanitizeUri(uri);
-                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + u + ". This exception will be ignored.", wireTapExchange.getException());
-                }
-                taskCount.decrement();
+        try {
+            executorService.submit(() -> {
+                taskCount.increment();
+                LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+                asyncProcessor.process(wireTapExchange, doneSync -> {
+                    if (wireTapExchange.getException() != null) {
+                        String u = URISupport.sanitizeUri(uri);
+                        LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + u + ". This exception will be ignored.", wireTapExchange.getException());
+                    }
+                    taskCount.decrement();
+                });
             });
-        });
+        } catch (Throwable e) {
+            // in case the thread pool rejects or cannot submit the task then we need to catch
+            // so camel error handler can react
+            exchange.setException(e);
+        }
 
         // continue routing this synchronously
         callback.done(true);
