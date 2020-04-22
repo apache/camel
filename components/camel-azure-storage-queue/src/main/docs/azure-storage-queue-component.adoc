@@ -167,3 +167,34 @@ can be used to retrieve lower level clients.
 |`CamelAzureStorageQueueTimeNextVisible`|`QueueConstants.TIME_NEXT_VISIBLE`|`OffsetDateTime`|The time that the message will again become visible in the Queue.
 |`CamelAzureStorageQueueRawHttpHeaders`|`QueueConstants.RAW_HTTP_HEADERS`|`HttpHeaders`|Returns non-parsed httpHeaders that can be used by the user.
 |=======================================================================
+
+=== Advanced Azure Storage Queue configuration
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `QueueServiceClient` instance configuration, you can
+create your own instance:
+[source,java]
+-----------------------------------------------------------------------
+StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
+String uri = String.format("https://%s.blob.queue.windows.net", "yourAccountName");
+
+QueueServiceClient client = new QueueServiceClientBuilder()
+                          .endpoint(uri)
+                          .credential(credential)
+                          .buildClient();
+// This is camel context
+context.getRegistry().bind("client", client);
+-----------------------------------------------------------------------
+
+Then refer to this instance in your Camel `azure-storage-queue` component configuration:
+
+[source,java]
+-----------------------------------------------------------------------
+from("azure-storage-queue://cameldev/queue1?serviceClient=#client")
+.to("mock:result");
+-----------------------------------------------------------------------
+
+=== Automatic detection of QueueServiceClient client in registry
+
+The component is capable of detecting the presence of an BlobServiceClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
