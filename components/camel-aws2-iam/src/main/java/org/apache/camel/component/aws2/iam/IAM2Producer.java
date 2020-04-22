@@ -199,7 +199,21 @@ public class IAM2Producer extends DefaultProducer {
         }
     }
 
-    private void deleteUser(IamClient iamClient, Exchange exchange) {
+    private void deleteUser(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteUserRequest) {
+                DeleteUserResponse result;
+                try {
+                    result = iamClient.deleteUser((DeleteUserRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DeleteUserRequest.Builder builder = DeleteUserRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
@@ -216,9 +230,24 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
-    private void getUser(IamClient iamClient, Exchange exchange) {
+    private void getUser(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetUserRequest) {
+                GetUserResponse result;
+                try {
+                    result = iamClient.getUser((GetUserRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         GetUserRequest.Builder builder = GetUserRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
@@ -235,6 +264,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void listUsers(IamClient iamClient, Exchange exchange) {
