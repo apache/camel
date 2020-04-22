@@ -183,7 +183,7 @@ from("direct:createUser")
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
 
-Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
