@@ -172,7 +172,7 @@ In AWS Translate the only operation available is TranslateText so you can do som
 from("direct:start")
   .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
                     .targetLanguageCode(Translate2LanguageEnum.GERMAN.toString()).text("Ciao").build())
-  .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
+  .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true");
 ------------------------------------------------------------------------------------------------------
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
