@@ -45,6 +45,7 @@ import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.iam.model.GetUserResponse;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
+import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
 import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
 import software.amazon.awssdk.services.iam.model.ListUsersRequest;
 import software.amazon.awssdk.services.iam.model.ListUsersResponse;
@@ -481,7 +482,21 @@ public class IAM2Producer extends DefaultProducer {
         }
     }
 
-    private void listGroups(IamClient iamClient, Exchange exchange) {
+    private void listGroups(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListGroupsRequest) {
+                ListGroupsResponse result;
+                try {
+                    result = iamClient.listGroups((ListGroupsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListGroupsResponse result;
         try {
             result = iamClient.listGroups();
@@ -491,9 +506,24 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
-    private void addUserToGroup(IamClient iamClient, Exchange exchange) {
+    private void addUserToGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof AddUserToGroupRequest) {
+                AddUserToGroupResponse result;
+                try {
+                    result = iamClient.addUserToGroup((AddUserToGroupRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         AddUserToGroupRequest.Builder builder = AddUserToGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
@@ -516,6 +546,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void removeUserFromGroup(IamClient iamClient, Exchange exchange) {
