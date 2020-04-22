@@ -219,6 +219,19 @@ The component is capable of detecting the presence of an LambdaClient bean into 
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
+== Using a POJO as body
+
+Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In AWS Lambda there are multiple operations you can submit, as an example for Get Function request, you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:getFunction")
+     .setBody(GetFunctionRequest.builder().functionName("test").build())
+     .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunction&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
 
 == Dependencies
 
