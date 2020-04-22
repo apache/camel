@@ -4,7 +4,7 @@
 :page-source: components/camel-ahc/src/main/docs/ahc-component.adoc
 :docTitle: AHC
 :artifactId: camel-ahc
-:description: To call external HTTP services using Async Http Client.
+:description: Call external HTTP services using Async Http Client.
 :since: 2.8
 :supportLevel: Stable
 :component-header: Only producer is supported

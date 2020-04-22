@@ -28,7 +28,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The CSV data format is used for handling CSV payloads.
+ * Handle CSV (Comma Separated Values) payloads.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")

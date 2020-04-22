@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "univocity-fixed",
     "title": "uniVocity Fixed Length",
-    "description": "The uniVocity Fixed Length data format is used for working with fixed length flat payloads.",
+    "description": "Marshal and unmarshal Java objects from and to fixed length records using univocity-parsers.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.15.0",

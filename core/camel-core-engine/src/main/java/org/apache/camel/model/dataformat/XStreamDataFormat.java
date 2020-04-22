@@ -33,8 +33,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * XStream data format is used for unmarshal a XML payload to POJO or to marshal
- * POJO back to XML payload.
+ * Marshal and unmarshal POJOs to/from XML.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")
@@ -267,7 +266,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     /**
      * To add permission for the given pojo classes.
-     * 
+     *
      * @param type the pojo class(es) xstream should use as allowed permission
      * @see #setPermissions(String)
      */

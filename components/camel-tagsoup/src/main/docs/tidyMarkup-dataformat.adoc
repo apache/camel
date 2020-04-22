@@ -2,7 +2,7 @@
 = TidyMarkup DataFormat
 :docTitle: TidyMarkup
 :artifactId: camel-tagsoup
-:description: TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
+:description: Parse (potentially invalid) HTML into valid HTML or DOM.
 :since: 2.0
 :supportLevel: Stable
 

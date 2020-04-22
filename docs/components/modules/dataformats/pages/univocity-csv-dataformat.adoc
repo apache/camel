@@ -4,7 +4,7 @@
 :page-source: components/camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc
 :docTitle: uniVocity CSV
 :artifactId: camel-univocity-parsers
-:description: The uniVocity CSV data format is used for working with CSV (Comma Separated Values) flat payloads.
+:description: Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using univocity-parsers.
 :since: 2.15
 :supportLevel: Stable
 

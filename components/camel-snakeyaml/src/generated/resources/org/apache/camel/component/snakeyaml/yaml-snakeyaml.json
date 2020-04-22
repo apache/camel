@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "yaml-snakeyaml",
     "title": "YAML SnakeYAML",
-    "description": "YAML is a data format to marshal and unmarshal Java objects to and from YAML.",
+    "description": "Marshal and unmarshal Java objects to and from YAML.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,yaml",
     "firstVersion": "2.17.0",

@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The BeanIO data format is used for working with flat payloads (such as CSV,
+ * Marshal and unmarshal Java beans to and from flat files (such as CSV,
  * delimited, or fixed length formats).
  */
 @Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO")

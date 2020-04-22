@@ -4,7 +4,7 @@
 :page-source: components/camel-ahc-ws/src/main/docs/ahc-ws-component.adoc
 :docTitle: AHC Websocket
 :artifactId: camel-ahc-ws
-:description: To exchange data with external Websocket servers using Async Http Client.
+:description: Exchange data with external Websocket servers using Async Http Client.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

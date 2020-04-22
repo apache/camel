@@ -4,7 +4,7 @@
 :page-source: components/camel-csv/src/main/docs/csv-dataformat.adoc
 :docTitle: CSV
 :artifactId: camel-csv
-:description: The CSV data format is used for handling CSV payloads.
+:description: Handle CSV (Comma Separated Values) payloads.
 :since: 1.3
 :supportLevel: Stable
 

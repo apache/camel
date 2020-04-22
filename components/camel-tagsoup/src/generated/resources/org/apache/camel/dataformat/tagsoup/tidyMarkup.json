@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "tidyMarkup",
     "title": "TidyMarkup",
-    "description": "TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.",
+    "description": "Parse (potentially invalid) HTML into valid HTML or DOM.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.0.0",

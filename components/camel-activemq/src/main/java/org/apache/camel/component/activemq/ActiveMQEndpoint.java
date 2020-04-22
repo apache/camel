@@ -20,8 +20,7 @@ import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The activemq component allows messages to be sent to (or consumed from)
- * Apache ActiveMQ. This component extends the Camel JMS component.
+ * Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.
  */
 @UriEndpoint(firstVersion = "1.0.0", extendsScheme = "jms", scheme = "activemq", title = "ActiveMQ", syntax = "activemq:destinationType:destinationName",
         label = "messaging")

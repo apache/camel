@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "zipdeflater",
     "title": "Zip Deflate Compression",
-    "description": "Zip Deflate Compression data format is a message compression and de-compression format (not zip files).",
+    "description": "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.12.0",

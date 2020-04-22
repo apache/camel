@@ -2,7 +2,7 @@
 = Bindy DataFormat
 :docTitle: Bindy
 :artifactId: camel-bindy
-:description: The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
+:description: Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
 :since: 2.0
 :supportLevel: Stable
 

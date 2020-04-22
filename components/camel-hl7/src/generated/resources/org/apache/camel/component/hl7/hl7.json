@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "hl7",
     "title": "HL7",
-    "description": "The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.",
+    "description": "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,hl7",
     "firstVersion": "2.0.0",

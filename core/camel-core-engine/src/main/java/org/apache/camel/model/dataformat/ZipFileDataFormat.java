@@ -25,8 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The Zip File data format is a message compression and de-compression format
- * of zip files.
+ * Compression and decompress streams using java.util.zip.Zip*Stream.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
 @XmlRootElement(name = "zipfile")

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "crypto",
     "title": "Crypto (Java Cryptographic Extension)",
-    "description": "Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.",
+    "description": "Encrypt and decrypt messages using Java Cryptography Extension (JCE).",
     "deprecated": false,
     "firstVersion": "2.3.0",
     "label": "dataformat,transformation,security",

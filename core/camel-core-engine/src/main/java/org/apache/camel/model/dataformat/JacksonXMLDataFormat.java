@@ -26,8 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * JacksonXML data format is used for unmarshal a XML payload to POJO or to
- * marshal POJO back to XML payload.
+ * Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")

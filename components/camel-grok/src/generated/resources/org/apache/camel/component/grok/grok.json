@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "grok",
     "title": "Grok",
-    "description": "The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.",
+    "description": "Unmarshal unstructured data to objects using Logstash based Grok patterns.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "3.0.0",

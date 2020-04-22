@@ -2,7 +2,7 @@
 = ActiveMQ Component
 :docTitle: ActiveMQ
 :artifactId: camel-activemq
-:description: The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.
+:description: Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

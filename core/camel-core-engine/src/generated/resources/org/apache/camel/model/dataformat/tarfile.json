@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "tarfile",
     "title": "Tar File",
-    "description": "The Tar File data format is a message compression and de-compression format of tar files.",
+    "description": "Archive\/extract files into\/from tarballs.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "dataformat,transformation,file",

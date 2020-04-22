@@ -4,7 +4,7 @@
 :page-source: components/camel-zip-deflater/src/main/docs/zipdeflater-dataformat.adoc
 :docTitle: Zip Deflate Compression
 :artifactId: camel-zip-deflater
-:description: Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
+:description: Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
 :since: 2.12
 :supportLevel: Stable
 

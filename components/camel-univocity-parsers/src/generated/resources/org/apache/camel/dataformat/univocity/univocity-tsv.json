@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "univocity-tsv",
     "title": "uniVocity TSV",
-    "description": "The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.",
+    "description": "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using univocity-parsers.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.15.0",

@@ -4,7 +4,7 @@
 :page-source: components/camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc
 :docTitle: YAML SnakeYAML
 :artifactId: camel-snakeyaml
-:description: YAML is a data format to marshal and unmarshal Java objects to and from YAML.
+:description: Marshal and unmarshal Java objects to and from YAML.
 :since: 2.17
 :supportLevel: Stable
 

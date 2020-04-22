@@ -84,13 +84,13 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
         endpoint.setClientConfig(getClientConfig());
         endpoint.setBinding(getBinding());
         endpoint.setSslContextParameters(ssl);
-        
+
         setProperties(endpoint, parameters);
 
         if (PropertiesHelper.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
             DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
-            
+
             if (endpoint.getClient() != null) {
                 LOG.warn("The user explicitly set an AsyncHttpClient instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
@@ -129,7 +129,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
                 setProperties(realmBuilder, realmParams);
                 validateParameters(uri, realmParams, null);
             }
-            
+
             // set and validate additional parameters on client config
             Map<String, Object> clientParams = PropertiesHelper.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
 
@@ -149,7 +149,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
         endpoint.setHttpUri(httpUri);
-        
+
         return endpoint;
     }
 

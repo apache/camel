@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ahc",
     "title": "AHC",
-    "description": "To call external HTTP services using Async Http Client.",
+    "description": "Call external HTTP services using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.8.0",
     "label": "http",

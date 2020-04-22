@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The uniVocity Fixed Length data format is used for working with fixed length
- * flat payloads.
+ * Marshal and unmarshal Java objects from and to fixed length records using univocity-parsers.
  */
 @Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity Fixed Length")
 @XmlRootElement(name = "univocity-fixed")

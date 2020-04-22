@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "thrift",
     "title": "Thrift",
-    "description": "The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.",
+    "description": "Serialize and deserialize of messages using Apache Thrift binary dataformat.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.20.0",

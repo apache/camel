@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "asn1",
     "title": "ASN.1 File",
-    "description": "The ASN.1 data format is used for file transfer with telecommunications protocols.",
+    "description": "Encode and decode data structures using Abstract Syntax Notation One (ASN.1).",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation,file",

@@ -2,7 +2,7 @@
 = Zip File DataFormat
 :docTitle: Zip File
 :artifactId: camel-zipfile
-:description: The Zip File data format is a message compression and de-compression format of zip files.
+:description: Compression and decompress streams using java.util.zip.ZipStream.
 :since: 2.11
 :supportLevel: Stable
 

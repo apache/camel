@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "any23",
     "title": "Any23",
-    "description": "Any23 data format is used for parsing data to RDF.",
+    "description": "Extract RDF data from HTML documents.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "3.0.0",

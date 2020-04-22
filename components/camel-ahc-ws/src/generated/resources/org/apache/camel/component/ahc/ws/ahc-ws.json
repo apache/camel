@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ahc-ws",
     "title": "AHC Websocket",
-    "description": "To exchange data with external Websocket servers using Async Http Client.",
+    "description": "Exchange data with external Websocket servers using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "websocket",

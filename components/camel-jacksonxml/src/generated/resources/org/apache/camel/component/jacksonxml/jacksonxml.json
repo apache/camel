@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "jacksonxml",
     "title": "JacksonXML",
-    "description": "JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
+    "description": "Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,xml",
     "firstVersion": "2.16.0",

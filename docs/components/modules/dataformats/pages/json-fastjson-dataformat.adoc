@@ -4,7 +4,7 @@
 :page-source: components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
 :docTitle: JSon Fastjson
 :artifactId: camel-fastjson
-:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:description: Marshal POJOs to JSON and back.
 :since: 2.20
 :supportLevel: Stable
 
