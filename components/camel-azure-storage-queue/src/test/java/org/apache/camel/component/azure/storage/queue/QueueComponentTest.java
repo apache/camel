@@ -72,7 +72,7 @@ class QueueComponentTest extends CamelTestSupport {
 
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getTimeToLive());
-        assertEquals(5, endpoint.getConfiguration().getMaxMessages());
+        assertEquals(1, endpoint.getConfiguration().getMaxMessages());
     }
 
     @Test

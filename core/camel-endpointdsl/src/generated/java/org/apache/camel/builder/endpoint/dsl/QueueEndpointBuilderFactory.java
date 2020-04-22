@@ -85,7 +85,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * s.
+         * Service client to a storage account to interact with the queue
+         * service. This client does not hold any state about a particular
+         * storage account but is instead a convenient way of sending off
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option is a:
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -97,7 +104,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * s.
+         * Service client to a storage account to interact with the queue
+         * service. This client does not hold any state about a particular
+         * storage account but is instead a convenient way of sending off
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -147,11 +161,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * as.
+         * Maximum number of messages to get, if there are less messages exist
+         * in the queue than requested all the messages will be returned. If
+         * left empty only 1 message will be retrieved, the allowed range is 1
+         * to 32 messages.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default: 5
+         * Default: 1
          * Group: queue
          */
         default QueueEndpointConsumerBuilder maxMessages(Integer maxMessages) {
@@ -159,12 +176,15 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * as.
+         * Maximum number of messages to get, if there are less messages exist
+         * in the queue than requested all the messages will be returned. If
+         * left empty only 1 message will be retrieved, the allowed range is 1
+         * to 32 messages.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default: 5
+         * Default: 1
          * Group: queue
          */
         default QueueEndpointConsumerBuilder maxMessages(String maxMessages) {
@@ -172,7 +192,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * How long the message will stay alive in the queue. If unset the value
+         * will default to 7 days, if -1 is passed the message will not expire.
+         * The time to live must be -1 or any positive number. The format should
+         * be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345
+         * seconds, P2D -- parses as 2 days However, in case you are using
+         * EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -183,7 +209,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * How long the message will stay alive in the queue. If unset the value
+         * will default to 7 days, if -1 is passed the message will not expire.
+         * The time to live must be -1 or any positive number. The format should
+         * be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345
+         * seconds, P2D -- parses as 2 days However, in case you are using
+         * EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -195,7 +227,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The timeout period for how long the message is invisible in the
+         * queue. If unset the value will default to 0 and the message will be
+         * instantly visible. The timeout must be between 0 seconds and 7 days.
+         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
+         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
+         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -207,7 +245,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The timeout period for how long the message is invisible in the
+         * queue. If unset the value will default to 0 and the message will be
+         * instantly visible. The timeout must be between 0 seconds and 7 days.
+         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
+         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
+         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -437,7 +481,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * s.
+         * Service client to a storage account to interact with the queue
+         * service. This client does not hold any state about a particular
+         * storage account but is instead a convenient way of sending off
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option is a:
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -449,7 +500,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * s.
+         * Service client to a storage account to interact with the queue
+         * service. This client does not hold any state about a particular
+         * storage account but is instead a convenient way of sending off
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -503,7 +561,7 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * ss.
+         * Queue service operation hint to the producer.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.storage.queue.QueueOperationDefinition</code> type.
@@ -516,7 +574,7 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * ss.
+         * Queue service operation hint to the producer.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.storage.queue.QueueOperationDefinition</code> type.
@@ -528,11 +586,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * as.
+         * Maximum number of messages to get, if there are less messages exist
+         * in the queue than requested all the messages will be returned. If
+         * left empty only 1 message will be retrieved, the allowed range is 1
+         * to 32 messages.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default: 5
+         * Default: 1
          * Group: queue
          */
         default QueueEndpointProducerBuilder maxMessages(Integer maxMessages) {
@@ -540,12 +601,15 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * as.
+         * Maximum number of messages to get, if there are less messages exist
+         * in the queue than requested all the messages will be returned. If
+         * left empty only 1 message will be retrieved, the allowed range is 1
+         * to 32 messages.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default: 5
+         * Default: 1
          * Group: queue
          */
         default QueueEndpointProducerBuilder maxMessages(String maxMessages) {
@@ -553,7 +617,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * How long the message will stay alive in the queue. If unset the value
+         * will default to 7 days, if -1 is passed the message will not expire.
+         * The time to live must be -1 or any positive number. The format should
+         * be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345
+         * seconds, P2D -- parses as 2 days However, in case you are using
+         * EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -564,7 +634,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * How long the message will stay alive in the queue. If unset the value
+         * will default to 7 days, if -1 is passed the message will not expire.
+         * The time to live must be -1 or any positive number. The format should
+         * be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345
+         * seconds, P2D -- parses as 2 days However, in case you are using
+         * EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -576,7 +652,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The timeout period for how long the message is invisible in the
+         * queue. If unset the value will default to 0 and the message will be
+         * instantly visible. The timeout must be between 0 seconds and 7 days.
+         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
+         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
+         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -588,7 +670,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The timeout period for how long the message is invisible in the
+         * queue. If unset the value will default to 0 and the message will be
+         * instantly visible. The timeout must be between 0 seconds and 7 days.
+         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
+         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
+         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -761,7 +849,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * s.
+         * Service client to a storage account to interact with the queue
+         * service. This client does not hold any state about a particular
+         * storage account but is instead a convenient way of sending off
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option is a:
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -773,7 +868,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * s.
+         * Service client to a storage account to interact with the queue
+         * service. This client does not hold any state about a particular
+         * storage account but is instead a convenient way of sending off
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -785,11 +887,14 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * as.
+         * Maximum number of messages to get, if there are less messages exist
+         * in the queue than requested all the messages will be returned. If
+         * left empty only 1 message will be retrieved, the allowed range is 1
+         * to 32 messages.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default: 5
+         * Default: 1
          * Group: queue
          */
         default QueueEndpointBuilder maxMessages(Integer maxMessages) {
@@ -797,12 +902,15 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * as.
+         * Maximum number of messages to get, if there are less messages exist
+         * in the queue than requested all the messages will be returned. If
+         * left empty only 1 message will be retrieved, the allowed range is 1
+         * to 32 messages.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default: 5
+         * Default: 1
          * Group: queue
          */
         default QueueEndpointBuilder maxMessages(String maxMessages) {
@@ -810,7 +918,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * How long the message will stay alive in the queue. If unset the value
+         * will default to 7 days, if -1 is passed the message will not expire.
+         * The time to live must be -1 or any positive number. The format should
+         * be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345
+         * seconds, P2D -- parses as 2 days However, in case you are using
+         * EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -821,7 +935,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * How long the message will stay alive in the queue. If unset the value
+         * will default to 7 days, if -1 is passed the message will not expire.
+         * The time to live must be -1 or any positive number. The format should
+         * be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345
+         * seconds, P2D -- parses as 2 days However, in case you are using
+         * EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -833,7 +953,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The timeout period for how long the message is invisible in the
+         * queue. If unset the value will default to 0 and the message will be
+         * instantly visible. The timeout must be between 0 seconds and 7 days.
+         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
+         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
+         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -845,7 +971,13 @@ public interface QueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * dd.
+         * The timeout period for how long the message is invisible in the
+         * queue. If unset the value will default to 0 and the message will be
+         * instantly visible. The timeout must be between 0 seconds and 7 days.
+         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
+         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
+         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -998,7 +1130,7 @@ public interface QueueEndpointBuilderFactory {
          * services
          * 
          * Path parameter: queueName
-         * d
+         * The queue resource name
          */
         default QueueEndpointBuilder azureStorageQueue(String path) {
             return QueueEndpointBuilderFactory.azureStorageQueue(path);
@@ -1020,7 +1152,7 @@ public interface QueueEndpointBuilderFactory {
      * services
      * 
      * Path parameter: queueName
-     * d
+     * The queue resource name
      */
     static QueueEndpointBuilder azureStorageQueue(String path) {
         class QueueEndpointBuilderImpl extends AbstractEndpointBuilder implements QueueEndpointBuilder, AdvancedQueueEndpointBuilder {

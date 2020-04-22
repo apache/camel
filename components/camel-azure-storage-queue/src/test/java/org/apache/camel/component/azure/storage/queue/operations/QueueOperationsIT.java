@@ -59,6 +59,7 @@ class QueueOperationsIT extends CamelTestSupport {
         configuration = new QueueConfiguration();
         configuration.setAccountName(properties.getProperty("account_name"));
         configuration.setAccessKey(properties.getProperty("access_key"));
+        configuration.setMaxMessages(5);
 
         final QueueServiceClient client = QueueClientFactory.createQueueServiceClient(configuration);
 

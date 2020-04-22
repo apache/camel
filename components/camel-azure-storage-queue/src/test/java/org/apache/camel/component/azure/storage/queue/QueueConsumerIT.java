@@ -96,7 +96,7 @@ class QueueConsumerIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("azure-storage-queue://cameldev/" + queueName + "?credentials=#creds")
+                from("azure-storage-queue://cameldev/" + queueName + "?credentials=#creds&maxMessages=5")
                         .to(resultName);
 
             }

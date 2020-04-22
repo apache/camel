@@ -45,8 +45,8 @@ public class QueueConfiguration implements Cloneable {
     private Duration timeToLive;
     @UriParam(label = "queue")
     private Duration visibilityTimeout;
-    @UriParam(label = "queue", defaultValue = "5")
-    private Integer maxMessages = 5;
+    @UriParam(label = "queue", defaultValue = "1")
+    private Integer maxMessages = 1;
 
     /**
      * Azure account name to be used for authentication with azure queue services
@@ -71,7 +71,12 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
-     * s
+     * Service client to a storage account to interact with the queue service. This client does not hold any state about a particular storage account
+     * but is instead a convenient way of sending off appropriate requests to the resource on the service.
+     *
+     * This client contains all the operations for interacting with a queue account in Azure Storage.
+     * Operations allowed by the client are creating, listing, and deleting queues, retrieving and updating properties of
+     * the account, and retrieving statistics of the account.
      */
     public QueueServiceClient getServiceClient() {
         return serviceClient;
@@ -82,7 +87,7 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
-     * d
+     * The queue resource name
      */
     public String getQueueName() {
         return queueName;
@@ -104,7 +109,12 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * How long the message will stay alive in the queue. If unset the value will default to
+     * 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number.
+     *
+     * The format should be in this form: `PnDTnHnMn.nS.`, e.g: "PT20.345S" -- parses as "20.345 seconds", P2D" -- parses as "2 days"
+     * However, in case you are using EndpointDsl/ComponentDsl, you can do something like `Duration.ofSeconds()`
+     * since these Java APIs are typesafe.
      */
     public Duration getTimeToLive() {
         return timeToLive;
@@ -115,7 +125,13 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
-     * dd
+     * The timeout period for how long the message is invisible in the queue. If
+     * unset the value will default to 0 and the message will be instantly visible. The timeout must be between 0
+     * seconds and 7 days.
+     *
+     * The format should be in this form: `PnDTnHnMn.nS.`, e.g: "PT20.345S" -- parses as "20.345 seconds", P2D" -- parses as "2 days"
+     * However, in case you are using EndpointDsl/ComponentDsl, you can do something like `Duration.ofSeconds()`
+     * since these Java APIs are typesafe.
      */
     public Duration getVisibilityTimeout() {
         return visibilityTimeout;
@@ -126,14 +142,20 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
-     * ss
+     * Queue service operation hint to the producer
      */
     public QueueOperationDefinition getOperation() {
         return operation;
     }
 
+    public void setOperation(QueueOperationDefinition operation) {
+        this.operation = operation;
+    }
+
     /**
-     * as
+     * Maximum number of messages to get, if there are less messages exist in the queue
+     * than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed
+     * range is 1 to 32 messages.
      */
     public Integer getMaxMessages() {
         return maxMessages;
@@ -141,10 +163,6 @@ public class QueueConfiguration implements Cloneable {
 
     public void setMaxMessages(Integer maxMessages) {
         this.maxMessages = maxMessages;
-    }
-
-    public void setOperation(QueueOperationDefinition operation) {
-        this.operation = operation;
     }
 
     // *************************************************
