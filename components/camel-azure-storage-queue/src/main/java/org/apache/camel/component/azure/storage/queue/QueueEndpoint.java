@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.azure.storage.queue;
 
 import com.azure.storage.queue.QueueServiceClient;
@@ -72,7 +88,6 @@ public class QueueEndpoint extends DefaultEndpoint {
     /**
      * Service client to a storage account to interact with the queue service. This client does not hold any state about a particular storage account
      * but is instead a convenient way of sending off appropriate requests to the resource on the service.
-     * It may also be used to construct URLs to blobs and containers.
      *
      * This client contains all the operations for interacting with a queue account in Azure Storage.
      * Operations allowed by the client are creating, listing, and deleting queues, retrieving and updating properties of

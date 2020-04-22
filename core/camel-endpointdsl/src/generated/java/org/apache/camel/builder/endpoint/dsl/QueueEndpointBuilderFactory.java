@@ -48,12 +48,11 @@ public interface QueueEndpointBuilderFactory {
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. It may also be
-         * used to construct URLs to blobs and containers. This client contains
-         * all the operations for interacting with a queue account in Azure
-         * Storage. Operations allowed by the client are creating, listing, and
-         * deleting queues, retrieving and updating properties of the account,
-         * and retrieving statistics of the account.
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option is a:
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -69,12 +68,11 @@ public interface QueueEndpointBuilderFactory {
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. It may also be
-         * used to construct URLs to blobs and containers. This client contains
-         * all the operations for interacting with a queue account in Azure
-         * Storage. Operations allowed by the client are creating, listing, and
-         * deleting queues, retrieving and updating properties of the account,
-         * and retrieving statistics of the account.
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -223,7 +221,7 @@ public interface QueueEndpointBuilderFactory {
         }
         /**
          * Access key for the associated azure account name to be used for
-         * authentication with azure blob services.
+         * authentication with azure queue services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -402,12 +400,11 @@ public interface QueueEndpointBuilderFactory {
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. It may also be
-         * used to construct URLs to blobs and containers. This client contains
-         * all the operations for interacting with a queue account in Azure
-         * Storage. Operations allowed by the client are creating, listing, and
-         * deleting queues, retrieving and updating properties of the account,
-         * and retrieving statistics of the account.
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option is a:
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -423,12 +420,11 @@ public interface QueueEndpointBuilderFactory {
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. It may also be
-         * used to construct URLs to blobs and containers. This client contains
-         * all the operations for interacting with a queue account in Azure
-         * Storage. Operations allowed by the client are creating, listing, and
-         * deleting queues, retrieving and updating properties of the account,
-         * and retrieving statistics of the account.
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -606,7 +602,7 @@ public interface QueueEndpointBuilderFactory {
         }
         /**
          * Access key for the associated azure account name to be used for
-         * authentication with azure blob services.
+         * authentication with azure queue services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -728,12 +724,11 @@ public interface QueueEndpointBuilderFactory {
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. It may also be
-         * used to construct URLs to blobs and containers. This client contains
-         * all the operations for interacting with a queue account in Azure
-         * Storage. Operations allowed by the client are creating, listing, and
-         * deleting queues, retrieving and updating properties of the account,
-         * and retrieving statistics of the account.
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option is a:
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -749,12 +744,11 @@ public interface QueueEndpointBuilderFactory {
          * Service client to a storage account to interact with the queue
          * service. This client does not hold any state about a particular
          * storage account but is instead a convenient way of sending off
-         * appropriate requests to the resource on the service. It may also be
-         * used to construct URLs to blobs and containers. This client contains
-         * all the operations for interacting with a queue account in Azure
-         * Storage. Operations allowed by the client are creating, listing, and
-         * deleting queues, retrieving and updating properties of the account,
-         * and retrieving statistics of the account.
+         * appropriate requests to the resource on the service. This client
+         * contains all the operations for interacting with a queue account in
+         * Azure Storage. Operations allowed by the client are creating,
+         * listing, and deleting queues, retrieving and updating properties of
+         * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
          * <code>com.azure.storage.queue.QueueServiceClient</code> type.
@@ -864,7 +858,7 @@ public interface QueueEndpointBuilderFactory {
         }
         /**
          * Access key for the associated azure account name to be used for
-         * authentication with azure blob services.
+         * authentication with azure queue services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1000,7 +994,7 @@ public interface QueueEndpointBuilderFactory {
          * Syntax: <code>azure-storage-queue:queueName</code>
          * 
          * Path parameter: accountName
-         * Azure account name to be used for authentication with azure blob
+         * Azure account name to be used for authentication with azure queue
          * services
          * 
          * Path parameter: queueName
@@ -1022,7 +1016,8 @@ public interface QueueEndpointBuilderFactory {
      * Syntax: <code>azure-storage-queue:queueName</code>
      * 
      * Path parameter: accountName
-     * Azure account name to be used for authentication with azure blob services
+     * Azure account name to be used for authentication with azure queue
+     * services
      * 
      * Path parameter: queueName
      * d

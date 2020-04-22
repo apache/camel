@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Azure Storage Queue</name>
-    <description>Camel Azure Blob Queue Service Component</description>
+    <description>Camel Azure Storage Queue Service Component</description>
 
     <properties>
     </properties>

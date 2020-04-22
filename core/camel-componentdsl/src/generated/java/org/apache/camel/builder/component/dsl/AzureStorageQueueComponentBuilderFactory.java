@@ -182,7 +182,7 @@ public interface AzureStorageQueueComponentBuilderFactory {
         }
         /**
          * Access key for the associated azure account name to be used for
-         * authentication with azure blob services.
+         * authentication with azure queue services.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

@@ -1,0 +1,12 @@
+[[azure-storage-queue-component]]
+= Azure Storage Queue Service Component
+:docTitle: Azure Storage Queue Service
+:artifactId: camel-azure-storage-queue
+:description: The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using Azure SDK v12.
+:since: 3.3
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
