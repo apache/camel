@@ -44,7 +44,7 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * For uploading downloading and managing files folders groups collaborations etc on box DOT com.
+ * Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "box", title = "Box", syntax = "box:apiName/methodName",
     consumerPrefix = "consumer", label = "api,file,cloud", lenientProperties = true)

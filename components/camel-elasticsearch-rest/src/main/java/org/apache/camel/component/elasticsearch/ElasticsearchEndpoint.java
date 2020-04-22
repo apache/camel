@@ -25,7 +25,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.elasticsearch.client.RestClient;
 
 /**
- * The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
+ * Send requests to with an ElasticSearch via REST API.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elastichsearch Rest",
     syntax = "elasticsearch-rest:clusterName", producerOnly = true, label = "monitoring,search")
@@ -55,7 +55,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Cannot consume from an ElasticsearchEndpoint: " + getEndpointUri());
     }
-    
+
     public RestClient getClient() {
         return client;
     }

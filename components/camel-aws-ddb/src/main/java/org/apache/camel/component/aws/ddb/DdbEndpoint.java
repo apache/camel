@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+ * Store and retrieve data from AWS DynamoDB service.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
@@ -77,7 +77,7 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
 
         ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
             : createDdbClient();
-        
+
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
 
@@ -101,7 +101,7 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
             LOG.trace("Table [{}] created", tableName);
         }
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonDDBClient())) {

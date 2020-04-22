@@ -35,8 +35,8 @@ import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
- * The cql component aims at integrating Cassandra 2.0+ using the CQL3 API (not
- * the Thrift API). It's based on Cassandra Java Driver provided by DataStax.
+ * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
+ * Based on Cassandra Java Driver provided by DataStax.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", label = "database,nosql")
 public class CassandraEndpoint extends ScheduledPollEndpoint {

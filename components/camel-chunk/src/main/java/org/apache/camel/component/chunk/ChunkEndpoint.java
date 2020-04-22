@@ -41,26 +41,26 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
 /**
- * Transforms the message using a Chunk template.
+ * Transform messages using Chunk templating engine.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
     private Chunk chunk;
-    
+
     @UriParam(description = "Define the encoding of the body")
     private String encoding;
-    
+
     @UriParam(description = "Define the themes folder to scan")
     private String themeFolder;
-    
+
     @UriParam(description = "Define the themes subfolder to scan")
     private String themeSubfolder;
-    
+
     @UriParam(description = "Define the theme layer to elaborate")
     private String themeLayer;
-    
+
     @UriParam(description = "Define the file extension of the template")
     private String extension;
 
@@ -157,11 +157,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
         }
         return chunk;
     }
-    
+
     private Theme getOrCreateTheme() throws IOException {
         if (theme == null) {
             if (themeFolder == null && themeSubfolder == null) {
-                theme = new Theme(); 
+                theme = new Theme();
             } else if (themeFolder != null && themeSubfolder == null) {
                 URL url = getCamelContext().getClassResolver().loadResourceAsURL(themeFolder);
                 theme = new Theme(url.getPath(), "");
@@ -190,7 +190,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             return uri;
         }
     }
-    
+
     private String getResourceUriExtended() throws IOException {
         return themeLayer == null
                 ? getResourceUri()
@@ -212,7 +212,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
     public void setThemeFolder(String themeFolder) {
         this.themeFolder = themeFolder;
     }
-    
+
     public String getThemeSubfolder() {
         return themeSubfolder;
     }
@@ -228,7 +228,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
     public void setThemeLayer(String themeLayer) {
         this.themeLayer = themeLayer;
     }
-    
+
     public String getExtension() {
         return extension;
     }

@@ -21,7 +21,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.
+ * Capture changes from a MySQL database.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mysql", title = "Debezium MySQL Connector", syntax = "debezium-mysql:name", label = "database,sql,mysql", consumerOnly = true)
 public final class DebeziumMySqlEndpoint extends DebeziumEndpoint<MySqlConnectorEmbeddedDebeziumConfiguration> {

@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
+ * Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {

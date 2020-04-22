@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-ecs is used for managing Amazon ECS
+ * Manage AWS ECS cluster instances.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS ECS", syntax = "aws-ecs:label", producerOnly = true, label = "cloud,management")
 public class ECSEndpoint extends ScheduledPollEndpoint {
@@ -65,7 +65,7 @@ public class ECSEndpoint extends ScheduledPollEndpoint {
 
         ecsClient = configuration.getEcsClient() != null ? configuration.getEcsClient() : createECSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEcsClient())) {

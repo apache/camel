@@ -35,7 +35,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
+ * Receive messages from AWS DynamoDB Stream service.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
         consumerOnly = true, syntax = "aws-ddbstream:tableName",

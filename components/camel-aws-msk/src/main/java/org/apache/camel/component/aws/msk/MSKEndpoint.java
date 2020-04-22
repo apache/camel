@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-msk is used for managing Amazon MSK
+ * Manage AWS MSK instances.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS MSK", syntax = "aws-msk:label", producerOnly = true, label = "cloud,management")
 public class MSKEndpoint extends ScheduledPollEndpoint {
@@ -65,7 +65,7 @@ public class MSKEndpoint extends ScheduledPollEndpoint {
 
         mskClient = configuration.getMskClient() != null ? configuration.getMskClient() : createMSKClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getMskClient())) {

@@ -35,16 +35,16 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-ec2 is used for managing Amazon EC2 instances.
+ * Manage AWS EC2 instances.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
 public class EC2Endpoint extends ScheduledPollEndpoint {
-    
+
     private AmazonEC2 ec2Client;
 
     @UriParam
     private EC2Configuration configuration;
-    
+
     public EC2Endpoint(String uri, Component component, EC2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -63,10 +63,10 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
+
         ec2Client = configuration.getAmazonEc2Client() != null ? configuration.getAmazonEc2Client() : (AmazonEC2Client) createEc2Client();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonEc2Client())) {

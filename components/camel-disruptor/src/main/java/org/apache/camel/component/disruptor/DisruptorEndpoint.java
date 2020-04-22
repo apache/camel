@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+ * Provides asynchronous SEDA behavior using LMAX Disruptor.
  *
  * This component works much as the standard SEDA Component, but utilizes a Disruptor
  * instead of a BlockingQueue utilized by the standard SEDA.
@@ -349,7 +349,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         boolean result = super.equals(object);
         return result && getCamelContext().equals(((DisruptorEndpoint)object).getCamelContext());
     }
-    
+
     @Override
     public int hashCode() {
         return getEndpointUri().hashCode() * 37 + getCamelContext().hashCode();

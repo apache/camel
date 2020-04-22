@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-iam is used for managing Amazon IAM
+ * Manage AWS IAM instances.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "aws-iam", title = "AWS IAM", syntax = "aws-iam:label", producerOnly = true, label = "cloud,management")
 public class IAMEndpoint extends ScheduledPollEndpoint {

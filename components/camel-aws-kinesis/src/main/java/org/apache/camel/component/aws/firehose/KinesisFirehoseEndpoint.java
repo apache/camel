@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+ * Consume data from AWS Kinesis Firehose streams.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "aws-kinesis-firehose", title = "AWS Kinesis Firehose", syntax = "aws-kinesis-firehose:streamName",
     producerOnly = true, label = "cloud,messaging")
@@ -41,7 +41,7 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
 
     @UriParam
     private KinesisFirehoseConfiguration configuration;
-    
+
     private AmazonKinesisFirehose kinesisFirehoseClient;
 
     public KinesisFirehoseEndpoint(String uri, KinesisFirehoseConfiguration configuration, KinesisFirehoseComponent component) {
@@ -58,15 +58,15 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume messages from this endpoint");
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null ? configuration.getAmazonKinesisFirehoseClient()
             : createKinesisFirehoseClient();
-               
+
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonKinesisFirehoseClient())) {
@@ -76,7 +76,7 @@ public class KinesisFirehoseEndpoint extends DefaultEndpoint {
         }
         super.doStop();
     }
-    
+
     AmazonKinesisFirehose createKinesisFirehoseClient() {
         AmazonKinesisFirehose client = null;
         ClientConfiguration clientConfiguration = null;

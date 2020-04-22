@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-eks is used for managing Amazon EKS
+ * Manage AWS EKS cluster instances.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-eks", title = "AWS EKS", syntax = "aws-eks:label", producerOnly = true, label = "cloud,management")
 public class EKSEndpoint extends ScheduledPollEndpoint {
@@ -65,7 +65,7 @@ public class EKSEndpoint extends ScheduledPollEndpoint {
 
         eksClient = configuration.getEksClient() != null ? configuration.getEksClient() : createEKSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEksClient())) {

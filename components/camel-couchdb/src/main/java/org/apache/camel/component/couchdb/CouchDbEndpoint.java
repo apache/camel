@@ -31,7 +31,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.lightcouch.CouchDbClient;
 
 /**
- * The couchdb component is used for integrate with CouchDB databases.
+ * Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete
+ * documents from a CouchDB database.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {

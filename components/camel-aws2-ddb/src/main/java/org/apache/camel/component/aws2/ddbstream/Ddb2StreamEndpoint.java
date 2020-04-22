@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
 
 /**
- * The aws2-ddbstream component is used for working with Amazon DynamoDB Streams.
+ * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true, syntax = "aws2-ddbstream:tableName", label = "cloud,messaging,streams")
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {

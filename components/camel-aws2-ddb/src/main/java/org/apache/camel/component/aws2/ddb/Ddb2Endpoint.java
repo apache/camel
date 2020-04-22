@@ -45,8 +45,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 /**
- * The aws2-ddb component is used for storing and retrieving data from Amazon's
- * DynamoDB service.
+ * Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class Ddb2Endpoint extends ScheduledPollEndpoint {

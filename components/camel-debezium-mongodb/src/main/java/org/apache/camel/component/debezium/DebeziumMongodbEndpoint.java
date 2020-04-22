@@ -23,7 +23,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.kafka.connect.data.Schema;
 
 /**
- * Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.
+ * Capture changes from a MongoDB database.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector", syntax = "debezium-mongodb:name", label = "database,nosql,mongodb", consumerOnly = true)
 public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration> {
