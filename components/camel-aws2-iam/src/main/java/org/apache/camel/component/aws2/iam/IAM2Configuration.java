@@ -47,6 +47,8 @@ public class IAM2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(defaultValue = "false")
+    private boolean pojoRequest;
 
     public IamClient getIamClient() {
         return iamClient;
@@ -137,6 +139,17 @@ public class IAM2Configuration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    public boolean isPojoRequest() {
+        return pojoRequest;
+    }
+
+    /**
+     * If we want to use a POJO request as body or not
+     */
+    public void setPojoRequest(boolean pojoRequest) {
+        this.pojoRequest = pojoRequest;
     }
 
     // *************************************************

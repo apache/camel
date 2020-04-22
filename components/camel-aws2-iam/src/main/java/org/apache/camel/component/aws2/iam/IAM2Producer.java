@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.iam;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -42,6 +43,7 @@ import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserResponse;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.iam.model.GetUserResponse;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
 import software.amazon.awssdk.services.iam.model.ListUsersResponse;
@@ -136,7 +138,21 @@ public class IAM2Producer extends DefaultProducer {
         return (IAM2Endpoint)super.getEndpoint();
     }
 
-    private void listAccessKeys(IamClient iamClient, Exchange exchange) {
+    private void listAccessKeys(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListAccessKeysRequest) {
+                ListAccessKeysResponse response;
+                try {
+                    response = iamClient.listAccessKeys((ListAccessKeysRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
         ListAccessKeysResponse response;
         try {
             response = iamClient.listAccessKeys();
@@ -146,9 +162,24 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(response);
+        }
     }
 
-    private void createUser(IamClient iamClient, Exchange exchange) {
+    private void createUser(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateUserRequest) {
+                CreateUserResponse result;
+                try {
+                    result = iamClient.createUser((CreateUserRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateUserRequest.Builder builder = CreateUserRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
@@ -165,6 +196,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void deleteUser(IamClient iamClient, Exchange exchange) {
