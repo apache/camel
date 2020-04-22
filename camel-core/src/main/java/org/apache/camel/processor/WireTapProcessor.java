@@ -152,20 +152,26 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
-        executorService.submit(new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                taskCount.increment();
-                try {
-                    LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-                    processor.process(wireTapExchange);
-                } catch (Throwable e) {
-                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
-                } finally {
-                    taskCount.decrement();
+        try {
+            executorService.submit(new Callable<Exchange>() {
+                public Exchange call() throws Exception {
+                    taskCount.increment();
+                    try {
+                        LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+                        processor.process(wireTapExchange);
+                    } catch (Throwable e) {
+                        LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
+                    } finally {
+                        taskCount.decrement();
+                    }
+                    return wireTapExchange;
                 }
-                return wireTapExchange;
-            }
-        });
+            });
+        } catch (Throwable e) {
+            // in case the thread pool rejects or cannot submit the task then we need to catch
+            // so camel error handler can react
+            exchange.setException(e);
+        }
 
         // continue routing this synchronously
         callback.done(true);
