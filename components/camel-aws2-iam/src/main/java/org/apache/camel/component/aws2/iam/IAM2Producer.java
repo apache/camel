@@ -46,6 +46,7 @@ import software.amazon.awssdk.services.iam.model.GetUserResponse;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
+import software.amazon.awssdk.services.iam.model.ListUsersRequest;
 import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupResponse;
@@ -267,7 +268,21 @@ public class IAM2Producer extends DefaultProducer {
         }
     }
 
-    private void listUsers(IamClient iamClient, Exchange exchange) {
+    private void listUsers(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListUsersRequest) {
+                ListUsersResponse result;
+                try {
+                    result = iamClient.listUsers((ListUsersRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         ListUsersResponse result;
         try {
             result = iamClient.listUsers();
@@ -277,9 +292,24 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
-    private void createAccessKey(IamClient iamClient, Exchange exchange) {
+    private void createAccessKey(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateAccessKeyRequest) {
+                CreateAccessKeyResponse result;
+                try {
+                    result = iamClient.createAccessKey((CreateAccessKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateAccessKeyRequest.Builder builder = CreateAccessKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
@@ -294,6 +324,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void deleteAccessKey(IamClient iamClient, Exchange exchange) {
