@@ -20,7 +20,7 @@ To use a Groovy expression use the following Java code
 
 [source,java]
 ---------------------------------------
-... groovy("someGroovyExpression") ... 
+... groovy("someGroovyExpression") ...
 ---------------------------------------
 
 For example you could use the *groovy* function to create an
@@ -57,7 +57,7 @@ bean to your Spring context...
 [source,java]
 ----------------------------------------------------------------------
 public class CustomGroovyShellFactory implements GroovyShellFactory {
- 
+
   public GroovyShell createGroovyShell(Exchange exchange) {
     ImportCustomizer importCustomizer = new ImportCustomizer();
     importCustomizer.addStaticStars("com.example.Utils");
@@ -71,6 +71,26 @@ public class CustomGroovyShellFactory implements GroovyShellFactory {
 
 ...Camel will use your custom GroovyShell instance (containing your
 custom static imports), instead of the default one.
+
+=== Customizing Groovy class file name
+
+You may rarely in need of customizing generated Groovy class file name for debugging purposes.
+This is also possible by implementing `getFileName` method.
+
+[source,java]
+----------------------------------------------------------------------
+public class CustomGroovyShellFactory implements GroovyShellFactory {
+
+  public GroovyShell createGroovyShell(Exchange exchange) {
+    return new GroovyShell();
+  }
+
+  public String getFileName(Exchange exchange) {
+    return "Foo.groovy";
+  }
+
+}
+----------------------------------------------------------------------
 
 == Example
 
@@ -135,7 +155,7 @@ header on the Camel message with the key `CamelScriptArguments`. +
 
 If you need to use the xref:ROOT:properties-component.adoc[Properties] component from a
 script to lookup property placeholders, then its a bit cumbersome to do
-so. 
+so.
 For example to set a header name myHeader with a value from a property
 placeholder, which key is provided in a header named "foo".
 
@@ -178,7 +198,7 @@ variable as the script return value.
 [source,text]
 -------------------------------------------------------------
 bar = "baz";
-# some other statements ... 
+# some other statements ...
 # camel take the result value as the script evaluation result
 result = body * 2 + 1
 -------------------------------------------------------------
