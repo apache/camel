@@ -29,7 +29,7 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
-    private static final String CONFLUENT_PLATFORM_VERSION = "5.3.1";
+    private static final String CONFLUENT_PLATFORM_VERSION = "5.4.1";
 
     @ClassRule
     public static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
