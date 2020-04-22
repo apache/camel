@@ -165,7 +165,7 @@ In AWS ECS there are multiple operations you can submit, as an example for List 
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(ListClustersRequest.builder().maxResults(10).build())
-  .to("aws2-ecs://test?ecsClient=#amazonEcsClient&operation=listClusters")
+  .to("aws2-ecs://test?ecsClient=#amazonEcsClient&operation=listClusters&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
