@@ -163,7 +163,7 @@ This may be really useful for smarter configuration of the endpoint.
 == Using a POJO as body
 
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
-In AWS KMS there are multiple operations you can submit, as an example for Create List keys request, you can do something like:
+In AWS KMS there are multiple operations you can submit, as an example for List keys request, you can do something like:
 
 ------------------------------------------------------------------------------------------------------
 from("direct:createUser")
