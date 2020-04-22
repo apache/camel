@@ -173,7 +173,7 @@ In AWS EKS there are multiple operations you can submit, as an example for List 
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(ListClustersRequest.builder().maxResults(12).build())
-  .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters")
+  .to("aws2-eks://test?eksClient=#amazonEksClient&operation=listClusters&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.

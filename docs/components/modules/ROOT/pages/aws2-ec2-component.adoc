@@ -188,7 +188,7 @@ In AWS EC2 there are multiple operations you can submit, as an example for Creat
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build())
-  .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
+  .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances&pojoRequest=true");
 ------------------------------------------------------------------------------------------------------
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
