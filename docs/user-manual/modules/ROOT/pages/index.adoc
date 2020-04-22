@@ -140,6 +140,7 @@ Consult the xref:components::index.adoc[components] documentation.
 
 * xref:support.adoc[Support]
 * xref:contributing.adoc[Contributing]
+* xref:release-guide.adoc[Release guide]
 * xref:mailing-lists.adoc[Mailing Lists]
 * https://gitter.im/apache/apache-camel[Gitter Chat]
 * xref:user-stories.adoc[User Stories]
