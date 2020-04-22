@@ -2,7 +2,7 @@
 = Atomix Queue Component
 :docTitle: Atomix Queue
 :artifactId: camel-atomix
-:description: The atomix-queue component is used to access Atomix's distributed queue.
+:description: Access Atomix's distributed queue.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

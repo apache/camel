@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ehcache",
     "title": "Ehcache",
-    "description": "The ehcache component enables you to perform caching operations using Ehcache as cache implementation.",
+    "description": "Perform caching operations using Ehcache.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "cache,datagrid,clustering",

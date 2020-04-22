@@ -4,7 +4,7 @@
 :page-source: components/camel-debezium-postgres/src/main/docs/debezium-postgres-component.adoc
 :docTitle: Debezium PostgresSQL Connector
 :artifactId: camel-debezium-postgres
-:description: Represents a Debezium PostgresSQL endpoint which is used to capture changes in PostgresSQL database so that that applications can see those changes and respond to them.
+:description: Capture changes from a PostgresSQL database.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

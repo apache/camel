@@ -2,7 +2,7 @@
 = AWS 2 MSK Component
 :docTitle: AWS 2 MSK
 :artifactId: camel-aws2-msk
-:description: The aws2-msk is used for managing Amazon MSK
+:description: Manage AWS MSK instances using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

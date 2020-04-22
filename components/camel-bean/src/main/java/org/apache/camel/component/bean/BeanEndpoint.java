@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The bean component is for invoking Java beans from Camel.
+ * Invoke methods of Java beans stored in Camel registry.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {

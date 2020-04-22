@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "etcd-stats",
     "title": "Etcd Stats",
-    "description": "The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.",
+    "description": "Access etcd cluster statistcs.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "clustering,database",

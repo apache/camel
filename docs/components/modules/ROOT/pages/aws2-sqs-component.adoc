@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-sqs/src/main/docs/aws2-sqs-component.adoc
 :docTitle: AWS 2 Simple Queue Service
 :artifactId: camel-aws2-sqs
-:description: The aws2-sqs component is used for sending and receiving messages to Amazon's SQS service.
+:description: Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

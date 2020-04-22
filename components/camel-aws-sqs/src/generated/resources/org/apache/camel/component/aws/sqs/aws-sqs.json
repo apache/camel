@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-sqs",
     "title": "AWS Simple Queue Service",
-    "description": "The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.",
+    "description": "Sending and receive messages to\/from AWS SQS service.",
     "deprecated": false,
     "firstVersion": "2.6.0",
     "label": "cloud,messaging",

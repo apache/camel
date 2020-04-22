@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-blob",
     "title": "Azure Storage Blob Service (Legacy)",
-    "description": "The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.",
+    "description": "Store and retrieve blobs from Azure Storage Blob Service.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,database,nosql",

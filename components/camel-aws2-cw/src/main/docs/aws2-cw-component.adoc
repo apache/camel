@@ -2,7 +2,7 @@
 = AWS 2 CloudWatch Component
 :docTitle: AWS 2 CloudWatch
 :artifactId: camel-aws2-cw
-:description: The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
+:description: Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

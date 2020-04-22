@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "caffeine-loadcache",
     "title": "Caffeine LoadCache",
-    "description": "The caffeine-loadcache component is used for integration with Caffeine Load Cache.",
+    "description": "Perform caching operations using Caffeine Cache with an attached CacheLoader.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "cache,datagrid,clustering",

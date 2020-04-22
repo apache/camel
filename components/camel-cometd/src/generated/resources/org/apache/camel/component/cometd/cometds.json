@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cometds",
     "title": "CometD (Secure)",
-    "description": "The cometd component is a transport for working with the Jetty implementation of the cometd\/bayeux protocol.",
+    "description": "Offers publish\/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD\/Bayeux protocol.",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "websocket",

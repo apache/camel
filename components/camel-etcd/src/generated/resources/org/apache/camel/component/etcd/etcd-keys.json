@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "etcd-keys",
     "title": "Etcd Keys",
-    "description": "Camel Etcd support",
+    "description": "Get, set or delete keys in etcd key-value store.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "clustering,database",

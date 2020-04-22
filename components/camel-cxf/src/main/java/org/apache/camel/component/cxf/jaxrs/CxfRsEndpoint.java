@@ -63,7 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The cxfrs component is used for JAX-RS REST services using Apache CXF.
+ * Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest", lenientProperties = true)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
@@ -277,7 +277,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     private void processResourceModel(JAXRSServerFactoryBean sfb) {
-        // Currently a CXF model document is the only possible source 
+        // Currently a CXF model document is the only possible source
         // of the model. Other sources will be supported going forward
         if (modelRef != null) {
 
@@ -298,10 +298,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 resource.setName(DefaultModelResource.class.getName());
             }
         }
-        // The CXF to Camel exchange binding may need to be customized 
+        // The CXF to Camel exchange binding may need to be customized
         // for the operation name, request, response types be derived from
         // the model info (when a given model does provide this info) as opposed
-        // to a matched method which is of no real use with a default handler. 
+        // to a matched method which is of no real use with a default handler.
         sfb.setModelBeans(resources);
 
     }

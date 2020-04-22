@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-queue",
     "title": "Azure Storage Queue Service",
-    "description": "The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.",
+    "description": "Store and retrieve messages from Azure Storage Queue Service.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,queue,azure",

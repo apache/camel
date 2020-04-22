@@ -21,6 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * Get, set or delete keys in etcd key-value store.
+ */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-keys", title = "Etcd Keys", producerOnly = true,
         syntax = "etcd-keys:path", label = "clustering,database")
 public class EtcdKeysEndpoint extends AbstractEtcdEndpoint {

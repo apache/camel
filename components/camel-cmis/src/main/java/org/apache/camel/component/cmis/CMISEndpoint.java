@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+ * Read and write data from to/from a CMIS compliant content repositories.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl", label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {

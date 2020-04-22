@@ -21,7 +21,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Represents a Debezium SQL Server endpoint which is used to capture changes in SQL Server database so that that applications can see those changes and respond to them.
+ * Capture changes from an SQL Server database.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector", syntax = "debezium-sqlserver:name", label = "database,sql,sqlserver", consumerOnly = true)
 public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration> {

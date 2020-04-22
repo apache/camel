@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 
 /**
- * The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
+ * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS 2 CloudWatch", syntax = "aws2-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class Cw2Endpoint extends DefaultEndpoint {

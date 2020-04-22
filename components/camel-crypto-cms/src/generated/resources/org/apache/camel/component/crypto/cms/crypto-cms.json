@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "crypto-cms",
     "title": "Crypto CMS",
-    "description": "The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.",
+    "description": "Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.",
     "deprecated": true,
     "firstVersion": "2.20.0",
     "label": "security,transformation",

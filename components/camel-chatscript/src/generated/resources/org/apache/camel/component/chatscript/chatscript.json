@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "chatscript",
     "title": "ChatScript",
-    "description": "Represents a ChatScript endpoint.",
+    "description": "Chat with a ChatScript Server.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "ai,chatscript",

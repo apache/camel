@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+ * Send metrics to AWS CloudWatch.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class CwEndpoint extends DefaultEndpoint {
@@ -64,7 +64,7 @@ public class CwEndpoint extends DefaultEndpoint {
 
         cloudWatchClient = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonCwClient())) {

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "dozer",
     "title": "Dozer",
-    "description": "The dozer component provides the ability to map between Java beans using the Dozer mapping library.",
+    "description": "Map between Java beans using the Dozer mapping library.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "transformation",

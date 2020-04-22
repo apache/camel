@@ -2,7 +2,7 @@
 = AWS 2 KMS Component
 :docTitle: AWS 2 KMS
 :artifactId: camel-aws2-kms
-:description: The aws2-kms is used for managing Amazon KMS
+:description: Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

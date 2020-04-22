@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The corda component uses corda-rpc to interact with corda nodes.
+ * Perform operations against Corda blockchain platform using corda-rpc library.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "Corda", syntax = "corda:node", label = "corda,blockchain")
 public class CordaEndpoint extends DefaultEndpoint {

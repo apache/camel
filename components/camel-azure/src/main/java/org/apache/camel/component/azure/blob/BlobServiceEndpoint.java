@@ -27,12 +27,12 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
+ * Store and retrieve blobs from Azure Storage Blob Service.
  */
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-blob",
              title = "Azure Storage Blob Service (Legacy)",
-             syntax = "azure-blob:containerOrBlobUri", 
+             syntax = "azure-blob:containerOrBlobUri",
              label = "cloud,database,nosql")
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
@@ -60,7 +60,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         if (getConfiguration().getBlobName() == null
-            && getConfiguration().getOperation() != null 
+            && getConfiguration().getOperation() != null
             && BlobServiceOperations.listBlobs != configuration.getOperation()) {
             // Omitting a blob name is only possible it is a (default) listBlobs producer operation
             throw new IllegalArgumentException("Blob name must be specified.");

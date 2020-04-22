@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cron",
     "title": "Cron",
-    "description": "Camel Cron Component",
+    "description": "A generic interface for triggering events at times specified through the Unix cron syntax.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "scheduling",

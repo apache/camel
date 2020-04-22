@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atmosphere-websocket",
     "title": "Atmosphere Websocket",
-    "description": "To exchange data with external Websocket clients using Atmosphere.",
+    "description": "Expose WebSocket endpoints using the Atmosphere framework.",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "2.14.0",

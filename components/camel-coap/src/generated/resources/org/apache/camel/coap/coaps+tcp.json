@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "coaps+tcp",
     "title": "CoAP",
-    "description": "The coap component is used for sending and receiving messages from COAP capable devices.",
+    "description": "Send and receive messages to\/from COAP capable devices.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "iot",

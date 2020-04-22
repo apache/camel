@@ -2,7 +2,7 @@
 = ChatScript Component
 :docTitle: ChatScript
 :artifactId: camel-chatscript
-:description: Represents a ChatScript endpoint.
+:description: Chat with a ChatScript Server.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

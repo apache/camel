@@ -2,7 +2,7 @@
 = Direct Component
 :docTitle: Direct
 :artifactId: camel-direct
-:description: The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
+:description: Provides a direct, synchronous call to another endpoint from the same CamelContext.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

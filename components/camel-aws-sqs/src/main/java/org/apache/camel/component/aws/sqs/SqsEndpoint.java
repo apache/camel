@@ -57,8 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-sqs component is used for sending and receiving messages to Amazon's
- * SQS service.
+ * Sending and receive messages to/from AWS SQS service.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn", label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
@@ -324,7 +323,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     /**
      * Provide the possibility to override this method for an mock
      * implementation
-     * 
+     *
      * @return AmazonSQSClient
      */
     AmazonSQS createClient() {
@@ -340,7 +339,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             isClientConfigFound = true;
         }
 
-        final String protocol = configuration.getProtocol(); 
+        final String protocol = configuration.getProtocol();
 
         if (protocol.equals("http")) {
             LOG.trace("Configuring AWS-SQS for HTTP protocol");

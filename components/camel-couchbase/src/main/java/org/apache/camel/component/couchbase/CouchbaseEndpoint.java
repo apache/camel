@@ -53,8 +53,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_TI
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VIEWNAME;
 
 /**
- * Represents a Couchbase endpoint that can query Views with a Poll strategy
- * and/or produce various type of operations.
+ * Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port", label = "database,nosql")
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {

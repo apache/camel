@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The asterisk component is used to interact with Asterisk PBX Server.
+ * Interact with Asterisk PBX Server.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {

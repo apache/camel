@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-ddbstream",
     "title": "AWS DynamoDB Streams",
-    "description": "The aws-ddbstream component is used for working with Amazon DynamoDB Streams.",
+    "description": "Receive messages from AWS DynamoDB Stream service.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "cloud,messaging,streams",

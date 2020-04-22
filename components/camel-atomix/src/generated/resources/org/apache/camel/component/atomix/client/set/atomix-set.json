@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-set",
     "title": "Atomix Set",
-    "description": "The atomix-set component is used to access Atomix's distributed set.",
+    "description": "Access Atomix's distributed set.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

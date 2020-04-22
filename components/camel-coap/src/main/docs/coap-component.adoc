@@ -2,7 +2,7 @@
 = CoAP Component
 :docTitle: CoAP
 :artifactId: camel-coap
-:description: The coap component is used for sending and receiving messages from COAP capable devices.
+:description: Send and receive messages to/from COAP capable devices.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

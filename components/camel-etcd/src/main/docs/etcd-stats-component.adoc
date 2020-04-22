@@ -2,7 +2,7 @@
 = Etcd Stats Component
 :docTitle: Etcd Stats
 :artifactId: camel-etcd
-:description: The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+:description: Access etcd cluster statistcs.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -30,9 +30,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The crypto cms component is used for encrypting data in CMS Enveloped Data
- * format, decrypting CMS Enveloped Data, signing data in CMS Signed Data
- * format, and verifying CMS Signed Data.
+ * Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "crypto-cms", title = "Crypto CMS", syntax = "crypto-cms:cryptoOperation:name", producerOnly = true, label = "security,transformation")
 public class CryptoCmsEndpoint extends DefaultEndpoint {

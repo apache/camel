@@ -35,7 +35,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-mq is used for managing Amazon MQ instances.
+ * Manage AWS MQ instances.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "aws-mq", title = "AWS MQ", syntax = "aws-mq:label", producerOnly = true, label = "cloud,management")
 public class MQEndpoint extends ScheduledPollEndpoint {
@@ -66,7 +66,7 @@ public class MQEndpoint extends ScheduledPollEndpoint {
 
         mqClient = configuration.getAmazonMqClient() != null ? configuration.getAmazonMqClient() : (AmazonMQClient)createMQClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonMqClient())) {

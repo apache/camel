@@ -4,7 +4,7 @@
 :page-source: components/camel-crypto-cms/src/main/docs/crypto-cms-component.adoc
 :docTitle: Crypto CMS
 :artifactId: camel-crypto-cms
-:description: The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
+:description: Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
 :since: 2.20
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*

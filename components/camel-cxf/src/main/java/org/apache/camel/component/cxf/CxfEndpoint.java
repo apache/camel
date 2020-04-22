@@ -117,7 +117,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The cxf component is used for SOAP WebServices using Apache CXF.
+ * Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", label = "soap,webservice")
 public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
@@ -621,15 +621,15 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         } else {
             factoryBean = createClientFactoryBean();
         }
-        
+
         // setup client factory bean
         setupClientFactoryBean(factoryBean, cls);
-        
+
         if (cls == null) {
             checkName(factoryBean.getEndpointName(), "endpoint/port name");
             checkName(factoryBean.getServiceName(), "service name");
         }
-        
+
         Client client = factoryBean.create();
 
         // setup the handlers
@@ -1141,7 +1141,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         CamelCxfClientImpl(Bus bus, Endpoint ep) {
             super(bus, ep);
         }
-  
+
         @Override
         protected Object[] processResult(Message message, org.apache.cxf.message.Exchange exchange,
                                          BindingOperationInfo oi, Map<String, Object> resContext)
@@ -1154,7 +1154,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 return null;
             }
         }
-        
+
         @SuppressWarnings("unchecked")
         @Override
         protected void setParameters(Object[] params, Message message) {

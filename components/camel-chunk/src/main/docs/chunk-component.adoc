@@ -2,7 +2,7 @@
 = Chunk Component
 :docTitle: Chunk
 :artifactId: camel-chunk
-:description: Transforms the message using a Chunk template.
+:description: Transform messages using Chunk templating engine.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported

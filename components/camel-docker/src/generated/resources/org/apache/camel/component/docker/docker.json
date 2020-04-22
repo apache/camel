@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "docker",
     "title": "Docker",
-    "description": "The docker component is used for managing Docker containers.",
+    "description": "Manage Docker containers.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "container,cloud,paas",

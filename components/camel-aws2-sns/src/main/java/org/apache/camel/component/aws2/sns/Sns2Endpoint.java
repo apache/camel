@@ -52,8 +52,7 @@ import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
 
 /**
- * The aws2-sns component is used for sending messages to an Amazon Simple
- * Notification Topic.
+ * Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS 2 Simple Notification System", syntax = "aws2-sns:topicNameOrArn", producerOnly = true, label = "cloud,mobile,messaging")
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {

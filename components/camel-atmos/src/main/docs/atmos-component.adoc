@@ -2,7 +2,7 @@
 = Atmos Component
 :docTitle: Atmos
 :artifactId: camel-atmos
-:description: The atmos component is used for integrating with EMC's Atomos Storage.
+:description: Integract with EMC's ViPR object data services using the Atmos Client.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

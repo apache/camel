@@ -4,7 +4,7 @@
 :page-source: components/camel-aws2-eks/src/main/docs/aws2-eks-component.adoc
 :docTitle: AWS 2 EKS
 :artifactId: camel-aws2-eks
-:description: The aws2-eks is used for managing Amazon EKS
+:description: Manage AWS EKS cluster instances using AWS SDK version 2.x.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

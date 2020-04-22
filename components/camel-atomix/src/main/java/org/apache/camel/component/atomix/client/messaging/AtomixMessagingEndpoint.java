@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The atomix-messaging component is used to access Atomix's <a href="http://atomix.io/atomix/docs/groups/#messaging">group messaging</a>.
+ * Access Atomix's <a href="http://atomix.io/atomix/docs/groups/#messaging">group messaging</a>.
  */
 @UriEndpoint(
     firstVersion = "2.20.0",

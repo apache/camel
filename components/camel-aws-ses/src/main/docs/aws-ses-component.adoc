@@ -2,7 +2,7 @@
 = AWS Simple Email Service Component
 :docTitle: AWS Simple Email Service
 :artifactId: camel-aws-ses
-:description: The aws-ses component is used for sending emails with Amazon's SES service.
+:description: Send e-mails through AWS SES service.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Only producer is supported

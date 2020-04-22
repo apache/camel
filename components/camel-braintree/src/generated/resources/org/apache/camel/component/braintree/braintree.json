@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "braintree",
     "title": "Braintree",
-    "description": "The braintree component is used for integrating with the Braintree Payment System.",
+    "description": "Process payments using Braintree Payments.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "api,cloud,payment",

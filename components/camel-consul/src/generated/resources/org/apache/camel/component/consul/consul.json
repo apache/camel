@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "consul",
     "title": "Consul",
-    "description": "The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.",
+    "description": "Integrate with Consul service discovery and configuration store.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "api,cloud",

@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+ * Send messages to an AWS Simple Notification Topic.
  */
 @UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn",
     producerOnly = true, label = "cloud,mobile,messaging")
@@ -106,7 +106,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new SnsHeaderFilterStrategy();
         }
-        
+
         if (configuration.getTopicArn() == null) {
             try {
                 String nextToken = null;
@@ -131,7 +131,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (configuration.getTopicArn() == null && configuration.isAutoCreateTopic()) {
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
-            
+
             if (configuration.isServerSideEncryptionEnabled()) {
                 if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
                     Map<String, String> attributes = new HashMap<>();
@@ -147,15 +147,15 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
             LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
         }
-        
+
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
-            
+
             snsClient.setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
-            
+
             LOG.trace("Topic policy updated");
         }
-        
+
         if (configuration.isSubscribeSNStoSQS()) {
             if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient()) && ObjectHelper.isNotEmpty(configuration.getQueueUrl())) {
                 String subscriptionARN = Topics.subscribeQueue(snsClient, configuration.getAmazonSQSClient(), configuration.getTopicArn(), configuration.getQueueUrl());
@@ -164,9 +164,9 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 throw new IllegalArgumentException("Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
             }
         }
-        
+
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSNSClient())) {
@@ -184,11 +184,11 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setConfiguration(SnsConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     public void setSNSClient(AmazonSNS snsClient) {
         this.snsClient = snsClient;
     }
-    
+
     public AmazonSNS getSNSClient() {
         return snsClient;
     }

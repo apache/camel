@@ -4,7 +4,7 @@
 :page-source: components/camel-asterisk/src/main/docs/asterisk-component.adoc
 :docTitle: Asterisk
 :artifactId: camel-asterisk
-:description: The asterisk component is used to interact with Asterisk PBX Server.
+:description: Interact with Asterisk PBX Server.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

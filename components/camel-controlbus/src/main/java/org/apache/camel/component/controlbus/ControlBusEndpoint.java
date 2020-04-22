@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+ * Manage and monitor Camel routes.
  *
  * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance statistics.
  */

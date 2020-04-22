@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atomix-messaging",
     "title": "Atomix Messaging",
-    "description": "The atomix-messaging component is used to access Atomix's group messaging.",
+    "description": "Access Atomix's group messaging.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "clustering",

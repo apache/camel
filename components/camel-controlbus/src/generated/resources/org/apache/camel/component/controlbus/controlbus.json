@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "controlbus",
     "title": "Control Bus",
-    "description": "The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.",
+    "description": "Manage and monitor Camel routes.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "core,monitoring",

@@ -2,7 +2,7 @@
 = Elastichsearch Rest Component
 :docTitle: Elastichsearch Rest
 :artifactId: camel-elasticsearch-rest
-:description: The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
+:description: Send requests to with an ElasticSearch via REST API.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported

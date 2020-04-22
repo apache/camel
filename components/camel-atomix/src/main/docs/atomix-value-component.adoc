@@ -2,7 +2,7 @@
 = Atomix Value Component
 :docTitle: Atomix Value
 :artifactId: camel-atomix
-:description: The atomix-value component is used to access Atomix's distributed value.
+:description: Access Atomix's distributed value.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

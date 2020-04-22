@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "cmis",
     "title": "CMIS",
-    "description": "The cmis component uses the Apache Chemistry client API and allows you to add\/read nodes to\/from a CMIS compliant content repositories.",
+    "description": "Read and write data from to\/from a CMIS compliant content repositories.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "cms,database",

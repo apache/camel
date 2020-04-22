@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-ddb",
     "title": "AWS DynamoDB",
-    "description": "The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.",
+    "description": "Store and retrieve data from AWS DynamoDB service.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "cloud,database,nosql",

@@ -4,7 +4,7 @@
 :page-source: components/camel-disruptor/src/main/docs/disruptor-component.adoc
 :docTitle: Disruptor
 :artifactId: camel-disruptor
-:description: The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+:description: Provides asynchronous SEDA behavior using LMAX Disruptor.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

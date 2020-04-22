@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "dns",
     "title": "DNS",
-    "description": "To lookup domain information and run DNS queries using DNSJava.",
+    "description": "Perform DNS queries using DNSJava.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "networking",

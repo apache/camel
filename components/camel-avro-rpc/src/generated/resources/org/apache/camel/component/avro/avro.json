@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "avro",
     "title": "Avro",
-    "description": "Working with Apache Avro for data serialization.",
+    "description": "Produce or consume Apache Avro RPC services.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "messaging,transformation",

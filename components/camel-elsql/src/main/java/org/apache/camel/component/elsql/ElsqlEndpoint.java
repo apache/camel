@@ -46,7 +46,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 /**
- * The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
+ * Use ElSql to define SQL queries. Extends the SQL Component.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri",
         label = "database,sql")

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-iam",
     "title": "AWS IAM",
-    "description": "The aws-iam is used for managing Amazon IAM",
+    "description": "Manage AWS IAM instances.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "cloud,management",

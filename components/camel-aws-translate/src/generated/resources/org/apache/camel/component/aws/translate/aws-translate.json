@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws-translate",
     "title": "AWS Translate",
-    "description": "The aws-translate component is used for managing Amazon Translate",
+    "description": "Translate texts using AWS Translate.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "cloud,management",

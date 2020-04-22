@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "digitalocean",
     "title": "DigitalOcean",
-    "description": "The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.",
+    "description": "Manage Droplets and resources within the DigitalOcean cloud.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,management",
