@@ -127,6 +127,11 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(messageExpression(m -> m.getHeader("name")), exchange, "James");
     }
 
+    @Test
+    public void testHeaderExpression() throws Exception {
+        assertExpression(headerExpression("name", String.class), exchange, "James");
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {

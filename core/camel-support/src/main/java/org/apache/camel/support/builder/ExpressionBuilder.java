@@ -112,7 +112,7 @@ public class ExpressionBuilder {
      * @return an expression object which will return the header value
      */
     public static <T> Expression headerExpression(final String headerName, final Class<T> type) {
-        return headerExpression(simpleExpression(headerName), constantExpression(type));
+        return headerExpression(simpleExpression(headerName), constantExpression(type.getName()));
     }
 
     /**
