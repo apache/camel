@@ -327,7 +327,21 @@ public class IAM2Producer extends DefaultProducer {
         }
     }
 
-    private void deleteAccessKey(IamClient iamClient, Exchange exchange) {
+    private void deleteAccessKey(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteAccessKeyRequest) {
+                DeleteAccessKeyResponse result;
+                try {
+                    result = iamClient.deleteAccessKey((DeleteAccessKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DeleteAccessKeyRequest.Builder builder = DeleteAccessKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
             String accessKeyId = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID, String.class);
@@ -348,9 +362,24 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
-    private void updateAccessKey(IamClient iamClient, Exchange exchange) {
+    private void updateAccessKey(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof UpdateAccessKeyRequest) {
+                UpdateAccessKeyResponse result;
+                try {
+                    result = iamClient.updateAccessKey((UpdateAccessKeyRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         UpdateAccessKeyRequest.Builder builder = UpdateAccessKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
             String accessKeyId = exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID, String.class);
@@ -377,6 +406,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void createGroup(IamClient iamClient, Exchange exchange) {
