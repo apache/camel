@@ -625,7 +625,7 @@ And the route using Spring DSL:
 
 [source,java]
 ----
-from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&isImplicit=true
+from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&implicit=true
       &ftpClient.keyStore.file=./src/test/resources/server.jks
       &ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password")
   .to("bean:foo");
