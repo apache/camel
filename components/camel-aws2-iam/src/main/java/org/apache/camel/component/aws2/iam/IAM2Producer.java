@@ -409,7 +409,21 @@ public class IAM2Producer extends DefaultProducer {
         }
     }
 
-    private void createGroup(IamClient iamClient, Exchange exchange) {
+    private void createGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateGroupRequest) {
+                CreateGroupResponse result;
+                try {
+                    result = iamClient.createGroup((CreateGroupRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         CreateGroupRequest.Builder builder = CreateGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
@@ -430,9 +444,24 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
-    private void deleteGroup(IamClient iamClient, Exchange exchange) {
+    private void deleteGroup(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof CreateGroupRequest) {
+                DeleteGroupResponse result;
+                try {
+                    result = iamClient.deleteGroup((DeleteGroupRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
         DeleteGroupRequest.Builder builder = DeleteGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAM2Constants.GROUP_NAME, String.class);
@@ -449,6 +478,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        }
     }
 
     private void listGroups(IamClient iamClient, Exchange exchange) {
