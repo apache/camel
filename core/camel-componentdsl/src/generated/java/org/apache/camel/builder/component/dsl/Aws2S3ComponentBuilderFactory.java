@@ -32,7 +32,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Component;
 public interface Aws2S3ComponentBuilderFactory {
 
     /**
-     * AWS2 S3 Storage Service (camel-aws2-s3)
+     * AWS 2 S3 Storage Service (camel-aws2-s3)
      * The aws2-s3 component is used for storing and retrieving object from
      * Amazon S3 Storage Service.
      * 
@@ -45,7 +45,7 @@ public interface Aws2S3ComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS2 S3 Storage Service component.
+     * Builder for the AWS 2 S3 Storage Service component.
      */
     interface Aws2S3ComponentBuilder
             extends

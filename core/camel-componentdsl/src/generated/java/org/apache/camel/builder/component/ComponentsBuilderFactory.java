@@ -610,7 +610,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2MskComponentBuilderFactory.aws2Msk();
     }
     /**
-     * AWS2 S3 Storage Service (camel-aws2-s3)
+     * AWS 2 S3 Storage Service (camel-aws2-s3)
      * The aws2-s3 component is used for storing and retrieving object from
      * Amazon S3 Storage Service.
      * 
