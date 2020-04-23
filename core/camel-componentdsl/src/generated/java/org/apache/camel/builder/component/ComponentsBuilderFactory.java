@@ -684,6 +684,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
     /**
+     * Azure Storage Queue Service (camel-azure-storage-queue)
+     * The azure-storage-queue component is used for storing and retrieving the
+     * messages to/from Azure Storage Queue using Azure SDK v12.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.3
+     * Maven coordinates: org.apache.camel:camel-azure-storage-queue
+     */
+    static org.apache.camel.builder.component.dsl.AzureStorageQueueComponentBuilderFactory.AzureStorageQueueComponentBuilder azureStorageQueue() {
+        return org.apache.camel.builder.component.dsl.AzureStorageQueueComponentBuilderFactory.azureStorageQueue();
+    }
+    /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
      * 
