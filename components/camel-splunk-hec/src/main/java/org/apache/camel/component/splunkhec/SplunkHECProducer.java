@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.splunkhec;
 
-
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -44,7 +43,6 @@ public class SplunkHECProducer extends DefaultProducer {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private SplunkHECEndpoint endpoint;
     private CloseableHttpClient httpClient;
-
 
     public SplunkHECProducer(SplunkHECEndpoint endpoint) {
         super(endpoint);
@@ -91,7 +89,9 @@ public class SplunkHECProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        httpClient.close();
+        if (httpClient != null) {
+            httpClient.close();
+        }
     }
 
     Map<String, Object> createPayload(Message message) {

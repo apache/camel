@@ -17,11 +17,9 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The splunk component allows to publish events in Splunk using the HTTP Event
@@ -34,256 +32,32 @@ public interface SplunkHECEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Splunk HEC component.
+     * Builder for endpoint for the Splunk HEC component.
      */
-    public interface SplunkHECEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedSplunkHECEndpointConsumerBuilder advanced() {
-            return (AdvancedSplunkHECEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SplunkHECEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SplunkHECEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
+    public interface SplunkHECEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedSplunkHECEndpointBuilder advanced() {
+            return (AdvancedSplunkHECEndpointBuilder) this;
         }
         /**
          * Splunk host.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: host
+         * Group: producer
          */
-        default SplunkHECEndpointConsumerBuilder host(String host) {
+        default SplunkHECEndpointBuilder host(String host) {
             doSetProperty("host", host);
             return this;
-        }
-        /**
-         * Contact HEC over https.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: https
-         */
-        default SplunkHECEndpointConsumerBuilder https(boolean https) {
-            doSetProperty("https", https);
-            return this;
-        }
-        /**
-         * Contact HEC over https.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: https
-         */
-        default SplunkHECEndpointConsumerBuilder https(String https) {
-            doSetProperty("https", https);
-            return this;
-        }
-        /**
-         * Splunk HEC TLS verification.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: skiptlsverify
-         */
-        default SplunkHECEndpointConsumerBuilder skiptlsverify(
-                boolean skiptlsverify) {
-            doSetProperty("skiptlsverify", skiptlsverify);
-            return this;
-        }
-        /**
-         * Splunk HEC TLS verification.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: skiptlsverify
-         */
-        default SplunkHECEndpointConsumerBuilder skiptlsverify(
-                String skiptlsverify) {
-            doSetProperty("skiptlsverify", skiptlsverify);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Splunk HEC component.
-     */
-    public interface AdvancedSplunkHECEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default SplunkHECEndpointConsumerBuilder basic() {
-            return (SplunkHECEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Splunk HEC component.
-     */
-    public interface SplunkHECEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedSplunkHECEndpointProducerBuilder advanced() {
-            return (AdvancedSplunkHECEndpointProducerBuilder) this;
         }
         /**
          * Splunk index to write to.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel
          * Group: producer
          */
-        default SplunkHECEndpointProducerBuilder index(String index) {
+        default SplunkHECEndpointBuilder index(String index) {
             doSetProperty("index", index);
             return this;
         }
@@ -303,7 +77,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SplunkHECEndpointProducerBuilder lazyStartProducer(
+        default SplunkHECEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -324,7 +98,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SplunkHECEndpointProducerBuilder lazyStartProducer(
+        default SplunkHECEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -334,9 +108,10 @@ public interface SplunkHECEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel
          * Group: producer
          */
-        default SplunkHECEndpointProducerBuilder source(String source) {
+        default SplunkHECEndpointBuilder source(String source) {
             doSetProperty("source", source);
             return this;
         }
@@ -345,170 +120,20 @@ public interface SplunkHECEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel
          * Group: producer
          */
-        default SplunkHECEndpointProducerBuilder sourceType(String sourceType) {
+        default SplunkHECEndpointBuilder sourceType(String sourceType) {
             doSetProperty("sourceType", sourceType);
             return this;
         }
         /**
-         * Splunk host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: host
-         */
-        default SplunkHECEndpointProducerBuilder host(String host) {
-            doSetProperty("host", host);
-            return this;
-        }
-        /**
          * Contact HEC over https.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
-         * Group: https
-         */
-        default SplunkHECEndpointProducerBuilder https(boolean https) {
-            doSetProperty("https", https);
-            return this;
-        }
-        /**
-         * Contact HEC over https.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: https
-         */
-        default SplunkHECEndpointProducerBuilder https(String https) {
-            doSetProperty("https", https);
-            return this;
-        }
-        /**
-         * Splunk HEC TLS verification.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: skiptlsverify
-         */
-        default SplunkHECEndpointProducerBuilder skiptlsverify(
-                boolean skiptlsverify) {
-            doSetProperty("skiptlsverify", skiptlsverify);
-            return this;
-        }
-        /**
-         * Splunk HEC TLS verification.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: skiptlsverify
-         */
-        default SplunkHECEndpointProducerBuilder skiptlsverify(
-                String skiptlsverify) {
-            doSetProperty("skiptlsverify", skiptlsverify);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Splunk HEC component.
-     */
-    public interface AdvancedSplunkHECEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default SplunkHECEndpointProducerBuilder basic() {
-            return (SplunkHECEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the Splunk HEC component.
-     */
-    public interface SplunkHECEndpointBuilder
-            extends
-                SplunkHECEndpointConsumerBuilder,
-                SplunkHECEndpointProducerBuilder {
-        default AdvancedSplunkHECEndpointBuilder advanced() {
-            return (AdvancedSplunkHECEndpointBuilder) this;
-        }
-        /**
-         * Splunk host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: host
-         */
-        default SplunkHECEndpointBuilder host(String host) {
-            doSetProperty("host", host);
-            return this;
-        }
-        /**
-         * Contact HEC over https.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: https
+         * Default: true
+         * Group: security
          */
         default SplunkHECEndpointBuilder https(boolean https) {
             doSetProperty("https", https);
@@ -519,8 +144,8 @@ public interface SplunkHECEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
-         * Group: https
+         * Default: true
+         * Group: security
          */
         default SplunkHECEndpointBuilder https(String https) {
             doSetProperty("https", https);
@@ -532,10 +157,10 @@ public interface SplunkHECEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: skiptlsverify
+         * Group: security
          */
-        default SplunkHECEndpointBuilder skiptlsverify(boolean skiptlsverify) {
-            doSetProperty("skiptlsverify", skiptlsverify);
+        default SplunkHECEndpointBuilder skipTlsVerify(boolean skipTlsVerify) {
+            doSetProperty("skipTlsVerify", skipTlsVerify);
             return this;
         }
         /**
@@ -544,10 +169,10 @@ public interface SplunkHECEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: skiptlsverify
+         * Group: security
          */
-        default SplunkHECEndpointBuilder skiptlsverify(String skiptlsverify) {
-            doSetProperty("skiptlsverify", skiptlsverify);
+        default SplunkHECEndpointBuilder skipTlsVerify(String skipTlsVerify) {
+            doSetProperty("skipTlsVerify", skipTlsVerify);
             return this;
         }
     }
@@ -557,8 +182,7 @@ public interface SplunkHECEndpointBuilderFactory {
      */
     public interface AdvancedSplunkHECEndpointBuilder
             extends
-                AdvancedSplunkHECEndpointConsumerBuilder,
-                AdvancedSplunkHECEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default SplunkHECEndpointBuilder basic() {
             return (SplunkHECEndpointBuilder) this;
         }
@@ -625,13 +249,16 @@ public interface SplunkHECEndpointBuilderFactory {
          * HTTP Event Collector.
          * 
          * Category: log,monitoring
-         * Since: 3.2
+         * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 
-         * Syntax: <code>splunk-hec:endpoint/token</code>
+         * Syntax: <code>splunk-hec:splunkURL/token</code>
          * 
-         * Path parameter: endpointUri
-         * Splunk host URI
+         * Path parameter: splunkURL (required)
+         * Splunk Host URL
+         * 
+         * Path parameter: token (required)
+         * Splunk authorization token
          */
         default SplunkHECEndpointBuilder splunkHec(String path) {
             return SplunkHECEndpointBuilderFactory.splunkHec(path);
@@ -643,13 +270,16 @@ public interface SplunkHECEndpointBuilderFactory {
      * Event Collector.
      * 
      * Category: log,monitoring
-     * Since: 3.2
+     * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
      * 
-     * Syntax: <code>splunk-hec:endpoint/token</code>
+     * Syntax: <code>splunk-hec:splunkURL/token</code>
      * 
-     * Path parameter: endpointUri
-     * Splunk host URI
+     * Path parameter: splunkURL (required)
+     * Splunk Host URL
+     * 
+     * Path parameter: token (required)
+     * Splunk authorization token
      */
     static SplunkHECEndpointBuilder splunkHec(String path) {
         class SplunkHECEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkHECEndpointBuilder, AdvancedSplunkHECEndpointBuilder {
