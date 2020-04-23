@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The file component is used for reading or writing files.
+ * Read and write files.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName", label = "core,file")
 public class FileEndpoint extends GenericFileEndpoint<File> {
@@ -209,7 +209,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     /**
      * Default Existing File Move Strategy
-     * 
+     *
      * @return the default implementation for file component
      */
     private FileMoveExistingStrategy createDefaultMoveExistingFileStrategy() {

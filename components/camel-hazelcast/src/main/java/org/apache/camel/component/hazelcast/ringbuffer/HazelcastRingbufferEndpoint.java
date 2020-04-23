@@ -26,7 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-ringbuffer component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-ringbuffer", title = "Hazelcast Ringbuffer", syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, label = "cache,datagrid")
 public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {

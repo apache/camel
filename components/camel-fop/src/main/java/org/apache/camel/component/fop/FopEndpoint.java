@@ -31,7 +31,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
- * The fop component allows you to render a message into different output formats using Apache FOP.
+ * Render messages into PDF and other output formats supported by Apache FOP.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {

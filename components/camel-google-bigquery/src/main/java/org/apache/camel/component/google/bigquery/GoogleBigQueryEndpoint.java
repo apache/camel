@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Google BigQuery data warehouse for analytics.
- * 
+ *
  * BigQuery Endpoint Definition
  * Represents a table within a BigQuery dataset
  * Contains configuration details for a single table and the utility methods (such as check, create) to ease operations

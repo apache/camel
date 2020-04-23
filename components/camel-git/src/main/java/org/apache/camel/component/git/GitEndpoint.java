@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The git component is used for working with git repositories.
+ * Perform operations on git repositories.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", label = "file")
 public class GitEndpoint extends DefaultEndpoint {

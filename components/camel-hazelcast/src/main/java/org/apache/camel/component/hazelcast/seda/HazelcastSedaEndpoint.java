@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The hazelcast-seda component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> {@link BlockingQueue}.
+ * Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by Hazelcast {@link BlockingQueue}.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName", label = "cache,datagrid")
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {

@@ -41,15 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading
- * files from FTP servers.
+ * Upload and download files to/from FTP servers supporting the FTPS protocol.
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName", label = "file")
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                   + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"   
+                   + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                    + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                   + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"  
+                   + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                    + "renameUsingCopy")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {

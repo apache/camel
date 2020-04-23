@@ -33,7 +33,7 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The google-mail component provides access to Google Mail.
+ * Manage messages in Google Mail.
  */
 @UriEndpoint(
         firstVersion = "2.15.0",

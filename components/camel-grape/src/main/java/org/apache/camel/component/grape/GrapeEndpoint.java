@@ -32,8 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
- * The grape component allows you to fetch, load and manage additional jars when
- * CamelContext is running.
+ * Fetch, load and manage additional jars dynamically after Camel Context was started.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
 public class GrapeEndpoint extends DefaultEndpoint {

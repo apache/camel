@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The file-watch is used to monitor file events in directory using {@link java.nio.file.WatchService}
+ * Get notified about file events in a directory using {@link java.nio.file.WatchService}.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "File Watch", syntax = "file-watch:path",
 label = "file", consumerOnly = true)

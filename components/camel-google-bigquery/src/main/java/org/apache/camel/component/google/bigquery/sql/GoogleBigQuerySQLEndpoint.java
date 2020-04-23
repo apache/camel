@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Google BigQuery data warehouse for analytics (using SQL queries).
+ * Access Google Cloud BigQuery service using SQL queries.
  *
  * BigQuery Endpoint Definition
  * Represents a table within a BigQuery dataset

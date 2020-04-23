@@ -26,7 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-multimap component is used to to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-multimap", title = "Hazelcast Multimap", syntax = "hazelcast-multimap:cacheName", label = "cache,datagrid")
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {

@@ -26,8 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-atomicvalue component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> atomic number, which
- * is an object that simply provides a grid wide number (long).
+ * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-atomicvalue", title = "Hazelcast Atomic Number", syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true, label = "cache,datagrid")
 public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {

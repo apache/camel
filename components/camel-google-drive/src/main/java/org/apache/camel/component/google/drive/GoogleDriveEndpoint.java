@@ -33,7 +33,7 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The google-drive component provides access to Google Drive file storage service.
+ * Manage files in Google Drive.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive", syntax = "google-drive:apiName/methodName",
         consumerPrefix = "consumer", label = "api,cloud,file")

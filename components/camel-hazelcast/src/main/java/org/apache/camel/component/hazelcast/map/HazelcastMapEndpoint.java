@@ -26,7 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-map component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed map.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed map.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-map", title = "Hazelcast Map", syntax = "hazelcast-map:cacheName", label = "cache,datagrid")
 public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {

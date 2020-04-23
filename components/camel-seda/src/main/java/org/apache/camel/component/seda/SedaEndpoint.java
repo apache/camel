@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
+ * Asynchronously call another endpoint from any Camel Context in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", label = "core,endpoint")
