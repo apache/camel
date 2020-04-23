@@ -2,7 +2,7 @@
 = Guava EventBus Component
 :docTitle: Guava EventBus
 :artifactId: camel-guava-eventbus
-:description: The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
+:description: Send and receive messages to/from Guava EventBus.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

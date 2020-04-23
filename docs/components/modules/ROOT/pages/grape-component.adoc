@@ -4,7 +4,7 @@
 :page-source: components/camel-grape/src/main/docs/grape-component.adoc
 :docTitle: Grape
 :artifactId: camel-grape
-:description: The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+:description: Fetch, load and manage additional jars dynamically after Camel Context was started.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported

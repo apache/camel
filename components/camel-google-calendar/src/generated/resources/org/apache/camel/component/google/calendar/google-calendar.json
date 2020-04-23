@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-calendar",
     "title": "Google Calendar",
-    "description": "The google-calendar component provides access to Google Calendar.",
+    "description": "Perform various operations on a Google Calendar.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "api,cloud",

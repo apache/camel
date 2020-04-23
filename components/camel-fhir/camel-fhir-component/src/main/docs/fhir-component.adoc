@@ -2,7 +2,7 @@
 = FHIR Component
 :docTitle: FHIR
 :artifactId: camel-fhir
-:description: The fhir component is used for working with the FHIR protocol (health care).
+:description: Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

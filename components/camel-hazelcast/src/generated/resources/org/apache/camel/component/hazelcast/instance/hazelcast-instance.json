@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-instance",
     "title": "Hazelcast Instance",
-    "description": "The hazelcast-instance component is used to consume join\/leave events of the cache instance in the cluster.",
+    "description": "Consume join\/leave events of a cache instance in a Hazelcast cluster.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

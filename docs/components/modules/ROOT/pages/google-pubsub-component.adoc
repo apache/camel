@@ -4,7 +4,7 @@
 :page-source: components/camel-google-pubsub/src/main/docs/google-pubsub-component.adoc
 :docTitle: Google Pubsub
 :artifactId: camel-google-pubsub
-:description: Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub/Sub libraries.
+:description: Send and receive messages to/from Google Cloud Platform PubSub Service.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

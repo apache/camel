@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-sheets-stream",
     "title": "Google Sheets Stream",
-    "description": "The google-sheets-stream component provides access to Google Sheets.",
+    "description": "Poll for changes in Google Sheets.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "api,cloud,sheets",

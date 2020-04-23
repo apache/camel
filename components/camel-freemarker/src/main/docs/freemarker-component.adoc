@@ -2,7 +2,7 @@
 = Freemarker Component
 :docTitle: Freemarker
 :artifactId: camel-freemarker
-:description: Transforms the message using a FreeMarker template.
+:description: Transform messages using FreeMarker templates.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported

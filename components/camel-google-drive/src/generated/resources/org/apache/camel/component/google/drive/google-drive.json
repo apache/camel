@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-drive",
     "title": "Google Drive",
-    "description": "The google-drive component provides access to Google Drive file storage service.",
+    "description": "Manage files in Google Drive.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "api,cloud,file",

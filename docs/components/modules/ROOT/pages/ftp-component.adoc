@@ -4,7 +4,7 @@
 :page-source: components/camel-ftp/src/main/docs/ftp-component.adoc
 :docTitle: FTP
 :artifactId: camel-ftp
-:description: The ftp component is used for uploading or downloading files from FTP servers.
+:description: Upload and download files to/from FTP servers.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

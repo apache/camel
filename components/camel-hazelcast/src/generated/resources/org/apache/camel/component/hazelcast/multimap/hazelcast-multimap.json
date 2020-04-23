@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-multimap",
     "title": "Hazelcast Multimap",
-    "description": "The hazelcast-multimap component is used to to access Hazelcast distributed multimap.",
+    "description": "Perform operations on Hazelcast distributed multimap.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

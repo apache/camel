@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-ringbuffer",
     "title": "Hazelcast Ringbuffer",
-    "description": "The hazelcast-ringbuffer component is used to access Hazelcast distributed ringbuffer.",
+    "description": "Perform operations on Hazelcast distributed ringbuffer.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "cache,datagrid",

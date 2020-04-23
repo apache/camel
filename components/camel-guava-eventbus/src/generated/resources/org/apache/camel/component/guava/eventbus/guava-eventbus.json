@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "guava-eventbus",
     "title": "Guava EventBus",
-    "description": "The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.",
+    "description": "Send and receive messages to\/from Guava EventBus.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "eventbus",

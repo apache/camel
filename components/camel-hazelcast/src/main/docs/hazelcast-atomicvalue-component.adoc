@@ -2,7 +2,7 @@
 = Hazelcast Atomic Number Component
 :docTitle: Hazelcast Atomic Number
 :artifactId: camel-hazelcast
-:description: The hazelcast-atomicvalue component is used to access Hazelcast atomic number, which is an object that simply provides a grid wide number (long).
+:description: Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
 :since: 2.7
 :supportLevel: Stable
 :component-header: Only producer is supported

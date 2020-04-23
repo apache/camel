@@ -4,7 +4,7 @@
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-instance-component.adoc
 :docTitle: Hazelcast Instance
 :artifactId: camel-hazelcast
-:description: The hazelcast-instance component is used to consume join/leave events of the cache instance in the cluster.
+:description: Consume join/leave events of a cache instance in a Hazelcast cluster.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Only consumer is supported

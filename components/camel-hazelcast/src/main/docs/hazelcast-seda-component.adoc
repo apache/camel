@@ -2,7 +2,7 @@
 = Hazelcast SEDA Component
 :docTitle: Hazelcast SEDA
 :artifactId: camel-hazelcast
-:description: The hazelcast-seda component is used to access Hazelcast BlockingQueue.
+:description: Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

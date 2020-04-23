@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "flink",
     "title": "Flink",
-    "description": "The flink component can be used to send DataSet jobs to Apache Flink cluster.",
+    "description": "Send DataSet jobs to an Apache Flink cluster.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "hadoop",

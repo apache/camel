@@ -2,7 +2,7 @@
 = gRPC Component
 :docTitle: gRPC
 :artifactId: camel-grpc
-:description: The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
+:description: Expose gRPC endpoints and access external gRPC endpoints.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

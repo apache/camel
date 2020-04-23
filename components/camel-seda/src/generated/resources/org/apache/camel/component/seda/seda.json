@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "seda",
     "title": "SEDA",
-    "description": "The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+    "description": "Asynchronously call another endpoint from any Camel Context in the same JVM.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "core,endpoint",

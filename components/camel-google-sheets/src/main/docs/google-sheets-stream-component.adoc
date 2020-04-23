@@ -2,7 +2,7 @@
 = Google Sheets Stream Component
 :docTitle: Google Sheets Stream
 :artifactId: camel-google-sheets
-:description: The google-sheets-stream component provides access to Google Sheets.
+:description: Poll for changes in Google Sheets.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only consumer is supported

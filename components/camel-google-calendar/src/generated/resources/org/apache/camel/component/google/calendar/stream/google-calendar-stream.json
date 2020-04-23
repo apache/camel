@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-calendar-stream",
     "title": "Google Calendar Stream",
-    "description": "The google-calendar-stream component provides access to Google Calendar in a streaming mode.",
+    "description": "Poll for changes in a Google Calendar.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "api,cloud",

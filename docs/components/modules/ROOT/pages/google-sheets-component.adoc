@@ -4,7 +4,7 @@
 :page-source: components/camel-google-sheets/src/main/docs/google-sheets-component.adoc
 :docTitle: Google Sheets
 :artifactId: camel-google-sheets
-:description: The google-sheets component provides access to Google Sheets.
+:description: Manage spreadsheets in Google Sheets.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-set",
     "title": "Hazelcast Set",
-    "description": "The hazelcast-set component is used to access Hazelcast distributed set.",
+    "description": "Perform operations on Hazelcast distributed set.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

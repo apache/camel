@@ -2,7 +2,7 @@
 = FOP Component
 :docTitle: FOP
 :artifactId: camel-fop
-:description: The fop component allows you to render a message into different output formats using Apache FOP.
+:description: Render messages into PDF and other output formats supported by Apache FOP.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
