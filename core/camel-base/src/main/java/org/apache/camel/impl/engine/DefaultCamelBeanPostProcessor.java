@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
@@ -85,15 +86,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             return bean;
         }
 
-        if (bindToRegistrySupported()) {
-            injectClass(bean, beanName);
-            injectNestedClasses(bean, beanName);
-            injectBindToRegistryFields(bean, beanName);
-            injectBindToRegistryMethods(bean, beanName);
-        }
-
-        injectFields(bean, beanName);
-        injectMethods(bean, beanName);
+        // do bean binding on simple types first, and then afterwards on complex types
+        injectFirstPass(bean, beanName, type -> !isComplexUserType(type));
+        injectSecondPass(bean, beanName, type -> isComplexUserType(type));
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
@@ -174,14 +169,38 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         return true;
     }
 
-    /**
-     * A strategy method to allow implementations to perform some custom JBI
-     * based injection of the POJO
-     *
-     * @param bean the bean to be injected
-     */
-    protected void injectFields(final Object bean, final String beanName) {
+    protected void injectFirstPass(Object bean, String beanName, Function<Class, Boolean> filter) {
+        // on first pass do field and methods first
+        injectFields(bean, beanName, filter);
+        injectMethods(bean, beanName, filter);
+
+        if (bindToRegistrySupported()) {
+            injectClass(bean, beanName);
+            injectNestedClasses(bean, beanName);
+            injectBindToRegistryFields(bean, beanName, filter);
+            injectBindToRegistryMethods(bean, beanName, filter);
+        }
+    }
+
+    protected void injectSecondPass(Object bean, String beanName, Function<Class, Boolean> filter) {
+        // on second pass do bind to registry beforehand as they may be used by field/method injections below
+        if (bindToRegistrySupported()) {
+            injectClass(bean, beanName);
+            injectNestedClasses(bean, beanName);
+            injectBindToRegistryFields(bean, beanName, filter);
+            injectBindToRegistryMethods(bean, beanName, filter);
+        }
+
+        injectFields(bean, beanName, filter);
+        injectMethods(bean, beanName, filter);
+    }
+
+    protected void injectFields(final Object bean, final String beanName, Function<Class, Boolean> accept) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            if (accept != null && !accept.apply(field.getType())) {
+                return;
+            }
+
             PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
             if (propertyInject != null) {
                 injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
@@ -213,8 +232,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         });
     }
 
-    protected void injectBindToRegistryFields(final Object bean, final String beanName) {
+    protected void injectBindToRegistryFields(final Object bean, final String beanName, Function<Class, Boolean> accept) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            if (accept != null && !accept.apply(field.getType())) {
+                return;
+            }
+
             BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
             if (bind != null) {
                 bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess());
@@ -250,18 +273,26 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                         field.getName(), bean, beanName));
     }
 
-    protected void injectMethods(final Object bean, final String beanName) {
+    protected void injectMethods(final Object bean, final String beanName, Function<Class, Boolean> accept) {
         ReflectionHelper.doWithMethods(bean.getClass(), method -> {
+            if (accept != null && !accept.apply(method.getReturnType())) {
+                return;
+            }
+
             setterInjection(method, bean, beanName);
             getPostProcessorHelper().consumerInjection(method, bean, beanName);
         });
     }
 
-    protected void injectBindToRegistryMethods(final Object bean, final String beanName) {
+    protected void injectBindToRegistryMethods(final Object bean, final String beanName, Function<Class, Boolean> accept) {
         // sort the methods so the simplest are used first
 
         final List<Method> methods = new ArrayList<>();
         ReflectionHelper.doWithMethods(bean.getClass(), method -> {
+            if (accept != null && !accept.apply(method.getReturnType())) {
+                return;
+            }
+
             BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
             if (bind != null) {
                 methods.add(method);
@@ -519,6 +550,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
 
         return parameters;
+    }
+
+    private static boolean isComplexUserType(Class type) {
+        // lets consider all non java, as complex types
+        return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
     }
 
 }
