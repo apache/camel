@@ -95,7 +95,7 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    public int processBatch(Queue<Object> exchanges) throws Exception {
+    public int processBatch(Queue<Object> exchanges) {
         final int total = exchanges.size();
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {

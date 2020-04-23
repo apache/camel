@@ -201,7 +201,7 @@ Then refer to this instance in your Camel `azure-storage-queue` component config
 [source,java]
 -----------------------------------------------------------------------
 from("azure-storage-queue://cameldev/queue1?serviceClient=#client")
-.to("mock:result");
+.to("file://outputFolder?fileName=output.txt&fileExist=Append");
 -----------------------------------------------------------------------
 
 === Automatic detection of QueueServiceClient client in registry
@@ -233,7 +233,7 @@ For these operations, `accountName` and `queueName` are *required*.
 |`createQueue` | Creates a new queue.
 |`deleteQueue` | Permanently deletes the queue.
 |`clearQueue`| Deletes all messages in the queue..
-|`sendMessage`| Sends a message with a given time-to-live and a timeout period where the message is invisible in the queue.
+|`sendMessage`| *Default Producer Operation* Sends a message with a given time-to-live and a timeout period where the message is invisible in the queue.
 |`deleteMessage`| Deletes the specified message in the queue.
 |`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However it will not dequeue the message from the queue due to reliability reasons.
 |`peekMessages`| Peek messages from the front of the queue up to the maximum number of messages.
@@ -243,8 +243,151 @@ For these operations, `accountName` and `queueName` are *required*.
 Refer to the example section in this page to learn how to use these operations into your camel application.
 
 === Consumer Examples
-To consume a queue into a file component, this can be done like this:
+To consume a queue into a file component with maximum 5 messages in one batch, this can be done like this:
+[source,java]
+-----------------------------------------------------------------------
+from("azure-storage-queue://cameldev/queue1?serviceClient=#client&maxMessages=5")
+.to("file://outputFolder?fileName=output.txt&fileExist=Append");
+-----------------------------------------------------------------------
 
+=== Producer Operations Examples
+- `listQueues`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g, to only returns list of queues with 'awesome' prefix:
+      exchange.getIn().setHeader(QueueConstants.QUEUES_SEGMENT_OPTIONS, new QueuesSegmentOptions().setPrefix("awesome"));
+     })
+    .to("azure-storage-queue://cameldev?serviceClient=#client&operation=listQueues")
+    .log("${body}")
+    .to("mock:result");
+-----------------------------------------------------------------------
+
+
+- `createQueue`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g:
+      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=createQueue");
+-----------------------------------------------------------------------
+
+- `deleteQueue`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g:
+      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteQueue");
+-----------------------------------------------------------------------
+
+- `clearQueue`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g:
+      exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "overrideName");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=clearQueue");
+-----------------------------------------------------------------------
+
+- `sendMessage`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g:
+      exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "message to send");
+      // we set a visibility of 1min
+      exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client");
+-----------------------------------------------------------------------
+
+- `deleteMessage`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+      // set the header you want the producer to evaluate, refer to the previous
+      // section to learn about the headers that can be set
+      // e.g:
+      // Mandatory header:
+      exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
+      // Mandatory header:
+      exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, "PAAAAHEEERXXX-1");
+     })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=deleteMessage");
+-----------------------------------------------------------------------
+
+- `receiveMessages`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=receiveMessages")
+    .process(exchange -> {
+        final List<QueueMessageItem> messageItems = exchange.getMessage().getBody(List.class);
+        messageItems.forEach(messageItem -> System.out.println(messageItem.getMessageText()));
+    })
+   .to("mock:result");
+-----------------------------------------------------------------------
+
+- `peekMessages`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=peekMessages")
+    .process(exchange -> {
+        final List<PeekedMessageItem> messageItems = exchange.getMessage().getBody(List.class);
+        messageItems.forEach(messageItem -> System.out.println(messageItem.getMessageText()));
+    })
+   .to("mock:result");
+-----------------------------------------------------------------------
+
+- `updateMessage`:
+
+[source,java]
+-----------------------------------------------------------------------
+from("direct:start")
+   .process(exchange -> {
+       // set the header you want the producer to evaluate, refer to the previous
+       // section to learn about the headers that can be set
+       // e.g:
+       exchange.getIn().setHeader(QueueConstants.MESSAGE_TEXT, "new message text");
+       // Mandatory header:
+       exchange.getIn().setHeader(QueueConstants.MESSAGE_ID, "1");
+       // Mandatory header:
+       exchange.getIn().setHeader(QueueConstants.POP_RECEIPT, "PAAAAHEEERXXX-1");
+       // Mandatory header:
+       exchange.getIn().setHeader(QueueConstants.VISIBILITY_TIMEOUT, Duration.ofMinutes(1));
+    })
+    .to("azure-storage-queue://cameldev/test?serviceClient=#client&operation=updateMessage");
+-----------------------------------------------------------------------
 
 
 === Development Notes (Important)
