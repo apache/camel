@@ -104,6 +104,7 @@
         <include>org.apache.camel:camel-aws2-translate</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-azure-storage-blob</include>
+        <include>org.apache.camel:camel-azure-storage-queue</include>
         <include>org.apache.camel:camel-barcode</include>
         <include>org.apache.camel:camel-base64</include>
         <include>org.apache.camel:camel-bean</include>
