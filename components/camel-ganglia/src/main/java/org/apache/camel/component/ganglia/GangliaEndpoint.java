@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The ganglia component is used for sending metrics to the Ganglia monitoring system.
+ * Send metrics to Ganglia monitoring system.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "ganglia", title = "Ganglia", syntax = "ganglia:host:port", producerOnly = true, label = "monitoring")
 public class GangliaEndpoint extends DefaultEndpoint {

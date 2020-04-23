@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The hazelcast-queue component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed queue.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed queue.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-queue", title = "Hazelcast Queue", syntax = "hazelcast-queue:cacheName", label = "cache,datagrid")
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
@@ -60,7 +60,7 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new HazelcastQueueProducer(hazelcastInstance, this, cacheName);
     }
-    
+
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "QueueConsumer", configuration.getPoolSize());
     }

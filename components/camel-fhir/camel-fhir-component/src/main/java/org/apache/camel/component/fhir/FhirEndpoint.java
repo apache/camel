@@ -48,7 +48,7 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The fhir component is used for working with the FHIR protocol (health care).
+ * Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
         label = "hl7,api")

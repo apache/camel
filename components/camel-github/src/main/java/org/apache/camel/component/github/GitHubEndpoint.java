@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The github component is used for integrating Camel with github.
+ * Interact with the GitHub API.
  *
  * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
  * Available endpoint URIs include:

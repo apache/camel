@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Messaging client for Google Cloud Platform PubSub Service
+ * Send and receive messages to/from Google Cloud Platform PubSub Service.
  * <p/>
  * Built on top of the Google Cloud Pub/Sub libraries.
  */

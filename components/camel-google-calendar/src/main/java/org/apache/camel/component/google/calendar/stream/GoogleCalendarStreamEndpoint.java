@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * The google-calendar-stream component provides access to Google Calendar in a streaming mode.
+ * Poll for changes in a Google Calendar.
  */
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-calendar-stream",
