@@ -2,7 +2,7 @@
 = Google Mail Component
 :docTitle: Google Mail
 :artifactId: camel-google-mail
-:description: The google-mail component provides access to Google Mail.
+:description: Manage messages in Google Mail.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

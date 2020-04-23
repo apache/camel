@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-topic",
     "title": "Hazelcast Topic",
-    "description": "The hazelcast-topic component is used to access Hazelcast distributed topic.",
+    "description": "Send and receive messages to\/from Hazelcast distributed topic.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "cache,datagrid",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "fhir",
     "title": "FHIR",
-    "description": "The fhir component is used for working with the FHIR protocol (health care).",
+    "description": "Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "hl7,api",

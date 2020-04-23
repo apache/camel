@@ -2,7 +2,7 @@
 = Hazelcast Set Component
 :docTitle: Hazelcast Set
 :artifactId: camel-hazelcast
-:description: The hazelcast-set component is used to access Hazelcast distributed set.
+:description: Perform operations on Hazelcast distributed set.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

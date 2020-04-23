@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-seda",
     "title": "Hazelcast SEDA",
-    "description": "The hazelcast-seda component is used to access Hazelcast BlockingQueue.",
+    "description": "Asynchronously send\/receive Exchanges between Camel routes running on potentially distinct JVMs\/hosts backed by Hazelcast BlockingQueue.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

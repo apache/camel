@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "exec",
     "title": "Exec",
-    "description": "The exec component can be used to execute OS system commands.",
+    "description": "Execute commands on the underlying operating system.",
     "deprecated": false,
     "firstVersion": "2.3.0",
     "label": "system",

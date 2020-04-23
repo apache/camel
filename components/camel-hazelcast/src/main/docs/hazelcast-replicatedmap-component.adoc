@@ -2,7 +2,7 @@
 = Hazelcast Replicated Map Component
 :docTitle: Hazelcast Replicated Map
 :artifactId: camel-hazelcast
-:description: The hazelcast-replicatedmap component is used to access Hazelcast replicated map.
+:description: Perform operations on Hazelcast replicated map.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "flatpack",
     "title": "Flatpack",
-    "description": "The flatpack component supports fixed width and delimited file parsing via the FlatPack library.",
+    "description": "Parse fixed width and delimited files using the FlatPack library.",
     "deprecated": false,
     "firstVersion": "1.4.0",
     "label": "transformation",

@@ -2,7 +2,7 @@
 = Git Component
 :docTitle: Git
 :artifactId: camel-git
-:description: The git component is used for working with git repositories.
+:description: Perform operations on git repositories.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

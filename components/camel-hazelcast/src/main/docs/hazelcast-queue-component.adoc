@@ -2,7 +2,7 @@
 = Hazelcast Queue Component
 :docTitle: Hazelcast Queue
 :artifactId: camel-hazelcast
-:description: The hazelcast-queue component is used to access Hazelcast distributed queue.
+:description: Perform operations on Hazelcast distributed queue.
 :since: 2.7
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

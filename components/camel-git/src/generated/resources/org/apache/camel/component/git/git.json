@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "git",
     "title": "Git",
-    "description": "The git component is used for working with git repositories.",
+    "description": "Perform operations on git repositories.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "file",

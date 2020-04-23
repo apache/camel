@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-mail",
     "title": "Google Mail",
-    "description": "The google-mail component provides access to Google Mail.",
+    "description": "Manage messages in Google Mail.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "api,cloud,mail",

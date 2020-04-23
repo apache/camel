@@ -4,7 +4,7 @@
 :page-source: components/camel-exec/src/main/docs/exec-component.adoc
 :docTitle: Exec
 :artifactId: camel-exec
-:description: The exec component can be used to execute OS system commands.
+:description: Execute commands on the underlying operating system.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported

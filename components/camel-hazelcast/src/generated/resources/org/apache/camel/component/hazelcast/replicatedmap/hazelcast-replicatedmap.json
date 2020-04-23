@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-replicatedmap",
     "title": "Hazelcast Replicated Map",
-    "description": "The hazelcast-replicatedmap component is used to access Hazelcast replicated map.",
+    "description": "Perform operations on Hazelcast replicated map.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "cache,datagrid",

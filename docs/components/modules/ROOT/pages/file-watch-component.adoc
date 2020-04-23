@@ -4,7 +4,7 @@
 :page-source: components/camel-file-watch/src/main/docs/file-watch-component.adoc
 :docTitle: File Watch
 :artifactId: camel-file-watch
-:description: The file-watch is used to monitor file events in directory using java.nio.file.WatchService
+:description: Get notified about file events in a directory using java.nio.file.WatchService.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

@@ -4,7 +4,7 @@
 :page-source: components/camel-facebook/src/main/docs/facebook-component.adoc
 :docTitle: Facebook
 :artifactId: camel-facebook
-:description: The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+:description: Send requests to Facebook APIs supported by Facebook4J.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

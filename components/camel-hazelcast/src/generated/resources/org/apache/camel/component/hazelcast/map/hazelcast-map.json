@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-map",
     "title": "Hazelcast Map",
-    "description": "The hazelcast-map component is used to access Hazelcast distributed map.",
+    "description": "Perform operations on Hazelcast distributed map.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

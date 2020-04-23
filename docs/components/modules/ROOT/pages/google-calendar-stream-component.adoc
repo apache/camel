@@ -4,7 +4,7 @@
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc
 :docTitle: Google Calendar Stream
 :artifactId: camel-google-calendar
-:description: The google-calendar-stream component provides access to Google Calendar in a streaming mode.
+:description: Poll for changes in a Google Calendar.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only consumer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "freemarker",
     "title": "Freemarker",
-    "description": "Transforms the message using a FreeMarker template.",
+    "description": "Transform messages using FreeMarker templates.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "transformation",
