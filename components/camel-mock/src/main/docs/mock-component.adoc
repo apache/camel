@@ -155,7 +155,7 @@ test has run, we assert that our expectations have been met:
 
 [source,java]
 ----
-MockEndpoint resultEndpoint = context.resolveEndpoint("mock:foo", MockEndpoint.class);
+MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
 
 // set expectations
 resultEndpoint.expectedMessageCount(2);
@@ -185,7 +185,7 @@ can do that by setting the `setAssertPeriod` method, for example:
 
 [source,java]
 ----
-MockEndpoint resultEndpoint = context.resolveEndpoint("mock:foo", MockEndpoint.class);
+MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
 resultEndpoint.setAssertPeriod(5000);
 resultEndpoint.expectedMessageCount(2);
 
