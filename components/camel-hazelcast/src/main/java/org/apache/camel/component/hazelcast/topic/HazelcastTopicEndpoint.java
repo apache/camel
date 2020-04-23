@@ -29,14 +29,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The hazelcast-topic component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
+ * Send and receive messages to/from <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic", syntax = "hazelcast-topic:cacheName", label = "cache,datagrid")
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
     private final HazelcastTopicConfiguration configuration;
-    
+
     public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName, final HazelcastTopicConfiguration configuration) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         this.configuration = configuration;

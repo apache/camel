@@ -33,7 +33,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Transforms the message using a FreeMarker template.
+ * Transform messages using FreeMarker templates.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
@@ -100,10 +100,10 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         log.debug("Getting endpoint with URI: {}", newUri);
         return getCamelContext().getEndpoint(newUri, FreemarkerEndpoint.class);
     }
-    
+
     @Override
     public void clearContentCache() {
-        configuration.clearTemplateCache();   
+        configuration.clearTemplateCache();
     }
 
     @Override

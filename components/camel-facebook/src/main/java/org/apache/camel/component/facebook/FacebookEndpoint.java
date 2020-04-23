@@ -48,7 +48,7 @@ import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper
 import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.getEndpointPropertyNames;
 
 /**
- * The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+ * Send requests to Facebook APIs supported by Facebook4J.
  *
  * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
  * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.

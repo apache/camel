@@ -40,7 +40,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The google-mail component provides access to Google Mail.
+ * Poll for incoming messages in Google Mail.
  */
 @UriEndpoint(firstVersion = "2.22.0",
              scheme = "google-mail-stream",

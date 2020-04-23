@@ -26,7 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-list component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> distributed list.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed list.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-list", title = "Hazelcast List", syntax = "hazelcast-list:cacheName", label = "cache,datagrid")
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {

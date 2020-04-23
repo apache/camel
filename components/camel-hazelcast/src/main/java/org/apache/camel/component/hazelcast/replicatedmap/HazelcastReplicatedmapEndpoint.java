@@ -26,7 +26,7 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The hazelcast-replicatedmap component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> replicated map.
+ * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> replicated map.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "hazelcast-replicatedmap", title = "Hazelcast Replicated Map", syntax = "hazelcast-replicatedmap:cacheName", label = "cache,datagrid")
 public class HazelcastReplicatedmapEndpoint extends HazelcastDefaultEndpoint {
