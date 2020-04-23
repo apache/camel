@@ -3470,6 +3470,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SplunkComponentBuilderFactory.splunk();
     }
     /**
+     * Splunk HEC (camel-splunk-hec)
+     * The splunk component allows to publish events in Splunk using the HTTP
+     * Event Collector.
+     * 
+     * Category: log,monitoring
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-splunk-hec
+     */
+    static org.apache.camel.builder.component.dsl.SplunkHecComponentBuilderFactory.SplunkHecComponentBuilder splunkHec() {
+        return org.apache.camel.builder.component.dsl.SplunkHecComponentBuilderFactory.splunkHec();
+    }
+    /**
      * Spring Batch (camel-spring-batch)
      * The spring-batch component allows to send messages to Spring Batch for
      * further processing.
