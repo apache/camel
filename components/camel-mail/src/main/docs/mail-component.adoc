@@ -251,9 +251,6 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-
-
-
 === Sample endpoints
 
 Typically, you specify a URI with login credentials as follows (taking
@@ -337,7 +334,7 @@ Registry registry = ...
 registry.bind("sslContextParameters", scp);
 ...
 from(...)
-&nbsp; &nbsp; .to("smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters");
+    .to("smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters");
 ----------------------------------------------------------------------------------------------------------------------------------
 
 [[Mail-SpringDSLbasedconfigurationofendpoint]]
@@ -357,7 +354,7 @@ Spring DSL based configuration of endpoint
 
 === Configuring JavaMail Directly
 
-Camel uses SUN JavaMail, which only trusts certificates issued by well
+Camel uses Jakarta JavaMail, which only trusts certificates issued by well
 known Certificate Authorities (the default JVM trust configuration). If
 you issue your own certificates, you have to import the CA certificates
 into the JVM's Java trust/key store files, override the default JVM
@@ -406,10 +403,10 @@ pre-configured settings.
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------
-        Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("to", "davsclaus@apache.org");
+Map<String, Object> headers = new HashMap<String, Object>();
+headers.put("to", "davsclaus@apache.org");
 
-        template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com", "Hello World", headers);
+template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com", "Hello World", headers);
 ------------------------------------------------------------------------------------------------------------
 
 == Multiple recipients for easier configuration
@@ -420,8 +417,8 @@ settings in an endpoint URI. For example:
 
 [source,java]
 ------------------------------------------------------------------------------------------------
-        Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("to", "davsclaus@apache.org ; jstrachan@apache.org ; ningjiang@apache.org");
+Map<String, Object> headers = new HashMap<String, Object>();
+headers.put("to", "davsclaus@apache.org ; jstrachan@apache.org ; ningjiang@apache.org");
 ------------------------------------------------------------------------------------------------
 
 The preceding example uses a semicolon, `;`, as the separator character.
@@ -475,12 +472,9 @@ interval, `consumer.delay`, as 60000 milliseconds = 60 seconds.
 
 [source,java]
 -------------------------------------------------------
-from("imap://admin@mymailserver.com
-     password=secret&unseen=true&delay=60000")
+from("imap://admin@mymailserver.com?password=secret&unseen=true&delay=60000")
     .to("seda://mails");
 -------------------------------------------------------
-
-In this sample we want to send a mail to multiple recipients:
 
 == Sending mail with attachment sample
 
@@ -549,27 +543,27 @@ mail from java code:
 
 [source,java]
 ---------------------------------------------------------------------------------
-    public void process(Exchange exchange) throws Exception {
-        // the API is a bit clunky so we need to loop
-        Map<String, DataHandler> attachments = exchange.getIn().getAttachments();
-        if (attachments.size() > 0) {
-            for (String name : attachments.keySet()) {
-                DataHandler dh = attachments.get(name);
-                // get the file name
-                String filename = dh.getName();
+public void process(Exchange exchange) throws Exception {
+    // the API is a bit clunky so we need to loop
+    Map<String, DataHandler> attachments = exchange.getIn().getAttachments();
+    if (attachments.size() > 0) {
+        for (String name : attachments.keySet()) {
+            DataHandler dh = attachments.get(name);
+            // get the file name
+            String filename = dh.getName();
 
-                // get the content and convert it to byte[]
-                byte[] data = exchange.getContext().getTypeConverter()
-                                  .convertTo(byte[].class, dh.getInputStream());
+            // get the content and convert it to byte[]
+            byte[] data = exchange.getContext().getTypeConverter()
+                              .convertTo(byte[].class, dh.getInputStream());
 
-                // write the data to a file
-                FileOutputStream out = new FileOutputStream(filename);
-                out.write(data);
-                out.flush();
-                out.close();
-            }
+            // write the data to a file
+            FileOutputStream out = new FileOutputStream(filename);
+            out.write(data);
+            out.flush();
+            out.close();
         }
-   }
+    }
+}
 ---------------------------------------------------------------------------------
 
 As you can see the API to handle attachments is a bit clunky but it's
@@ -610,7 +604,7 @@ the Splitter as shown below
 
  
 
-From Camel 2.16 onwards you can also split the attachments as byte[] to
+You can also split the attachments as byte[] to
 be stored as the message body. This is done by creating the expression
 with boolean true
 
@@ -619,11 +613,9 @@ with boolean true
 SplitAttachmentsExpression split = SplitAttachmentsExpression(true);
 --------------------------------------------------------------------
 
-And then use the expression with the splitter eip.
+And then use the expression with the splitter EIP.
 
 == Using custom SearchTerm
-
-*Since Camel 2.11*
 
 You can configure a `searchTerm` on the `MailEndpoint` which allows you
 to filter out unwanted mails.
