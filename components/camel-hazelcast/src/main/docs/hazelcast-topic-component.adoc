@@ -2,7 +2,7 @@
 = Hazelcast Topic Component
 :docTitle: Hazelcast Topic
 :artifactId: camel-hazelcast
-:description: The hazelcast-topic component is used to access Hazelcast distributed topic.
+:description: Send and receive messages to/from Hazelcast distributed topic.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

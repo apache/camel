@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-bigquery-sql",
     "title": "Google BigQuery Standard SQL",
-    "description": "Google BigQuery data warehouse for analytics (using SQL queries).",
+    "description": "Access Google Cloud BigQuery service using SQL queries.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "cloud,messaging",

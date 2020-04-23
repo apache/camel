@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "github",
     "title": "GitHub",
-    "description": "The github component is used for integrating Camel with github.",
+    "description": "Interact with the GitHub API.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "api,file",

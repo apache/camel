@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ftp",
     "title": "FTP",
-    "description": "The ftp component is used for uploading or downloading files from FTP servers.",
+    "description": "Upload and download files to\/from FTP servers.",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "1.1.0",

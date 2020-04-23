@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-mail-stream",
     "title": "Google Mail Stream",
-    "description": "The google-mail component provides access to Google Mail.",
+    "description": "Poll for incoming messages in Google Mail.",
     "deprecated": false,
     "firstVersion": "2.22.0",
     "label": "api,cloud,mail",

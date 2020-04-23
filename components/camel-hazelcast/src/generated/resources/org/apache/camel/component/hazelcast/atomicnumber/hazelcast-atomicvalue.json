@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-atomicvalue",
     "title": "Hazelcast Atomic Number",
-    "description": "The hazelcast-atomicvalue component is used to access Hazelcast atomic number, which is an object that simply provides a grid wide number (long).",
+    "description": "Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

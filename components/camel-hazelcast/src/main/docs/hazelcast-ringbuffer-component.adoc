@@ -2,7 +2,7 @@
 = Hazelcast Ringbuffer Component
 :docTitle: Hazelcast Ringbuffer
 :artifactId: camel-hazelcast
-:description: The hazelcast-ringbuffer component is used to access Hazelcast distributed ringbuffer.
+:description: Perform operations on Hazelcast distributed ringbuffer.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported

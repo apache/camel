@@ -4,7 +4,7 @@
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-component.adoc
 :docTitle: Google Calendar
 :artifactId: camel-google-calendar
-:description: The google-calendar component provides access to Google Calendar.
+:description: Perform various operations on a Google Calendar.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

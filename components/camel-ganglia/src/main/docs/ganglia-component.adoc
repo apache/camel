@@ -2,7 +2,7 @@
 = Ganglia Component
 :docTitle: Ganglia
 :artifactId: camel-ganglia
-:description: The ganglia component is used for sending metrics to the Ganglia monitoring system.
+:description: Send metrics to Ganglia monitoring system.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported

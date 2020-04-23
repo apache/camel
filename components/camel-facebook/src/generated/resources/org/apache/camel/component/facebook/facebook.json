@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "facebook",
     "title": "Facebook",
-    "description": "The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.",
+    "description": "Send requests to Facebook APIs supported by Facebook4J.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "social",

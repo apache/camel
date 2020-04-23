@@ -4,7 +4,7 @@
 :page-source: components/camel-gora/src/main/docs/gora-component.adoc
 :docTitle: Gora
 :artifactId: camel-gora
-:description: The gora component allows you to work with NoSQL databases using the Apache Gora framework.
+:description: Access NoSQL databases using the Apache Gora framework.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

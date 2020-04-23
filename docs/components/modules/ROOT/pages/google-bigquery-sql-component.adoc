@@ -4,7 +4,7 @@
 :page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
 :docTitle: Google BigQuery Standard SQL
 :artifactId: camel-google-bigquery
-:description: Google BigQuery data warehouse for analytics (using SQL queries).
+:description: Access Google Cloud BigQuery service using SQL queries.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only producer is supported

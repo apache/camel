@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-sheets",
     "title": "Google Sheets",
-    "description": "The google-sheets component provides access to Google Sheets.",
+    "description": "Manage spreadsheets in Google Sheets.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "api,cloud,sheets",

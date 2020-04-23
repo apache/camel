@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "graphql",
     "title": "GraphQL",
-    "description": "A Camel GraphQL Component",
+    "description": "Send GraphQL queries and mutations to external systems.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "api",

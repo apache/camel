@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hazelcast-queue",
     "title": "Hazelcast Queue",
-    "description": "The hazelcast-queue component is used to access Hazelcast distributed queue.",
+    "description": "Perform operations on Hazelcast distributed queue.",
     "deprecated": false,
     "firstVersion": "2.7.0",
     "label": "cache,datagrid",

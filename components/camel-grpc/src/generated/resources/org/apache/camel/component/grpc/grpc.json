@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "grpc",
     "title": "gRPC",
-    "description": "The gRPC component allows to call and expose remote procedures via HTTP\/2 with protobuf dataformat",
+    "description": "Expose gRPC endpoints and access external gRPC endpoints.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "rpc",

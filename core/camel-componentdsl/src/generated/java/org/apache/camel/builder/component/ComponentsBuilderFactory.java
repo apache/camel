@@ -1320,7 +1320,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Exec (camel-exec)
-     * The exec component can be used to execute OS system commands.
+     * Execute commands on the underlying operating system.
      * 
      * Category: system
      * Since: 2.3
@@ -1331,8 +1331,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Facebook (camel-facebook)
-     * The Facebook component provides access to all of the Facebook APIs
-     * accessible using Facebook4J.
+     * Send requests to Facebook APIs supported by Facebook4J.
      * 
      * Category: social
      * Since: 2.14
@@ -1343,8 +1342,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * FHIR (camel-fhir)
-     * The fhir component is used for working with the FHIR protocol (health
-     * care).
+     * Exchange information in the healthcare domain using the FHIR (Fast
+     * Healthcare Interoperability Resources) standard.
      * 
      * Category: hl7,api
      * Since: 2.23
@@ -1355,7 +1354,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * File (camel-file)
-     * The file component is used for reading or writing files.
+     * Read and write files.
      * 
      * Category: core,file
      * Since: 1.0
@@ -1366,8 +1365,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * File Watch (camel-file-watch)
-     * The file-watch is used to monitor file events in directory using
-     * java.nio.file.WatchService
+     * Get notified about file events in a directory using
+     * java.nio.file.WatchService.
      * 
      * Category: file
      * Since: 3.0
@@ -1378,8 +1377,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Flatpack (camel-flatpack)
-     * The flatpack component supports fixed width and delimited file parsing
-     * via the FlatPack library.
+     * Parse fixed width and delimited files using the FlatPack library.
      * 
      * Category: transformation
      * Since: 1.4
@@ -1390,8 +1388,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Flink (camel-flink)
-     * The flink component can be used to send DataSet jobs to Apache Flink
-     * cluster.
+     * Send DataSet jobs to an Apache Flink cluster.
      * 
      * Category: hadoop
      * Since: 2.18
@@ -1402,8 +1399,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * FOP (camel-fop)
-     * The fop component allows you to render a message into different output
-     * formats using Apache FOP.
+     * Render messages into PDF and other output formats supported by Apache
+     * FOP.
      * 
      * Category: transformation
      * Since: 2.10
@@ -1414,7 +1411,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Freemarker (camel-freemarker)
-     * Transforms the message using a FreeMarker template.
+     * Transform messages using FreeMarker templates.
      * 
      * Category: transformation
      * Since: 2.10
@@ -1425,8 +1422,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * FTP (camel-ftp)
-     * The ftp component is used for uploading or downloading files from FTP
-     * servers.
+     * Upload and download files to/from FTP servers.
      * 
      * Category: file
      * Since: 1.1
@@ -1437,8 +1433,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * FTPS (camel-ftp)
-     * The ftps (FTP secure SSL/TLS) component is used for uploading or
-     * downloading files from FTP servers.
+     * Upload and download files to/from FTP servers supporting the FTPS
+     * protocol.
      * 
      * Category: file
      * Since: 2.2
@@ -1449,8 +1445,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Ganglia (camel-ganglia)
-     * The ganglia component is used for sending metrics to the Ganglia
-     * monitoring system.
+     * Send metrics to Ganglia monitoring system.
      * 
      * Category: monitoring
      * Since: 2.15
@@ -1461,8 +1456,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Geocoder (camel-geocoder)
-     * The geocoder component is used for looking up geocodes (latitude and
-     * longitude) for a given address, or reverse lookup.
+     * Find geocodes (latitude and longitude) for a given address or the other
+     * way round.
      * 
      * Category: api,location
      * Since: 2.12
@@ -1473,7 +1468,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Git (camel-git)
-     * The git component is used for working with git repositories.
+     * Perform operations on git repositories.
      * 
      * Category: file
      * Since: 2.16
@@ -1484,7 +1479,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * GitHub (camel-github)
-     * The github component is used for integrating Camel with github.
+     * Interact with the GitHub API.
      * 
      * Category: api,file
      * Since: 2.15
@@ -1506,7 +1501,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics (using SQL queries).
+     * Access Google Cloud BigQuery service using SQL queries.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -1517,7 +1512,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Calendar (camel-google-calendar)
-     * The google-calendar component provides access to Google Calendar.
+     * Perform various operations on a Google Calendar.
      * 
      * Category: api,cloud
      * Since: 2.15
@@ -1528,8 +1523,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Calendar Stream (camel-google-calendar)
-     * The google-calendar-stream component provides access to Google Calendar
-     * in a streaming mode.
+     * Poll for changes in a Google Calendar.
      * 
      * Category: api,cloud
      * Since: 2.23
@@ -1540,8 +1534,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Drive (camel-google-drive)
-     * The google-drive component provides access to Google Drive file storage
-     * service.
+     * Manage files in Google Drive.
      * 
      * Category: api,cloud,file
      * Since: 2.14
@@ -1552,7 +1545,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Mail (camel-google-mail)
-     * The google-mail component provides access to Google Mail.
+     * Manage messages in Google Mail.
      * 
      * Category: api,cloud,mail
      * Since: 2.15
@@ -1563,7 +1556,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Mail Stream (camel-google-mail)
-     * The google-mail component provides access to Google Mail.
+     * Poll for incoming messages in Google Mail.
      * 
      * Category: api,cloud,mail
      * Since: 2.22
@@ -1574,8 +1567,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Pubsub (camel-google-pubsub)
-     * Messaging client for Google Cloud Platform PubSub Service Built on top of
-     * the Google Cloud Pub/Sub libraries.
+     * Send and receive messages to/from Google Cloud Platform PubSub Service.
      * 
      * Category: messaging
      * Since: 2.19
@@ -1586,7 +1578,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Sheets (camel-google-sheets)
-     * The google-sheets component provides access to Google Sheets.
+     * Manage spreadsheets in Google Sheets.
      * 
      * Category: api,cloud,sheets
      * Since: 2.23
@@ -1597,7 +1589,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Sheets Stream (camel-google-sheets)
-     * The google-sheets-stream component provides access to Google Sheets.
+     * Poll for changes in Google Sheets.
      * 
      * Category: api,cloud,sheets
      * Since: 2.23
@@ -1608,8 +1600,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Gora (camel-gora)
-     * The gora component allows you to work with NoSQL databases using the
-     * Apache Gora framework.
+     * Access NoSQL databases using the Apache Gora framework.
      * 
      * Category: database,hadoop,nosql
      * Since: 2.14
@@ -1620,8 +1611,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Grape (camel-grape)
-     * The grape component allows you to fetch, load and manage additional jars
-     * when CamelContext is running.
+     * Fetch, load and manage additional jars dynamically after Camel Context
+     * was started.
      * 
      * Category: management,deployment
      * Since: 2.16
@@ -1632,7 +1623,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * GraphQL (camel-graphql)
-     * A Camel GraphQL Component
+     * Send GraphQL queries and mutations to external systems.
      * 
      * Category: api
      * Since: 3.0
@@ -1643,8 +1634,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * gRPC (camel-grpc)
-     * The gRPC component allows to call and expose remote procedures via HTTP/2
-     * with protobuf dataformat
+     * Expose gRPC endpoints and access external gRPC endpoints.
      * 
      * Category: rpc
      * Since: 2.19
@@ -1655,8 +1645,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Guava EventBus (camel-guava-eventbus)
-     * The guava-eventbus component provides integration bridge between Camel
-     * and Google Guava EventBus.
+     * Send and receive messages to/from Guava EventBus.
      * 
      * Category: eventbus
      * Since: 2.10
@@ -1667,9 +1656,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Atomic Number (camel-hazelcast)
-     * The hazelcast-atomicvalue component is used to access Hazelcast atomic
-     * number, which is an object that simply provides a grid wide number
-     * (long).
+     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+     * number).
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1680,8 +1668,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Instance (camel-hazelcast)
-     * The hazelcast-instance component is used to consume join/leave events of
-     * the cache instance in the cluster.
+     * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1692,8 +1679,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast List (camel-hazelcast)
-     * The hazelcast-list component is used to access Hazelcast distributed
-     * list.
+     * Perform operations on Hazelcast distributed list.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1704,7 +1690,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Map (camel-hazelcast)
-     * The hazelcast-map component is used to access Hazelcast distributed map.
+     * Perform operations on Hazelcast distributed map.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1715,8 +1701,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Multimap (camel-hazelcast)
-     * The hazelcast-multimap component is used to to access Hazelcast
-     * distributed multimap.
+     * Perform operations on Hazelcast distributed multimap.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1727,8 +1712,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Queue (camel-hazelcast)
-     * The hazelcast-queue component is used to access Hazelcast distributed
-     * queue.
+     * Perform operations on Hazelcast distributed queue.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1739,8 +1723,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
-     * The hazelcast-replicatedmap component is used to access Hazelcast
-     * replicated map.
+     * Perform operations on Hazelcast replicated map.
      * 
      * Category: cache,datagrid
      * Since: 2.16
@@ -1751,8 +1734,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
-     * The hazelcast-ringbuffer component is used to access Hazelcast
-     * distributed ringbuffer.
+     * Perform operations on Hazelcast distributed ringbuffer.
      * 
      * Category: cache,datagrid
      * Since: 2.16
@@ -1763,7 +1745,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast SEDA (camel-hazelcast)
-     * The hazelcast-seda component is used to access Hazelcast BlockingQueue.
+     * Asynchronously send/receive Exchanges between Camel routes running on
+     * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1774,7 +1757,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Set (camel-hazelcast)
-     * The hazelcast-set component is used to access Hazelcast distributed set.
+     * Perform operations on Hazelcast distributed set.
      * 
      * Category: cache,datagrid
      * Since: 2.7
@@ -1785,8 +1768,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hazelcast Topic (camel-hazelcast)
-     * The hazelcast-topic component is used to access Hazelcast distributed
-     * topic.
+     * Send and receive messages to/from Hazelcast distributed topic.
      * 
      * Category: cache,datagrid
      * Since: 2.15
@@ -3226,8 +3208,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SEDA (camel-seda)
-     * The seda component provides asynchronous call to another endpoint from
-     * any CamelContext in the same JVM.
+     * Asynchronously call another endpoint from any Camel Context in the same
+     * JVM.
      * 
      * Category: core,endpoint
      * Since: 1.1
@@ -3274,8 +3256,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SFTP (camel-ftp)
-     * The sftp (FTP over SSH) component is used for uploading or downloading
-     * files from SFTP servers.
+     * Upload and download files to/from SFTP servers.
      * 
      * Category: file
      * Since: 1.1

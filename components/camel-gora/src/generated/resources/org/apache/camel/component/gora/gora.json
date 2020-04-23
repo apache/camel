@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "gora",
     "title": "Gora",
-    "description": "The gora component allows you to work with NoSQL databases using the Apache Gora framework.",
+    "description": "Access NoSQL databases using the Apache Gora framework.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "database,hadoop,nosql",

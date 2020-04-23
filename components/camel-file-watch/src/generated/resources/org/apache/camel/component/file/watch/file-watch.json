@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "file-watch",
     "title": "File Watch",
-    "description": "The file-watch is used to monitor file events in directory using java.nio.file.WatchService",
+    "description": "Get notified about file events in a directory using java.nio.file.WatchService.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "file",

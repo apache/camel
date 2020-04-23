@@ -4,7 +4,7 @@
 :page-source: components/camel-graphql/src/main/docs/graphql-component.adoc
 :docTitle: GraphQL
 :artifactId: camel-graphql
-:description: A Camel GraphQL Component
+:description: Send GraphQL queries and mutations to external systems.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "google-pubsub",
     "title": "Google Pubsub",
-    "description": "Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub\/Sub libraries.",
+    "description": "Send and receive messages to\/from Google Cloud Platform PubSub Service.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "messaging",

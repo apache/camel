@@ -2,7 +2,7 @@
 = File Component
 :docTitle: File
 :artifactId: camel-file
-:description: The file component is used for reading or writing files.
+:description: Read and write files.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

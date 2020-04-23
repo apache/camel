@@ -4,7 +4,7 @@
 :page-source: components/camel-geocoder/src/main/docs/geocoder-component.adoc
 :docTitle: Geocoder
 :artifactId: camel-geocoder
-:description: The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
+:description: Find geocodes (latitude and longitude) for a given address or the other way round.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

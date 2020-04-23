@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "file",
     "title": "File",
-    "description": "The file component is used for reading or writing files.",
+    "description": "Read and write files.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "core,file",

@@ -4,7 +4,7 @@
 :page-source: components/camel-ftp/src/main/docs/sftp-component.adoc
 :docTitle: SFTP
 :artifactId: camel-ftp
-:description: The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
+:description: Upload and download files to/from SFTP servers.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

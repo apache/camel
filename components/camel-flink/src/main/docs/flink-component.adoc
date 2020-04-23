@@ -2,7 +2,7 @@
 = Flink Component
 :docTitle: Flink
 :artifactId: camel-flink
-:description: The flink component can be used to send DataSet jobs to Apache Flink cluster.
+:description: Send DataSet jobs to an Apache Flink cluster.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported

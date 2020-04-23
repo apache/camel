@@ -4,7 +4,7 @@
 :page-source: components/camel-github/src/main/docs/github-component.adoc
 :docTitle: GitHub
 :artifactId: camel-github
-:description: The github component is used for integrating Camel with github.
+:description: Interact with the GitHub API.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

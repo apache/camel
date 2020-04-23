@@ -2,7 +2,7 @@
 = Google Mail Stream Component
 :docTitle: Google Mail Stream
 :artifactId: camel-google-mail
-:description: The google-mail component provides access to Google Mail.
+:description: Poll for incoming messages in Google Mail.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only consumer is supported

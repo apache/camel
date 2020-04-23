@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "geocoder",
     "title": "Geocoder",
-    "description": "The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.",
+    "description": "Find geocodes (latitude and longitude) for a given address or the other way round.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "api,location",

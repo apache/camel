@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ganglia",
     "title": "Ganglia",
-    "description": "The ganglia component is used for sending metrics to the Ganglia monitoring system.",
+    "description": "Send metrics to Ganglia monitoring system.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "monitoring",
