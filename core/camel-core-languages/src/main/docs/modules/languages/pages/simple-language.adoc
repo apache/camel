@@ -25,9 +25,7 @@ choose a more expressive and powerful language such as:
 * xref:mvel-language.adoc[MVEL]
 * xref:ognl-language.adoc[OGNL]
 
-The simple language uses `${body`} placeholders for complex expressions
-where the expression contains constant literals. The $\{ } placeholders
-can be omitted if the expression is only the token itself.
+The simple language uses `${body`} placeholders for complex expressions or functions.
 
 [TIP]
 ====
