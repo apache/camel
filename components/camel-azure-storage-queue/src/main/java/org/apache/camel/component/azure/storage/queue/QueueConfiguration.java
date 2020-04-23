@@ -47,6 +47,8 @@ public class QueueConfiguration implements Cloneable {
     private Duration visibilityTimeout;
     @UriParam(label = "queue", defaultValue = "1")
     private Integer maxMessages = 1;
+    @UriParam(label = "queue")
+    private Duration timeout;
 
     /**
      * Azure account name to be used for authentication with azure queue services
@@ -125,8 +127,7 @@ public class QueueConfiguration implements Cloneable {
     }
 
     /**
-     * The timeout period for how long the message is invisible in the queue. If
-     * unset the value will default to 0 and the message will be instantly visible. The timeout must be between 0
+     * The timeout period for how long the message is invisible in the queue. The timeout must be between 1
      * seconds and 7 days.
      *
      * The format should be in this form: `PnDTnHnMn.nS.`, e.g: "PT20.345S" -- parses as "20.345 seconds", P2D" -- parses as "2 days"
@@ -163,6 +164,18 @@ public class QueueConfiguration implements Cloneable {
 
     public void setMaxMessages(Integer maxMessages) {
         this.maxMessages = maxMessages;
+    }
+
+    /**
+     * An optional timeout applied to the operation. If a response is not returned before the timeout
+     * concludes a {@link RuntimeException} will be thrown.
+     */
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Duration timeout) {
+        this.timeout = timeout;
     }
 
     // *************************************************

@@ -43,6 +43,7 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.queue.QueueServiceClient.class, value)); return true;
         case "timetolive":
         case "timeToLive": getOrCreateConfiguration(target).setTimeToLive(property(camelContext, java.time.Duration.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
@@ -62,6 +63,7 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         answer.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
         answer.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
         answer.put("timeToLive", java.time.Duration.class);
+        answer.put("timeout", java.time.Duration.class);
         answer.put("visibilityTimeout", java.time.Duration.class);
         return answer;
     }
@@ -87,6 +89,7 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         case "timetolive":
         case "timeToLive": return getOrCreateConfiguration(target).getTimeToLive();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "visibilitytimeout":
         case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         default: return null;

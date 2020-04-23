@@ -167,6 +167,20 @@ public interface AzureStorageQueueComponentBuilderFactory {
             return this;
         }
         /**
+         * An optional timeout applied to the operation. If a response is not
+         * returned before the timeout concludes a RuntimeException will be
+         * thrown.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: queue
+         */
+        default AzureStorageQueueComponentBuilder timeout(
+                java.time.Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
          * How long the message will stay alive in the queue. If unset the value
          * will default to 7 days, if -1 is passed the message will not expire.
          * The time to live must be -1 or any positive number. The format should
@@ -186,11 +200,10 @@ public interface AzureStorageQueueComponentBuilderFactory {
         }
         /**
          * The timeout period for how long the message is invisible in the
-         * queue. If unset the value will default to 0 and the message will be
-         * instantly visible. The timeout must be between 0 seconds and 7 days.
-         * The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S --
-         * parses as 20.345 seconds, P2D -- parses as 2 days However, in case
-         * you are using EndpointDsl/ComponentDsl, you can do something like
+         * queue. The timeout must be between 1 seconds and 7 days. The format
+         * should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as
+         * 20.345 seconds, P2D -- parses as 2 days However, in case you are
+         * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
          * The option is a: <code>java.time.Duration</code> type.
@@ -261,6 +274,7 @@ public interface AzureStorageQueueComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((QueueComponent) component).setOperation((org.apache.camel.component.azure.storage.queue.QueueOperationDefinition) value); return true;
             case "basicPropertyBinding": ((QueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "maxMessages": getOrCreateConfiguration((QueueComponent) component).setMaxMessages((java.lang.Integer) value); return true;
+            case "timeout": getOrCreateConfiguration((QueueComponent) component).setTimeout((java.time.Duration) value); return true;
             case "timeToLive": getOrCreateConfiguration((QueueComponent) component).setTimeToLive((java.time.Duration) value); return true;
             case "visibilityTimeout": getOrCreateConfiguration((QueueComponent) component).setVisibilityTimeout((java.time.Duration) value); return true;
             case "accessKey": getOrCreateConfiguration((QueueComponent) component).setAccessKey((java.lang.String) value); return true;

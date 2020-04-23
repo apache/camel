@@ -26,6 +26,7 @@ public final class QueueConstants {
     public static final String EXPIRATION_TIME = HEADER_PREFIX + "ExpirationTime";
     public static final String POP_RECEIPT = HEADER_PREFIX + "PopReceipt";
     public static final String TIME_NEXT_VISIBLE = HEADER_PREFIX + "TimeNextVisible";
+    public static final String DEQUEUE_COUNT = HEADER_PREFIX + "DequeueCount";
     // headers to be retrieved
     public static final String QUEUE_OPERATION = HEADER_PREFIX + "Operation";
     public static final String QUEUE_NAME = HEADER_PREFIX + "Name";

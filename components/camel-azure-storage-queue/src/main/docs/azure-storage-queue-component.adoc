@@ -59,7 +59,7 @@ to("file://queuedirectory");
 == URI Options
 
 // component options: START
-The Azure Storage Queue Service component supports 11 options, which are listed below.
+The Azure Storage Queue Service component supports 12 options, which are listed below.
 
 
 
@@ -73,8 +73,9 @@ The Azure Storage Queue Service component supports 11 options, which are listed 
 | *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *maxMessages* (queue) | Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages. | 1 | Integer
+| *timeout* (queue) | An optional timeout applied to the operation. If a response is not returned before the timeout concludes a RuntimeException will be thrown. |  | Duration
 | *timeToLive* (queue) | How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
-| *visibilityTimeout* (queue) | The timeout period for how long the message is invisible in the queue. If unset the value will default to 0 and the message will be instantly visible. The timeout must be between 0 seconds and 7 days. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
+| *visibilityTimeout* (queue) | The timeout period for how long the message is invisible in the queue. The timeout must be between 1 seconds and 7 days. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
 | *accessKey* (security) | Access key for the associated azure account name to be used for authentication with azure queue services |  | String
 | *credentials* (security) | StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information |  | StorageSharedKeyCredential
 |===
@@ -100,7 +101,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -115,8 +116,9 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *maxMessages* (queue) | Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages. | 1 | Integer
+| *timeout* (queue) | An optional timeout applied to the operation. If a response is not returned before the timeout concludes a RuntimeException will be thrown. |  | Duration
 | *timeToLive* (queue) | How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
-| *visibilityTimeout* (queue) | The timeout period for how long the message is invisible in the queue. If unset the value will default to 0 and the message will be instantly visible. The timeout must be between 0 seconds and 7 days. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
+| *visibilityTimeout* (queue) | The timeout period for how long the message is invisible in the queue. The timeout must be between 1 seconds and 7 days. The format should be in this form: PnDTnHnMn.nS., e.g: PT20.345S -- parses as 20.345 seconds, P2D -- parses as 2 days However, in case you are using EndpointDsl/ComponentDsl, you can do something like Duration.ofSeconds() since these Java APIs are typesafe. |  | Duration
 | *accessKey* (security) | Access key for the associated azure account name to be used for authentication with azure queue services |  | String
 | *credentials* (security) | StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information |  | StorageSharedKeyCredential
 |===
@@ -133,6 +135,14 @@ provided into `credentials` option.
 - Provide a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/queue/QueueServiceClient.html[QueueServiceClient] instance which can be
 provided into `serviceClient`. Note: You don't need to create a specific client, e.g: QueueClient, the QueueServiceClient represents the upper level which
 can be used to retrieve lower level clients.
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
 
 == Usage
 
@@ -165,6 +175,7 @@ can be used to retrieve lower level clients.
 |`CamelAzureStorageQueueExpirationTime`|`QueueConstants.EXPIRATION_TIME`|`OffsetDateTime`|The time that the Message will expire and be automatically deleted.
 |`CamelAzureStorageQueuePopReceipt`|`QueueConstants.POP_RECEIPT`|`String`|This value is required to delete/update the Message. If deletion fails using this popreceipt then the message has been dequeued by another client.
 |`CamelAzureStorageQueueTimeNextVisible`|`QueueConstants.TIME_NEXT_VISIBLE`|`OffsetDateTime`|The time that the message will again become visible in the Queue.
+|`CamelAzureStorageQueueDequeueCount` | `QueueConstants.DEQUEUE_COUNT`|`long`|The number of times the message has been dequeued.
 |`CamelAzureStorageQueueRawHttpHeaders`|`QueueConstants.RAW_HTTP_HEADERS`|`HttpHeaders`|Returns non-parsed httpHeaders that can be used by the user.
 |=======================================================================
 
@@ -175,7 +186,7 @@ create your own instance:
 [source,java]
 -----------------------------------------------------------------------
 StorageSharedKeyCredential credential = new StorageSharedKeyCredential("yourAccountName", "yourAccessKey");
-String uri = String.format("https://%s.blob.queue.windows.net", "yourAccountName");
+String uri = String.format("https://%s.queue.core.windows.net", "yourAccountName");
 
 QueueServiceClient client = new QueueServiceClientBuilder()
                           .endpoint(uri)
@@ -195,6 +206,52 @@ from("azure-storage-queue://cameldev/queue1?serviceClient=#client")
 
 === Automatic detection of QueueServiceClient client in registry
 
-The component is capable of detecting the presence of an BlobServiceClient bean into the registry.
+The component is capable of detecting the presence of an QueueServiceClient bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
 This may be really useful for smarter configuration of the endpoint.
+
+=== Azure Storage Queue Producer operations
+
+Camel Azure Storage Queue component provides wide range of operations on the producer side:
+
+*Operations on the service level*
+
+For these operations, `accountName` is *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`listQueues`  |Lists the queues in the storage account that pass the filter starting at the specified marker.
+|===
+
+
+*Operations on the queue level*
+
+For these operations, `accountName` and `queueName` are *required*.
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`createQueue` | Creates a new queue.
+|`deleteQueue` | Permanently deletes the queue.
+|`clearQueue`| Deletes all messages in the queue..
+|`sendMessage`| Sends a message with a given time-to-live and a timeout period where the message is invisible in the queue.
+|`deleteMessage`| Deletes the specified message in the queue.
+|`receiveMessages`|  Retrieves up to the maximum number of messages from the queue and hides them from other operations for the timeout period. However it will not dequeue the message from the queue due to reliability reasons.
+|`peekMessages`| Peek messages from the front of the queue up to the maximum number of messages.
+|`updateMessage`| Updates the specific message in the queue with a new message and resets the visibility timeout.
+|===
+
+Refer to the example section in this page to learn how to use these operations into your camel application.
+
+=== Consumer Examples
+To consume a queue into a file component, this can be done like this:
+
+
+
+=== Development Notes (Important)
+When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
+you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
+To run the integration tests, on this component directory, run the following maven command:
+----
+mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
+----
+Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
+import com.azure.storage.queue.models.QueueMessageItem;
 import com.azure.storage.queue.models.QueuesSegmentOptions;
 import com.azure.storage.queue.models.SendMessageResult;
 import org.apache.camel.Exchange;
@@ -37,6 +38,16 @@ public class QueueExchangeHeaders {
                 .expirationTime(result.getExpirationTime())
                 .popReceipt(result.getPopReceipt())
                 .timeNextVisible(result.getTimeNextVisible());
+    }
+
+    public static QueueExchangeHeaders createQueueExchangeHeadersFromQueueMessageItem(final QueueMessageItem item) {
+        return new QueueExchangeHeaders()
+                .messageId(item.getMessageId())
+                .insertionTime(item.getInsertionTime())
+                .expirationTime(item.getExpirationTime())
+                .popReceipt(item.getPopReceipt())
+                .timeNextVisible(item.getTimeNextVisible())
+                .dequeueCount(item.getDequeueCount());
     }
 
     public Map<String, Object> toMap() {
@@ -118,6 +129,11 @@ public class QueueExchangeHeaders {
 
     public QueueExchangeHeaders timeNextVisible(final OffsetDateTime timeNextVisible) {
         headers.put(QueueConstants.TIME_NEXT_VISIBLE, timeNextVisible);
+        return this;
+    }
+
+    public QueueExchangeHeaders dequeueCount(final long count) {
+        headers.put(QueueConstants.DEQUEUE_COUNT, count);
         return this;
     }
 

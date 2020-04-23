@@ -18,14 +18,12 @@ package org.apache.camel.component.azure.storage.queue;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.queue.QueueServiceClient;
-import com.azure.storage.queue.models.QueueMessageItem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientWrapper;
@@ -38,13 +36,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueueConsumerIT extends CamelTestSupport {
-
-    @EndpointInject
-    private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -72,18 +67,19 @@ class QueueConsumerIT extends CamelTestSupport {
 
     @Test
     public void testPollingMessages() throws InterruptedException {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(3);
         result.assertIsSatisfied();
 
-        final List<QueueMessageItem> messages = result.getExchanges().get(0).getMessage().getBody(List.class);
-        final List<String> messagesText = messages
-                .stream()
-                .map(QueueMessageItem::getMessageText)
-                .collect(Collectors.toList());
+        final List<Exchange> exchanges = result.getExchanges();
 
-        assertTrue(messagesText.contains("test-message-1"));
-        assertTrue(messagesText.contains("test-message-2"));
-        assertTrue(messagesText.contains("test-message-3"));
+        result.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
+        result.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
+        result.message(2).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(2);
+        result.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
+
+        assertEquals("test-message-1", exchanges.get(0).getMessage().getBody());
+        assertEquals("test-message-2", exchanges.get(1).getMessage().getBody());
+        assertEquals("test-message-3", exchanges.get(2).getMessage().getBody());
     }
 
     @AfterAll

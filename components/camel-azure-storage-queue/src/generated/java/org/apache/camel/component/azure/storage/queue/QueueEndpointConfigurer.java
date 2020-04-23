@@ -40,6 +40,7 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
         case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, java.time.Duration.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": target.getConfiguration().setVisibilityTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
@@ -61,6 +62,7 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeToLive", java.time.Duration.class);
+        answer.put("timeout", java.time.Duration.class);
         answer.put("visibilityTimeout", java.time.Duration.class);
         return answer;
     }
@@ -90,6 +92,7 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": return target.isSynchronous();
         case "timetolive":
         case "timeToLive": return target.getConfiguration().getTimeToLive();
+        case "timeout": return target.getConfiguration().getTimeout();
         case "visibilitytimeout":
         case "visibilityTimeout": return target.getConfiguration().getVisibilityTimeout();
         default: return null;
