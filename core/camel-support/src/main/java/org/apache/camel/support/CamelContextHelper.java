@@ -147,6 +147,11 @@ public final class CamelContextHelper {
         }
     }
 
+    public static <T extends Endpoint> T resolveEndpoint(CamelContext camelContext, String uri, String ref, Class<T> type) {
+        Endpoint endpoint = resolveEndpoint(camelContext, uri, ref);
+        return ObjectHelper.cast(type, endpoint);
+    }
+
     /**
      * Converts the given value to the requested type
      */
