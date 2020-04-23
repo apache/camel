@@ -28,17 +28,17 @@ import org.slf4j.LoggerFactory;
 public class SplunkHECConfiguration {
     private static final transient Logger LOG = LoggerFactory.getLogger(SplunkHECConfiguration.class);
 
-    @UriParam(label = "producer")
+    @UriParam(defaultValue = "camel")
     private String index = "camel";
-    @UriParam(label = "producer")
+    @UriParam(defaultValue = "camel")
     private String sourceType = "camel";
-    @UriParam(label = "producer")
+    @UriParam(defaultValue = "camel")
     private String source = "camel";
-    @UriParam(label = "producer")
+    @UriParam
     private String host;
-    @UriParam(label = "producer")
+    @UriParam(label = "security")
     private boolean skipTlsVerify;
-    @UriParam(label = "producer")
+    @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;
 
     public String getSourceType() {

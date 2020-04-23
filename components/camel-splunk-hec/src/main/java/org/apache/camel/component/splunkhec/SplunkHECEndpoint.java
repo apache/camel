@@ -22,29 +22,25 @@ import java.util.regex.Pattern;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", syntax = "splunk-hec:endpoint/token", label = "log,monitoring")
+@UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
+        syntax = "splunk-hec:splunkURL/token", label = "log,monitoring")
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SplunkHECEndpoint.class);
     private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?(\\w+):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
 
-    @UriPath
-    private String endpointUri;
-
+    @UriPath @Metadata(required = true)
     private String splunkURL;
-
+    @UriPath(label = "security") @Metadata(required = true)
     private String token;
-
     @UriParam
     private SplunkHECConfiguration configuration;
 
@@ -58,7 +54,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         if (!match.matches()) {
             throw new IllegalArgumentException("Invalid URI: " + uri);
         }
-        int port = Integer.valueOf(match.group(2));
+        int port = Integer.parseInt(match.group(2));
         if (port < 1 || port > 65535) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
@@ -84,20 +80,22 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         return splunkURL;
     }
 
+    /**
+     * Splunk Host URL
+     */
+    public void setSplunkURL(String splunkURL) {
+        this.splunkURL = splunkURL;
+    }
+
     public String getToken() {
         return token;
     }
 
     /**
-     * Splunk host URI
+     * Splunk authorization token
      */
-    @Override
-    public void setEndpointUri(String endpointUri) {
-        this.endpointUri = endpointUri;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    @Override
-    public String getEndpointUri() {
-        return endpointUri;
-    }
 }

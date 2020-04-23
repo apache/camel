@@ -37,7 +37,7 @@ public interface SplunkHecComponentBuilderFactory {
      * Event Collector.
      * 
      * Category: log,monitoring
-     * Since: 3.2
+     * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
      */
     static SplunkHecComponentBuilder splunkHec() {
@@ -50,25 +50,6 @@ public interface SplunkHecComponentBuilderFactory {
     interface SplunkHecComponentBuilder
             extends
                 ComponentBuilder<SplunkHECComponent> {
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SplunkHecComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -121,7 +102,6 @@ public interface SplunkHecComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((SplunkHECComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SplunkHECComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((SplunkHECComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;

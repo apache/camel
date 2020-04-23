@@ -3475,7 +3475,7 @@ public interface ComponentsBuilderFactory {
      * Event Collector.
      * 
      * Category: log,monitoring
-     * Since: 3.2
+     * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
      */
     static org.apache.camel.builder.component.dsl.SplunkHecComponentBuilderFactory.SplunkHecComponentBuilder splunkHec() {

@@ -6628,10 +6628,10 @@
     "version": "3.3.0-SNAPSHOT",
     "scheme": "splunk-hec",
     "extendsScheme": "",
-    "syntax": "splunk-hec:endpoint\/token",
+    "syntax": "splunk-hec:splunkURL\/token",
     "async": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "SpringBatchComponentBuilderFactory": {
