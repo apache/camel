@@ -30,6 +30,11 @@
             <to uri="mock:result"/>
         </route>
         <route>
+            <from uri="direct:listBrokersPojo"/>
+            <to uri="aws2-mq://Test?amazonMqClient=#amazonMqClient&amp;operation=listBrokers&amp;pojoRequest=true"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:createBroker"/>
             <to uri="aws2-mq://Test?amazonMqClient=#amazonMqClient&amp;operation=createBroker"/>
             <to uri="mock:result"/>
