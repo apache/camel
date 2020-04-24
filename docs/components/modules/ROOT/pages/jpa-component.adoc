@@ -272,7 +272,7 @@ explicitly configure a JPA component that references the
 == Using a consumer with a named query
 
 For consuming only selected entities, you can use the
-`consumer.namedQuery` URI query option. First, you have to define the
+`namedQuery` URI query option. First, you have to define the
 named query in the JPA Entity class:
 
 [source,java]
@@ -288,30 +288,30 @@ After that you can define a consumer uri like this one:
 
 [source,java]
 ----------------------------------------------------------------------------
-from("jpa://org.apache.camel.examples.MultiSteps?consumer.namedQuery=step1")
+from("jpa://org.apache.camel.examples.MultiSteps?namedQuery=step1")
 .to("bean:myBusinessLogic");
 ----------------------------------------------------------------------------
 
 == Using a consumer with a query
 
-For consuming only selected entities, you can use the `consumer.query`
+For consuming only selected entities, you can use the `query`
 URI query option. You only have to define the query option:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
-from("jpa://org.apache.camel.examples.MultiSteps?consumer.query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1")
+from("jpa://org.apache.camel.examples.MultiSteps?query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1")
 .to("bean:myBusinessLogic");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 == Using a consumer with a native query
 
 For consuming only selected entities, you can use the
-`consumer.nativeQuery` URI query option. You only have to define the
+`nativeQuery` URI query option. You only have to define the
 native query option:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
-from("jpa://org.apache.camel.examples.MultiSteps?consumer.nativeQuery=select * from MultiSteps where step = 1")
+from("jpa://org.apache.camel.examples.MultiSteps?nativeQuery=select * from MultiSteps where step = 1")
 .to("bean:myBusinessLogic");
 ---------------------------------------------------------------------------------------------------------------
 

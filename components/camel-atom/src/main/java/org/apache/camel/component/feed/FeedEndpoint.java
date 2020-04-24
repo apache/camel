@@ -49,7 +49,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     private boolean sortEntries;
     @UriParam(defaultValue = "true", description = "Sets whether all entries identified in a " 
             + "single feed poll should be delivered immediately. If true, only one entry is processed " 
-            + "per consumer.delay. Only applicable when splitEntries = true.")
+            + "per delay. Only applicable when splitEntries = true.")
     private boolean throttleEntries = true;
     @UriParam(description = "Sets the username to be used for basic authentication when polling from a HTTP feed.")
     private String username;
@@ -206,7 +206,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Sets whether all entries identified in a single feed poll should be delivered immediately. If true, only one
-     * entry is processed per consumer.delay. Only applicable when splitEntries = true.
+     * entry is processed per delay. Only applicable when splitEntries = true.
      */
     public void setThrottleEntries(boolean throttleEntries) {
         this.throttleEntries = throttleEntries;
