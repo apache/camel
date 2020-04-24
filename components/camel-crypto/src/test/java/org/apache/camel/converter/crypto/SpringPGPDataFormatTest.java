@@ -18,7 +18,7 @@ package org.apache.camel.converter.crypto;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
@@ -30,7 +30,7 @@ public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
-    public void testEncryption() throws Exception {
+    void testEncryption() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
 

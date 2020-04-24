@@ -23,11 +23,11 @@ import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This class tests the common {@link CsvRecordConverter} implementations of
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 public class CsvRecordConvertersTest {
     private CSVRecord record;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         CSVFormat format = CSVFormat.DEFAULT.withHeader("A", "B", "C");
         CSVParser parser = new CSVParser(new StringReader("1,2,3"), format);
@@ -45,7 +45,7 @@ public class CsvRecordConvertersTest {
     }
 
     @Test
-    public void shouldConvertAsList() {
+    void shouldConvertAsList() {
         List<String> list = CsvRecordConverters.listConverter().convertRecord(record);
 
         assertNotNull(list);
@@ -56,7 +56,7 @@ public class CsvRecordConvertersTest {
     }
 
     @Test
-    public void shouldConvertAsMap() {
+    void shouldConvertAsMap() {
         Map<String, String> map = CsvRecordConverters.mapConverter().convertRecord(record);
 
         assertNotNull(map);

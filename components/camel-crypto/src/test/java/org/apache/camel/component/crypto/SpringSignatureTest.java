@@ -85,7 +85,7 @@ public class SpringSignatureTest extends SignatureTest {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {};
     }
 }
