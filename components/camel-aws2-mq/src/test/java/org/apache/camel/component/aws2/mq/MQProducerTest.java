@@ -72,7 +72,7 @@ public class MQProducerTest extends CamelTestSupport {
     public void mqListBrokersPojoTest() throws Exception {
 
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:listBrokers", new Processor() {
+        Exchange exchange = template.request("direct:listBrokersPojo", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
