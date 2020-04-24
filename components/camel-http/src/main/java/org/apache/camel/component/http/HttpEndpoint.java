@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * For calling out to external HTTP servers using Apache HTTP Client 4.x.
+ * Send requests to external HTTP servers using Apache HTTP Client 4.x.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri",
     producerOnly = true, label = "http", lenientProperties = true)

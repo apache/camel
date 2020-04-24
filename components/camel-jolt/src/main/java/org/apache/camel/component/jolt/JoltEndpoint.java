@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).
+ * JSON to JSON transformation using JOLT.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, label = "transformation")
 public class JoltEndpoint extends ResourceEndpoint {

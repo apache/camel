@@ -31,8 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents an endpoint which only becomes active when the {@link CamelClusterView}
- * has the leadership.
+ * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed Master Endpoint")
 @UriEndpoint(

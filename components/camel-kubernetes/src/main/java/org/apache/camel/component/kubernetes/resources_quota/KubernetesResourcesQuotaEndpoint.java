@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Resources Quota component provides a producer to execute
- * kubernetes resources quota operations.
+ * Perform operations on Kubernetes Resources Quotas.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-resources-quota", title = "Kubernetes Resources Quota", syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint {

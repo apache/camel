@@ -25,7 +25,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import weka.core.Version;
 
 /**
- * The camel-weka component provides Data Mining functionality through Weka.
+ * Perform machine learning tasks using Weka.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "weka", title = "Weka", syntax = "weka:command", producerOnly = true, label = "Datamining")
 public class WekaEndpoint extends DefaultEndpoint {

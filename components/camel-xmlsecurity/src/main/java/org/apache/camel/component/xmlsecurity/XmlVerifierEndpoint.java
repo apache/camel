@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Used to verify exchanges using the XML signature specification.
+ * Verify XML payloads using the XML signature specification.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-verify", title = "XML Security Verify",
         syntax = "xmlsecurity-verify:name", producerOnly = true, label = "security,transformation")

@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
 /**
- * The openstack-swift component allows messages to be sent to an OpenStack object storage services.
+ * Access OpenStack Swift object/blob store.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host", label = "cloud,paas", producerOnly = true)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {

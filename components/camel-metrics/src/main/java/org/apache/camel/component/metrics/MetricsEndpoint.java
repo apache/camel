@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To collect various metrics directly from Camel routes using the DropWizard metrics library.
+ * Collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MetricsEndpoint extends DefaultEndpoint {

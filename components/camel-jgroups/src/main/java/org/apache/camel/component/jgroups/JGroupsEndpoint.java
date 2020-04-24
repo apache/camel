@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The jgroups component provides exchange of messages between Camel and JGroups clusters.
+ * Exchange messages with JGroups clusters.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", label = "clustering,messaging")
 public class JGroupsEndpoint extends DefaultEndpoint {

@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Netty HTTP server and client using the Netty 4.x library.
+ * Netty HTTP server and client using the Netty 4.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
         syntax = "netty-http:protocol:host:port/path",  label = "http", lenientProperties = true)

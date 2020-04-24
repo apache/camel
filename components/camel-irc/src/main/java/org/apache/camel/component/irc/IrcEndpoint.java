@@ -32,14 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The irc component implements an <a href="https://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC</a> (Internet Relay Chat) transport.
+ * Send and receive messages to/from and IRC chat.
  */
 @UriEndpoint(
-    firstVersion = "1.1.0", 
-    scheme = "irc", 
-    title = "IRC", 
+    firstVersion = "1.1.0",
+    scheme = "irc",
+    title = "IRC",
     syntax = "irc:hostname:port",
-    alternativeSyntax = "irc:username:password@hostname:port", 
+    alternativeSyntax = "irc:username:password@hostname:port",
     label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
 

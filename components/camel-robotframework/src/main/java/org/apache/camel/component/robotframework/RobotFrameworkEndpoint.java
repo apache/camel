@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.robotframework.RobotFramework;
 
 /**
- * Represents a RobotFramework endpoint.
+ * Pass camel exchanges to acceptence test written in Robot DSL.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework", syntax = "robotframework:resourceUri", label = "testing")
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
@@ -120,7 +120,7 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
         log.debug("RobotFrameworkEndpoint resourceUri:{}", path);
-        
+
         String newResourceUri = exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, String.class);
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI);
@@ -138,7 +138,7 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
         // run robot framework
         int camelRobotReturnCode = RobotFramework.run(generatedArguments.toArray());
-        
+
         exchange.getIn().setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE, camelRobotReturnCode);
     }
 }

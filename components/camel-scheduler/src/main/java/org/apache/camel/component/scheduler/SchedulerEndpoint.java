@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * The scheduler component is used for generating message exchanges when a scheduler fires.
+ * Generate messages in specified intervals using <code>java.util.concurrent.ScheduledExecutorService</code>.
  *
  * This component is similar to the timer component, but it offers more functionality in terms of scheduling.
  * Also this component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.

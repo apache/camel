@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes HPA component provides a producer to execute kubernetes hpa
- * operations and a consumer to consume HPA events.
+ * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl", label = "container,cloud,paas")
 public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {

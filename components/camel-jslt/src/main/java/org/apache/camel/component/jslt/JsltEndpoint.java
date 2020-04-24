@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The jslt component allows you to process a JSON messages using an JSLT transformations.
+ * Query or transform JSON payloads using an JSLT.
  *
  *  @author JiriOndrusek
  */

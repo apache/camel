@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Jobs component provides a producer to execute kubernetes job
- * operations
+ * Perform operations on Kubernetes Jobs.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-job", title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl", label = "container,cloud,paas")
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {

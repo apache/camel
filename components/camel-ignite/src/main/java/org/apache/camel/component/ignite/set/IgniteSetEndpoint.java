@@ -32,8 +32,8 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
 /**
- * The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to interact with
- * <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Set data structures</a>.
+ * Interact with <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Set data structures</a>.
+ *
  * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", label = "nosql,cache", producerOnly = true)

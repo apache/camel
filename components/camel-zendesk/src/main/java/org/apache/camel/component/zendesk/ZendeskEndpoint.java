@@ -35,7 +35,7 @@ import org.apache.camel.util.IOHelper;
 import org.zendesk.client.v2.Zendesk;
 
 /**
- * Allows producing messages to manage Zendesk ticket, user, organization, etc.
+ * Manage Zendesk tickets, users, organizations, etc.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
     consumerPrefix = "consumer", label = "api,support,cloud", lenientProperties = true)

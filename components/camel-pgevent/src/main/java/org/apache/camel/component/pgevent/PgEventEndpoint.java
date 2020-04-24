@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
+ * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
  * <p/>
  * This requires using PostgreSQL 8.3 or newer.
  */

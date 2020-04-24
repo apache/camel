@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Used to sign exchanges using the XML signature specification.
+ * Sign XML payloads using the XML signature specification.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-sign", title = "XML Security Sign",
         syntax = "xmlsecurity-sign:name", producerOnly = true, label = "security,transformation")

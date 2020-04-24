@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The pdf components provides the ability to create, modify or extract content from PDF documents.
+ * Create, modify or extract content from PDF documents.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "document,transformation,printing")
 public class PdfEndpoint extends DefaultEndpoint {

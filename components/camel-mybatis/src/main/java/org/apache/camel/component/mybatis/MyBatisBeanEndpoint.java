@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Performs a query, insert, update or delete in a relational database using MyBatis.
+ * Perform queries, inserts, updates or deletes in a relational database using MyBatis.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "mybatis-bean", title = "MyBatis Bean", syntax = "mybatis-bean:beanName:methodName", producerOnly = true, label = "database,sql")
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {

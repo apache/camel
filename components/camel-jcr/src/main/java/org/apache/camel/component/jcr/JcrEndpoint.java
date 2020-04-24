@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
+ * Read and write nodes to/from a JCR compliant content repository.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base", alternativeSyntax = "jcr:username:password@host/base",
         label = "cms,database")
@@ -125,7 +125,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
     /**
      * Get the {@link Repository}
-     * 
+     *
      * @return the repository
      */
     protected Repository getRepository() {
@@ -134,7 +134,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
     /**
      * Get the {@link Credentials} for establishing the JCR repository connection
-     * 
+     *
      * @return the credentials
      */
     protected Credentials getCredentials() {
@@ -143,7 +143,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
     /**
      * Get the base node when accessing the repository
-     * 
+     *
      * @return the base node
      */
     protected String getBase() {
@@ -179,7 +179,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     /**
      * <code>eventTypes</code> (a combination of one or more event types encoded
      * as a bit mask value such as javax.jcr.observation.Event.NODE_ADDED, javax.jcr.observation.Event.NODE_REMOVED, etc.).
-     * 
+     *
      * @return eventTypes
      * @see {@link javax.jcr.observation.Event}
      * @see {@link javax.jcr.observation.ObservationManager#addEventListener(javax.jcr.observation.EventListener, int, String, boolean, String[], String[], boolean)}
@@ -248,7 +248,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     /**
      * Interval in milliseconds to wait before the first session live checking.
      * The default value is 3000 ms.
-     * 
+     *
      * @return sessionLiveCheckIntervalOnStart
      */
     public long getSessionLiveCheckIntervalOnStart() {
@@ -278,7 +278,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
         this.sessionLiveCheckInterval = sessionLiveCheckInterval;
     }
-    
+
     /**
      * The workspace to access. If it's not specified then the default one will be used
      */

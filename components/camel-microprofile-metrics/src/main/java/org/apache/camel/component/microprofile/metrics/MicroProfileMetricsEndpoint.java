@@ -28,6 +28,9 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 
+/**
+ * Expose metrics from Camel routes.
+ */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricName", producerOnly = true, label = "monitoring")
 public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
 

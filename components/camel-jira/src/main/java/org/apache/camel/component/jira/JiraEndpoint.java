@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
 /**
- * The jira component interacts with the JIRA issue tracker.
+ * Interact with JIRA issue tracker.
  * <p>
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs include:
  * <p>

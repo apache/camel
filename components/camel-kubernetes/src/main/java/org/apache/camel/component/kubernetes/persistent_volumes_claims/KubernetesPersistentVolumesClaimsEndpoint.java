@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Persistent Volumes Claims component provides a producer to
- * execute kubernetes persistent volume claim operations.
+ * Perform operations on Kubernetes Persistent Volumes Claims and get notified on Persistent Volumes Claim changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes-claims", title = "Kubernetes Persistent Volume Claim", syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesPersistentVolumesClaimsEndpoint extends AbstractKubernetesEndpoint {

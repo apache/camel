@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The influxdb component allows you to interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
+ * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database", producerOnly = true)
 public class InfluxDbEndpoint extends DefaultEndpoint {
@@ -52,7 +52,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String operation = InfluxDbOperations.INSERT;
     @UriParam
     private String query;
-    
+
     public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
         super(uri, component);
     }
@@ -66,7 +66,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
-    
+
     public InfluxDB getInfluxDB() {
         return influxDB;
     }

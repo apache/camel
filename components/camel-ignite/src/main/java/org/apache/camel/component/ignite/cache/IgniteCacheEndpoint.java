@@ -36,10 +36,7 @@ import org.apache.ignite.cache.query.ContinuousQuery;
 import org.apache.ignite.cache.query.Query;
 
 /**
- * The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with
- * an <a href="https://apacheignite.readme.io/docs/data-grid">Ignite Cache</a>.
- * This offers both a Producer (to invoke cache operations on an Ignite cache) and
- * a Consumer (to consume changes from a continuous query).
+ * Perform cache operations on an Ignite cache or consume changes from a continuous query.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName", label = "nosql,cache,compute")
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
@@ -108,7 +105,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the cache name.
-     * 
+     *
      * @return
      */
     public String getCacheName() {
@@ -117,7 +114,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The cache name.
-     * 
+     *
      * @param cacheName cache name
      */
     public void setCacheName(String cacheName) {
@@ -126,7 +123,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the cache operation to invoke.
-     * 
+     *
      * @return cache name
      */
     public IgniteCacheOperation getOperation() {
@@ -136,7 +133,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     /**
      * The cache operation to invoke.
      * <p>Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR.</p>
-     * 
+     *
      * @param operation
      */
     public void setOperation(IgniteCacheOperation operation) {
@@ -145,7 +142,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Whether to fail the initialization if the cache doesn't exist.
-     * 
+     *
      * @return
      */
     public boolean isFailIfInexistentCache() {
@@ -154,7 +151,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Whether to fail the initialization if the cache doesn't exist.
-     * 
+     *
      * @param failIfInexistentCache
      */
     public void setFailIfInexistentCache(boolean failIfInexistentCache) {
@@ -163,7 +160,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the {@link CachePeekMode}, only needed for operations that require it ({@link IgniteCacheOperation#SIZE}).
-     * 
+     *
      * @return
      */
     public CachePeekMode getCachePeekMode() {
@@ -172,7 +169,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The {@link CachePeekMode}, only needed for operations that require it ({@link IgniteCacheOperation#SIZE}).
-     * 
+     *
      * @param cachePeekMode
      */
     public void setCachePeekMode(CachePeekMode cachePeekMode) {
@@ -180,9 +177,9 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Gets the query to execute, only needed for operations that require it, 
+     * Gets the query to execute, only needed for operations that require it,
      * and for the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public Query<Entry<Object, Object>> getQuery() {
@@ -192,7 +189,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     /**
      * The {@link Query} to execute, only needed for operations that require it,
      * and for the Continuous Query Consumer.
-     * 
+     *
      * @param query
      */
     public void setQuery(Query<Entry<Object, Object>> query) {
@@ -201,7 +198,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the remote filter, only used by the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public CacheEntryEventSerializableFilter<Object, Object> getRemoteFilter() {
@@ -210,7 +207,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The remote filter, only used by the Continuous Query Consumer.
-     * 
+     *
      * @param remoteFilter
      */
     public void setRemoteFilter(CacheEntryEventSerializableFilter<Object, Object> remoteFilter) {
@@ -220,7 +217,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     /**
      * Gets whether to pack each update in an individual Exchange, even if multiple updates are
      * received in one batch. Only used by the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public boolean isOneExchangePerUpdate() {
@@ -230,7 +227,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     /**
      * Whether to pack each update in an individual Exchange, even if multiple updates are
      * received in one batch. Only used by the Continuous Query Consumer.
-     * 
+     *
      * @param oneExchangePerUpdate
      */
     public void setOneExchangePerUpdate(boolean oneExchangePerUpdate) {
@@ -239,7 +236,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets whether auto unsubscribe is enabled in the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public boolean isAutoUnsubscribe() {
@@ -248,7 +245,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Whether auto unsubscribe is enabled in the Continuous Query Consumer.
-     * 
+     *
      * @param autoUnsubscribe
      */
     public void setAutoUnsubscribe(boolean autoUnsubscribe) {
@@ -257,7 +254,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the page size. Only used by the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public int getPageSize() {
@@ -266,7 +263,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The page size. Only used by the Continuous Query Consumer.
-     * 
+     *
      * @param pageSize
      */
     public void setPageSize(int pageSize) {
@@ -274,9 +271,9 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Gets whether to process existing results that match the query. Used on initialization of 
+     * Gets whether to process existing results that match the query. Used on initialization of
      * the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public boolean isFireExistingQueryResults() {
@@ -284,9 +281,9 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Whether to process existing results that match the query. Used on initialization of 
+     * Whether to process existing results that match the query. Used on initialization of
      * the Continuous Query Consumer.
-     * 
+     *
      * @param fireExistingQueryResults
      */
     public void setFireExistingQueryResults(boolean fireExistingQueryResults) {
@@ -295,7 +292,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the time interval for the Continuous Query Consumer.
-     * 
+     *
      * @return
      */
     public long getTimeInterval() {
@@ -304,7 +301,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The time interval for the Continuous Query Consumer.
-     * 
+     *
      * @param timeInterval
      */
     public void setTimeInterval(long timeInterval) {

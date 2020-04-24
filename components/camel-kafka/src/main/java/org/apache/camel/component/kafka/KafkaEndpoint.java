@@ -42,8 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The kafka component allows messages to be sent to (or consumed from) Apache
- * Kafka brokers.
+ * Sent and receive messages to/from an Apache Kafka broker.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {

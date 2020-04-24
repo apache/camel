@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * Integrates Camel with Wordpress.
+ * Manage posts and users using Wordpress API.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", label = "cms")
 public class WordpressEndpoint extends DefaultEndpoint {

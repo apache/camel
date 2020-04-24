@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Nodes component provides a producer to execute kubernetes node
- * operations and a consumer to consume node events.
+ * Perform operations on Kubernetes Deployments and get notified on Deployment changes.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "kubernetes-deployments", title = "Kubernetes Deployments", syntax = "kubernetes-deployments:masterUrl", label = "container,cloud,paas")
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {

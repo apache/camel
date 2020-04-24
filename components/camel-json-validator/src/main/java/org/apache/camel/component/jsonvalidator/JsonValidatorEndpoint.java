@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Validates the payload of a message using NetworkNT JSON Schema library.
+ * Validate JSON payloads using NetworkNT JSON Schema.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator", syntax = "json-validator:resourceUri",
@@ -63,12 +63,12 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         this.schema = null;
         super.clearContentCache();
     }
-    
+
     @Override
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOut;
     }
-    
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         StreamCache cache = null;
@@ -135,7 +135,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
             }
         }
     }
-    
+
     private Object getContentToValidate(Exchange exchange) {
         if (shouldUseHeader()) {
             return exchange.getIn().getHeader(headerName);
@@ -147,10 +147,10 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     private boolean shouldUseHeader() {
         return headerName != null;
     }
-    
+
     /**
      * Synchronized method to create a schema if is does not already exist.
-     * 
+     *
      * @return The currently loaded schema
      */
     private JsonSchema getOrCreateSchema() throws Exception {
@@ -166,7 +166,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     protected String createEndpointUri() {
         return "json-validator:" + getResourceUri();
     }
-    
+
     public JsonValidatorErrorHandler getErrorHandler() {
         return errorHandler;
     }
@@ -179,11 +179,11 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     public void setErrorHandler(JsonValidatorErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
-    
+
     public JsonSchemaLoader getSchemaLoader() {
         return schemaLoader;
     }
-    
+
     /**
      * To use a custom schema loader allowing for adding custom format validation. The default implementation will create a schema loader with draft v4 support.
      */

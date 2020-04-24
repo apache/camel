@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.messaging.MessageChannel;
 
 /**
- * Bridges Camel with Spring Integration.
+ * Bridge Camel with Spring Integration.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
         label = "spring,eventbus")

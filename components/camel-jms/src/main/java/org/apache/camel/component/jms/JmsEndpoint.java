@@ -65,7 +65,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+ * Sent and receive messages to/from a JMS Queue or Topic.
  *
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
@@ -683,7 +683,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public boolean isAllowReplyManagerQuickStop() {
         return getConfiguration().isAllowReplyManagerQuickStop();
     }
-    
+
     @ManagedAttribute
     public boolean isAlwaysCopyMessage() {
         return getConfiguration().isAlwaysCopyMessage();
@@ -778,7 +778,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
         getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
     }
-    
+
     @ManagedAttribute
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);

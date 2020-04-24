@@ -45,7 +45,7 @@ import static org.apache.camel.component.schematron.constant.Constants.LINE_NUMB
 import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
 
 /**
- *  Validates the payload of a message using the Schematron Library.
+ *  Validate XML payload using the Schematron Library.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
 public class SchematronEndpoint extends DefaultEndpoint {

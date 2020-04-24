@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 
 /**
- * Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
+ * Communicate with external systems using the MLLP protocol.
  *
  * <p/>
  * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI into the log files.  Logging of PHI can be globally disabled by setting the

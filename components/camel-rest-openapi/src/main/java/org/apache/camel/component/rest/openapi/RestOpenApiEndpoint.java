@@ -86,7 +86,8 @@ import static org.apache.camel.util.StringHelper.before;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
- * An awesome REST endpoint backed by OpenApi specifications.
+ * Configure REST producers based on an OpenAPI specification document delegating to a component implementing the
+ * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
     syntax = "rest-openapi:specificationUri#operationId", label = "rest,openapi,http", producerOnly = true)
