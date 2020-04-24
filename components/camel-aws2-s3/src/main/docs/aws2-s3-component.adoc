@@ -545,6 +545,19 @@ from("direct:putObject")
     .to(awsEndpoint);
 --------------------------------------------------------------------------------
 
+== Using a POJO as body
+
+Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In AWS S3 there are multiple operations you can submit, as an example for List brokers request, you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:aws2-s3")
+     .setBody(ListObjectsRequest.builder().bucket(bucketName).build())
+     .to("aws2-s3://test?amazonS3Client=#amazonS3Client&operation=listObjects&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
