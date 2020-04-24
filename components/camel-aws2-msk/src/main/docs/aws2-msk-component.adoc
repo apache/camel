@@ -168,7 +168,7 @@ Sometimes build an AWS Request can be complex, because of multiple options. We i
 In AWS MSK there are multiple operations you can submit, as an example for List clusters request, you can do something like:
 
 ------------------------------------------------------------------------------------------------------
-from("direct:createUser")
+from("direct:aws2-msk")
      .setBody(ListClustersRequest.builder().maxResults(10).build())
      .to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
