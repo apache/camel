@@ -2,7 +2,7 @@
 = StAX Component
 :docTitle: StAX
 :artifactId: camel-stax
-:description: The stax component allows messages to be process through a SAX ContentHandler.
+:description: Process XML payloads by a SAX ContentHandler.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Only producer is supported

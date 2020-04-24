@@ -4,7 +4,7 @@
 :page-source: components/camel-spring-batch/src/main/docs/spring-batch-component.adoc
 :docTitle: Spring Batch
 :artifactId: camel-spring-batch
-:description: The spring-batch component allows to send messages to Spring Batch for further processing.
+:description: Send messages to Spring Batch for further processing.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported

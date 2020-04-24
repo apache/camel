@@ -4,7 +4,7 @@
 :page-source: components/camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc
 :docTitle: ZooKeeper Master
 :artifactId: camel-zookeeper-master
-:description: Represents an endpoint which only becomes active when it obtains the master lock
+:description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only consumer is supported

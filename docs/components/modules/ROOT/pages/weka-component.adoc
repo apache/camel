@@ -4,7 +4,7 @@
 :page-source: components/camel-weka/src/main/docs/weka-component.adoc
 :docTitle: Weka
 :artifactId: camel-weka
-:description: The camel-weka component provides Data Mining functionality through Weka.
+:description: Perform machine learning tasks using Weka.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -4,7 +4,7 @@
 :page-source: components/camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc
 :docTitle: Javax Websocket
 :artifactId: camel-websocket-jsr356
-:description: Camel WebSocket using JSR356 (javax)
+:description: Expose websocket endpoints using JSR356.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

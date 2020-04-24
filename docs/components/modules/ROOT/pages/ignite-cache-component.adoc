@@ -4,7 +4,7 @@
 :page-source: components/camel-ignite/src/main/docs/ignite-cache-component.adoc
 :docTitle: Ignite Cache
 :artifactId: camel-ignite
-:description: The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.
+:description: Perform cache operations on an Ignite cache or consume changes from a continuous query.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

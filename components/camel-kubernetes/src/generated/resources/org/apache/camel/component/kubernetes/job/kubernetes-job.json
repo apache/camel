@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kubernetes-job",
     "title": "Kubernetes Job",
-    "description": "The Kubernetes Jobs component provides a producer to execute kubernetes job operations",
+    "description": "Perform operations on Kubernetes Jobs.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "container,cloud,paas",

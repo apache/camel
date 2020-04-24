@@ -2,7 +2,7 @@
 = HBase Component
 :docTitle: HBase
 :artifactId: camel-hbase
-:description: For reading/writing from/to an HBase store (Hadoop database).
+:description: Reading and write from/to an HBase store (Hadoop database).
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

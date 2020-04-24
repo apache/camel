@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "json-validator",
     "title": "JSON Schema Validator",
-    "description": "Validates the payload of a message using NetworkNT JSON Schema library.",
+    "description": "Validate JSON payloads using NetworkNT JSON Schema.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "validation",

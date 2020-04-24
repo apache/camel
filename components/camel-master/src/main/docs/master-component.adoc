@@ -2,7 +2,7 @@
 = Master Component
 :docTitle: Master
 :artifactId: camel-master
-:description: Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+:description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only consumer is supported

@@ -4,7 +4,7 @@
 :page-source: components/camel-stub/src/main/docs/stub-component.adoc
 :docTitle: Stub
 :artifactId: camel-stub
-:description: The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+:description: Stub out any physical endpoints while in development or testing.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

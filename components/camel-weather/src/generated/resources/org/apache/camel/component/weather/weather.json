@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "weather",
     "title": "Weather",
-    "description": "Polls the weather information from Open Weather Map.",
+    "description": "Poll the weather information from Open Weather Map.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "api",

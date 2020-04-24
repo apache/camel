@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "infinispan",
     "title": "Infinispan",
-    "description": "For reading\/writing from\/to Infinispan distributed key\/value store and data grid.",
+    "description": "Read and write from\/to Infinispan distributed key\/value store and data grid.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "cache,datagrid,clustering",

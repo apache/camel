@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jgroups",
     "title": "JGroups",
-    "description": "The jgroups component provides exchange of messages between Camel and JGroups clusters.",
+    "description": "Exchange messages with JGroups clusters.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "clustering,messaging",

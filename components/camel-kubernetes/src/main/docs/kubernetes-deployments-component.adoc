@@ -2,7 +2,7 @@
 = Kubernetes Deployments Component
 :docTitle: Kubernetes Deployments
 :artifactId: camel-kubernetes
-:description: The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
+:description: Perform operations on Kubernetes Deployments and get notified on Deployment changes.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

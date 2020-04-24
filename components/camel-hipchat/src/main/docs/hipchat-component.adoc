@@ -2,7 +2,7 @@
 = Hipchat Component
 :docTitle: Hipchat
 :artifactId: camel-hipchat
-:description: The hipchat component supports producing and consuming messages from/to Hipchat service.
+:description: Send and receive messages to/from Hipchat service.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

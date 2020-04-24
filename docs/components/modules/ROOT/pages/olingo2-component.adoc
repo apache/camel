@@ -4,7 +4,7 @@
 :page-source: components/camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc
 :docTitle: Olingo2
 :artifactId: camel-olingo2
-:description: Communicates with OData 2.0 services using Apache Olingo.
+:description: Communicate with OData 2.0 services using Apache Olingo.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

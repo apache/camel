@@ -4,7 +4,7 @@
 :page-source: components/camel-snmp/src/main/docs/snmp-component.adoc
 :docTitle: SNMP
 :artifactId: camel-snmp
-:description: The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+:description: Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.
 :since: 2.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

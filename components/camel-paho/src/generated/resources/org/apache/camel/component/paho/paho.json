@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "paho",
     "title": "Paho",
-    "description": "Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.",
+    "description": "Communicate with MQTT message brokers using Eclipse Paho MQTT Client.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "messaging,iot",

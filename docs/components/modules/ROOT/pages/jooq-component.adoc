@@ -4,7 +4,7 @@
 :page-source: components/camel-jooq/src/main/docs/jooq-component.adoc
 :docTitle: JOOQ
 :artifactId: camel-jooq
-:description: The jooq component enables you to store and retrieve entities from databases using JOOQ
+:description: Store and retrieve Java objects from an SQL database using JOOQ.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

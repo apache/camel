@@ -4,7 +4,7 @@
 :page-source: components/camel-openstack/src/main/docs/openstack-swift-component.adoc
 :docTitle: OpenStack Swift
 :artifactId: camel-openstack
-:description: The openstack-swift component allows messages to be sent to an OpenStack object storage services.
+:description: Access OpenStack Swift object/blob store.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

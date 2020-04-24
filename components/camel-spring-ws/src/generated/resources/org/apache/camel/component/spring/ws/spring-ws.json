@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-ws",
     "title": "Spring WebService",
-    "description": "The spring-ws component is used for SOAP WebServices using Spring WebServices.",
+    "description": "Access external web services as a client or expose your own web services.",
     "deprecated": false,
     "firstVersion": "2.6.0",
     "label": "spring,soap,webservice",

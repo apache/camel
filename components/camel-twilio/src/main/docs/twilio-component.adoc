@@ -2,7 +2,7 @@
 = Twilio Component
 :docTitle: Twilio
 :artifactId: camel-twilio
-:description: The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
+:description: Interact with Twilio REST APIs using Twilio Java SDK.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

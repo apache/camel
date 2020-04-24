@@ -2,7 +2,7 @@
 = JBPM Component
 :docTitle: JBPM
 :artifactId: camel-jbpm
-:description: The jbpm component provides integration with jBPM (Business Process Management).
+:description: Interact with jBPM workflow engine over REST.
 :since: 2.6
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

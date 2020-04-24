@@ -2,7 +2,7 @@
 = MSV Component
 :docTitle: MSV
 :artifactId: camel-msv
-:description: Validates the payload of a message using the MSV Library.
+:description: Validate XML payloads using Multi-Schema Validator (MSV).
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported

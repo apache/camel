@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "robotframework",
     "title": "Robot Framework",
-    "description": "Represents a RobotFramework endpoint.",
+    "description": "Pass camel exchanges to acceptence test written in Robot DSL.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "testing",

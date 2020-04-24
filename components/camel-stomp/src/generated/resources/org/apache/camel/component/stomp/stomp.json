@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "stomp",
     "title": "Stomp",
-    "description": "The stomp component is used for communicating with Stomp compliant message brokers.",
+    "description": "Send and rececive messages to\/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "messaging",

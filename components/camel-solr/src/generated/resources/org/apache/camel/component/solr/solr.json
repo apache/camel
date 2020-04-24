@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "solr",
     "title": "Solr",
-    "description": "The solr component allows you to interface with an Apache Lucene Solr server.",
+    "description": "Perform operations against Apache Lucene Solr.",
     "deprecated": false,
     "firstVersion": "2.9.0",
     "label": "monitoring,search",

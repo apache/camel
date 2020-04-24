@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "sql",
     "title": "SQL",
-    "description": "The sql component allows you to work with databases using JDBC SQL queries.",
+    "description": "Perform SQL queries using Spring JDBC.",
     "deprecated": false,
     "firstVersion": "1.4.0",
     "label": "database,sql",

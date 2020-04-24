@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "rabbitmq",
     "title": "RabbitMQ",
-    "description": "The rabbitmq component allows you produce and consume messages from RabbitMQ instances.",
+    "description": "Send and receive messages from RabbitMQ instances.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "messaging",

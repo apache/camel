@@ -4,7 +4,7 @@
 :page-source: components/camel-jira/src/main/docs/jira-component.adoc
 :docTitle: Jira
 :artifactId: camel-jira
-:description: The jira component interacts with the JIRA issue tracker.
+:description: Interact with JIRA issue tracker.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

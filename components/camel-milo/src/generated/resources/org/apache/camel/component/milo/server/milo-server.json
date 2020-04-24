@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "milo-server",
     "title": "OPC UA Server",
-    "description": "Make telemetry data available as an OPC UA server",
+    "description": "Make telemetry data available as an OPC UA server.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "iot",

@@ -2,7 +2,7 @@
 = MongoDB GridFS Component
 :docTitle: MongoDB GridFS
 :artifactId: camel-mongodb-gridfs
-:description: Component for working with MongoDB GridFS.
+:description: Interact with MongoDB GridFS.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

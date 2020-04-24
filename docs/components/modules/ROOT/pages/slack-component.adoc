@@ -4,7 +4,7 @@
 :page-source: components/camel-slack/src/main/docs/slack-component.adoc
 :docTitle: Slack
 :artifactId: camel-slack
-:description: The slack component allows you to send messages to Slack.
+:description: Send and receive messages to/from Slack.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

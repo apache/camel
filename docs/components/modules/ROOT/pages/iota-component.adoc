@@ -4,7 +4,7 @@
 :page-source: components/camel-iota/src/main/docs/iota-component.adoc
 :docTitle: IOTA
 :artifactId: camel-iota
-:description: Component for integrate IOTA DLT
+:description: Manage financial transactions using IOTA distributed ledger.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only producer is supported

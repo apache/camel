@@ -4,7 +4,7 @@
 :page-source: components/camel-ldif/src/main/docs/ldif-component.adoc
 :docTitle: LDIF
 :artifactId: camel-ldif
-:description: The ldif component allows you to do updates on an LDAP server from a LDIF body content.
+:description: Perform updates on an LDAP server from an LDIF body content.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported

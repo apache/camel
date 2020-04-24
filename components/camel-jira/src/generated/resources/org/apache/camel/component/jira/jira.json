@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jira",
     "title": "Jira",
-    "description": "The jira component interacts with the JIRA issue tracker.",
+    "description": "Interact with JIRA issue tracker.",
     "deprecated": false,
     "firstVersion": "3.0",
     "label": "api,reporting",

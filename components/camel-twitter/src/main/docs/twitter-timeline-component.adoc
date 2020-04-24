@@ -2,7 +2,7 @@
 = Twitter Timeline Component
 :docTitle: Twitter Timeline
 :artifactId: camel-twitter
-:description: The Twitter Timeline component consumes twitter timeline or update the status of specific user.
+:description: Send tweets and receive tweets from user's timeline.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

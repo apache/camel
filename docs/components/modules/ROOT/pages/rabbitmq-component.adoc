@@ -4,7 +4,7 @@
 :page-source: components/camel-rabbitmq/src/main/docs/rabbitmq-component.adoc
 :docTitle: RabbitMQ
 :artifactId: camel-rabbitmq
-:description: The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
+:description: Send and receive messages from RabbitMQ instances.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

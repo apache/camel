@@ -4,7 +4,7 @@
 :page-source: components/camel-solr/src/main/docs/solr-component.adoc
 :docTitle: Solr
 :artifactId: camel-solr
-:description: The solr component allows you to interface with an Apache Lucene Solr server.
+:description: Perform operations against Apache Lucene Solr.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "scheduler",
     "title": "Scheduler",
-    "description": "The scheduler component is used for generating message exchanges when a scheduler fires.",
+    "description": "Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "core,scheduling",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "rest-swagger",
     "title": "REST Swagger",
-    "description": "An awesome REST endpoint backed by Swagger specifications.",
+    "description": "Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the RestProducerFactory interface.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "rest,swagger,http",

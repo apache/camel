@@ -2,7 +2,7 @@
 = PubNub Component
 :docTitle: PubNub
 :artifactId: camel-pubnub
-:description: To send and receive messages to PubNub data stream network for connected devices.
+:description: Send and receive messages to/from PubNub data stream network for connected devices.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

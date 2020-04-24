@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mvel",
     "title": "MVEL",
-    "description": "Transforms the message using a MVEL template.",
+    "description": "Transform messages using an MVEL template.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "transformation,script",

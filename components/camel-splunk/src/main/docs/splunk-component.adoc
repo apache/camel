@@ -2,7 +2,7 @@
 = Splunk Component
 :docTitle: Splunk
 :artifactId: camel-splunk
-:description: The splunk component allows to publish or search for events in Splunk.
+:description: Publish or search for events in Splunk.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

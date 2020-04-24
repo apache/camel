@@ -4,7 +4,7 @@
 :page-source: components/camel-quickfix/src/main/docs/quickfix-component.adoc
 :docTitle: QuickFix
 :artifactId: camel-quickfix
-:description: The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
+:description: Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
 :since: 2.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

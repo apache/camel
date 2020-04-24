@@ -2,7 +2,7 @@
 = OpenStack Cinder Component
 :docTitle: OpenStack Cinder
 :artifactId: camel-openstack
-:description: The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
+:description: Access data in OpenStack Cinder block storage.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

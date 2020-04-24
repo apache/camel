@@ -4,7 +4,7 @@
 :page-source: components/camel-ssh/src/main/docs/ssh-component.adoc
 :docTitle: SSH
 :artifactId: camel-ssh
-:description: The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
+:description: Execute commands on remote hosts using SSH.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

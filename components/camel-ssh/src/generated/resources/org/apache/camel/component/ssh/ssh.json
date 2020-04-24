@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ssh",
     "title": "SSH",
-    "description": "The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.",
+    "description": "Execute commands on remote hosts using SSH.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "file",

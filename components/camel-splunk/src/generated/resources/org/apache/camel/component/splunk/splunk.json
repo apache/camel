@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "splunk",
     "title": "Splunk",
-    "description": "The splunk component allows to publish or search for events in Splunk.",
+    "description": "Publish or search for events in Splunk.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "log,monitoring",

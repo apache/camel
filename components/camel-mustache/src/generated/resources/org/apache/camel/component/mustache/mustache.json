@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mustache",
     "title": "Mustache",
-    "description": "Transforms the message using a Mustache template.",
+    "description": "Transform messages using a Mustache template.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "transformation",

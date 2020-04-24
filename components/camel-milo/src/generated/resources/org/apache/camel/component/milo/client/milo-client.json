@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "milo-client",
     "title": "OPC UA Client",
-    "description": "Connect to OPC UA servers using the binary protocol for acquiring telemetry data",
+    "description": "Connect to OPC UA servers using the binary protocol for acquiring telemetry data.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "iot",

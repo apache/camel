@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "msv",
     "title": "MSV",
-    "description": "Validates the payload of a message using the MSV Library.",
+    "description": "Validate XML payloads using Multi-Schema Validator (MSV).",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "validation",

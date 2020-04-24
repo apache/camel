@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "stub",
     "title": "Stub",
-    "description": "The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+    "description": "Stub out any physical endpoints while in development or testing.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "core,testing",

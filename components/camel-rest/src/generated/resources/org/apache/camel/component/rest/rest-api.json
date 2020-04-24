@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "rest-api",
     "title": "REST API",
-    "description": "The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.",
+    "description": "Expose OpenAPI Specification of the REST services defined using Camel REST DSL.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "core,rest",

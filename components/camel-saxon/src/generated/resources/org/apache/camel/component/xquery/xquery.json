@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xquery",
     "title": "XQuery",
-    "description": "Transforms the message using a XQuery template using Saxon.",
+    "description": "Query and\/or transform XML payloads using XQuery and Saxon.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "transformation",

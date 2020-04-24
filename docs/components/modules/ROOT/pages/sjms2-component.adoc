@@ -4,7 +4,7 @@
 :page-source: components/camel-sjms2/src/main/docs/sjms2-component.adoc
 :docTitle: Simple JMS2
 :artifactId: camel-sjms2
-:description: The sjms2 component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 2.x API).
+:description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

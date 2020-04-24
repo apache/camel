@@ -4,7 +4,7 @@
 :page-source: components/camel-nats/src/main/docs/nats-component.adoc
 :docTitle: Nats
 :artifactId: camel-nats
-:description: The nats component allows you produce and consume messages from NATS.
+:description: Send and receive messages from NATS messaging system.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

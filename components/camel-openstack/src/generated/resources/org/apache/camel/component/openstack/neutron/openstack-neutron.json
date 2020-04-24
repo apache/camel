@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openstack-neutron",
     "title": "OpenStack Neutron",
-    "description": "The openstack-neutron component allows messages to be sent to an OpenStack network services.",
+    "description": "Access OpenStack Neutron for network services.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,paas",

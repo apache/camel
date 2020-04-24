@@ -2,7 +2,7 @@
 = Reactive Streams Component
 :docTitle: Reactive Streams
 :artifactId: camel-reactive-streams
-:description: Reactive Camel using reactive streams
+:description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

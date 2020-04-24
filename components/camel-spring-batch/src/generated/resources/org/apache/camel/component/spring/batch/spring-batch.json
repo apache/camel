@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-batch",
     "title": "Spring Batch",
-    "description": "The spring-batch component allows to send messages to Spring Batch for further processing.",
+    "description": "Send messages to Spring Batch for further processing.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "spring,batch,scheduling",

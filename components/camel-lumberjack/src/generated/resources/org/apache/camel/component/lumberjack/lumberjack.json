@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "lumberjack",
     "title": "Lumberjack",
-    "description": "The lumberjack retrieves logs sent over the network using the Lumberjack protocol.",
+    "description": "Receive logs messages using the Lumberjack protocol.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "log",

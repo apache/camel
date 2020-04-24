@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mybatis-bean",
     "title": "MyBatis Bean",
-    "description": "Performs a query, insert, update or delete in a relational database using MyBatis.",
+    "description": "Perform queries, inserts, updates or deletes in a relational database using MyBatis.",
     "deprecated": false,
     "firstVersion": "2.22.0",
     "label": "database,sql",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ldap",
     "title": "LDAP",
-    "description": "The ldap component allows you to perform searches in LDAP servers using filters as the message payload.",
+    "description": "Perform searches on LDAP servers.",
     "deprecated": false,
     "firstVersion": "1.5.0",
     "label": "ldap",

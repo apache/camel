@@ -4,7 +4,7 @@
 :page-source: components/camel-stringtemplate/src/main/docs/string-template-component.adoc
 :docTitle: String Template
 :artifactId: camel-stringtemplate
-:description: Transforms the message using a String template.
+:description: Transform messages using StringTemplate engine.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "nitrite",
     "title": "Nitrite",
-    "description": "Used for integrating Camel with Nitrite databases.",
+    "description": "Access Nitrite databases.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database,nosql",

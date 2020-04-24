@@ -4,7 +4,7 @@
 :page-source: components/camel-log/src/main/docs/log-component.adoc
 :docTitle: Log
 :artifactId: camel-log
-:description: The log component logs message exchanges to the underlying logging mechanism.
+:description: Log messages to the underlying logging mechanism.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported

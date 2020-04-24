@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "iec60870-server",
     "title": "IEC 60870 Server",
-    "description": "IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.",
+    "description": "IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "iot",

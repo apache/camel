@@ -4,7 +4,7 @@
 :page-source: components/camel-smpp/src/main/docs/smpp-component.adoc
 :docTitle: SMPP
 :artifactId: camel-smpp
-:description: To send and receive SMS using a SMSC (Short Message Service Center).
+:description: Send and receive SMS messages using a SMSC (Short Message Service Center).
 :since: 2.2
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

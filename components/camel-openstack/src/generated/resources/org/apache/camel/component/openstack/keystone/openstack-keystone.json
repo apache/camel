@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openstack-keystone",
     "title": "OpenStack Keystone",
-    "description": "The openstack-keystone component allows messages to be sent to an OpenStack identity services.",
+    "description": "Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,paas",

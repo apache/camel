@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ldif",
     "title": "LDIF",
-    "description": "The ldif component allows you to do updates on an LDAP server from a LDIF body content.",
+    "description": "Perform updates on an LDAP server from an LDIF body content.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "ldap",

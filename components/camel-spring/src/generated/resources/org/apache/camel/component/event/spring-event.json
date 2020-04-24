@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-event",
     "title": "Spring Event",
-    "description": "The spring-event component allows to listen for Spring Application Events.",
+    "description": "Listen for Spring Application Events.",
     "deprecated": false,
     "firstVersion": "1.4.0",
     "label": "spring,eventbus",

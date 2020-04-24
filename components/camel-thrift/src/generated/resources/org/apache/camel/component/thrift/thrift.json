@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "thrift",
     "title": "Thrift",
-    "description": "The Thrift component allows to call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism",
+    "description": "Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "rpc",

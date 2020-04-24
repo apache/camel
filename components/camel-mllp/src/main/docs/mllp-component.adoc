@@ -2,7 +2,7 @@
 = MLLP Component
 :docTitle: MLLP
 :artifactId: camel-mllp
-:description: Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
+:description: Communicate with external systems using the MLLP protocol.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mongodb",
     "title": "MongoDB",
-    "description": "Component for working with documents stored in MongoDB database.",
+    "description": "Perform operations on MongoDB documents and collections.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "database,nosql",

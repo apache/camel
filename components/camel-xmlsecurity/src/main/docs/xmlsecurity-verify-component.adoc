@@ -2,7 +2,7 @@
 = XML Security Verify Component
 :docTitle: XML Security Verify
 :artifactId: camel-xmlsecurity
-:description: Used to verify exchanges using the XML signature specification.
+:description: Verify XML payloads using the XML signature specification.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -2,7 +2,7 @@
 = Yammer Component
 :docTitle: Yammer
 :artifactId: camel-yammer
-:description: The yammer component allows you to interact with the Yammer enterprise social network.
+:description: Interact with the Yammer enterprise social network.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

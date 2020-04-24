@@ -4,7 +4,7 @@
 :page-source: components/camel-velocity/src/main/docs/velocity-component.adoc
 :docTitle: Velocity
 :artifactId: camel-velocity
-:description: Transforms the message using a Velocity template.
+:description: Transform messages using a Velocity template.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only producer is supported

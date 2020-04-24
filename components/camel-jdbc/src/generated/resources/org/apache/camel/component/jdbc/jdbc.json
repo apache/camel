@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jdbc",
     "title": "JDBC",
-    "description": "The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.",
+    "description": "Access databases through SQL and JDBC.",
     "deprecated": false,
     "firstVersion": "1.2.0",
     "label": "database,sql",

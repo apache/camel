@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "iota",
     "title": "IOTA",
-    "description": "Component for integrate IOTA DLT",
+    "description": "Manage financial transactions using IOTA distributed ledger.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "ledger",

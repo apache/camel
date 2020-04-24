@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mina",
     "title": "Mina",
-    "description": "Socket level networking using TCP or UDP with the Apache Mina 2.x library.",
+    "description": "Socket level networking using TCP or UDP with Apache Mina 2.x.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "networking,tcp,udp",

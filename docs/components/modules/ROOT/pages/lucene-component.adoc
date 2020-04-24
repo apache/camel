@@ -4,7 +4,7 @@
 :page-source: components/camel-lucene/src/main/docs/lucene-component.adoc
 :docTitle: Lucene
 :artifactId: camel-lucene
-:description: To insert or query from Apache Lucene databases.
+:description: Perform inserts or queries against Apache Lucene databases.
 :since: 2.2
 :supportLevel: Stable
 :component-header: Only producer is supported

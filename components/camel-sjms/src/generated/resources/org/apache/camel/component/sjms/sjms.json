@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "sjms",
     "title": "Simple JMS",
-    "description": "The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).",
+    "description": "Send and receive messages to\/from a JMS Queue or Topic using plain JMS 1.x API.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "messaging",

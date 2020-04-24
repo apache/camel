@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jclouds",
     "title": "JClouds",
-    "description": "For interacting with cloud compute & blobstore service via jclouds.",
+    "description": "Interact with jclouds compute & blobstore service.",
     "deprecated": false,
     "firstVersion": "2.9.0",
     "label": "api,cloud",

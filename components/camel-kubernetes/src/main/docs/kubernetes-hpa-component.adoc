@@ -2,7 +2,7 @@
 = Kubernetes HPA Component
 :docTitle: Kubernetes HPA
 :artifactId: camel-kubernetes
-:description: The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume HPA events.
+:description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

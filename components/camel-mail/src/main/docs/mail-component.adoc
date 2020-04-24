@@ -2,7 +2,7 @@
 = Mail Component
 :docTitle: Mail
 :artifactId: camel-mail
-:description: To send or receive emails using imap/pop3 or smtp protocols.
+:description: Send and receive emails using imap, pop3 and smtp protocols.
 :since: 1.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

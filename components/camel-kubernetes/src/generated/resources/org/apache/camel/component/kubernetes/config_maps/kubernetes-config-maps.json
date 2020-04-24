@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kubernetes-config-maps",
     "title": "Kubernetes ConfigMap",
-    "description": "The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.",
+    "description": "Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "container,cloud,paas",
