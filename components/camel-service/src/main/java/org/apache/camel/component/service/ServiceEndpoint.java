@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+ * Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
  */
 @ManagedResource(description = "Managed Service Endpoint")
 @UriEndpoint(
@@ -98,7 +98,7 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Override
     public boolean isLenientProperties() {
         return true;
-    } 
+    }
 
     private ServiceDefinition computeServiceDefinition(CamelContext context, Endpoint delegateEndpoint) {
         Map<String, String> parameters = new HashMap<>();

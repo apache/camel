@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
+ * Send requests to SAP NetWeaver Gateway using HTTP.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
 public class NetWeaverEndpoint extends DefaultEndpoint {

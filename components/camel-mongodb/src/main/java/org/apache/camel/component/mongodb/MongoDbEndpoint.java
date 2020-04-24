@@ -55,7 +55,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.DocumentList;
 import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable;
 
 /**
- * Component for working with documents stored in MongoDB database.
+ * Perform operations on MongoDB documents and collections.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
         label = "database,nosql")

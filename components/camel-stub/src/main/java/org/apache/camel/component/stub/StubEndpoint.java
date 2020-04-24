@@ -27,7 +27,7 @@ import org.apache.camel.component.vm.VmEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+ * Stub out any physical endpoints while in development or testing.
  *
  * For example to run a route without needing to actually connect to a specific SMTP or HTTP endpoint.
  * Just add stub: in front of any endpoint URI to stub out the endpoint.

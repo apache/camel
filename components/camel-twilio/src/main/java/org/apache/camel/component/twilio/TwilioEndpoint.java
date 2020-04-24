@@ -39,7 +39,7 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
+ * Interact with Twilio REST APIs using Twilio Java SDK.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
     label = "api,messaging,cloud")

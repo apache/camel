@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consumer endpoint to receive from PostgreSQL Replication Slot.
+ * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
         syntax = "pg-replication-slot:host:port/database/slot:outputPlugin", label = "database,sql", consumerOnly = true)

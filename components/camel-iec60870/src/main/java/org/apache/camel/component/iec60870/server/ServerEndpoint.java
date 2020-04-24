@@ -28,8 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 import static java.util.Objects.requireNonNull;
 
 /**
- * IEC 60870 component used for telecontrol (supervisory control and data acquisition)
- * such as controlling electric power transmission grids and other geographically widespread control systems.
+ * IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA™ implementation.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-server", syntax = "iec60870-server:uriPath",
     title = "IEC 60870 Server", label = "iot")

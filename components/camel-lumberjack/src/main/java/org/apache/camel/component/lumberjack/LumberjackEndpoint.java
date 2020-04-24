@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
- * The lumberjack retrieves logs sent over the network using the Lumberjack protocol.
+ * Receive logs messages using the Lumberjack protocol.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "lumberjack", title = "Lumberjack", syntax = "lumberjack:host:port", consumerOnly = true, label = "log")
 public class LumberjackEndpoint extends DefaultEndpoint {

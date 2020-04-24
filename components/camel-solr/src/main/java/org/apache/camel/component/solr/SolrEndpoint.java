@@ -34,7 +34,7 @@ import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 /**
- * The solr component allows you to interface with an Apache Lucene Solr server.
+ * Perform operations against Apache Lucene Solr.
  */
 @UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
@@ -142,7 +142,7 @@ public class SolrEndpoint extends DefaultEndpoint {
                 }
                 if (connectionTimeout != null) {
                     solrServerBuilder.withConnectionTimeout(connectionTimeout);
-                }                
+                }
 
                 HttpSolrClient solrServer = solrServerBuilder.build();
                 // set the properties on the solr server

@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Build Config component provides a producer to execute
- * kubernetes build config operations.
+ * Perform operations on OpenShift Build Configs.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-build-configs", title = "Openshift Build Config", syntax = "openshift-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class OpenshiftBuildConfigsEndpoint extends AbstractKubernetesEndpoint {

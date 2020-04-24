@@ -28,7 +28,7 @@ import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.PersistentCollection;
 
 /**
- * Used for integrating Camel with Nitrite databases.
+ * Access Nitrite databases.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "nitrite", title = "Nitrite", syntax = "nitrite:database",
              label = "database,nosql")

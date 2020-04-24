@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transforms the message using a Velocity template.
+ * Transform messages using a Velocity template.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
@@ -88,8 +88,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
             properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
             final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
-            
-          
+
+
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {

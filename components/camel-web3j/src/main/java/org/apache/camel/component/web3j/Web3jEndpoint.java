@@ -40,7 +40,7 @@ import org.web3j.protocol.ipc.WindowsIpcService;
 import org.web3j.quorum.Quorum;
 
 /**
- * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
+ * Interact with Ethereum nodes using web3j client API.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
     label = "bitcoin,blockchain")

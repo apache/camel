@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Configmaps component provides a producer to execute kubernetes
- * configmap operations.
+ * Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-config-maps", title = "Kubernetes ConfigMap", syntax = "kubernetes-config-maps:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {

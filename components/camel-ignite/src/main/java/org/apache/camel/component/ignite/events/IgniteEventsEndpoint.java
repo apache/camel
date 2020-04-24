@@ -40,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Ignite Events endpoint is one of camel-ignite endpoints which allows you to
- * <a href="https://apacheignite.readme.io/docs/events">receive events</a> from
- * the Ignite cluster by creating a local event listener.
+ * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from
+ * an Ignite cluster by creating a local event listener.
+ *
  * This endpoint only supports consumers.
  * The Exchanges created by this consumer put the received Event object into the body of the IN message.
  */

@@ -36,7 +36,7 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * Communicates with OData 4.0 services using Apache Olingo OData API.
+ * Communicate with OData 4.0 services using Apache Olingo OData API.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName", label = "cloud")
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration> {

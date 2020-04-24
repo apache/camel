@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Namespaces component provides a producer to execute kubernetes
- * namespace operations and a consumer to consume namespace events.
+ * Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces", syntax = "kubernetes-namespaces:masterUrl", label = "container,cloud,paas")
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {

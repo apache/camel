@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The Twitter Search component consumes search results.
+ * Access Twitter Search.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-search", title = "Twitter Search", syntax = "twitter-search:keywords",
     label = "api,social")

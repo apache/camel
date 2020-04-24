@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents an endpoint which only becomes active when it obtains the master lock
+ * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed ZooKeeper Master Endpoint")
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerOnly = true,

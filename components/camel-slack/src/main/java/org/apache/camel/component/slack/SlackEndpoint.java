@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * The slack component allows you to send messages to Slack.
+ * Send and receive messages to/from Slack.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", label = "social")
 public class SlackEndpoint extends ScheduledPollEndpoint {
@@ -168,7 +168,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     public String getServerUrl() {
         return serverUrl;
     }
-    
+
     /**
      * The Server URL of the Slack instance
      */

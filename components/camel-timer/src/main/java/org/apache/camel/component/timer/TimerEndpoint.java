@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The timer component is used for generating message exchanges when a timer fires.
+ * Generate messages in specified intervals using <code>java.util.Timer</code>.
  *
  * This component is similar to the scheduler component, but has much less functionality.
  */
@@ -69,7 +69,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         super(uri, component);
         this.timerName = timerName;
     }
-    
+
     protected TimerEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }

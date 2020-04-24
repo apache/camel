@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Transforms json/xml message back and forth using a XSLT.
+ * Transform JSON and XML message using a XSLT.
  */
 @ManagedResource(description = "Managed XJEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true, label = "transformation")

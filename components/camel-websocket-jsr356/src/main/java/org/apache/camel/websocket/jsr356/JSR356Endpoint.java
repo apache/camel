@@ -26,6 +26,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * Expose websocket endpoints using JSR356.
+ */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:uri", label = "http")
 public class JSR356Endpoint extends DefaultEndpoint {
     @UriPath(description = "If a schemeless URI path is provided, a ServerEndpoint is deployed under that path. "

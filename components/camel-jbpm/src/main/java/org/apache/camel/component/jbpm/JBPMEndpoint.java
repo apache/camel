@@ -35,8 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The jbpm component provides integration with jBPM (Business Process
- * Management).
+ * Interact with jBPM workflow engine over REST.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", label = "process")
 public class JBPMEndpoint extends DefaultEndpoint {

@@ -36,7 +36,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Validates the payload of a message using RelaxNG Syntax using Jing library.
+ * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {

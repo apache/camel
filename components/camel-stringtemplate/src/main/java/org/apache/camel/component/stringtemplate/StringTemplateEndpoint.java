@@ -32,7 +32,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 /**
- * Transforms the message using a String template.
+ * Transform messages using StringTemplate engine.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
@@ -79,7 +79,7 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
-        
+
         @SuppressWarnings("unchecked")
         Map<String, Object> variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
         if (variableMap == null) {

@@ -50,8 +50,7 @@ import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PREFIX;
 
 /**
- * The rabbitmq component allows you produce and consume messages from
- * <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
+ * Send and receive messages from <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:exchangeName", label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {

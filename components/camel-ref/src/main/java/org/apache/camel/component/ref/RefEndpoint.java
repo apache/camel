@@ -29,7 +29,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The ref component is used for lookup of existing endpoints bound in the Registry.
+ * Route messages to an endpoint looked up dynamically by name in the Camel Registry.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name", label = "core,endpoint")
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {

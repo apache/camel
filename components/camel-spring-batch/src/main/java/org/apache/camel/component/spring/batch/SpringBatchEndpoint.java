@@ -33,7 +33,7 @@ import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
 /**
- * The spring-batch component allows to send messages to Spring Batch for further processing.
+ * Send messages to Spring Batch for further processing.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
@@ -58,7 +58,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     private JobLauncher defaultResolvedJobLauncher;
     private Map<String, JobLauncher> allResolvedJobLaunchers;
     private Job job;
-    
+
     @UriParam
     private JobRegistry jobRegistry;
 
@@ -90,7 +90,7 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
 
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
-        } 
+        }
         if (job == null && jobName != null && !jobFromHeader) {
             if (jobRegistry != null) {
                 job = jobRegistry.getJob(jobName);
@@ -174,10 +174,10 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
 
     /**
      * Explicitly specifies a JobRegistry to be used.
-     */    
+     */
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }
 
-    
+
 }

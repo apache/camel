@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
+ * Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
  *
  * This component uses plain JMS API where as the jms component uses Spring JMS.
  */
@@ -570,8 +570,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     /**
      * Sets the reply to destination name used for InOut producer endpoints.
-     * The type of the reply to destination can be determined by the starting 
-     * prefix (topic: or queue:) in its name. 
+     * The type of the reply to destination can be determined by the starting
+     * prefix (topic: or queue:) in its name.
      */
     public void setNamedReplyTo(String namedReplyTo) {
         this.namedReplyTo = namedReplyTo;

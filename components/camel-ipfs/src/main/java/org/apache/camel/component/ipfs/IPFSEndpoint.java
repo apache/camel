@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The camel-ipfs component provides access to the Interplanetary File System (IPFS).
+ *  Access the Interplanetary File System (IPFS).
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS",
         syntax = "ipfs:ipfsCmd", producerOnly = true, label = "file,ipfs")

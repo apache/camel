@@ -47,7 +47,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * The jpa component enables you to store and retrieve Java objects from databases using JPA.
+ * Store and retrieve Java objects from databases using Java Persistence API (JPA).
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
@@ -318,7 +318,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
-    
+
     public boolean isUsePersist() {
         return usePersist;
     }

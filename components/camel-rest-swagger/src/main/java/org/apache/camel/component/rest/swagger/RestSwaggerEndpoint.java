@@ -76,7 +76,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 import static org.apache.camel.util.StringHelper.*;
 
 /**
- * An awesome REST endpoint backed by Swagger specifications.
+ * Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the
+ * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "rest-swagger", title = "REST Swagger",
     syntax = "rest-swagger:specificationUri#operationId", label = "rest,swagger,http", producerOnly = true)

@@ -38,7 +38,7 @@ import quickfix.Message;
 import quickfix.SessionID;
 
 /**
- * The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
+ * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", label = "messaging")
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
@@ -141,7 +141,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
             && isMatching(this.sessionID.getSenderSubID(), sessionID.getSenderSubID())
             && isMatching(this.sessionID.getSenderLocationID(), sessionID.getSenderLocationID())
             && isMatching(this.sessionID.getTargetCompID(), sessionID.getTargetCompID())
-            && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID()) 
+            && isMatching(this.sessionID.getTargetSubID(), sessionID.getTargetSubID())
             && isMatching(this.sessionID.getTargetLocationID(), sessionID.getTargetLocationID());
     }
 
@@ -184,7 +184,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public QuickfixjEngine getEngine() {
         return engine;
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         // clear list of consumers

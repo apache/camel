@@ -34,7 +34,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 /**
- * Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
+ * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {

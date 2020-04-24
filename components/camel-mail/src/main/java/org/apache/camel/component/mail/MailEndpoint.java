@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * To send or receive emails using imap/pop3 or smtp protocols.
+ * Send and receive emails using imap, pop3 and smtp protocols.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
         syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",

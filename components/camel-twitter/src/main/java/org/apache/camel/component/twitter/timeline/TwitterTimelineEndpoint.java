@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The Twitter Timeline component consumes twitter timeline or update the status of specific user.
+ * Send tweets and receive tweets from user's timeline.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline", syntax = "twitter-timeline:timelineType",
         label = "api,social")

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
- * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
+ * Send and receive messages acting as a Telegram Bot <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type", label = "chat")
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {

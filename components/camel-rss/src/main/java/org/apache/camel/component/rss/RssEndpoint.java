@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The rss component is used for consuming RSS feeds.
+ * Poll RSS feeds.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
         syntax = "rss:feedUri", consumerOnly = true, label = "rss", lenientProperties = true)

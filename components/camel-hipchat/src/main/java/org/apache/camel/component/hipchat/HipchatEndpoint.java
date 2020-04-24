@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * The hipchat component supports producing and consuming messages from/to Hipchat service.
+ * Send and receive messages to/from Hipchat service.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "hipchat", title = "Hipchat", syntax = "hipchat:protocol:host:port", label = "api,cloud")
 public class HipchatEndpoint extends ScheduledPollEndpoint {
