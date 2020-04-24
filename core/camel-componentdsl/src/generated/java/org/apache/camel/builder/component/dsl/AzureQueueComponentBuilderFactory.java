@@ -31,7 +31,7 @@ import org.apache.camel.component.azure.queue.QueueServiceComponent;
 public interface AzureQueueComponentBuilderFactory {
 
     /**
-     * Azure Storage Queue Service (camel-azure)
+     * Azure Storage Queue Service (Legacy) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,queue,azure
@@ -43,7 +43,7 @@ public interface AzureQueueComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Azure Storage Queue Service component.
+     * Builder for the Azure Storage Queue Service (Legacy) component.
      */
     interface AzureQueueComponentBuilder
             extends
