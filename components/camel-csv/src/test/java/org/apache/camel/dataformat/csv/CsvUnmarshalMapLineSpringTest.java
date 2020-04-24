@@ -21,9 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of
@@ -35,7 +37,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvUnMarshal() throws Exception {
+    void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
 
         // the first line contains the column names which we intend to skip
@@ -54,7 +56,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testCsvUnMarshalNoLine() throws Exception {
+    void testCsvUnMarshalNoLine() throws Exception {
         result.expectedMessageCount(1);
 
         // the first and last line we intend to skip
@@ -68,7 +70,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void shouldUseExplicitHeadersInMap() throws Exception {
+    void shouldUseExplicitHeadersInMap() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:explicitHeader", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
@@ -87,7 +89,7 @@ public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void shouldReplaceHeaderInMap() throws Exception {
+    void shouldReplaceHeaderInMap() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:replaceHeader", "a|b|c\n123|Camel in Action|1\n124|ActiveMQ in Action|2");

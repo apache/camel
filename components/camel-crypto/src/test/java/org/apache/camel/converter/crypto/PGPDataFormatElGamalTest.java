@@ -16,9 +16,9 @@
  */
 package org.apache.camel.converter.crypto;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Requires JCE unlimited strength jurisdiction policy files on CI server")
+@Disabled("Requires JCE unlimited strength jurisdiction policy files on CI server")
 public class PGPDataFormatElGamalTest extends PGPDataFormatTest {
     @Override
     protected String getKeyFileName() {

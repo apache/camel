@@ -35,43 +35,48 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CryptoDataFormatTest extends CamelTestSupport {
 
     @Test
-    public void testBasicSymmetric() throws Exception {
+    void testBasicSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:basic-encryption");
     }
 
     @Test
-    public void testSymmetricWithInitVector() throws Exception {
+    void testSymmetricWithInitVector() throws Exception {
         doRoundTripEncryptionTests("direct:init-vector");
     }
 
     @Test
-    public void testSymmetricWithInlineInitVector() throws Exception {
+    void testSymmetricWithInlineInitVector() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
 
     @Test
-    public void testSymmetricWithHMAC() throws Exception {
+    void testSymmetricWithHMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac");
     }
 
     @Test
-    public void testSymmetricWithMD5HMAC() throws Exception {
+    void testSymmetricWithMD5HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-algorithm");
     }
 
     @Test
-    public void testSymmetricWithSHA256HMAC() throws Exception {
+    void testSymmetricWithSHA256HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-sha-256-algorithm");
     }
 
     @Test
-    public void testKeySuppliedAsHeader() throws Exception {
+    void testKeySuppliedAsHeader() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
         Key key = generator.generateKey();
 
@@ -94,31 +99,31 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void test3DESECBSymmetric() throws Exception {
+    void test3DESECBSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:3des-ecb-encryption");
     }
 
     @Test
-    public void test3DESCBCSymmetric() throws Exception {
+    void test3DESCBCSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:3des-cbc-encryption");
     }
 
     @Test
-    public void testAES128ECBSymmetric() throws Exception {
+    void testAES128ECBSymmetric() throws Exception {
         if (checkUnrestrictedPoliciesInstalled()) {
             doRoundTripEncryptionTests("direct:aes-128-ecb-encryption");
         }
     }
 
     @Test
-    public void testAES128GCMSymmetric() throws Exception {
+    void testAES128GCMSymmetric() throws Exception {
         if (checkUnrestrictedPoliciesInstalled()) {
             doRoundTripEncryptionTests("direct:aes-gcm-encryption");
         }
     }
 
     @Test
-    public void testNoAlgorithm() throws Exception {
+    void testNoAlgorithm() throws Exception {
         try {
             doRoundTripEncryptionTests("direct:no-algorithm");
             fail("Failure expected on no algorithm specified");
@@ -161,7 +166,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: basic

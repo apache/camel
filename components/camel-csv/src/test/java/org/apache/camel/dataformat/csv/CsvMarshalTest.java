@@ -23,8 +23,10 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * This class tests standard marshalling
@@ -34,7 +36,7 @@ public class CsvMarshalTest extends CamelTestSupport {
     MockEndpoint output;
 
     @Test
-    public void shouldMarshalLists() throws Exception {
+    void shouldMarshalLists() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:default", Arrays.<List>asList(
@@ -48,7 +50,7 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldMarshalListsOneRow() throws Exception {
+    void shouldMarshalListsOneRow() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:default", Arrays.<List>asList(
@@ -62,7 +64,7 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldMarshalMaps() throws Exception {
+    void shouldMarshalMaps() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:default", Arrays.<Map>asList(
@@ -75,7 +77,7 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldMarshalSingleMap() throws Exception {
+    void shouldMarshalSingleMap() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2", "C", "3"));
@@ -85,7 +87,7 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldHandleColumns() throws Exception {
+    void shouldHandleColumns() throws Exception {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:headers", Arrays.<Map>asList(
@@ -98,7 +100,7 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldMarshalDifferentDynamicColumns() throws Exception {
+    void shouldMarshalDifferentDynamicColumns() throws Exception {
         output.expectedMessageCount(2);
 
         template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2"));
@@ -110,10 +112,10 @@ public class CsvMarshalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Default format
                 from("direct:default")
                         .marshal(new CsvDataFormat())

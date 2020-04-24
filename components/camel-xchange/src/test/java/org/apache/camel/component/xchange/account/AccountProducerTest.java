@@ -20,21 +20,22 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.Wallet;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 public class AccountProducerTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 
                 from("direct:balances")
                     .to("xchange:binance?service=account&method=balances");
@@ -50,32 +51,32 @@ public class AccountProducerTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBalances() throws Exception {
+    void testBalances() {
         
-        Assume.assumeTrue(hasAPICredentials());
+        assumeTrue(hasAPICredentials());
         
         List<Balance> balances = template.requestBody("direct:balances", null, List.class);
-        Assert.assertNotNull("Balances not null", balances);
+        assertNotNull(balances, "Balances not null");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testWallets() throws Exception {
+    void testWallets() {
         
-        Assume.assumeTrue(hasAPICredentials());
+        assumeTrue(hasAPICredentials());
         
         List<Wallet> wallets = template.requestBody("direct:wallets", null, List.class);
-        Assert.assertNotNull("Wallets not null", wallets);
+        assertNotNull(wallets, "Wallets not null");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testFundingHistory() throws Exception {
+    void testFundingHistory() {
         
-        Assume.assumeTrue(hasAPICredentials());
+        assumeTrue(hasAPICredentials());
         
         List<FundingRecord> records = template.requestBody("direct:fundingHistory", null, List.class);
-        Assert.assertNotNull("Funding records not null", records);
+        assertNotNull(records, "Funding records not null");
     }
 
     private boolean hasAPICredentials() {
