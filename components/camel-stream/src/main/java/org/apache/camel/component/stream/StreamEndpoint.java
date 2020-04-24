@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file.
+ * Read from system-in and write to system-out and system-err streams.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
@@ -194,7 +194,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     public void setScanStream(boolean scanStream) {
         this.scanStream = scanStream;
     }
-    
+
     public GroupStrategy getGroupStrategy() {
         return groupStrategy;
     }
@@ -265,7 +265,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     public void setGroupLines(int groupLines) {
         this.groupLines = groupLines;
     }
-    
+
     public int getAutoCloseCount() {
         return autoCloseCount;
     }
@@ -305,7 +305,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         charset = loadCharset();
     }
-    
+
     Charset loadCharset() {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();

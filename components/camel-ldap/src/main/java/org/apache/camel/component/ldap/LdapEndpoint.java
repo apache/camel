@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+ * Perform searches on LDAP servers.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
 public class LdapEndpoint extends DefaultEndpoint {

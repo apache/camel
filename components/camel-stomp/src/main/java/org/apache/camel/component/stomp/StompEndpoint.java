@@ -54,7 +54,7 @@ import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
 /**
- * The stomp component is used for communicating with Stomp compliant message brokers.
+ * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", label = "messaging")
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
@@ -183,11 +183,11 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
     }
 
     private void populateCamelMessageHeadersToStompFrames(final Exchange exchange, final StompFrame frame) {
-        Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();        
+        Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
-            if (!headerName.toLowerCase().startsWith("camel") 
+            if (!headerName.toLowerCase().startsWith("camel")
                 && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                 if (headerValue != null) {
                     frame.addHeader(new AsciiBuffer(headerName), StompFrame.encodeHeader(headerValue.toString()));
@@ -235,7 +235,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
     AsciiBuffer getNextId() {
         return connection.nextId();
     }
-    
+
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {

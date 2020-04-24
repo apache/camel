@@ -25,21 +25,20 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 
 /**
- * The Thrift component allows to call and expose remote procedures (RPC) with
- * Apache Thrift data format and serialization mechanism
+ * Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "thrift", title = "Thrift", syntax = "thrift:host:port/service", label = "rpc")
 public class ThriftEndpoint extends DefaultEndpoint {
     @UriParam
     private ThriftConfiguration configuration;
-    
+
     private String serviceName;
     private String servicePackage;
 
     public ThriftEndpoint(String uri, ThriftComponent component, ThriftConfiguration config) throws Exception {
         super(uri, component);
         this.configuration = config;
-        
+
         // Extract service and package names from the full service name
         serviceName = ThriftUtils.extractServiceName(configuration.getService());
         servicePackage = ThriftUtils.extractServicePackage(configuration.getService());

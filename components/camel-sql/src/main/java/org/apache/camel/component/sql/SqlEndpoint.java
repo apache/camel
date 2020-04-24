@@ -27,7 +27,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * The sql component allows you to work with databases using JDBC SQL queries.
+ * Perform SQL queries using Spring JDBC.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query", label = "database,sql")
 public class SqlEndpoint extends DefaultSqlEndpoint {

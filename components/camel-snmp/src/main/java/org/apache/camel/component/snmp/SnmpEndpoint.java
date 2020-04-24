@@ -35,7 +35,7 @@ import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
 /**
- * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+ * Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {

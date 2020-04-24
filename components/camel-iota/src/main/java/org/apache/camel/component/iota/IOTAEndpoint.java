@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.iota.jota.IotaAPI;
 
 /**
- * Component for integrate IOTA DLT
+ * Manage financial transactions using IOTA distributed ledger.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "iota", title = "IOTA", syntax = "iota:name", label = "ledger", producerOnly = true)
 public class IOTAEndpoint extends DefaultEndpoint {

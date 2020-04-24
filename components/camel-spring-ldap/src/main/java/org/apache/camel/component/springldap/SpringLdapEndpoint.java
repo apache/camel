@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.ldap.core.LdapTemplate;
 
 /**
- * The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+ * Perform searches in LDAP servers using filters as the message payload.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, label = "spring,ldap")
 public class SpringLdapEndpoint extends DefaultEndpoint {

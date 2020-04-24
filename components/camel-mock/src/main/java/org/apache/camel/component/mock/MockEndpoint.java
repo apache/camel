@@ -65,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The mock component is used for testing routes and mediation rules using mocks.
+ * Test routes and mediation rules using mocks.
  * <p/>
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
@@ -101,7 +101,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
-    
+
     private volatile Processor defaultProcessor;
     private volatile Map<Integer, Processor> processors;
     private volatile List<Exchange> receivedExchanges;
@@ -346,10 +346,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void whenAnyExchangeReceived(Processor processor) {
         this.defaultProcessor = processor;
     }
-    
+
     /**
      * Set the expression which value will be set to the message body
-     * @param expression which is use to set the message body 
+     * @param expression which is use to set the message body
      */
     public void returnReplyBody(Expression expression) {
         this.defaultProcessor = exchange -> {
@@ -357,11 +357,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             exchange.getMessage().setBody(exp);
         };
     }
-    
+
     /**
      * Set the expression which value will be set to the message header
      * @param headerName that will be set value
-     * @param expression which is use to set the message header 
+     * @param expression which is use to set the message header
      */
     public void returnReplyHeader(String headerName, Expression expression) {
         this.defaultProcessor = exchange -> {
@@ -369,7 +369,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             exchange.getMessage().setHeader(headerName, exp);
         };
     }
-    
+
 
     /**
      * Validates that all the available expectations on this endpoint are
@@ -459,7 +459,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
         }
         if (failed) {
-            // fail() throws the AssertionError to indicate the test failed. 
+            // fail() throws the AssertionError to indicate the test failed.
             fail("Expected assertion failure but test succeeded!");
         }
     }
@@ -484,12 +484,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 LOG.info("Caught expected failure: " + e.getMessage());
             }
         }
-        if (failed) { 
-            // fail() throws the AssertionError to indicate the test failed. 
+        if (failed) {
+            // fail() throws the AssertionError to indicate the test failed.
             fail("Expected assertion failure but test succeeded!");
         }
-    }    
-    
+    }
+
     /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint
@@ -513,7 +513,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Sets a grace period after which the mock endpoint will re-assert
      * to ensure the preliminary assertion is still valid.
      * <p/>
-     * This is used for example to assert that <b>exactly</b> a number of messages 
+     * This is used for example to assert that <b>exactly</b> a number of messages
      * arrives. For example if {@link #expectedMessageCount(int)} was set to 5, then
      * the assertion is satisfied when 5 or more message arrives. To ensure that
      * exactly 5 messages arrives, then you would need to wait a little period
@@ -730,7 +730,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         List<Object> valueList = new ArrayList<>();
         valueList.addAll(Arrays.asList(values));
         expectedPropertyValuesReceivedInAnyOrder(name, valueList);
-    }    
+    }
 
     /**
      * Adds an expectation that the given body values are received by this
@@ -1338,7 +1338,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      *
      * @param expectedCount the number of message exchanges that should be
      *                expected by this endpoint
-     * @see #setAssertPeriod(long)                      
+     * @see #setAssertPeriod(long)
      */
     public void setExpectedCount(int expectedCount) {
         setExpectedMessageCount(expectedCount);
@@ -1406,7 +1406,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <p/>
      * You can configure both {@link #setRetainFirst(int)} and {@link #setRetainLast(int)} methods,
      * to limit both the first and last received.
-     * 
+     *
      * @param retainFirst  to limit and only keep the first n'th received {@link Exchange}s, use
      *                     <tt>0</tt> to not retain any messages, or <tt>-1</tt> to retain all.
      * @see #setRetainLast(int)
@@ -1649,7 +1649,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     /**
      * Adds the received exchange.
-     * 
+     *
      * @param copy  a copy of the received exchange
      */
     protected void addReceivedExchange(Exchange copy) {

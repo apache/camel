@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
 /**
- * The openstack-keystone component allows messages to be sent to an OpenStack identity services.
+ * Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-keystone", title = "OpenStack Keystone", syntax = "openstack-keystone:host", label = "cloud,paas", producerOnly = true)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {

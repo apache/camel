@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
+ * Perform caching operations against JSR107/JCache.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "jcache", title = "JCache", syntax = "jcache:cacheName", label = "cache,datagrid,clustering")
 public class JCacheEndpoint extends DefaultEndpoint {

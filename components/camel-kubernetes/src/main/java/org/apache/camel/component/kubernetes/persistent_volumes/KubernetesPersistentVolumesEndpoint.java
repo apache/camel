@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Persistent Volumes component provides a producer to execute
- * kubernetes persistent volume operations.
+ * Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes", title = "Kubernetes Persistent Volume", syntax = "kubernetes-persistent-volumes:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {

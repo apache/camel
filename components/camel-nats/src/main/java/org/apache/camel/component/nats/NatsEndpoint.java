@@ -34,14 +34,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The nats component allows you produce and consume messages from <a href="http://nats.io/">NATS</a>.
+ * Send and receive messages from <a href="http://nats.io/">NATS</a> messaging system.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", label = "messaging")
 public class NatsEndpoint extends DefaultEndpoint {
 
     @UriParam
     private NatsConfiguration configuration;
-    
+
     public NatsEndpoint(String uri, NatsComponent component, NatsConfiguration config) {
         super(uri, component);
         this.configuration = config;
@@ -58,15 +58,15 @@ public class NatsEndpoint extends DefaultEndpoint {
         configureConsumer(consumer);
         return consumer;
     }
-    
+
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
-    
+
     public NatsConfiguration getConfiguration() {
         return configuration;
     }
-    
+
     public Connection getConnection() throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
         Builder builder = getConfiguration().createOptions();
         if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {

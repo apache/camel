@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The jmx component allows to receive JMX notifications.
+ * Receive JMX notifications.
  *
  * Endpoint that describes a connection to an mbean.
  * <p/>
@@ -165,7 +165,7 @@ public class JMXEndpoint extends DefaultEndpoint {
      */
     @UriParam(label = "consumer,string")
     private String stringToCompare;
-    
+
     /**
      * Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
      */
@@ -195,21 +195,21 @@ public class JMXEndpoint extends DefaultEndpoint {
      */
     @UriParam(label = "advanced")
     private Object handback;
-    
+
     /**
      * If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
      * to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay
      */
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
-    
+
     /**
      * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
      * to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
      */
     @UriParam(label = "advanced")
     private boolean reconnectOnConnectionFailure;
-     
+
     /**
      * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
      */
@@ -241,11 +241,11 @@ public class JMXEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor aProcessor) throws Exception {
         // validate that all of the endpoint is configured properly
         if (getMonitorType() != null) {
-            
+
             if (!isPlatformServer()) {
                 throw new IllegalArgumentException(ERR_PLATFORM_SERVER);
             }
-            
+
             if (ObjectHelper.isEmpty(getObservedAttribute())) {
                 throw new IllegalArgumentException(ERR_OBSERVED_ATTRIBUTE);
             }
@@ -502,27 +502,27 @@ public class JMXEndpoint extends DefaultEndpoint {
     public void setStringToCompare(String aStringToCompare) {
         stringToCompare = aStringToCompare;
     }
-    
+
     public boolean isTestConnectionOnStartup() {
         return this.testConnectionOnStartup;
     }
-    
+
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
-    
+
     public boolean isReconnectOnConnectionFailure() {
         return this.reconnectOnConnectionFailure;
     }
-    
+
     public void setReconnectOnConnectionFailure(boolean reconnectOnConnectionFailure) {
         this.reconnectOnConnectionFailure = reconnectOnConnectionFailure;
-    }    
-    
+    }
+
     public int getReconnectDelay() {
         return this.reconnectDelay;
-    }    
-     
+    }
+
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }

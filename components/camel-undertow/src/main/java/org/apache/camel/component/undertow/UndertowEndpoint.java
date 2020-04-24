@@ -58,7 +58,7 @@ import org.xnio.OptionMap;
 import org.xnio.Options;
 
 /**
- * The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
+ * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         label = "http,websocket", lenientProperties = true)
@@ -287,12 +287,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side and if the caused Exception 
-     * was send back serialized in the response as a application/x-java-serialized-object content type. 
-     * On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. 
-     * This is by default turned off. If you enable this 
+     * If enabled and an Exchange failed processing on the consumer side and if the caused Exception
+     * was send back serialized in the response as a application/x-java-serialized-object content type.
+     * On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     * This is by default turned off. If you enable this
      * then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-     * 
+     *
      */
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;

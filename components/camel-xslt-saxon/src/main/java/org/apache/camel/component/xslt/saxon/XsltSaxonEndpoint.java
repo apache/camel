@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transforms the message using a XSLT template using Saxon.
+ * Transform XML payloads using an XSLT template using Saxon.
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, label = "core,transformation")
@@ -121,7 +121,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
         this.saxonConfigurationProperties = configurationProperties;
     }
-    
+
     public Map<String, Object> getSaxonReaderProperties() {
         return saxonReaderProperties;
     }
@@ -213,7 +213,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
         return xslt;
     }
-    
+
     /**
      * Loads the resource.
      *
@@ -237,7 +237,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         // now loaded so clear flag
         setCacheCleared(false);
     }
-    
+
     private Source createReaderForSource(Source source) {
         try {
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
@@ -246,7 +246,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 Object value = entry.getValue();
                 try {
                     URI uri = new URI(key);
-                    if (value != null 
+                    if (value != null
                         && (value.toString().equals("true") || (value.toString().equals("false")))) {
                         xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
                     } else if (value != null) {
@@ -255,7 +255,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 } catch (URISyntaxException e) {
                     LOG.debug("{} isn't a valid URI, so ingore it", key);
                 }
-            }     
+            }
             InputSource inputSource = SAXSource.sourceToInputSource(source);
             return new SAXSource(xmlReader, inputSource);
         } catch (SAXException e) {

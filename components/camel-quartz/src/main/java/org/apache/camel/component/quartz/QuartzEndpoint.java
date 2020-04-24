@@ -54,7 +54,7 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 /**
- * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+ * Schedule sending of messages using the Quartz 2.x scheduler.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName", consumerOnly = true, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {

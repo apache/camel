@@ -31,8 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a Kudu endpoint. A kudu endpoint allows you to interact with
- * <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source
+ * Interact with <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source
  * column-oriented data store of the Apache Hadoop ecosystem.
  */
 @UriEndpoint(firstVersion = "3.0",

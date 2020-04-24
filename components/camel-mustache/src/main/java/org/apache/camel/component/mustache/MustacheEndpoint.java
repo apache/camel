@@ -40,7 +40,7 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RES
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
 
 /**
- * Transforms the message using a Mustache template.
+ * Transform messages using a Mustache template.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri", producerOnly = true, label = "transformation")
 public class MustacheEndpoint extends ResourceEndpoint {

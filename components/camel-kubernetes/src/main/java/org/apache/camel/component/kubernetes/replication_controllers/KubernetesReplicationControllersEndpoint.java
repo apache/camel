@@ -24,9 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Replication Controllers component provides a producer to
- * execute kubernetes replication controller operations and a consumer to
- * consume replication controller events.
+ * Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers", title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl", label = "container,cloud,paas")
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {

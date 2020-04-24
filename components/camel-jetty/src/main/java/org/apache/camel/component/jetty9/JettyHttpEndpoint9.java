@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * To use Jetty as a HTTP server as consumer for Camel routes.
+ * Expose HTTP endpoints using Jetty 9.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty", syntax = "jetty:httpUri", label = "http", consumerOnly = true, lenientProperties = true)
 @Metadata(excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"

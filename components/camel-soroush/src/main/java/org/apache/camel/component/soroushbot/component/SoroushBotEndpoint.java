@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To integrate with the Soroush chat bot.
+ * Send and receive messages as a Soroush chat bot.
  */
 @UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:action", label = "chat")
 public class SoroushBotEndpoint extends DefaultEndpoint {

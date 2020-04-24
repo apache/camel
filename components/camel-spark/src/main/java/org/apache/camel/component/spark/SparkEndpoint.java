@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
+ * Send RDD or DataFrame jobs to Apache Spark clusters.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "spark", title = "Spark", syntax = "spark:endpointType",
         producerOnly = true, label = "bigdata,iot")

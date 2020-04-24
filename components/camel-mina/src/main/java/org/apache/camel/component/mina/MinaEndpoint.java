@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.session.IoSession;
 
 /**
- * Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+ * Socket level networking using TCP or UDP with Apache Mina 2.x.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", label = "networking,tcp,udp")
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {

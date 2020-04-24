@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Make telemetry data available as an OPC UA server
+ * Make telemetry data available as an OPC UA server.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "milo-server", syntax = "milo-server:itemId", title = "OPC UA Server", label = "iot")
 public class MiloServerEndpoint extends DefaultEndpoint {

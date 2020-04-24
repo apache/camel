@@ -33,8 +33,8 @@ import org.apache.ignite.IgniteQueue;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
 /**
- * The Ignite Queue endpoint is one of camel-ignite endpoints which allows you to interact with
- * <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Queue data structures</a>.
+ * Interact with <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Queue data structures</a>.
+ *
  * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-queue", title = "Ignite Queues", syntax = "ignite-queue:name", label = "nosql,cache", producerOnly = true)

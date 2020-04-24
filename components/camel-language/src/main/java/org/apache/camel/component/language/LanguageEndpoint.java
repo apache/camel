@@ -40,7 +40,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
+ * Execute scripts in any of the languages supported by Camel.
  *
  * By having a component to execute language scripts, it allows more dynamic routing capabilities.
  * For example by using the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints

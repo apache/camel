@@ -24,8 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Secrets component provides a producer to execute kubernetes
- * secret operations.
+ * Perform operations on Kubernetes Secrets.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-secrets", title = "Kubernetes Secrets", syntax = "kubernetes-secrets:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {

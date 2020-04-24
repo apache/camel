@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 
 /**
- * Polls the weather information from Open Weather Map.
+ * Poll the weather information from Open Weather Map.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", label = "api")
 public class WeatherEndpoint extends DefaultPollingEndpoint {

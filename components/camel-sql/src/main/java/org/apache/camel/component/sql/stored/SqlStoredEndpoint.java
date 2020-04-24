@@ -31,7 +31,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * The sql component allows you to work with databases using JDBC Stored Procedure queries.
+ * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template", producerOnly = true, label = "database,sql")
 public class SqlStoredEndpoint extends DefaultEndpoint {

@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Reactive Camel using reactive streams
+ * Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
         label = "reactive,streams")

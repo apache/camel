@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The saga component provides access to advanced options for managing the flow in the Saga EIP.
+ * Execute custom actions within a route using the Saga EIP.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true, label = "core,endpoint")
 public class SagaEndpoint extends DefaultEndpoint {

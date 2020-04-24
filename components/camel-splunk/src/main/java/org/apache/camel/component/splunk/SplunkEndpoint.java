@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The splunk component allows to publish or search for events in Splunk.
+ * Publish or search for events in Splunk.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", label = "log,monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {

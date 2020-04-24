@@ -27,6 +27,9 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.PulsarClient;
 
+/**
+ * Send and receive messages from/to Apache Pulsar messaging system.
+ */
 @UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
