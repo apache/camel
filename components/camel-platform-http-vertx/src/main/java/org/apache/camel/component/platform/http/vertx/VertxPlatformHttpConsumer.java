@@ -87,11 +87,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         super.doInit();
 
         final PlatformHttpEndpoint endpoint = getEndpoint();
-        final String path = endpoint.getPath();
-
-        // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
-        final String vertxPathParamPath = PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
-        final Route newRoute = router.route(vertxPathParamPath);
+        final String path = configureEndpointPath(endpoint);
+        final Route newRoute = router.route(path);
 
         final Set<Method> methods = Method.parseList(endpoint.getHttpMethodRestrict());
         if (!methods.equals(Method.getAll())) {
@@ -117,7 +114,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                         doneSync -> writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy()));
                 } catch (Exception e) {
                     ctx.fail(e);
-                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + path, exchg, e);
+                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg, e);
                 } finally {
                     if (exchg != null) {
                         doneUoW(exchg);
@@ -151,6 +148,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             route.enable();
         }
         super.doResume();
+    }
+
+    private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
+        String path = endpoint.getPath();
+        if (endpoint.isMatchOnUriPrefix()) {
+            path += "*";
+        }
+        // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
+        return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
     private Exchange toExchange(RoutingContext ctx) {
