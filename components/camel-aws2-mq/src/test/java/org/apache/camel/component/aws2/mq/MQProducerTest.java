@@ -34,6 +34,7 @@ import software.amazon.awssdk.services.mq.model.DeleteBrokerResponse;
 import software.amazon.awssdk.services.mq.model.DeploymentMode;
 import software.amazon.awssdk.services.mq.model.DescribeBrokerResponse;
 import software.amazon.awssdk.services.mq.model.EngineType;
+import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
 import software.amazon.awssdk.services.mq.model.ListBrokersResponse;
 import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
@@ -56,6 +57,26 @@ public class MQProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListBrokersResponse resultGet = (ListBrokersResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.brokerSummaries().size());
+        assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
+        assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
+    }
+    
+    @Test
+    public void mqListBrokersPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listBrokers", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
+                exchange.getIn().setBody(ListBrokersRequest.builder().maxResults(10).build());
             }
         });
 
@@ -178,6 +199,7 @@ public class MQProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listBrokers").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers").to("mock:result");
+                from("direct:listBrokersPojo").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true").to("mock:result");
                 from("direct:createBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker").to("mock:result");
                 from("direct:deleteBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=deleteBroker").to("mock:result");
                 from("direct:rebootBroker").to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=rebootBroker").to("mock:result");
