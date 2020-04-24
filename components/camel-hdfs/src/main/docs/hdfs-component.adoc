@@ -2,7 +2,7 @@
 = HDFS Component
 :docTitle: HDFS
 :artifactId: camel-hdfs
-:description: For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+:description: Read and write from/to an HDFS filesystem using Hadoop 2.x.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

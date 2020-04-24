@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "timer",
     "title": "Timer",
-    "description": "The timer component is used for generating message exchanges when a timer fires.",
+    "description": "Generate messages in specified intervals using java.util.Timer.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "core,scheduling",

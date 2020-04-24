@@ -4,7 +4,7 @@
 :page-source: components/camel-json-validator/src/main/docs/json-validator-component.adoc
 :docTitle: JSON Schema Validator
 :artifactId: camel-json-validator
-:description: Validates the payload of a message using NetworkNT JSON Schema library.
+:description: Validate JSON payloads using NetworkNT JSON Schema.
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported

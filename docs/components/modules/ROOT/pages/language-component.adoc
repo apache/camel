@@ -4,7 +4,7 @@
 :page-source: components/camel-language/src/main/docs/language-component.adoc
 :docTitle: Language
 :artifactId: camel-language
-:description: The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
+:description: Execute scripts in any of the languages supported by Camel.
 :since: 2.5
 :supportLevel: Stable
 :component-header: Only producer is supported

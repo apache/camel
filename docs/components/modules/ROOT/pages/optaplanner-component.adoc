@@ -4,7 +4,7 @@
 :page-source: components/camel-optaplanner/src/main/docs/optaplanner-component.adoc
 :docTitle: OptaPlanner
 :artifactId: camel-optaplanner
-:description: Solves the planning problem contained in a message with OptaPlanner.
+:description: Solve planning problems with OptaPlanner.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

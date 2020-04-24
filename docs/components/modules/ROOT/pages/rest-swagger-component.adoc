@@ -4,7 +4,7 @@
 :page-source: components/camel-rest-swagger/src/main/docs/rest-swagger-component.adoc
 :docTitle: REST Swagger
 :artifactId: camel-rest-swagger
-:description: An awesome REST endpoint backed by Swagger specifications.
+:description: Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the RestProducerFactory interface.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

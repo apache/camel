@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "snmp",
     "title": "SNMP",
-    "description": "The snmp component gives you the ability to poll SNMP capable devices or receiving traps.",
+    "description": "Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.",
     "deprecated": false,
     "firstVersion": "2.1.0",
     "label": "monitoring",

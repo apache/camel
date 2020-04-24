@@ -2,7 +2,7 @@
 = SCP Component
 :docTitle: SCP
 :artifactId: camel-jsch
-:description: To copy files using the secure copy protocol (SCP).
+:description: Copy files to/from remote hosts using the secure copy protocol (SCP).
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported

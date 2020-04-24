@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "lucene",
     "title": "Lucene",
-    "description": "To insert or query from Apache Lucene databases.",
+    "description": "Perform inserts or queries against Apache Lucene databases.",
     "deprecated": false,
     "firstVersion": "2.2.0",
     "label": "database,search",

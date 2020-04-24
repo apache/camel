@@ -4,7 +4,7 @@
 :page-source: components/camel-ignite/src/main/docs/ignite-idgen-component.adoc
 :docTitle: Ignite ID Generator
 :artifactId: camel-ignite
-:description: The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with Ignite Atomic Sequences and ID Generators.
+:description: Interact with Ignite Atomic Sequences and ID Generators .
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported

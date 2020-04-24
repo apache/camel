@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xmpp",
     "title": "XMPP",
-    "description": "To send and receive messages from a XMPP (chat) server.",
+    "description": "Send and receive messages to\/from an XMPP chat server.",
     "deprecated": false,
     "firstVersion": "1.0",
     "label": "chat,messaging",

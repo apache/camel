@@ -2,7 +2,7 @@
 = Scheduler Component
 :docTitle: Scheduler
 :artifactId: camel-scheduler
-:description: The scheduler component is used for generating message exchanges when a scheduler fires.
+:description: Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only consumer is supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jpa",
     "title": "JPA",
-    "description": "The jpa component enables you to store and retrieve Java objects from databases using JPA.",
+    "description": "Store and retrieve Java objects from databases using Java Persistence API (JPA).",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "database,sql",

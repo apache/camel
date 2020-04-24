@@ -178,7 +178,7 @@ Sometimes build an AWS Request can be complex, because of multiple options. We i
 In AWS MQ there are multiple operations you can submit, as an example for List brokers request, you can do something like:
 
 ------------------------------------------------------------------------------------------------------
-from("direct:createUser")
+from("direct:aws2-mq")
      .setBody(ListBrokersRequest.builder().maxResults(10).build())
      .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------

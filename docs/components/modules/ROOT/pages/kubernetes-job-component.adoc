@@ -4,7 +4,7 @@
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-job-component.adoc
 :docTitle: Kubernetes Job
 :artifactId: camel-kubernetes
-:description: The Kubernetes Jobs component provides a producer to execute kubernetes job operations
+:description: Perform operations on Kubernetes Jobs.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

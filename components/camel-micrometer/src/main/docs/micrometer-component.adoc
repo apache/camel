@@ -2,7 +2,7 @@
 = Micrometer Component
 :docTitle: Micrometer
 :artifactId: camel-micrometer
-:description: To collect various metrics directly from Camel routes using the Micrometer library.
+:description: Collect various metrics directly from Camel routes using the Micrometer library.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only producer is supported

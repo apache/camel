@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "vertx",
     "title": "Vert.x",
-    "description": "The vertx component is used for sending and receive messages from a vertx event bus.",
+    "description": "Send and receive messages to\/from Vert.x Event Bus.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "eventbus,reactive",

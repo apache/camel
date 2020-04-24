@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "pulsar",
     "title": "Pulsar",
-    "description": "Camel Apache Pulsar Component",
+    "description": "Send and receive messages from\/to Apache Pulsar messaging system.",
     "deprecated": false,
     "firstVersion": "2.24.0",
     "label": "messaging",

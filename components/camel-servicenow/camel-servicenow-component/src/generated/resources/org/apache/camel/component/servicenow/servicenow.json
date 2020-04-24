@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "servicenow",
     "title": "ServiceNow",
-    "description": "The servicenow component is used to integrate Camel with ServiceNow cloud services.",
+    "description": "Interact with ServiceNow via its REST API.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "api,cloud,management",

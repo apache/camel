@@ -4,7 +4,7 @@
 :page-source: components/camel-schematron/src/main/docs/schematron-component.adoc
 :docTitle: Schematron
 :artifactId: camel-schematron
-:description: Validates the payload of a message using the Schematron Library.
+:description: Validate XML payload using the Schematron Library.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported

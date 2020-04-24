@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "scp",
     "title": "SCP",
-    "description": "To copy files using the secure copy protocol (SCP).",
+    "description": "Copy files to\/from remote hosts using the secure copy protocol (SCP).",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "2.10.0",

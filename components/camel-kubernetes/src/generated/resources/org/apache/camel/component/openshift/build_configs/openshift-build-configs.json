@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openshift-build-configs",
     "title": "Openshift Build Config",
-    "description": "The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.",
+    "description": "Perform operations on OpenShift Build Configs.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "container,cloud,paas",

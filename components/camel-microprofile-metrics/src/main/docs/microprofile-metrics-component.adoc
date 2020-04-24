@@ -2,7 +2,7 @@
 = MicroProfile Metrics Component
 :docTitle: MicroProfile Metrics
 :artifactId: camel-microprofile-metrics
-:description: Camel metrics exposed with Eclipse MicroProfile Metrics
+:description: Expose metrics from Camel routes.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

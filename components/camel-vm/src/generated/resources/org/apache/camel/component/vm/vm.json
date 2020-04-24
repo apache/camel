@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "vm",
     "title": "VM",
-    "description": "The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+    "description": "Call another endpoint in the same CamelContext asynchronously.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "core,endpoint",

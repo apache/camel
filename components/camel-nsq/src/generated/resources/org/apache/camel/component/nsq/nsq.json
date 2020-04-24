@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "nsq",
     "title": "NSQ",
-    "description": "Represents a nsq endpoint.",
+    "description": "Send and receive messages from NSQ realtime distributed messaging platform.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "messaging",

@@ -2,7 +2,7 @@
 = SQL Component
 :docTitle: SQL
 :artifactId: camel-sql
-:description: The sql component allows you to work with databases using JDBC SQL queries.
+:description: Perform SQL queries using Spring JDBC.
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

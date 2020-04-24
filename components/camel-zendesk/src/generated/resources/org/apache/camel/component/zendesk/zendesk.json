@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "zendesk",
     "title": "Zendesk",
-    "description": "Allows producing messages to manage Zendesk ticket, user, organization, etc.",
+    "description": "Manage Zendesk tickets, users, organizations, etc.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "api,support,cloud",

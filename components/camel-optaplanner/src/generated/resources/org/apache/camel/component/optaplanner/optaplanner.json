@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "optaplanner",
     "title": "OptaPlanner",
-    "description": "Solves the planning problem contained in a message with OptaPlanner.",
+    "description": "Solve planning problems with OptaPlanner.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "engine,planning",

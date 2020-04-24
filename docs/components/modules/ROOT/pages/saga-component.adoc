@@ -4,7 +4,7 @@
 :page-source: components/camel-saga/src/main/docs/saga-component.adoc
 :docTitle: Saga
 :artifactId: camel-saga
-:description: The saga component provides access to advanced options for managing the flow in the Saga EIP.
+:description: Execute custom actions within a route using the Saga EIP.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Only producer is supported

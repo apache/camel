@@ -4,7 +4,7 @@
 :page-source: components/camel-jgroups/src/main/docs/jgroups-component.adoc
 :docTitle: JGroups
 :artifactId: camel-jgroups
-:description: The jgroups component provides exchange of messages between Camel and JGroups clusters.
+:description: Exchange messages with JGroups clusters.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

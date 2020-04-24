@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "nagios",
     "title": "Nagios",
-    "description": "To send passive checks to Nagios using JSendNSCA.",
+    "description": "Send passive checks to Nagios using JSendNSCA.",
     "deprecated": false,
     "firstVersion": "2.3.0",
     "label": "monitoring",

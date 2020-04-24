@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "language",
     "title": "Language",
-    "description": "The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.",
+    "description": "Execute scripts in any of the languages supported by Camel.",
     "deprecated": false,
     "firstVersion": "2.5.0",
     "label": "core,script",

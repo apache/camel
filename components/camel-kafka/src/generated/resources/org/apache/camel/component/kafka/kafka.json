@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kafka",
     "title": "Kafka",
-    "description": "The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.",
+    "description": "Sent and receive messages to\/from an Apache Kafka broker.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "messaging",

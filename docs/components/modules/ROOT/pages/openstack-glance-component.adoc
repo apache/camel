@@ -4,7 +4,7 @@
 :page-source: components/camel-openstack/src/main/docs/openstack-glance-component.adoc
 :docTitle: OpenStack Glance
 :artifactId: camel-openstack
-:description: The openstack-glance component allows messages to be sent to an OpenStack image services.
+:description: Manage VM images and metadata definitions in OpenStack Glance.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

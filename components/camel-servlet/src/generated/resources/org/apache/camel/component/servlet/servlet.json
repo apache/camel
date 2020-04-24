@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "servlet",
     "title": "Servlet",
-    "description": "To use a HTTP Servlet as entry for Camel routes when running in a servlet container.",
+    "description": "Serve HTTP requests by a Servlet.",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "2.0.0",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openstack-glance",
     "title": "OpenStack Glance",
-    "description": "The openstack-glance component allows messages to be sent to an OpenStack image services.",
+    "description": "Manage VM images and metadata definitions in OpenStack Glance.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,paas",

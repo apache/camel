@@ -4,7 +4,7 @@
 :page-source: components/camel-mvel/src/main/docs/mvel-component.adoc
 :docTitle: MVEL
 :artifactId: camel-mvel
-:description: Transforms the message using a MVEL template.
+:description: Transform messages using an MVEL template.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

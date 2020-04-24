@@ -4,7 +4,7 @@
 :page-source: components/camel-ironmq/src/main/docs/ironmq-component.adoc
 :docTitle: IronMQ
 :artifactId: camel-ironmq
-:description: The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.
+:description: Send and receive messages to/from IronMQ an elastic and durable hosted message queue as a service.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

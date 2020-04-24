@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kubernetes-hpa",
     "title": "Kubernetes HPA",
-    "description": "The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume HPA events.",
+    "description": "Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "container,cloud,paas",

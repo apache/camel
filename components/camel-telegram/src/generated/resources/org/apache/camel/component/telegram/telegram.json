@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "telegram",
     "title": "Telegram",
-    "description": "The telegram component provides access to the Telegram Bot API.",
+    "description": "Send and receive messages acting as a Telegram Bot Telegram Bot API.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "chat",

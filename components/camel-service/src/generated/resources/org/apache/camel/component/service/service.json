@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "service",
     "title": "Service",
-    "description": "Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.",
+    "description": "Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.",
     "deprecated": false,
     "firstVersion": "2.22.0",
     "label": "cloud",

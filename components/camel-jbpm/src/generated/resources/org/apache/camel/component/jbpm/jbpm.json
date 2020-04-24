@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jbpm",
     "title": "JBPM",
-    "description": "The jbpm component provides integration with jBPM (Business Process Management).",
+    "description": "Interact with jBPM workflow engine over REST.",
     "deprecated": false,
     "firstVersion": "2.6.0",
     "label": "process",

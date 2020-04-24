@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "websocket",
     "title": "Jetty Websocket",
-    "description": "The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.",
+    "description": "Expose websocket endpoints using Jetty.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "websocket",

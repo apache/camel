@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jt400",
     "title": "JT400",
-    "description": "The jt400 component allows you to exchanges messages with an AS\/400 system using data queues or program call.",
+    "description": "Exchanges messages with an AS\/400 system using data queues or program call.",
     "deprecated": false,
     "firstVersion": "1.5.0",
     "label": "messaging",

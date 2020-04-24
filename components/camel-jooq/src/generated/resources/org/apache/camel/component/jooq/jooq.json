@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jooq",
     "title": "JOOQ",
-    "description": "The jooq component enables you to store and retrieve entities from databases using JOOQ",
+    "description": "Store and retrieve Java objects from an SQL database using JOOQ.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database",

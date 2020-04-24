@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "lpr",
     "title": "Printer",
-    "description": "The printer component is used for sending messages to printers as print jobs.",
+    "description": "Send print jobs to printers.",
     "deprecated": false,
     "firstVersion": "2.1.0",
     "label": "printing",

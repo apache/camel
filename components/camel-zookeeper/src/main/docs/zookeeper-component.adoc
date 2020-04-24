@@ -2,7 +2,7 @@
 = ZooKeeper Component
 :docTitle: ZooKeeper
 :artifactId: camel-zookeeper
-:description: The zookeeper component allows interaction with a ZooKeeper cluster.
+:description: Manage ZooKeeper clusters.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -2,7 +2,7 @@
 = REST OpenApi Component
 :docTitle: REST OpenApi
 :artifactId: camel-rest-openapi
-:description: An awesome REST endpoint backed by OpenApi specifications.
+:description: Configure REST producers based on an OpenAPI specification document delegating to a component implementing the RestProducerFactory interface.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

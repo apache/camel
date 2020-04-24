@@ -2,7 +2,7 @@
 = OPC UA Client Component
 :docTitle: OPC UA Client
 :artifactId: camel-milo
-:description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data
+:description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

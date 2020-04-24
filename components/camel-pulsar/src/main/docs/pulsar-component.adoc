@@ -2,7 +2,7 @@
 = Pulsar Component
 :docTitle: Pulsar
 :artifactId: camel-pulsar
-:description: Camel Apache Pulsar Component
+:description: Send and receive messages from/to Apache Pulsar messaging system.
 :since: 2.24
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

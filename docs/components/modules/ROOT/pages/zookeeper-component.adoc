@@ -4,7 +4,7 @@
 :page-source: components/camel-zookeeper/src/main/docs/zookeeper-component.adoc
 :docTitle: ZooKeeper
 :artifactId: camel-zookeeper
-:description: The zookeeper component allows interaction with a ZooKeeper cluster.
+:description: Manage ZooKeeper clusters.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

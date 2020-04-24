@@ -2,7 +2,7 @@
 = Simple JMS Component
 :docTitle: Simple JMS
 :artifactId: camel-sjms
-:description: The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
+:description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

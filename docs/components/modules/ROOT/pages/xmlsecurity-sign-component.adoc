@@ -4,7 +4,7 @@
 :page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-sign-component.adoc
 :docTitle: XML Security Sign
 :artifactId: camel-xmlsecurity
-:description: Used to sign exchanges using the XML signature specification.
+:description: Sign XML payloads using the XML signature specification.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

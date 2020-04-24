@@ -2,7 +2,7 @@
 = Metrics Component
 :docTitle: Metrics
 :artifactId: camel-metrics
-:description: To collect various metrics directly from Camel routes using the DropWizard metrics library.
+:description: Collect various metrics directly from Camel routes using the DropWizard metrics library.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Only producer is supported

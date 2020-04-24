@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xchange",
     "title": "XChange",
-    "description": "The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.",
+    "description": "Access market data and trade on Bitcoin and Altcoin exchanges.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "bitcoin,blockchain",

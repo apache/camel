@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "olingo4",
     "title": "Olingo4",
-    "description": "Communicates with OData 4.0 services using Apache Olingo OData API.",
+    "description": "Communicate with OData 4.0 services using Apache Olingo OData API.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud",

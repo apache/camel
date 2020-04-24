@@ -2,7 +2,7 @@
 = HTTP Component
 :docTitle: HTTP
 :artifactId: camel-http
-:description: For calling out to external HTTP servers using Apache HTTP Client 4.x.
+:description: Send requests to external HTTP servers using Apache HTTP Client 4.x.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported

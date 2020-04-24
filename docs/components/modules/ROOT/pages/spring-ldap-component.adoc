@@ -4,7 +4,7 @@
 :page-source: components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc
 :docTitle: Spring LDAP
 :artifactId: camel-spring-ldap
-:description: The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+:description: Perform searches in LDAP servers using filters as the message payload.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Only producer is supported

@@ -4,7 +4,7 @@
 :page-source: components/camel-webhook/src/main/docs/webhook-component.adoc
 :docTitle: Webhook
 :artifactId: camel-webhook
-:description: The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
+:description: Expose webhook endpoints to receive push notifications for other Camel components.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

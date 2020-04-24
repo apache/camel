@@ -4,7 +4,7 @@
 :page-source: components/camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc
 :docTitle: PostgresSQL Replication Slot
 :artifactId: camel-pg-replication-slot
-:description: Consumer endpoint to receive from PostgreSQL Replication Slot.
+:description: Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

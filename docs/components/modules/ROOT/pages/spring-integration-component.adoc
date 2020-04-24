@@ -4,7 +4,7 @@
 :page-source: components/camel-spring-integration/src/main/docs/spring-integration-component.adoc
 :docTitle: Spring Integration
 :artifactId: camel-spring-integration
-:description: Bridges Camel with Spring Integration.
+:description: Bridge Camel with Spring Integration.
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kubernetes-services",
     "title": "Kubernetes Services",
-    "description": "The Kubernetes Services component provides a producer to execute service operations and a consumer to consume service events.",
+    "description": "Perform operations on Kubernetes Services and get notified on Service changes.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "container,cloud,paas",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mongodb-gridfs",
     "title": "MongoDB GridFS",
-    "description": "Component for working with MongoDB GridFS.",
+    "description": "Interact with MongoDB GridFS.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "database,nosql",

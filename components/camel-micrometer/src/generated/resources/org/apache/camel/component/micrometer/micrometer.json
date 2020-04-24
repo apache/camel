@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "micrometer",
     "title": "Micrometer",
-    "description": "To collect various metrics directly from Camel routes using the Micrometer library.",
+    "description": "Collect various metrics directly from Camel routes using the Micrometer library.",
     "deprecated": false,
     "firstVersion": "2.22.0",
     "label": "monitoring",

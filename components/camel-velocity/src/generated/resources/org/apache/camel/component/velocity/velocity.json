@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "velocity",
     "title": "Velocity",
-    "description": "Transforms the message using a Velocity template.",
+    "description": "Transform messages using a Velocity template.",
     "deprecated": false,
     "firstVersion": "1.2.0",
     "label": "transformation",

@@ -2,7 +2,7 @@
 = Spring WebService Component
 :docTitle: Spring WebService
 :artifactId: camel-spring-ws
-:description: The spring-ws component is used for SOAP WebServices using Spring WebServices.
+:description: Access external web services as a client or expose your own web services.
 :since: 2.6
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

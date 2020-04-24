@@ -4,7 +4,7 @@
 :page-source: components/camel-mustache/src/main/docs/mustache-component.adoc
 :docTitle: Mustache
 :artifactId: camel-mustache
-:description: Transforms the message using a Mustache template.
+:description: Transform messages using a Mustache template.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

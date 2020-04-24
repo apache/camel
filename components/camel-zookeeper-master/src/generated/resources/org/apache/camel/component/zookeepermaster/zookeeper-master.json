@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "zookeeper-master",
     "title": "ZooKeeper Master",
-    "description": "Represents an endpoint which only becomes active when it obtains the master lock",
+    "description": "Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "clustering",

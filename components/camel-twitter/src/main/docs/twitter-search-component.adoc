@@ -2,7 +2,7 @@
 = Twitter Search Component
 :docTitle: Twitter Search
 :artifactId: camel-twitter
-:description: The Twitter Search component consumes search results.
+:description: Access Twitter Search.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

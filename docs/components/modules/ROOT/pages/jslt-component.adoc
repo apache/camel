@@ -4,7 +4,7 @@
 :page-source: components/camel-jslt/src/main/docs/jslt-component.adoc
 :docTitle: JSLT
 :artifactId: camel-jslt
-:description: The jslt component allows you to process a JSON messages using an JSLT transformations.
+:description: Query or transform JSON payloads using an JSLT.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

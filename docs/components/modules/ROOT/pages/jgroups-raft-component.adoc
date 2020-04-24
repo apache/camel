@@ -4,7 +4,7 @@
 :page-source: components/camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc
 :docTitle: JGroups raft
 :artifactId: camel-jgroups-raft
-:description: The jgroups component provides exchange of messages between Camel and JGroups clusters.
+:description: Exchange messages with JGroups-raft clusters.
 :since: 2.24
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

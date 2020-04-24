@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "twitter-timeline",
     "title": "Twitter Timeline",
-    "description": "The Twitter Timeline component consumes twitter timeline or update the status of specific user.",
+    "description": "Send tweets and receive tweets from user's timeline.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "api,social",

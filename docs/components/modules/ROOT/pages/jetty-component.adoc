@@ -4,7 +4,7 @@
 :page-source: components/camel-jetty/src/main/docs/jetty-component.adoc
 :docTitle: Jetty
 :artifactId: camel-jetty
-:description: To use Jetty as a HTTP server as consumer for Camel routes.
+:description: Expose HTTP endpoints using Jetty 9.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Only consumer is supported

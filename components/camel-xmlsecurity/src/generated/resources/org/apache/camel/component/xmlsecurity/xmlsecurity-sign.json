@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xmlsecurity-sign",
     "title": "XML Security Sign",
-    "description": "Used to sign exchanges using the XML signature specification.",
+    "description": "Sign XML payloads using the XML signature specification.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "security,transformation",

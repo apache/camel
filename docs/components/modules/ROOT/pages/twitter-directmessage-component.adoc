@@ -4,7 +4,7 @@
 :page-source: components/camel-twitter/src/main/docs/twitter-directmessage-component.adoc
 :docTitle: Twitter Direct Message
 :artifactId: camel-twitter
-:description: The Twitter Direct Message Component consumes/produces user's direct messages.
+:description: Send and receive Twitter direct messages.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

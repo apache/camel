@@ -2,7 +2,7 @@
 = Paho Component
 :docTitle: Paho
 :artifactId: camel-paho
-:description: Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
+:description: Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

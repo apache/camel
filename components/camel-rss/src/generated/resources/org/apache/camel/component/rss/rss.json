@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "rss",
     "title": "RSS",
-    "description": "The rss component is used for consuming RSS feeds.",
+    "description": "Poll RSS feeds.",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "rss",

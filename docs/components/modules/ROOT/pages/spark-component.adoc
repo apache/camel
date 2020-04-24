@@ -4,7 +4,7 @@
 :page-source: components/camel-spark/src/main/docs/spark-component.adoc
 :docTitle: Spark
 :artifactId: camel-spark
-:description: The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
+:description: Send RDD or DataFrame jobs to Apache Spark clusters.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported
