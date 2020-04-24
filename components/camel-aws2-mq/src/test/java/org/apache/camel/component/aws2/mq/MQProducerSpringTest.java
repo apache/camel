@@ -33,6 +33,7 @@ import software.amazon.awssdk.services.mq.model.DeleteBrokerResponse;
 import software.amazon.awssdk.services.mq.model.DeploymentMode;
 import software.amazon.awssdk.services.mq.model.DescribeBrokerResponse;
 import software.amazon.awssdk.services.mq.model.EngineType;
+import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
 import software.amazon.awssdk.services.mq.model.ListBrokersResponse;
 import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
@@ -52,6 +53,26 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListBrokersResponse resultGet = (ListBrokersResponse)exchange.getIn().getBody();
+        assertEquals(1, resultGet.brokerSummaries().size());
+        assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
+        assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
+    }
+    
+    @Test
+    public void mqListBrokersPojoTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listBrokersPojo", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
+                exchange.getIn().setBody(ListBrokersRequest.builder().maxResults(10).build());
             }
         });
 
