@@ -172,7 +172,20 @@ The component is capable of detecting the presence of an MqClient bean into the 
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
-Dependencies
+== Using a POJO as body
+
+Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In AWS MQ there are multiple operations you can submit, as an example for List brokers request, you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:createUser")
+     .setBody(ListBrokersRequest.builder().maxResults(10).build())
+     .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
