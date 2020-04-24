@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "soroush",
     "title": "Soroush",
-    "description": "To integrate with the Soroush chat bot.",
+    "description": "Send and receive messages as a Soroush chat bot.",
     "deprecated": false,
     "firstVersion": "3.0",
     "label": "chat",

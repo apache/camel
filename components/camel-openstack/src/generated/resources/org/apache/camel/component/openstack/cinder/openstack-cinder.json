@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openstack-cinder",
     "title": "OpenStack Cinder",
-    "description": "The openstack-cinder component allows messages to be sent to an OpenStack block storage services.",
+    "description": "Access data in OpenStack Cinder block storage.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,paas",

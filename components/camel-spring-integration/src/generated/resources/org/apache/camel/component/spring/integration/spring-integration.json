@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-integration",
     "title": "Spring Integration",
-    "description": "Bridges Camel with Spring Integration.",
+    "description": "Bridge Camel with Spring Integration.",
     "deprecated": false,
     "firstVersion": "1.4.0",
     "label": "spring,eventbus",

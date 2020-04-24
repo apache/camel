@@ -4,7 +4,7 @@
 :page-source: components/camel-zendesk/src/main/docs/zendesk-component.adoc
 :docTitle: Zendesk
 :artifactId: camel-zendesk
-:description: Allows producing messages to manage Zendesk ticket, user, organization, etc.
+:description: Manage Zendesk tickets, users, organizations, etc.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

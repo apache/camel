@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "websocket-jsr356",
     "title": "Javax Websocket",
-    "description": "Camel WebSocket using JSR356 (javax)",
+    "description": "Expose websocket endpoints using JSR356.",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "http",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "pgevent",
     "title": "PostgresSQL Event",
-    "description": "The pgevent component allows for producing\/consuming PostgreSQL events related to the listen\/notify commands.",
+    "description": "Send and receive PostgreSQL events via LISTEN and NOTIFY commands.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "database,sql",

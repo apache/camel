@@ -4,7 +4,7 @@
 :page-source: components/camel-web3j/src/main/docs/web3j-component.adoc
 :docTitle: Web3j Ethereum Blockchain
 :artifactId: camel-web3j
-:description: The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
+:description: Interact with Ethereum nodes using web3j client API.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

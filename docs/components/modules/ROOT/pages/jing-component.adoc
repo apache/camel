@@ -4,7 +4,7 @@
 :page-source: components/camel-jing/src/main/docs/jing-component.adoc
 :docTitle: Jing
 :artifactId: camel-jing
-:description: Validates the payload of a message using RelaxNG Syntax using Jing library.
+:description: Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported

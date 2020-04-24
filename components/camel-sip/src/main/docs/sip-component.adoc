@@ -2,7 +2,7 @@
 = SIP Component
 :docTitle: SIP
 :artifactId: camel-sip
-:description: To send and receive messages using the SIP protocol (used in telco and mobile).
+:description: Send and receive messages using the SIP protocol (used in telecommunications).
 :since: 2.5
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

@@ -2,7 +2,7 @@
 = Netty HTTP Component
 :docTitle: Netty HTTP
 :artifactId: camel-netty-http
-:description: Netty HTTP server and client using the Netty 4.x library.
+:description: Netty HTTP server and client using the Netty 4.x.
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

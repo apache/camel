@@ -2,7 +2,7 @@
 = MyBatis Bean Component
 :docTitle: MyBatis Bean
 :artifactId: camel-mybatis
-:description: Performs a query, insert, update or delete in a relational database using MyBatis.
+:description: Perform queries, inserts, updates or deletes in a relational database using MyBatis.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only producer is supported

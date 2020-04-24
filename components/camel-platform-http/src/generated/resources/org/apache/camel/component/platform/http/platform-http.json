@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "platform-http",
     "title": "Platform HTTP",
-    "description": "HTTP service leveraging existing runtime platform HTTP server",
+    "description": "Expose HTTP endpoints using the HTTP server available in the current platform.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "http",

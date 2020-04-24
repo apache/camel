@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openstack-swift",
     "title": "OpenStack Swift",
-    "description": "The openstack-swift component allows messages to be sent to an OpenStack object storage services.",
+    "description": "Access OpenStack Swift object\/blob store.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,paas",

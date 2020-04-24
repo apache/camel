@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "pubnub",
     "title": "PubNub",
-    "description": "To send and receive messages to PubNub data stream network for connected devices.",
+    "description": "Send and receive messages to\/from PubNub data stream network for connected devices.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,iot,messaging",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "openstack-nova",
     "title": "OpenStack Nova",
-    "description": "The openstack-nova component allows messages to be sent to an OpenStack compute services.",
+    "description": "Access OpenStack to manage compute resources.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "cloud,paas",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "hipchat",
     "title": "Hipchat",
-    "description": "The hipchat component supports producing and consuming messages from\/to Hipchat service.",
+    "description": "Send and receive messages to\/from Hipchat service.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "api,cloud",

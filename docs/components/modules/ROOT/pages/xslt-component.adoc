@@ -4,7 +4,7 @@
 :page-source: components/camel-xslt/src/main/docs/xslt-component.adoc
 :docTitle: XSLT
 :artifactId: camel-xslt
-:description: Transforms the message using a XSLT template.
+:description: Transforms XML payload using an XSLT template.
 :since: 1.3
 :supportLevel: Stable
 :component-header: Only producer is supported

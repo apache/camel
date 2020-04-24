@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "sip",
     "title": "SIP",
-    "description": "To send and receive messages using the SIP protocol (used in telco and mobile).",
+    "description": "Send and receive messages using the SIP protocol (used in telecommunications).",
     "deprecated": false,
     "firstVersion": "2.5.0",
     "label": "mobile",

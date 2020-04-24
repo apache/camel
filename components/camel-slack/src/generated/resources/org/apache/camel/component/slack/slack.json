@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "slack",
     "title": "Slack",
-    "description": "The slack component allows you to send messages to Slack.",
+    "description": "Send and receive messages to\/from Slack.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "social",

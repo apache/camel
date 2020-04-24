@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jetty",
     "title": "Jetty",
-    "description": "To use Jetty as a HTTP server as consumer for Camel routes.",
+    "description": "Expose HTTP endpoints using Jetty 9.",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "1.2.0",

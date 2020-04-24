@@ -4,7 +4,7 @@
 :page-source: components/camel-kafka/src/main/docs/kafka-component.adoc
 :docTitle: Kafka
 :artifactId: camel-kafka
-:description: The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+:description: Sent and receive messages to/from an Apache Kafka broker.
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

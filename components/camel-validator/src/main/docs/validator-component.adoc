@@ -2,7 +2,7 @@
 = Validator Component
 :docTitle: Validator
 :artifactId: camel-validator
-:description: Validates the payload of a message using XML Schema and JAXP Validation.
+:description: Validate the payload using XML Schema and JAXP Validation.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Only producer is supported

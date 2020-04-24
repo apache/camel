@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xj",
     "title": "XJ",
-    "description": "Transforms json\/xml message back and forth using a XSLT.",
+    "description": "Transform JSON and XML message using a XSLT.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "transformation",

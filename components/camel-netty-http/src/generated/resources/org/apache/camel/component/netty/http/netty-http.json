@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "netty-http",
     "title": "Netty HTTP",
-    "description": "Netty HTTP server and client using the Netty 4.x library.",
+    "description": "Netty HTTP server and client using the Netty 4.x.",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "2.14.0",

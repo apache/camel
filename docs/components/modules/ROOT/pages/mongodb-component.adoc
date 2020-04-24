@@ -4,7 +4,7 @@
 :page-source: components/camel-mongodb/src/main/docs/mongodb-component.adoc
 :docTitle: MongoDB
 :artifactId: camel-mongodb
-:description: Component for working with documents stored in MongoDB database.
+:description: Perform operations on MongoDB documents and collections.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

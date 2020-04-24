@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "irc",
     "title": "IRC",
-    "description": "The irc component implements an IRC (Internet Relay Chat) transport.",
+    "description": "Send and receive messages to\/from and IRC chat.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "chat",

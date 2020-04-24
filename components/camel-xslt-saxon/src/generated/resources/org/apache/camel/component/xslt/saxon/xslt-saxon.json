@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xslt-saxon",
     "title": "XSLT Saxon",
-    "description": "Transforms the message using a XSLT template using Saxon.",
+    "description": "Transform XML payloads using an XSLT template using Saxon.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "core,transformation",

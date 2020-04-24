@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "undertow",
     "title": "Undertow",
-    "description": "The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP\/WebSocket requests.",
+    "description": "Expose HTTP and WebSocket endpoints and access external HTTP\/WebSocket servers.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "http,websocket",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "twitter-search",
     "title": "Twitter Search",
-    "description": "The Twitter Search component consumes search results.",
+    "description": "Access Twitter Search.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "api,social",

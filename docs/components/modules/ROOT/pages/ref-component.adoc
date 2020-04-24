@@ -4,7 +4,7 @@
 :page-source: components/camel-ref/src/main/docs/ref-component.adoc
 :docTitle: Ref
 :artifactId: camel-ref
-:description: The ref component is used for lookup of existing endpoints bound in the Registry.
+:description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.
 :since: 1.2
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

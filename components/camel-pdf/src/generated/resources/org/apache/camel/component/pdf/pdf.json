@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "pdf",
     "title": "PDF",
-    "description": "The pdf components provides the ability to create, modify or extract content from PDF documents.",
+    "description": "Create, modify or extract content from PDF documents.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "document,transformation,printing",

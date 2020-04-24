@@ -4,7 +4,7 @@
 :page-source: components/camel-vm/src/main/docs/vm-component.adoc
 :docTitle: VM
 :artifactId: camel-vm
-:description: The vm component provides asynchronous call to another endpoint from the same CamelContext.
+:description: Call another endpoint in the same CamelContext asynchronously.
 :since: 1.1
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

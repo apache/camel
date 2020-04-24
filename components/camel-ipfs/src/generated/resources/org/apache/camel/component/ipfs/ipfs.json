@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ipfs",
     "title": "IPFS",
-    "description": "The camel-ipfs component provides access to the Interplanetary File System (IPFS).",
+    "description": "Access the Interplanetary File System (IPFS).",
     "deprecated": false,
     "firstVersion": "2.23.0",
     "label": "file,ipfs",

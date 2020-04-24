@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "stax",
     "title": "StAX",
-    "description": "The stax component allows messages to be process through a SAX ContentHandler.",
+    "description": "Process XML payloads by a SAX ContentHandler.",
     "deprecated": false,
     "firstVersion": "2.9.0",
     "label": "transformation",

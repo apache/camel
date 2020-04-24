@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "pop3",
     "title": "POP3",
-    "description": "To send or receive emails using imap\/pop3 or smtp protocols.",
+    "description": "Send and receive emails using imap, pop3 and smtp protocols.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "mail",

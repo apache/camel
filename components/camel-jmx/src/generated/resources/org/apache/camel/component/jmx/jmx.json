@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jmx",
     "title": "JMX",
-    "description": "The jmx component allows to receive JMX notifications.",
+    "description": "Receive JMX notifications.",
     "deprecated": false,
     "firstVersion": "2.6.0",
     "label": "monitoring",

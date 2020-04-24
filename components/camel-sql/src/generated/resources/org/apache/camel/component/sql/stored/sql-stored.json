@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "sql-stored",
     "title": "SQL Stored Procedure",
-    "description": "The sql component allows you to work with databases using JDBC Stored Procedure queries.",
+    "description": "Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "database,sql",

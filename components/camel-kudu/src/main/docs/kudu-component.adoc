@@ -2,7 +2,7 @@
 = Kudu Component
 :docTitle: Kudu
 :artifactId: camel-kudu
-:description: Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+:description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

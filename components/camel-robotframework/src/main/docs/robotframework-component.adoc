@@ -2,7 +2,7 @@
 = Robot Framework Component
 :docTitle: Robot Framework
 :artifactId: camel-robotframework
-:description: Represents a RobotFramework endpoint.
+:description: Pass camel exchanges to acceptence test written in Robot DSL.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

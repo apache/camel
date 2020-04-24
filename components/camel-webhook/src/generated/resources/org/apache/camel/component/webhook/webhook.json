@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "webhook",
     "title": "Webhook",
-    "description": "The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.",
+    "description": "Expose webhook endpoints to receive push notifications for other Camel components.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "cloud",

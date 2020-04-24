@@ -2,7 +2,7 @@
 = JOLT Component
 :docTitle: JOLT
 :artifactId: camel-jolt
-:description: The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).
+:description: JSON to JSON transformation using JOLT.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported

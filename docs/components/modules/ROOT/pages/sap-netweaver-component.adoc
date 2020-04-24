@@ -4,7 +4,7 @@
 :page-source: components/camel-sap-netweaver/src/main/docs/sap-netweaver-component.adoc
 :docTitle: SAP NetWeaver
 :artifactId: camel-sap-netweaver
-:description: The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
+:description: Send requests to SAP NetWeaver Gateway using HTTP.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Only producer is supported

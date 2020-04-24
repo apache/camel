@@ -2,7 +2,7 @@
 = Workday Component
 :docTitle: Workday
 :artifactId: camel-workday
-:description: Represents a Workday endpoint.
+:description: Detect and parse documents using Workday.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported

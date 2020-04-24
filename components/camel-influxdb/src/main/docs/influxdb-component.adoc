@@ -2,7 +2,7 @@
 = InfluxDB Component
 :docTitle: InfluxDB
 :artifactId: camel-influxdb
-:description: The influxdb component allows you to interact with InfluxDB, a time series database.
+:description: Interact with InfluxDB, a time series database.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported

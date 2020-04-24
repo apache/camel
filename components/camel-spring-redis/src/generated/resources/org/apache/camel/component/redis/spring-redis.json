@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-redis",
     "title": "Spring Redis",
-    "description": "The spring-redis component allows sending and receiving messages from Redis.",
+    "description": "Send and receive messages from Redis.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "spring,nosql",

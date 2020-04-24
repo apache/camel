@@ -2,7 +2,7 @@
 = OpenStack Nova Component
 :docTitle: OpenStack Nova
 :artifactId: camel-openstack
-:description: The openstack-nova component allows messages to be sent to an OpenStack compute services.
+:description: Access OpenStack to manage compute resources.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported

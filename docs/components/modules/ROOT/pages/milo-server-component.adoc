@@ -4,7 +4,7 @@
 :page-source: components/camel-milo/src/main/docs/milo-server-component.adoc
 :docTitle: OPC UA Server
 :artifactId: camel-milo
-:description: Make telemetry data available as an OPC UA server
+:description: Make telemetry data available as an OPC UA server.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

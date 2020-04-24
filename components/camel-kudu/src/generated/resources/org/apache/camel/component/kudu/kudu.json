@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kudu",
     "title": "Kudu",
-    "description": "Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.",
+    "description": "Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.",
     "deprecated": false,
     "firstVersion": "3.0",
     "label": "cloud,database,iot",

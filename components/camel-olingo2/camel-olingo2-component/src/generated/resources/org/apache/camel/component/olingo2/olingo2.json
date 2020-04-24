@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "olingo2",
     "title": "Olingo2",
-    "description": "Communicates with OData 2.0 services using Apache Olingo.",
+    "description": "Communicate with OData 2.0 services using Apache Olingo.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "cloud",

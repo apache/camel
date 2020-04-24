@@ -2,7 +2,7 @@
 = Service Component
 :docTitle: Service
 :artifactId: camel-service
-:description: Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+:description: Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only consumer is supported

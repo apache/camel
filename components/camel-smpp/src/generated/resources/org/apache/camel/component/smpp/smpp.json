@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "smpp",
     "title": "SMPP",
-    "description": "To send and receive SMS using a SMSC (Short Message Service Center).",
+    "description": "Send and receive SMS messages using a SMSC (Short Message Service Center).",
     "deprecated": false,
     "firstVersion": "2.2.0",
     "label": "mobile",

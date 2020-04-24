@@ -2,7 +2,7 @@
 = Nagios Component
 :docTitle: Nagios
 :artifactId: camel-nagios
-:description: To send passive checks to Nagios using JSendNSCA.
+:description: Send passive checks to Nagios using JSendNSCA.
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported

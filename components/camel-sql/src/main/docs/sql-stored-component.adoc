@@ -2,7 +2,7 @@
 = SQL Stored Procedure Component
 :docTitle: SQL Stored Procedure
 :artifactId: camel-sql
-:description: The sql component allows you to work with databases using JDBC Stored Procedure queries.
+:description: Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported

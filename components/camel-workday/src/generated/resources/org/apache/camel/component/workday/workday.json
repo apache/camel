@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "workday",
     "title": "Workday",
-    "description": "Represents a Workday endpoint.",
+    "description": "Detect and parse documents using Workday.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "hcm",

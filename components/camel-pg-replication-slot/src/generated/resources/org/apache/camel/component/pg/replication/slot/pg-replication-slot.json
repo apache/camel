@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "pg-replication-slot",
     "title": "PostgresSQL Replication Slot",
-    "description": "Consumer endpoint to receive from PostgreSQL Replication Slot.",
+    "description": "Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "database,sql",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "web3j",
     "title": "Web3j Ethereum Blockchain",
-    "description": "The web3j component uses the Web3j client API and allows you to add\/read nodes to\/from a web3j compliant content repositories.",
+    "description": "Interact with Ethereum nodes using web3j client API.",
     "deprecated": false,
     "firstVersion": "2.22.0",
     "label": "bitcoin,blockchain",

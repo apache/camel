@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "quickfix",
     "title": "QuickFix",
-    "description": "The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.",
+    "description": "Open a Financial Interchange (FIX) session using an embedded QuickFix\/J engine.",
     "deprecated": false,
     "firstVersion": "2.1.0",
     "label": "messaging",

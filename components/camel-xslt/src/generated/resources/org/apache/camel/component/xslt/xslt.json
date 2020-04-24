@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "xslt",
     "title": "XSLT",
-    "description": "Transforms the message using a XSLT template.",
+    "description": "Transforms XML payload using an XSLT template.",
     "deprecated": false,
     "firstVersion": "1.3.0",
     "label": "core,transformation",

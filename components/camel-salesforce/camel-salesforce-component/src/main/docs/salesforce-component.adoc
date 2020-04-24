@@ -2,7 +2,7 @@
 = Salesforce Component
 :docTitle: Salesforce
 :artifactId: camel-salesforce
-:description: The salesforce component is used for integrating Camel with the massive Salesforce API.
+:description: Communicate with Salesforce using Java DTOs.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

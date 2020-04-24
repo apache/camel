@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "kubernetes-pods",
     "title": "Kubernetes Pods",
-    "description": "The Kubernetes Pods component provides a producer to execute kubernetes pod operations and a consumer to consume pod events.",
+    "description": "Perform operations on Kubernetes Pods and get notified on Pod changes.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "container,cloud,paas",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "wordpress",
     "title": "Wordpress",
-    "description": "Integrates Camel with Wordpress.",
+    "description": "Manage posts and users using Wordpress API.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "cms",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "twilio",
     "title": "Twilio",
-    "description": "The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.",
+    "description": "Interact with Twilio REST APIs using Twilio Java SDK.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "api,messaging,cloud",

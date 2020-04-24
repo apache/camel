@@ -2,7 +2,7 @@
 = Printer Component
 :docTitle: Printer
 :artifactId: camel-printer
-:description: The printer component is used for sending messages to printers as print jobs.
+:description: Send print jobs to printers.
 :since: 2.1
 :supportLevel: Stable
 :component-header: Only producer is supported

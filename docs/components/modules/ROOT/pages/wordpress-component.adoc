@@ -4,7 +4,7 @@
 :page-source: components/camel-wordpress/src/main/docs/wordpress-component.adoc
 :docTitle: Wordpress
 :artifactId: camel-wordpress
-:description: Integrates Camel with Wordpress.
+:description: Manage posts and users using Wordpress API.
 :since: 2.21
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

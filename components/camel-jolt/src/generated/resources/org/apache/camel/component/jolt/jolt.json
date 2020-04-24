@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jolt",
     "title": "JOLT",
-    "description": "The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).",
+    "description": "JSON to JSON transformation using JOLT.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "transformation",

@@ -2,7 +2,7 @@
 = JT400 Component
 :docTitle: JT400
 :artifactId: camel-jt400
-:description: The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+:description: Exchanges messages with an AS/400 system using data queues or program call.
 :since: 1.5
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

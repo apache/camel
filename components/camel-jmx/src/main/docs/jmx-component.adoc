@@ -2,7 +2,7 @@
 = JMX Component
 :docTitle: JMX
 :artifactId: camel-jmx
-:description: The jmx component allows to receive JMX notifications.
+:description: Receive JMX notifications.
 :since: 2.6
 :supportLevel: Stable
 :component-header: Only consumer is supported

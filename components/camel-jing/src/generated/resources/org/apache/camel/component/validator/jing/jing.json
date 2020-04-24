@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jing",
     "title": "Jing",
-    "description": "Validates the payload of a message using RelaxNG Syntax using Jing library.",
+    "description": "Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "validation",

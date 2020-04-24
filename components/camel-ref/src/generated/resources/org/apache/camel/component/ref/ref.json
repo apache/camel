@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ref",
     "title": "Ref",
-    "description": "The ref component is used for lookup of existing endpoints bound in the Registry.",
+    "description": "Route messages to an endpoint looked up dynamically by name in the Camel Registry.",
     "deprecated": false,
     "firstVersion": "1.2.0",
     "label": "core,endpoint",

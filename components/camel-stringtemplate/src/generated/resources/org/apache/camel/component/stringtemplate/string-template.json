@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "string-template",
     "title": "String Template",
-    "description": "Transforms the message using a String template.",
+    "description": "Transform messages using StringTemplate engine.",
     "deprecated": false,
     "firstVersion": "1.2.0",
     "label": "transformation",

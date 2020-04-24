@@ -4,7 +4,7 @@
 :page-source: components/camel-websocket/src/main/docs/websocket-component.adoc
 :docTitle: Jetty Websocket
 :artifactId: camel-websocket
-:description: The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
+:description: Expose websocket endpoints using Jetty.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

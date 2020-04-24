@@ -4,7 +4,7 @@
 :page-source: components/camel-undertow/src/main/docs/undertow-component.adoc
 :docTitle: Undertow
 :artifactId: camel-undertow
-:description: The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
+:description: Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

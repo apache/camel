@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "microprofile-metrics",
     "title": "MicroProfile Metrics",
-    "description": "Camel metrics exposed with Eclipse MicroProfile Metrics",
+    "description": "Expose metrics from Camel routes.",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "label": "monitoring",

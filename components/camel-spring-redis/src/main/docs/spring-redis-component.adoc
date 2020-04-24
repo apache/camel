@@ -2,7 +2,7 @@
 = Spring Redis Component
 :docTitle: Spring Redis
 :artifactId: camel-spring-redis
-:description: The spring-redis component allows sending and receiving messages from Redis.
+:description: Send and receive messages from Redis.
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

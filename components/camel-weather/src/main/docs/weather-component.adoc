@@ -2,7 +2,7 @@
 = Weather Component
 :docTitle: Weather
 :artifactId: camel-weather
-:description: Polls the weather information from Open Weather Map.
+:description: Poll the weather information from Open Weather Map.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

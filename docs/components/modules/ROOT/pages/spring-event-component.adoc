@@ -4,7 +4,7 @@
 :page-source: components/camel-spring/src/main/docs/spring-event-component.adoc
 :docTitle: Spring Event
 :artifactId: camel-spring
-:description: The spring-event component allows to listen for Spring Application Events.
+:description: Listen for Spring Application Events.
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

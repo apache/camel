@@ -4,7 +4,7 @@
 :page-source: components/camel-nsq/src/main/docs/nsq-component.adoc
 :docTitle: NSQ
 :artifactId: camel-nsq
-:description: Represents a nsq endpoint.
+:description: Send and receive messages from NSQ realtime distributed messaging platform.
 :since: 2.23
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

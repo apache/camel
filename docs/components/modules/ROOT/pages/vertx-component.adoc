@@ -4,7 +4,7 @@
 :page-source: components/camel-vertx/src/main/docs/vertx-component.adoc
 :docTitle: Vert.x
 :artifactId: camel-vertx
-:description: The vertx component is used for sending and receive messages from a vertx event bus.
+:description: Send and receive messages to/from Vert.x Event Bus.
 :since: 2.12
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

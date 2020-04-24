@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jcr",
     "title": "JCR",
-    "description": "The jcr component allows you to add\/read nodes to\/from a JCR compliant content repository.",
+    "description": "Read and write nodes to\/from a JCR compliant content repository.",
     "deprecated": false,
     "firstVersion": "1.3.0",
     "label": "cms,database",

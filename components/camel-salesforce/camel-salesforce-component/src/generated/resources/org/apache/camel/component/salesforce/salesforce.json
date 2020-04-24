@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "salesforce",
     "title": "Salesforce",
-    "description": "The salesforce component is used for integrating Camel with the massive Salesforce API.",
+    "description": "Communicate with Salesforce using Java DTOs.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "api,cloud,crm",

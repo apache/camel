@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "rest",
     "title": "REST",
-    "description": "The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+    "description": "Expose REST services or call external REST services.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "core,rest",

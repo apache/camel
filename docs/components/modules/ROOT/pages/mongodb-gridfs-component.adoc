@@ -4,7 +4,7 @@
 :page-source: components/camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc
 :docTitle: MongoDB GridFS
 :artifactId: camel-mongodb-gridfs
-:description: Component for working with MongoDB GridFS.
+:description: Interact with MongoDB GridFS.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

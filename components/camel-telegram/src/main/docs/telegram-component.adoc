@@ -2,7 +2,7 @@
 = Telegram Component
 :docTitle: Telegram
 :artifactId: camel-telegram
-:description: The telegram component provides access to the Telegram Bot API.
+:description: Send and receive messages acting as a Telegram Bot Telegram Bot API.
 :since: 2.18
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

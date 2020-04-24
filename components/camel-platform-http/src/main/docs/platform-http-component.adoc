@@ -2,7 +2,7 @@
 = Platform HTTP Component
 :docTitle: Platform HTTP
 :artifactId: camel-platform-http
-:description: HTTP service leveraging existing runtime platform HTTP server
+:description: Expose HTTP endpoints using the HTTP server available in the current platform.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

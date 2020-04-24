@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "mock",
     "title": "Mock",
-    "description": "The mock component is used for testing routes and mediation rules using mocks.",
+    "description": "Test routes and mediation rules using mocks.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "core,testing",

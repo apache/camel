@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "zookeeper",
     "title": "ZooKeeper",
-    "description": "The zookeeper component allows interaction with a ZooKeeper cluster.",
+    "description": "Manage ZooKeeper clusters.",
     "deprecated": false,
     "firstVersion": "2.9.0",
     "label": "clustering",

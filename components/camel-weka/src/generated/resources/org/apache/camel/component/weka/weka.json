@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "weka",
     "title": "Weka",
-    "description": "The camel-weka component provides Data Mining functionality through Weka.",
+    "description": "Perform machine learning tasks using Weka.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "Datamining",

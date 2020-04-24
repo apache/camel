@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jcache",
     "title": "JCache",
-    "description": "The jcache component enables you to perform caching operations using JSR107\/JCache as cache implementation.",
+    "description": "Perform caching operations against JSR107\/JCache.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "cache,datagrid,clustering",

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "reactive-streams",
     "title": "Reactive Streams",
-    "description": "Reactive Camel using reactive streams",
+    "description": "Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "reactive,streams",

@@ -2,7 +2,7 @@
 = RSS Component
 :docTitle: RSS
 :artifactId: camel-rss
-:description: The rss component is used for consuming RSS feeds.
+:description: Poll RSS feeds.
 :since: 2.0
 :supportLevel: Stable
 :component-header: Only consumer is supported

@@ -4,7 +4,7 @@
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc
 :docTitle: Kubernetes ConfigMap
 :artifactId: camel-kubernetes
-:description: The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+:description: Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported

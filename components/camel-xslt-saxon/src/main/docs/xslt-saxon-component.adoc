@@ -2,7 +2,7 @@
 = XSLT Saxon Component
 :docTitle: XSLT Saxon
 :artifactId: camel-xslt-saxon
-:description: Transforms the message using a XSLT template using Saxon.
+:description: Transform XML payloads using an XSLT template using Saxon.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

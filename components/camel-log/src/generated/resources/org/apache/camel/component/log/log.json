@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "log",
     "title": "Log",
-    "description": "The log component logs message exchanges to the underlying logging mechanism.",
+    "description": "Log messages to the underlying logging mechanism.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "core,monitoring",

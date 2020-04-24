@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "nats",
     "title": "Nats",
-    "description": "The nats component allows you produce and consume messages from NATS.",
+    "description": "Send and receive messages from NATS messaging system.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "messaging",

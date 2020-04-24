@@ -4,7 +4,7 @@
 :page-source: components/camel-soroush/src/main/docs/soroush-component.adoc
 :docTitle: Soroush
 :artifactId: camel-soroush
-:description: To integrate with the Soroush chat bot.
+:description: Send and receive messages as a Soroush chat bot.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

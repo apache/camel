@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "schematron",
     "title": "Schematron",
-    "description": "Validates the payload of a message using the Schematron Library.",
+    "description": "Validate XML payload using the Schematron Library.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "validation",

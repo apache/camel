@@ -4,7 +4,7 @@
 :page-source: components/camel-nitrite/src/main/docs/nitrite-component.adoc
 :docTitle: Nitrite
 :artifactId: camel-nitrite
-:description: Used for integrating Camel with Nitrite databases.
+:description: Access Nitrite databases.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

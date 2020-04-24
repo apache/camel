@@ -2,7 +2,7 @@
 = Stream Component
 :docTitle: Stream
 :artifactId: camel-stream
-:description: The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file.
+:description: Read from system-in and write to system-out and system-err streams.
 :since: 1.3
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

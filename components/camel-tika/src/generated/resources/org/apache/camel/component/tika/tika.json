@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "tika",
     "title": "Tika",
-    "description": "This component integrates with Apache Tika to extract content and metadata from thousands of file types.",
+    "description": "Parse documents and extract metadata and text using Apache Tika.",
     "deprecated": false,
     "firstVersion": "2.19.0",
     "label": "document,transformation",

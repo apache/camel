@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "saga",
     "title": "Saga",
-    "description": "The saga component provides access to advanced options for managing the flow in the Saga EIP.",
+    "description": "Execute custom actions within a route using the Saga EIP.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "core,endpoint",

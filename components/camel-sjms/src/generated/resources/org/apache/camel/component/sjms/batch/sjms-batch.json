@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "sjms-batch",
     "title": "Simple JMS Batch",
-    "description": "The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.",
+    "description": "Highly performant and transactional batch consumption of messages from a JMS queue.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "messaging",

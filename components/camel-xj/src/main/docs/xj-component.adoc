@@ -2,7 +2,7 @@
 = XJ Component
 :docTitle: XJ
 :artifactId: camel-xj
-:description: Transforms json/xml message back and forth using a XSLT.
+:description: Transform JSON and XML message using a XSLT.
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only producer is supported

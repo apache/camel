@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "spring-ldap",
     "title": "Spring LDAP",
-    "description": "The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.",
+    "description": "Perform searches in LDAP servers using filters as the message payload.",
     "deprecated": false,
     "firstVersion": "2.11.0",
     "label": "spring,ldap",

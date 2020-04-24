@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "metrics",
     "title": "Metrics",
-    "description": "To collect various metrics directly from Camel routes using the DropWizard metrics library.",
+    "description": "Collect various metrics directly from Camel routes using the DropWizard metrics library.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "monitoring",

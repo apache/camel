@@ -2,7 +2,7 @@
 = Olingo4 Component
 :docTitle: Olingo4
 :artifactId: camel-olingo4
-:description: Communicates with OData 4.0 services using Apache Olingo OData API.
+:description: Communicate with OData 4.0 services using Apache Olingo OData API.
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

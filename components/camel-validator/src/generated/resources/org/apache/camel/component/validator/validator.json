@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "validator",
     "title": "Validator",
-    "description": "Validates the payload of a message using XML Schema and JAXP Validation.",
+    "description": "Validate the payload using XML Schema and JAXP Validation.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "core,validation",

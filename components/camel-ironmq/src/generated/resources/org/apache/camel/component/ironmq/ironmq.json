@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "ironmq",
     "title": "IronMQ",
-    "description": "The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.",
+    "description": "Send and receive messages to\/from IronMQ an elastic and durable hosted message queue as a service.",
     "deprecated": false,
     "firstVersion": "2.17.0",
     "label": "cloud,messaging",
