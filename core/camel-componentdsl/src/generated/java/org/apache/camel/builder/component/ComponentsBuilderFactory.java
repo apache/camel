@@ -662,7 +662,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureBlobComponentBuilderFactory.azureBlob();
     }
     /**
-     * Azure Storage Queue Service (camel-azure)
+     * Azure Storage Queue Service (Legacy) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,queue,azure

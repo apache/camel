@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-queue",
-             title = "Azure Storage Queue Service",
+             title = "Azure Storage Queue Service (Legacy)",
              syntax = "azure-blob:containerAndQueueUri",
              label = "cloud,queue,azure")
 public class QueueServiceEndpoint extends DefaultEndpoint {

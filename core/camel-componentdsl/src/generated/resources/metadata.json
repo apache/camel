@@ -1258,7 +1258,7 @@
   "AzureQueueComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-queue",
-    "title": "Azure Storage Queue Service",
+    "title": "Azure Storage Queue Service (Legacy)",
     "description": "Store and retrieve messages from Azure Storage Queue Service.",
     "deprecated": false,
     "deprecationNote": "cloud,queue,azure",

@@ -34,7 +34,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint consumers for the Azure Storage Queue Service
-     * component.
+     * (Legacy) component.
      */
     public interface QueueServiceEndpointConsumerBuilder
             extends
@@ -186,7 +186,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint consumers for the Azure Storage Queue
-     * Service component.
+     * Service (Legacy) component.
      */
     public interface AdvancedQueueServiceEndpointConsumerBuilder
             extends
@@ -311,7 +311,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Builder for endpoint producers for the Azure Storage Queue Service
-     * component.
+     * (Legacy) component.
      */
     public interface QueueServiceEndpointProducerBuilder
             extends
@@ -554,7 +554,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint producers for the Azure Storage Queue
-     * Service component.
+     * Service (Legacy) component.
      */
     public interface AdvancedQueueServiceEndpointProducerBuilder
             extends
@@ -621,7 +621,8 @@ public interface QueueServiceEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Azure Storage Queue Service component.
+     * Builder for endpoint for the Azure Storage Queue Service (Legacy)
+     * component.
      */
     public interface QueueServiceEndpointBuilder
             extends
@@ -734,7 +735,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint for the Azure Storage Queue Service
-     * component.
+     * (Legacy) component.
      */
     public interface AdvancedQueueServiceEndpointBuilder
             extends
@@ -818,7 +819,7 @@ public interface QueueServiceEndpointBuilderFactory {
 
     public interface QueueServiceBuilders {
         /**
-         * Azure Storage Queue Service (camel-azure)
+         * Azure Storage Queue Service (Legacy) (camel-azure)
          * Store and retrieve messages from Azure Storage Queue Service.
          * 
          * Category: cloud,queue,azure
@@ -835,7 +836,7 @@ public interface QueueServiceEndpointBuilderFactory {
         }
     }
     /**
-     * Azure Storage Queue Service (camel-azure)
+     * Azure Storage Queue Service (Legacy) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
      * Category: cloud,queue,azure
