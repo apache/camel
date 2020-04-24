@@ -31,7 +31,7 @@ xref:ROOT:component.adoc[component]-specific.
 
 From Camel 2.10 onwards the file and ftp consumers can now bridge to the
 Camel routing engine's error handler. See more details at the
-`consumer.bridgeErrorHandler` option on the xref:components::file-component.adoc[File]
+`bridgeErrorHandler` option on the xref:components::file-component.adoc[File]
 documentation.
 ====
 

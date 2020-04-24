@@ -147,16 +147,16 @@ what to do with the job, it can be
 The consumer may delete the job immediately after reserving it or wait
 until Camel routes process it. While the first scenario is more like a
 “message queue”, the second is similar to “job queue”. This behavior is
-controlled by `consumer.awaitJob` parameter, which equals `true` by
+controlled by `awaitJob` parameter, which equals `true` by
 default (following Beanstalkd nature).
 
 When synchronous, the consumer calls `delete` on successful job
 completion and calls `bury` on failure. You can choose which command to
 execute in the case of failure by
-specifying `consumer.onFailure` parameter in the URI. It can take values
+specifying `onFailure` parameter in the URI. It can take values
 of `bury`, `delete` or `release`.
 
-There is a boolean parameter `consumer.useBlockIO` which corresponds to
+There is a boolean parameter `useBlockIO` which corresponds to
 the same parameter in JavaBeanstalkClient library. By default it
 is `true`.
 

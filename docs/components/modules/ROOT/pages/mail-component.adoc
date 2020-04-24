@@ -469,8 +469,6 @@ from("jms://queue:subscription").to("smtp://admin@mymailserver.com?password=secr
 -------------------------------------------------------------------------------------
 
 In the next sample, we poll a mailbox for new emails once every minute.
-Notice that we use the special `consumer` option for setting the poll
-interval, `consumer.delay`, as 60000 milliseconds = 60 seconds.
 
 [source,java]
 -------------------------------------------------------

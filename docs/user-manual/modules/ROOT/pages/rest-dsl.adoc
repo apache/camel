@@ -620,9 +620,7 @@ You can configure properties on these levels.
 also configure these directly on the component.
 * endpoint - Is used set any option on the endpoint level. Many of the
 Camel components has many options you can set on endpoint level.
-* consumer - Is used to set any option on the consumer level. Some
-components has consumer options, which you can also configure from
-endpoint level by prefixing the option with "consumer." 
+* consumer - Is used to set any option on the consumer level.
 * data format - Is used to set any option on the data formats. For
 example to enable pretty print in the json data format.
 * cors headers - If cors is enabled, then custom CORS headers can be

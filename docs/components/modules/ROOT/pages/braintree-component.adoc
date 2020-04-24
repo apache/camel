@@ -812,11 +812,11 @@ URI Options for _webhookNotification_
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can
 use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
-Poll Consumer Options] with a *consumer.* prefix to schedule endpoint
-invocation. By default Consumer endpoints that return an array or
+Poll Consumer Options] to schedule endpoint invocation.
+By default Consumer endpoints that return an array or
 collection will generate one exchange per element, and their routes will
 be executed once for each exchange. To change this behavior use the
-property *consumer.splitResults=true* to return a single exchange for
+property *splitResults=true* to return a single exchange for
 the entire list or array. 
 
 == Message Headers
