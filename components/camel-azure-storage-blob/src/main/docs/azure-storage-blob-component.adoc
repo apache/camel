@@ -645,3 +645,6 @@ To run the integration tests, on this component directory, run the following mav
 mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
 ----
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
+
+
+include::camel-spring-boot::page$azure-storage-blob-starter.adoc[]
