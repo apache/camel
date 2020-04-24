@@ -237,4 +237,50 @@ public class VertxPlatformHttpEngineTest {
             context.stop();
         }
     }
+
+    @Test
+    public void testMatchOnUriPrefix() throws Exception {
+        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+        conf.setBindPort(AvailablePortFinder.getNextAvailable());
+
+        CamelContext context = new DefaultCamelContext();
+        try {
+            final String greeting = "Hello Camel";
+            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
+                            .transform().simple("Hello ${header.name}");
+                }
+            });
+
+            context.start();
+
+            given()
+                .port(conf.getBindPort())
+            .when()
+                .get("/greeting")
+            .then()
+                .statusCode(404);
+
+            given()
+                .port(conf.getBindPort())
+            .when()
+                .get("/greeting/Camel")
+            .then()
+                .statusCode(200)
+                .body(equalTo(greeting));
+
+            given()
+                .port(conf.getBindPort())
+            .when()
+                .get("/greeting/Camel/other/path/")
+            .then()
+                .statusCode(200)
+                .body(equalTo(greeting));
+        } finally {
+            context.stop();
+        }
+    }
 }
