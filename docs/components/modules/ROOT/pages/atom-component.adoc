@@ -92,7 +92,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *sortEntries* (consumer) | Sets whether to sort entries by published date. Only works when splitEntries = true. | false | boolean
 | *splitEntries* (consumer) | Sets whether or not entries should be sent individually or whether the entire feed should be sent as a single message | true | boolean
-| *throttleEntries* (consumer) | Sets whether all entries identified in a single feed poll should be delivered immediately. If true, only one entry is processed per consumer.delay. Only applicable when splitEntries = true. | true | boolean
+| *throttleEntries* (consumer) | Sets whether all entries identified in a single feed poll should be delivered immediately. If true, only one entry is processed per delay. Only applicable when splitEntries = true. | true | boolean
 | *username* (consumer) | Sets the username to be used for basic authentication when polling from a HTTP feed. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern

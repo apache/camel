@@ -249,7 +249,7 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets whether all entries identified in a single feed poll should be
          * delivered immediately. If true, only one entry is processed per
-         * consumer.delay. Only applicable when splitEntries = true.
+         * delay. Only applicable when splitEntries = true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -263,7 +263,7 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets whether all entries identified in a single feed poll should be
          * delivered immediately. If true, only one entry is processed per
-         * consumer.delay. Only applicable when splitEntries = true.
+         * delay. Only applicable when splitEntries = true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
