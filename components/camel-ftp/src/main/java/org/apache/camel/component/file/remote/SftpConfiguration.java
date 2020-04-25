@@ -338,10 +338,10 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Whether to check for existing directory using LS command instead of CD.
-     * By default CD is used which is faster but has been reported to maybe cause a problem on windows systems
-     * and therefore this option can be enabled to use LS. The LS command is slower as it transfers the full
-     * directory listing over the wire, which can be slow if the remote FTP server has many files in the directory.
+     * Whether to check for existing directory using LS command or CD.
+     * By default LS is used which is safer as otherwise Camel needs to change the directory
+     * back after checking. However LS has been reported to cause a problem on windows system in some situations
+     * and therefore you can disable this option to use CD.
      */
     public void setExistDirCheckUsingLs(boolean existDirCheckUsingLs) {
         this.existDirCheckUsingLs = existDirCheckUsingLs;
