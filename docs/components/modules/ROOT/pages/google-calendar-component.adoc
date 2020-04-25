@@ -185,8 +185,8 @@ override a `CamelGoogleCalendar.option` header.
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
 http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
-Poll Consumer Options] to schedule endpoint invocation.
-Consumer endpoints that return an array or collection will
+Poll Consumer Options] with a `consumer.` prefix to schedule endpoint
+invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
