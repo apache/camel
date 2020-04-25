@@ -537,6 +537,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints list of endpoints to send to
      * @return the builder
      */
+    @Deprecated
     public Type to(ExchangePattern pattern, Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint, pattern));
@@ -994,6 +995,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints list of endpoints
      * @return the builder
      */
+    @Deprecated
     public Type pipeline(Collection<Endpoint> endpoints) {
         PipelineDefinition answer = new PipelineDefinition();
         for (Endpoint endpoint : endpoints) {
