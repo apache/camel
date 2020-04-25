@@ -4,7 +4,7 @@
     "name": "inOut",
     "title": "In Out",
     "description": "Marks the exchange pattern for the route to request\/reply",
-    "deprecated": false,
+    "deprecated": true,
     "label": "eip,endpoint,routing",
     "javaType": "org.apache.camel.model.InOutDefinition",
     "input": true,

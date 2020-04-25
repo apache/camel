@@ -477,6 +477,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints list of endpoints to send to
      * @return the builder
      */
+    @Deprecated
     public Type to(Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint));
@@ -586,7 +587,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(@AsEndpointUri String uri) {
         return to(ExchangePattern.InOnly, uri);
     }
@@ -602,7 +605,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(Endpoint endpoint) {
         return to(ExchangePattern.InOnly, endpoint);
     }
@@ -618,7 +623,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uris list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(@AsEndpointUri String... uris) {
         return to(ExchangePattern.InOnly, uris);
     }
@@ -634,7 +641,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(@AsEndpointUri Endpoint... endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
@@ -650,7 +659,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOnly(Iterable<Endpoint> endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
@@ -666,7 +677,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(@AsEndpointUri String uri) {
         return to(ExchangePattern.InOut, uri);
     }
@@ -682,7 +695,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(Endpoint endpoint) {
         return to(ExchangePattern.InOut, endpoint);
     }
@@ -698,7 +713,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param uris list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(@AsEndpointUri String... uris) {
         return to(ExchangePattern.InOut, uris);
     }
@@ -714,7 +731,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(Endpoint... endpoints) {
         return to(ExchangePattern.InOut, endpoints);
     }
@@ -730,7 +749,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param endpoints list of endpoints to send to
      * @return the builder
+     * @deprecated use to where you can specify the exchange pattern as well
      */
+    @Deprecated
     public Type inOut(Iterable<Endpoint> endpoints) {
         return to(ExchangePattern.InOut, endpoints);
     }
@@ -975,8 +996,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type pipeline(Collection<Endpoint> endpoints) {
         PipelineDefinition answer = new PipelineDefinition();
+        for (Endpoint endpoint : endpoints) {
+            answer.addOutput(new ToDefinition(endpoint));
+        }
         addOutput(answer);
-        answer.to(endpoints);
         return asType();
     }
 
