@@ -69,6 +69,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exclude": target.setExclude(property(camelContext, java.lang.String.class, value)); return true;
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": target.setExclusiveReadLockStrategy(property(camelContext, org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class, value)); return true;
+        case "existdircheckusingls":
+        case "existDirCheckUsingLs": target.getConfiguration().setExistDirCheckUsingLs(property(camelContext, boolean.class, value)); return true;
         case "fastexistscheck":
         case "fastExistsCheck": target.setFastExistsCheck(property(camelContext, boolean.class, value)); return true;
         case "fileexist":
@@ -268,6 +270,7 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("exclude", java.lang.String.class);
         answer.put("exclusiveReadLockStrategy", org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class);
+        answer.put("existDirCheckUsingLs", boolean.class);
         answer.put("fastExistsCheck", boolean.class);
         answer.put("fileExist", org.apache.camel.component.file.GenericFileExist.class);
         answer.put("fileName", java.lang.String.class);
@@ -415,6 +418,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exclude": return target.getExclude();
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return target.getExclusiveReadLockStrategy();
+        case "existdircheckusingls":
+        case "existDirCheckUsingLs": return target.getConfiguration().isExistDirCheckUsingLs();
         case "fastexistscheck":
         case "fastExistsCheck": return target.isFastExistsCheck();
         case "fileexist":

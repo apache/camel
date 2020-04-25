@@ -62,13 +62,6 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
                                                          + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
                                                          + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
                                                          + "not be downloaded.")
-
-    private boolean  loadFullDirectory;
-    @UriParam(label = "advanced", description = " If set this option to be true, camel-ftp will load the full directory listing and load it over the wire."
-                                                + "If the remote directory has a lot of files then this option can be set to false, camel-ftp will use the "
-                                                + "old way to check if directory exist via cd. This can be used to speed up the process If the remote"
-                                                + " directory has a lot of files.", defaultValue = "false")
-
     private boolean download = true;
 
     public RemoteFileEndpoint() {
@@ -315,20 +308,6 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      */
     public void setDownload(boolean download) {
         this.download = download;
-    }
-
-    public boolean isLoadFullDirectory() {
-        return  loadFullDirectory;
-    }
-
-    /**
-     * If set this option to be true, camel-ftp will load the full directory listing and load it over the wire.
-     * If the remote directory has a lot of files then this option can be set to false, camel-ftp will use the
-     * old way to check if directory exist via cd. This can be used to speed up the process If the remote"
-     * directory has a lot of files.
-     */
-    public void setLoadFullDirectory(boolean loadFullDirectory) {
-        this.loadFullDirectory = loadFullDirectory;
     }
 
 }
