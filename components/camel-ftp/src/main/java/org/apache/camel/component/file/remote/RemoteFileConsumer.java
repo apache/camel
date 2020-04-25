@@ -28,6 +28,7 @@ import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,6 +149,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected boolean isRetrieveFile() {
         return getEndpoint().isDownload();
+    }
+
+    /**
+     * Whether there is a starting directory configured.
+     */
+    protected boolean hasStartingDirectory() {
+        String dir = endpoint.getConfiguration().getDirectory();
+        if (ObjectHelper.isEmpty(dir)) {
+            return false;
+        }
+        // should not be a empty separator
+        return !dir.equals("/") && !dir.equals("\\");
     }
 
     @Override
