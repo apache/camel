@@ -517,7 +517,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         try {
             // maybe the full directory already exists
             try {
-                channel.ls(directory);
+                if (this.endpoint.isLoadFullDirectory()) {
+                    channel.ls(directory);
+                } else {
+                    channel.cd(directory);
+                }
                 success = true;
             } catch (SftpException e) {
                 // ignore, we could not change directory so try to create it
