@@ -44,4 +44,53 @@ public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
         assertEquals("Hello World", IOConverter.toString(file, null));
     }
 
+    @Test
+    public void testProducerFileWithPathTwice() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello/claus.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Again World", Exchange.FILE_NAME, "hello/andrea.txt");
+
+        File file = new File(FTP_ROOT_DIR + "/hello/claus.txt");
+        assertTrue(file.exists(), "The uploaded file should exists");
+        assertEquals("Hello World", IOConverter.toString(file, null));
+
+        file = new File(FTP_ROOT_DIR + "/hello/andrea.txt");
+        assertTrue(file.exists(), "The uploaded file should exists");
+        assertEquals("Hello Again World", IOConverter.toString(file, null));
+    }
+
+    @Test
+    public void testProducerFileWithPathExistDirCheckUsingLs() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME, "bye/andrea.txt");
+
+        File file = new File(FTP_ROOT_DIR + "/bye/andrea.txt");
+        assertTrue(file.exists(), "The uploaded file should exists");
+        assertEquals("Bye World", IOConverter.toString(file, null));
+    }
+
+    @Test
+    public void testProducerFileWithPathExistDirCheckUsingLsTwice() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME, "bye/andrea.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye Again World", Exchange.FILE_NAME, "bye/claus.txt");
+
+        File file = new File(FTP_ROOT_DIR + "/bye/andrea.txt");
+        assertTrue(file.exists(), "The uploaded file should exists");
+        assertEquals("Bye World", IOConverter.toString(file, null));
+
+        file = new File(FTP_ROOT_DIR + "/bye/claus.txt");
+        assertTrue(file.exists(), "The uploaded file should exists");
+        assertEquals("Bye Again World", IOConverter.toString(file, null));
+    }
+
 }
