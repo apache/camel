@@ -71,6 +71,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private Integer bulkRequests;
     @UriParam(label = "advanced")
     private String bindAddress;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean existDirCheckUsingLs = true;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -329,4 +331,20 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     public String getBindAddress() {
         return bindAddress;
     }
+
+
+    public boolean isExistDirCheckUsingLs() {
+        return existDirCheckUsingLs;
+    }
+
+    /**
+     * Whether to check for existing directory using LS command instead of CD.
+     * By default CD is used which is faster but has been reported to maybe cause a problem on windows systems
+     * and therefore this option can be enabled to use LS. The LS command is slower as it transfers the full
+     * directory listing over the wire, which can be slow if the remote FTP server has many files in the directory.
+     */
+    public void setExistDirCheckUsingLs(boolean existDirCheckUsingLs) {
+        this.existDirCheckUsingLs = existDirCheckUsingLs;
+    }
+
 }
