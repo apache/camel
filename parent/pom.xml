@@ -154,7 +154,6 @@
         <debezium-version>1.1.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.16</debezium-mysql-connector-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
-        <ehcache-version>2.10.6</ehcache-version>
         <ehcache3-version>3.8.1</ehcache3-version>
         <elasticsearch-rest-sniffer-version>7.3.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-cluster-runner-version>7.3.2.0</elasticsearch-rest-cluster-runner-version>
@@ -3419,13 +3418,6 @@
                 <groupId>org.apache.openjpa</groupId>
                 <artifactId>openjpa-persistence-jdbc</artifactId>
                 <version>${openjpa-version}</version>
-            </dependency>
-
-            <!-- optional Ehcache -->
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache-version}</version>
             </dependency>
 
             <!-- hibernate and other db systems -->
