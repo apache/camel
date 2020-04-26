@@ -156,16 +156,6 @@
             <artifactId>derby</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- todo: remove log4j 1.x logging if possible -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
