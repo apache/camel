@@ -4,7 +4,7 @@
 :page-source: components/camel-flatpack/src/main/docs/flatpack-dataformat.adoc
 :docTitle: Flatpack
 :artifactId: camel-flatpack
-:description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats).
+:description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.
 :since: 2.1
 :supportLevel: Stable
 

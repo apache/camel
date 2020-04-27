@@ -2,7 +2,7 @@
 = SpEL Language
 :docTitle: SpEL
 :artifactId: camel-spring
-:description: To use Spring Expression Language (SpEL) in Camel expressions or predicates.
+:description: Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.
 :since: 2.7
 :supportLevel: Stable
 

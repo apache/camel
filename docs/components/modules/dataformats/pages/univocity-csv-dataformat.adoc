@@ -4,7 +4,7 @@
 :page-source: components/camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc
 :docTitle: uniVocity CSV
 :artifactId: camel-univocity-parsers
-:description: Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using univocity-parsers.
+:description: Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
 :since: 2.15
 :supportLevel: Stable
 

@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "univocity-tsv",
     "title": "uniVocity TSV",
-    "description": "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using univocity-parsers.",
+    "description": "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.15.0",

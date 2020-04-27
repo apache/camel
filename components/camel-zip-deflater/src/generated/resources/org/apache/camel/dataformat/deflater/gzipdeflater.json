@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "gzipdeflater",
     "title": "GZip Deflater",
-    "description": "Compress and de-compress messages using java.util.zip.GZIPStream.",
+    "description": "Compress and decompress messages using java.util.zip.GZIPStream.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.0.0",

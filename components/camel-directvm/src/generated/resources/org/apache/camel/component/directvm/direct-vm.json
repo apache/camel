@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "direct-vm",
     "title": "Direct VM",
-    "description": "Provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+    "description": "Call another endpoint from any Camel Context in the same JVM synchronously.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "core,endpoint",

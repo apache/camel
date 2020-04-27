@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "univocity-fixed",
     "title": "uniVocity Fixed Length",
-    "description": "Marshal and unmarshal Java objects from and to fixed length records using univocity-parsers.",
+    "description": "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.15.0",

@@ -4,7 +4,7 @@
 :page-source: components/camel-univocity-parsers/src/main/docs/univocity-fixed-dataformat.adoc
 :docTitle: uniVocity Fixed Length
 :artifactId: camel-univocity-parsers
-:description: Marshal and unmarshal Java objects from and to fixed length records using univocity-parsers.
+:description: Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.
 :since: 2.15
 :supportLevel: Stable
 

@@ -2,7 +2,7 @@
 = HL7 Terser Language
 :docTitle: HL7 Terser
 :artifactId: camel-hl7
-:description: To use HL7 terser scripts in Camel expressions or predicates.
+:description: Get the value of an HL7 message field specified by terse location specification syntax.
 :since: 2.11
 :supportLevel: Stable
 

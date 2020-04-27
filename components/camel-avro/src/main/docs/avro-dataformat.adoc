@@ -2,7 +2,7 @@
 = Avro DataFormat
 :docTitle: Avro
 :artifactId: camel-avro
-:description: Serialize and deserialize messages using Apache Avro binary dataformat.
+:description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
 :supportLevel: Stable
 

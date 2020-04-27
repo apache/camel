@@ -2,7 +2,7 @@
 = Tokenize Language
 :docTitle: Tokenize
 :artifactId: camel-core-languages
-:description: To use Camel message body or header with a tokenizer in Camel expressions or predicates.
+:description: Tokenize text payloads using the specified delimiter patterns.
 :since: 2.0
 :supportLevel: Stable
 

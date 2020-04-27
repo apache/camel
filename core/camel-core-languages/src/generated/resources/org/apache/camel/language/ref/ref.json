@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "ref",
     "title": "Ref",
-    "description": "Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.",
+    "description": "Look up an expression in the Camel Registry and evaluate it.",
     "deprecated": false,
     "deprecationNote": "language,core",
     "firstVersion": "2.8.0",

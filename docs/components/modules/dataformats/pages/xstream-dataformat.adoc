@@ -4,7 +4,7 @@
 :page-source: components/camel-xstream/src/main/docs/xstream-dataformat.adoc
 :docTitle: XStream
 :artifactId: camel-xstream
-:description: Marshal and unmarshal POJOs to/from XML.
+:description: Marshal and unmarshal POJOs to/from XML using XStream library.
 :since: 1.3
 :supportLevel: Stable
 

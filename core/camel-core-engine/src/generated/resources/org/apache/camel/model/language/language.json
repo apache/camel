@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "language",
     "title": "Language",
-    "description": "To use the specified language in Camel expressions or predicates.",
+    "description": "Evaluate the given expression using the specified language.",
     "deprecated": false,
     "label": "language,core",
     "javaType": "org.apache.camel.model.language.LanguageExpression",
