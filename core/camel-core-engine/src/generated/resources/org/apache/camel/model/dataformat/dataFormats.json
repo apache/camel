@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "dataFormats",
     "title": "Data formats",
-    "description": "To configure data formats",
+    "description": "Configure data formats.",
     "deprecated": false,
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.model.dataformat.DataFormatsDefinition",

@@ -4,7 +4,7 @@
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhirXml-dataformat.adoc
 :docTitle: FHIR XML
 :artifactId: camel-fhir
-:description: Marshall/unmarshall FHIR objects to/from XML.
+:description: Marshall and unmarshall FHIR objects to/from XML.
 :since: 2.21
 :supportLevel: Stable
 

@@ -2,7 +2,7 @@
 = Direct VM Component
 :docTitle: Direct VM
 :artifactId: camel-directvm
-:description: Provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+:description: Call another endpoint from any Camel Context in the same JVM synchronously.
 :since: 2.10
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported

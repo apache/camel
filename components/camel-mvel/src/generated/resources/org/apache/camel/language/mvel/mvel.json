@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "mvel",
     "title": "MVEL",
-    "description": "To use MVEL scripts in Camel expressions or predicates.",
+    "description": "Evaluate an MVEL template against the Camel Exchange.",
     "deprecated": false,
     "deprecationNote": "language,java",
     "firstVersion": "2.0.0",

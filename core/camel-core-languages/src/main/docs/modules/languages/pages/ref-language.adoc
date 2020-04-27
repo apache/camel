@@ -2,7 +2,7 @@
 = Ref Language
 :docTitle: Ref
 :artifactId: camel-core-languages
-:description: Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+:description: Look up an expression in the Camel Registry and evaluate it.
 :since: 2.8
 :supportLevel: Stable
 

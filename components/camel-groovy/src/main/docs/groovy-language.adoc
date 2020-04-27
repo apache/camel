@@ -2,7 +2,7 @@
 = Groovy Language
 :docTitle: Groovy
 :artifactId: camel-groovy
-:description: To use Groovy scripts in Camel expressions or predicates.
+:description: Evaluate a Groovy script.
 :since: 1.3
 :supportLevel: Stable
 

@@ -4,7 +4,7 @@
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhirJson-dataformat.adoc
 :docTitle: FHIR JSon
 :artifactId: camel-fhir
-:description: Marshall/unmarshall FHIR objects to/from JSON.
+:description: Marshall and unmarshall FHIR objects to/from JSON.
 :since: 2.21
 :supportLevel: Stable
 

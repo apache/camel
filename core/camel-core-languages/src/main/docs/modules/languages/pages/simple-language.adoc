@@ -2,7 +2,7 @@
 = Simple Language
 :docTitle: Simple
 :artifactId: camel-core-languages
-:description: To use Camels built-in Simple language in Camel expressions or predicates.
+:description: Evaluate Camel's built-in Simple language expression against the Camel Exchange.
 :since: 1.1
 :supportLevel: Stable
 

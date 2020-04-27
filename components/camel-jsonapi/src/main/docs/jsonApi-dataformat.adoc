@@ -2,7 +2,7 @@
 = JSonApi DataFormat
 :docTitle: JSonApi
 :artifactId: camel-jsonapi
-:description: Marshal and unmarshal JSON:API resources.
+:description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.
 :since: 3.0
 :supportLevel: Stable
 

@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "bean",
     "title": "Bean method",
-    "description": "To use a Java bean (aka method call) in Camel expressions or predicates.",
+    "description": "Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.",
     "deprecated": false,
     "deprecationNote": "language,core,java",
     "firstVersion": "1.3.0",

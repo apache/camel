@@ -1140,8 +1140,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Direct (camel-direct)
-     * Provides a direct, synchronous call to another endpoint from the same
-     * CamelContext.
+     * Call another endpoint from the same Camel Context synchronously.
      * 
      * Category: core,endpoint
      * Since: 1.0
@@ -1152,8 +1151,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Direct VM (camel-directvm)
-     * Provides direct, synchronous call to another endpoint from any
-     * CamelContext in the same JVM.
+     * Call another endpoint from any Camel Context in the same JVM
+     * synchronously.
      * 
      * Category: core,endpoint
      * Since: 2.10

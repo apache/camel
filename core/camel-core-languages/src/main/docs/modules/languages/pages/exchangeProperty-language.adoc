@@ -2,7 +2,7 @@
 = ExchangeProperty Language
 :docTitle: ExchangeProperty
 :artifactId: camel-core-languages
-:description: To use a Camel Exchange property in expressions or predicates.
+:description: Get the value of named Camel Exchange property.
 :since: 2.0
 :supportLevel: Stable
 

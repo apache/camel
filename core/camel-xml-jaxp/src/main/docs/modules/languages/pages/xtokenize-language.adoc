@@ -2,7 +2,7 @@
 = XML Tokenize Language
 :docTitle: XML Tokenize
 :artifactId: camel-xml-jaxp
-:description: To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+:description: Tokenize XML payloads using the specified path expression.
 :since: 2.14
 :supportLevel: Stable
 

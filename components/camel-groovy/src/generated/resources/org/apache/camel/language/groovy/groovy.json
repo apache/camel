@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "groovy",
     "title": "Groovy",
-    "description": "To use Groovy scripts in Camel expressions or predicates.",
+    "description": "Evaluate a Groovy script.",
     "deprecated": false,
     "deprecationNote": "language,script",
     "firstVersion": "1.3.0",

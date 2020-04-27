@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "simple",
     "title": "Simple",
-    "description": "To use Camels built-in Simple language in Camel expressions or predicates.",
+    "description": "Evaluate Camel's built-in Simple language expression against the Camel Exchange.",
     "deprecated": false,
     "deprecationNote": "language,core,java",
     "firstVersion": "1.1.0",

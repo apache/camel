@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "header",
     "title": "Header",
-    "description": "To use a Camel Message header in expressions or predicates.",
+    "description": "Get the value of the named Camel Message header.",
     "deprecated": false,
     "firstVersion": "1.5.0",
     "label": "language,core",

@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "xtokenize",
     "title": "XML Tokenize",
-    "description": "To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.",
+    "description": "Tokenize XML payloads using the specified path expression.",
     "deprecated": false,
     "deprecationNote": "language,core,xml",
     "firstVersion": "2.14.0",
