@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To use a Java bean (aka method call) in Camel expressions or predicates.
+ * Call a method of the specified Java bean passing the Exchange, Body or specific headers to it.
  */
 @Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")

@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
+ * Compress and decompress streams using <code>java.util.zip.Deflater</code> and <code>java.util.zip.Inflater</code>.
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "Zip Deflate Compression")
 @XmlRootElement(name = "zipdeflater")

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use MVEL scripts in Camel expressions or predicates.
+ * Evaluate an MVEL template against the Camel Exchange.
  */
 @Metadata(firstVersion = "2.0.0", label = "language,java", title = "MVEL")
 @XmlRootElement(name = "mvel")

@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Archive/extract files into/from tarballs.
+ * Archive files into tarballs or extract files from tarballs.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File")
 @XmlRootElement(name = "tarfile")
