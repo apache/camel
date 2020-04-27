@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "spel",
     "title": "SpEL",
-    "description": "To use Spring Expression Language (SpEL) in Camel expressions or predicates.",
+    "description": "Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.",
     "deprecated": false,
     "deprecationNote": "language,spring",
     "firstVersion": "2.7.0",

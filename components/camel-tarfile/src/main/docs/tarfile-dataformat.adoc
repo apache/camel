@@ -2,7 +2,7 @@
 = Tar File DataFormat
 :docTitle: Tar File
 :artifactId: camel-tarfile
-:description: Archive/extract files into/from tarballs.
+:description: Archive files into tarballs or extract files from tarballs.
 :since: 2.16
 :supportLevel: Stable
 

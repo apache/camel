@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "tarfile",
     "title": "Tar File",
-    "description": "Archive\/extract files into\/from tarballs.",
+    "description": "Archive files into tarballs or extract files from tarballs.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "dataformat,transformation,file",

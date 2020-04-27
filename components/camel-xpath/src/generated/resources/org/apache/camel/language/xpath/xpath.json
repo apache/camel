@@ -3,7 +3,7 @@
     "kind": "language",
     "name": "xpath",
     "title": "XPath",
-    "description": "To use XPath (XML) in Camel expressions or predicates.",
+    "description": "Evaluate an XPath expression against an XML payload.",
     "deprecated": false,
     "deprecationNote": "language,core,xml",
     "firstVersion": "1.1.0",

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "jsonpath",
     "title": "JsonPath",
-    "description": "To use JsonPath in Camel expressions or predicates.",
+    "description": "Evaluate a JsonPath expression against a JSON message body.",
     "deprecated": false,
     "firstVersion": "2.13.0",
     "label": "language,json",

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "thrift",
     "title": "Thrift",
-    "description": "Serialize and deserialize of messages using Apache Thrift binary dataformat.",
+    "description": "Serialize and deserialize messages using Apache Thrift binary data format.",
     "deprecated": false,
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation",

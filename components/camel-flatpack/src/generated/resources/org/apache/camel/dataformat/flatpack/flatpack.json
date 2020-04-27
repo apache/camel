@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "flatpack",
     "title": "Flatpack",
-    "description": "Marshal and unmarshal Java lists and maps to\/from flat files (such as CSV, delimited, or fixed length formats).",
+    "description": "Marshal and unmarshal Java lists and maps to\/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.",
     "deprecated": false,
     "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.1.0",

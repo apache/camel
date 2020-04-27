@@ -2,7 +2,7 @@
 = Header Language
 :docTitle: Header
 :artifactId: camel-core-languages
-:description: To use a Camel Message header in expressions or predicates.
+:description: Get the value of the named Camel Message header.
 :since: 1.5
 :supportLevel: Stable
 

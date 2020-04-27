@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "fhirXml",
     "title": "FHIR XML",
-    "description": "Marshall\/unmarshall FHIR objects to\/from XML.",
+    "description": "Marshall and unmarshall FHIR objects to\/from XML.",
     "deprecated": false,
     "firstVersion": "2.21.0",
     "label": "dataformat,transformation,hl7,xml",

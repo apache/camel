@@ -2,7 +2,7 @@
 = JsonPath Language
 :docTitle: JsonPath
 :artifactId: camel-jsonpath
-:description: To use JsonPath in Camel expressions or predicates.
+:description: Evaluate a JsonPath expression against a JSON message body.
 :since: 2.13
 :supportLevel: Stable
 

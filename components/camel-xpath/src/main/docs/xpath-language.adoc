@@ -2,7 +2,7 @@
 = XPath Language
 :docTitle: XPath
 :artifactId: camel-xpath
-:description: To use XPath (XML) in Camel expressions or predicates.
+:description: Evaluate an XPath expression against an XML payload.
 :since: 1.1
 :supportLevel: Stable
 

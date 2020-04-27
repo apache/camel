@@ -2,7 +2,7 @@
 = MVEL Language
 :docTitle: MVEL
 :artifactId: camel-mvel
-:description: To use MVEL scripts in Camel expressions or predicates.
+:description: Evaluate an MVEL template against the Camel Exchange.
 :since: 2.0
 :supportLevel: Stable
 

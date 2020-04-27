@@ -4,7 +4,7 @@
 :page-source: components/camel-saxon/src/main/docs/xquery-language.adoc
 :docTitle: XQuery
 :artifactId: camel-saxon
-:description: To use XQuery (XML) in Camel expressions or predicates.
+:description: Evaluate an XQuery expressions against an XML payload.
 :since: 1.0
 :supportLevel: Stable
 

@@ -2,7 +2,7 @@
 = GZip Deflater DataFormat
 :docTitle: GZip Deflater
 :artifactId: camel-zip-deflater
-:description: Compress and de-compress messages using java.util.zip.GZIPStream.
+:description: Compress and decompress messages using java.util.zip.GZIPStream.
 :since: 2.0
 :supportLevel: Stable
 

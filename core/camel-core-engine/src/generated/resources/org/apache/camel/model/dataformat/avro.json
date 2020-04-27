@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "avro",
     "title": "Avro",
-    "description": "Serialize and deserialize messages using Apache Avro binary dataformat.",
+    "description": "Serialize and deserialize messages using Apache Avro binary data format.",
     "deprecated": false,
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",

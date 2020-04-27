@@ -2,7 +2,7 @@
 = XQuery Language
 :docTitle: XQuery
 :artifactId: camel-saxon
-:description: To use XQuery (XML) in Camel expressions or predicates.
+:description: Evaluate an XQuery expressions against an XML payload.
 :since: 1.0
 :supportLevel: Stable
 
