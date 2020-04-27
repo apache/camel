@@ -71,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (120 parameters):
+=== Query Parameters (121 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -125,6 +125,7 @@ with the following path and query parameters:
 | *bulkRequests* (advanced) | Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file transfer speed but will increase memory usage. |  | Integer
 | *compression* (advanced) | To use compression. Specify a level from 1 to 10. Important: You must manually add the needed JSCH zlib JAR to the classpath for compression support. |  | int
 | *connectTimeout* (advanced) | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH | 10000 | int
+| *existDirCheckUsingLs* (advanced) | Whether to check for existing directory using LS command or CD. By default LS is used which is safer as otherwise Camel needs to change the directory back after checking. However LS has been reported to cause a problem on windows system in some situations and therefore you can disable this option to use CD. | true | boolean
 | *maximumReconnectAttempts* (advanced) | Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior. |  | int
 | *proxy* (advanced) | To use a custom configured com.jcraft.jsch.Proxy. This proxy is used to consume/send messages from the target SFTP host. |  | Proxy
 | *reconnectDelay* (advanced) | Delay in millis Camel will wait before performing a reconnect attempt. |  | long
