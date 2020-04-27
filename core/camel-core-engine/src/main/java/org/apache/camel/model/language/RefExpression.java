@@ -23,8 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Reference to an existing Camel expression or predicate, which is looked up
- * from the Camel registry.
+ * Look up an expression in the Camel Registry and evaluate it.
  */
 @Metadata(firstVersion = "2.8.0", label = "language,core", title = "Ref")
 @XmlRootElement(name = "ref")

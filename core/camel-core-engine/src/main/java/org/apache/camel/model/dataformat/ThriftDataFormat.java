@@ -26,7 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Serialize and deserialize of messages using Apache Thrift binary dataformat.
+ * Serialize and deserialize messages using Apache Thrift binary data format.
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation", title = "Thrift")
 @XmlRootElement(name = "thrift")

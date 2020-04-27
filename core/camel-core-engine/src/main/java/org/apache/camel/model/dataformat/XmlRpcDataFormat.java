@@ -25,7 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * The XML RPC data format is used for working with the XML RPC protocol.
+ * Marshal and unmarshal XML RPC protocol requests or responses.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,xml", title = "XML RPC")
 @XmlRootElement(name = "xmlrpc")

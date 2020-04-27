@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+ * Call another endpoint from any Camel Context in the same JVM synchronously.
  *
  * This endpoint can be used to connect existing routes in the same JVM between different CamelContexts.
  */

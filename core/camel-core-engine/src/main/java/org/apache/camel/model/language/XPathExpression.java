@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To use XPath (XML) in Camel expressions or predicates.
+ * Evaluate an XPath expression against an XML payload.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")
