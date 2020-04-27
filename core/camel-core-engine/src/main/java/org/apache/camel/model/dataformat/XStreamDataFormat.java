@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * Marshal and unmarshal POJOs to/from XML.
+ * Marshal and unmarshal POJOs to/from XML using <a href="https://x-stream.github.io/">XStream</a> library.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")

@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Camel message body or header with a XML tokenizer in Camel expressions
- * or predicates.
+ * Tokenize XML payloads using the specified path expression.
  *
  * @see org.apache.camel.language.xtokenizer.XMLTokenizeLanguage
  */

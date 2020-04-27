@@ -26,7 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To use Camels built-in Simple language in Camel expressions or predicates.
+ * Evaluate Camel's built-in Simple language expression against the Camel Exchange.
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")

@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Represents the concrete Json libraries Camel supports.
+ * Supported JSON marshalers.
  */
 @XmlType
 @XmlEnum

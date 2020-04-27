@@ -32,7 +32,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Provides a direct, synchronous call to another endpoint from the same CamelContext.
+ * Call another endpoint from the same Camel Context synchronously.
  *
  * This endpoint can be used to connect existing routes in the same CamelContext.
  */
