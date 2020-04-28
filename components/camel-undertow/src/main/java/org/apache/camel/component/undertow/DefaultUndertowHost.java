@@ -45,6 +45,7 @@ public class DefaultUndertowHost implements UndertowHost {
     private final RestRootHandler restHandler;
     private Undertow undertow;
     private String hostString;
+    private DeploymentManager deploymentManager;
 
     public DefaultUndertowHost(UndertowHostKey key) {
         this(key, null);
@@ -139,15 +140,16 @@ public class DefaultUndertowHost implements UndertowHost {
                     //httpHandler for servlet is ignored, camel handler is used instead of it
                     .addOuterHandlerChainWrapper(h -> handler);
 
-            DeploymentManager manager = Servlets.newContainer().addDeployment(deployment);
-            manager.deploy();
+            deploymentManager = Servlets.newContainer().addDeployment(deployment);
+            deploymentManager.deploy();
             try {
-                return builder.setHandler(manager.start()).build();
+                return builder.setHandler(deploymentManager.start()).build();
             } catch (ServletException e) {
                 LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
 
                 throw new RuntimeException(e);
             }
+
         }
 
         return builder.setHandler(handler).build();
@@ -166,6 +168,9 @@ public class DefaultUndertowHost implements UndertowHost {
         } else {
             rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(), registrationInfo.isMatchOnUriPrefix());
             stop = rootHandler.isEmpty();
+        }
+        if (deploymentManager != null) {
+            deploymentManager.undeploy();
         }
 
         if (stop) {

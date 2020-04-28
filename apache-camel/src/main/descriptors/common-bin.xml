@@ -366,6 +366,7 @@
         <include>org.apache.camel:camel-twilio</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-undertow</include>
+        <include>org.apache.camel:camel-undertow-spring-security</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
         <include>org.apache.camel:camel-validator</include>
         <include>org.apache.camel:camel-velocity</include>
