@@ -69,7 +69,7 @@ public class EnricherAggregateStreamingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().setStreamCaching(Boolean.TRUE);
                 StreamCachingStrategy scs = getContext().getStreamCachingStrategy();
-                scs.setSpoolThreshold(1l);
+                scs.setSpoolThreshold(1L);
                 scs.setSpoolDirectory("target/streamcache/");
                 from("direct:start").process(new StreamProcessor()).enrich("direct:foo", new MyAggregationStrategy(), false)
                         .to("mock:result");
