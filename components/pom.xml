@@ -355,6 +355,7 @@
         <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>
+        <module>camel-undertow-spring-security</module>
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>
