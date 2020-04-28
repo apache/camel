@@ -42,6 +42,7 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -237,6 +238,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                     try {
                         // prepare the exchanges for aggregation
                         ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+                        MessageHelper.resetStreamCache(exchange.getIn());
 
                         Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                         if (aggregatedExchange != null) {
@@ -298,6 +300,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             try {
                 // prepare the exchanges for aggregation
                 ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+                MessageHelper.resetStreamCache(exchange.getIn());
 
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 if (aggregatedExchange != null) {
