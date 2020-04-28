@@ -54,7 +54,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OasDocument openapi = null;
+        OasDocument openapi;
         try {
             openapi = readOpenApiDoc(specificationUri);
         } catch (Exception e1) {

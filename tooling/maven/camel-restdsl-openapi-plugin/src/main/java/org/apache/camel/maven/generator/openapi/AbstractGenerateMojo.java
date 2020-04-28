@@ -26,13 +26,17 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
+import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.execution.MavenSession;
@@ -44,6 +48,8 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
+import org.yaml.snakeyaml.Yaml;
+
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -267,14 +273,22 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     OasDocument readOpenApiDoc(String specificationUri) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream is = null;
+        InputStream is;
         try {
             is = new FileInputStream(new File(specificationUri));
         } catch (Exception ex) {
             //use classloader resource stream as fallback
             is = this.getClass().getClassLoader().getResourceAsStream(specificationUri);
         }
-        JsonNode node = mapper.readTree(is);
-        return (OasDocument)Library.readDocument(node);
+
+        if (specificationUri.toLowerCase().endsWith(".yaml")) {
+            Yaml loader = new Yaml();
+            Map map = loader.load(is);
+            JsonNode node = mapper.convertValue(map, JsonNode.class);
+            return (OasDocument) Library.readDocument(node);
+        } else {
+            JsonNode node = mapper.readTree(is);
+            return (OasDocument) Library.readDocument(node);
+        }
     }
 }
