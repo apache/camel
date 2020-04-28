@@ -1,7 +1,10 @@
 [[undertow-spring-security-component]]
-= Undertow Spring Security Security Provider
-//by hand
+= Undertow Spring Security Component
+:docTitle: Undertow Spring Security
+:artifactId: camel-undertow-spring-security
+:description: Spring Security Provider for camel-undertow
 :since: 3.3
+:supportLevel: Stable
 
 *Since Camel {since}*
 
@@ -28,5 +31,3 @@ for example from DelegatingFilterProxyRegistrationBean. | Filter
 Each exchange created by Undertow endpoint with spring security contains header 'SpringSecurityProvider_principal' (
 name of header is provided as a constant `SpringSecurityProvider.PRINCIPAL_NAME_HEADER`) with current authorized identity
 as value  or header is not present in case of rejected requests.
-
-
