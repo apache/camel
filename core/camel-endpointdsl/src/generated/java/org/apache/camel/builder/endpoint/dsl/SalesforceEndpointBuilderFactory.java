@@ -92,11 +92,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Salesforce API version, defaults to
-         * SalesforceEndpointConfig.DEFAULT_VERSION.
+         * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 34.0
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder apiVersion(String apiVersion) {
@@ -109,6 +109,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder backoffIncrement(
@@ -122,6 +123,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder backoffIncrement(
@@ -344,6 +346,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder maxBackoff(long maxBackoff) {
@@ -356,6 +359,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder maxBackoff(String maxBackoff) {
@@ -372,6 +376,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
@@ -389,6 +394,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
@@ -1033,11 +1039,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Salesforce API version, defaults to
-         * SalesforceEndpointConfig.DEFAULT_VERSION.
+         * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 34.0
          * Group: common
          */
         default SalesforceEndpointProducerBuilder apiVersion(String apiVersion) {
@@ -1050,6 +1056,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceEndpointProducerBuilder backoffIncrement(
@@ -1063,6 +1070,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceEndpointProducerBuilder backoffIncrement(
@@ -1285,6 +1293,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceEndpointProducerBuilder maxBackoff(long maxBackoff) {
@@ -1297,6 +1306,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceEndpointProducerBuilder maxBackoff(String maxBackoff) {
@@ -1313,6 +1323,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
@@ -1330,6 +1341,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
@@ -1899,11 +1911,11 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Salesforce API version, defaults to
-         * SalesforceEndpointConfig.DEFAULT_VERSION.
+         * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 34.0
          * Group: common
          */
         default SalesforceEndpointBuilder apiVersion(String apiVersion) {
@@ -1916,6 +1928,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceEndpointBuilder backoffIncrement(long backoffIncrement) {
@@ -1928,6 +1941,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceEndpointBuilder backoffIncrement(
@@ -2145,6 +2159,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceEndpointBuilder maxBackoff(long maxBackoff) {
@@ -2157,6 +2172,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceEndpointBuilder maxBackoff(String maxBackoff) {
@@ -2173,6 +2189,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceEndpointBuilder notFoundBehaviour(
@@ -2190,6 +2207,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceEndpointBuilder notFoundBehaviour(

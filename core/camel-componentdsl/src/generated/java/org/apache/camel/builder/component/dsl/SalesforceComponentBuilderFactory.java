@@ -85,11 +85,11 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * Salesforce API version, defaults to
-         * SalesforceEndpointConfig.DEFAULT_VERSION.
+         * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 34.0
          * Group: common
          */
         default SalesforceComponentBuilder apiVersion(
@@ -103,6 +103,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default SalesforceComponentBuilder backoffIncrement(
@@ -279,6 +280,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SalesforceComponentBuilder maxBackoff(long maxBackoff) {
@@ -295,6 +297,7 @@ public interface SalesforceComponentBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
+         * Default: EXCEPTION
          * Group: common
          */
         default SalesforceComponentBuilder notFoundBehaviour(
