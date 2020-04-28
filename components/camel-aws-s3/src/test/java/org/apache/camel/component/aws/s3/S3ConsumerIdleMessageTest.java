@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 
 /**
@@ -34,7 +37,7 @@ public class S3ConsumerIdleMessageTest extends CamelTestSupport {
 
     @Test
     public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
+        Awaitility.await().atMost(110, TimeUnit.MILLISECONDS);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
