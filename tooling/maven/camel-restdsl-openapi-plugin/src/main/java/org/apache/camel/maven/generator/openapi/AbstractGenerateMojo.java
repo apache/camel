@@ -96,7 +96,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/src/spec/openapi.json", required = true)
     String specificationUri;
 
-    @Parameter(defaultValue = "3.0.14")
+    @Parameter(defaultValue = "3.0.19")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)
