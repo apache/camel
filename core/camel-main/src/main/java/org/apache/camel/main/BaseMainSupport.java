@@ -87,7 +87,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private static final String SENSITIVE_KEYS = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
-    private static final String VALID_THREAD_POOL_KEYS = "id|poolsize|maxpoolsize|keepalivetime|timeunit|maxqueuesize|allowcorethreadtimeout|rejectedpolicy";
+    private static final String VALID_THREAD_POOL_KEYS = "id|poolSize|maxPoolSize|keepAliveTime|timeUnit|maxQueueSize|allowCoreThreadTimeout|rejectedPolicy";
 
     protected final AtomicBoolean completed = new AtomicBoolean(false);
 
@@ -130,8 +130,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected static String optionKey(String key) {
         // as we ignore case for property names we should use keys in same case and without dashes
-        key = StringHelper.replaceAll(key, "-", "");
-        key = key.toLowerCase(Locale.ENGLISH);
+        key = StringHelper.dashToCamelCase(key);
         return key;
     }
 
@@ -631,7 +630,7 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.debug("    {}={}", key, prop.getProperty(key));
         }
 
-        // special for environment-variable-enbaled as we need to know this early before we set all the other options
+        // special for environment-variable-enabled as we need to know this early before we set all the other options
         Object envEnabled = prop.remove("camel.main.autoConfigurationEnvironmentVariablesEnabled");
         if (envEnabled == null) {
             envEnabled = prop.remove("camel.main.auto-configuration-environment-variables-enabled");
@@ -912,13 +911,13 @@ public abstract class BaseMainSupport extends BaseService {
             Map<String, String> map = profiles.get(id);
             // camel-main will lower-case keys
             String overrideId = map.remove("id");
-            String poolSize = map.remove("poolsize");
-            String maxPoolSize = map.remove("maxpoolsize");
-            String keepAliveTime = map.remove("keepalivetime");
-            String timeUnit = map.remove("timeunit");
-            String maxQueueSize = map.remove("maxqueuesize");
-            String allowCoreThreadTimeOut = map.remove("allowcorethreadtimeout");
-            String rejectedPolicy = map.remove("rejectedpolicy");
+            String poolSize = map.remove("poolSize");
+            String maxPoolSize = map.remove("maxPoolSize");
+            String keepAliveTime = map.remove("keepAliveTime");
+            String timeUnit = map.remove("timeUnit");
+            String maxQueueSize = map.remove("maxQueueSize");
+            String allowCoreThreadTimeOut = map.remove("allowCoreThreadTimeout");
+            String rejectedPolicy = map.remove("rejectedPolicy");
 
             if (overrideId != null) {
                 id = CamelContextHelper.parseText(camelContext, overrideId);
