@@ -96,7 +96,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String NOT_FOUND_BEHAVIOUR = "notFoundBehaviour";
 
     // general properties
-    @UriParam
+    @UriParam(defaultValue = DEFAULT_VERSION)
     private String apiVersion = DEFAULT_VERSION;
 
     // Rest API properties
@@ -183,17 +183,17 @@ public class SalesforceEndpointConfig implements Cloneable {
     private ObjectMapper objectMapper;
 
     // Streaming connection restart attempt backoff interval increment
-    @UriParam
+    @UriParam(defaultValue = "" + DEFAULT_BACKOFF_INCREMENT)
     private long backoffIncrement = DEFAULT_BACKOFF_INCREMENT;
 
     // Streaming connection restart attempt maximum backoff interval
-    @UriParam
+    @UriParam(defaultValue = "" + DEFAULT_MAX_BACKOFF)
     private long maxBackoff = DEFAULT_MAX_BACKOFF;
 
     @UriParam
     private Integer limit;
 
-    @UriParam
+    @UriParam(defaultValue = "EXCEPTION")
     private NotFoundBehaviour notFoundBehaviour = NotFoundBehaviour.EXCEPTION;
 
     public SalesforceEndpointConfig copy() {
@@ -236,8 +236,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Salesforce API version, defaults to
-     * SalesforceEndpointConfig.DEFAULT_VERSION
+     * Salesforce API version.
      */
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
