@@ -36,4 +36,5 @@
 ** xref:testcontainers-junit5.adoc[Testcontainers JUnit5]
 ** xref:testcontainers-spring.adoc[Testcontainers Spring]
 ** xref:testcontainers-spring-junit5.adoc[Testcontainers Spring Junit5]
+** xref:undertow-spring-security.adoc[Undertow Spring Security]
 ** xref:zipkin.adoc[Zipkin]
