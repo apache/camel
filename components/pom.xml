@@ -314,6 +314,7 @@
     <module>camel-thrift</module>
     <module>camel-twilio</module>
     <module>camel-twitter</module>
+    <module>camel-undertow-spring-security</module>
     <module>camel-univocity-parsers</module>
     <module>camel-urlrewrite</module>
     <module>camel-velocity</module>

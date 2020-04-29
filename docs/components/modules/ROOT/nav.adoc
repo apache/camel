@@ -372,6 +372,7 @@
 * xref:twitter-streaming-component.adoc[Twitter Streaming Component]
 * xref:twitter-timeline-component.adoc[Twitter Timeline Component]
 * xref:twitter.adoc[Twitter Components ]
+* xref:undertow-spring-security-component.adoc[Undertow Spring Security Security Provider]
 * xref:undertow-component.adoc[Undertow Component]
 * xref:univocity-csv-dataformat.adoc[uniVocity CSV DataFormat]
 * xref:univocity-fixed-dataformat.adoc[uniVocity Fixed Length DataFormat]

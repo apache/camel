@@ -23,6 +23,7 @@ import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
+import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class DefaultUndertowHost implements UndertowHost {
     }
 
     @Override
-    public synchronized HttpHandler registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
+    public synchronized HttpHandler registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler, UndertowSecurityProvider securityProvider) {
         if (undertow == null) {
             Undertow.Builder builder = Undertow.builder();
             if (key.getSslContext() != null) {
@@ -81,8 +82,17 @@ public class DefaultUndertowHost implements UndertowHost {
                 }
             }
 
-            undertow = builder.setHandler(rootHandler).build();
-            LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
+            if (securityProvider != null) {
+                try {
+                    undertow = securityProvider.registerHandler(builder, rootHandler);
+                } catch (Exception e) {
+                    LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
+                    throw new RuntimeException(e);
+                }
+            } else {
+                undertow = builder.setHandler(rootHandler).build();
+                LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
+            }
 
             try {
                 // If there is an exception while starting up, Undertow wraps it
@@ -106,12 +116,16 @@ public class DefaultUndertowHost implements UndertowHost {
     }
 
     @Override
-    public synchronized void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo) {
+    public synchronized void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo, UndertowSecurityProvider securityProvider) {
         if (undertow == null) {
             return;
         }
 
         rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(), registrationInfo.isMatchOnUriPrefix());
+
+        if (securityProvider != null) {
+            securityProvider.unregisterHandler(undertow);
+        }
 
         if (rootHandler.isEmpty()) {
             LOG.info("Stopping Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
