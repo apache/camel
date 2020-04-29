@@ -32,7 +32,7 @@ public class TimedScheduledExecutorService extends TimedExecutorService implemen
     private final MeterRegistry registry;
 
     public TimedScheduledExecutorService(MeterRegistry registry, ScheduledExecutorService delegate, String executorServiceName, Iterable<Tag> tags) {
-        super(registry, delegate, executorServiceName, tags);
+        super(registry, delegate, executorServiceName, "", tags);
         this.registry = registry;
         this.delegate = delegate;
     }
