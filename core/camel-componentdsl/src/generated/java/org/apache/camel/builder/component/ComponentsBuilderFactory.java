@@ -1263,7 +1263,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.EhcacheComponentBuilderFactory.ehcache();
     }
     /**
-     * Elastichsearch Rest (camel-elasticsearch-rest)
+     * Elasticsearch Rest (camel-elasticsearch-rest)
      * Send requests to with an ElasticSearch via REST API.
      * 
      * Category: monitoring,search

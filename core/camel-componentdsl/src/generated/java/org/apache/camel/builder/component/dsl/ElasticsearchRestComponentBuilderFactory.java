@@ -31,7 +31,7 @@ import org.apache.camel.component.elasticsearch.ElasticsearchComponent;
 public interface ElasticsearchRestComponentBuilderFactory {
 
     /**
-     * Elastichsearch Rest (camel-elasticsearch-rest)
+     * Elasticsearch Rest (camel-elasticsearch-rest)
      * Send requests to with an ElasticSearch via REST API.
      * 
      * Category: monitoring,search
@@ -43,7 +43,7 @@ public interface ElasticsearchRestComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Elastichsearch Rest component.
+     * Builder for the Elasticsearch Rest component.
      */
     interface ElasticsearchRestComponentBuilder
             extends

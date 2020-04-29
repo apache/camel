@@ -1,8 +1,8 @@
 [[elasticsearch-rest-component]]
-= Elastichsearch Rest Component
+= Elasticsearch Rest Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
-:docTitle: Elastichsearch Rest
+:docTitle: Elasticsearch Rest
 :artifactId: camel-elasticsearch-rest
 :description: Send requests to with an ElasticSearch via REST API.
 :since: 2.21
@@ -44,7 +44,7 @@ elasticsearch-rest://clusterName[?options]
 == Endpoint Options
 
 // component options: START
-The Elastichsearch Rest component supports 13 options, which are listed below.
+The Elasticsearch Rest component supports 13 options, which are listed below.
 
 
 
@@ -69,7 +69,7 @@ The Elastichsearch Rest component supports 13 options, which are listed below.
 
 
 // endpoint options: START
-The Elastichsearch Rest endpoint is configured using URI syntax:
+The Elasticsearch Rest endpoint is configured using URI syntax:
 
 ----
 elasticsearch-rest:clusterName
