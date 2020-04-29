@@ -56,7 +56,7 @@ The AWS 2 Simple Queue Service component supports 38 options, which are listed b
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
-| *region* (common) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *region* (common) | The region in which SQS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
@@ -129,7 +129,7 @@ with the following path and query parameters:
 | *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
-| *region* (common) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *region* (common) | The region in which SQS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
