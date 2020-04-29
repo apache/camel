@@ -2432,7 +2432,7 @@
   "ElasticsearchRestComponentBuilderFactory": {
     "kind": "component",
     "name": "elasticsearch-rest",
-    "title": "Elastichsearch Rest",
+    "title": "Elasticsearch Rest",
     "description": "Send requests to with an ElasticSearch via REST API.",
     "deprecated": false,
     "deprecationNote": "monitoring,search",

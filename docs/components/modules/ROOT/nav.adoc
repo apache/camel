@@ -107,7 +107,7 @@
 ** xref:drill-component.adoc[Drill]
 ** xref:dropbox-component.adoc[Dropbox]
 ** xref:ehcache-component.adoc[Ehcache]
-** xref:elasticsearch-rest-component.adoc[Elastichsearch Rest]
+** xref:elasticsearch-rest-component.adoc[Elasticsearch Rest]
 ** xref:elsql-component.adoc[ElSQL]
 ** xref:etcd-keys-component.adoc[Etcd Keys]
 ** xref:etcd-stats-component.adoc[Etcd Stats]

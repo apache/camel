@@ -27,7 +27,7 @@ import org.elasticsearch.client.RestClient;
 /**
  * Send requests to with an ElasticSearch via REST API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elastichsearch Rest",
+@UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elasticsearch Rest",
     syntax = "elasticsearch-rest:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 

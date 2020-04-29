@@ -31,7 +31,7 @@ public interface ElasticsearchEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Elastichsearch Rest component.
+     * Builder for endpoint for the Elasticsearch Rest component.
      */
     public interface ElasticsearchEndpointBuilder
             extends
@@ -463,7 +463,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Elastichsearch Rest component.
+     * Advanced builder for endpoint for the Elasticsearch Rest component.
      */
     public interface AdvancedElasticsearchEndpointBuilder
             extends
@@ -550,7 +550,7 @@ public interface ElasticsearchEndpointBuilderFactory {
 
     public interface ElasticsearchBuilders {
         /**
-         * Elastichsearch Rest (camel-elasticsearch-rest)
+         * Elasticsearch Rest (camel-elasticsearch-rest)
          * Send requests to with an ElasticSearch via REST API.
          * 
          * Category: monitoring,search
@@ -567,7 +567,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
     }
     /**
-     * Elastichsearch Rest (camel-elasticsearch-rest)
+     * Elasticsearch Rest (camel-elasticsearch-rest)
      * Send requests to with an ElasticSearch via REST API.
      * 
      * Category: monitoring,search
