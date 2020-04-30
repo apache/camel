@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.spring.security;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.net.URL;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,16 +51,6 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
     @BeforeClass
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
-
-        URL location = SpringSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
-        File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
-        file.getParentFile().mkdirs();
-
-        Writer output = new FileWriter(file);
-        output.write(SpringSecurityProvider.class.getName());
-        output.close();
-
-        file.deleteOnExit();
     }
 
     protected static int getPort() {
