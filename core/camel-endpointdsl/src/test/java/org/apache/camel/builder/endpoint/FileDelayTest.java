@@ -49,7 +49,7 @@ public class FileDelayTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(file("target/data/files/").initialDelay(0).delay(2).timeUnit(TimeUnit.SECONDS).delete(true).maxMessagesPerPoll(1))
+                from(file("target/data/files/").delay(2).timeUnit(TimeUnit.SECONDS).delete(true).maxMessagesPerPoll(1))
                     .convertBodyTo(String.class)
                     .to(mock("result"));
             }
