@@ -36,18 +36,21 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private static final String SPRING_SCHEDULER = "org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler";
     private static final String QUARTZ_SCHEDULER = "org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler";
 
+    private static final int DEFAULT_INITIAL_DELAY = 1000;
+    private static final int DEFAULT_DELAY = 500;
+
     private transient ScheduledPollConsumerScheduler consumerScheduler;
 
     // if adding more options then align with org.apache.camel.support.ScheduledPollConsumer
     @UriParam(defaultValue = "true", label = "consumer,scheduler",
             description = "Whether the scheduler should be auto started.")
     private boolean startScheduler = true;
-    @UriParam(defaultValue = "1000", label = "consumer,scheduler",
+    @UriParam(defaultValue = "" + DEFAULT_INITIAL_DELAY, label = "consumer,scheduler",
             description = "Milliseconds before the first poll starts.")
-    private long initialDelay = 1000;
-    @UriParam(defaultValue = "500", label = "consumer,scheduler",
+    private long initialDelay = -1;
+    @UriParam(defaultValue = "" + DEFAULT_DELAY, label = "consumer,scheduler",
             description = "Milliseconds before the next poll.")
-    private long delay = 500;
+    private long delay = -1;
     @UriParam(defaultValue = "MILLISECONDS", label = "consumer,scheduler",
             description = "Time unit for initialDelay and delay options.")
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
@@ -157,9 +160,21 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             spc.setBackoffIdleThreshold(backoffIdleThreshold);
             spc.setBackoffMultiplier(backoffMultiplier);
             spc.setRepeatCount(repeatCount);
-            spc.setDelay(delay);
+            if (delay < 0) {
+                // compute the default delay that are millis to use current time unit
+                long value = timeUnit.convert(DEFAULT_DELAY, TimeUnit.MILLISECONDS);
+                spc.setDelay(value);
+            } else {
+                spc.setDelay(delay);
+            }
             spc.setGreedy(greedy);
-            spc.setInitialDelay(initialDelay);
+            if (initialDelay < 0) {
+                // compute the default delay that are millis to use current time unit
+                long value = timeUnit.convert(DEFAULT_INITIAL_DELAY, TimeUnit.MILLISECONDS);
+                spc.setInitialDelay(value);
+            } else {
+                spc.setInitialDelay(initialDelay);
+            }
             spc.setPollStrategy(pollStrategy);
             spc.setRunLoggingLevel(runLoggingLevel);
             spc.setScheduledExecutorService(scheduledExecutorService);
