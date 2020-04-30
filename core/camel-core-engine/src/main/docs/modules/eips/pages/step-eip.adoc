@@ -1,5 +1,6 @@
 [[step-eip]]
 = Step EIP
+:docTitle: Step
 :description: Routes the message to a sequence of processors which is grouped together as one logical name
 :since: 
 :supportLevel: Stable

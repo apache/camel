@@ -1,5 +1,6 @@
 [[throttle-eip]]
 = Throttle EIP
+:docTitle: Throttle
 :description: Controls the rate at which messages are passed to the next node in the route
 :since: 
 :supportLevel: Stable

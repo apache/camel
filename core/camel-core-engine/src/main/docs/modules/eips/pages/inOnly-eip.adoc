@@ -1,8 +1,10 @@
 [[inOnly-eip]]
-= In Only EIP
+= In Only EIP (deprecated)
+:docTitle: In Only
 :description: Marks the exchange pattern for the route to one way
 :since: 
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 

@@ -1,5 +1,6 @@
 [[faultToleranceConfiguration-eip]]
 = Fault Tolerance Configuration EIP
+:docTitle: Fault Tolerance Configuration
 :description: MicroProfile Fault Tolerance Circuit Breaker EIP configuration
 :since: 
 :supportLevel: Stable

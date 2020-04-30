@@ -1,5 +1,6 @@
 [[circuitBreaker-eip]]
 = Circuit Breaker EIP
+:docTitle: Circuit Breaker
 :description: null
 :since: 
 :supportLevel: Stable

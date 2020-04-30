@@ -1,5 +1,6 @@
 [[otherwise-eip]]
 = Otherwise EIP
+:docTitle: Otherwise
 :description: Route to be executed when all other choices evaluate to false
 :since: 
 :supportLevel: Stable

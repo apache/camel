@@ -1,5 +1,6 @@
 [[onFallback-eip]]
 = On Fallback EIP
+:docTitle: On Fallback
 :description: Route to be executed when Hystrix EIP executes fallback
 :since: 
 :supportLevel: Stable

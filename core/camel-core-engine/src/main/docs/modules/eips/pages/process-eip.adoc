@@ -1,5 +1,6 @@
 [[process-eip]]
 = Process EIP
+:docTitle: Process
 :description: Calls a Camel processor
 :since: 
 :supportLevel: Stable

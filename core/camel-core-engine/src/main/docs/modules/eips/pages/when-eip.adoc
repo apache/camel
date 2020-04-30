@@ -1,5 +1,6 @@
 [[when-eip]]
 = When EIP
+:docTitle: When
 :description: Triggers a route when an expression evaluates to true
 :since: 
 :supportLevel: Stable

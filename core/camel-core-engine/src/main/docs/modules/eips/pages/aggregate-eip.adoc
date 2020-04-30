@@ -1,5 +1,6 @@
 [[aggregate-eip]]
 = Aggregate EIP
+:docTitle: Aggregate
 :description: Aggregates many messages into a single message
 :since: 
 :supportLevel: Stable

@@ -1,5 +1,6 @@
 [[bean-eip]]
 = Bean EIP
+:docTitle: Bean
 :description: Calls a java bean
 :since: 
 :supportLevel: Stable

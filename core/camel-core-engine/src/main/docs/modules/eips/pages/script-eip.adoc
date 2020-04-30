@@ -1,5 +1,6 @@
 [[script-eip]]
 = Script EIP
+:docTitle: Script
 :description: Executes a script from a language which does not change the message body.
 :since: 
 :supportLevel: Stable

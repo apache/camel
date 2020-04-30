@@ -1,5 +1,6 @@
 [[removeProperty-eip]]
 = Remove Property EIP
+:docTitle: Remove Property
 :description: Removes a named property from the message exchange
 :since: 
 :supportLevel: Stable

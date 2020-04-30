@@ -1,6 +1,6 @@
 [[rollback-eip]]
 = Rollback EIP
-// Rollback might be needed if there is a transaction or transactional pieces in your design.
+:docTitle: Rollback
 :description: Forces a rollback by stopping routing the message
 :since: 
 :supportLevel: Stable

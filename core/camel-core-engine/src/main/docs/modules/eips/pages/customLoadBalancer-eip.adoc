@@ -1,5 +1,6 @@
 [[customLoadBalancer-eip]]
 = Custom Load Balancer EIP
+:docTitle: Custom Load Balancer
 :description: Custom load balancer
 :since: 
 :supportLevel: Stable

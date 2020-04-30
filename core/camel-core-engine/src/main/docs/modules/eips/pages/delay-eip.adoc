@@ -1,6 +1,6 @@
 [[delay-eip]]
 = Delay EIP
-// The Delayer Pattern allows you to delay the delivery of messages to some destination.
+:docTitle: Delay
 :description: Delays processing for a specified length of time
 :since: 
 :supportLevel: Stable
