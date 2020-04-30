@@ -37,6 +37,8 @@ public class MockFilter implements Filter {
 
     private Jwt jwt;
 
+    private boolean putJwtIntoContext = true;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -50,7 +52,9 @@ public class MockFilter implements Filter {
 
         Collection<? extends GrantedAuthority> grantedAuthorities = new KeycloakRealmRoleConverter().convert(jwt);
 
-        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt, grantedAuthorities));
+        if (putJwtIntoContext) {
+            SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt, grantedAuthorities));
+        }
 
         if (chain != null) {
             chain.doFilter(request, response);
@@ -64,5 +68,13 @@ public class MockFilter implements Filter {
 
     public void setJwt(Jwt jwt) {
         this.jwt = jwt;
+    }
+
+    public boolean isPutJwtIntoContext() {
+        return putJwtIntoContext;
+    }
+
+    public void setPutJwtIntoContext(boolean putJwtIntoContext) {
+        this.putJwtIntoContext = putJwtIntoContext;
     }
 }
