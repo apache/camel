@@ -163,6 +163,10 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             if (delay < 0) {
                 // compute the default delay that are millis to use current time unit
                 long value = timeUnit.convert(DEFAULT_DELAY, TimeUnit.MILLISECONDS);
+                if (value <= 0) {
+                    // delay must be at least 1
+                    value = 1;
+                }
                 spc.setDelay(value);
             } else {
                 spc.setDelay(delay);
