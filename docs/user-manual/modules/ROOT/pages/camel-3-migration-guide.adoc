@@ -273,9 +273,9 @@ To use this API you can get it via the `getMessage` method on `Exchange`:
 
 The fault API has been removed from `org.apache.camel.Message` as it was only used for SOAP-WS fault message. The `camel-cxf` and `camel-spring-ws` components for SOAP-WS has been modified to support fault messages from their components. The option `handleFault` has also been removed and you now need to turn this on as endpoint or component option on `camel-cxf` or `camel-spring-ws`.
 
-=== getOut on Message
+=== getOut on Exchange
 
-The `hasOut` and `getOut` methods on `Message` has been deprecated in favour of using `getMessage` instead. (sidenote: The camel-core are still using these methods in a few places to be backwards compatible and rely on this logic as Camel was initially designed with the concepts of IN and OUT message inspired from the JBI and SOAP-WS specifications).
+The `hasOut` and `getOut` methods on `Exchange` has been deprecated in favour of using `getMessage` instead. (sidenote: The camel-core are still using these methods in a few places to be backwards compatible and rely on this logic as Camel was initially designed with the concepts of IN and OUT message inspired from the JBI and SOAP-WS specifications).
 
 === OUT message removed from Simple language and Mock component
 
