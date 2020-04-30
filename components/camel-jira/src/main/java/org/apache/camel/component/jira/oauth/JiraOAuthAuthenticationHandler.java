@@ -20,6 +20,7 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.jira.rest.client.api.AuthenticationHandler;
@@ -28,7 +29,6 @@ import com.google.api.client.auth.oauth.OAuthParameters;
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 
 /**
  * This authentication handler uses the 3-legged OAuth approach described in https://developer.atlassian.com/server/jira/platform/oauth/
@@ -69,7 +69,7 @@ public class JiraOAuthAuthenticationHandler implements AuthenticationHandler {
     }
 
     private OAuthRsaSigner getOAuthRsaSigner(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] privateBytes = Base64.decodeBase64(privateKey);
+        byte[] privateBytes = Base64.getDecoder().decode(privateKey);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         OAuthRsaSigner oAuthRsaSigner = new OAuthRsaSigner();
