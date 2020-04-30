@@ -41,6 +41,7 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.json.JsonReader;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,11 @@ public final class MongoDbBasicConverters {
     @Converter
     public static Document fromStringToDocument(String s) {
         return Document.parse(s);
+    }
+
+    @Converter
+    public static ObjectId fromStringToObjectId(String s) {
+        return new ObjectId(s);
     }
 
     @Converter
