@@ -203,6 +203,16 @@ from("direct:findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
+Please, note that the default _id is treated by Mongo as and `ObjectId` type, so you may need to convert it properly.
+
+[source,java]
+------------------------------------------------------------------------------
+from("direct:findById")
+    .convertBodyTo(ObjectId.class)
+    .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
+    .to("mock:resultFindById");
+------------------------------------------------------------------------------
+
 [TIP]
 ====
 *Supports optional parameters*.
