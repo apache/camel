@@ -1,5 +1,6 @@
 [[claimCheck-eip]]
 = Claim Check EIP
+:docTitle: Claim Check
 :description: The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
 :since: 
 :supportLevel: Stable

@@ -1,5 +1,6 @@
 [[choice-eip]]
 = Choice EIP
+:docTitle: Choice
 :description: Routes messages based on a series of predicates
 :since: 
 :supportLevel: Stable

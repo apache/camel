@@ -1,5 +1,6 @@
 [[enrich-eip]]
 = Enrich EIP
+:docTitle: Enrich
 :description: Enriches a message with data from a secondary resource
 :since: 
 :supportLevel: Stable

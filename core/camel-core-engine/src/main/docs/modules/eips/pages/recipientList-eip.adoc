@@ -1,6 +1,6 @@
 [[recipientList-eip]]
 = Recipient List EIP
-// The http://www.enterpriseintegrationpatterns.com/RecipientList.html[Recipient List] from the EIP patterns allows you to route messages to a number of dynamically specified recipients.
+:docTitle: Recipient List
 :description: Routes messages to a number of dynamically specified recipients (dynamic to)
 :since: 
 :supportLevel: Stable

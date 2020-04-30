@@ -1,5 +1,6 @@
 [[sort-eip]]
 = Sort EIP
+:docTitle: Sort
 :description: Sorts the contents of the message
 :since: 
 :supportLevel: Stable

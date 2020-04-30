@@ -1,5 +1,6 @@
 [[saga-eip]]
 = Saga EIP
+:docTitle: Saga
 :description: Enables sagas on the route
 :since: 
 :supportLevel: Stable

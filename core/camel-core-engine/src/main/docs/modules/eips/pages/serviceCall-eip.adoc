@@ -1,5 +1,6 @@
 [[serviceCall-eip]]
 = Service Call EIP
+:docTitle: Service Call
 :description: To call remote services
 :since: 
 :supportLevel: Stable

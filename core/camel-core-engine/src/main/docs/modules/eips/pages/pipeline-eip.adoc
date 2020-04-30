@@ -1,5 +1,6 @@
 [[pipeline-eip]]
 = Pipeline EIP
+:docTitle: Pipeline
 :description: Routes the message to a sequence of processors.
 :since: 
 :supportLevel: Stable

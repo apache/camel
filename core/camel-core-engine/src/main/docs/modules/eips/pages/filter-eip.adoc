@@ -1,5 +1,6 @@
 [[filter-eip]]
 = Filter EIP
+:docTitle: Filter
 :description: Filter out messages based using a predicate
 :since: 
 :supportLevel: Stable

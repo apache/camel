@@ -1,5 +1,6 @@
 [[sample-eip]]
 = Sample EIP
+:docTitle: Sample
 :description: Extract a sample of the messages passing through a route
 :since: 
 :supportLevel: Stable

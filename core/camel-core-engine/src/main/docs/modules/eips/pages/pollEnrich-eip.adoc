@@ -1,5 +1,6 @@
 [[pollEnrich-eip]]
 = Poll Enrich EIP
+:docTitle: Poll Enrich
 :description: Enriches messages with data polled from a secondary resource
 :since: 
 :supportLevel: Stable

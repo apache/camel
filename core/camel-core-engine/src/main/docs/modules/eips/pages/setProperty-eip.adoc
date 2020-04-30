@@ -1,5 +1,6 @@
 [[setProperty-eip]]
 = Set Property EIP
+:docTitle: Set Property
 :description: Sets a named property on the message exchange
 :since: 
 :supportLevel: Stable

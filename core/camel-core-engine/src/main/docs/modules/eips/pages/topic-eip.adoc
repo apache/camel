@@ -1,5 +1,6 @@
 [[topic-eip]]
 = Topic EIP
+:docTitle: Topic
 :description: Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)
 :since: 
 :supportLevel: Stable

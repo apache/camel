@@ -1,5 +1,6 @@
 [[multicast-eip]]
 = Multicast EIP
+:docTitle: Multicast
 :description: Routes the same message to multiple paths either sequentially or in parallel.
 :since: 
 :supportLevel: Stable

@@ -1,5 +1,6 @@
 [[setHeader-eip]]
 = Set Header EIP
+:docTitle: Set Header
 :description: Sets the value of a message header
 :since: 
 :supportLevel: Stable

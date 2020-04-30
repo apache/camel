@@ -1,5 +1,6 @@
 [[to-eip]]
 = To EIP
+:docTitle: To
 :description: Sends the message to a static endpoint
 :since: 
 :supportLevel: Stable
