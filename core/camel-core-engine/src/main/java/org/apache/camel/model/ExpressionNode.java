@@ -56,7 +56,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     }
 
     public ExpressionNode(Predicate predicate) {
-        setExpression(predicate);
+        setPredicate(predicate);
     }
 
     public ExpressionDefinition getExpression() {
@@ -69,7 +69,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         }
     }
 
-    private void setExpression(Predicate predicate) {
+    private void setPredicate(Predicate predicate) {
         if (predicate != null) {
             setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
         }
