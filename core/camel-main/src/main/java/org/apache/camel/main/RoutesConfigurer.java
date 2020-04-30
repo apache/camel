@@ -38,6 +38,7 @@ public class RoutesConfigurer {
 
     private final RoutesCollector routesCollector;
     private final List<RoutesBuilder> routesBuilders;
+    private boolean addRestsToRoutes = true;
 
     /**
      * Creates a new routes configurer
@@ -57,6 +58,13 @@ public class RoutesConfigurer {
     public RoutesConfigurer(RoutesCollector routesCollector, List<RoutesBuilder> routesBuilders) {
         this.routesCollector = routesCollector;
         this.routesBuilders = routesBuilders;
+    }
+
+    /**
+     * Whether rests should be automatic added as routes
+     */
+    public void setAddRestsToRoutes(boolean addRestsToRoutes) {
+        this.addRestsToRoutes = addRestsToRoutes;
     }
 
     /**
@@ -98,7 +106,7 @@ public class RoutesConfigurer {
                     List<RestsDefinition> defs = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
                     for (RestsDefinition def : defs) {
                         LOG.debug("Adding rests into CamelContext from XML files: {}", config.getXmlRests());
-                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), true);
+                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), addRestsToRoutes);
                     }
                 }
             } catch (Exception e) {
