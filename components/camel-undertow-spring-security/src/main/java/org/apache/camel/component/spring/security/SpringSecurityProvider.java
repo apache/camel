@@ -30,14 +30,17 @@ import io.undertow.servlet.handlers.ServletRequestContext;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.StatusCodes;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public class SpringSecurityProvider implements UndertowSecurityProvider {
-
     public static final String PRINCIPAL_NAME_HEADER = SpringSecurityProvider.class.getName() + "_principal";
+
+    private static final Logger LOG = LoggerFactory.getLogger(SpringSecurityProvider.class);
     private static final AttachmentKey<String> PRINCIPAL_NAME_KEY = AttachmentKey.create(String.class);
 
     private Filter securityFilter;
@@ -58,10 +61,12 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
         FilterChain fc = (servletRequest, servletResponse) -> {
             Authentication a = SecurityContextHolder.getContext().getAuthentication();
             if (a instanceof JwtAuthenticationToken) {
+                LOG.debug("Authentication token is present.");
                 boolean allowed = false;
                 Collection<GrantedAuthority> grantedAuthorities = ((JwtAuthenticationToken) a).getAuthorities();
                 for (GrantedAuthority grantedAuthority : grantedAuthorities) {
                     if (allowedRoles.contains(grantedAuthority.getAuthority())) {
+                        LOG.debug("Authenticated principal {} has authority to access resource.", ((JwtAuthenticationToken) a).getName());
                         allowed = true;
                         break;
                     }
@@ -71,10 +76,16 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
                     httpExchange.putAttachment(PRINCIPAL_NAME_KEY, ((JwtAuthenticationToken) a).getName());
                     httpExchange.setStatusCode(StatusCodes.OK);
                     return;
+                } else {
+                    LOG.debug("Authenticated principal {} doesn't have authority to access resource.", ((JwtAuthenticationToken) a).getName());
                 }
 
-                httpExchange.setStatusCode(StatusCodes.FORBIDDEN);
+            } else {
+                //this is logged as warn, because it shows an error in configuration
+                //spring-security shouldn't allow to access this code if configuration is correct
+                LOG.warn("Authentication token is not present. Access is FORBIDDEN.");
             }
+            httpExchange.setStatusCode(StatusCodes.FORBIDDEN);
         };
         securityFilter.doFilter(request, response, fc);
 
