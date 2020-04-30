@@ -16,28 +16,32 @@
  */
 package org.apache.camel.component.undertow.spi;
 
+import java.io.File;
+import java.net.URL;
+
 import io.undertow.util.StatusCodes;
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Test of basic securityProvider scenario, when provider does not accepts security configuration.
  */
-public class SecurityProviderNoAcceptanceTest extends AbstractSecurityProviderTest {
+public class SecurityProviderWithoutProviderTest extends AbstractSecurityProviderTest {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext =  super.createCamelContext();
-        this.securityConfiguration.setAccept(false);
-        return camelContext;
+    @BeforeClass
+    public static void createSecurtyProviderConfigurationFile() throws Exception {
+        URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
+        File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     @Test
-    public void testSecuredNotAcceptingProvider() throws Exception {
+    public void testSecuredNoProviderd() throws Exception {
         securityConfiguration.setRoleToAssign("user");
 
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
