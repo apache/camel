@@ -564,6 +564,10 @@ should be rewritten as:
 
 == Upgrading Camel 3.1 to 3.2
 
+```=== JndiRegistry
+
+The deprecated class `org.apache.camel.impl.JndiRegistry` was removed. `org.apache.camel.support.jndi.JndiBeanRepository` should be used instead.
+
 === Rest Configuration
 
 The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.

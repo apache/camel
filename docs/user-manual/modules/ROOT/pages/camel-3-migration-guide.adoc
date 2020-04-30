@@ -51,7 +51,7 @@ In Camel 2.x camel-core was one JAR file, it has now been split up into many JAR
 - camel-util
 - camel-util-json
 
-Maven users of Apache Camel can keep using the dependency `camel-core` which has transitive dependencies on all of its modules, and therefore no migration is needed.
+Maven users of Apache Camel can keep using the dependency `camel-core` which has transitive dependencies on all of its modules, except for `camel-main`, and therefore no migration is needed.
 However, users who want to trim the size of the classes on the classpath, can use fine grained Maven dependencies on only the modules needed.
 You may find how to do that in the examples.
 
@@ -155,7 +155,7 @@ The implementation is still named `org.apache.camel.component.properties.Propert
 
 === Removed components
 
-We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz` and `camel-rx` components.
+We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz`, `camel-restlet` and `camel-rx` components.
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
