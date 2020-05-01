@@ -105,6 +105,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         configureConsumer(sqsConsumer);
         sqsConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
+        scheduler.setDelay(sqsConsumer.getDelay());
+        scheduler.setUseFixedDelay(sqsConsumer.isUseFixedDelay());
+        scheduler.setInitialDelay(sqsConsumer.getInitialDelay());
+        scheduler.setTimeUnit(sqsConsumer.getTimeUnit());
         scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
         sqsConsumer.setScheduler(scheduler);
         return sqsConsumer;
