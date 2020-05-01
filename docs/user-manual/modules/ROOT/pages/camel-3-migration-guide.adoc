@@ -275,7 +275,7 @@ The fault API has been removed from `org.apache.camel.Message` as it was only us
 
 === getOut on Exchange
 
-The `hasOut` and `getOut` methods on `Exchange` has been deprecated in favour of using `getMessage` instead. (sidenote: The camel-core are still using these methods in a few places to be backwards compatible and rely on this logic as Camel was initially designed with the concepts of IN and OUT message inspired from the JBI and SOAP-WS specifications).
+The `hasOut` and `getOut` methods on `Exchange` has been deprecated in favour of using `getMessage` instead. (Side note: Camel-core is still using these methods in a few places to be backwards compatible and relies on this logic as Camel was initially designed with the concept of IN and OUT messages inspired by the JBI and SOAP-WS specifications.)
 
 === OUT message removed from Simple language and Mock component
 
@@ -326,7 +326,7 @@ The `camel-kafka` component has removed the options `bridgeEndpoint` and `circul
 
 === Telegram
 
-The `camel-telegram` component has moved the authorization token from uri-path to a query parameter instead, eg migrate
+The `camel-telegram` component has moved the authorization token from uri-path to a query parameter instead, e.g. migrate
 
     telegram:bots/myTokenHere
 
@@ -353,15 +353,21 @@ And use `org.apache.camel.component.xslt.saxon.XsltSaxonBuilder` for Saxon suppo
 
 In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `getGlobalOptions`, so you should migrate to:
 
-  context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
-  context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+[source,java]
+----
+context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
+context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+----
 
 and in XML:
 
-  <globalOptions>
-    <globalOption key="CamelJacksonEnableTypeConverter" value="true"/>
-    <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
-  </globalOptions>
+[source,xml]
+----
+<globalOptions>
+  <globalOption key="CamelJacksonEnableTypeConverter" value="true"/>
+  <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
+</globalOptions>
+----
 
 === Main class
 
@@ -435,7 +441,7 @@ The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has 
 
 ==== ModelCamelContext
 
-If you need to access the routes model (such as `addRouteDefinitions`, etc), then you need to adapt form CamelContext as shown:
+If you need to access the routes model (such as `addRouteDefinitions`, etc.), then you need to adapt form CamelContext as shown:
 
     ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
 
@@ -448,7 +454,7 @@ The APIs on `CamelContext` has been reduced a bit to focus on relevant API for C
 
 === Checked vs unchecked exceptions
 
-Most of the Camel exception classes has been migrated to be unchecked (eg extends `RuntimeException`).
+Most of the Camel exception classes have been migrated to be unchecked (e.g. extends `RuntimeException`).
 
 Also the lifecycle of the `start`, `stop` and `suspend`, `resume` methods on `Service` and `SuspendableService` has been changed to not throw checked exceptions.
 
@@ -513,7 +519,7 @@ The `Component` and `DataFormat` interfaces now extend `Service` as components a
 The class `FactoryFinder` has changed its API to use `Optional` as return types instead of throwing checked `FactoryNotFoundException` or `ClassNotFoundException` etc.
 
 The option `resolvePropertyPlaceholders` on all the components has been removed,
-as property placeholders is already supported via Camel Main, Camel Spring Boot and other means.
+as property placeholders are already supported via Camel Main, Camel Spring Boot and other means.
 
 === camel-test
 
@@ -536,22 +542,31 @@ All the events from package `org.apache.camel.management.event` has been moved t
 
 Testing using `adviceWith` currently needs to be changed from:
 
-  context.getRouteDefinition("start").adviceWith(camelContext, new AdviceWithRouteBuilder() {
-    ...
-  }
+[source,java]
+----
+context.getRouteDefinition("start").adviceWith(camelContext, new AdviceWithRouteBuilder() {
+  ...
+}
+----
 
 to using style:
 
-  ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
-  RouteReifier.adviceWith(mcc.getRouteDefinition("start"), mcc, new AdviceWithRouteBuilder() {
-    ...
-  }
+[source,java]
+----
+ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+RouteReifier.adviceWith(mcc.getRouteDefinition("start"), mcc, new AdviceWithRouteBuilder() {
+  ...
+}
+----
 
 However its even easier using lambda style with `AdviceWithRouteBuilder` directly:
 
-  AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
-    a.replaceFromWith("direct:start");
-  }
+[source,java]
+----
+AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
+  a.replaceFromWith("direct:start");
+}
+----
 
 === Generic Classes
 
@@ -633,7 +648,7 @@ The `@FallbackConverter` annotation has been removed, and you should use `@Conve
 
 === Removed JMX APIs for explaining EIPs, components, etc.
 
-The APIs that could find, and explain EIPs, components, endpoints etc has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
+The APIs that could find, and explain EIPs, components, endpoints etc. has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
 
 === Other changes
 
