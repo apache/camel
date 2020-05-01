@@ -21,14 +21,16 @@ import java.util.Collections;
 import io.debezium.config.Configuration;
 import io.debezium.embedded.EmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EmbeddedDebeziumConfigurationTest {
 
     @Test
-    public void testIfCreatesConfig() {
+    void testIfCreatesConfig() {
         final TestEmbeddedDebeziumConfiguration configuration = new TestEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setOffsetStorageReplicationFactor(2);
@@ -36,8 +38,7 @@ public class EmbeddedDebeziumConfigurationTest {
 
         final Configuration dbzEmbeddedConfiguration = configuration.createDebeziumConfiguration();
 
-        assertEquals("Expect the same name", "test_config",
-                dbzEmbeddedConfiguration.getString(EmbeddedEngine.ENGINE_NAME));
+        assertEquals("test_config", dbzEmbeddedConfiguration.getString(EmbeddedEngine.ENGINE_NAME), "Expect the same name");
         assertEquals(2, dbzEmbeddedConfiguration
                 .getInteger(EmbeddedEngine.OFFSET_STORAGE_KAFKA_REPLICATION_FACTOR));
         assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
@@ -47,7 +48,7 @@ public class EmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testIfValidatesConfigurationCorrectly() {
+    void testIfValidatesConfigurationCorrectly() {
         final TestEmbeddedDebeziumConfiguration configuration = new TestEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setOffsetStorageReplicationFactor(2);
@@ -63,7 +64,7 @@ public class EmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testIfCreatesAdditionalProperties() {
+    void testIfCreatesAdditionalProperties() {
         final TestEmbeddedDebeziumConfiguration configuration = new TestEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setAdditionalProperties(Collections.singletonMap("test.additional", "test_additional"));

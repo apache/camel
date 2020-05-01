@@ -19,16 +19,16 @@ package org.apache.camel.maven.config;
 import java.util.Collections;
 
 import org.apache.kafka.common.config.ConfigDef;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectorConfigFieldTest {
 
     @Test
-    public void testIfReturnsCorrectly() {
+    void testIfReturnsCorrectly() {
         final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey("field.test", ConfigDef.Type.STRING, "empty",
                 null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
                 null, false);
@@ -46,7 +46,7 @@ public class ConnectorConfigFieldTest {
     }
 
     @Test
-    public void testIfHandlesUnderscoreFieldsCorrectly() {
+    void testIfHandlesUnderscoreFieldsCorrectly() {
         final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey("field.test_underscore", ConfigDef.Type.STRING, "empty",
                 null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
                 null, false);
