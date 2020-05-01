@@ -155,10 +155,6 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         if (delay <= 0) {
             // compute the default delay that are millis to use current time unit
             currentDelay = timeUnit.convert(DEFAULT_DELAY, TimeUnit.MILLISECONDS);
-            if (currentDelay <= 0) {
-                // delay must be at least 1
-                currentDelay = 1;
-            }
         } else {
             currentDelay = delay;
         }
