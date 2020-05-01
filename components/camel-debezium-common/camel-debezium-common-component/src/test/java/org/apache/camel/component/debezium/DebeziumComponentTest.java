@@ -21,13 +21,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.debezium.configuration.FileConnectorEmbeddedDebeziumConfiguration;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DebeziumComponentTest extends CamelTestSupport {
 
     @Test
-    public void testIfSetsAdditionalProperties() throws Exception {
+    void testIfSetsAdditionalProperties() throws Exception {
         final DebeziumTestComponent component = new DebeziumTestComponent(context);
         final FileConnectorEmbeddedDebeziumConfiguration configuration = new FileConnectorEmbeddedDebeziumConfiguration();
 

@@ -22,15 +22,16 @@ import java.util.Map;
 
 import org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DebeziumMongodbComponentTest {
 
     @Test
-    public void testIfConnectorEndpointCreatedWithConfig() throws Exception {
+    void testIfConnectorEndpointCreatedWithConfig() throws Exception {
         final Map<String, Object> params = new HashMap<>();
         params.put("offsetStorageFileName", "/offset_test_file");
         params.put("mongodbHosts", "localhost");
@@ -44,26 +45,26 @@ public class DebeziumMongodbComponentTest {
                 + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
                 + "databaseServerName=test&databaseHistoryFileName=/test";
 
-        final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
-        debeziumComponent.start();
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
+        try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
+            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
 
-        assertNotNull(debeziumEndpoint);
+            assertNotNull(debeziumEndpoint);
 
-        // test for config
-        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = (MongoDbConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint
-                .getConfiguration();
-        assertEquals("test_name", configuration.getName());
-        assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
-        assertEquals("localhost", configuration.getMongodbHosts());
-        assertEquals("dbz", configuration.getMongodbUser());
-        assertEquals("pwd", configuration.getMongodbPassword());
-        assertEquals("test", configuration.getMongodbName());
-        assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
+            // test for config
+            final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = (MongoDbConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            assertEquals("test_name", configuration.getName());
+            assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
+            assertEquals("localhost", configuration.getMongodbHosts());
+            assertEquals("dbz", configuration.getMongodbUser());
+            assertEquals("pwd", configuration.getMongodbPassword());
+            assertEquals("test", configuration.getMongodbName());
+            assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
+        }
     }
 
     @Test
-    public void testIfCreatesComponentWithExternalConfiguration() throws Exception {
+    void testIfCreatesComponentWithExternalConfiguration() throws Exception {
         final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
@@ -72,52 +73,54 @@ public class DebeziumMongodbComponentTest {
         configuration.setMongodbName("test");
 
         final String uri = "debezium:dummy";
-        final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
-        debeziumComponent.start();
+        try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
 
-        // set configurations
-        debeziumComponent.setConfiguration(configuration);
+            // set configurations
+            debeziumComponent.setConfiguration(configuration);
 
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null,
-                Collections.emptyMap());
+            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
 
-        assertNotNull(debeziumEndpoint);
+            assertNotNull(debeziumEndpoint);
 
-        // assert configurations
-        final MongoDbConnectorEmbeddedDebeziumConfiguration actualConfigurations = (MongoDbConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint
-                .getConfiguration();
-        assertNotNull(actualConfigurations);
-        assertEquals(configuration.getName(), actualConfigurations.getName());
-        assertEquals(configuration.getMongodbUser(),
-                actualConfigurations.getMongodbUser());
-        assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
+            // assert configurations
+            final MongoDbConnectorEmbeddedDebeziumConfiguration actualConfigurations = (MongoDbConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            assertNotNull(actualConfigurations);
+            assertEquals(configuration.getName(), actualConfigurations.getName());
+            assertEquals(configuration.getMongodbUser(), actualConfigurations.getMongodbUser());
+            assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIfItHandlesNullExternalConfigurations() throws Exception {
+    @Test
+    void testIfItHandlesNullExternalConfigurations() throws Exception {
         final String remaining = "";
         final String uri = "debezium:";
-        final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
-        debeziumComponent.start();
+        try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
 
-        // set configurations
-        debeziumComponent.setConfiguration(null);
+            // set configurations
+            debeziumComponent.setConfiguration(null);
 
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                Collections.emptyMap());
+            assertThrows(IllegalArgumentException.class, () -> {
+                debeziumComponent.createEndpoint(uri, remaining, Collections.emptyMap());
+            });
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIfItHandlesNullExternalConfigurationsWithValidUri() throws Exception {
+    @Test
+    void testIfItHandlesNullExternalConfigurationsWithValidUri() throws Exception {
         final String remaining = "dummy";
         final String uri = "debezium:dummy";
-        final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
-        debeziumComponent.start();
+        try (final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
 
-        // set configurations
-        debeziumComponent.setConfiguration(null);
+            // set configurations
+            debeziumComponent.setConfiguration(null);
 
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                Collections.emptyMap());
+            assertThrows(IllegalArgumentException.class, () -> {
+                debeziumComponent.createEndpoint(uri, remaining, Collections.emptyMap());
+            });
+        }
     }
 }

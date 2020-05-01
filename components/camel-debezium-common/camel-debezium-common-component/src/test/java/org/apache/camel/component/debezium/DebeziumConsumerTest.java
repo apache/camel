@@ -32,11 +32,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
 import org.apache.camel.component.debezium.configuration.FileConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DebeziumConsumerTest extends CamelTestSupport {
 
@@ -54,23 +54,21 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-
-
-    @Before
+    @BeforeEach
     public void beforeEach() {
         linesAdded = 0;
         inputFile = createTestingFile(TEST_FILE_PATH);
         offsetStore = createTestingFile(TEST_OFFSET_STORE_PATH);
     }
 
-    @After
+    @AfterEach
     public void afterEach() {
         // clean all data files
         deletePath(TEST_FILE_PATH);
         deletePath(TEST_OFFSET_STORE_PATH);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         // make sure to clean all data files
         deletePath(TEST_FILE_PATH);
@@ -78,7 +76,7 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void camelShouldConsumeDebeziumMessages() throws Exception {
+    void camelShouldConsumeDebeziumMessages() throws Exception {
         // add initial lines to the file
         appendLinesToSource(NUMBER_OF_LINES);
 
@@ -101,7 +99,7 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void camelShouldContinueConsumeDebeziumMessagesWhenRouteIsOffline() throws Exception {
+    void camelShouldContinueConsumeDebeziumMessagesWhenRouteIsOffline() throws Exception {
         // add initial lines to the file
         appendLinesToSource(NUMBER_OF_LINES);
 
@@ -147,10 +145,10 @@ public class DebeziumConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("debezium:dummy")
                         .to(to);
             }

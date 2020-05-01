@@ -22,16 +22,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.kafka.common.config.ConfigDef;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectorConfigFieldsFactoryTest {
 
     @Test
-    public void testIfCreatesFieldsMapWithDeprecatedFields() {
+    void testIfCreatesFieldsMapWithDeprecatedFields() {
         final ConfigDef configDef = new ConfigDef()
                 .define("test.field.1", ConfigDef.Type.STRING, ConfigDef.Importance.MEDIUM, "docs1")
                 .define("test.field.2", ConfigDef.Type.CLASS, ConfigDef.Importance.MEDIUM, "docs2")
