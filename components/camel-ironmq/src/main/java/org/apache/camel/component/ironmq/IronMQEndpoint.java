@@ -62,9 +62,12 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         configureConsumer(ironMQConsumer);
         ironMQConsumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler();
+        scheduler.setDelay(ironMQConsumer.getDelay());
+        scheduler.setUseFixedDelay(ironMQConsumer.isUseFixedDelay());
+        scheduler.setInitialDelay(ironMQConsumer.getInitialDelay());
+        scheduler.setTimeUnit(ironMQConsumer.getTimeUnit());
         scheduler.setConcurrentTasks(configuration.getConcurrentConsumers());
         ironMQConsumer.setScheduler(scheduler);
-
         return ironMQConsumer;
     }
 
