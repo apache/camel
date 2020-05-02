@@ -4,7 +4,7 @@
 :artifactId: camel-undertow-spring-security
 :description: Spring Security Provider for camel-undertow
 :since: 3.3
-:supportLevel: Stable
+:supportLevel: Preview
 
 *Since Camel {since}*
 

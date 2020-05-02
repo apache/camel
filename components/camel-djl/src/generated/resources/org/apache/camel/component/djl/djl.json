@@ -8,7 +8,7 @@
     "firstVersion": "3.3.0",
     "label": "ai,deeplearning",
     "javaType": "org.apache.camel.component.djl.DJLComponent",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-djl",
     "version": "3.3.0-SNAPSHOT",

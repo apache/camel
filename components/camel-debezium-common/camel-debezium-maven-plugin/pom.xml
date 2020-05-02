@@ -33,6 +33,10 @@
     <name>Camel :: Debezium :: Maven plugin</name>
     <description>Camel Debezium Maven plugin</description>
 
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

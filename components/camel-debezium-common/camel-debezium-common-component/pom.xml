@@ -31,6 +31,10 @@
     <name>Camel :: Debezium :: Common</name>
     <description>Camel Debezium Common support</description>
 
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+    </properties>
+
     <dependencies>
         <!-- test -->
         <dependency>

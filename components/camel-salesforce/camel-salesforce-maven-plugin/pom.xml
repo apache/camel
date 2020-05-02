@@ -35,6 +35,7 @@
 
     <properties>
         <salesforce.component.root>..</salesforce.component.root>
+        <firstVersion>2.12.0</firstVersion>
     </properties>
 
     <dependencyManagement>

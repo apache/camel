@@ -32,6 +32,10 @@
     <name>Camel :: HTTP :: Base</name>
     <description>Camel HTTP base</description>
 
+    <properties>
+        <firstVersion>3.1.0</firstVersion>
+    </properties>
+
     <dependencies>
 
         <dependency>
