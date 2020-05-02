@@ -132,6 +132,7 @@ public class LogEndpoint extends ProcessorEndpoint {
             def.setShowBody(showBody);
             def.setShowBodyType(showBodyType);
             def.setShowException(showException);
+            def.setShowCaughtException(showCaughtException);
             def.setShowStackTrace(showStackTrace);
             def.setShowAll(showAll);
             def.setMultiline(multiline);

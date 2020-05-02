@@ -19,10 +19,15 @@ package org.apache.camel.component.log;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.support.processor.CamelLogProcessor;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LogEndpointTest extends ContextTestSupport {
 
@@ -39,6 +44,21 @@ public class LogEndpointTest extends ContextTestSupport {
         @Override
         public String toString() {
             return "myLogger";
+        }
+    }
+
+    private static class TestLogListener implements LogListener {
+
+        private final AtomicReference<String> logged;
+
+        public TestLogListener(AtomicReference<String> logged) {
+            this.logged = logged;
+        }
+
+        @Override
+        public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
+            logged.set(message);
+            return message;
         }
     }
 
@@ -63,6 +83,32 @@ public class LogEndpointTest extends ContextTestSupport {
             template.sendBody("direct:start2", "blub");
         }
         out.assertIsSatisfied();
+    }
+
+    @Test
+    public void testShowCaughtException() {
+        final AtomicReference<String> logged = new AtomicReference<>();
+        context.adapt(ExtendedCamelContext.class).addLogListener(new TestLogListener(logged));
+        Exchange ex = createExchangeWithBody(null);
+        ex.setProperty(Exchange.EXCEPTION_CAUGHT, new RuntimeException("test"));
+        template.send("log:testShowCaughtException?showCaughtException=true", ex);
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], CaughtExceptionType: java.lang.RuntimeException, CaughtExceptionMessage: test]",
+                logged.get()
+        );
+    }
+
+    @Test
+    public void testShowException() {
+        final AtomicReference<String> logged = new AtomicReference<>();
+        context.adapt(ExtendedCamelContext.class).addLogListener(new TestLogListener(logged));
+        Exchange ex = createExchangeWithBody(null);
+        ex.setException(new RuntimeException("test"));
+        template.send("log:testShowException?showException=true", ex);
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], ExceptionType: java.lang.RuntimeException, ExceptionMessage: test]",
+                logged.get()
+        );
     }
 
     @Override
