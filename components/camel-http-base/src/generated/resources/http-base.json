@@ -5,6 +5,7 @@
     "title": "Http Base",
     "description": "Camel HTTP base",
     "deprecated": false,
+    "firstVersion": "3.2.0",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http-base",

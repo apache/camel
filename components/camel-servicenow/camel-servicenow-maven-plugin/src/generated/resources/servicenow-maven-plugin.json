@@ -5,6 +5,7 @@
     "title": "Servicenow Maven Plugin",
     "description": "Camel ServiceNow Maven plugin",
     "deprecated": false,
+    "firstVersion": "2.18.0",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel.maven",
     "artifactId": "camel-servicenow-maven-plugin",

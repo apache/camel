@@ -8,7 +8,7 @@
     "firstVersion": "3.3.0",
     "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.azure.storage.queue.QueueComponent",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-storage-queue",
     "version": "3.3.0-SNAPSHOT",

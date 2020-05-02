@@ -35,6 +35,7 @@
 
     <properties>
         <servicenow.component.root>..</servicenow.component.root>
+        <firstVersion>2.18.0</firstVersion>
     </properties>
 
     <dependencyManagement>

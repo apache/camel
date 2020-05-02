@@ -37,6 +37,7 @@
             javax.activation.*;version="${javax-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
+        <firstVersion>2.16.0</firstVersion>
     </properties>
 
     <dependencies>
