@@ -461,6 +461,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             model.setFirstVersion(firstVersion);
         }
 
+        model.setDescription(project.getDescription());
+        model.setGroupId(project.getGroupId());
+        model.setArtifactId(project.getArtifactId());
+        model.setVersion(project.getVersion());
+
         // grab level from annotation, pom.xml or default to stable
         String level = project.getProperties().getProperty("supportLevel");
         boolean experimental = ClassUtil.hasAnnotation("org.apache.camel.Experimental", endpointClassElement);
@@ -498,10 +503,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (model.getJavaType() == null) {
             throw new IllegalStateException("Could not find component java type");
         }
-        model.setDescription(project.getDescription());
-        model.setGroupId(project.getGroupId());
-        model.setArtifactId(project.getArtifactId());
-        model.setVersion(project.getVersion());
 
         // favor to use endpoint class javadoc as description
         String doc = getDocComment(endpointClassElement);
