@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.log;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,8 +28,6 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.support.processor.CamelLogProcessor;
 import org.junit.Test;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LogEndpointTest extends ContextTestSupport {
 
