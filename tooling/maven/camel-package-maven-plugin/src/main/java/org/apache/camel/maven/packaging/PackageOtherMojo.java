@@ -109,34 +109,34 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
 
         try {
             // create json model
-            OtherModel otherModel = new OtherModel();
-            otherModel.setName(name);
-            otherModel.setGroupId(project.getGroupId());
-            otherModel.setArtifactId(project.getArtifactId());
-            otherModel.setVersion(project.getVersion());
-            otherModel.setDescription(project.getDescription());
-            otherModel.setDeprecated(project.getName() != null && project.getName().contains("(deprecated)"));
-            otherModel.setFirstVersion(project.getProperties().getProperty("firstVersion"));
-            otherModel.setLabel(project.getProperties().getProperty("label"));
+            OtherModel model = new OtherModel();
+            model.setName(name);
+            model.setGroupId(project.getGroupId());
+            model.setArtifactId(project.getArtifactId());
+            model.setVersion(project.getVersion());
+            model.setDescription(project.getDescription());
+            model.setDeprecated(project.getName() != null && project.getName().contains("(deprecated)"));
+            model.setFirstVersion(project.getProperties().getProperty("firstVersion"));
+            model.setLabel(project.getProperties().getProperty("label"));
             String title = project.getProperties().getProperty("title");
             if (title == null) {
                 title = Strings.camelDashToTitle(name);
             }
-            otherModel.setTitle(title);
+            model.setTitle(title);
 
             // grab level from pom.xml or default to stable
             String level = project.getProperties().getProperty("supportLevel");
             if (level != null) {
-                otherModel.setSupportLevel(SupportLevel.safeValueOf(level));
+                model.setSupportLevel(SupportLevel.safeValueOf(level));
             } else {
-                otherModel.setSupportLevel(SupportLevel.Stable);
+                model.setSupportLevel(SupportLevelHelper.defaultSupportLevel(model.getFirstVersion(), model.getVersion()));
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Model: " + otherModel);
+                log.debug("Model: " + model);
             }
 
-            String schema = JsonMapper.createJsonSchema(otherModel);
+            String schema = JsonMapper.createJsonSchema(model);
 
             // write this to the directory
             String fileName = name + PackageHelper.JSON_SUFIX;

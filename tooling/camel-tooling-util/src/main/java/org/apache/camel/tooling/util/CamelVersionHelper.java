@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.tooling.util;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -42,6 +42,13 @@ public final class CamelVersionHelper {
      * @return <tt>true</tt> if GE, <tt>false</tt> otherwise
      */
     public static boolean isGE(String base, String other) {
+        if (base == null || base.isEmpty()) {
+            throw new IllegalArgumentException("Empty base version");
+        }
+        if (other == null || other.isEmpty()) {
+            throw new IllegalArgumentException("Empty other version");
+        }
+
         ComparableVersion v1 = new ComparableVersion(base);
         ComparableVersion v2 = new ComparableVersion(other);
         return v2.compareTo(v1) >= 0;

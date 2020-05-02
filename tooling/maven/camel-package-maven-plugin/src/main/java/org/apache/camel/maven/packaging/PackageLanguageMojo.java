@@ -219,7 +219,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         } else if (level != null) {
             model.setSupportLevel(SupportLevel.safeValueOf(level));
         } else {
-            model.setSupportLevel(SupportLevel.Stable);
+            model.setSupportLevel(SupportLevelHelper.defaultSupportLevel(model.getFirstVersion(), model.getVersion()));
         }
 
         for (EipOptionModel opt : def.getOptions()) {

@@ -14,27 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.maven.packaging;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.tooling.model.SupportLevel;
+import org.apache.camel.tooling.util.CamelVersionHelper;
 
-import static org.apache.camel.util.CamelVersionHelper.isGE;
+public final class SupportLevelHelper {
 
-public class CamelVersionHelperTest extends Assert {
+    private SupportLevelHelper() {
+    }
 
-    @Test
-    public void testGE() throws Exception {
-        assertTrue(isGE("2.15.0", "2.15.0"));
-        assertTrue(isGE("2.15.0", "2.15.1"));
-        assertTrue(isGE("2.15.0", "2.16.0"));
-        assertTrue(isGE("2.15.0", "2.16-SNAPSHOT"));
-        assertTrue(isGE("2.15.0", "2.16-foo"));
-
-        assertFalse(isGE("2.15.0", "2.14.3"));
-        assertFalse(isGE("2.15.0", "2.13.0"));
-        assertFalse(isGE("2.15.0", "2.13.1"));
-        assertFalse(isGE("2.15.0", "2.14-SNAPSHOT"));
-        assertFalse(isGE("2.15.0", "2.14-foo"));
+    public static SupportLevel defaultSupportLevel(String firstVersion, String currentVersion) {
+        boolean older = CamelVersionHelper.isGE(currentVersion, firstVersion);
+        if (older) {
+            return SupportLevel.Stable;
+        } else {
+            // its a new component that is added to this version so lets mark it as preview by default
+            return SupportLevel.Preview;
+        }
     }
 }
