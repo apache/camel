@@ -25,12 +25,12 @@ public final class SupportLevelHelper {
     }
 
     public static SupportLevel defaultSupportLevel(String firstVersion, String currentVersion) {
-        boolean older = CamelVersionHelper.isGE(currentVersion, firstVersion);
-        if (older) {
-            return SupportLevel.Stable;
-        } else {
+        boolean justNew = CamelVersionHelper.isGE(currentVersion, firstVersion);
+        if (justNew) {
             // its a new component that is added to this version so lets mark it as preview by default
             return SupportLevel.Preview;
+        } else {
+            return SupportLevel.Stable;
         }
     }
 }
