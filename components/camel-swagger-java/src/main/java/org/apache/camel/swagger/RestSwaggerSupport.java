@@ -55,7 +55,6 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.xml.XmlLineNumberParser;
@@ -191,7 +190,6 @@ public class RestSwaggerSupport {
 
     public List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception {
         ObjectName found = null;
-        boolean supportResolvePlaceholder = false;
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> names = server.queryNames(new ObjectName("org.apache.camel:type=context,*"), null);
@@ -201,24 +199,12 @@ public class RestSwaggerSupport {
                 id = id.substring(1, id.length() - 1);
             }
             if (camelId == null || camelId.equals(id)) {
-                // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
-                String version = (String) server.getAttribute(on, "CamelVersion");
-                if (CamelVersionHelper.isGE("2.15.0", version)) {
-                    found = on;
-                }
-                if (CamelVersionHelper.isGE("2.15.3", version)) {
-                    supportResolvePlaceholder = true;
-                }
+                found = on;
             }
         }
 
         if (found != null) {
-            String xml;
-            if (supportResolvePlaceholder) {
-                xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[]{true}, new String[]{"boolean"});
-            } else {
-                xml = (String) server.invoke(found, "dumpRestsAsXml", null, null);
-            }
+            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[]{true}, new String[]{"boolean"});
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
                 InputStream isxml = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
@@ -244,16 +230,7 @@ public class RestSwaggerSupport {
             if (id.startsWith("\"") && id.endsWith("\"")) {
                 id = id.substring(1, id.length() - 1);
             }
-
-            // filter out older Camel versions as this requires Camel 2.15 or better (rest-dsl)
-            try {
-                String version = (String) server.getAttribute(on, "CamelVersion");
-                if (CamelVersionHelper.isGE("2.15.0", version)) {
-                    answer.add(id);
-                }
-            } catch (AttributeNotFoundException ex) {
-                // ignore
-            }
+            answer.add(id);
         }
         return answer;
     }

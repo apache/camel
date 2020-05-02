@@ -469,7 +469,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         } else if (level != null) {
             model.setSupportLevel(SupportLevel.safeValueOf(level));
         } else {
-            model.setSupportLevel(SupportLevel.Stable);
+            model.setSupportLevel(SupportLevelHelper.defaultSupportLevel(model.getFirstVersion(), model.getVersion()));
         }
 
         // get the java type class name via the @Component annotation from its
