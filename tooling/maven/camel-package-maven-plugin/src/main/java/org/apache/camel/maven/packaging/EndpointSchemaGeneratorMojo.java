@@ -213,20 +213,26 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // component options
         Class<?> componentClassElement = loadClass(componentModel.getJavaType());
+        String excludedComponentProperties = "";
         if (componentClassElement != null) {
             findComponentClassProperties(componentModel, componentClassElement, "", null, null);
+            Metadata componentMetadata = componentClassElement.getAnnotation(Metadata.class);
+            if (componentMetadata != null) {
+                excludedComponentProperties = componentMetadata.excludeProperties();
+            }
         }
 
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
 
-        String excludedProperties = "";
-        Metadata metadata = classElement.getAnnotation(Metadata.class);
-        if (metadata != null) {
-            excludedProperties = metadata.excludeProperties();
+        String excludedEndpointProperties = "";
+        Metadata endpointMetadata = classElement.getAnnotation(Metadata.class);
+        if (endpointMetadata != null) {
+            excludedEndpointProperties = endpointMetadata.excludeProperties();
         }
+
         // enhance and generate
-        enhanceComponentModel(componentModel, parentData, excludedProperties);
+        enhanceComponentModel(componentModel, parentData, excludedEndpointProperties, excludedComponentProperties);
 
         // if the component has known class name
         if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
@@ -270,7 +276,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return data;
     }
 
-    private void enhanceComponentModel(ComponentModel componentModel, ComponentModel parentData, String excludeProperties) {
+    private void enhanceComponentModel(ComponentModel componentModel, ComponentModel parentData, String excludedEndpointProperties, String excludedComponentProperties) {
         componentModel.getComponentOptions().removeIf(option -> filterOutOption(componentModel, option));
         componentModel.getComponentOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getComponentOptions() : null));
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
@@ -281,7 +287,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (parentData != null) {
             Set<String> componentOptionNames = componentModel.getComponentOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
             Set<String> endpointOptionNames = componentModel.getEndpointOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
-            Collections.addAll(endpointOptionNames, excludeProperties.split(","));
+            Collections.addAll(componentOptionNames, excludedComponentProperties.split(","));
+            Collections.addAll(endpointOptionNames, excludedEndpointProperties.split(","));
             parentData.getComponentOptions().stream()
                     .filter(option -> !componentOptionNames.contains(option.getName()))
                     .forEach(option -> componentModel.getComponentOptions().add(option));
@@ -528,10 +535,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected void findComponentClassProperties(ComponentModel componentModel, Class<?> classElement,
                                                 String prefix, String nestedTypeName, String nestedFieldName) {
         final Class<?> orgClassElement = classElement;
+        Set<String> excludes = new HashSet<>();
         while (true) {
             Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
-            if (componentAnnotation != null && Objects.equals("verifiers", componentAnnotation.label())) {
-                componentModel.setVerifiers(componentAnnotation.enums());
+            if (componentAnnotation != null) {
+                if(Objects.equals("verifiers", componentAnnotation.label())) {
+                    componentModel.setVerifiers(componentAnnotation.enums());
+                }
+                Collections.addAll(excludes, componentAnnotation.excludeProperties().split(","));
             }
 
             List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
@@ -682,7 +693,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 // filter out consumer/producer only
-                boolean accept = true;
+                boolean accept = !excludes.contains(name);
                 if (componentModel.isConsumerOnly() && "producer".equals(group)) {
                     accept = false;
                 } else if (componentModel.isProducerOnly() && "consumer".equals(group)) {
