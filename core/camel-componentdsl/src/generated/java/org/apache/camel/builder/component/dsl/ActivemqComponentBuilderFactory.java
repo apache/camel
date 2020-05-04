@@ -269,25 +269,6 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
          * Sets the cache level by ID for the underlying JMS resources. See
          * cacheLevelName option for more details.
          * 
@@ -1686,7 +1667,6 @@ public interface ActivemqComponentBuilderFactory {
             case "acknowledgementModeName": getOrCreateConfiguration((ActiveMQComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
             case "asyncConsumer": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncConsumer((boolean) value); return true;
             case "autoStartup": getOrCreateConfiguration((ActiveMQComponent) component).setAutoStartup((boolean) value); return true;
-            case "bridgeErrorHandler": ((ActiveMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "cacheLevel": getOrCreateConfiguration((ActiveMQComponent) component).setCacheLevel((int) value); return true;
             case "cacheLevelName": getOrCreateConfiguration((ActiveMQComponent) component).setCacheLevelName((java.lang.String) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((ActiveMQComponent) component).setConcurrentConsumers((int) value); return true;
