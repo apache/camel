@@ -31,7 +31,7 @@ public class MainWithRestConfigTest extends Assert {
 
         Main main = new Main();
         try {
-            main.addRoutesBuilder(new RouteBuilder() {
+            main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     restConfiguration();
@@ -56,7 +56,7 @@ public class MainWithRestConfigTest extends Assert {
 
         Main main = new Main();
         try {
-            main.addRoutesBuilder(new RouteBuilder() {
+            main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     restConfiguration()

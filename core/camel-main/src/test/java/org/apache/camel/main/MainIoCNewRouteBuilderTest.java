@@ -30,8 +30,8 @@ public class MainIoCNewRouteBuilderTest extends Assert {
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addConfiguration(new MyConfiguration());
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addConfiguration(new MyConfiguration());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

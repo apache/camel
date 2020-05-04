@@ -29,7 +29,7 @@ public class MainLogPlaceholderTest extends Assert {
         main.addInitialProperty("camel.context.name", "test-ctx");
         main.addInitialProperty("message", "test");
         main.addInitialProperty("tap", "mock:tap");
-        main.addRoutesBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("timer:tick?period=10")

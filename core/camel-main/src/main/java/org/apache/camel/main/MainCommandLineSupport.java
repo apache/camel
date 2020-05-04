@@ -44,7 +44,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 "routerBuilderClasses") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setRouteBuilderClasses(parameter);
+                configure().setRoutesBuilderClasses(parameter);
             }
         });
         addOption(new ParameterOption("d", "duration",

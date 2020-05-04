@@ -47,6 +47,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionLoggingLevel": target.setBeanIntrospectionLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
+        case "configurationclasses":
+        case "ConfigurationClasses": target.setConfigurationClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "configurations":
+        case "Configurations": target.setConfigurations(property(camelContext, java.util.List.class, value)); return true;
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
         case "durationhitexitcode":
@@ -105,6 +109,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteFilterExcludePattern": target.setRouteFilterExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterincludepattern":
         case "RouteFilterIncludePattern": target.setRouteFilterIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesbuilderclasses":
+        case "RoutesBuilderClasses": target.setRoutesBuilderClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "routesbuilders":
+        case "RoutesBuilders": target.setRoutesBuilders(property(camelContext, java.util.List.class, value)); return true;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": target.setRoutesCollectorEnabled(property(camelContext, boolean.class, value)); return true;
         case "shutdownloginflightexchangesontimeout":
@@ -174,6 +182,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("BeanIntrospectionExtendedStatistics", boolean.class);
         answer.put("BeanIntrospectionLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("CaseInsensitiveHeaders", boolean.class);
+        answer.put("ConfigurationClasses", java.lang.String.class);
+        answer.put("Configurations", java.util.List.class);
         answer.put("ConsumerTemplateCacheSize", int.class);
         answer.put("DurationHitExitCode", int.class);
         answer.put("DurationMaxIdleSeconds", int.class);
@@ -203,6 +213,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("ProducerTemplateCacheSize", int.class);
         answer.put("RouteFilterExcludePattern", java.lang.String.class);
         answer.put("RouteFilterIncludePattern", java.lang.String.class);
+        answer.put("RoutesBuilderClasses", java.lang.String.class);
+        answer.put("RoutesBuilders", java.util.List.class);
         answer.put("RoutesCollectorEnabled", boolean.class);
         answer.put("ShutdownLogInflightExchangesOnTimeout", boolean.class);
         answer.put("ShutdownNowOnTimeout", boolean.class);
@@ -262,6 +274,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionLoggingLevel": return target.getBeanIntrospectionLoggingLevel();
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
+        case "configurationclasses":
+        case "ConfigurationClasses": return target.getConfigurationClasses();
+        case "configurations":
+        case "Configurations": return target.getConfigurations();
         case "consumertemplatecachesize":
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
         case "durationhitexitcode":
@@ -320,6 +336,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteFilterExcludePattern": return target.getRouteFilterExcludePattern();
         case "routefilterincludepattern":
         case "RouteFilterIncludePattern": return target.getRouteFilterIncludePattern();
+        case "routesbuilderclasses":
+        case "RoutesBuilderClasses": return target.getRoutesBuilderClasses();
+        case "routesbuilders":
+        case "RoutesBuilders": return target.getRoutesBuilders();
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return target.isRoutesCollectorEnabled();
         case "shutdownloginflightexchangesontimeout":

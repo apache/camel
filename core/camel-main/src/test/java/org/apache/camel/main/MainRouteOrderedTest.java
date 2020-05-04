@@ -26,8 +26,8 @@ public class MainRouteOrderedTest extends Assert {
     @Test
     public void testOrdered() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new BarRouteBuilder());
-        main.addRoutesBuilder(new FooRouteBuilder());
+        main.configure().addRoutesBuilder(new BarRouteBuilder());
+        main.configure().addRoutesBuilder(new FooRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

@@ -28,7 +28,7 @@ public class MainBeansTest extends Assert {
         MyFoo myFoo = new MyFoo();
 
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.bind("myFoolish", myFoo);
 
         // create by class
