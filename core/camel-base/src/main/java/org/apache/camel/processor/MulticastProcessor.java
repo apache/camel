@@ -74,8 +74,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Implements the Multicast pattern to send a message exchange to a number of
  * endpoints, each endpoint receiving a copy of the message exchange.
- *
- * @see Pipeline
  */
 public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
@@ -309,9 +307,6 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             this.lock = new ReentrantLock();
             this.completion = new AsyncCompletionService<>(MulticastProcessor.this::schedule, !isStreaming(), lock);
             this.result = new AtomicReference<>();
-            if (timeout > 0) {
-                schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
-            }
         }
 
         @Override
@@ -414,34 +409,6 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
         }
 
-        protected void timeout() {
-            Lock lock = this.lock;
-            if (lock.tryLock()) {
-                try {
-                    while (nbAggregated.get() < nbExchangeSent.get()) {
-                        Exchange exchange = completion.pollUnordered();
-                        int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
-                        while (nbAggregated.get() < index) {
-                            AggregationStrategy strategy = getAggregationStrategy(null);
-                            strategy.timeout(result.get() != null ? result.get() : original,
-                                    nbAggregated.getAndIncrement(), nbExchangeSent.get(), timeout);
-                        }
-                        if (exchange != null) {
-                            doAggregate(result, exchange, original);
-                            nbAggregated.incrementAndGet();
-                        }
-                    }
-                    doDone(result.get(), true);
-                } catch (Throwable e) {
-                    original.setException(e);
-                    // and do the done work
-                    doDone(null, false);
-                } finally {
-                    lock.unlock();
-                }
-            }
-        }
-
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (done.compareAndSet(false, true)) {
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
@@ -453,6 +420,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         MulticastParallelTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             super(original, pairs, callback);
+            if (timeout > 0) {
+                schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
+            }
         }
 
         @Override
@@ -530,6 +500,34 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             } catch (Exception e) {
                 original.setException(e);
                 doDone(null, false);
+            }
+        }
+
+        protected void timeout() {
+            Lock lock = this.lock;
+            if (lock.tryLock()) {
+                try {
+                    while (nbAggregated.get() < nbExchangeSent.get()) {
+                        Exchange exchange = completion.pollUnordered();
+                        int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
+                        while (nbAggregated.get() < index) {
+                            AggregationStrategy strategy = getAggregationStrategy(null);
+                            strategy.timeout(result.get() != null ? result.get() : original,
+                                    nbAggregated.getAndIncrement(), nbExchangeSent.get(), timeout);
+                        }
+                        if (exchange != null) {
+                            doAggregate(result, exchange, original);
+                            nbAggregated.incrementAndGet();
+                        }
+                    }
+                    doDone(result.get(), true);
+                } catch (Throwable e) {
+                    original.setException(e);
+                    // and do the done work
+                    doDone(null, false);
+                } finally {
+                    lock.unlock();
+                }
             }
         }
     }
@@ -894,6 +892,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     protected void doStart() throws Exception {
         if (isParallelProcessing() && executorService == null) {
             throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
+        }
+        if (timeout > 0 && !isParallelProcessing()) {
+            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled");
         }
         if (timeout > 0 && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
