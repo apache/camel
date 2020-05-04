@@ -1124,6 +1124,8 @@ as they were not in use by Camel.
 
 In relation to the dump model classes removal, in camel-karaf the following commands were removed: `context-info`, `route-info`, `route-profile` and `route-step`.
 
+The `configure(CamelContext)` method of the ``org.apache.camel.main.MainListener` has been deprecated and will be removed in a future release.  The `afterConfigure(BaseMainSupport)` method should be used instead.
+
 === camel-jackson
 
 The dependency on `jackson-module-jaxb-annotations` and the option `enableJaxbAnnotationModule` have been removed. To

@@ -77,6 +77,7 @@ public abstract class MainSupport extends BaseMainSupport {
      */
     public void run() throws Exception {
         if (!completed.get()) {
+            init();
             internalBeforeStart();
             // if we have an issue starting then propagate the exception to caller
             beforeStart();

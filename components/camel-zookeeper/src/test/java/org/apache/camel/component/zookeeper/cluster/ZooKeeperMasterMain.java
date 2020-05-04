@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
+import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
@@ -36,13 +37,13 @@ public final class ZooKeeperMasterMain {
         Main main = new Main();
         main.addMainListener(new MainListenerSupport() {
             @Override
-            public void configure(CamelContext context) {
+            public void afterConfigure(BaseMainSupport main) {
                 try {
                     ZooKeeperClusterService service = new ZooKeeperClusterService();
                     service.setId("node-" + nodeId);
                     service.setNodes(address);
                     service.setBasePath("/camel/master");
-
+                    CamelContext context = main.getCamelContext();
                     context.setNameStrategy(new ExplicitCamelContextNameStrategy("camel-" + nodeId));
                     context.addService(service);
                 } catch (Exception e) {

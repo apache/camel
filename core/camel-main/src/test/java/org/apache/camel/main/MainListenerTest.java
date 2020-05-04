@@ -19,9 +19,41 @@ package org.apache.camel.main;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
 
 public class MainListenerTest extends Assert {
+
+    @Test
+    public void testEventOrder() throws Exception {
+        List<String> events = new ArrayList<>();
+        Main main = new Main();
+        main.addMainListener((MainListener) Proxy.newProxyInstance(
+                MainListener.class.getClassLoader(),
+                new Class[]{MainListener.class},
+                (proxy, method, args) -> {
+                    events.add(method.getName());
+                    return null;
+                }));
+        Thread thread = new Thread(() -> {
+            try {
+                main.run();
+            } catch (Exception e) {
+                fail("Unexpected exception: " + e);
+            }
+        });
+        thread.start();
+        Thread.sleep(100);
+        main.completed();
+        thread.join();
+        assertEquals(Arrays.asList("beforeConfigure", "configure", "beforeStart",
+                "afterStart", "beforeStop", "afterStop"), events);
+    }
+
     @Test
     public void testBeforeConfigure() {
         Main main = new Main();

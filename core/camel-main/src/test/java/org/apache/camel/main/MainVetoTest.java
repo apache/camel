@@ -34,8 +34,8 @@ public class MainVetoTest extends Assert {
         main.addRoutesBuilder(new MyRoute());
         main.addMainListener(new MainListenerSupport() {
             @Override
-            public void configure(CamelContext context) {
-                context.addLifecycleStrategy(new MyVetoLifecycle());
+            public void afterConfigure(BaseMainSupport main) {
+                main.getCamelContext().addLifecycleStrategy(new MyVetoLifecycle());
             }
         });
 
