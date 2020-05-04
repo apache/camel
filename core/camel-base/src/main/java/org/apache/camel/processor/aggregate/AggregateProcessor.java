@@ -861,15 +861,17 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         // send this exchange
         // the call to schedule last if needed to ensure in-order processing of the aggregates
-        executorService.submit(() -> reactiveExecutor.scheduleSync(() -> processor.process(exchange, done -> {
-            // log exception if there was a problem
-            if (exchange.getException() != null) {
-                // if there was an exception then let the exception handler handle it
-                getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
-            } else {
-                LOG.trace("Processing aggregated exchange: {} complete.", exchange);
-            }
-        })));
+        executorService.execute(() -> {
+            processor.process(exchange, done -> {
+                // log exception if there was a problem
+                if (exchange.getException() != null) {
+                    // if there was an exception then let the exception handler handle it
+                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
+                } else {
+                    LOG.trace("Processing aggregated exchange: {} complete.", exchange);
+                }
+            });
+        });
     }
 
     /**

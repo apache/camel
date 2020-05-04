@@ -34,6 +34,13 @@ public interface ReactiveExecutor {
     void schedule(Runnable runnable);
 
     /**
+     * Schedules the task to be run first
+     *
+     * @param runnable    the task
+     */
+    void scheduleFirst(Runnable runnable);
+
+    /**
      * Schedules the task to be prioritized and run asap
      *
      * @param runnable    the task
