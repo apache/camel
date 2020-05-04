@@ -49,6 +49,7 @@ import static org.apache.camel.util.StringHelper.removeStartingCharacters;
  * JMS component which uses Spring JMS.
  */
 @Component("jms")
+@Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsComponent extends HeaderFilterStrategyComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);

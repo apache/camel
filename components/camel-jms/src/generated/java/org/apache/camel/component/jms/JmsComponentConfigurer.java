@@ -56,8 +56,6 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": getOrCreateConfiguration(target).setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachelevel":
         case "cacheLevel": getOrCreateConfiguration(target).setCacheLevel(property(camelContext, int.class, value)); return true;
         case "cachelevelname":
@@ -234,7 +232,6 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         answer.put("asyncStopListener", boolean.class);
         answer.put("autoStartup", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
         answer.put("cacheLevel", int.class);
         answer.put("cacheLevelName", java.lang.String.class);
         answer.put("clientId", java.lang.String.class);
@@ -352,8 +349,6 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return getOrCreateConfiguration(target).isAutoStartup();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachelevel":
         case "cacheLevel": return getOrCreateConfiguration(target).getCacheLevel();
         case "cachelevelname":
