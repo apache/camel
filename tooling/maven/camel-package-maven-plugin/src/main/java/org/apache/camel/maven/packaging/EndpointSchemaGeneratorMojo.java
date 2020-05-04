@@ -539,7 +539,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         while (true) {
             Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
             if (componentAnnotation != null) {
-                if(Objects.equals("verifiers", componentAnnotation.label())) {
+                if (Objects.equals("verifiers", componentAnnotation.label())) {
                     componentModel.setVerifiers(componentAnnotation.enums());
                 }
                 Collections.addAll(excludes, componentAnnotation.excludeProperties().split(","));

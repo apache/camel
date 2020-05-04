@@ -27,7 +27,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
