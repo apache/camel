@@ -40,4 +40,4 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: mvn sourcecheck
-        run: ./mvnw -V --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
+        run: ./mvnw -V --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true -DskipTests checkstyle:checkstyle verify
