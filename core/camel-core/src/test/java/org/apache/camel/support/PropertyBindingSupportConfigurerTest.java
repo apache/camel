@@ -151,6 +151,16 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testConfigurerShouldNotFailForAnonymousClasses() throws Exception {
+        PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, new Bar() {
+            @Override
+            public int getAge() {
+                return super.getAge();
+            }
+        });
+    }
+
     public static class Bar {
         private int age;
         private boolean rider;
@@ -199,7 +209,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         }
     }
 
-    private class MyConfigurer implements GeneratedPropertyConfigurer {
+    private static class MyConfigurer implements GeneratedPropertyConfigurer {
 
         private int counter;
 

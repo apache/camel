@@ -364,8 +364,11 @@ public final class PropertyBindingSupport {
                 // special for camel context itself as we have an extended configurer
                 name = "ExtendedCamelContext";
             }
-            // see if there is a configurer for it
-            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(name, camelContext);
+
+            if (isNotEmpty(name)) {
+                // see if there is a configurer for it
+                configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(name, camelContext);
+            }
         }
 
         // use configurer to get all the current options and its values
