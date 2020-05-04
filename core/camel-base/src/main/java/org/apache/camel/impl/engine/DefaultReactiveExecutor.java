@@ -56,11 +56,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     }
 
     @Override
-    public void scheduleFirst(Runnable runnable) {
-        workers.get().schedule(runnable, true, false, false);
-    }
-
-    @Override
     public void scheduleMain(Runnable runnable) {
         workers.get().schedule(runnable, true, true, false);
     }
