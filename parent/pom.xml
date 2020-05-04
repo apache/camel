@@ -4171,7 +4171,6 @@
             </plugins>
         </pluginManagement>
         <plugins>
-
             <!-- skip site-plugin as we dont use Maven site (inherited from Apache BOM) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
