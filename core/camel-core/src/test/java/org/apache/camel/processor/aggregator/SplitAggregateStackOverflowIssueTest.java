@@ -14,7 +14,6 @@ import org.junit.Test;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.Exchange.SPLIT_COMPLETE;
 
-@Ignore("TODO: Fix this bug")
 public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
     private final AtomicInteger count = new AtomicInteger();
@@ -36,7 +35,7 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(60, SECONDS, result);
 
-        assertTrue("Stackframe must not be too high, was " + count.get(), count.get() < 50);
+        assertTrue("Stackframe must not be too high, was " + count.get(), count.get() < 100);
     }
 
     @Override
@@ -47,8 +46,9 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
                 from("direct:start")
                     .split().tokenize("\n").streaming()
+                        .to("log:input?groupSize=100")
                         .process(e -> {
-                            if (e.getProperty(Exchange.SPLIT_INDEX, 0, int.class) % 100 == 0) {
+                            if (e.getProperty(Exchange.SPLIT_INDEX, 0, int.class) % 1000 == 0) {
                                 int frames = Thread.currentThread().getStackTrace().length;
                                 count.set(frames);
                                 log.info("Stackframe: {}", frames);
