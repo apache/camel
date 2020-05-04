@@ -27,7 +27,7 @@ public final class EtcdRoutePolicyMain {
 
     public static void main(final String[] args) throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
                 EtcdRoutePolicy policy = new EtcdRoutePolicy();
                 policy.setClientUris(EtcdConstants.ETCD_DEFAULT_URIS);

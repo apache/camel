@@ -55,7 +55,7 @@ public final class AtomixClientClusteredRoutePolicyFactoryMain {
             }
         });
 
-        main.addRoutesBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() {
                 from("timer:clustered?delay=1000&period=1000")

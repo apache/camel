@@ -25,8 +25,8 @@ public class MainVetoTest extends Assert {
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.setDuration(30);
-        main.setDurationHitExitCode(99);
+        main.configure().setDurationMaxSeconds(1);
+        main.configure().setDurationHitExitCode(99);
         main.setApplicationContextUri("org/apache/camel/spring/MainVetoTest.xml");
 
         // should not hang as we veto fail

@@ -28,7 +28,7 @@ public class MainIoCTest extends Assert {
         // lets make a simple route
         Main main = new Main();
         // add as class so we get IoC from its packages
-        main.addRouteBuilder(MyMainIoCRouteBuilder.class);
+        main.configure().addRoutesBuilder(MyMainIoCRouteBuilder.class);
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

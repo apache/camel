@@ -33,7 +33,7 @@ public final class PubNubGeoLocationExample {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new GeoLocationRoute());
+        main.configure().addRoutesBuilder(new GeoLocationRoute());
         main.run();
     }
 
