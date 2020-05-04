@@ -31,7 +31,7 @@ public class MainIoCBeanConfigInjectPropertiesTest extends Assert {
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addInitialProperty("bar.Name", "Thirsty Bear");
         main.addInitialProperty("Bar.AGE", "23");
         main.addInitialProperty("foo", "blah");

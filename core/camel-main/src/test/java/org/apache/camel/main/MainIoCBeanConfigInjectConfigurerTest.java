@@ -30,7 +30,7 @@ public class MainIoCBeanConfigInjectConfigurerTest extends Assert {
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addInitialProperty("bar.name", "Thirsty Bear");
         main.addInitialProperty("bar.age", "23");
         main.bind(MyBarConfig.class.getName() + "-configurer", new MyBarConfigConfigurer());

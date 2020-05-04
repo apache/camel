@@ -37,9 +37,9 @@ public class MainIoCTest extends Assert {
         // use configuration class
         Main main = new Main();
         // add the configuration
-        main.addConfigurationClass(MyConfiguration.class);
+        main.configure().addConfigurationClass(MyConfiguration.class);
         // add as class so we get IoC
-        main.addRouteBuilder(MyRouteBuilder.class);
+        main.configure().addRoutesBuilder(MyRouteBuilder.class);
         // manually bind
         main.bind("myBar", new MyBar());
 

@@ -27,7 +27,7 @@ public class MainSedaTest extends Assert {
     @Test
     public void testSedaMain() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.addProperty("camel.component.seda.defaultQueueFactory.counter", "123");
         main.start();
@@ -47,7 +47,7 @@ public class MainSedaTest extends Assert {
     @Test
     public void testSedaAutowireFromRegistryMain() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.beans.myqf", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.addProperty("camel.beans.myqf.counter", "123");
         main.start();

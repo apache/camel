@@ -31,7 +31,7 @@ public class MainVetoTest extends Assert {
         Main main = new Main();
         main.configure().setDurationMaxSeconds(30);
         main.configure().setDurationHitExitCode(99);
-        main.addRoutesBuilder(new MyRoute());
+        main.configure().addRoutesBuilder(new MyRoute());
         main.addMainListener(new MainListenerSupport() {
             @Override
             public void afterConfigure(BaseMainSupport main) {

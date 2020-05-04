@@ -27,7 +27,7 @@ public class MainThreadPoolTest extends Assert {
     @Test
     public void testDefaultThreadPool() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.threadpool[default].pool-size", "5");
         main.addProperty("camel.threadpool[default].max-pool-size", "10");
         main.addProperty("camel.threadpool[default].max-queue-size", "20");
@@ -50,7 +50,7 @@ public class MainThreadPoolTest extends Assert {
     @Test
     public void testCustomThreadPool() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.threadpool[myPool].id", "myPool");
         main.addProperty("camel.threadpool[myPool].pool-size", "1");
         main.addProperty("camel.threadpool[myPool].max-pool-size", "2");

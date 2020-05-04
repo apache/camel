@@ -44,7 +44,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -105,10 +104,6 @@ public abstract class BaseMainSupport extends BaseService {
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected final Properties wildcardProperties = new OrderedProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
-    protected List<RoutesBuilder> routeBuilders = new ArrayList<>();
-    protected String routeBuilderClasses;
-    protected List<Object> configurations = new ArrayList<>();
-    protected String configurationClasses;
     protected String propertyPlaceholderLocations;
     protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
@@ -201,34 +196,6 @@ public abstract class BaseMainSupport extends BaseService {
         return mainConfigurationProperties;
     }
 
-    public String getConfigurationClasses() {
-        return configurationClasses;
-    }
-
-    public void setConfigurationClasses(String configurations) {
-        this.configurationClasses = configurations;
-    }
-
-    public void addConfigurationClass(Class... configuration) {
-        String existing = configurationClasses;
-        if (existing == null) {
-            existing = "";
-        }
-        if (configuration != null) {
-            for (Class clazz : configuration) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
-                }
-                existing = existing + clazz.getName();
-            }
-        }
-        setConfigurationClasses(existing);
-    }
-
-    public void addConfiguration(Object configuration) {
-        configurations.add(configuration);
-    }
-
     public RoutesCollector getRoutesCollector() {
         return routesCollector;
     }
@@ -238,14 +205,6 @@ public abstract class BaseMainSupport extends BaseService {
      */
     public void setRoutesCollector(RoutesCollector routesCollector) {
         this.routesCollector = routesCollector;
-    }
-
-    public String getRouteBuilderClasses() {
-        return routeBuilderClasses;
-    }
-
-    public void setRouteBuilderClasses(String builders) {
-        this.routeBuilderClasses = builders;
     }
 
     public String getPropertyPlaceholderLocations() {
@@ -376,35 +335,21 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     /**
-     * @deprecated use {@link #getRoutesBuilders()}
+     * Adds a {@link MainListener} to receive callbacks when the main is started or stopping
+     *
+     * @param listener the listener
      */
-    @Deprecated
-    public List<RoutesBuilder> getRouteBuilders() {
-        return getRoutesBuilders();
+    public void addMainListener(MainListener listener) {
+        listeners.add(listener);
     }
 
     /**
-     * @deprecated use {@link #setRoutesBuilders(List)} ()}
+     * Removes the {@link MainListener}
+     *
+     * @param listener the listener
      */
-    @Deprecated
-    public void setRouteBuilders(List<RoutesBuilder> routeBuilders) {
-        setRoutesBuilders(routeBuilders);
-    }
-
-    public List<RoutesBuilder> getRoutesBuilders() {
-        return routeBuilders;
-    }
-
-    public void setRoutesBuilders(List<RoutesBuilder> routesBuilders) {
-        this.routeBuilders = routesBuilders;
-    }
-
-    public List<Object> getConfigurations() {
-        return configurations;
-    }
-
-    public void setConfigurations(List<Object> configurations) {
-        this.configurations = configurations;
+    public void removeMainListener(MainListener listener) {
+        listeners.remove(listener);
     }
 
     public List<RouteDefinition> getRouteDefinitions() {
@@ -438,22 +383,24 @@ public abstract class BaseMainSupport extends BaseService {
         // lets use Camel's bean post processor on any existing route builder classes
         // so the instance has some support for dependency injection
         CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (RoutesBuilder routeBuilder : getRoutesBuilders()) {
+        for (RoutesBuilder routeBuilder : mainConfigurationProperties.getRoutesBuilders()) {
             postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
             postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
         }
 
-        if (routeBuilderClasses != null) {
-            String[] routeClasses = routeBuilderClasses.split(",");
+        if (mainConfigurationProperties.getRoutesBuilderClasses() != null) {
+            String[] routeClasses = mainConfigurationProperties.getRoutesBuilderClasses().split(",");
             for (String routeClass : routeClasses) {
-                Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
-                // lets use Camel's injector so the class has some support for dependency injection
-                Object builder = camelContext.getInjector().newInstance(routeClazz);
-                if (builder instanceof RouteBuilder) {
-                    getRoutesBuilders().add((RouteBuilder) builder);
-                } else {
-                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                Class<RoutesBuilder> routeClazz = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
+                if (routeClazz == null) {
+                    LOG.warn("Unable to resolve class: {}", routeClass);
+                    continue;
                 }
+
+                // lets use Camel's injector so the class has some support for dependency injection
+                RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
+
+                mainConfigurationProperties.addRoutesBuilder(builder);
             }
         }
 
@@ -462,8 +409,8 @@ public abstract class BaseMainSupport extends BaseService {
             Set<Class<?>> set = camelContext.getExtension(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
-                if (builder instanceof RouteBuilder) {
-                    getRoutesBuilders().add((RouteBuilder) builder);
+                if (builder instanceof RoutesBuilder) {
+                    mainConfigurationProperties.addRoutesBuilder((RoutesBuilder) builder);
                 } else {
                     LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
                 }
@@ -475,22 +422,22 @@ public abstract class BaseMainSupport extends BaseService {
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
         CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (Object configuration : getConfigurations()) {
+        for (Object configuration : mainConfigurationProperties.getConfigurations()) {
             postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
             postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
         }
 
-        if (configurationClasses != null) {
-            String[] configClasses = configurationClasses.split(",");
+        if (mainConfigurationProperties.getConfigurationClasses() != null) {
+            String[] configClasses = mainConfigurationProperties.getConfigurationClasses().split(",");
             for (String configClass : configClasses) {
                 Class<?> configClazz = camelContext.getClassResolver().resolveClass(configClass);
                 // lets use Camel's injector so the class has some support for dependency injection
                 Object config = camelContext.getInjector().newInstance(configClazz);
-                getConfigurations().add(config);
+                mainConfigurationProperties.addConfiguration(config);
             }
         }
 
-        for (Object config : getConfigurations()) {
+        for (Object config : mainConfigurationProperties.getConfigurations()) {
             // invoke configure method if exists
             Method method = findMethod(config.getClass(), "configure");
             if (method != null) {
@@ -601,7 +548,7 @@ public abstract class BaseMainSupport extends BaseService {
         loadRouteBuilders(camelContext);
 
         // then configure and add the routes
-        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, routeBuilders);
+        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, mainConfigurationProperties.getRoutesBuilders());
         configurer.configureRoutes(camelContext, mainConfigurationProperties);
     }
 
@@ -1255,52 +1202,6 @@ public abstract class BaseMainSupport extends BaseService {
         if (ObjectHelper.isEmpty(value)) {
             throw new IllegalArgumentException("Error configuring property: " + key + " because value is empty");
         }
-    }
-
-    /**
-     * @deprecated use {@link #addRoutesBuilder(RoutesBuilder)}
-     */
-    @Deprecated
-    public void addRouteBuilder(RoutesBuilder routeBuilder) {
-        getRoutesBuilders().add(routeBuilder);
-    }
-
-    public void addRoutesBuilder(RoutesBuilder routeBuilder) {
-        getRoutesBuilders().add(routeBuilder);
-    }
-
-    public void addRouteBuilder(Class... routeBuilder) {
-        String existing = routeBuilderClasses;
-        if (existing == null) {
-            existing = "";
-        }
-        if (routeBuilder != null) {
-            for (Class clazz : routeBuilder) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
-                }
-                existing = existing + clazz.getName();
-            }
-        }
-        setRouteBuilderClasses(existing);
-    }
-
-    /**
-     * Adds a {@link MainListener} to receive callbacks when the main is started or stopping
-     *
-     * @param listener the listener
-     */
-    public void addMainListener(MainListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * Removes the {@link MainListener}
-     *
-     * @param listener the listener
-     */
-    public void removeMainListener(MainListener listener) {
-        listeners.remove(listener);
     }
 
     private static final class PropertyOptionKey {
