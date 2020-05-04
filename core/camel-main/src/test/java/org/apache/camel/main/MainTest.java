@@ -33,7 +33,7 @@ public class MainTest extends Assert {
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.enableTrace();
         main.bind("foo", 31);
         main.start();
@@ -57,7 +57,7 @@ public class MainTest extends Assert {
     public void testDisableHangupSupport() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.disableHangupSupport();
         main.enableTrace();
         main.bind("foo", 31);
@@ -99,7 +99,7 @@ public class MainTest extends Assert {
     public void testOptionalProperties() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -112,7 +112,7 @@ public class MainTest extends Assert {
     @Test
     public void testDisableTracing() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

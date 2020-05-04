@@ -17,7 +17,6 @@
 package org.apache.camel.main;
 
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +65,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     protected MainSupport(Class... configurationClasses) {
         this();
-        addConfigurationClass(configurationClasses);
+        configure().addConfigurationClass(configurationClasses);
     }
 
     protected MainSupport() {

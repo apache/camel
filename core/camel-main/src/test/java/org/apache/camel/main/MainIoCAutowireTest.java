@@ -45,7 +45,7 @@ public class MainIoCAutowireTest extends Assert {
 
         try {
             main.bind("seda", createSedaComponent());
-            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfigurationClass(MyConfiguration.class);
             main.configure().setAutowireComponentPropertiesNonNullOnly(false);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
@@ -63,7 +63,7 @@ public class MainIoCAutowireTest extends Assert {
 
         try {
             main.bind("seda", createSedaComponent());
-            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfigurationClass(MyConfiguration.class);
             main.configure().setAutowireComponentPropertiesNonNullOnly(true);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
@@ -85,7 +85,7 @@ public class MainIoCAutowireTest extends Assert {
 
             main.bind("dummy", new MyDummyComponent());
             main.bind("context", otherContext);
-            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().addConfigurationClass(MyConfiguration.class);
             main.configure().setName("main");
             main.configure().setAutowireComponentPropertiesNonNullOnly(true);
             main.setPropertyPlaceholderLocations("empty.properties");
