@@ -34,10 +34,12 @@ public class MainTest extends Assert {
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRouteBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("mock:results");
+                from("file://src/test/data?initialDelay=0&delay=10&noop=true")
+                    .process(new MyProcessor())
+                    .to("mock:results");
             }
         });
         main.start();

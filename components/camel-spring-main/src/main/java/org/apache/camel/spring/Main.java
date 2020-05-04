@@ -236,11 +236,11 @@ public class Main extends MainCommandLineSupport {
         } else {
             // okay no application context specified so lets look for either
             // classpath xml or annotation based
-            if (routeBuilderClasses != null) {
+            if (mainConfigurationProperties.getRoutesBuilderClasses() != null) {
                 AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
                 ac.register(SpringCamelContext.class);
                 Set<String> packages = new LinkedHashSet<>();
-                String[] classes = routeBuilderClasses.split(",");
+                String[] classes = mainConfigurationProperties.getRoutesBuilderClasses().split(",");
                 for (String clazz : classes) {
                     if (clazz.contains(".")) {
                         String packageName = clazz.substring(0, clazz.lastIndexOf('.'));

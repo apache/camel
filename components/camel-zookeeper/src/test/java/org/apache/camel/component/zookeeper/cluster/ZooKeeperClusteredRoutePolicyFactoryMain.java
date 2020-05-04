@@ -52,7 +52,7 @@ public final class ZooKeeperClusteredRoutePolicyFactoryMain {
             }
         });
 
-        main.addRoutesBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("timer:clustered?delay=1000&period=1000")

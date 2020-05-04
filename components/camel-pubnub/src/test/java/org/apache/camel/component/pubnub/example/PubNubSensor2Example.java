@@ -40,8 +40,8 @@ public final class PubNubSensor2Example {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new PubsubRoute());
-        main.addRouteBuilder(new SimulatedDeviceEventGeneratorRoute());
+        main.configure().addRoutesBuilder(new PubsubRoute());
+        main.configure().addRoutesBuilder(new SimulatedDeviceEventGeneratorRoute());
         main.run();
     }
 
@@ -54,7 +54,7 @@ public final class PubNubSensor2Example {
             from("timer:device2").routeId("device-event-route")
                 .bean(PubNubSensor2Example.EventGeneratorBean.class, "getRandomEvent('device2')")
                 .to(deviceEP);
-            
+
             from(devicePrivateEP)
                 .routeId("device-unicast-route")
                 .log("Message from master to device2 : ${body}");
@@ -71,8 +71,8 @@ public final class PubNubSensor2Example {
                 .routeId("master-route")
                 .bean(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "doSomethingInteresting(${body})")
                 .log("${body} headers : ${headers}").to("mock:result");
-            
-            //TODO Could remote control device to turn on/off sensor measurement 
+
+            //TODO Could remote control device to turn on/off sensor measurement
             from("timer:master?delay=15000&period=5000").routeId("unicast2device-route")
                 .setHeader(PubNubConstants.CHANNEL, method(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "getUnicastChannelOfDevice()"))
                 .setBody(constant("Hello device"))
