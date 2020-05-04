@@ -564,9 +564,9 @@ should be rewritten as:
 
 == Upgrading Camel 3.1 to 3.2
 
-```=== JndiRegistry
+=== JndiRegistry
 
-The deprecated class `org.apache.camel.impl.JndiRegistry` was removed. `org.apache.camel.support.jndi.JndiBeanRepository` should be used instead.
+The deprecated class `org.apache.camel.impl.JndiRegistry` has been removed. The class `org.apache.camel.support.jndi.JndiBeanRepository` located in `org.apache.camel:camel-support` should be used instead.
 
 === Rest Configuration
 
