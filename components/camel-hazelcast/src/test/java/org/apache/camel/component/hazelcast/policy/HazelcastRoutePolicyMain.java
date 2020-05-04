@@ -28,7 +28,7 @@ public final class HazelcastRoutePolicyMain {
 
     public static void main(final String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
                 HazelcastRoutePolicy policy = new HazelcastRoutePolicy();
                 policy.setLockMapName("camel:lock:map");

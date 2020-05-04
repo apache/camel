@@ -25,7 +25,7 @@ public class MainExampleTest extends Assert {
     @Test
     public void testMain() throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor()).to("file://target/mainTest");
@@ -33,20 +33,20 @@ public class MainExampleTest extends Assert {
         });
         main.start();
 
-        // run for 100 millis
-        main.setDuration(100);
+        // run for 1 second
+        main.configure().setDurationMaxSeconds(1);
 
         main.stop();
     }
-    
+
     @Test
     public void testFileApplicationContextUri() throws Exception {
         Main main = new Main();
         main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");
         main.start();
 
-        // run for 100 millis
-        main.setDuration(100);
+        // run for 1 second
+        main.configure().setDurationMaxSeconds(1);
 
         main.stop();
     }

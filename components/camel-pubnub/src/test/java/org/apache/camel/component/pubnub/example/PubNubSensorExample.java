@@ -26,7 +26,7 @@ public final class PubNubSensorExample {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new SensorRoute());
+        main.configure().addRoutesBuilder(new SensorRoute());
         main.run();
     }
 
