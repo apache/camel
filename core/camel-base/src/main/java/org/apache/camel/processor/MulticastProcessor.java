@@ -33,7 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
@@ -177,9 +176,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                               ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
                               boolean shareUnitOfWork, boolean parallelAggregate) {
         this(camelContext, route, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
-             shareUnitOfWork, parallelAggregate, false);
+                shareUnitOfWork, parallelAggregate, false);
     }
-    
+
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
@@ -260,15 +259,14 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             return true;
         }
 
+        MulticastTask state = new MulticastTask(exchange, pairs, callback);
         if (isParallelProcessing()) {
-            MulticastParallelTask task = new MulticastParallelTask(exchange, pairs, callback);
-            executorService.submit(() -> reactiveExecutor.schedule(task));
+            executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
-            MulticastTask task = new MulticastTask(exchange, pairs, callback);
             if (exchange.isTransacted()) {
-                reactiveExecutor.scheduleSync(task);
+                reactiveExecutor.scheduleSync(state);
             } else {
-                reactiveExecutor.scheduleMain(task);
+                reactiveExecutor.scheduleMain(state);
             }
         }
 
@@ -286,66 +284,6 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         }
     }
 
-    private interface MulticastCompletionService {
-
-        Exchange poll();
-
-        Exchange pollUnordered();
-
-        void submit(Consumer<Consumer<Exchange>> runner);
-
-    }
-
-    private class MulticastCompletionServiceParallelTask implements MulticastCompletionService {
-        private final AsyncCompletionService<Exchange> completion;
-
-        public MulticastCompletionServiceParallelTask(ReentrantLock lock) {
-            this.completion = new AsyncCompletionService<>(MulticastProcessor.this::schedule, !isStreaming(), lock);;
-        }
-
-        @Override
-        public Exchange poll() {
-            return completion.poll();
-        }
-
-        @Override
-        public Exchange pollUnordered() {
-            return completion.pollUnordered();
-        }
-
-        @Override
-        public void submit(Consumer<Consumer<Exchange>> runner) {
-            completion.submit(runner);
-        }
-    }
-
-    private class MulticastCompletionServiceTask implements MulticastCompletionService {
-
-        private final AtomicReference<Exchange> exchange = new AtomicReference<>();
-
-        public MulticastCompletionServiceTask() {
-        }
-
-        @Override
-        public Exchange poll() {
-            return exchange.getAndSet(null);
-        }
-
-        @Override
-        public Exchange pollUnordered() {
-            return exchange.getAndSet(null);
-        }
-
-        @Override
-        public void submit(Consumer<Consumer<Exchange>> runner) {
-            runner.accept(this::setResult);
-        }
-
-        private void setResult(Exchange result) {
-            this.exchange.set(result);
-        }
-    }
-
     protected class MulticastTask implements Runnable {
 
         final Exchange original;
@@ -353,7 +291,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         final AsyncCallback callback;
         final Iterator<ProcessorExchangePair> iterator;
         final ReentrantLock lock;
-        MulticastCompletionService completion;
+        final AsyncCompletionService<Exchange> completion;
         final AtomicReference<Exchange> result;
         final AtomicInteger nbExchangeSent = new AtomicInteger();
         final AtomicInteger nbAggregated = new AtomicInteger();
@@ -366,126 +304,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             this.callback = callback;
             this.iterator = pairs.iterator();
             this.lock = new ReentrantLock();
-            this.completion = new MulticastCompletionServiceTask();
+            this.completion = new AsyncCompletionService<>(MulticastProcessor.this::schedule, !isStreaming(), lock);
             this.result = new AtomicReference<>();
-        }
-
-        @Override
-        public String toString() {
-            return "MulticastTask";
-        }
-
-        private Exchange completionPoll() {
-            return completion.poll();
-        }
-
-        @Override
-        public void run() {
-            try {
-                if (done.get()) {
-                    return;
-                }
-
-                // Check if the iterator is empty
-                // This can happen the very first time we check the existence
-                // of an item before queuing the run.
-                // or some iterators may return true for hasNext() but then null in next()
-                if (!iterator.hasNext()) {
-                    doDone(result.get(), true);
-                    return;
-                }
-
-                ProcessorExchangePair pair = iterator.next();
-                boolean hasNext = iterator.hasNext();
-                // some iterators may return true for hasNext() but then null in next()
-                if (pair == null && !hasNext) {
-                    doDone(result.get(), true);
-                    return;
-                }
-
-                Exchange exchange = pair.getExchange();
-                int index = nbExchangeSent.getAndIncrement();
-                updateNewExchange(exchange, index, pairs, hasNext);
-
-                if (!hasNext) {
-                    allSent.set(true);
-                }
-
-                completion.submit(exchangeResult -> {
-                    // compute time taken if sending to another endpoint
-                    StopWatch watch = beforeSend(pair);
-
-                    AsyncProcessor async = AsyncProcessorConverterHelper.convert(pair.getProcessor());
-                    async.process(exchange, doneSync -> {
-                        afterSend(pair, watch);
-
-                        // Decide whether to continue with the multicast or not; similar logic to the Pipeline
-                        // remember to test for stop on exception and aggregate before copying back results
-                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, "Multicast processing failed for number " + index, LOG);
-                        if (stopOnException && !continueProcessing) {
-                            if (exchange.getException() != null) {
-                                // wrap in exception to explain where it failed
-                                exchange.setException(new CamelExchangeException("Multicast processing failed for number " + index, exchange, exchange.getException()));
-                            } else {
-                                // we want to stop on exception, and the exception was handled by the error handler
-                                // this is similar to what the pipeline does, so we should do the same to not surprise end users
-                                // so we should set the failed exchange as the result and be done
-                                result.set(exchange);
-                            }
-                            // and do the done work
-                            doDone(exchange, true);
-                            return;
-                        }
-
-                        exchangeResult.accept(exchange);
-
-                        // aggregate exchanges if any
-                        aggregate();
-
-                        if (hasNext) {
-                            schedule(this);
-                        }
-                    });
-                });
-            } catch (Exception e) {
-                original.setException(e);
-                doDone(null, false);
-            }
-        }
-
-        protected void aggregate() {
-            Lock lock = this.lock;
-            if (lock.tryLock()) {
-                try {
-                    Exchange exchange;
-                    while (!done.get() && (exchange = completionPoll()) != null) {
-                        doAggregate(result, exchange, original);
-                        if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
-                            doDone(result.get(), true);
-                        }
-                    }
-                } catch (Throwable e) {
-                    original.setException(e);
-                    // and do the done work
-                    doDone(null, false);
-                } finally {
-                    lock.unlock();
-                }
-            }
-        }
-
-        protected void doDone(Exchange exchange, boolean forceExhaust) {
-            if (done.compareAndSet(false, true)) {
-                MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
-            }
-        }
-    }
-
-    protected class MulticastParallelTask extends MulticastTask {
-
-        MulticastParallelTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
-            super(original, pairs, callback);
-            this.completion = new MulticastCompletionServiceParallelTask(lock);
             if (timeout > 0) {
                 schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             }
@@ -493,7 +313,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         @Override
         public String toString() {
-            return "MulticastParallelTask";
+            return "MulticastTask";
         }
 
         @Override
@@ -526,7 +346,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
                 // Schedule the processing of the next pair
                 if (hasNext) {
-                    schedule(this);
+                    if (isParallelProcessing()) {
+                        schedule(this);
+                    }
                 } else {
                     allSent.set(true);
                 }
@@ -561,11 +383,37 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
                         // aggregate exchanges if any
                         aggregate();
+
+                        // next step
+                        if (hasNext && !isParallelProcessing()) {
+                            schedule(this);
+                        }
                     });
                 });
             } catch (Exception e) {
                 original.setException(e);
                 doDone(null, false);
+            }
+        }
+
+        protected void aggregate() {
+            Lock lock = this.lock;
+            if (lock.tryLock()) {
+                try {
+                    Exchange exchange;
+                    while (!done.get() && (exchange = completion.poll()) != null) {
+                        doAggregate(result, exchange, original);
+                        if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
+                            doDone(result.get(), true);
+                        }
+                    }
+                } catch (Throwable e) {
+                    original.setException(e);
+                    // and do the done work
+                    doDone(null, false);
+                } finally {
+                    lock.unlock();
+                }
             }
         }
 
@@ -594,6 +442,12 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                 } finally {
                     lock.unlock();
                 }
+            }
+        }
+
+        protected void doDone(Exchange exchange, boolean forceExhaust) {
+            if (done.compareAndSet(false, true)) {
+                MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
     }
@@ -804,10 +658,10 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             // If the multi-cast processor has an aggregation strategy
-            // then the StreamCache created by the child routes must not be 
-            // closed by the unit of work of the child route, but by the unit of 
+            // then the StreamCache created by the child routes must not be
+            // closed by the unit of work of the child route, but by the unit of
             // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
-            // Set therefore the unit of work of the  parent route as stream cache unit of work, 
+            // Set therefore the unit of work of the  parent route as stream cache unit of work,
             // if it is not already set.
             if (copy.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
                 copy.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());
@@ -958,9 +812,6 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     protected void doStart() throws Exception {
         if (isParallelProcessing() && executorService == null) {
             throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
-        }
-        if (timeout > 0 && !isParallelProcessing()) {
-            throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled");
         }
         if (timeout > 0 && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
