@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
+import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 
@@ -35,12 +36,12 @@ public final class ConsulClusteredRoutePolicyFactoryMain {
         Main main = new Main();
         main.addMainListener(new MainListenerSupport() {
             @Override
-            public void configure(CamelContext context) {
+            public void afterConfigure(BaseMainSupport main) {
                 try {
                     ConsulClusterService service = new ConsulClusterService();
                     service.setId("node-" + id);
                     service.setUrl(args[0]);
-
+                    CamelContext context = main.getCamelContext();
                     context.setNameStrategy(new ExplicitCamelContextNameStrategy("camel-" + id));
                     context.addService(service);
                     context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));

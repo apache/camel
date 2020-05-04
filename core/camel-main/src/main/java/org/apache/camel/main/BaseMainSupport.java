@@ -605,6 +605,10 @@ public abstract class BaseMainSupport extends BaseService {
         // ensure camel is initialized
         camelContext.build();
 
+        for (MainListener listener : listeners) {
+            listener.beforeInitialize(this);
+        }
+
         configurePropertiesService(camelContext);
 
         // allow to do configuration before its started
@@ -618,6 +622,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
+            listener.afterConfigure(this);
             listener.configure(camelContext);
         }
     }
