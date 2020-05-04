@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +62,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -73,7 +75,8 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
+import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -82,6 +85,10 @@ import static org.apache.camel.util.StringHelper.matches;
  * Base class for main implementations to allow bootstrapping Camel in standalone mode.
  */
 public abstract class BaseMainSupport extends BaseService {
+    public static final String DEFAULT_PROPERTY_PLACEHOLDER_LOCATION = "classpath:application.properties;optional=true";
+    public static final String INITIAL_PROPERTIES_LOCATION = "camel.main.initial-properties-location";
+    public static final String OVERRIDE_PROPERTIES_LOCATION = "camel.main.override-properties-location";
+    public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
@@ -103,30 +110,9 @@ public abstract class BaseMainSupport extends BaseService {
     protected List<Object> configurations = new ArrayList<>();
     protected String configurationClasses;
     protected String propertyPlaceholderLocations;
-    protected String defaultPropertyPlaceholderLocation = "classpath:application.properties;optional=true";
+    protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
-
-    protected static Properties loadEnvironmentVariablesAsProperties(String[] prefixes) {
-        Properties answer = new OrderedProperties();
-        if (prefixes == null || prefixes.length == 0) {
-            return answer;
-        }
-
-        for (String prefix : prefixes) {
-            final String pk = prefix.toUpperCase(Locale.US).replaceAll("[^\\w]", "-");
-            final String pk2 = pk.replace('-', '_');
-            System.getenv().forEach((k, v) -> {
-                k = k.toUpperCase(Locale.US);
-                if (k.startsWith(pk) || k.startsWith(pk2)) {
-                    String key = k.toLowerCase(Locale.ENGLISH).replace('_', '.');
-                    answer.put(key, v);
-                }
-            });
-        }
-
-        return answer;
-    }
 
     protected static String optionKey(String key) {
         // as we ignore case for property names we should use keys in same case and without dashes
@@ -515,26 +501,44 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void configurePropertiesService(CamelContext camelContext) throws Exception {
-        if (propertyPlaceholderLocations != null) {
-            PropertiesComponent pc = camelContext.getPropertiesComponent();
-            pc.addLocation(propertyPlaceholderLocations);
-            LOG.info("Using properties from: {}", propertyPlaceholderLocations);
-        } else if (ObjectHelper.isNotEmpty(defaultPropertyPlaceholderLocation) && !ObjectHelper.equal("false", defaultPropertyPlaceholderLocation)) {
-            // lets default to defaultPropertyPlaceholderLocation if
-            // there are no existing locations configured
-            PropertiesComponent pc = camelContext.getPropertiesComponent();
-            if (pc.getLocations().isEmpty()) {
-                pc.addLocation(defaultPropertyPlaceholderLocation);
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        if (pc.getLocations().isEmpty()) {
+            String locations = propertyPlaceholderLocations;
+            if (locations == null) {
+                locations = lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION).orElse(defaultPropertyPlaceholderLocation);
             }
-            LOG.info("Using properties from {}", defaultPropertyPlaceholderLocation);
+            if (!Objects.equals(locations, "false")) {
+                pc.addLocation(locations);
+                LOG.info("Using properties from: {}", propertyPlaceholderLocations);
+            }
         }
 
-        PropertiesComponent pc = camelContext.getPropertiesComponent();
-        if (initialProperties != null) {
-            pc.setInitialProperties(initialProperties);
+        Properties ip = initialProperties;
+        if (ip == null || ip.isEmpty()) {
+            Optional<String> location = lookupPropertyFromSysOrEnv(INITIAL_PROPERTIES_LOCATION);
+            if (location.isPresent()) {
+                try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
+                    ip = new Properties();
+                    ip.load(is);
+                }
+            }
         }
-        if (overrideProperties != null) {
-            pc.setOverrideProperties(overrideProperties);
+        if (ip != null) {
+            pc.setInitialProperties(ip);
+        }
+
+        Properties op = overrideProperties;
+        if (op == null || op.isEmpty()) {
+            Optional<String> location = lookupPropertyFromSysOrEnv(OVERRIDE_PROPERTIES_LOCATION);
+            if (location.isPresent()) {
+                try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
+                    op = new Properties();
+                    op.load(is);
+                }
+            }
+        }
+        if (op != null) {
+            pc.setOverrideProperties(op);
         }
     }
 
