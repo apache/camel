@@ -27,18 +27,11 @@ public interface ReactiveExecutor {
     String FACTORY = "reactive-executor";
 
     /**
-     * Schedules the task to be run
+     * Schedules the task to be run (fairly)
      *
      * @param runnable    the task
      */
     void schedule(Runnable runnable);
-
-    /**
-     * Schedules the task to be run first
-     *
-     * @param runnable    the task
-     */
-    void scheduleFirst(Runnable runnable);
 
     /**
      * Schedules the task to be prioritized and run asap
@@ -48,7 +41,7 @@ public interface ReactiveExecutor {
     void scheduleMain(Runnable runnable);
 
     /**
-     * Schedules the task to run synchronously
+     * Schedules the task to run synchronously (current thread)
      *
      * @param runnable    the task
      */
