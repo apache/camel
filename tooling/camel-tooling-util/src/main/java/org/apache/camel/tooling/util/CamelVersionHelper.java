@@ -58,7 +58,7 @@ public final class CamelVersionHelper {
         return ver2.compareTo(ver1) >= 0;
     }
 
-    private static class Version implements Comparable<Version> {
+    private static final class Version implements Comparable<Version> {
 
         private final String version;
 
