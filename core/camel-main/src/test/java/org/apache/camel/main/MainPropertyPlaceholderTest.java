@@ -19,7 +19,7 @@ package org.apache.camel.main;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MainPropertyPlaceholderLocationsTest extends Assert {
+public class MainPropertyPlaceholderTest extends Assert {
     @Test(expected = IllegalArgumentException.class)
     public void testDefaultPropertyPlaceholderLocationDisabled() {
         Main main = new Main();
