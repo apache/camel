@@ -24,11 +24,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
 
 public class MainListenerTest extends Assert {
