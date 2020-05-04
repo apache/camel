@@ -64,7 +64,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.slf4j.Logger;
@@ -262,14 +261,15 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             return true;
         }
 
-        MulticastState state = new MulticastState(exchange, pairs, callback);
         if (isParallelProcessing()) {
-            executorService.submit(() -> reactiveExecutor.schedule(state));
+            MulticastParallelTask task = new MulticastParallelTask(exchange, pairs, callback);
+            executorService.submit(() -> reactiveExecutor.schedule(task));
         } else {
+            MulticastTask task = new MulticastTask(exchange, pairs, callback);
             if (exchange.isTransacted()) {
-                reactiveExecutor.scheduleSync(state);
+                reactiveExecutor.scheduleSync(task);
             } else {
-                reactiveExecutor.scheduleMain(state);
+                reactiveExecutor.scheduleMain(task);
             }
         }
 
@@ -287,7 +287,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         }
     }
 
-    protected class MulticastState implements Runnable {
+    protected class MulticastTask implements Runnable {
 
         final Exchange original;
         final Iterable<ProcessorExchangePair> pairs;
@@ -301,7 +301,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
 
-        MulticastState(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -347,12 +347,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
 
-                // Schedule the processing of the next pair
-                if (hasNext) {
-                    if (isParallelProcessing()) {
-                        schedule(this);
-                    }
-                } else {
+                if (!hasNext) {
                     allSent.set(true);
                 }
 
@@ -387,8 +382,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                         // aggregate exchanges if any
                         aggregate();
 
-                        // next step
-                        if (hasNext && !isParallelProcessing()) {
+                        if (hasNext) {
                             schedule(this);
                         }
                     });
@@ -451,6 +445,91 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (done.compareAndSet(false, true)) {
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+    }
+
+    protected class MulticastParallelTask extends MulticastTask {
+
+        MulticastParallelTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) {
+            super(original, pairs, callback);
+        }
+
+        @Override
+        public String toString() {
+            return "MulticastParallelTask";
+        }
+
+        @Override
+        public void run() {
+            try {
+                if (done.get()) {
+                    return;
+                }
+
+                // Check if the iterator is empty
+                // This can happen the very first time we check the existence
+                // of an item before queuing the run.
+                // or some iterators may return true for hasNext() but then null in next()
+                if (!iterator.hasNext()) {
+                    doDone(result.get(), true);
+                    return;
+                }
+
+                ProcessorExchangePair pair = iterator.next();
+                boolean hasNext = iterator.hasNext();
+                // some iterators may return true for hasNext() but then null in next()
+                if (pair == null && !hasNext) {
+                    doDone(result.get(), true);
+                    return;
+                }
+
+                Exchange exchange = pair.getExchange();
+                int index = nbExchangeSent.getAndIncrement();
+                updateNewExchange(exchange, index, pairs, hasNext);
+
+                // Schedule the processing of the next pair
+                if (hasNext) {
+                    schedule(this);
+                } else {
+                    allSent.set(true);
+                }
+
+                completion.submit(exchangeResult -> {
+                    // compute time taken if sending to another endpoint
+                    StopWatch watch = beforeSend(pair);
+
+                    AsyncProcessor async = AsyncProcessorConverterHelper.convert(pair.getProcessor());
+                    async.process(exchange, doneSync -> {
+                        afterSend(pair, watch);
+
+                        // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                        // remember to test for stop on exception and aggregate before copying back results
+                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, "Multicast processing failed for number " + index, LOG);
+                        if (stopOnException && !continueProcessing) {
+                            if (exchange.getException() != null) {
+                                // wrap in exception to explain where it failed
+                                exchange.setException(new CamelExchangeException("Multicast processing failed for number " + index, exchange, exchange.getException()));
+                            } else {
+                                // we want to stop on exception, and the exception was handled by the error handler
+                                // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                                // so we should set the failed exchange as the result and be done
+                                result.set(exchange);
+                            }
+                            // and do the done work
+                            doDone(exchange, true);
+                            return;
+                        }
+
+                        exchangeResult.accept(exchange);
+
+                        // aggregate exchanges if any
+                        aggregate();
+                    });
+                });
+            } catch (Exception e) {
+                original.setException(e);
+                doDone(null, false);
             }
         }
     }
