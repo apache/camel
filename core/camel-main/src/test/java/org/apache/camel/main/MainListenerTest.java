@@ -16,13 +16,13 @@
  */
 package org.apache.camel.main;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
 
@@ -33,12 +33,12 @@ public class MainListenerTest extends Assert {
         List<String> events = new ArrayList<>();
         Main main = new Main();
         main.addMainListener((MainListener) Proxy.newProxyInstance(
-                MainListener.class.getClassLoader(),
-                new Class[]{MainListener.class},
-                (proxy, method, args) -> {
-                    events.add(method.getName());
-                    return null;
-                }));
+            MainListener.class.getClassLoader(),
+            new Class[]{MainListener.class},
+            (proxy, method, args) -> {
+                events.add(method.getName());
+                return null;
+            }));
         Thread thread = new Thread(() -> {
             try {
                 main.run();
@@ -50,8 +50,8 @@ public class MainListenerTest extends Assert {
         Thread.sleep(100);
         main.completed();
         thread.join();
-        assertEquals(Arrays.asList("beforeConfigure", "configure", "beforeStart",
-                "afterStart", "beforeStop", "afterStop"), events);
+        assertEquals(Arrays.asList("beforeInitialize", "beforeConfigure", "afterConfigure",
+                "configure", "beforeStart", "afterStart", "beforeStop", "afterStop"), events);
     }
 
     @Test
