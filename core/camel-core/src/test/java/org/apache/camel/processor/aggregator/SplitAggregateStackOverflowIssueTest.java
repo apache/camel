@@ -35,7 +35,9 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(60, SECONDS, result);
 
-        assertTrue("Stackframe must not be too high, was " + count.get(), count.get() < 100);
+        // the stackframe is 48 at this time of coding but can grow a little bit over time so lets just assume 70
+        // is fine, as if we get the endless bug again then this test fails before and this counter goes to 1024
+        assertTrue("Stackframe must not be too high, was " + count.get(), count.get() < 70);
     }
 
     @Override
