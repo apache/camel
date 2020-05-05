@@ -48,6 +48,9 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                FreemarkerComponent fc = context.getComponent("freemarker", FreemarkerComponent.class);
+                fc.setAllowTemplateFromHeader(true);
+
                 from("direct:a")
                     .to("freemarker:dummy")
                     .to("mock:result");

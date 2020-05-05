@@ -79,7 +79,7 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("freemarker://dummy");
+                from("direct:a").to("freemarker://dummy?allowTemplateFromHeader=true");
             }
         };
     }

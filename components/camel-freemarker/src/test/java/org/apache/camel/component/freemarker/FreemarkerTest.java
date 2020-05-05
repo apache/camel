@@ -78,7 +78,7 @@ public class FreemarkerTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").
-                        to("freemarker:org/apache/camel/component/freemarker/example.ftl");
+                        to("freemarker:org/apache/camel/component/freemarker/example.ftl?allowTemplateFromHeader=true");
                 // END SNIPPET: example
             }
         };
