@@ -48,7 +48,10 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
     private Chunk chunk;
-    
+
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+
     @UriParam(description = "Define the encoding of the body")
     private String encoding;
     
@@ -95,9 +98,16 @@ public class ChunkEndpoint extends ResourceEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         boolean fromTemplate;
-        String newResourceUri = exchange.getIn().getHeader(CHUNK_RESOURCE_URI, String.class);
+
+        String newResourceUri = null;
+        if (allowTemplateFromHeader) {
+            newResourceUri = exchange.getIn().getHeader(CHUNK_RESOURCE_URI, String.class);
+        }
         if (newResourceUri == null) {
-            String newTemplate = exchange.getIn().getHeader(CHUNK_TEMPLATE, String.class);
+            String newTemplate = null;
+            if (allowTemplateFromHeader) {
+                newTemplate = exchange.getIn().getHeader(CHUNK_TEMPLATE, String.class);
+            }
             Chunk newChunk;
             if (newTemplate == null) {
                 fromTemplate = false;
@@ -245,6 +255,19 @@ public class ChunkEndpoint extends ResourceEndpoint {
         this.extension = extension;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
     @Override
     protected void doStart() throws Exception {
         super.doStart();
