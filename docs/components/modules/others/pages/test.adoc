@@ -7,6 +7,8 @@
 :description: Camel unit testing
 :since: 2.9
 
+*Since Camel {since}*
+
 Testing of distributed and asynchronous processing is
 notoriously difficult. The Mock, Test
 and DataSet endpoints work great with the

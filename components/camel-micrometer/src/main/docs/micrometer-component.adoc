@@ -6,12 +6,15 @@
 :since: 2.22
 :component-header: Only producer is supported
 
+ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
 :note-caption: :information_source:
 :tip-caption: :bulb:
 :warning-caption: :warning:
 endif::[]
+
+*Since Camel {since}*
 
 == Micrometer Component
 

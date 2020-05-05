@@ -274,7 +274,7 @@ log sensitive data from the message itself.
 
 == OGNL expression support
 
-*Since Camel {since}*
+*Since Camel 2.3*
 
 INFO:Camel's OGNL support is for invoking methods only. You cannot access
 fields. From *Camel 2.11.1* onwards we added special support for accessing the
@@ -853,7 +853,7 @@ From Camel 2.9 onwards you can nest functions, such as shown below:
 
 == Referring to constants or enums
 
-*Since Camel {since}*
+*Since Camel 2.11*
 
 Suppose you have an enum for customers
 
@@ -863,7 +863,7 @@ the message which enum it matches.
 
 == Using new lines or tabs in XML DSLs
 
-*Since Camel {since}*
+*Since Camel 2.9.3*
 
 From Camel 2.9.3 onwards it is easier to specify new lines or tabs in
 XML DSLs as you can escape the value now
@@ -877,7 +877,7 @@ XML DSLs as you can escape the value now
 
 == Leading and trailing whitespace handling
 
-*Since Camel {since}*
+*Since Camel 2.10.0*
 
 From Camel 2.10.0 onwards, the trim attribute of the expression can be
 used to control whether the leading and trailing whitespace characters
@@ -893,7 +893,7 @@ whitespace characters.
 
 == Setting result type
 
-*Since Camel {since}*
+*Since Camel 2.8*
 
 You can now provide a result type to the xref:simple-language.adoc[Simple]
 expression, which means the result of the evaluation will be converted
@@ -919,7 +919,7 @@ And in XML DSL
 
 == Changing function start and end tokens
 
-*Since Camel {since}*
+*Since Camel 2.9.1*
 
 You can configure the function start and end tokens - $\{ } using the
 setters `changeFunctionStartToken` and `changeFunctionEndToken` on
@@ -944,7 +944,7 @@ as a Web Application as a WAR file it only affects the Web Application.
 
 == Loading script from external resource
 
-*Since Camel {since}*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -958,7 +958,7 @@ eg to refer to a file on the classpath you can do:
 
 == Setting Spring beans to Exchange properties
 
-*Since Camel {since}*
+*Since Camel 2.6*
 
 You can set a spring bean into an exchange property as shown below:
 

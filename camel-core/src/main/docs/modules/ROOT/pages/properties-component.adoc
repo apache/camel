@@ -170,7 +170,7 @@ with comma such as:
 pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
 ----
 
-*Since Camel {since}*
+*Since Camel 2.19.0*
 
 You can set which location can be discarded if missing by by setting the ``optional`` attribute, which is false by default, i.e:
 
@@ -183,7 +183,7 @@ pc.setLocations(
 
 == Using system and environment variables in locations
 
-*Since Camel {since}*
+*Since Camel 2.7*
 
 The location now supports using placeholders for JVM system properties
 and OS environments variables.
@@ -217,7 +217,7 @@ location=file:${env:APP_HOME}/etc/${prop.name}.properties
 
 == Using system and environment variables to configure property prefixes and suffixes
 
-*Since Camel {since}*
+*Since Camel 2.12.5, 2.13.3, 2.14.0*
 
 `propertyPrefix`, `propertySuffix` configuration properties support
 using placeholders for JVM system properties and OS environments
@@ -317,7 +317,7 @@ inside the Spring as well as the Blueprint XML.
 
 == Using a Properties from the Registry
 
-*Since Camel {since}*
+*Since Camel 2.4*
 
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
@@ -463,7 +463,7 @@ the `<camelContext>` tag such as `trace` as shown here:
 
 == Overriding a property setting using a JVM System Property
 
-*Since Camel {since}*
+*Since Camel 2.5*
 
 It is possible to override a property value at runtime using a JVM
 System property without the need to restart the application to pick up
@@ -501,7 +501,7 @@ assertMockEndpointsSatisfied();
 
 == Using property placeholders for any kind of attribute in the XML DSL
 
-*Since Camel {since}*
+*Since Camel 2.7*
 
 NOTE: If you use OSGi Blueprint then this only works from *2.11.1* or *2.10.5*
 onwards.
@@ -528,7 +528,7 @@ stop=true
 
 == Using Blueprint property placeholder with Camel routes
 
-*Since Camel {since}*
+*Since Camel 2.7*
 
 Camel supports Blueprint
 which also offers a property placeholder service. Camel supports
@@ -635,7 +635,7 @@ Each location is separated by comma.
 
 == Overriding Blueprint property placeholders outside CamelContext
 
-*Since Camel {since}*
+*Since Camel 2.10.4*
 
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
@@ -655,7 +655,7 @@ file.
 
 == Using .cfg or .properties file for Blueprint property placeholders
 
-*Since Camel {since}*
+*Since Camel 2.10.4*
 
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties in a `.properties` or `.cfg` file. If you use
@@ -703,7 +703,7 @@ destination=mock:result
 
 == Bridging Spring and Camel property placeholders
 
-*Since Camel {since}*
+*Since Camel 2.10*
 
 The Spring Framework does not allow 3rd party frameworks such as Apache
 Camel to seamless hook into the Spring property placeholder mechanism.
@@ -759,7 +759,7 @@ An alternative is to configure the `PropertyPlaceholderConfigurer` with
 
 == Overriding properties from Camel test kit
 
-*Since Camel {since}*
+*Since Camel 2.10*
 
 When Testing with Camel and using the
 xref:properties-component.adoc[Properties] component, you may want to be able to
@@ -789,7 +789,7 @@ access to the location of the properties.
 
 == Using @PropertyInject
 
-*Since Camel {since}*
+*Since Camel 2.12*
 
 Camel allows to inject property placeholders in POJOs using the
 `@PropertyInject` annotation which can be set on fields and setter
@@ -840,7 +840,7 @@ private int timeout;
 
 == Using out of the box functions
 
-*Since Camel {since}*
+*Since Camel 2.14.1*
 
 The xref:properties-component.adoc[Properties] component includes the following
 functions out of the box
@@ -937,7 +937,7 @@ example to call a service on localhost, maybe for unit testing etc
 
 == Using custom functions
 
-*Since Camel {since}*
+*Since Camel 2.14.1*
 
 The xref:properties-component.adoc[Properties] component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.

@@ -8,12 +8,15 @@
 :since: 2.14
 :component-header: Only producer is supported
 
+ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
 :note-caption: :information_source:
 :tip-caption: :bulb:
 :warning-caption: :warning:
 endif::[]
+
+*Since Camel {since}*
 
 == Metrics Component
 
@@ -581,7 +584,7 @@ if (registryService != null) {
 
 == MetricsMessageHistoryFactory
 
-*Since Camel {since}*
+*Since Camel 2.17*
 
 This factory allows to use metrics to
 capture Message History performance
@@ -658,7 +661,7 @@ with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
 
-*Since Camel {since}*
+*Since Camel 2.18*
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.

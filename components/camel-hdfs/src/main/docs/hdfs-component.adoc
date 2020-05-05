@@ -262,7 +262,7 @@ split strategy.
 
 == Controlling to close file stream
 
-*Since Camel {since}*
+*Since Camel 2.10.4*
 
 When using the xref:hdfs-component.adoc[HDFS] producer *without* a split strategy,
 then the file output stream is by default closed after the write.

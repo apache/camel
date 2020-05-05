@@ -9,10 +9,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-
 The *mqtt:* component is used for communicating with
 http://mqtt.org[MQTT] compliant message brokers, like
 http://activemq.apache.org[Apache ActiveMQ] or

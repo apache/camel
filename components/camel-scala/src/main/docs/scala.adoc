@@ -6,6 +6,8 @@
 :since: 1.4
 :deprecated: *deprecated*
 
+*Since Camel {since}*
+
 **Deprecated**
 
 http://www.scala-lang.org/[Scala] is a general purpose programming

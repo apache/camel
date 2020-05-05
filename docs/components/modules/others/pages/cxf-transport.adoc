@@ -7,6 +7,8 @@
 :description: Camel Transport for Apache CXF
 :since: 2.8
 
+*Since Camel {since}*
+
 In CXF you offer or consume a webservice by defining its address. The
 first part of the address specifies the protocol to use. For example
 address="http://localhost:9000" in an endpoint configuration means your

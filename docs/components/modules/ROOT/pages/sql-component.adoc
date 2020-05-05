@@ -10,13 +10,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-*Since Camel {since}*
-
-
-
 The *sql:* component allows you to work with databases using JDBC
 queries. The difference between this component and xref:jdbc-component.adoc[JDBC]
 component is that in case of SQL the query is a property of the endpoint
@@ -348,7 +341,7 @@ message headers (*Available as of Camel 2.12.4, 2.13.1*):
 
 == Generated keys
 
-*Since Camel {since}*
+*Since Camel 2.12.4, 2.13.1 and 2.14*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the SQL producer to return the
@@ -372,7 +365,7 @@ sql:select * from table where id=# order by name?dataSource=myDS
 
 == Using named parameters
 
-*Since Camel {since}*
+*Since Camel 2.11*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -403,7 +396,7 @@ parameters will be taken from the body.
 
 == Using expression parameters in producers
 
-*Since Camel {since}*
+*Since Camel 2.14*
 
 In the given route below, we want to get all the project from the
 database. It uses the body of the exchange for defining the license and
@@ -419,7 +412,7 @@ from("direct:projects")
 
 === Using expression parameters in consumers
 
-*Since Camel {since}*
+*Since Camel 2.23*
 
 When using the SQL component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
@@ -451,7 +444,7 @@ bean methods as in this example.
 
 == Using IN queries with dynamic values
 
-*Since Camel {since}*
+*Since Camel 2.17*
 
 From Camel 2.17 onwards the SQL producer allows to use SQL queries with
 IN statements where the IN values is dynamic computed. For example from
@@ -517,8 +510,9 @@ from("direct:query")
 
 == Using the JDBC based idempotent repository
 
-*Since Camel {since}*
-idempotent repository.
+*Since Camel 2.7*
+
+In this section we will use the JDBC based idempotent repository.
 
 TIP:*Abstract class*
 From Camel 2.9 onwards there is an abstract class
@@ -587,7 +581,7 @@ the second one is the message id (`String`).
 
 == Using the JDBC based aggregation repository
 
-*Since Camel {since}*
+*Since Camel 2.6*
 
 INFO: *Using JdbcAggregationRepository in Camel 2.6*
 
@@ -656,7 +650,7 @@ CREATE TABLE aggregation_completed (
 
 == Storing body and headers as text
 
-*Since Camel {since}*
+*Since Camel 2.11*
 
 You can configure the `JdbcAggregationRepository` to store message body
 and select(ed) headers as String in separate columns. For example to

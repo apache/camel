@@ -8,10 +8,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-
 The *netty4-http* component is an extension to xref:netty4-component.adoc[Netty4]
 component to facilitiate HTTP transport with xref:netty4-component.adoc[Netty4].
 

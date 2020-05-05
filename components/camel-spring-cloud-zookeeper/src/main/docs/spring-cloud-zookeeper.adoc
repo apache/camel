@@ -1,3 +1,8 @@
-= Spring Cloud Zookeeper
+[[spring-cloud-zookeeper-component]]
+= Spring Cloud Zookeeper Component
+:docTitle: Spring Cloud Zookeeper
+:artifactId: camel-spring-cloud-zookeeper
+:description: Camel Cloud integration with Spring Cloud Zookeeper
+:since: 2.19
 
 *Since Camel {since}*

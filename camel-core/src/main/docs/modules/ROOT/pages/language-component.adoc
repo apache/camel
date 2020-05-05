@@ -120,7 +120,7 @@ assertEquals("Hello World", out);
 
 == Loading scripts from resources
 
-*Since Camel {since}*
+*Since Camel 2.9*
 
 You can specify a resource uri for a script to load in either the
 endpoint uri, or in the `Exchange.LANGUAGE_SCRIPT` header. +

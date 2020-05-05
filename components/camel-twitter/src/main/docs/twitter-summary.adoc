@@ -1,6 +1,10 @@
 = Twitter Components 
+//attributes written by hand, not generated
+:docTitle: Twitter
+:description: Summary of {docTitle} components
+:since: 2.10
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 The camel-twitter consists of 4 components:
 

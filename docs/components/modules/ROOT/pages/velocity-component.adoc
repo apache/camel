@@ -210,7 +210,7 @@ when the resource never changes.
 
 == Dynamic templates
 
-*Since Camel {since}*
+*Since Camel 2.1*
 
  Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these

@@ -73,7 +73,7 @@ way of filtering out bundles you don't want to start during the test.
 
 == Setting timeout when getting CamelContext
 
-*Since Camel {since}*
+*Since Camel 2.13.0/2.12.1/2.11.2*
 
 `CamelBlueprintTestSupport` waits 30 seconds for Camel Context to be
 ready by default, now you can override this value in two ways:
@@ -86,7 +86,7 @@ method.
 
 == Adding services on startup
 
-*Since Camel {since}*
+*Since Camel 2.11.2/2.12.0*
 
 When using `camel-test-blueprint` you may do unit tests which requires
 using shared services which are not available during unit testing, but

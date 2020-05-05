@@ -10,13 +10,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-*Since Camel {since}*
-
-
-
 Note: Camel MongoDB3 component Use the Mongo Driver for Java 3.4. If your are looking for previews versions look the Camel MongoDB component
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
@@ -616,7 +609,7 @@ containing the number of records deleted (copied from
 
 ===== bulkWrite
 
-*Since Camel {since}*
+*Since Camel 2.21*
 
 Performs write operations in bulk with controls for order of execution.
 Requires a `List<WriteModel<Document>>` as the IN message body containing commands for insert, update, and delete operations.

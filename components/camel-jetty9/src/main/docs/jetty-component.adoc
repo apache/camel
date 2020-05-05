@@ -553,7 +553,7 @@ Jetty to listen on.
 
 ==== Configuring general SSL properties
 
-*Since Camel {since}*
+*Since Camel 2.5*
 
 Instead of a per port number specific SSL socket connector (as shown
 above) you can now configure general properties which applies for all
@@ -588,7 +588,7 @@ X509Certificate cert = (X509Certificate) req.getAttribute("javax.servlet.request
 
 ==== Configuring general HTTP properties
 
-*Since Camel {since}*
+*Since Camel 2.5*
 
 Instead of a per port number specific HTTP socket connector (as shown
 above) you can now configure general properties which applies for all

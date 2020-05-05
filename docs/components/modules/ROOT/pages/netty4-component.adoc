@@ -10,10 +10,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-
 The *netty4* component in Camel is a socket communication component,
 based on the http://netty.io/[Netty] project version 4.
 

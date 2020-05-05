@@ -161,7 +161,7 @@ the data queue as either raw bytes or text.
 
 == Connection pool
 
-*Since Camel {since}*
+*Since Camel 2.10*
 
 Connection pooling is in use from Camel 2.10 onwards. You can explicit
 configure a connection pool on the Jt400Component, or as an uri option

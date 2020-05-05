@@ -10,10 +10,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-
 The AS2 component provides transport of EDI messages using the HTTP transfer protocol
 as specified in https://tools.ietf.org/html/rfc4130[RFC4130]. 
 

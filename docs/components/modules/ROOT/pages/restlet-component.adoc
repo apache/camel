@@ -11,10 +11,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-
 The *Restlet* component provides http://www.restlet.org[Restlet] based
 endpoints for consuming and producing RESTful
 resources.
@@ -334,7 +330,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 
 === Using Restlet API to populate response
 
-*Since Camel {since}*
+*Since Camel 2.8*
 
 You may want to use the `org.restlet.Response` API to populate the
 response. This gives you full access to the Restlet API and fine grained
@@ -357,7 +353,7 @@ such as:
 
 === Using the Restlet servlet within a webapp
 
-*Since Camel {since}*
+*Since Camel 2.8*
 
  There are
 http://www.restlet.org/documentation/2.0/jee/ext/org/restlet/ext/servlet/ServerServlet.html[three

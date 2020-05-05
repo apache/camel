@@ -1,5 +1,10 @@
-= Spring Cloud Consul
+[[spring-cloud-consul-component]]
+= Spring Cloud Consul Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-cloud-consul/src/main/docs/spring-cloud-consul.adoc
+:docTitle: Spring Cloud Consul
+:artifactId: camel-spring-cloud-consul
+:description: Camel Cloud integration with Spring Cloud Consul
+:since: 2.19
 
 *Since Camel {since}*

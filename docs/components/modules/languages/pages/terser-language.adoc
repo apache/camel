@@ -7,6 +7,8 @@
 :description: To use HL7 terser scripts in Camel expressions or predicates.
 :since: 2.11
 
+*Since Camel {since}*
+
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
 class that provides access to fields using a commonly used terse

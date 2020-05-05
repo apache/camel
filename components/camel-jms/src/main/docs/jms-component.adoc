@@ -6,6 +6,7 @@
 :since: 1.0
 :component-header: Both producer and consumer are supported
 
+ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
 :note-caption: :information_source:
@@ -13,10 +14,7 @@
 :warning-caption: :warning:
 endif::[]
 
-ifndef::env-github[]
-:icons: font
-endif::[]
-
+*Since Camel {since}*
 
 == JMS Component
 
@@ -1267,7 +1265,7 @@ broker more frequent, and thus require more network traffic.
 
 === Request-reply over JMS and using an exclusive fixed reply queue
 
-*Since Camel {since}*
+*Since Camel 2.9*
 
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
@@ -1419,7 +1417,7 @@ messaging:
 The `transacted` property applies *only* to the InOnly message
 Exchange Pattern (MEP).
 
-*Since Camel {since}*
+*Since Camel 2.10*
 
 You can leverage the
 http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/jms/listener/AbstractPollingMessageListenerContainer.html#setSessionTransacted(boolean)[DMLC
