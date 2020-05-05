@@ -59,7 +59,7 @@ public class ChunkComponentTemplateTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:startSimple")
-                        .to("chunk://hello")
+                        .to("chunk://hello?allowTemplateFromHeader=true")
                         .to("mock:endSimple");
             }
         };
