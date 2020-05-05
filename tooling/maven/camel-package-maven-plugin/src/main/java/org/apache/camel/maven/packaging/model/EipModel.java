@@ -19,73 +19,15 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EipModel {
+public class EipModel extends BaseModel<EipOptionModel> {
 
-    private String name;
-    private String title;
-    private String javaType;
-    private String label;
-    private String description;
-    private boolean deprecated;
-    private String deprecationNote;
     private boolean input;
     private boolean output;
-    private final List<EipOptionModel> eipOptions = new ArrayList<>();
+//    private final List<EipOptionModel> eipOptions = new ArrayList<>();
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(String javaType) {
-        this.javaType = javaType;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isDeprecated() {
-        return deprecated;
-    }
-
-    public void setDeprecated(boolean deprecated) {
-        this.deprecated = deprecated;
-    }
-
-    public String getDeprecationNote() {
-        return deprecationNote;
-    }
-
-    public void setDeprecationNote(String deprecationNote) {
-        this.deprecationNote = deprecationNote;
+    @Override
+    public String getKind() {
+        return "model";
     }
 
     public boolean isInput() {
@@ -112,13 +54,13 @@ public class EipModel {
         return output ? "true" : "false";
     }
 
-    public List<EipOptionModel> getEipOptions() {
-        return eipOptions;
-    }
-
-    public void addEipOptionModel(EipOptionModel option) {
-        eipOptions.add(option);
-    }
+//    public List<EipOptionModel> getEipOptions() {
+//        return eipOptions;
+//    }
+//
+//    public void addEipOptionModel(EipOptionModel option) {
+//        eipOptions.add(option);
+//    }
 
     public String getDocLink() {
         // lets store EIP docs in a sub-folder as we have many EIPs

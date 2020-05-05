@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,31 +16,39 @@
  */
 package org.apache.camel.maven.packaging.model;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * A {@link BaseModel} with Maven coordinates.
+ *
+ * @param <O> the type of option mode.
+ */
+public abstract class ArtifactModel<O extends Object> extends BaseModel<O> {
 
-import org.apache.camel.maven.packaging.StringHelper;
+    protected String groupId;
+    protected String artifactId;
+    protected String version;
 
-import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
-
-public class OtherModel extends ArtifactModel<OtherOptionModel> {
-
-    private String kind;
-
-    public String getKind() {
-        return kind;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setKind(String kind) {
-        this.kind = kind;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
-    public void setDeprecated(String deprecated) {
-        setDeprecated("true".equals(deprecated));
+    public String getArtifactId() {
+        return artifactId;
     }
 
-    public String getDocLink() {
-        return artifactId + "/src/main/docs";
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
 }
