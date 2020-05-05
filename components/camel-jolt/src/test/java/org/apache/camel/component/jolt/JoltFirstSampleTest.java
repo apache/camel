@@ -62,6 +62,9 @@ public class JoltFirstSampleTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                JoltComponent jolt = context.getComponent("jolt", JoltComponent.class);
+                jolt.setAllowTemplateFromHeader(true);
+
                 from("direct://start")
                         .process(processor)
                     .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
