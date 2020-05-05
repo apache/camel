@@ -23,7 +23,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.Service;
 import org.apache.camel.component.jms.JmsConfiguration;
-import org.apache.camel.spi.Metadata;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
@@ -36,7 +35,6 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     private String brokerURL = ActiveMQConnectionFactory.DEFAULT_BROKER_URL;
     private volatile boolean customBrokerURL;
     private boolean useSingleConnection;
-    @Metadata(defaultValue = "true")
     private boolean usePooledConnection = true;
     private boolean trustAllPackages;
 

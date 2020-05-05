@@ -51,7 +51,9 @@ public interface ActivemqComponentBuilderFactory {
             extends
                 ComponentBuilder<ActiveMQComponent> {
         /**
-         * Sets the broker URL to use to connect to ActiveMQ.
+         * Sets the broker URL to use to connect to ActiveMQ. If none configured
+         * then localhost:61616 is used by default (however can be overridden by
+         * configuration from environment variables).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -74,19 +76,6 @@ public interface ActivemqComponentBuilderFactory {
          */
         default ActivemqComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Configuration of ActiveMQ.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
-         * 
-         * Group: common
-         */
-        default ActivemqComponentBuilder configuration(
-                org.apache.camel.component.jms.JmsConfiguration configuration) {
-            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -169,22 +158,6 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Define if all Java packages are trusted or not (for Java object JMS
-         * message types). Notice its not recommended practice to send Java
-         * serialized objects over network. Setting this to true can expose
-         * security risks, so use this with care.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default ActivemqComponentBuilder trustAllPackages(
-                boolean trustAllPackages) {
-            doSetProperty("trustAllPackages", trustAllPackages);
-            return this;
-        }
-        /**
          * Enables or disables whether a PooledConnectionFactory will be used so
          * that when messages are sent to ActiveMQ from outside of a message
          * consuming thread, pooling will be used rather than the default with
@@ -194,7 +167,7 @@ public interface ActivemqComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          */
         default ActivemqComponentBuilder usePooledConnection(
@@ -1110,6 +1083,19 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a shared JMS configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder configuration(
+                org.apache.camel.component.jms.JmsConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * A pluggable
          * org.springframework.jms.support.destination.DestinationResolver that
          * allows you to use your own resolver (for example, to lookup the real
@@ -1456,6 +1442,22 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * Define if all Java packages are trusted or not (for Java object JMS
+         * message types). Notice its not recommended practice to send Java
+         * serialized objects over network. Setting this to true can expose
+         * security risks, so use this with care.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder trustAllPackages(
+                boolean trustAllPackages) {
+            doSetProperty("trustAllPackages", trustAllPackages);
+            return this;
+        }
+        /**
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
@@ -1655,13 +1657,11 @@ public interface ActivemqComponentBuilderFactory {
             switch (name) {
             case "brokerURL": ((ActiveMQComponent) component).setBrokerURL((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((ActiveMQComponent) component).setClientId((java.lang.String) value); return true;
-            case "configuration": ((ActiveMQComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
             case "connectionFactory": getOrCreateConfiguration((ActiveMQComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((ActiveMQComponent) component).setDisableReplyTo((boolean) value); return true;
             case "durableSubscriptionName": getOrCreateConfiguration((ActiveMQComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((ActiveMQComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((ActiveMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
-            case "trustAllPackages": ((ActiveMQComponent) component).setTrustAllPackages((boolean) value); return true;
             case "usePooledConnection": ((ActiveMQComponent) component).setUsePooledConnection((boolean) value); return true;
             case "useSingleConnection": ((ActiveMQComponent) component).setUseSingleConnection((boolean) value); return true;
             case "acknowledgementModeName": getOrCreateConfiguration((ActiveMQComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
@@ -1718,6 +1718,7 @@ public interface ActivemqComponentBuilderFactory {
             case "asyncStartListener": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((ActiveMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((ActiveMQComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
             case "destinationResolver": getOrCreateConfiguration((ActiveMQComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
             case "errorHandler": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
             case "exceptionListener": getOrCreateConfiguration((ActiveMQComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
@@ -1739,6 +1740,7 @@ public interface ActivemqComponentBuilderFactory {
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((ActiveMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
             case "transferException": getOrCreateConfiguration((ActiveMQComponent) component).setTransferException((boolean) value); return true;
             case "transferExchange": getOrCreateConfiguration((ActiveMQComponent) component).setTransferExchange((boolean) value); return true;
+            case "trustAllPackages": ((ActiveMQComponent) component).setTrustAllPackages((boolean) value); return true;
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((ActiveMQComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
