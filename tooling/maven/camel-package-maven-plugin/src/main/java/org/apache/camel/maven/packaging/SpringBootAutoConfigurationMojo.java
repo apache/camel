@@ -724,7 +724,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         Set<JavaClassSource> nestedTypes = new HashSet<>();
-        for (ComponentOptionModel option : model.getComponentOptions()) {
+        for (ComponentOptionModel option : model.getOptions()) {
 
             if (skipComponentOption(model, option)) {
                 // some component options should be skipped
@@ -1159,7 +1159,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
-        for (DataFormatOptionModel option : model.getDataFormatOptions()) {
+        for (DataFormatOptionModel option : model.getOptions()) {
             // skip option with name id in data format as we do not need that
             if ("id".equals(option.getName())) {
                 continue;
@@ -1248,7 +1248,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
-        for (LanguageOptionModel option : model.getLanguageOptions()) {
+        for (LanguageOptionModel option : model.getOptions()) {
             // skip option with name id, or expression in language as we do not need that and skip resultType as they are not global options
             if ("id".equals(option.getName()) || "expression".equals(option.getName()) || "resultType".equals(option.getName())) {
                 continue;
@@ -1982,7 +1982,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnums(getSafeValue("enum", row));
-            component.addComponentOption(option);
+            component.addOption(option);
         }
 
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
@@ -2039,7 +2039,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnumValues(getSafeValue("enum", row));
-            dataFormat.addDataFormatOption(option);
+            dataFormat.addOption(option);
         }
 
         return dataFormat;
@@ -2075,7 +2075,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnumValues(getSafeValue("enum", row));
-            language.addLanguageOption(option);
+            language.addOption(option);
         }
 
         return language;
@@ -2110,7 +2110,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setEnums(getSafeValue("enums", row));
 
-            model.addOptionModel(option);
+            model.addOption(option);
         }
 
         return model;

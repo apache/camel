@@ -23,24 +23,17 @@ import org.apache.camel.maven.packaging.StringHelper;
 
 import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
-public class LanguageModel {
+public class LanguageModel extends ArtifactModel<LanguageOptionModel> {
 
     private final boolean coreOnly;
 
     private String kind;
-    private String name;
     private String modelName;
     private String title;
     private String description;
     private String firstVersion;
     private String label;
-    private String deprecated;
-    private String deprecationNote;
-    private String javaType;
-    private String groupId;
-    private String artifactId;
-    private String version;
-    private final List<LanguageOptionModel> languageOptions = new ArrayList<>();
+//    private final List<LanguageOptionModel> languageOptions = new ArrayList<>();
 
     public LanguageModel() {
         this(false);
@@ -56,14 +49,6 @@ public class LanguageModel {
 
     public void setKind(String kind) {
         this.kind = kind;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getModelName() {
@@ -106,65 +91,17 @@ public class LanguageModel {
         this.label = label;
     }
 
-    public String getDeprecated() {
-        return deprecated;
-    }
-
     public void setDeprecated(String deprecated) {
-        this.deprecated = deprecated;
+        setDeprecated("true".equals(deprecated));
     }
 
-    public String getDeprecationNote() {
-        return deprecationNote;
-    }
-
-    public void setDeprecationNote(String deprecationNote) {
-        this.deprecationNote = deprecationNote;
-    }
-
-    public String getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(String javaType) {
-        this.javaType = javaType;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public List<LanguageOptionModel> getLanguageOptions() {
-        return languageOptions;
-    }
-
-    public void addLanguageOption(LanguageOptionModel option) {
-        languageOptions.add(option);
-    }
-
-    public String getShortJavaType() {
-        return StringHelper.getClassShortName(javaType);
-    }
+//    public List<LanguageOptionModel> getLanguageOptions() {
+//        return languageOptions;
+//    }
+//
+//    public void addLanguageOption(LanguageOptionModel option) {
+//        languageOptions.add(option);
+//    }
 
     public String getDocLink() {
         if ("camel-core".equals(artifactId)) {

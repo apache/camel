@@ -19,28 +19,15 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.maven.packaging.StringHelper;
-
 import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
-public class DataFormatModel {
+public class DataFormatModel extends ArtifactModel<DataFormatOptionModel> {
 
     private final boolean coreOnly;
 
     private String kind;
-    private String name;
     private String modelName;
-    private String title;
-    private String description;
-    private String firstVersion;
-    private String label;
-    private String deprecated;
-    private String deprecationNote;
-    private String javaType;
-    private String groupId;
-    private String artifactId;
-    private String version;
-    private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<>();
+//    private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<>();
 
     public DataFormatModel() {
         this(false);
@@ -58,14 +45,6 @@ public class DataFormatModel {
         this.kind = kind;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getModelName() {
         return modelName;
     }
@@ -74,98 +53,18 @@ public class DataFormatModel {
         this.modelName = modelName;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getFirstVersion() {
-        return firstVersion;
-    }
-
-    public void setFirstVersion(String firstVersion) {
-        this.firstVersion = firstVersion;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getDeprecated() {
-        return deprecated;
-    }
-
     public void setDeprecated(String deprecated) {
-        this.deprecated = deprecated;
+        setDeprecated("true".equals(deprecated));
     }
 
-    public String getDeprecationNote() {
-        return deprecationNote;
-    }
-
-    public void setDeprecationNote(String deprecationNote) {
-        this.deprecationNote = deprecationNote;
-    }
-
-    public String getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(String javaType) {
-        this.javaType = javaType;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public List<DataFormatOptionModel> getDataFormatOptions() {
-        return dataFormatOptions;
-    }
-
-    public void addDataFormatOption(DataFormatOptionModel option) {
-        dataFormatOptions.add(option);
-    }
-
-    public String getShortJavaType() {
-        return StringHelper.getClassShortName(javaType);
-    }
-
+//    public List<DataFormatOptionModel> getDataFormatOptions() {
+//        return dataFormatOptions;
+//    }
+//
+//    public void addDataFormatOption(DataFormatOptionModel option) {
+//        dataFormatOptions.add(option);
+//    }
+//
     public String getDocLink() {
         // special for these components
         if ("camel-fhir".equals(artifactId)) {

@@ -23,7 +23,7 @@ import org.apache.camel.maven.packaging.StringHelper;
 
 import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
-public class ComponentModel {
+public class ComponentModel extends ArtifactModel<ComponentOptionModel> {
 
     private final boolean coreOnly;
 
@@ -32,19 +32,9 @@ public class ComponentModel {
     private String syntax;
     private String alternativeSyntax;
     private String alternativeSchemes;
-    private String title;
-    private String description;
-    private String firstVersion;
-    private String label;
-    private String deprecated;
-    private String deprecationNote;
-    private String consumerOnly;
-    private String producerOnly;
-    private String javaType;
-    private String groupId;
-    private String artifactId;
-    private String version;
-    private final List<ComponentOptionModel> componentOptions = new ArrayList<>();
+    private boolean consumerOnly;
+    private boolean producerOnly;
+//    private final List<ComponentOptionModel> componentOptions = new ArrayList<>();
     private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<>();
     private final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
 
@@ -92,108 +82,36 @@ public class ComponentModel {
         this.alternativeSchemes = alternativeSchemes;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getFirstVersion() {
-        return firstVersion;
-    }
-
-    public void setFirstVersion(String firstVersion) {
-        this.firstVersion = firstVersion;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getDeprecated() {
-        return deprecated;
-    }
+//    public String getDeprecated() {
+//        return deprecated;
+//    }
 
     public void setDeprecated(String deprecated) {
-        this.deprecated = deprecated;
+        setDeprecated("true".equalsIgnoreCase(deprecated));
     }
 
-    public String getDeprecationNote() {
-        return deprecationNote;
-    }
-
-    public void setDeprecationNote(String deprecationNote) {
-        this.deprecationNote = deprecationNote;
-    }
-
-    public String getConsumerOnly() {
+    public boolean isConsumerOnly() {
         return consumerOnly;
     }
 
     public void setConsumerOnly(String consumerOnly) {
-        this.consumerOnly = consumerOnly;
+        this.consumerOnly = "true".equals(consumerOnly);
     }
 
-    public String getProducerOnly() {
+    public boolean isProducerOnly() {
         return producerOnly;
     }
 
     public void setProducerOnly(String producerOnly) {
-        this.producerOnly = producerOnly;
-    }
-
-    public String getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(String javaType) {
-        this.javaType = javaType;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
+        this.producerOnly = "true".equalsIgnoreCase(producerOnly);
     }
 
     public List<ComponentOptionModel> getComponentOptions() {
-        return componentOptions;
+        return super.getOptions();
     }
 
     public void addComponentOption(ComponentOptionModel option) {
-        componentOptions.add(option);
+        super.addOption(option);
     }
 
     public List<EndpointOptionModel> getEndpointOptions() {
@@ -210,10 +128,6 @@ public class ComponentModel {
 
     public void addEndpointPathOption(EndpointOptionModel option) {
         endpointPathOptions.add(option);
-    }
-
-    public String getShortJavaType() {
-        return StringHelper.getClassShortName(javaType);
     }
 
     public String getDocLink() {
