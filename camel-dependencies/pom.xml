@@ -167,7 +167,7 @@
     <trimStackTrace>false</trimStackTrace>
     <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
     <jettison-version>1.4.1</jettison-version>
-    <assertj-version>3.15.0</assertj-version>
+    <assertj-version>3.16.0</assertj-version>
     <glassfish-jaxb-runtime-version>2.3.2</glassfish-jaxb-runtime-version>
     <hadoop2-version>2.10.0</hadoop2-version>
     <geronimo-interceptor-1.1-spec-version>1.0</geronimo-interceptor-1.1-spec-version>
