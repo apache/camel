@@ -137,6 +137,9 @@ public class MustacheComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                MustacheComponent mc = context.getComponent("mustache", MustacheComponent.class);
+                mc.setAllowTemplateFromHeader(true);
+
                 from("direct:startSimple")
                         .to("mustache://simple.mustache")
                         .to("mock:endSimple");
