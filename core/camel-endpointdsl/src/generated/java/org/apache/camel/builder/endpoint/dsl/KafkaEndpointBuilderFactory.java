@@ -1228,7 +1228,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.1,TLSv1
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslEnabledProtocols(
@@ -1287,7 +1287,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLS
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslProtocol(String sslProtocol) {
@@ -2814,7 +2814,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.1,TLSv1
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslEnabledProtocols(
@@ -2912,7 +2912,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLS
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslProtocol(String sslProtocol) {
@@ -3439,7 +3439,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.1,TLSv1
          * Group: security
          */
         default KafkaEndpointBuilder sslEnabledProtocols(
@@ -3497,7 +3497,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLS
          * Group: security
          */
         default KafkaEndpointBuilder sslProtocol(String sslProtocol) {
