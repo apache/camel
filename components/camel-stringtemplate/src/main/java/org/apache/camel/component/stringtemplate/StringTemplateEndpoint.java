@@ -37,6 +37,8 @@ import org.stringtemplate.v4.STGroup;
 @UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "<")
     private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
     @UriParam(defaultValue = ">")
@@ -81,12 +83,27 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         this.delimiterStop = delimiterStop;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
-        
-        @SuppressWarnings("unchecked")
-        Map<String, Object> variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
+        Map<String, Object> variableMap = null;
+        if (allowTemplateFromHeader) {
+            variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
+        }
         if (variableMap == null) {
             variableMap = ExchangeHelper.createVariableMap(exchange);
         }
