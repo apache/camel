@@ -30,7 +30,7 @@ import org.apache.camel.support.component.AbstractApiComponent;
 public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfiguration, BoxApiCollection> {
 
     @Metadata
-    BoxConfiguration configuration;
+    BoxConfiguration configuration; // needed for documentation generation
 
     @Metadata(label = "advanced")
     BoxAPIConnection boxConnection;
@@ -86,8 +86,8 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
         super.doStart();
 
         if (boxConnection == null) {
-            if (configuration != null) {
-                boxConnection = BoxConnectionHelper.createConnection(configuration);
+            if (getConfiguration() != null) {
+                boxConnection = BoxConnectionHelper.createConnection(getConfiguration());
             } else {
                 throw new IllegalArgumentException("Unable to connect, Box component configuration is missing");
             }
