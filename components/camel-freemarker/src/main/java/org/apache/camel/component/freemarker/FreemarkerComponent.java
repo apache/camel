@@ -67,12 +67,13 @@ public class FreemarkerComponent extends UriEndpointComponent {
         endpoint.setConfiguration(config);
         endpoint.setTemplateUpdateDelay(templateUpdateDelay);
 
+        setProperties(endpoint, parameters);
+
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
             remaining = ResourceHelper.appendParameters(remaining, parameters);
             endpoint.setResourceUri(remaining);
         }
-        setProperties(endpoint, parameters);
 
         return endpoint;
     }

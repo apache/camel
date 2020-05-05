@@ -29,6 +29,8 @@ import org.apache.velocity.app.VelocityEngine;
  */
 public class VelocityComponent extends UriEndpointComponent {
 
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced")
     private VelocityEngine velocityEngine;
     
@@ -47,13 +49,30 @@ public class VelocityComponent extends UriEndpointComponent {
         this.velocityEngine = velocityEngine;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
         VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
-        setProperties(answer, parameters);
         answer.setContentCache(cache);
         answer.setVelocityEngine(velocityEngine);
+        answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {

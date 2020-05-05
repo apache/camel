@@ -78,6 +78,9 @@ public class VelocityTemplateInHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                VelocityComponent vc = context.getComponent("velocity", VelocityComponent.class);
+                vc.setAllowTemplateFromHeader(true);
+
                 from("direct:a").to("velocity://dummy");
             }
         };

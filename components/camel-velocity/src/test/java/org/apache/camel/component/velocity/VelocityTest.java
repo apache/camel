@@ -76,7 +76,7 @@ public class VelocityTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").
-                        to("velocity:org/apache/camel/component/velocity/example.vm");
+                        to("velocity:org/apache/camel/component/velocity/example.vm?allowTemplateFromHeader=true");
                 // END SNIPPET: example
             }
         };

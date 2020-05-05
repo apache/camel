@@ -50,6 +50,8 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "true")
     private boolean loaderCache = true;
     @UriParam
@@ -94,8 +96,6 @@ public class VelocityEndpoint extends ResourceEndpoint {
             properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
             final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
-            
-          
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
@@ -124,6 +124,20 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     public boolean isLoaderCache() {
@@ -170,18 +184,23 @@ public class VelocityEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        String newResourceUri = exchange.getIn().getHeader(VelocityConstants.VELOCITY_RESOURCE_URI, String.class);
-        if (newResourceUri != null) {
-            exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
+        if (allowTemplateFromHeader) {
+            String newResourceUri = exchange.getIn().getHeader(VelocityConstants.VELOCITY_RESOURCE_URI, String.class);
+            if (newResourceUri != null) {
+                exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
 
-            log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI, newResourceUri);
-            VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
-            newEndpoint.onExchange(exchange);
-            return;
+                log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI, newResourceUri);
+                VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+                newEndpoint.onExchange(exchange);
+                return;
+            }
         }
 
         Reader reader;
-        String content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
+        String content = null;
+        if (allowTemplateFromHeader) {
+            content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
+        }
         if (content != null) {
             // use content from header
             reader = new StringReader(content);
@@ -200,16 +219,19 @@ public class VelocityEndpoint extends ResourceEndpoint {
         // getResourceAsInputStream also considers the content cache
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
-        Context velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
+        Context velocityContext = null;
+        if (allowTemplateFromHeader) {
+            velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
+        }
         if (velocityContext == null) {
             Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
-            if (supplementalMap != null) {
-                variableMap.putAll(supplementalMap);
+            if (allowTemplateFromHeader) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
+                if (supplementalMap != null) {
+                    variableMap.putAll(supplementalMap);
+                }
             }
-
             velocityContext = new VelocityContext(variableMap);
         }
 

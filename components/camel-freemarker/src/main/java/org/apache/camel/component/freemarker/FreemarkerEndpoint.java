@@ -28,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
@@ -40,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
-    @Metadata(defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
     @UriParam
     private String encoding;

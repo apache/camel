@@ -59,7 +59,7 @@ public class VelocitySetTemplateViaHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("velocity:dummy").to("mock:result");
+                from("direct:a").to("velocity:dummy?allowTemplateFromHeader=true").to("mock:result");
             }
         };
     }
