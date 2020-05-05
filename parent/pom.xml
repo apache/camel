@@ -344,7 +344,7 @@
         <json-simple-version>1.1.1</json-simple-version>
         <json-smart-version>2.3</json-smart-version>
         <jsoup-version>1.13.1</jsoup-version>
-        <jt400-version>10.2</jt400-version>
+        <jt400-version>10.3</jt400-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
         <junit-version>4.13</junit-version>
         <junit-jupiter-version>5.6.2</junit-jupiter-version>
