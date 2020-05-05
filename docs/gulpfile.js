@@ -36,7 +36,31 @@ function deleteComponentImageSymlinks() {
 }
 
 function createComponentSymlinks() {
-    const f = filter(['**','!**/*-language.adoc', '!**/*-dataformat.adoc'])
+    // const f = filter(['**','!**/*-language.adoc', '!**/*-dataformat.adoc'])
+    // return src(['../core/camel-base/src/main/docs/*.adoc','../components/{*,*/*}/src/main/docs/*.adoc'])
+    //     .pipe(f)
+    return src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*-summary.adoc'])
+        .pipe(map((file, done) => {
+            // this flattens the output to just .../pages/....adoc
+            // instead of .../pages/camel-.../src/main/docs/....adoc
+            file.base = path.dirname(file.path);
+            done(null, file);
+        }))
+        // Antora disabled symlinks, there is an issue open
+        // https://gitlab.com/antora/antora/issues/188
+        // to reinstate symlink support, until that's resolved
+        // we'll simply copy over instead of creating symlinks
+        // .pipe(symlink('components/modules/ROOT/pages/', {
+        //     relativeSymlinks: true
+        // }));
+        // uncomment above .pipe() and remove the .pipe() below
+        // when antora#188 is resolved
+        .pipe(insertSourceAttribute())
+        .pipe(dest('components/modules/ROOT/pages/'));
+}
+
+function createComponentOthersSymlinks() {
+    const f = filter(['**','!**/*-language.adoc', '!**/*-dataformat.adoc', '!**/*-component.adoc', '!**/*-summary.adoc'])
     return src(['../core/camel-base/src/main/docs/*.adoc','../components/{*,*/*}/src/main/docs/*.adoc'])
         .pipe(f)
         .pipe(map((file, done) => {
@@ -55,7 +79,7 @@ function createComponentSymlinks() {
         // uncomment above .pipe() and remove the .pipe() below
         // when antora#188 is resolved
         .pipe(insertSourceAttribute())
-        .pipe(dest('components/modules/ROOT/pages/'));
+        .pipe(dest('components/modules/others/pages/'));
 }
 
 function createComponentDataFormatSymlinks() {
@@ -168,6 +192,22 @@ function createComponentNav() {
         .pipe(dest('components/modules/ROOT/'))
 }
 
+function createComponentOthersNav() {
+    return src('component-others-nav.adoc.template')
+        .pipe(insertGeneratedNotice())
+        .pipe(inject(src(['components/modules/others/pages/**/*.adoc', '!components/modules/others/pages/index.adoc'])
+            .pipe(sort(compare)), {
+            removeTags: true,
+            transform: (filename, file) => {
+                const filepath = path.basename(filename);
+                const title = titleFrom(file);
+                return `** xref:${filepath}[${title}]`;
+            }
+        }))
+        .pipe(rename('nav.adoc'))
+        .pipe(dest('components/modules/others/'))
+}
+
 function createComponentDataFormatsNav() {
     return src('component-dataformats-nav.adoc.template')
         .pipe(insertGeneratedNotice())
@@ -271,10 +311,10 @@ function createComponentExamples() {
 }
 
 const symlinks = parallel(
-    series(deleteComponentSymlinks, createComponentSymlinks, createComponentDataFormatSymlinks, createComponentLanguageSymlinks),
+    series(deleteComponentSymlinks, createComponentSymlinks, createComponentOthersSymlinks, createComponentDataFormatSymlinks, createComponentLanguageSymlinks),
     series(deleteComponentImageSymlinks, createComponentImageSymlinks)
 );
-const nav = parallel(createComponentNav, createComponentDataFormatsNav, createComponentLanguagesNav/*, createEIPNav*/);
+const nav = parallel(createComponentNav, createComponentOthersNav, createComponentDataFormatsNav, createComponentLanguagesNav/*, createEIPNav*/);
 const examples = series(deleteExamples, /*createUserManualExamples, createEIPExamples, createUserManualLanguageExamples,*/ createComponentExamples);
 
 exports.symlinks = symlinks;
