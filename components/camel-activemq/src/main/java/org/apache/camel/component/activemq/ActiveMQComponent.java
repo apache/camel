@@ -27,6 +27,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -90,8 +91,11 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     /**
-     * Sets the broker URL to use to connect to ActiveMQ
+     * Sets the broker URL to use to connect to ActiveMQ.
+     * If none configured then localhost:61616 is used by default
+     * (however can be overridden by configuration from environment variables)
      */
+    @Metadata(label = "common")
     public void setBrokerURL(String brokerURL) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setBrokerURL(brokerURL);
@@ -103,6 +107,7 @@ public class ActiveMQComponent extends JmsComponent {
      * Notice its not recommended practice to send Java serialized objects over network.
      * Setting this to true can expose security risks, so use this with care.
      */
+    @Metadata(defaultValue = "false", label = "advanced")
     public void setTrustAllPackages(boolean trustAllPackages) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setTrustAllPackages(trustAllPackages);
@@ -125,6 +130,7 @@ public class ActiveMQComponent extends JmsComponent {
      * <p/>
      * The default value is true.
      */
+    @Metadata(defaultValue = "true", label = "common")
     public void setUsePooledConnection(boolean usePooledConnection) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setUsePooledConnection(usePooledConnection);
@@ -147,6 +153,7 @@ public class ActiveMQComponent extends JmsComponent {
      * <p/>
      * The default value is false and a pooled connection is used by default.
      */
+    @Metadata(defaultValue = "false", label = "common")
     public void setUseSingleConnection(boolean useSingleConnection) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setUseSingleConnection(useSingleConnection);
