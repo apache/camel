@@ -122,10 +122,12 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         try {
             super.doStart();
         } finally {
-            // check if this endpoint has its own http client that needs to be
-            // started
-            final HttpClient httpClient = getConfiguration().getHttpClient();
-            if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
+            // check if this endpoint has its own http client that needs to be started
+            HttpClient httpClient = getConfiguration().getHttpClient();
+            if (httpClient == null) {
+                httpClient = getComponent().getHttpClient();
+            }
+            if (httpClient != null && getComponent().getHttpClient() != httpClient) {
                 final String endpointUri = getEndpointUri();
                 LOG.debug("Starting http client for {} ...", endpointUri);
                 httpClient.start();
@@ -139,10 +141,12 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         try {
             super.doStop();
         } finally {
-            // check if this endpoint has its own http client that needs to be
-            // stopped
-            final HttpClient httpClient = getConfiguration().getHttpClient();
-            if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
+            // check if this endpoint has its own http client that needs to be stopped
+            HttpClient httpClient = getConfiguration().getHttpClient();
+            if (httpClient == null) {
+                httpClient = getComponent().getHttpClient();
+            }
+            if (httpClient != null && getComponent().getHttpClient() != httpClient) {
                 final String endpointUri = getEndpointUri();
                 LOG.debug("Stopping http client for {} ...", endpointUri);
                 httpClient.stop();

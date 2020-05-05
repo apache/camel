@@ -302,6 +302,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return result;
     }
 
+    protected SalesforceHttpClient getHttpClient() {
+        return httpClient;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
