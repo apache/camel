@@ -238,7 +238,7 @@
     <stompjms-version>1.19</stompjms-version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
     <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
-    <aws-java-sdk2-version>2.13.8</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.13.9</aws-java-sdk2-version>
     <build-helper-maven-plugin-version>3.1.0</build-helper-maven-plugin-version>
     <vertx-version>3.9.0</vertx-version>
     <ribbon-version>2.3.0</ribbon-version>
