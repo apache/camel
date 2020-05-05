@@ -54,7 +54,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-        	Properties parentProp;
+            Properties parentProp;
             try (FileReader reader = new FileReader(sourcePom)) {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
@@ -63,21 +63,20 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 parentProp = project.getProperties();
             }
             try (FileReader reader = new FileReader(targetPom)) {
-            	MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+                MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
 
                 MavenProject project = new MavenProject(model);
                 project.getProperties().clear();
                 Set<String> keys = parentProp.stringPropertyNames();
                 for (String key : keys) {
-                  project.getProperties().setProperty(key, parentProp.getProperty(key));
+                    project.getProperties().setProperty(key, parentProp.getProperty(key));
                 }
-                
-            	MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
-            	mavenWriter.write(new FileWriter(targetPom), model);	
+
+                MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
+                mavenWriter.write(new FileWriter(targetPom), model);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }
     }
