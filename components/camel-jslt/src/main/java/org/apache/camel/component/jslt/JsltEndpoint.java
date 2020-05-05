@@ -35,17 +35,16 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Query or transform JSON payloads using an JSLT.
- *
- *  @author JiriOndrusek
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true, label = "transformation")
 public class JsltEndpoint extends ResourceEndpoint {
 
     private Expression transform;
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "false", label = "common")
     private boolean prettyPrint;
-
 
     public JsltEndpoint() {
     }
@@ -71,7 +70,7 @@ public class JsltEndpoint extends ResourceEndpoint {
                 log.debug("Jslt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
 
-            String jsltStringFromHeader = msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class);
+            String jsltStringFromHeader = allowTemplateFromHeader ? msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class) : null;
             Collection<Function> functions = ((JsltComponent)getComponent()).getFunctions();
 
             if (jsltStringFromHeader != null) {
@@ -103,7 +102,10 @@ public class JsltEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        String newResourceUri = exchange.getIn().getHeader(JsltConstants.HEADER_JSLT_RESOURCE_URI, String.class);
+        String newResourceUri = null;
+        if (allowTemplateFromHeader) {
+            newResourceUri = exchange.getIn().getHeader(JsltConstants.HEADER_JSLT_RESOURCE_URI, String.class);
+        }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(JsltConstants.HEADER_JSLT_RESOURCE_URI);
 
@@ -126,11 +128,8 @@ public class JsltEndpoint extends ResourceEndpoint {
         }
 
         JsonNode output = getTransform(exchange.getMessage()).apply(input);
-
         Message out = exchange.getMessage();
-
         out.setBody(isPrettyPrint() ? output.toPrettyString() : output.toString());
-
         out.setHeaders(exchange.getIn().getHeaders());
     }
 
@@ -144,4 +143,19 @@ public class JsltEndpoint extends ResourceEndpoint {
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
 }

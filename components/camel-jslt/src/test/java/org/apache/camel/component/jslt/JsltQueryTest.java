@@ -29,7 +29,6 @@ import org.junit.Test;
  */
 public class JsltQueryTest extends CamelTestSupport {
 
-
     @Test
     public void testSimpleQuery() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
@@ -49,7 +48,7 @@ public class JsltQueryTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .to("jslt:dummy")
+                    .to("jslt:dummy?allowTemplateFromHeader=true")
                     .to("mock:result");
             }
         };

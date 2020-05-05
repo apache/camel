@@ -103,7 +103,7 @@ public class JsltBasicTest extends CamelTestSupport {
                     .to("mock:result");
 
                 from("direct://startPrettyPrint")
-                    .to("jslt:dummy?prettyPrint=true")
+                    .to("jslt:dummy?prettyPrint=true&allowTemplateFromHeader=true")
                     .to("mock:result");
             }
         };

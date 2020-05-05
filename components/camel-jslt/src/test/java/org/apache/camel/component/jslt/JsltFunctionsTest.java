@@ -62,6 +62,9 @@ public class JsltFunctionsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                JsltComponent js = context.getComponent("jslt", JsltComponent.class);
+                js.setAllowTemplateFromHeader(true);
+
                 from("direct://start")
                     .to("jslt:dummy")
                     .to("mock:result");
