@@ -40,7 +40,7 @@ public class StringTemplateTest extends CamelTestSupport {
     }
     
     @Test
-    public void testVelocityContext() throws Exception {
+    public void testVariableMap() throws Exception {
         Exchange exchange = template.request("direct:a", exchange1 -> {
             exchange1.getIn().setBody("");
             exchange1.getIn().setHeader("name", "Christian");
@@ -64,7 +64,7 @@ public class StringTemplateTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").
-                        to("string-template:org/apache/camel/component/stringtemplate/template.tm");
+                        to("string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true");
                 // END SNIPPET: example
             }
         };
