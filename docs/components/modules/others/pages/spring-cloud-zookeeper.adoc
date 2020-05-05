@@ -1,5 +1,10 @@
-= Spring Cloud Zookeeper
+[[spring-cloud-zookeeper-component]]
+= Spring Cloud Zookeeper Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-cloud-zookeeper/src/main/docs/spring-cloud-zookeeper.adoc
+:docTitle: Spring Cloud Zookeeper
+:artifactId: camel-spring-cloud-zookeeper
+:description: Camel Cloud integration with Spring Cloud Zookeeper
+:since: 2.19
 
 *Since Camel {since}*

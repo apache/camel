@@ -27,7 +27,7 @@ by using a Java API from the `CamelContext`, or from the
  or use the event notifier which has an example
 here.
 
-From Camel 2.11 onwards we have introduced a new
+From Camel {since} onwards we have introduced a new
 xref:controlbus-component.adoc[ControlBus Component] that allows you to
 send messages to a control bus Endpoint that reacts
 accordingly.
@@ -134,7 +134,7 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 [[ControlBus-Gettingperformancestatistics]]
 == Getting performance statistics
 
-*Since Camel {since}*
+*Since Camel 2.11.1*
 
 This requires JMX to be enabled (is by default) then you can get the
 performance statics per route, or for the

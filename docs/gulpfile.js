@@ -28,7 +28,7 @@ const File = require('vinyl')
 const fs = require('fs');
 
 function deleteComponentSymlinks() {
-    return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
+    return del(['components/modules/*/pages/*', '!components/modules/*/pages/index.adoc']);
 }
 
 function deleteComponentImageSymlinks() {
@@ -145,9 +145,14 @@ function createComponentImageSymlinks() {
 }
 
 function titleFrom(file) {
-    const maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
+    var maybeName = /(?::docTitle: )(.*)/.exec(file.contents.toString())
     if (maybeName == null) {
-        throw new Error(`${file.path} doesn't contain Asciidoc heading ('= <Title>') or ('# <Title')`);
+        //TODO investigate these... why dont they have them?
+        // console.warn(`${file.path} doesn't contain Asciidoc docTitle attribute (':docTitle: <Title>'`);
+        maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
+        if (maybeName == null) {
+            throw new Error(`${file.path} also doesn't contain Asciidoc heading ('= <Title>') or ('# <Title')`);
+        }
     }
 
     return maybeName[1];

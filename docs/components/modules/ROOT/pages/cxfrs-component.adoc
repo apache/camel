@@ -10,7 +10,6 @@
 
 *Since Camel {since}*
 
-
 The *cxfrs:* component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
 services hosted in CXF.
@@ -199,7 +198,7 @@ setting the message with the key of "CamelDestinationOverrideUrl".
 
 == Consuming a REST Request - Simple Binding Style
 
-*Since Camel {since}*
+*Since Camel 2.11*
 
 The `Default` binding style is rather low-level, requiring the user to
 manually process the `MessageContentsList` object coming into the route.

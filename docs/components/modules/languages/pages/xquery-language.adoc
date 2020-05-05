@@ -223,7 +223,7 @@ function reference] useful
 
 == Loading script from external resource
 
-*Since Camel {since}*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.

@@ -1,8 +1,10 @@
 = Kubernetes Components
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-kubernetes/src/main/docs/kubernetes.adoc
+//attributes written by hand, not generated
+:docTitle: Kubernetes
+:description: Summary of {docTitle} components
+:since: 2.17
 
-*Available as of Camel version 2.17*
+*Since Camel {since}*
 
 The *Kubernetes* components integrate your application with Kubernetes standalone or on top of Openshift. 
 

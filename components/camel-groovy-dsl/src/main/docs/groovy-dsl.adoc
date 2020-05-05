@@ -6,6 +6,8 @@
 :since: 2.19
 :deprecated: *deprecated*
 
+*Since Camel {since}*
+
 The Groovy DSL implementation is built on top of the existing Java-based
 DSL, but it additionally allows to use Groovy language
 features in your routes, particularly

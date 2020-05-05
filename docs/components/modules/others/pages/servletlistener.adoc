@@ -127,7 +127,7 @@ Example].
 [[ServletListenerComponent-AccessingthecreatedCamelContext]]
 == Accessing the created CamelContext
 
-*Since Camel {since}*
+*Since Camel 2.14/2.13.3/2.12.5*
 
 The created `CamelContext` is stored on the `ServletContext` as an
 attribute with the key "CamelContext". You can get hold of the

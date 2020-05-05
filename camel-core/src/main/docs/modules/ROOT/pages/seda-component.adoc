@@ -110,7 +110,7 @@ with the following path and query parameters:
 
 == Choosing BlockingQueue implementation
 
-*Since Camel {since}*
+*Since Camel 2.12*
 
 By default, the SEDA component always intantiates LinkedBlockingQueue,
 but you can use different implementation, you can reference your own
@@ -227,7 +227,7 @@ unit test.
 
 == Using multipleConsumers
 
-*Since Camel {since}*
+*Since Camel 2.2*
 
 In this example we have defined two consumers and registered them as
 spring beans.

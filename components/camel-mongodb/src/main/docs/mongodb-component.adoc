@@ -554,7 +554,7 @@ containing the number of records deleted (copied from
 
 ==== bulkWrite
 
-*Since Camel {since}*
+*Since Camel 2.21*
 
 Performs write operations in bulk with controls for order of execution.
 Requires a `List<WriteModel<DBObject>>` as the IN message body containing commands for insert, update, and delete operations.
@@ -590,7 +590,7 @@ Unordered operations are executed in parallel and this behavior is not guarantee
 
 ==== aggregate
 
-*Since Camel {since}*
+*Since Camel 2.14*
 
 Perform a aggregation with the given pipeline contained in the
 body.
@@ -718,7 +718,7 @@ in the shell, in the form of a `DBObject` in the OUT message body.
 
 ==== command
 
-*Since Camel {since}*
+*Since Camel 2.15*
 
 Run the body as a command on database. Usefull for admin operation as
 getting host informations, replication or sharding status.

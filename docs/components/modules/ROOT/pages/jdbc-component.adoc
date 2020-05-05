@@ -172,7 +172,7 @@ type.
 
 == Generated keys
 
-*Since Camel {since}*
+*Since Camel 2.10*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
@@ -190,7 +190,7 @@ Using generated keys does not work with together with named parameters.
 
 == Using named parameters
 
-*Since Camel {since}*
+*Since Camel 2.12*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :?lic and

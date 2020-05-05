@@ -6,6 +6,8 @@
 :since: 1.5
 :deprecated: *deprecated*
 
+*Since Camel {since}*
+
 We have support for http://code.google.com/p/google-guice/[Google Guice]
 as a dependency injection framework.
 

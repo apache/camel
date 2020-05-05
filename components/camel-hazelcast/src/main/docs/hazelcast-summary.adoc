@@ -1,8 +1,10 @@
 = Hazelcast Component
-//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
-:page-source: components/camel-hazelcast/src/main/docs/hazelcast.adoc
+//attributes written by hand, not generated
+:docTitle: Hazelcast
+:description: Summary of {docTitle} components
+:since: 2.7
 
-*Available as of Camel version 2.7*
+*Since Camel {since}*
 
 The *hazelcast-* component allows you to work with the
 http://www.hazelcast.com[Hazelcast] distributed data grid / cache.

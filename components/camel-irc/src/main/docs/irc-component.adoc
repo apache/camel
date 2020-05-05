@@ -8,10 +8,6 @@
 
 *Since Camel {since}*
 
-*Since Camel {since}*
-
-
-
 The IRC component implements an
 http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay
 Chat) transport.
@@ -224,7 +220,7 @@ ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTr
 
 == Using keys
 
-*Since Camel {since}*
+*Since Camel 2.2*
 
 Some irc rooms requires you to provide a key to be able to join that
 channel. The key is just a secret word.

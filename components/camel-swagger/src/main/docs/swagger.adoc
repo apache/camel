@@ -224,7 +224,7 @@ client. Or block certain clients etc.
 [[Swagger-MultipleCamelContexts]]
 == Multiple CamelContexts
 
-*Since Camel {since}*
+*Since Camel 2.16*
 
 When using camel-swagger from Camel 2.16 onwards then it supports
 detecting all the running CamelContexts in the same JVM. These contexts
