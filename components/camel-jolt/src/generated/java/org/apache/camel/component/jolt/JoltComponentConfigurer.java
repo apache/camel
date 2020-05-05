@@ -19,6 +19,8 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JoltComponent target = (JoltComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -31,6 +33,7 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("allowTemplateFromHeader", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("transform", com.bazaarvoice.jolt.Transform.class);
@@ -41,6 +44,8 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JoltComponent target = (JoltComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
