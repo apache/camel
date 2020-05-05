@@ -18,10 +18,10 @@ package org.apache.camel.component.kubernetes.hpa;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerList;
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerSpec;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerList;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpec;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
@@ -86,7 +86,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        HorizontalPodAutoscalerList hpaList = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().list();
+        HorizontalPodAutoscalerList hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().list();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(hpaList.getItems());
@@ -100,7 +100,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
 
         FilterWatchListMultiDeletable<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Boolean, Watch, Watcher<HorizontalPodAutoscaler>> hpas = getEndpoint()
-                .getKubernetesClient().autoscaling().horizontalPodAutoscalers();
+                .getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             hpas.withLabel(entry.getKey(), entry.getValue());
         }
@@ -122,7 +122,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
             LOG.error("Get a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Get a specific hpa require specify a namespace name");
         }
-        hpa = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().inNamespace(namespaceName).withName(podName).get();
+        hpa = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName).withName(podName).get();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(hpa);
@@ -147,7 +147,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
         HorizontalPodAutoscaler hpaCreating = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName(hpaName).withLabels(labels).endMetadata().withSpec(hpaSpec).build();
-        hpa = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().inNamespace(namespaceName).create(hpaCreating);
+        hpa = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName).create(hpaCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(hpa);
@@ -164,7 +164,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
             LOG.error("Delete a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific hpa require specify a namespace name");
         }
-        boolean hpaDeleted = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().inNamespace(namespaceName).withName(hpaName).delete();
+        boolean hpaDeleted = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName).withName(hpaName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(hpaDeleted);
