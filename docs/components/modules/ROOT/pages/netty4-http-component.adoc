@@ -2,10 +2,15 @@
 = Netty4 HTTP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-netty4-http/src/main/docs/netty4-http-component.adoc
+:docTitle: Netty4 HTTP
+:artifactId: camel-netty4-http
+:description: Netty HTTP server and client using the Netty 4.x library.
+:since: 2.14
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.14*
+*Since Camel {since}*
 
-*Available as of Camel version 2.14*
+*Since Camel {since}*
 
 
 

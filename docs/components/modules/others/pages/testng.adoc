@@ -1,0 +1,15 @@
+[[testng-component]]
+= TestNG Component (deprecated)
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-testng/src/main/docs/testng.adoc
+:docTitle: TestNG
+:artifactId: camel-testng
+:description: Camel unit testing with TestNG
+:since: 2.8
+:deprecated: *deprecated*
+
+*Available since Camel 2.8*
+
+Camel testing using TestNG.
+
+This component has been deprecated and we recommend using `camel-test` instead which is using JUnit.

@@ -1,7 +1,10 @@
 [[micrometer-component]]
 = Micrometer Component
-ifdef::env-github[]
-*Available as of Camel version 2.22*
+:docTitle: Micrometer
+:artifactId: camel-micrometer
+:description: To collect various metrics directly from Camel routes using the Micrometer library.
+:since: 2.22
+:component-header: Only producer is supported
 
 :caution-caption: :boom:
 :important-caption: :exclamation:

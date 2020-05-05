@@ -1,7 +1,12 @@
 [[kubernetes-config-maps-component]]
 = Kubernetes ConfigMap Component
+:docTitle: Kubernetes ConfigMap
+:artifactId: camel-kubernetes
+:description: The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+:since: 2.17
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.17*
+*Since Camel {since}*
 
 The *Kubernetes ConfigMap* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes ConfigMap operations and a consumer to consume events related to Config maps.

@@ -1,7 +1,11 @@
 [[hl7-dataformat]]
 = HL7 DataFormat
+:docTitle: HL7
+:artifactId: camel-hl7
+:description: The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 The *HL7* component is used for working with the HL7 MLLP protocol and

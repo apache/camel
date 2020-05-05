@@ -1,7 +1,12 @@
 [[aws-cw-component]]
 = AWS CloudWatch Component
+:docTitle: AWS CloudWatch
+:artifactId: camel-aws
+:description: The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+:since: 2.11
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.11*
+*Since Camel {since}*
 
 
 The CW component allows messages to be sent to an

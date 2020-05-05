@@ -2,8 +2,12 @@
 = SOAP DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-soap/src/main/docs/soapjaxb-dataformat.adoc
+:docTitle: SOAP
+:artifactId: camel-soap
+:description: SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.
+:since: 2.3
 
-*Available as of Camel version 2.3*
+*Since Camel {since}*
 
 
 SOAP is a Data Format which uses JAXB2 and JAX-WS
@@ -132,7 +136,7 @@ most settings apply here as well
 
 === Using SOAP 1.2
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -170,7 +174,7 @@ And in the Camel route
 
 == Multi-part Messages
 
-*Available as of Camel 2.8.1*
+*Since Camel {since}*
 
 Multi-part SOAP messages are supported by the ServiceInterfaceStrategy.
 The ServiceInterfaceStrategy must be initialized with a service

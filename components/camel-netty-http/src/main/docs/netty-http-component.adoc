@@ -1,7 +1,13 @@
 [[netty-http-component]]
 = Netty HTTP Component (deprecated)
+:docTitle: Netty HTTP
+:artifactId: camel-netty-http
+:description: Netty HTTP server and client using the Netty 3.x library.
+:since: 2.12
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.12*
+*Since Camel {since}*
 
 
 

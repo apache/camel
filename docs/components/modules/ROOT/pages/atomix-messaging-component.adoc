@@ -2,8 +2,13 @@
 = Atomix Messaging Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atomix/src/main/docs/atomix-messaging-component.adoc
+:docTitle: Atomix Messaging
+:artifactId: camel-atomix
+:description: The atomix-messaging component is used to access Atomix's group messaging.
+:since: 2.20
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The camel atomix-messaging component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/cluster-communication/direct-messaging[Group Messaging].

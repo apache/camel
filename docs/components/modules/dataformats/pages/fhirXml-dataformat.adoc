@@ -2,8 +2,12 @@
 = FHIR XML DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhirXml-dataformat.adoc
+:docTitle: FHIR XML
+:artifactId: camel-fhir
+:description: The FHIR XML data format is used to marshall/unmarshall from/to FHIR objects to/from XML.
+:since: 2.21
 
-*Available as of Camel version 2.21*
+*Since Camel {since}*
 
 The FHIR-XML Data Format leverages
 link:https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-base/src/main/java/ca/uhn/fhir/parser/XmlParser.java[HAPI-FHIR's]

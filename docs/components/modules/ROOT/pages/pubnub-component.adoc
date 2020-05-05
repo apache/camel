@@ -2,8 +2,13 @@
 = PubNub Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pubnub/src/main/docs/pubnub-component.adoc
+:docTitle: PubNub
+:artifactId: camel-pubnub
+:description: To send and receive messages to PubNub data stream network for connected devices.
+:since: 2.19
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices.

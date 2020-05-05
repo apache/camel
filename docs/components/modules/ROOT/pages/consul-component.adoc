@@ -2,8 +2,13 @@
 = Consul Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-consul/src/main/docs/consul-component.adoc
+:docTitle: Consul
+:artifactId: camel-consul
+:description: The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
+:since: 2.18
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 The *Consul* component is a component for integrating your application with Consul.

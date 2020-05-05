@@ -2,8 +2,12 @@
 = JSon GSon DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
+:docTitle: JSon GSon
+:artifactId: camel-gson
+:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:since: 2.10
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 Gson is a Data Format which uses the

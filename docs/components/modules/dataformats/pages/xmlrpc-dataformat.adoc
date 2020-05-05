@@ -2,8 +2,12 @@
 = XML RPC DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc
+:docTitle: XML RPC
+:artifactId: camel-xmlrpc
+:description: The XML RPC data format is used for working with the XML RPC protocol.
+:since: 2.11
 
-*Available as of Camel version 2.11*
+*Since Camel {since}*
 
 
 As the XmlRpc message could be request or response, when you use the

@@ -1,7 +1,13 @@
 [[mock-component]]
 = Mock Component
+:docTitle: Mock
+:artifactId: camel-core
+:description: The mock component is used for testing routes and mediation rules using mocks.
+:since: 1.0
+:component-header: Only producer is supported
+:core:
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The xref:mock-component.adoc[Mock], xref:test-component.adoc[Test]
@@ -93,7 +99,7 @@ mock:name
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +109,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -153,7 +159,7 @@ invoked. This can be configured by setting the
 
 == Using assertPeriod
 
-*Available as of Camel 2.7*
+*Since Camel {since}*
 
 When the assertion is satisfied then Camel will stop waiting and
 continue from the `assertIsSatisfied` method. That means if a new
@@ -240,7 +246,7 @@ processor tests].
 
 == Mocking existing endpoints
 
-*Available as of Camel 2.7*
+*Since Camel {since}*
 
 Camel now allows you to automatically mock existing endpoints in your
 Camel routes.
@@ -366,7 +372,7 @@ in the constructor for the bean:
 
 == Mocking endpoints and skip sending to original endpoint
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
@@ -392,7 +398,7 @@ include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test
 
 == Limiting the number of messages to keep
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 The xref:mock-component.adoc[Mock] endpoints will by default keep a copy of every
 Exchange that it received. So if you test with a lot
@@ -427,7 +433,7 @@ expectations on the 10 retained messages.
 
 == Testing with arrival times
 
-*Available as of Camel 2.7*
+*Since Camel {since}*
 
 The xref:mock-component.adoc[Mock] endpoint stores the arrival time of the message
 as a property on the Exchange.

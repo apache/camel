@@ -2,8 +2,12 @@
 = Base64 DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-base64/src/main/docs/base64-dataformat.adoc
+:docTitle: Base64
+:artifactId: camel-base64
+:description: The Base64 data format is used for base64 encoding and decoding.
+:since: 2.11
 
-*Available as of Camel version 2.11*
+*Since Camel {since}*
 
 
 The Base64 data format is used for base64 encoding and decoding.

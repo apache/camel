@@ -1,7 +1,12 @@
 [[spring-ldap-component]]
 = Spring LDAP Component
+:docTitle: Spring LDAP
+:artifactId: camel-spring-ldap
+:description: The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+:since: 2.11
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.11*
+*Since Camel {since}*
 
 
 The *spring-ldap:* component provides a Camel wrapper for

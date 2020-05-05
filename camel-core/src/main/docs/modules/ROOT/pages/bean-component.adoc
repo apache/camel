@@ -1,7 +1,13 @@
 [[bean-component]]
 = Bean Component
+:docTitle: Bean
+:artifactId: camel-core
+:description: The bean component is for invoking Java beans from Camel.
+:since: 1.0
+:component-header: Only producer is supported
+:core:
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 The *bean:* component binds beans to Camel message exchanges.
 
@@ -42,7 +48,7 @@ bean:beanName
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -52,7 +58,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

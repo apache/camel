@@ -2,8 +2,13 @@
 = XML Security Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc
+:docTitle: XML Security
+:artifactId: camel-xmlsecurity
+:description: Used to sign and verify exchanges using the XML signature specification.
+:since: 2.12
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.12*
+*Since Camel {since}*
 
 With this Apache Camel component, you can generate and validate XML
 signatures as described in the W3C standard
@@ -575,7 +580,7 @@ from("direct:detached")
 
 == XAdES-BES/EPES for the Signer Endpoint
 
-*Available as of Camel 2.15.0* 
+*Since Camel {since}*
 
 http://www.etsi.org/deliver/etsi_ts/101900_101999/101903/01.04.02_60/ts_101903v010402p.pdf[XML
 Advanced Electronic Signatures (XAdES)] defines extensions to XML

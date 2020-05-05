@@ -1,7 +1,12 @@
 [[kubernetes-job-component]]
 = Kubernetes Job Component
+:docTitle: Kubernetes Job
+:artifactId: camel-kubernetes
+:description: The Kubernetes Jobs component provides a producer to execute kubernetes job operations
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 The *Kubernetes Job* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes job operations.

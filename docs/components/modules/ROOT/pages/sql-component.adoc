@@ -2,13 +2,18 @@
 = SQL Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-sql/src/main/docs/sql-component.adoc
+:docTitle: SQL
+:artifactId: camel-sql
+:description: The sql component allows you to work with databases using JDBC SQL queries.
+:since: 1.4
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.4*
+*Since Camel {since}*
 
-*Available as of Camel version 1.4*
+*Since Camel {since}*
 
 
-*Available as of Camel version 1.4*
+*Since Camel {since}*
 
 
 
@@ -343,7 +348,7 @@ message headers (*Available as of Camel 2.12.4, 2.13.1*):
 
 == Generated keys
 
-*Available as of Camel 2.12.4, 2.13.1 and 2.14 *
+*Since Camel {since}*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the SQL producer to return the
@@ -367,7 +372,7 @@ sql:select * from table where id=# order by name?dataSource=myDS
 
 == Using named parameters
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -398,7 +403,7 @@ parameters will be taken from the body.
 
 == Using expression parameters in producers
 
-*Available as of Camel 2.14*
+*Since Camel {since}*
 
 In the given route below, we want to get all the project from the
 database. It uses the body of the exchange for defining the license and
@@ -414,7 +419,7 @@ from("direct:projects")
 
 === Using expression parameters in consumers
 
-*Available as of Camel 2.23*
+*Since Camel {since}*
 
 When using the SQL component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
@@ -446,7 +451,7 @@ bean methods as in this example.
 
 == Using IN queries with dynamic values
 
-*Available as of Camel 2.17*
+*Since Camel {since}*
 
 From Camel 2.17 onwards the SQL producer allows to use SQL queries with
 IN statements where the IN values is dynamic computed. For example from
@@ -512,7 +517,7 @@ from("direct:query")
 
 == Using the JDBC based idempotent repository
 
-*Available as of Camel 2.7*: In this section we will use the JDBC based
+*Since Camel {since}*
 idempotent repository.
 
 TIP:*Abstract class*
@@ -582,7 +587,7 @@ the second one is the message id (`String`).
 
 == Using the JDBC based aggregation repository
 
-*Available as of Camel 2.6*
+*Since Camel {since}*
 
 INFO: *Using JdbcAggregationRepository in Camel 2.6*
 
@@ -651,7 +656,7 @@ CREATE TABLE aggregation_completed (
 
 == Storing body and headers as text
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can configure the `JdbcAggregationRepository` to store message body
 and select(ed) headers as String in separate columns. For example to

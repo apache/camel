@@ -2,8 +2,13 @@
 = Bonita Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-bonita/src/main/docs/bonita-component.adoc
+:docTitle: Bonita
+:artifactId: camel-bonita
+:description: Used for communicating with a remote Bonita BPM process engine.
+:since: 2.19
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 Used for communicating with a remote Bonita BPM process engine.

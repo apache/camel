@@ -1,7 +1,11 @@
 [[fhirJson-dataformat]]
 = FHIR JSon DataFormat
+:docTitle: FHIR JSon
+:artifactId: camel-fhir
+:description: The FHIR JSon data format is used to marshall/unmarshall to/from FHIR objects to/from JSON.
+:since: 2.21
 
-*Available as of Camel version 2.21*
+*Since Camel {since}*
 
 The FHIR-JSON Data Format leverages
 link:https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-base/src/main/java/ca/uhn/fhir/parser/JsonParser.java[HAPI-FHIR's]

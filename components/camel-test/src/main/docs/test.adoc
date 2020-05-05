@@ -1,5 +1,9 @@
-[[Test-TestComponent]]
+[[test-component]]
 = Test Component
+:docTitle: Test
+:artifactId: camel-test
+:description: Camel unit testing
+:since: 2.9
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The Mock, Test
@@ -92,4 +96,3 @@ method], your test case will perform the necessary assertions.
 
 To see how you can set other expectations on the test endpoint, see the
 Mock component.
-

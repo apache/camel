@@ -1,7 +1,12 @@
 [[crypto-cms-component]]
 = Crypto CMS Component
+:docTitle: Crypto CMS
+:artifactId: camel-crypto-cms
+:description: The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
+:since: 2.20
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 http://tools.ietf.org/html/rfc5652[Cryptographic Message Syntax (CMS)] is a well established standard for signing and encrypting messages. The Apache Crypto CMS component supports the following parts of this standard:

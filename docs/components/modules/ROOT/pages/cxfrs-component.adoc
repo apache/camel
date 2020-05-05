@@ -2,8 +2,13 @@
 = CXF-RS Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cxf/src/main/docs/cxfrs-component.adoc
+:docTitle: CXF-RS
+:artifactId: camel-cxf
+:description: The cxfrs component is used for JAX-RS REST services using Apache CXF.
+:since: 2.0
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 The *cxfrs:* component provides integration with
@@ -194,7 +199,7 @@ setting the message with the key of "CamelDestinationOverrideUrl".
 
 == Consuming a REST Request - Simple Binding Style
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 The `Default` binding style is rather low-level, requiring the user to
 manually process the `MessageContentsList` object coming into the route.

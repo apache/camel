@@ -1,7 +1,13 @@
 [[direct-component]]
 = Direct Component
+:docTitle: Direct
+:artifactId: camel-core
+:description: The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
+:since: 1.0
+:component-header: Both producer and consumer are supported
+:core:
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 The *direct:* component provides direct, synchronous invocation of any
 consumers when a producer sends a message exchange. +
@@ -55,7 +61,7 @@ direct:name
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

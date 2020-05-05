@@ -2,8 +2,13 @@
 = Boon DataFormat (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-boon/src/main/docs/boon-dataformat.adoc
+:docTitle: Boon
+:artifactId: camel-boon
+:description: Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:since: 2.16
+:deprecated: *deprecated*
 
-*Available as of Camel version 2.16*
+*Since Camel {since}*
 
 
 Boon is a Data Format which uses the

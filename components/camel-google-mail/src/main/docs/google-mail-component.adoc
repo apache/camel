@@ -1,7 +1,12 @@
 [[google-mail-component]]
 = Google Mail Component
+:docTitle: Google Mail
+:artifactId: camel-google-mail
+:description: The google-mail component provides access to Google Mail.
+:since: 2.15
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.15*
+*Since Camel {since}*
 
 
 The Google Mail component provides access

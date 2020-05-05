@@ -2,8 +2,13 @@
 = JGroups raft Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc
+:docTitle: JGroups raft
+:artifactId: camel-jgroups-raft
+:description: The jgroups component provides exchange of messages between Camel and JGroups clusters.
+:since: 2.24
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.24*
+*Since Camel {since}*
 
 
 http://belaban.github.io/jgroups-raft/[JGroups-raft] is a https://raftconsensus.github.io/[Raft] implementation in http://www.jgroups.org/[JGroups].

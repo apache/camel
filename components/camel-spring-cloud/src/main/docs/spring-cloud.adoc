@@ -1,7 +1,11 @@
-[[SpringCloud-SpringCloud]]
-= Spring Cloud
+[[spring-cloud-component]]
+= Spring Cloud Component
+:docTitle: Spring Cloud
+:artifactId: camel-spring-cloud
+:description: Camel Cloud integration with Spring Cloud
+:since: 2.19
 
-*Available as of Camel 2.19*
+*Since Camel {since}*
 
 Spring Cloud component
 

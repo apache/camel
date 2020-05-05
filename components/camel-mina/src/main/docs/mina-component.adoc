@@ -1,7 +1,13 @@
 [[mina-component]]
 = Mina Component (deprecated)
+:docTitle: Mina
+:artifactId: camel-mina
+:description: Socket level networking using TCP or UDP with the Apache Mina 1.x library.
+:since: 1.0
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 

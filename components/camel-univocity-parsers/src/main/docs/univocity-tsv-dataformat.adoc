@@ -1,7 +1,11 @@
 [[univocity-tsv-dataformat]]
 = uniVocity TSV DataFormat
+:docTitle: uniVocity TSV
+:artifactId: camel-univocity-parsers
+:description: The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.
+:since: 2.15
 
-*Available as of Camel version 2.15*
+*Since Camel {since}*
 
 This xref:latest@manual::data-format.adoc[Data
 Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]

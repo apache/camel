@@ -2,8 +2,13 @@
 = AHC Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ahc/src/main/docs/ahc-component.adoc
+:docTitle: AHC
+:artifactId: camel-ahc
+:description: To call external HTTP services using Async Http Client.
+:since: 2.8
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.8*
+*Since Camel {since}*
 
 
 The AHC component provides HTTP based endpoints

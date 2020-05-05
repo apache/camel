@@ -1,7 +1,11 @@
-[[Kura-EclipseKuracomponent]]
-= Eclipse Kura component
+[[kura-component]]
+= Kura Component
+:docTitle: Kura
+:artifactId: camel-kura
+:description: Using Camel with Eclipse Kura (OSGi)
+:since: 2.15
 
-*Available as of Camel 2.15*
+*Since Camel {since}*
 
 This documentation page covers the integration options of Camel with the
 https://eclipse.org/kura/[Eclipse Kura] M2M gateway. The common reason

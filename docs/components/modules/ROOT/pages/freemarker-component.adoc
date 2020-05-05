@@ -2,8 +2,13 @@
 = Freemarker Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-freemarker/src/main/docs/freemarker-component.adoc
+:docTitle: Freemarker
+:artifactId: camel-freemarker
+:description: Transforms the message using a FreeMarker template.
+:since: 2.10
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 The *freemarker:* component allows for processing a message using a

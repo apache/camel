@@ -1,5 +1,10 @@
-[[Ruby-Ruby]]
-= Ruby
+[[ruby-component]]
+= Ruby Component (deprecated)
+:docTitle: Ruby
+:artifactId: camel-ruby
+:description: Camel Ruby DSL
+:since: 1.0
+:deprecated: *deprecated*
 
 Camel supports http://www.ruby-lang.org/en/[Ruby] among other
 Scripting Languages to allow an
@@ -85,7 +90,7 @@ languages with explicit DSL support.
 [[Ruby-AdditionalargumentstoScriptingEngine]]
 == Additional arguments to ScriptingEngine
 
-*Available as of Camel 2.8*
+*Since Camel {since}*
 
 You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`.
@@ -95,7 +100,7 @@ header on the Camel message with the key `CamelScriptArguments`.
 [[Ruby-Usingpropertiesfunction]]
 == Using properties function
 
-*Available as of Camel 2.9*
+*Since Camel {since}*
 
 If you need to use the Properties component from a
 script to lookup property placeholders, then its a bit cumbersome to do
@@ -118,7 +123,7 @@ same example is simpler:
 [[Ruby-Loadingscriptfromexternalresource]]
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
@@ -134,7 +139,7 @@ eg to refer to a file on the classpath you can do:
 [[Ruby-Howtogettheresultfrommultiplestatementsscript]]
 == How to get the result from multiple statements script
 
-*Available as of Camel 2.14*
+*Since Camel {since}*
 
 As the scripteengine evale method just return a Null if it runs a
 multiple statments script. Camel now look up the value of script result

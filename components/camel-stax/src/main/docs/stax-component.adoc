@@ -1,7 +1,12 @@
 [[stax-component]]
 = StAX Component
+:docTitle: StAX
+:artifactId: camel-stax
+:description: The stax component allows messages to be process through a SAX ContentHandler.
+:since: 2.9
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.9*
+*Since Camel {since}*
 
 
 The StAX component allows messages to be process through a SAX

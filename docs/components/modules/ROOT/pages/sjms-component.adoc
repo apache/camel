@@ -2,8 +2,13 @@
 = Simple JMS Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-sjms/src/main/docs/sjms-component.adoc
+:docTitle: Simple JMS
+:artifactId: camel-sjms
+:description: The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
+:since: 2.11
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.11*
+*Since Camel {since}*
 
 
 The Simple JMS Component, or SJMS, is a JMS client for use with Camel

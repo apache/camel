@@ -2,8 +2,14 @@
 = Kubernetes Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kubernetes/src/main/docs/kubernetes-component.adoc
+:docTitle: Kubernetes
+:artifactId: camel-kubernetes
+:description: Use splitted kubernetes components instead of this composite component.
+:since: 2.17
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.17*
+*Since Camel {since}*
 
 [IMPORTANT]
 ====================================================================================

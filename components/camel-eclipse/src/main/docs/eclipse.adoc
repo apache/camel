@@ -1,6 +1,12 @@
-= Eclipse Component
+[[eclipse-component]]
+= Eclipse Component (deprecated)
+:docTitle: Eclipse
+:artifactId: camel-eclipse
+:description: Camel classpath scanning support for running in Eclipse Desktop Applications
+:since: 2.3
+:deprecated: *deprecated*
 
-*Available as of Camel 2.3*
+*Since Camel {since}*
 
 The camel-eclipse is a component which allows
 you to run Camel with Eclipse RCP. This component is needed due Eclipse

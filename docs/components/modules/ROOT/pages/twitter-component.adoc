@@ -2,8 +2,14 @@
 = Twitter Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-twitter/src/main/docs/twitter-component.adoc
+:docTitle: Twitter
+:artifactId: camel-twitter
+:description: Use twitter-directmessage, twitter-search, twitter-streaming and twitter-timeline instead of this component.
+:since: 2.10
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 [IMPORTANT]

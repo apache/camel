@@ -1,7 +1,12 @@
-[[UrlRewrite-UrlRewriteComponent]]
-= UrlRewrite Component
+[[urlrewrite-component]]
+= URLRewrite Component (deprecated)
+:docTitle: URLRewrite
+:artifactId: camel-urlrewrite
+:description: URL rewrite support for HTTP components
+:since: 2.11
+:deprecated: *deprecated*
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 The `camel-urlrewrite` component allows to plugin url rewrite
 functionality to xref:http-component.adoc[HTTP], xref:http4-component.adoc[HTTP4],

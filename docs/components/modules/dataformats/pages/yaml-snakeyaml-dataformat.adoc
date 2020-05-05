@@ -2,8 +2,12 @@
 = YAML SnakeYAML DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc
+:docTitle: YAML SnakeYAML
+:artifactId: camel-snakeyaml
+:description: YAML is a data format to marshal and unmarshal Java objects to and from YAML.
+:since: 2.17
 
-*Available as of Camel version 2.17*
+*Since Camel {since}*
 
 
 YAML is a Data Format to marshal and unmarshal

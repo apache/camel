@@ -1121,7 +1121,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 44 in 44 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===

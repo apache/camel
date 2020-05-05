@@ -1,7 +1,12 @@
 [[hazelcast-map-component]]
 = Hazelcast Map Component
+:docTitle: Hazelcast Map
+:artifactId: camel-hazelcast
+:description: The hazelcast-map component is used to access Hazelcast distributed map.
+:since: 2.7
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.7*
+*Since Camel {since}*
 
 
 The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed map.

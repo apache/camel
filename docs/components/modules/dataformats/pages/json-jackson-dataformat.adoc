@@ -2,8 +2,12 @@
 = JSon Jackson DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc
+:docTitle: JSon Jackson
+:artifactId: camel-jackson
+:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 Jackson is a Data Format which uses the

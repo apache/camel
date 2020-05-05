@@ -1,7 +1,11 @@
 [[constant-language]]
 = Constant Language
+:docTitle: Constant
+:artifactId: camel-core
+:description: To use a constant value in Camel expressions or predicates.
+:since: 1.5
 
-*Available as of Camel version 1.5*
+*Since Camel {since}*
 
 The Constant Expression Language is really just a way to specify
 constant strings as a type of expression.

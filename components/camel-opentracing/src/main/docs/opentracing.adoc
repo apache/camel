@@ -1,7 +1,11 @@
-[[OpenTracing-OpenTracingComponent]]
+[[opentracing-component]]
 = OpenTracing Component
+:docTitle: OpenTracing
+:artifactId: camel-opentracing
+:description: Distributed tracing using OpenTracing
+:since: 2.19
 
-*Available as of Camel 2.19*
+*Since Camel {since}*
 
 IMPORTANT: Starting with Camel 2.21, it will be necessary to use an OpenTracing complaint tracer that is
 compatible with OpenTracing Java API version 0.31 or higher.

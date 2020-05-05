@@ -1,7 +1,13 @@
 [[rmi-component]]
 = RMI Component (deprecated)
+:docTitle: RMI
+:artifactId: camel-rmi
+:description: The rmi component is for invoking Java RMI beans from Camel.
+:since: 1.0
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 The *rmi:* component binds Exchanges to the RMI

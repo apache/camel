@@ -2,8 +2,13 @@
 = Telegram Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-telegram/src/main/docs/telegram-component.adoc
+:docTitle: Telegram
+:artifactId: camel-telegram
+:description: The telegram component provides access to the Telegram Bot API.
+:since: 2.18
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 The *Telegram* component provides access to the https://core.telegram.org/bots/api[Telegram Bot API].

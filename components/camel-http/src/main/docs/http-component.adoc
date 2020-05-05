@@ -1,7 +1,13 @@
 [[http-component]]
 = HTTP Component (deprecated)
+:docTitle: HTTP
+:artifactId: camel-http
+:description: For calling out to external HTTP servers using Apache HTTP Client 3.x.
+:since: 1.0
+:deprecated: *deprecated*
+:component-header: Only producer is supported
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 The HTTP component provides HTTP based endpoints

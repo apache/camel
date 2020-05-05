@@ -1,7 +1,12 @@
 [[atmosphere-websocket-component]]
 = Atmosphere Websocket Component
+:docTitle: Atmosphere Websocket
+:artifactId: camel-atmosphere-websocket
+:description: To exchange data with external Websocket clients using Atmosphere.
+:since: 2.14
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.14*
+*Since Camel {since}*
 
 
 The *atmosphere-websocket:* component provides Websocket

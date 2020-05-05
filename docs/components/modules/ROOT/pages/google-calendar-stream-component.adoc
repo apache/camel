@@ -2,8 +2,13 @@
 = Google Calendar Stream Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc
+:docTitle: Google Calendar Stream
+:artifactId: camel-google-calendar
+:description: The google-calendar component provides access to Google Calendar in a streaming mode.
+:since: 2.23
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 
 The Google Calendar component provides access

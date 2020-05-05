@@ -2,8 +2,13 @@
 = AWS Kinesis Firehose Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/src/main/docs/aws-kinesis-firehose-component.adoc
+:docTitle: AWS Kinesis Firehose
+:artifactId: camel-aws
+:description: The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.

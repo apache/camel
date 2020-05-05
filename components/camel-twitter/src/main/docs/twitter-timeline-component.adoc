@@ -1,7 +1,12 @@
 [[twitter-timeline-component]]
 = Twitter Timeline Component
+:docTitle: Twitter Timeline
+:artifactId: camel-twitter
+:description: The Twitter Timeline component consumes twitter timeline or update the status of specific user.
+:since: 2.10
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 The Twitter Timeline component consumes twitter timeline or update the status of specific user.

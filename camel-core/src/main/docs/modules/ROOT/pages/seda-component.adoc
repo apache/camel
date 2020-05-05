@@ -1,7 +1,13 @@
 [[seda-component]]
 = SEDA Component
+:docTitle: SEDA
+:artifactId: camel-core
+:description: The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
+:since: 1.1
+:component-header: Both producer and consumer are supported
+:core:
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 The *seda:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that
@@ -65,7 +71,7 @@ seda:name
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,7 +110,7 @@ with the following path and query parameters:
 
 == Choosing BlockingQueue implementation
 
-*Available as of Camel 2.12*
+*Since Camel {since}*
 
 By default, the SEDA component always intantiates LinkedBlockingQueue,
 but you can use different implementation, you can reference your own
@@ -221,7 +227,7 @@ unit test.
 
 == Using multipleConsumers
 
-*Available as of Camel 2.2*
+*Since Camel {since}*
 
 In this example we have defined two consumers and registered them as
 spring beans.

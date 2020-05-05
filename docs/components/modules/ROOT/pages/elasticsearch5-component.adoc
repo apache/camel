@@ -2,8 +2,14 @@
 = Elasticsearch5 Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elasticsearch5/src/main/docs/elasticsearch5-component.adoc
+:docTitle: Elasticsearch5
+:artifactId: camel-elasticsearch5
+:description: The elasticsearch component is used for interfacing with ElasticSearch server using 5.x API.
+:since: 2.19
+:deprecated: *deprecated*
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The ElasticSearch component allows you to interface with an

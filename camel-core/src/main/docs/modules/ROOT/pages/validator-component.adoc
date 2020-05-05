@@ -1,7 +1,13 @@
 [[validator-component]]
 = Validator Component
+:docTitle: Validator
+:artifactId: camel-core
+:description: Validates the payload of a message using XML Schema and JAXP Validation.
+:since: 1.1
+:component-header: Only producer is supported
+:core:
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML
@@ -75,7 +81,7 @@ validator:resourceUri
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

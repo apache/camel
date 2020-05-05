@@ -1,7 +1,13 @@
 [[class-component]]
 = Class Component
+:docTitle: Class
+:artifactId: camel-core
+:description: The Class Component is for invoking Java Classes (Java beans) from Camel.
+:since: 2.4
+:component-header: Only producer is supported
+:core:
 
-*Available as of Camel version 2.4*
+*Since Camel {since}*
 
 The *class:* component binds beans to Camel message exchanges. It works
 in the same way as the xref:bean-component.adoc[Bean] component but instead of
@@ -45,7 +51,7 @@ class:beanName
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -55,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

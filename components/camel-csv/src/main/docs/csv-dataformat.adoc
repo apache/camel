@@ -1,7 +1,11 @@
 [[csv-dataformat]]
 = CSV DataFormat
+:docTitle: CSV
+:artifactId: camel-csv
+:description: The CSV data format is used for handling CSV payloads.
+:since: 1.3
 
-*Available as of Camel version 1.3*
+*Since Camel {since}*
 
 
 The CSV Data Format uses
@@ -190,7 +194,7 @@ for (List<String> line : data) {
 
 == Marshalling a List<Map> to CSV
 
-*Available as of Camel 2.1*
+*Since Camel {since}*
 
 If you have multiple rows of data you want to be marshalled into CSV
 format you can now store the message payload as a
@@ -275,7 +279,7 @@ abc|123
 Using autogenColumns, configRef and strategyRef attributes inside XML
 == DSL
 
-*Available as of Camel 2.9.2 / 2.10 and deleted for Camel 2.15*
+*Since Camel {since}*
 
 You can customize the CSV Data Format to make use
 of your own `CSVConfig` and/or `CSVStrategy`. Also note that the default
@@ -314,7 +318,7 @@ should illustrate this customization.
 
 == Using skipFirstLine option while unmarshaling
 
-*Available as of Camel 2.10 and deleted for Camel 2.15*
+*Since Camel {since}*
 
 You can instruct the CSV Data Format to skip the
 first line which contains the CSV headers. Using the Spring/XML DSL:

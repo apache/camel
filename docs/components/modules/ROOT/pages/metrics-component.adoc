@@ -2,8 +2,11 @@
 = Metrics Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-metrics/src/main/docs/metrics-component.adoc
-ifdef::env-github[]
-*Available as of Camel version 2.14*
+:docTitle: Metrics
+:artifactId: camel-metrics
+:description: To collect various metrics directly from Camel routes using the DropWizard metrics library.
+:since: 2.14
+:component-header: Only producer is supported
 
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -578,7 +581,7 @@ if (registryService != null) {
 
 == MetricsMessageHistoryFactory
 
-*Available as of Camel 2.17*
+*Since Camel {since}*
 
 This factory allows to use metrics to
 capture Message History performance
@@ -655,7 +658,7 @@ with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
 
-*Available as of Camel 2.18*
+*Since Camel {since}*
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.

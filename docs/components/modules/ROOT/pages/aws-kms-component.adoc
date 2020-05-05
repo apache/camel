@@ -2,8 +2,13 @@
 = AWS KMS Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws/src/main/docs/aws-kms-component.adoc
+:docTitle: AWS KMS
+:artifactId: camel-aws
+:description: The aws-kms is used for managing Amazon KMS
+:since: 2.21
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.21*
+*Since Camel {since}*
 
 
 The KMS component supports create, run, start, stop and terminate

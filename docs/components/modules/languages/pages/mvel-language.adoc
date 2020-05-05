@@ -2,8 +2,12 @@
 = MVEL Language
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mvel/src/main/docs/mvel-language.adoc
+:docTitle: MVEL
+:artifactId: camel-mvel
+:description: To use MVEL scripts in Camel expressions or predicates.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 Camel allows Mvel to be used as an Expression or
@@ -122,7 +126,7 @@ And the sample using Java DSL:
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.

@@ -1,7 +1,12 @@
 [[paxlogging-component]]
 = OSGi PAX Logging Component
+:docTitle: OSGi PAX Logging
+:artifactId: camel-paxlogging
+:description: The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
+:since: 2.6
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.6*
+*Since Camel {since}*
 
 
 The `paxlogging` component can be used in an OSGi environment to receive

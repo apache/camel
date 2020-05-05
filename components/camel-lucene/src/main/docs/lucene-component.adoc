@@ -1,7 +1,12 @@
 [[lucene-component]]
 = Lucene Component
+:docTitle: Lucene
+:artifactId: camel-lucene
+:description: To insert or query from Apache Lucene databases.
+:since: 2.2
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.2*
+*Since Camel {since}*
 
 
 The *lucene* component is based on the Apache Lucene project. Apache

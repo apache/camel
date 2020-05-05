@@ -1,7 +1,12 @@
 [[openstack-glance-component]]
 = OpenStack Glance Component
+:docTitle: OpenStack Glance
+:artifactId: camel-openstack
+:description: The openstack-glance component allows messages to be sent to an OpenStack image services.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The openstack-glance component allows messages to be sent to an OpenStack image services.

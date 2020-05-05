@@ -2,8 +2,13 @@
 = Gora Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-gora/src/main/docs/gora-component.adoc
+:docTitle: Gora
+:artifactId: camel-gora
+:description: The gora component allows you to work with NoSQL databases using the Apache Gora framework.
+:since: 2.14
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.14*
+*Since Camel {since}*
 
 
 *Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that

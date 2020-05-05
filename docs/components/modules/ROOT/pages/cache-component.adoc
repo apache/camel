@@ -2,8 +2,14 @@
 = EHCache Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cache/src/main/docs/cache-component.adoc
+:docTitle: EHCache
+:artifactId: camel-cache
+:description: The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
+:since: 2.1
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.1*
+*Since Camel {since}*
 
 
 The *cache* component enables you to perform caching operations using

@@ -1,7 +1,11 @@
 [[syslog-dataformat]]
 = Syslog DataFormat
+:docTitle: Syslog
+:artifactId: camel-syslog
+:description: The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).
+:since: 2.6
 
-*Available as of Camel version 2.6*
+*Since Camel {since}*
 
 
 The *syslog* dataformat is used for working with
@@ -89,7 +93,7 @@ ND
 
 == RFC5424 Syslog protocol
 
-*Available as of Camel 2.14*
+*Since Camel {since}*
 
 To expose a Syslog listener service we reuse the
 existing xref:ROOT:mina2-component.adoc[Mina 2] component

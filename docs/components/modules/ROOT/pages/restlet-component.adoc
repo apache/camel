@@ -2,10 +2,16 @@
 = Restlet Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-restlet/src/main/docs/restlet-component.adoc
+:docTitle: Restlet
+:artifactId: camel-restlet
+:description: Component for consuming and producing Restful resources using Restlet.
+:since: 2.0
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 
@@ -328,7 +334,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 
 === Using Restlet API to populate response
 
-*Available as of Camel 2.8*
+*Since Camel {since}*
 
 You may want to use the `org.restlet.Response` API to populate the
 response. This gives you full access to the Restlet API and fine grained
@@ -351,7 +357,7 @@ such as:
 
 === Using the Restlet servlet within a webapp
 
-*Available as of Camel 2.8*
+*Since Camel {since}*
 
  There are
 http://www.restlet.org/documentation/2.0/jee/ext/org/restlet/ext/servlet/ServerServlet.html[three

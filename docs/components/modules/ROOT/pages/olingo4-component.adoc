@@ -2,8 +2,13 @@
 = Olingo4 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc
+:docTitle: Olingo4
+:artifactId: camel-olingo4
+:description: Communicates with OData 4.0 services using Apache Olingo OData API.
+:since: 2.19
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]

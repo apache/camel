@@ -1,7 +1,13 @@
 [[chronicle-engine-component]]
 = Chronicle Engine Component (deprecated)
+:docTitle: Chronicle Engine
+:artifactId: camel-chronicle
+:description: The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine.
+:since: 2.18
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine

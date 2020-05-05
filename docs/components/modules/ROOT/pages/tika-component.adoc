@@ -2,8 +2,13 @@
 = Tika Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-tika/src/main/docs/tika-component.adoc
+:docTitle: Tika
+:artifactId: camel-tika
+:description: This component integrates with Apache Tika to extract content and metadata from thousands of file types.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The *Tika*: components provides the ability to detect and parse documents with 

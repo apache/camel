@@ -1,7 +1,12 @@
 [[atomix-set-component]]
 = Atomix Set Component
+:docTitle: Atomix Set
+:artifactId: camel-atomix
+:description: The atomix-set component is used to access Atomix's distributed set.
+:since: 2.20
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The camel atomix-set component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedSet/[Distributed Set] collection.

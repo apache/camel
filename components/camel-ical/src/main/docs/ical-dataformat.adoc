@@ -1,7 +1,11 @@
 [[ical-dataformat]]
 = iCal DataFormat
+:docTitle: iCal
+:artifactId: camel-ical
+:description: The iCal dataformat is used for working with iCalendar messages.
+:since: 2.12
 
-*Available as of Camel version 2.12*
+*Since Camel {since}*
 
 
 The *ICal* dataformat is used for working with

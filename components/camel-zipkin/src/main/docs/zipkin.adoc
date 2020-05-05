@@ -1,7 +1,11 @@
-[[Zipkin-ZipkinComponent]]
+[[zipkin-component]]
 = Zipkin Component
+:docTitle: Zipkin
+:artifactId: camel-zipkin
+:description: Distributed message tracing using Zipkin
+:since: 2.18
 
-*Available as of Camel 2.18*
+*Since Camel {since}*
 
 The Camel Zipkin component is used for tracing and timing incoming and
 outgoing Camel messages using http://zipkin.io/[zipkin].

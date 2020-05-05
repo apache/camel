@@ -2,8 +2,12 @@
 = JSon XStream DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
+:docTitle: JSon XStream
+:artifactId: camel-xstream
+:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 XStream is a Data Format which uses the

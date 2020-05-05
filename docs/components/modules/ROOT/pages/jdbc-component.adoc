@@ -2,8 +2,13 @@
 = JDBC Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jdbc/src/main/docs/jdbc-component.adoc
+:docTitle: JDBC
+:artifactId: camel-jdbc
+:description: The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
+:since: 1.2
+:component-header: Only producer is supported
 
-*Available as of Camel version 1.2*
+*Since Camel {since}*
 
 
 The JDBC component enables you to access databases through JDBC, where
@@ -167,7 +172,7 @@ type.
 
 == Generated keys
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
@@ -185,7 +190,7 @@ Using generated keys does not work with together with named parameters.
 
 == Using named parameters
 
-*Available as of Camel 2.12*
+*Since Camel {since}*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :?lic and

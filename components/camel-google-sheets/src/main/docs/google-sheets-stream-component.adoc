@@ -1,7 +1,12 @@
 [[google-sheets-stream-component]]
 = Google Sheets Stream Component
+:docTitle: Google Sheets Stream
+:artifactId: camel-google-sheets
+:description: The google-sheets component provides access to Google Sheets.
+:since: 2.23
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 
 The Google Sheets component provides access

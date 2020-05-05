@@ -2,10 +2,16 @@
 = MQTT Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mqtt/src/main/docs/mqtt-component.adoc
+:docTitle: MQTT
+:artifactId: camel-mqtt
+:description: Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
+:since: 2.10
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 

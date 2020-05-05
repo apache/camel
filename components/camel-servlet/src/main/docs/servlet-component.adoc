@@ -1,7 +1,12 @@
 [[servlet-component]]
 = Servlet Component
+:docTitle: Servlet
+:artifactId: camel-servlet
+:description: To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+:since: 2.0
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 The *servlet:* component provides HTTP based

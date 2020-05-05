@@ -2,8 +2,13 @@
 = SCP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsch/src/main/docs/scp-component.adoc
+:docTitle: SCP
+:artifactId: camel-jsch
+:description: To copy files using the secure copy protocol (SCP).
+:since: 2.10
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 The *camel-jsch* component supports the

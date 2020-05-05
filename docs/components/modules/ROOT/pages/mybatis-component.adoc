@@ -2,8 +2,13 @@
 = MyBatis Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mybatis/src/main/docs/mybatis-component.adoc
+:docTitle: MyBatis
+:artifactId: camel-mybatis
+:description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
+:since: 2.7
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.7*
+*Since Camel {since}*
 
 
 The MyBatis component allows you to query, poll, insert, update and
@@ -225,7 +230,7 @@ IN body to MyBatis:
 
 === Using InsertList StatementType
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 MyBatis allows you to insert multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -237,7 +242,7 @@ below:
 
 === Using UpdateList StatementType
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 MyBatis allows you to update multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -269,7 +274,7 @@ from("direct:start")
 
 === Using DeleteList StatementType
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 MyBatis allows you to delete multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML

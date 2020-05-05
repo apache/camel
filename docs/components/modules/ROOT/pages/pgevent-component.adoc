@@ -2,8 +2,13 @@
 = PostgresSQL Event Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-pgevent/src/main/docs/pgevent-component.adoc
+:docTitle: PostgresSQL Event
+:artifactId: camel-pgevent
+:description: The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
+:since: 2.15
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.15*
+*Since Camel {since}*
 
 
 This is a component for Apache Camel which allows for

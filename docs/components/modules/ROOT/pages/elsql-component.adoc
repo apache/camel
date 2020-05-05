@@ -2,8 +2,13 @@
 = ElSQL Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-elsql/src/main/docs/elsql-component.adoc
+:docTitle: ElSQL
+:artifactId: camel-elsql
+:description: The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
+:since: 2.16
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.16*
+*Since Camel {since}*
 
 
 The ELSQL component is an extension to the existing
@@ -265,7 +270,7 @@ assumes to have `getLicense` and `getMinimum` methods:
 
 === Using expression parameters in consumers
 
-*Available as of Camel 2.23*
+*Since Camel {since}*
 
 When using the ElSql component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.

@@ -1,6 +1,11 @@
-= Blueprint Testing
+[[test-blueprint-component]]
+= Test Blueprint Component
+:docTitle: Test Blueprint
+:artifactId: camel-test-blueprint
+:description: Camel unit testing with OSGi Blueprint
+:since: 2.10
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 camel-test-blueprint does only support testing _one_ CamelContext. So
 if you have two or more CamelContexts in your blueprint XML files, then
@@ -68,7 +73,7 @@ way of filtering out bundles you don't want to start during the test.
 
 == Setting timeout when getting CamelContext
 
-*Available as of Camel 2.13.0/2.12.1/2.11.2*
+*Since Camel {since}*
 
 `CamelBlueprintTestSupport` waits 30 seconds for Camel Context to be
 ready by default, now you can override this value in two ways:
@@ -81,7 +86,7 @@ method.
 
 == Adding services on startup
 
-*Available as of Camel 2.11.2/2.12.0*
+*Since Camel {since}*
 
 When using `camel-test-blueprint` you may do unit tests which requires
 using shared services which are not available during unit testing, but

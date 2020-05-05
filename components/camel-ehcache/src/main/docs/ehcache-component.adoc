@@ -1,7 +1,12 @@
 [[ehcache-component]]
 = Ehcache Component
+:docTitle: Ehcache
+:artifactId: camel-ehcache
+:description: The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
+:since: 2.18
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 The *ehcache* component enables you to perform caching operations using

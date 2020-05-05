@@ -1,5 +1,10 @@
-[[GroovyDSL-AbouttheGroovyDSL]]
-= About the Groovy DSL (deprecated)
+[[groovy-dsl-component]]
+= Groovy DSL Component (deprecated)
+:docTitle: Groovy DSL
+:artifactId: camel-groovy-dsl
+:description: Camel Groovy DSL support
+:since: 2.19
+:deprecated: *deprecated*
 
 The Groovy DSL implementation is built on top of the existing Java-based
 DSL, but it additionally allows to use Groovy language

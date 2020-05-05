@@ -1,7 +1,12 @@
 [[google-sheets-component]]
 = Google Sheets Component
+:docTitle: Google Sheets
+:artifactId: camel-google-sheets
+:description: The google-sheets component provides access to Google Sheets.
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 
 The Google Sheets component provides access
