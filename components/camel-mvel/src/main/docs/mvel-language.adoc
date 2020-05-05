@@ -53,13 +53,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.mvel.allow-template-from-header* | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | Boolean
 | *camel.component.mvel.enabled* | Enable mvel component | true | Boolean
 | *camel.component.mvel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.language.mvel.enabled* | Enable mvel language | true | Boolean

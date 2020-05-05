@@ -39,7 +39,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mustache component supports 2 options, which are listed below.
+The Mustache component supports 3 options, which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The Mustache component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *mustacheFactory* (advanced) | To use a custom MustacheFactory |  | MustacheFactory
+| *allowTemplateFrom Header* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -77,12 +78,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (5 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *encoding* (producer) | Character encoding of the resource content. |  | String
 | *endDelimiter* (producer) | Characters used to mark template code end. | }} | String
@@ -106,13 +108,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.mustache.allow-template-from-header* | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | Boolean
 | *camel.component.mustache.enabled* | Enable mustache component | true | Boolean
 | *camel.component.mustache.mustache-factory* | To use a custom MustacheFactory. The option is a com.github.mustachejava.MustacheFactory type. |  | String
 | *camel.component.mustache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean

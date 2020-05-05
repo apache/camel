@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Velocity component supports 2 options, which are listed below.
+The Velocity component supports 3 options, which are listed below.
 
 
 
@@ -50,6 +50,7 @@ The Velocity component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *velocityEngine* (advanced) | To use the VelocityEngine otherwise a new engine is created |  | VelocityEngine
+| *allowTemplateFrom Header* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -76,12 +77,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (5 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *encoding* (producer) | Character encoding of the resource content. |  | String
 | *loaderCache* (producer) | Enables / disables the velocity resource loader cache which is enabled by default | true | boolean
@@ -105,13 +107,14 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.velocity.allow-template-from-header* | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | Boolean
 | *camel.component.velocity.enabled* | Enable velocity component | true | Boolean
 | *camel.component.velocity.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.velocity.velocity-engine* | To use the VelocityEngine otherwise a new engine is created. The option is a org.apache.velocity.app.VelocityEngine type. |  | String
