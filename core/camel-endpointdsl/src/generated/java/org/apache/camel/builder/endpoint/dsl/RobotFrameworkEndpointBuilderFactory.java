@@ -48,6 +48,40 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return (AdvancedRobotFrameworkEndpointConsumerBuilder) this;
         }
         /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RobotFrameworkEndpointConsumerBuilder allowTemplateFromHeader(
+                boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RobotFrameworkEndpointConsumerBuilder allowTemplateFromHeader(
+                String allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
          * A text file to read more arguments from.
          * 
          * The option is a: <code>java.io.File</code> type.
@@ -1416,6 +1450,40 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return (AdvancedRobotFrameworkEndpointProducerBuilder) this;
         }
         /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RobotFrameworkEndpointProducerBuilder allowTemplateFromHeader(
+                boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RobotFrameworkEndpointProducerBuilder allowTemplateFromHeader(
+                String allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
          * A text file to read more arguments from.
          * 
          * The option is a: <code>java.io.File</code> type.
@@ -2298,6 +2366,40 @@ public interface RobotFrameworkEndpointBuilderFactory {
                 RobotFrameworkEndpointProducerBuilder {
         default AdvancedRobotFrameworkEndpointBuilder advanced() {
             return (AdvancedRobotFrameworkEndpointBuilder) this;
+        }
+        /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RobotFrameworkEndpointBuilder allowTemplateFromHeader(
+                boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default RobotFrameworkEndpointBuilder allowTemplateFromHeader(
+                String allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
         }
         /**
          * A text file to read more arguments from.

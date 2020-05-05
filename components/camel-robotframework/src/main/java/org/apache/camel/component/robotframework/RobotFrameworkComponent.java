@@ -24,12 +24,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link RobotFrameworkEndpoint}.
- */
 @Component("robotframework")
 public class RobotFrameworkComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced")
     private RobotFrameworkCamelConfiguration configuration;
 
@@ -53,11 +52,27 @@ public class RobotFrameworkComponent extends DefaultComponent {
         return configuration;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final RobotFrameworkCamelConfiguration configuration = this.configuration.copy();
 
-        Endpoint endpoint = new RobotFrameworkEndpoint(uri, this, remaining, configuration);
+        RobotFrameworkEndpoint endpoint = new RobotFrameworkEndpoint(uri, this, remaining, configuration);
+        endpoint.getConfiguration().setAllowTemplateFromHeader(allowTemplateFromHeader);
         setProperties(endpoint, parameters);
         return endpoint;
     }
+
 }

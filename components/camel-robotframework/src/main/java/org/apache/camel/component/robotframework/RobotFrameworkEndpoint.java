@@ -121,7 +121,10 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         ObjectHelper.notNull(path, "resourceUri");
         log.debug("RobotFrameworkEndpoint resourceUri:{}", path);
 
-        String newResourceUri = exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, String.class);
+        String newResourceUri = null;
+        if (getConfiguration().isAllowTemplateFromHeader()) {
+            newResourceUri = exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, String.class);
+        }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI);
             log.debug("{} set to {} setting resourceUri to pass robotframework", RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI, newResourceUri);

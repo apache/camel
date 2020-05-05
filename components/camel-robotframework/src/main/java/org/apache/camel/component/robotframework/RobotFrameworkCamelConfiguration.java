@@ -160,6 +160,9 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean noStatusReturnCode;
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+
     public String getName() {
         return name;
     }
@@ -690,6 +693,20 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
      */
     public void setNoStatusReturnCode(boolean noStatusReturnCode) {
         this.noStatusReturnCode = noStatusReturnCode;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     public RobotFrameworkCamelConfiguration copy() {
