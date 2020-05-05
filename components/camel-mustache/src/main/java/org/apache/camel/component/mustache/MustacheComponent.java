@@ -38,6 +38,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mustache")
 public class MustacheComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+
     @Metadata(label = "advanced")
     private MustacheFactory mustacheFactory = new DefaultMustacheFactory();
 
@@ -48,6 +51,7 @@ public class MustacheComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MustacheEndpoint endpoint = new MustacheEndpoint(uri, this, remaining);
         endpoint.setMustacheFactory(getMustacheFactory());
+        endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -61,6 +65,20 @@ public class MustacheComponent extends DefaultComponent {
      */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
 }

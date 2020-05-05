@@ -19,6 +19,8 @@ public class MustacheEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MustacheEndpoint target = (MustacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
@@ -38,6 +40,7 @@ public class MustacheEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("allowTemplateFromHeader", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("contentCache", boolean.class);
         answer.put("encoding", java.lang.String.class);
@@ -52,6 +55,8 @@ public class MustacheEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MustacheEndpoint target = (MustacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
