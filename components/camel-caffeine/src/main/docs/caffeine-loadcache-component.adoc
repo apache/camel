@@ -1,7 +1,12 @@
 [[caffeine-loadcache-component]]
 = Caffeine LoadCache Component
+:docTitle: Caffeine LoadCache
+:artifactId: camel-caffeine
+:description: The caffeine-loadcache component is used for integration with Caffeine Load Cache.
+:since: 2.20
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The *caffeine-loadcache* component enables you to perform caching operations using

@@ -2,8 +2,13 @@
 = Stomp Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-stomp/src/main/docs/stomp-component.adoc
+:docTitle: Stomp
+:artifactId: camel-stomp
+:description: The stomp component is used for communicating with Stomp compliant message brokers.
+:since: 2.12
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.12*
+*Since Camel {since}*
 
 
 The *stomp:* component is used for communicating with

@@ -2,8 +2,13 @@
 = Solr Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-solr/src/main/docs/solr-component.adoc
+:docTitle: Solr
+:artifactId: camel-solr
+:description: The solr component allows you to interface with an Apache Lucene Solr server.
+:since: 2.9
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.9*
+*Since Camel {since}*
 
 
 The Solr component allows you to interface with an

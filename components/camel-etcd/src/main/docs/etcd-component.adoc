@@ -1,7 +1,12 @@
 [[etcd-component]]
 = etcd Component
+:docTitle: etcd
+:artifactId: camel-etcd
+:description: The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+:since: 2.18
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.

@@ -2,8 +2,13 @@
 = Atomix Value Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atomix/src/main/docs/atomix-value-component.adoc
+:docTitle: Atomix Value
+:artifactId: camel-atomix
+:description: The atomix-value component is used to access Atomix's distributed value.
+:since: 2.20
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The camel atomix-value component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedValue/[Distributed Value].

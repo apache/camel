@@ -2,8 +2,13 @@
 = FOP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-fop/src/main/docs/fop-component.adoc
+:docTitle: FOP
+:artifactId: camel-fop
+:description: The fop component allows you to render a message into different output formats using Apache FOP.
+:since: 2.10
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 The FOP component allows you to render a message into different output

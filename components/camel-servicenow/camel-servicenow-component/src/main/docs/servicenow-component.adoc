@@ -1,7 +1,12 @@
 [[servicenow-component]]
 = ServiceNow Component
+:docTitle: ServiceNow
+:artifactId: camel-servicenow
+:description: The servicenow component is used to integrate Camel with ServiceNow cloud services.
+:since: 2.18
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 The ServiceNow component provides access to ServiceNow platform through their REST API.

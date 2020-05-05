@@ -1,7 +1,12 @@
 [[paho-component]]
 = Paho Component
+:docTitle: Paho
+:artifactId: camel-paho
+:description: Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+:since: 2.16
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.16*
+*Since Camel {since}*
 
 
 Paho component provides connector for the MQTT messaging protocol using

@@ -1,7 +1,12 @@
-[[RX-CamelRX]]
-= Camel RX (deprecated)
+[[rx-component]]
+= RX Component (deprecated)
+:docTitle: RX
+:artifactId: camel-rx
+:description: Camel Reactive using RxJava library
+:since: 2.11
+:deprecated: *deprecated*
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 This component is deprecated.
 We suggest to use the newer `camel-reactive-streams` component.

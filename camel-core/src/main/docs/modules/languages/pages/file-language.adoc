@@ -1,7 +1,11 @@
 [[file-language]]
 = File Language
+:docTitle: File
+:artifactId: camel-core
+:description: For expressions and predicates using the file/simple language
+:since: 1.1
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 INFO:*File language is now merged with Simple language*
 From Camel 2.2 onwards, the file language is now merged with

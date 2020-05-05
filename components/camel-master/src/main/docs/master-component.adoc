@@ -1,7 +1,12 @@
 [[master-component]]
 = Master Component
+:docTitle: Master
+:artifactId: camel-master
+:description: Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
+:since: 2.20
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The **camel-master:** endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;

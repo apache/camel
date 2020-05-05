@@ -2,8 +2,13 @@
 = Twitter Streaming Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-twitter/src/main/docs/twitter-streaming-component.adoc
+:docTitle: Twitter Streaming
+:artifactId: camel-twitter
+:description: The Twitter Streaming component consumes twitter statuses using Streaming API.
+:since: 2.10
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.10*
+*Since Camel {since}*
 
 
 The Twitter Streaming component consumes twitter statuses using Streaming API.

@@ -1,7 +1,12 @@
-[[Swagger-SwaggerScalaComponent]]
-= Swagger Scala Component (deprecated)
+[[swagger-component]]
+= Swagger Component (deprecated)
+:docTitle: Swagger
+:artifactId: camel-swagger
+:description: Rest-dsl support for using swagger api-doc (uses Scala)
+:since: 2.14
+:deprecated: *deprecated*
 
-*Available as of Camel 2.14*
+*Since Camel {since}*
 
 The  Rest DSL can be integrated with
 the `camel-swagger` module which is used for exposing the REST services
@@ -219,7 +224,7 @@ client. Or block certain clients etc.
 [[Swagger-MultipleCamelContexts]]
 == Multiple CamelContexts
 
-*Available as of Camel 2.16*
+*Since Camel {since}*
 
 When using camel-swagger from Camel 2.16 onwards then it supports
 detecting all the running CamelContexts in the same JVM. These contexts

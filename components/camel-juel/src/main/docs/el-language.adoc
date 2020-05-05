@@ -1,7 +1,12 @@
 [[el-language]]
 = EL Language (deprecated)
+:docTitle: EL
+:artifactId: camel-juel
+:description: To use EL scripts in Camel expressions or predicates.
+:since: 1.1
+:deprecated: *deprecated*
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 == EL
 ~~

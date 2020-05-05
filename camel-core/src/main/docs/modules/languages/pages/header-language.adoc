@@ -1,7 +1,11 @@
 [[header-language]]
 = Header Language
+:docTitle: Header
+:artifactId: camel-core
+:description: To use a Camel Message header in expressions or predicates.
+:since: 1.5
 
-*Available as of Camel version 1.5*
+*Since Camel {since}*
 
 The Header Expression Language allows you to extract values of named
 headers.

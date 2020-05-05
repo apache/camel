@@ -1,7 +1,13 @@
 [[javaspace-component]]
 = JavaSpace Component (deprecated)
+:docTitle: JavaSpace
+:artifactId: camel-javaspace
+:description: Sending and receiving messages through JavaSpace.
+:since: 2.1
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.1*
+*Since Camel {since}*
 
 
 The *javaspace* component is a transport for working with any JavaSpace

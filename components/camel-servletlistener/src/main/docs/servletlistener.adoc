@@ -1,7 +1,12 @@
-[[ServletListenerComponent-ServletListenerComponent]]
-= ServletListener Component
+[[servletlistener-component]]
+= Servlet Listener Component (deprecated)
+:docTitle: Servlet Listener
+:artifactId: camel-servletlistener
+:description: Bootstrapping Camel using Servet Listener
+:since: 2.11
+:deprecated: *deprecated*
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 This component is used for bootstrapping Camel applications in web
 applications. For example beforehand people would have to find their own
@@ -120,7 +125,7 @@ Example].
 [[ServletListenerComponent-AccessingthecreatedCamelContext]]
 == Accessing the created CamelContext
 
-*Available as of Camel 2.14/2.13.3/2.12.5*
+*Since Camel {since}*
 
 The created `CamelContext` is stored on the `ServletContext` as an
 attribute with the key "CamelContext". You can get hold of the

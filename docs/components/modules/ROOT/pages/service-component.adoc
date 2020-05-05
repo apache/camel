@@ -2,8 +2,13 @@
 = Service Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-service/src/main/docs/service-component.adoc
+:docTitle: Service
+:artifactId: camel-service
+:description: Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
+:since: 2.22
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.22*
+*Since Camel {since}*
 
 
 

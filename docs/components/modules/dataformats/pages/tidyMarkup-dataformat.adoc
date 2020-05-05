@@ -2,8 +2,12 @@
 = TidyMarkup DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc
+:docTitle: TidyMarkup
+:artifactId: camel-tagsoup
+:description: TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 TidyMarkup is a Data Format that uses the

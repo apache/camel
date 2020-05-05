@@ -1,7 +1,11 @@
 [[jsonpath-language]]
 = JsonPath Language
+:docTitle: JsonPath
+:artifactId: camel-jsonpath
+:description: To use JsonPath in Camel expressions or predicates.
+:since: 2.13
 
-*Available as of Camel version 2.13*
+*Since Camel {since}*
 
 
 Camel supports https://code.google.com/p/json-path/[JSonPath] to allow
@@ -111,7 +115,7 @@ further examples.
 
 == Easy Syntax
 
-*Available as of Camel 2.19*
+*Since Camel {since}*
 
 When you just want to define a basic predicate using jsonpath syntax it can be a bit hard to remember the syntax.
  So for example to find out all the cheap books you have to do
@@ -170,7 +174,7 @@ can configure JSonPath to suppress exceptions (see below)
 
 == Suppress exceptions
 
-*Available as of Camel 2.16*
+*Since Camel {since}*
 
 By default jsonpath will throw an exception if the json payload does not
 have a valid path accordingly to the configured jsonpath expression. In
@@ -211,7 +215,7 @@ This option is also available on the `@JsonPath` annotation.
 
 == Inline Simple exceptions
 
-*Available as of Camel 2.18*
+*Since Camel {since}*
 
 Its now possible to inlined Simple language expressions in the JSonPath expression using the simple syntax $\{xxx\}.
 An example is shown below:
@@ -320,7 +324,7 @@ would need to use camel-jackson dataformat and marshal the message body to make 
 convert the message body from `Map` to a `String` type.
 
 == Using header as input
-*Available as of Camel 2.20*
+*Since Camel {since}*
 
 By default jsonpath uses the message body as the input source. However you can also use a header as input
 by specifying the `headerName` option.

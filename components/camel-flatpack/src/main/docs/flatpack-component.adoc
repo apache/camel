@@ -1,7 +1,12 @@
 [[flatpack-component]]
 = Flatpack Component
+:docTitle: Flatpack
+:artifactId: camel-flatpack
+:description: The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
+:since: 1.4
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.4*
+*Since Camel {since}*
 
 
 The Flatpack component supports fixed width and delimited file parsing

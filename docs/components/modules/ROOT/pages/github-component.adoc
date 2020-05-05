@@ -2,8 +2,13 @@
 = GitHub Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-github/src/main/docs/github-component.adoc
+:docTitle: GitHub
+:artifactId: camel-github
+:description: The github component is used for integrating Camel with github.
+:since: 2.15
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.15*
+*Since Camel {since}*
 
 
 The GitHub component interacts with the GitHub API by

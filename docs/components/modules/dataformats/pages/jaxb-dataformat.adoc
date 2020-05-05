@@ -2,8 +2,12 @@
 = JAXB DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jaxb/src/main/docs/jaxb-dataformat.adoc
+:docTitle: JAXB
+:artifactId: camel-jaxb
+:description: JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
+:since: 1.0
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 JAXB is a Data Format which uses the JAXB2 XML
@@ -244,7 +248,7 @@ In this Spring DSL we have defined to use `iso-8859-1` as the encoding:
 
 == Controlling namespace prefix mapping
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 When marshalling using xref:jaxb-dataformat.adoc[JAXB] or xref:soapjaxb-dataformat.adoc[SOAP] then
 the JAXB implementation will automatic assign namespace prefixes, such
@@ -282,7 +286,7 @@ with the id "myMap", which was what we defined above.
 
 == Schema validation
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 The JAXB Data Format supports validation by
 marshalling and unmarshalling from/to XML. Your can use the prefix
@@ -330,7 +334,7 @@ jaxbDataFormat.setSchemaFactory(thradSafeSchemaFactory);
 
 == Schema Location
 
-*Available as of Camel 2.14*
+*Since Camel {since}*
 
 The JAXB Data Format supports to specify the
 SchemaLocation when marshaling the XML. 
@@ -355,7 +359,7 @@ You can do the same using the XML DSL:
 
 == Marshal data that is already XML
 
-*Available as of Camel 2.14.1*
+*Since Camel {since}*
 
 The JAXB marshaller requires that the message body is JAXB compatible,
 eg its a JAXBElement, eg a java instance that has JAXB annotations, or

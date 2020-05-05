@@ -1,5 +1,10 @@
-[[Guice-CamelGuice]]
-= Camel Guice
+[[guice-component]]
+= Guice Component (deprecated)
+:docTitle: Guice
+:artifactId: camel-guice
+:description: Using Camel with Guice
+:since: 1.5
+:deprecated: *deprecated*
 
 We have support for http://code.google.com/p/google-guice/[Google Guice]
 as a dependency injection framework.

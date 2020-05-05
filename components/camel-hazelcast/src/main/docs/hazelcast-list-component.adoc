@@ -1,7 +1,12 @@
 [[hazelcast-list-component]]
 = Hazelcast List Component
+:docTitle: Hazelcast List
+:artifactId: camel-hazelcast
+:description: The hazelcast-list component is used to access Hazelcast distributed list.
+:since: 2.7
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.7*
+*Since Camel {since}*
 
 
 The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed list.

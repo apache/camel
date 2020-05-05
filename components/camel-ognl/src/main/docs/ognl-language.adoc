@@ -1,7 +1,11 @@
 [[ognl-language]]
 = OGNL Language
+:docTitle: OGNL
+:artifactId: camel-ognl
+:description: To use OGNL scripts in Camel expressions or predicates.
+:since: 1.1
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 
 Camel allows http://commons.apache.org/proper/commons-ognl/[OGNL] to be
@@ -122,7 +126,7 @@ And the sample using Java DSL:
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.

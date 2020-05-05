@@ -1,5 +1,10 @@
-[[ScalaDSL-AbouttheScalaDSL]]
-= About the Scala DSL
+[[scala-component]]
+= Scala DSL Component (deprecated)
+:docTitle: Scala DSL
+:artifactId: camel-scala
+:description: Camel Scala DSL
+:since: 1.4
+:deprecated: *deprecated*
 
 **Deprecated**
 

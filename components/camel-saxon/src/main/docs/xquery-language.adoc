@@ -1,7 +1,11 @@
 [[xquery-language]]
 = XQuery Language
+:docTitle: XQuery
+:artifactId: camel-saxon
+:description: To use XQuery (XML) in Camel expressions or predicates.
+:since: 1.0
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
@@ -217,7 +221,7 @@ function reference] useful
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.

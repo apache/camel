@@ -1,6 +1,11 @@
-= Jasypt component
+[[jasypt-component]]
+= Jasypt Component
+:docTitle: Jasypt
+:artifactId: camel-jasypt
+:description: Security using Jasypt
+:since: 2.5
 
-*Available as of Camel 2.5*
+*Since Camel {since}*
 
 http://www.jasypt.org/[Jasypt] is a simplified encryption library which
 makes encryption and decryption easy. Camel integrates with Jasypt to

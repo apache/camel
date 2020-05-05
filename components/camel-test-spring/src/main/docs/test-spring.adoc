@@ -1,4 +1,9 @@
-= Test Spring
+[[test-spring-component]]
+= Test Spring Component
+:docTitle: Test Spring
+:artifactId: camel-test-spring
+:description: Camel unit testing with Spring
+:since: 2.10
 
 *Available since 2.10*
 

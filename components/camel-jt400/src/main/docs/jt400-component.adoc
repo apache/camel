@@ -1,7 +1,12 @@
 [[jt400-component]]
 = JT400 Component
+:docTitle: JT400
+:artifactId: camel-jt400
+:description: The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+:since: 1.5
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.5*
+*Since Camel {since}*
 
 
 The *`jt400`* component allows you to exchanges messages with an AS/400
@@ -156,7 +161,7 @@ the data queue as either raw bytes or text.
 
 == Connection pool
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 Connection pooling is in use from Camel 2.10 onwards. You can explicit
 configure a connection pool on the Jt400Component, or as an uri option

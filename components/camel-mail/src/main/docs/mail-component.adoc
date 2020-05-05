@@ -1,7 +1,12 @@
 [[mail-component]]
 = Mail Component
+:docTitle: Mail
+:artifactId: camel-mail
+:description: To send or receive emails using imap/pop3 or smtp protocols.
+:since: 1.0
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 The Mail component provides access to Email via Spring's Mail support
@@ -648,7 +653,7 @@ And then use the expression with the splitter eip.
 
 == Using custom SearchTerm
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can configure a `searchTerm` on the `MailEndpoint` which allows you
 to filter out unwanted mails.

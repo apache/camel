@@ -2,8 +2,13 @@
 = IEC 60870 Client Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-iec60870/src/main/docs/iec60870-client-component.adoc
+:docTitle: IEC 60870 Client
+:artifactId: camel-iec60870
+:description: IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
+:since: 2.20
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The *IEC 60870-5-104 Client* component provides access to IEC 60870 servers using the

@@ -1,4 +1,9 @@
-= Testcontainers
+[[testcontainers-component]]
+= Testcontainers Component
+:docTitle: Testcontainers
+:artifactId: camel-testcontainers
+:description: Camel support for testcontainers
+:since: 2.22
 
 *Available since 2.22.0*
 

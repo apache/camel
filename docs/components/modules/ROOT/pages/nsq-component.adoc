@@ -2,8 +2,13 @@
 = NSQ Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-nsq/src/main/docs/nsq-component.adoc
+:docTitle: NSQ
+:artifactId: camel-nsq
+:description: Represents a nsq endpoint.
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 
 

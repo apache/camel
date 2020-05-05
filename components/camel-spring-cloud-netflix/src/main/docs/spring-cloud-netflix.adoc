@@ -1,6 +1,11 @@
-= Spring Cloud Netflix
+[[spring-cloud-netflix-component]]
+= Spring Cloud Netflix Component
+:docTitle: Spring Cloud Netflix
+:artifactId: camel-spring-cloud-netflix
+:description: Camel Cloud integration with Spring Cloud Netflix
+:since: 2.19
 
-*Available as of Camel 2.19*
+*Since Camel {since}*
 
 The Spring Cloud Netflix component bridges Camel Cloud and Spring Cloud Netflix so you can leverage Spring Cloud Netflix service discovery and load balance features in Camel and/or you can use Camel Service Discovery implementations as ServerList source for Spring Cloud Netflix's Ribbon load balabncer.
 

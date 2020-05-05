@@ -1,7 +1,12 @@
 [[jgroups-component]]
 = JGroups Component
+:docTitle: JGroups
+:artifactId: camel-jgroups
+:description: The jgroups component provides exchange of messages between Camel and JGroups clusters.
+:since: 2.13
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.13*
+*Since Camel {since}*
 
 
 http://www.jgroups.org[JGroups] is a toolkit for reliable multicast

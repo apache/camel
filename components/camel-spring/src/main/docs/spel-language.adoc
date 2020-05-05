@@ -1,7 +1,11 @@
 [[spel-language]]
 = SpEL Language
+:docTitle: SpEL
+:artifactId: camel-spring
+:description: To use Spring Expression Language (SpEL) in Camel expressions or predicates.
+:since: 2.7
 
-*Available as of Camel version 2.7*
+*Since Camel {since}*
 
 
 Camel allows
@@ -142,7 +146,7 @@ from("direct:foo")
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.

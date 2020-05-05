@@ -1,7 +1,12 @@
 [[drill-component]]
 = Drill Component
+:docTitle: Drill
+:artifactId: camel-drill
+:description: The drill component gives you the ability to quering into apache drill cluster.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The *drill:* component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]

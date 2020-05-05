@@ -1,7 +1,12 @@
 [[xmlBeans-dataformat]]
 = XML Beans DataFormat (deprecated)
+:docTitle: XML Beans
+:artifactId: camel-xmlbeans
+:description: XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+:since: 1.2
+:deprecated: *deprecated*
 
-*Available as of Camel version 1.2*
+*Since Camel {since}*
 
 
 XmlBeans is a Data Format which uses the

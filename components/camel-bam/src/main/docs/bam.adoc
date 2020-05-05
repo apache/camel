@@ -1,5 +1,10 @@
-[[BAM-BusinessActivityMonitoring]]
-= Business Activity Monitoring
+[[bam-component]]
+= BAM Component (deprecated)
+:docTitle: BAM
+:artifactId: camel-bam
+:description: Business Activity Monitoring
+:since: 1.0
+:deprecated: *deprecated*
 
 The *Camel BAM* module provides a Business Activity Monitoring (BAM)
 framework for testing business processes across multiple message

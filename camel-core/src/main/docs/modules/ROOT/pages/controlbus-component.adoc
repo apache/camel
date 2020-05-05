@@ -1,7 +1,13 @@
 [[controlbus-component]]
 = Control Bus Component
+:docTitle: Control Bus
+:artifactId: camel-core
+:description: The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+:since: 2.11
+:component-header: Only producer is supported
+:core:
 
-*Available as of Camel version 2.11*
+*Since Camel {since}*
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 EIP patterns allows for the
@@ -28,7 +34,7 @@ accordingly.
 
 == ControlBus Component
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 The *controlbus:* component provides easy management of Camel
 applications based on the xref:controlbus-component.adoc[Control Bus] EIP
@@ -76,7 +82,7 @@ controlbus:command:language
 
 with the following path and query parameters:
 
-== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -128,7 +134,7 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 [[ControlBus-Gettingperformancestatistics]]
 == Getting performance statistics
 
-*Available as of Camel 2.11.1*
+*Since Camel {since}*
 
 This requires JMX to be enabled (is by default) then you can get the
 performance statics per route, or for the

@@ -1,4 +1,9 @@
-= Using OSGi blueprint with Camel
+[[blueprint-component]]
+= Blueprint Component
+:docTitle: Blueprint
+:artifactId: camel-blueprint
+:description: Using Camel with OSGi Blueprint
+:since: 2.4
 
 A custom XML namespace for Blueprint has been created to let you leverage the nice XML dialect.
 Given Blueprint custom namespaces are not standardized yet, this namespace can only be used on the Apache Aries Blueprint

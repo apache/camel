@@ -2,8 +2,12 @@
 = Barcode DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-barcode/src/main/docs/barcode-dataformat.adoc
+:docTitle: Barcode
+:artifactId: camel-barcode
+:description: The Barcode data format is used for creating barccode images (such as QR-Code)
+:since: 2.14
 
-*Available as of Camel version 2.14*
+*Since Camel {since}*
 
 
 The barcode data format is based on the

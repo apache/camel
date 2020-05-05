@@ -2,8 +2,13 @@
 = Jetty 9 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jetty9/src/main/docs/jetty-component.adoc
+:docTitle: Jetty 9
+:artifactId: camel-jetty9
+:description: The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+:since: 1.2
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.2*
+*Since Camel {since}*
 
 
 WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
@@ -550,7 +555,7 @@ Jetty to listen on.
 
 ==== Configuring general SSL properties
 
-*Available as of Camel 2.5*
+*Since Camel {since}*
 
 Instead of a per port number specific SSL socket connector (as shown
 above) you can now configure general properties which applies for all
@@ -585,7 +590,7 @@ X509Certificate cert = (X509Certificate) req.getAttribute("javax.servlet.request
 
 ==== Configuring general HTTP properties
 
-*Available as of Camel 2.5*
+*Since Camel {since}*
 
 Instead of a per port number specific HTTP socket connector (as shown
 above) you can now configure general properties which applies for all

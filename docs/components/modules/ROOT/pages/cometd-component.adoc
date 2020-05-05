@@ -2,8 +2,13 @@
 = CometD Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cometd/src/main/docs/cometd-component.adoc
+:docTitle: CometD
+:artifactId: camel-cometd
+:description: The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+:since: 2.0
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 The Cometd component is a transport for working with the
@@ -173,7 +178,7 @@ cometd://localhost:8080?resourceBase=classpath:webapp
 
 == Authentication
 
-*Available as of Camel 2.8*
+*Since Camel {since}*
 
 You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as

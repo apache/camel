@@ -2,8 +2,12 @@
 = JSon Johnzon DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
+:docTitle: JSon Johnzon
+:artifactId: camel-johnzon
+:description: JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+:since: 2.18
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 Johnzon is a Data Format which uses the

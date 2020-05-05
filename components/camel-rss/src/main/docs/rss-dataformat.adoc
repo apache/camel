@@ -1,7 +1,11 @@
 [[rss-dataformat]]
 = RSS DataFormat
+:docTitle: RSS
+:artifactId: camel-rss
+:description: RSS data format is used for working with RSS sync feed Java Objects and transforming to XML and vice-versa.
+:since: 2.1
 
-*Available as of Camel version 2.1*
+*Since Camel {since}*
 
 
 The RSS component ships with an RSS dataformat that can be used to

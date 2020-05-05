@@ -2,8 +2,13 @@
 = Google BigQuery Standard SQL Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
+:docTitle: Google BigQuery Standard SQL
+:artifactId: camel-google-bigquery
+:description: Google BigQuery data warehouse for analytics (using SQL queries).
+:since: 2.23
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 The Google Bigquery SQL component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via

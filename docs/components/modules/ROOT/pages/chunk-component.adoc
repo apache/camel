@@ -2,8 +2,13 @@
 = Chunk Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-chunk/src/main/docs/chunk-component.adoc
+:docTitle: Chunk
+:artifactId: camel-chunk
+:description: Transforms the message using a Chunk template.
+:since: 2.15
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.15*
+*Since Camel {since}*
 
 
 The *chunk:* component allows for processing a message using a

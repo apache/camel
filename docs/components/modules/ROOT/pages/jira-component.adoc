@@ -2,8 +2,14 @@
 = JIRA Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jira/src/main/docs/jira-component.adoc
+:docTitle: JIRA
+:artifactId: camel-jira
+:description: The jira component interacts with the JIRA issue tracker.
+:since: 2.15
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.15*
+*Since Camel {since}*
 
 
 

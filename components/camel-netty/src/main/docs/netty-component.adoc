@@ -1,7 +1,13 @@
 [[netty-component]]
 = Netty Component (deprecated)
+:docTitle: Netty
+:artifactId: camel-netty
+:description: Socket level networking using TCP or UDP with the Netty 3.x library.
+:since: 2.3
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.3*
+*Since Camel {since}*
 
 
 The Netty component in Camel is a socket communication component,

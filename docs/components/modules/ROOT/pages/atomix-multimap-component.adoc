@@ -2,8 +2,13 @@
 = Atomix MultiMap Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-atomix/src/main/docs/atomix-multimap-component.adoc
+:docTitle: Atomix MultiMap
+:artifactId: camel-atomix
+:description: The atomix-multimap component is used to access Atomix's distributed multi map.
+:since: 2.20
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.20*
+*Since Camel {since}*
 
 
 The camel atomix-multimap component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedMultimap/[Distributed MultiMap] collection.

@@ -2,8 +2,13 @@
 = InfluxDB Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-influxdb/src/main/docs/influxdb-component.adoc
+:docTitle: InfluxDB
+:artifactId: camel-influxdb
+:description: The influxdb component allows you to interact with InfluxDB, a time series database.
+:since: 2.18
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.18*
+*Since Camel {since}*
 
 
 This component allows you to interact with InfluxDB

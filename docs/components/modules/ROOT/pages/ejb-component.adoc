@@ -2,8 +2,14 @@
 = EJB Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ejb/src/main/docs/ejb-component.adoc
+:docTitle: EJB
+:artifactId: camel-ejb
+:description: The ejb component is for invoking EJB Java beans from Camel.
+:since: 2.4
+:deprecated: *deprecated*
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.4*
+*Since Camel {since}*
 
 
 The *ejb:* component binds EJBs to Camel message exchanges.

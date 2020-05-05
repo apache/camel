@@ -1,7 +1,12 @@
 [[sql-language]]
 = SQL Language (deprecated)
+:docTitle: SQL
+:artifactId: camel-josql
+:description: To use SQL (on Java beans) in Camel expressions or predicates.
+:since: 1.0
+:deprecated: *deprecated*
 
-*Available as of Camel version 1.0*
+*Since Camel {since}*
 
 
 The SQL support is added by http://josql.sourceforge.net/[JoSQL] and is
@@ -101,7 +106,7 @@ The component supports 2 options, which are listed below.
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel {since}*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.

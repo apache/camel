@@ -1,7 +1,12 @@
-[[HawtDB-HawtDB]]
-= HawtDB (deprecated)
+[[hawtdb-component]]
+= HawtDB Component (deprecated)
+:docTitle: HawtDB
+:artifactId: camel-hawtdb
+:description: Using HawtDB as persistent EIP store
+:since: 2.3
+:deprecated: *deprecated*
 
-*Available as of Camel 2.3*
+*Since Camel {since}*
 
 http://hawtdb.fusesource.org/[HawtDB] is a very lightweight and
 embedable key value database. It allows together with Camel to provide

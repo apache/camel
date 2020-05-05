@@ -1,7 +1,13 @@
 [[test-component]]
 = Test Component
+:docTitle: Test
+:artifactId: camel-core
+:description: The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+:since: 1.3
+:component-header: Only producer is supported
+:core:
 
-*Available as of Camel version 1.3*
+*Since Camel {since}*
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The xref:mock-component.adoc[Mock], xref:test-component.adoc[Test]
@@ -67,7 +73,7 @@ test:name
 
 with the following path and query parameters:
 
-== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

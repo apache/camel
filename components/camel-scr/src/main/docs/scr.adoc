@@ -1,6 +1,12 @@
-= Camel SCR (deprecated)
+[[scr-component]]
+= SCR Component (deprecated)
+:docTitle: SCR
+:artifactId: camel-scr
+:description: Camel with OSGi SCR (Declarative Services)
+:since: 2.15
+:deprecated: *deprecated*
 
-*Available as of Camel 2.15*
+*Since Camel {since}*
 
 SCR stands for Service Component Runtime and is an implementation of
 OSGi Declarative Services specification. SCR enables any plain old Java

@@ -1,7 +1,12 @@
 [[openstack-keystone-component]]
 = OpenStack Keystone Component
+:docTitle: OpenStack Keystone
+:artifactId: camel-openstack
+:description: The openstack-keystone component allows messages to be sent to an OpenStack identity services.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The openstack-keystone component allows messages to be sent to an OpenStack identity services.

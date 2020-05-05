@@ -2,8 +2,13 @@
 = Hazelcast Ringbuffer Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-ringbuffer-component.adoc
+:docTitle: Hazelcast Ringbuffer
+:artifactId: camel-hazelcast
+:description: The hazelcast-ringbuffer component is used to access Hazelcast distributed ringbuffer.
+:since: 2.16
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.16*
+*Since Camel {since}*
 
 
 *Avalaible from Camel 2.16*

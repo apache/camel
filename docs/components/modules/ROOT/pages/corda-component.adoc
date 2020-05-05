@@ -2,8 +2,13 @@
 = corda Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-corda/src/main/docs/corda-component.adoc
+:docTitle: corda
+:artifactId: camel-corda
+:description: The corda component uses the corda-rpc to interact with corda nodes.
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 
 

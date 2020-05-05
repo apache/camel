@@ -1,7 +1,11 @@
 [[xtokenize-language]]
 = XML Tokenize Language
+:docTitle: XML Tokenize
+:artifactId: camel-core
+:description: To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+:since: 2.14
 
-*Available as of Camel version 2.14*
+*Since Camel {since}*
 
 The xml tokenizer language is a built-in language in camel-core, which
 is a truly XML-aware tokenizer that can be used with the Splitter as the

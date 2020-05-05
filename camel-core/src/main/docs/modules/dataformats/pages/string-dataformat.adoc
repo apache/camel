@@ -1,7 +1,12 @@
 [[string-dataformat]]
 = String Encoding DataFormat (deprecated)
+:docTitle: String Encoding
+:artifactId: camel-core
+:description: String data format is a textual based format that supports character encoding.
+:since: 2.12
+:deprecated: *deprecated*
 
-*Available as of Camel version 2.12*
+*Since Camel {since}*
 
 The String Data Format is a textual based format
 that supports encoding.

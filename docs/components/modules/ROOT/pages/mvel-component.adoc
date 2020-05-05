@@ -2,8 +2,13 @@
 = MVEL Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mvel/src/main/docs/mvel-component.adoc
+:docTitle: MVEL
+:artifactId: camel-mvel
+:description: Transforms the message using a MVEL template.
+:since: 2.12
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.12*
+*Since Camel {since}*
 
 
 The *mvel:* component allows you to process a message using an

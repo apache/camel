@@ -1,9 +1,14 @@
 [[irc-component]]
 = IRC Component
+:docTitle: IRC
+:artifactId: camel-irc
+:description: The irc component implements an IRC (Internet Relay Chat) transport.
+:since: 1.1
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 
 
@@ -219,7 +224,7 @@ ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTr
 
 == Using keys
 
-*Available as of Camel 2.2*
+*Since Camel {since}*
 
 Some irc rooms requires you to provide a key to be able to join that
 channel. The key is just a secret word.

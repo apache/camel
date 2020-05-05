@@ -1,7 +1,12 @@
 [[velocity-component]]
 = Velocity Component
+:docTitle: Velocity
+:artifactId: camel-velocity
+:description: Transforms the message using a Velocity template.
+:since: 1.2
+:component-header: Only producer is supported
 
-*Available as of Camel version 1.2*
+*Since Camel {since}*
 
 
 The *velocity:* component allows you to process a message using an
@@ -203,7 +208,7 @@ when the resource never changes.
 
 == Dynamic templates
 
-*Available as of Camel 2.1*
+*Since Camel {since}*
 
  Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these

@@ -1,5 +1,9 @@
 [[cdi-component]]
-= Camel CDI
+= CDI Component
+:docTitle: CDI
+:artifactId: camel-cdi
+:description: Using Camel with CDI
+:since: 2.10
 
 The Camel CDI component provides auto-configuration for Apache Camel
 using CDI as dependency injection framework based

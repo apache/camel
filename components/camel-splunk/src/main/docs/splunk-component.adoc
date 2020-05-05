@@ -1,7 +1,12 @@
 [[splunk-component]]
 = Splunk Component
+:docTitle: Splunk
+:artifactId: camel-splunk
+:description: The splunk component allows to publish or search for events in Splunk.
+:since: 2.13
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.13*
+*Since Camel {since}*
 
 
 The Splunk component provides access to

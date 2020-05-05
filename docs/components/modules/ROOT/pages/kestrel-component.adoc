@@ -2,8 +2,14 @@
 = Kestrel Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-kestrel/src/main/docs/kestrel-component.adoc
+:docTitle: Kestrel
+:artifactId: camel-kestrel
+:description: The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
+:since: 2.6
+:deprecated: *deprecated*
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.6*
+*Since Camel {since}*
 
 
 The Kestrel component allows messages to be sent to a

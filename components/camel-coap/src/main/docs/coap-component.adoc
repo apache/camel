@@ -1,7 +1,12 @@
 [[coap-component]]
 = CoAP Component
+:docTitle: CoAP
+:artifactId: camel-coap
+:description: The coap component is used for sending and receiving messages from COAP capable devices.
+:since: 2.16
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.16*
+*Since Camel {since}*
 
 
 *Camel-CoAP* is an http://camel.apache.org/[Apache Camel] component that

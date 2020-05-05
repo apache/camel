@@ -2,8 +2,13 @@
 = Spring WebService Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-ws/src/main/docs/spring-ws-component.adoc
+:docTitle: Spring WebService
+:artifactId: camel-spring-ws
+:description: The spring-ws component is used for SOAP WebServices using Spring WebServices.
+:since: 2.6
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.6*
+*Since Camel {since}*
 
 
 The *spring-ws:* component allows you to integrate with
@@ -253,7 +258,7 @@ SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 
 == Using SOAP headers
 
-*Available as of Camel 2.11.1*
+*Since Camel {since}*
 
 You can provide the SOAP header(s) as a Camel Message header when
 sending a message to a spring-ws endpoint, for example given the

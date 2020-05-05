@@ -1,7 +1,12 @@
 [[kubernetes-hpa-component]]
 = Kubernetes HPA Component
+:docTitle: Kubernetes HPA
+:artifactId: camel-kubernetes
+:description: The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume HPA events.
+:since: 2.23
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.23*
+*Since Camel {since}*
 
 The *Kubernetes HPA* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes hpa operations and a consumer to consume kubernetes

@@ -1,7 +1,12 @@
 [[aws-sdb-component]]
 = AWS SimpleDB Component
+:docTitle: AWS SimpleDB
+:artifactId: camel-aws
+:description: The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+:since: 2.9
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.9*
+*Since Camel {since}*
 
 
 The sdb component supports storing and retrieving data from/to

@@ -2,8 +2,13 @@
 = OpenStack Cinder Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-cinder-component.adoc
+:docTitle: OpenStack Cinder
+:artifactId: camel-openstack
+:description: The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
+:since: 2.19
+:component-header: Only producer is supported
 
-*Available as of Camel version 2.19*
+*Since Camel {since}*
 
 
 The openstack-cinder component allows messages to be sent to an OpenStack block storage services.

@@ -2,8 +2,13 @@
 = OSGi EventAdmin Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-eventadmin/src/main/docs/eventadmin-component.adoc
+:docTitle: OSGi EventAdmin
+:artifactId: camel-eventadmin
+:description: The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
+:since: 2.6
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 2.6*
+*Since Camel {since}*
 
 
 The `eventadmin` component can be used in an OSGi environment to receive

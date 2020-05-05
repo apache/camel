@@ -1,7 +1,10 @@
 [[jms-component]]
 = JMS Component
-ifdef::env-github[]
-*Available as of Camel version 1.0*
+:docTitle: JMS
+:artifactId: camel-jms
+:description: The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+:since: 1.0
+:component-header: Both producer and consumer are supported
 
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -1264,7 +1267,7 @@ broker more frequent, and thus require more network traffic.
 
 === Request-reply over JMS and using an exclusive fixed reply queue
 
-*Available as of Camel 2.9*
+*Since Camel {since}*
 
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
@@ -1416,7 +1419,7 @@ messaging:
 The `transacted` property applies *only* to the InOnly message
 Exchange Pattern (MEP).
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 You can leverage the
 http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/jms/listener/AbstractPollingMessageListenerContainer.html#setSessionTransacted(boolean)[DMLC

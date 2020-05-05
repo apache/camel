@@ -1,7 +1,12 @@
 [[ldap-component]]
 = LDAP Component
+:docTitle: LDAP
+:artifactId: camel-ldap
+:description: The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
+:since: 1.5
+:component-header: Only producer is supported
 
-*Available as of Camel version 1.5*
+*Since Camel {since}*
 
 
 The *ldap* component allows you to perform searches in LDAP servers

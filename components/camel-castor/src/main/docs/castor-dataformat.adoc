@@ -1,7 +1,12 @@
 [[castor-dataformat]]
 = Castor DataFormat (deprecated)
+:docTitle: Castor
+:artifactId: camel-castor
+:description: Castor data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+:since: 2.1
+:deprecated: *deprecated*
 
-*Available as of Camel version 2.1*
+*Since Camel {since}*
 
 
 Castor is a Data Format which uses the

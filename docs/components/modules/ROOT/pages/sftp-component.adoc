@@ -2,8 +2,13 @@
 = SFTP Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ftp/src/main/docs/sftp-component.adoc
+:docTitle: SFTP
+:artifactId: camel-ftp
+:description: The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
+:since: 1.1
+:component-header: Both producer and consumer are supported
 
-*Available as of Camel version 1.1*
+*Since Camel {since}*
 
 
 This component provides access to remote file systems over the FTP and

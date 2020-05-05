@@ -1,7 +1,12 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
+:docTitle: Google Mail Stream
+:artifactId: camel-google-mail
+:description: The google-mail component provides access to Google Mail.
+:since: 2.22
+:component-header: Only consumer is supported
 
-*Available as of Camel version 2.22*
+*Since Camel {since}*
 
 
 The Google Mail component provides access

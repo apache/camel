@@ -1,7 +1,10 @@
 [[jmx-component]]
 = JMX Component
-ifdef::env-github[]
-*Available as of Camel version 2.6*
+:docTitle: JMX
+:artifactId: camel-jmx
+:description: The jmx component allows to receive JMX notifications.
+:since: 2.6
+:component-header: Only consumer is supported
 
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -583,7 +586,7 @@ usage of each incoming and outgoing endpoints).
 ==== Configuring whether to register MBeans always, for new routes or just by default
 
 
-*Available as of Camel 2.7*
+*Since Camel {since}*
 
 Camel now offers 2 settings to control whether or not to register mbeans
 
@@ -706,7 +709,7 @@ image:jconsole_trace_notifications.png[image]
 
 ==== Registering your own Managed Endpoints
 
-*Available as of Camel 2.0*
+*Since Camel {since}*
 
 You can decorate your own endpoints with Spring managed annotations
 `@ManagedResource` to allow to register them in the Camel `MBeanServer`
@@ -762,7 +765,7 @@ code to not depend on Spring JARs.
 
 ==== Programming your own Managed Services
 
-*Available as of Camel 2.1*
+*Since Camel {since}*
 
 Camel now offers to use your own MBeans when registering services for
 management. What that means is for example you can develop a custom
@@ -816,7 +819,7 @@ And in the future we will add additional wrappers for more EIP patterns.
 
 ==== ManagementNamingStrategy
 
-*Available as of Camel 2.1*
+*Since Camel {since}*
 
 Camel provides a pluggable API for naming strategy by
 `org.apache.camel.spi.ManagementNamingStrategy`. A default
@@ -825,7 +828,7 @@ registered with.
 
 ==== Management naming pattern
 
-*Available as of Camel 2.10*
+*Since Camel {since}*
 
 From *Camel 2.10* onwards we made it easier to configure a naming
 pattern for the MBeans. The pattern is used as part of the `ObjectName`
@@ -967,7 +970,7 @@ MBean already exists exception.
 
 ==== ManagementStrategy
 
-*Available as of Camel 2.1*
+*Since Camel {since}*
 
 Camel now provides a totally pluggable management strategy that allows
 you to be 100% in control of management. It is a rich interface with
@@ -980,7 +983,7 @@ details and features that are provided out of the box at Apache.
 
 ==== Configuring level of granularity for performance statistics
 
-*Available as of Camel 2.1*
+*Since Camel {since}*
 
 You can now set a pre set level whether performance statistics is
 enabled or not when Camel start ups. The levels are
@@ -1041,7 +1044,7 @@ And from Spring DSL you do:
 
 === Hiding sensitive information
 
-*Available as of Camel 2.12*
+*Since Camel {since}*
 
 By default, Camel enlists MBeans in JMX such as endpoints configured
 using URIs. In this configuration, there may be

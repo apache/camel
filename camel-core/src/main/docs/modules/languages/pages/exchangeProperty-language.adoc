@@ -1,7 +1,11 @@
 [[exchangeProperty-language]]
 = ExchangeProperty Language
+:docTitle: ExchangeProperty
+:artifactId: camel-core
+:description: To use a Camel Exchange property in expressions or predicates.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 The ExchangeProperty Expression Language allows you to extract values of
 named exchange properties.

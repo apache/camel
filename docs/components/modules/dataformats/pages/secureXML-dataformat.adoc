@@ -2,8 +2,12 @@
 = XML Security DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc
+:docTitle: XML Security
+:artifactId: camel-xmlsecurity
+:description: The XML Security data format facilitates encryption and decryption of XML payloads.
+:since: 2.0
 
-*Available as of Camel version 2.0*
+*Since Camel {since}*
 
 
 The XMLSecurity Data Format facilitates encryption and decryption of XML
@@ -19,7 +23,7 @@ encryption formats. Additional formats can be easily added later as
 needed. This capability allows Camel users to encrypt/decrypt payloads
 while being dispatched or received along a route.
 
-*Available as of Camel 2.9*
+*Since Camel {since}*
 
  The XMLSecurity Data Format supports asymmetric key encryption. In this
 encryption model a symmetric key is generated and used to perform XML
