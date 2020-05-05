@@ -3,60 +3,11 @@
 
 Below is the list of expression languages that are provided by Apache Camel.
 
+Number of Languages: indexCount:[] in indexUniqueCount:[unique=artifactid] JAR artifacts (indexCount:[attributes=deprecated] deprecated)
 
-// languages: START
-Number of Languages: 24 in 12 JAR artifacts (7 deprecated)
-
-[width="100%",cols="4,1,5",options="header"]
+[{index-table-format}]
 |===
-| Language | Since | Description
-
-| xref:languages:bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
-
-| xref:languages:constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
-
-| xref:languages:el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* To use EL scripts in Camel expressions or predicates.
-
-| xref:languages:exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
-
-| xref:languages:file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
-
-| xref:languages:groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
-
-| xref:languages:header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
-
-| xref:languages:terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
-
-| xref:languages:javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | *deprecated* To use JavaScript in Camel expressions or predicates.
-
-| xref:languages:jsonpath-language.adoc[JsonPath] (camel-jsonpath) | 2.13 | To use JsonPath in Camel expressions or predicates.
-
-| xref:languages:jxpath-language.adoc[JXPath] (camel-jxpath) | 1.3 | *deprecated* To use JXPath in Camel expressions or predicates.
-
-| xref:languages:mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | To use MVEL scripts in Camel expressions or predicates.
-
-| xref:languages:ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
-
-| xref:languages:php-language.adoc[PHP] (camel-script) | 1.0 | *deprecated* To use PHP scripts in Camel expressions or predicates.
-
-| xref:languages:python-language.adoc[Python] (camel-script) | 1.0 | *deprecated* To use Python scripts in Camel expressions or predicates.
-
-| xref:languages:ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
-
-| xref:languages:ruby-language.adoc[Ruby] (camel-script) | 1.0 | *deprecated* To use Ruby scripts in Camel expressions or predicates.
-
-| xref:languages:simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
-
-| xref:languages:spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
-
-| xref:languages:sql-language.adoc[SQL] (camel-josql) | 1.0 | *deprecated* To use SQL (on Java beans) in Camel expressions or predicates.
-
-| xref:languages:tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
-
-| xref:languages:xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
-
-| xref:languages:xpath-language.adoc[XPath] (camel-core) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
-
-| xref:languages:xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
+| Language | Artifact | Status | Since | Description
 |===
-// languages: END
+indexTable::[cells="$xref,artifactid,deprecated,since,description"]
+
