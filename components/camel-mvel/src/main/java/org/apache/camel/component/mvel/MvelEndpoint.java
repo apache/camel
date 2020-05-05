@@ -40,8 +40,11 @@ import org.mvel2.templates.TemplateRuntime;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true, label = "transformation,script")
 public class MvelEndpoint extends ResourceEndpoint {
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @UriParam
     private String encoding;
+
     private volatile String template;
     private volatile CompiledTemplate compiled;
 
@@ -64,6 +67,20 @@ public class MvelEndpoint extends ResourceEndpoint {
         return "mvel:" + getResourceUri();
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
     public String getEncoding() {
         return encoding;
     }
@@ -80,21 +97,26 @@ public class MvelEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        String newResourceUri = exchange.getIn().getHeader(MvelConstants.MVEL_RESOURCE_URI, String.class);
-        if (newResourceUri != null) {
-            exchange.getIn().removeHeader(MvelConstants.MVEL_RESOURCE_URI);
+        if (allowTemplateFromHeader) {
+            String newResourceUri = exchange.getIn().getHeader(MvelConstants.MVEL_RESOURCE_URI, String.class);
+            if (newResourceUri != null) {
+                exchange.getIn().removeHeader(MvelConstants.MVEL_RESOURCE_URI);
 
-            log.debug("{} set to {} creating new endpoint to handle exchange", MvelConstants.MVEL_RESOURCE_URI, newResourceUri);
-            MvelEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
-            newEndpoint.onExchange(exchange);
-            return;
+                log.debug("{} set to {} creating new endpoint to handle exchange", MvelConstants.MVEL_RESOURCE_URI, newResourceUri);
+                MvelEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+                newEndpoint.onExchange(exchange);
+                return;
+            }
         }
 
         CompiledTemplate compiled;
         ParserContext mvelContext = ParserContext.create();
         Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
 
-        String content = exchange.getIn().getHeader(MvelConstants.MVEL_TEMPLATE, String.class);
+        String content = null;
+        if (allowTemplateFromHeader) {
+            content = exchange.getIn().getHeader(MvelConstants.MVEL_TEMPLATE, String.class);
+        }
         if (content != null) {
             // use content from header
             if (log.isDebugEnabled()) {

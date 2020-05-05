@@ -41,7 +41,7 @@ public class MvelComponentTest extends CamelTestSupport {
 
     @Test
     public void testMvelTemplate() throws Exception {
-        Exchange exchange = template.request("direct:a", new Processor() {
+        Exchange exchange = template.request("direct:b", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(7);
@@ -54,7 +54,7 @@ public class MvelComponentTest extends CamelTestSupport {
 
     @Test
     public void testMvelUri() throws Exception {
-        Exchange exchange = template.request("direct:a", new Processor() {
+        Exchange exchange = template.request("direct:b", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(7);
@@ -71,6 +71,9 @@ public class MvelComponentTest extends CamelTestSupport {
                 // START SNIPPET: example
                 from("direct:a").
                         to("mvel:template.mvel");
+
+                from("direct:b").
+                        to("mvel:template.mvel?allowTemplateFromHeader=true");
                 // END SNIPPET: example
             }
         };
