@@ -53,6 +53,9 @@ public class JoltEndpoint extends ResourceEndpoint {
     @UriParam(defaultValue = "Chainr")
     private JoltTransformType transformDsl = JoltTransformType.Chainr;
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+
     public JoltEndpoint() {
     }
 
@@ -144,6 +147,20 @@ public class JoltEndpoint extends ResourceEndpoint {
         this.transformDsl = transformType;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
     public JoltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
@@ -155,10 +172,12 @@ public class JoltEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        String newResourceUri = exchange.getIn().getHeader(JoltConstants.JOLT_RESOURCE_URI, String.class);
+        String newResourceUri = null;
+        if (allowTemplateFromHeader) {
+            newResourceUri = exchange.getIn().getHeader(JoltConstants.JOLT_RESOURCE_URI, String.class);
+        }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(JoltConstants.JOLT_RESOURCE_URI);
-
             log.debug("{} set to {} creating new endpoint to handle exchange", JoltConstants.JOLT_RESOURCE_URI, newResourceUri);
             JoltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
@@ -172,10 +191,11 @@ public class JoltEndpoint extends ResourceEndpoint {
             input = exchange.getIn().getBody();
         }
 
+        Map<String, Object> inputContextMap = null;
+        if (allowTemplateFromHeader) {
+            inputContextMap = exchange.getIn().getHeader(JoltConstants.JOLT_CONTEXT, Map.class);
+        }
         Object output;
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> inputContextMap = exchange.getIn().getHeader(JoltConstants.JOLT_CONTEXT, Map.class);
         if (inputContextMap != null) {
             output = ((ContextualTransform)getTransform()).transform(input, inputContextMap);
         } else {
@@ -191,4 +211,5 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
         out.setHeaders(exchange.getIn().getHeaders());
     }
+
 }
