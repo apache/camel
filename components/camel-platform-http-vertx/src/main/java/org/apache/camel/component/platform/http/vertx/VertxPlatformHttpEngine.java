@@ -22,8 +22,6 @@ import java.util.List;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Experimental;
 import org.apache.camel.Processor;
@@ -33,7 +31,6 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.component.platform.http.spi.UploadAttacher;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 
 
 /**
@@ -41,9 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Experimental
 @JdkService(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY)
-public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine, CamelContextAware {
-    private CamelContext camelContext;
-    private VertxPlatformHttp router;
+public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine {
     private List<Handler<RoutingContext>> handlers;
     private UploadAttacher uploadAttacher;
 
@@ -51,20 +46,12 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         this.handlers = Collections.emptyList();
     }
 
-    public VertxPlatformHttp getRouter() {
-        return router;
-    }
-
-    public void setRouter(VertxPlatformHttp router) {
-        this.router = router;
-    }
-
     public List<Handler<RoutingContext>> getHandlers() {
         return Collections.unmodifiableList(handlers);
     }
 
     public void setHandlers(List<Handler<RoutingContext>> handlers) {
-        if (handlers == null) {
+        if (handlers != null) {
             this.handlers = new ArrayList<>(handlers);
         }
     }
@@ -78,22 +65,8 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
     }
 
     @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    @Override
     protected void doStart() throws Exception {
-        if (router == null) {
-            ObjectHelper.notNull(getCamelContext(), "Camel Context");
-
-            router = VertxPlatformHttp.lookup(getCamelContext());
-        }
+        // no-op
     }
 
     @Override
@@ -103,14 +76,9 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
 
     @Override
     public Consumer createConsumer(PlatformHttpEndpoint endpoint, Processor processor) {
-        List<Handler<RoutingContext>> handlers = new ArrayList<>(this.handlers.size() + router.handlers().size());
-        handlers.addAll(this.router.handlers());
-        handlers.addAll(this.handlers);
-
         return new VertxPlatformHttpConsumer(
             endpoint,
             processor,
-            router.router(),
             handlers,
             uploadAttacher);
     }
