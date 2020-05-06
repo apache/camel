@@ -98,7 +98,6 @@ pipeline {
                 body: '${DEFAULT_CONTENT}',
                 recipientProviders: [[$class: 'CulpritsRecipientProvider']]
             )
-            cleanWs()
         }
     }
 }
