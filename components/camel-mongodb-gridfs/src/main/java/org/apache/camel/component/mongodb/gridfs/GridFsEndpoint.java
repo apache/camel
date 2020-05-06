@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.mongodb.gridfs;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
-import com.mongodb.gridfs.GridFS;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -44,6 +46,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public static final String GRIDFS_METADATA = "gridfs.metadata";
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
     public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
+    public static final String GRIDFS_OBJECT_ID = "gridfs.objectid";
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
 
@@ -53,9 +56,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriParam
     @Metadata(required = true)
     private String database;
-    @UriParam(defaultValue = GridFS.DEFAULT_BUCKET)
+    @UriParam(defaultValue = "fs")
     private String bucket;
-    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY,SAFE")
+    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
     private WriteConcern writeConcern;
     @UriParam
     private ReadPreference readPreference;
@@ -79,9 +82,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private String fileAttributeName = "camel-processed";
 
     private MongoClient mongoConnection;
-    private DB db;
-    private GridFS gridFs;
-    private DBCollection filesCollection;
+    private MongoDatabase db;
+    private GridFSBucket gridFSBucket;
+    private MongoCollection<GridFSFile> filesCollection;
 
     public GridFsEndpoint(String uri, GridFsComponent component) {
         super(uri, component);
@@ -104,15 +107,18 @@ public class GridFsEndpoint extends DefaultEndpoint {
         if (database == null) {
             throw new IllegalStateException("Missing required endpoint configuration: database");
         }
-        db = mongoConnection.getDB(database);
+        db = mongoConnection.getDatabase(database);
         if (db == null) {
             throw new IllegalStateException("Could not initialize GridFsComponent. Database " + database + " does not exist.");
         }
-        gridFs = new GridFS(db, bucket == null ? GridFS.DEFAULT_BUCKET : bucket) {
-            {
-                filesCollection = getFilesCollection();
-            }
-        };
+
+        if (bucket != null) {
+            gridFSBucket = GridFSBuckets.create(db, bucket);
+        } else {
+            gridFSBucket = GridFSBuckets.create(db);
+        }
+
+        this.filesCollection = db.getCollection(gridFSBucket.getBucketName() + ".files", GridFSFile.class);
     }
 
     @Override
@@ -135,12 +141,12 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private void setWriteReadOptionsOnConnection() {
         // Set the WriteConcern
         if (writeConcern != null) {
-            mongoConnection.setWriteConcern(writeConcern);
+            db = db.withWriteConcern(writeConcern);
         }
 
         // Set the ReadPreference
         if (readPreference != null) {
-            mongoConnection.setReadPreference(readPreference);
+            db = db.withReadPreference(readPreference);
         }
     }
 
@@ -151,7 +157,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of {@link com.mongodb.MongoClient} to use.
+     * Name of {@link com.mongodb.client.MongoClient} to use.
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
@@ -170,7 +176,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
         this.mongoConnection = mongoConnection;
     }
 
-    public DB getDB() {
+    public MongoDatabase getDB() {
         return db;
     }
 
@@ -342,7 +348,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the operation this endpoint will execute against GridRS.
+     * Sets the operation this endpoint will execute against GridFs.
      */
     public void setOperation(String operation) {
         this.operation = operation;
@@ -352,16 +358,15 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return operation;
     }
 
-    public GridFS getGridFs() {
-        return gridFs;
+    public GridFSBucket getGridFsBucket() {
+        return gridFSBucket;
     }
 
-    public void setGridFs(GridFS gridFs) {
-        this.gridFs = gridFs;
+    public void setGridFsBucket(GridFSBucket gridFs) {
+        this.gridFSBucket = gridFs;
     }
 
-    public DBCollection getFilesCollection() {
+    public MongoCollection<GridFSFile> getFilesCollection() {
         return filesCollection;
     }
-
 }
