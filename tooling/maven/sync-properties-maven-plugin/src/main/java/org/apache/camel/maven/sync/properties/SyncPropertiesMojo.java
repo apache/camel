@@ -20,8 +20,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Properties;
-import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.camel.util.OrderedProperties;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -66,12 +67,12 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
 
+                // lets sort the properties
+                OrderedProperties op = new OrderedProperties();
+                op.putAll(new TreeMap<>(parentProp));
+
                 MavenProject project = new MavenProject(model);
-                project.getProperties().clear();
-                Set<String> keys = parentProp.stringPropertyNames();
-                for (String key : keys) {
-                    project.getProperties().setProperty(key, parentProp.getProperty(key));
-                }
+                project.getModel().setProperties(op);
 
                 MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
                 mavenWriter.write(new FileWriter(targetPom), model);
