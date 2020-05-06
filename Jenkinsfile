@@ -43,13 +43,13 @@ pipeline {
         disableConcurrentBuilds()
     }
 
-    pre { 
-        always { 
-            cleanWs()
-        }
-    }
-
     stages {
+
+        stage('Cleanup workspace') {
+            steps {
+                cleanWs()
+            }
+        }
 
         stage('Build & Deploy') {
             when {
