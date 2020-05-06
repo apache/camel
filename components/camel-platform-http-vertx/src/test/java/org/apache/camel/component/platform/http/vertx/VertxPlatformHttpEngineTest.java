@@ -18,6 +18,7 @@ package org.apache.camel.component.platform.http.vertx;
 
 import java.util.Arrays;
 
+import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -28,7 +29,9 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -39,8 +42,18 @@ public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
     public static SSLContextParameters clientSSLParameters;
 
+    public int port;
+    public CamelContext context;
+    public Vertx vertx;
+
+    // ***************************
+    //
+    // set-up
+    //
+    // ***************************
+
     @BeforeAll
-    public static void setUp() {
+    public static void setUpSSL() {
         serverSSLParameters = new SSLContextParameters();
         clientSSLParameters = new SSLContextParameters();
 
@@ -75,104 +88,111 @@ public class VertxPlatformHttpEngineTest {
         clientSSLParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
     }
 
+    @BeforeEach
+    public void setUp() {
+        this.port = AvailablePortFinder.getNextAvailable();
+        this.vertx = Vertx.vertx();
+        this.context = new DefaultCamelContext();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (this.context != null) {
+            this.context.stop();
+        }
+        if (this.vertx != null) {
+            this.vertx.close();
+        }
+    }
+
+    // ***************************
+    //
+    // Tests
+    //
+    // ***************************
+
     @Test
     public void testEngine() throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
-        final CamelContext context = new DefaultCamelContext();
+        VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+        conf.setBindPort(port);
 
-        try {
-            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-            conf.setBindPort(port);
+        context.addService(new VertxPlatformHttpServer(vertx, conf));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("platform-http:/get")
+                    .routeId("get")
+                    .setBody().constant("get");
+                from("platform-http:/post")
+                    .routeId("post")
+                    .transform().body(String.class, b -> b.toUpperCase());
+            }
+        });
 
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("platform-http:/get")
-                        .routeId("get")
-                        .setBody().constant("get");
-                    from("platform-http:/post")
-                        .routeId("post")
-                        .transform().body(String.class, b -> b.toUpperCase());
-                }
+        context.start();
+
+        assertThat(VertxPlatformHttp.lookup(context)).isNotNull();
+        assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
+            assertThat(component.getEngine()).isInstanceOfSatisfying(VertxPlatformHttpEngine.class, e -> {
+                assertThat(e.getRouter().router()).isNotNull();
+                assertThat(e.getRouter().handlers()).isNotEmpty();
             });
+        });
 
-            context.start();
+        given()
+            .port(conf.getBindPort())
+        .when()
+            .get("/get")
+        .then()
+            .statusCode(200)
+            .body(equalTo("get"));
 
-            assertThat(VertxPlatformHttp.lookup(context)).isNotNull();
-            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
-                assertThat(component.getEngine()).isInstanceOfSatisfying(VertxPlatformHttpEngine.class, e -> {
-                    assertThat(e.getRouter().router()).isNotNull();
-                    assertThat(e.getRouter().handlers()).isNotEmpty();
-                });
-            });
-
-            given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/get")
-            .then()
-                .statusCode(200)
-                .body(equalTo("get"));
-
-            given()
-                .port(conf.getBindPort())
-                .body("post")
-            .when()
-                .post("/post")
-            .then()
-                .statusCode(200)
-                .body(equalTo("POST"));
-
-        } finally {
-            context.stop();
-        }
+        given()
+            .port(conf.getBindPort())
+            .body("post")
+        .when()
+            .post("/post")
+        .then()
+            .statusCode(200)
+            .body(equalTo("POST"));
     }
 
     @Test
     public void testEngineSSL() throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setSslContextParameters(serverSSLParameters);
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
+        conf.setBindPort(port);
 
-        CamelContext context = new DefaultCamelContext();
+        context.addService(new VertxPlatformHttpServer(vertx, conf));
+        context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
 
-        try {
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
-            context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                fromF("platform-http:/")
+                    .transform().body(String.class, b -> b.toUpperCase());
+            }
+        });
 
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    fromF("platform-http:/")
-                        .transform().body(String.class, b -> b.toUpperCase());
-                }
-            });
+        context.start();
 
-            context.start();
+        String result = context.createFluentProducerTemplate()
+            .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
+            .withBody("test")
+            .request(String.class);
 
-            String result = context.createFluentProducerTemplate()
-                .toF("https://localhost:%d?sslContextParameters=#clientSSLContextParameters", conf.getBindPort())
-                .withBody("test")
-                .request(String.class);
-
-            assertThat(result).isEqualTo("TEST");
-        } finally {
-            context.stop();
-        }
+        assertThat(result).isEqualTo("TEST");
     }
 
     @Test
     public void testEngineGlobalSSL() throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setUseGlobalSslContextParameters(true);
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
-
-        CamelContext context = new DefaultCamelContext();
+        conf.setBindPort(port);
 
         try {
             context.setSSLContextParameters(serverSSLParameters);
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addService(new VertxPlatformHttpServer(vertx, conf));
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
 
             context.addRoutes(new RouteBuilder() {
@@ -199,88 +219,77 @@ public class VertxPlatformHttpEngineTest {
     @Test
     public void testEngineCORS() throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
+        conf.setBindPort(port);
         conf.getCors().setEnabled(true);
         conf.getCors().setMethods(Arrays.asList("GET", "POST"));
 
-        CamelContext context = new DefaultCamelContext();
+        context.addService(new VertxPlatformHttpServer(vertx, conf));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("platform-http:/")
+                    .transform().constant("cors");
+            }
+        });
 
-        try {
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("platform-http:/")
-                        .transform().constant("cors");
-                }
-            });
+        context.start();
 
-            context.start();
+        final String origin = "http://custom.origin.quarkus";
+        final String methods = "GET,POST";
+        final String headers = "X-Custom";
 
-            final String origin = "http://custom.origin.quarkus";
-            final String methods = "GET,POST";
-            final String headers = "X-Custom";
-
-            given()
-                .port(conf.getBindPort())
-                .header("Origin", origin)
-                .header("Access-Control-Request-Method", methods)
-                .header("Access-Control-Request-Headers", headers)
-            .when()
-                .get("/")
-            .then()
-                .statusCode(200)
-                .header("Access-Control-Allow-Origin", origin)
-                .header("Access-Control-Allow-Methods", methods)
-                .header("Access-Control-Allow-Headers", headers);
-        } finally {
-            context.stop();
-        }
+        given()
+            .port(conf.getBindPort())
+            .header("Origin", origin)
+            .header("Access-Control-Request-Method", methods)
+            .header("Access-Control-Request-Headers", headers)
+        .when()
+            .get("/")
+        .then()
+            .statusCode(200)
+            .header("Access-Control-Allow-Origin", origin)
+            .header("Access-Control-Allow-Methods", methods)
+            .header("Access-Control-Allow-Headers", headers);
     }
 
     @Test
     public void testMatchOnUriPrefix() throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(AvailablePortFinder.getNextAvailable());
+        conf.setBindPort(port);
 
-        CamelContext context = new DefaultCamelContext();
-        try {
-            final String greeting = "Hello Camel";
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
-                            .transform().simple("Hello ${header.name}");
-                }
-            });
+        final String greeting = "Hello Camel";
+        context.addService(new VertxPlatformHttpServer(vertx, conf));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
+                        .transform().simple("Hello ${header.name}");
+            }
+        });
 
-            context.start();
+        context.start();
 
-            given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/greeting")
-            .then()
-                .statusCode(404);
+        given()
+            .port(conf.getBindPort())
+        .when()
+            .get("/greeting")
+        .then()
+            .statusCode(404);
 
-            given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/greeting/Camel")
-            .then()
-                .statusCode(200)
-                .body(equalTo(greeting));
+        given()
+            .port(conf.getBindPort())
+        .when()
+            .get("/greeting/Camel")
+        .then()
+            .statusCode(200)
+            .body(equalTo(greeting));
 
-            given()
-                .port(conf.getBindPort())
-            .when()
-                .get("/greeting/Camel/other/path/")
-            .then()
-                .statusCode(200)
-                .body(equalTo(greeting));
-        } finally {
-            context.stop();
-        }
+        given()
+            .port(conf.getBindPort())
+        .when()
+            .get("/greeting/Camel/other/path/")
+        .then()
+            .statusCode(200)
+            .body(equalTo(greeting));
     }
 }
