@@ -115,10 +115,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
-        if (component != null) {
-            entityManagerFactory = component.getEntityManagerFactory();
-            transactionManager = component.getTransactionManager();
-        }
     }
 
     @Override
@@ -586,4 +582,15 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         };
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (entityManagerFactory == null && getComponent() != null) {
+            entityManagerFactory = getComponent().getEntityManagerFactory();
+        }
+        if (transactionManager == null && getComponent() != null) {
+            transactionManager = getComponent().getTransactionManager();
+        }
+    }
 }
