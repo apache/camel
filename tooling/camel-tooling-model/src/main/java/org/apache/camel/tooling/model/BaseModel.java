@@ -29,6 +29,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     protected String javaType;
     protected String label;
     protected boolean deprecated;
+    protected String deprecatedSince;
     protected String deprecationNote;
     protected final List<O> options = new ArrayList<>();
     protected SupportLevel supportLevel;
@@ -94,6 +95,14 @@ public abstract class BaseModel<O extends BaseOptionModel> {
 
     public void setDeprecationNote(String deprecationNote) {
         this.deprecationNote = deprecationNote;
+    }
+
+    public String getDeprecatedSince() {
+        return deprecatedSince;
+    }
+
+    public void setDeprecatedSince(String deprecatedSince) {
+        this.deprecatedSince = deprecatedSince;
     }
 
     public String getJavaType() {

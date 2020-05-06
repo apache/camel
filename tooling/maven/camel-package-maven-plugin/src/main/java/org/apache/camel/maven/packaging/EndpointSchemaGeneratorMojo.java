@@ -504,6 +504,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNote();
         }
         model.setDeprecationNote(deprecationNote);
+        model.setDeprecatedSince(project.getProperties().getProperty("deprecatedSince"));
 
         // these information is not available at compile time and we enrich
         // these later during the camel-package-maven-plugin

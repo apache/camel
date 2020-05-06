@@ -301,6 +301,7 @@ public final class JsonMapper {
         obj.put("title", model.getTitle());
         obj.put("description", model.getDescription());
         obj.put("deprecated", model.isDeprecated());
+        obj.put("deprecatedSince", model.getDeprecatedSince());
         obj.put("deprecationNote", model.getDeprecationNote());
         obj.put("firstVersion", model.getFirstVersion());
         obj.put("label", model.getLabel());
@@ -326,7 +327,8 @@ public final class JsonMapper {
         model.setFirstVersion(mobj.getString("firstVersion"));
         model.setLabel(mobj.getString("label"));
         model.setDeprecated(mobj.getBooleanOrDefault("deprecated", false));
-        model.setDeprecationNote(mobj.getString("label"));
+        model.setDeprecatedSince(mobj.getString("deprecatedSince"));
+        model.setDeprecationNote(mobj.getString("deprecationNote"));
         model.setJavaType(mobj.getString("javaType"));
         model.setSupportLevel(SupportLevel.safeValueOf(mobj.getString("supportLevel")));
         model.setNativeSupported(mobj.getBooleanOrDefault("nativeSupported", false));

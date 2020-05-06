@@ -116,6 +116,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             model.setVersion(project.getVersion());
             model.setDescription(project.getDescription());
             model.setDeprecated(project.getName() != null && project.getName().contains("(deprecated)"));
+            model.setDeprecatedSince(project.getProperties().getProperty("deprecatedSince"));
             model.setFirstVersion(project.getProperties().getProperty("firstVersion"));
             model.setLabel(project.getProperties().getProperty("label"));
             String title = project.getProperties().getProperty("title");
