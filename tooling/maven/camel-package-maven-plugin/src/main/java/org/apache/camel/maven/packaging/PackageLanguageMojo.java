@@ -204,6 +204,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         model.setLabel(def.getLabel());
         model.setDeprecated(def.isDeprecated());
         model.setDeprecationNote(def.getDeprecationNote());
+        model.setDeprecatedSince(project.getProperties().getProperty("deprecatedSince"));
         model.setJavaType(javaType.getCanonicalName());
         model.setModelName(def.getName());
         model.setModelJavaType(def.getJavaType());
