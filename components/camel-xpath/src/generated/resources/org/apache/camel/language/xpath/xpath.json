@@ -5,7 +5,6 @@
     "title": "XPath",
     "description": "Evaluate an XPath expression against an XML payload.",
     "deprecated": false,
-    "deprecationNote": "language,core,xml",
     "firstVersion": "1.1.0",
     "label": "language,core,xml",
     "javaType": "org.apache.camel.language.xpath.XPathLanguage",

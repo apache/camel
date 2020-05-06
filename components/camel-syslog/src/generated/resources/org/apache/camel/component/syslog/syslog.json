@@ -5,7 +5,6 @@
     "title": "Syslog",
     "description": "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,monitoring",
     "firstVersion": "2.6.0",
     "label": "dataformat,transformation,monitoring",
     "javaType": "org.apache.camel.component.syslog.SyslogDataFormat",

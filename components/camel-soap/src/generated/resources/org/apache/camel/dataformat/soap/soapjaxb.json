@@ -5,7 +5,6 @@
     "title": "SOAP",
     "description": "Marshal Java objects to SOAP messages and back.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,xml",
     "firstVersion": "2.3.0",
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.dataformat.soap.SoapJaxbDataFormat",

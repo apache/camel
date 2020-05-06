@@ -5,7 +5,6 @@
     "title": "HL7 Terser",
     "description": "Get the value of an HL7 message field specified by terse location specification syntax.",
     "deprecated": false,
-    "deprecationNote": "language,hl7",
     "firstVersion": "2.11.0",
     "label": "language,hl7",
     "javaType": "org.apache.camel.component.hl7.Hl7TerserLanguage",

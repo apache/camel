@@ -5,7 +5,6 @@
     "title": "GZip Deflater",
     "description": "Compress and decompress messages using java.util.zip.GZIPStream.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.deflater.GzipDeflaterDataFormat",

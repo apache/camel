@@ -5,6 +5,7 @@
     "title": "Crypto CMS",
     "description": "Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.",
     "deprecated": true,
+    "deprecatedSince": "3.2.0",
     "firstVersion": "2.20.0",
     "label": "security,transformation",
     "javaType": "org.apache.camel.component.crypto.cms.CryptoCmsComponent",

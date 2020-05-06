@@ -5,7 +5,6 @@
     "title": "Thrift",
     "description": "Serialize and deserialize messages using Apache Thrift binary data format.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.thrift.ThriftDataFormat",

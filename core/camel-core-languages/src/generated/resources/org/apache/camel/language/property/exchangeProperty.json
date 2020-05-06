@@ -5,7 +5,6 @@
     "title": "ExchangeProperty",
     "description": "Get the value of named Camel Exchange property.",
     "deprecated": false,
-    "deprecationNote": "language,core",
     "firstVersion": "2.0.0",
     "label": "language,core",
     "javaType": "org.apache.camel.language.property.ExchangePropertyLanguage",

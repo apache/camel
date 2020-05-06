@@ -5,7 +5,6 @@
     "title": "CBOR",
     "description": "Unmarshal a CBOR payload to POJO and back.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,json",
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.cbor.CBORDataFormat",

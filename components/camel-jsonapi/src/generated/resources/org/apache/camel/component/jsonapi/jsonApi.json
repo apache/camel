@@ -5,7 +5,6 @@
     "title": "JSonApi",
     "description": "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.component.jsonapi.JsonApiDataFormat",

@@ -5,7 +5,6 @@
     "title": "PGP",
     "description": "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,security",
     "firstVersion": "2.9.0",
     "label": "dataformat,transformation,security",
     "javaType": "org.apache.camel.converter.crypto.PGPDataFormat",

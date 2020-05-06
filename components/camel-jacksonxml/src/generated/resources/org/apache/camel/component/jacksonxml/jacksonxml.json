@@ -5,7 +5,6 @@
     "title": "JacksonXML",
     "description": "Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,xml",
     "firstVersion": "2.16.0",
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.component.jacksonxml.JacksonXMLDataFormat",

@@ -5,7 +5,6 @@
     "title": "Grok",
     "description": "Unmarshal unstructured data to objects using Logstash based Grok patterns.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.component.grok.GrokDataFormat",

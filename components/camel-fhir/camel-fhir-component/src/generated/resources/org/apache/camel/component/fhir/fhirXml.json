@@ -5,7 +5,6 @@
     "title": "FHIR XML",
     "description": "Marshall and unmarshall FHIR objects to\/from XML.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,hl7,xml",
     "firstVersion": "2.21.0",
     "label": "dataformat,transformation,hl7,xml",
     "javaType": "org.apache.camel.component.fhir.FhirXmlDataFormat",

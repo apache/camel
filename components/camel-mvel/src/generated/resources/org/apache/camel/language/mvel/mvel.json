@@ -5,7 +5,6 @@
     "title": "MVEL",
     "description": "Evaluate an MVEL template against the Camel Exchange.",
     "deprecated": false,
-    "deprecationNote": "language,java",
     "firstVersion": "2.0.0",
     "label": "language,java",
     "javaType": "org.apache.camel.language.mvel.MvelLanguage",

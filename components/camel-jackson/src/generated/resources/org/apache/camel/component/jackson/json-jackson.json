@@ -5,7 +5,6 @@
     "title": "JSon Jackson",
     "description": "Marshal POJOs to JSON and back.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,json",
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.jackson.JacksonDataFormat",

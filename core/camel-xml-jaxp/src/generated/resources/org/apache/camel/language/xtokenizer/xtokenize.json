@@ -5,7 +5,6 @@
     "title": "XML Tokenize",
     "description": "Tokenize XML payloads using the specified path expression.",
     "deprecated": false,
-    "deprecationNote": "language,core,xml",
     "firstVersion": "2.14.0",
     "label": "language,core,xml",
     "javaType": "org.apache.camel.language.xtokenizer.XMLTokenizeLanguage",

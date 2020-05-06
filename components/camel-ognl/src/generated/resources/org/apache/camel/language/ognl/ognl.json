@@ -5,7 +5,6 @@
     "title": "OGNL",
     "description": "Evaluate an Apache Commons Object Graph Navigation Library (OGNL) expression against the Camel Exchange.",
     "deprecated": false,
-    "deprecationNote": "language,java",
     "firstVersion": "1.1.0",
     "label": "language,java",
     "javaType": "org.apache.camel.language.ognl.OgnlLanguage",
