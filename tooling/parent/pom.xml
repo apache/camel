@@ -44,7 +44,9 @@
         <maven-resolver-version>1.0.3</maven-resolver-version>
         <plexus-build-api-version>0.0.7</plexus-build-api-version>
         <plexus-container-default-version>1.6</plexus-container-default-version>
-        <plexus-utils-version>3.1.0</plexus-utils-version>
+        <plexus-utils-version>3.3.0</plexus-utils-version>
+        <maven-archiver-version>3.5.0</maven-archiver-version>
+        <plexus-archiver-version>4.2.1</plexus-archiver-version>
     </properties>
 
     <dependencyManagement>
@@ -143,6 +145,21 @@
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-build-api</artifactId>
                 <version>${plexus-build-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-archiver</artifactId>
+                <version>${maven-archiver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-archiver</artifactId>
+                <version>${plexus-archiver-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
