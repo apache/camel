@@ -27,8 +27,6 @@ import org.apache.camel.support.DefaultComponent;
 @Component("robotframework")
 public class RobotFrameworkComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "false")
-    private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced")
     private RobotFrameworkCamelConfiguration configuration;
 
@@ -53,7 +51,7 @@ public class RobotFrameworkComponent extends DefaultComponent {
     }
 
     public boolean isAllowTemplateFromHeader() {
-        return allowTemplateFromHeader;
+        return configuration.isAllowTemplateFromHeader();
     }
 
     /**
@@ -63,14 +61,13 @@ public class RobotFrameworkComponent extends DefaultComponent {
      * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
-        this.allowTemplateFromHeader = allowTemplateFromHeader;
+        configuration.setAllowTemplateFromHeader(allowTemplateFromHeader);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final RobotFrameworkCamelConfiguration configuration = this.configuration.copy();
 
         RobotFrameworkEndpoint endpoint = new RobotFrameworkEndpoint(uri, this, remaining, configuration);
-        endpoint.getConfiguration().setAllowTemplateFromHeader(allowTemplateFromHeader);
         setProperties(endpoint, parameters);
         return endpoint;
     }
