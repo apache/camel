@@ -104,24 +104,20 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     @BeforeClass
     public static void before() {
-        Properties stringsProps = new Properties();
+        stringsConsumerConn = createStringKafkaConsumer("DemoConsumer");
+        bytesConsumerConn = createByteKafkaConsumer(GROUP_BYTES);
+    }
 
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, "DemoConsumer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        stringsConsumerConn = new KafkaConsumer<>(stringsProps);
+    @AfterClass
+    public static void after() {
+        // clean all test topics
+        final List<String> topics = new ArrayList<>();
+        topics.add(TOPIC_BYTES);
+        topics.add(TOPIC_INTERCEPTED);
+        topics.add(TOPIC_PROPAGATED_HEADERS);
+        topics.add(TOPIC_STRINGS);
 
-        Properties bytesProps = new Properties();
-        bytesProps.putAll(stringsProps);
-        bytesProps.put("group.id", GROUP_BYTES);
-        bytesProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        bytesProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        bytesConsumerConn = new KafkaConsumer<>(bytesProps);
+        kafkaAdminClient.deleteTopics(topics);
     }
 
     @Override
@@ -329,7 +325,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         CountDownLatch messagesLatch = new CountDownLatch(1);
         propagatedHeadersTemplate.sendBodyAndHeaders("Some test message", camelHeaders);
 
-        List<ConsumerRecord<String, String>> records = pollForRecords(stringsConsumerConn, TOPIC_PROPAGATED_HEADERS, messagesLatch);
+        List<ConsumerRecord<String, String>> records = pollForRecords(createStringKafkaConsumer("propagatedHeaderConsumer"), TOPIC_PROPAGATED_HEADERS, messagesLatch);
         boolean allMessagesReceived = messagesLatch.await(10_000, TimeUnit.MILLISECONDS);
 
         assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
@@ -363,6 +359,36 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         Header foundHeader = StreamSupport.stream(headers.spliterator(), false).filter(header -> header.key().equals(headerKey)).findFirst().orElse(null);
         assertNotNull("Header should be sent", foundHeader);
         return foundHeader.value();
+    }
+
+    private static KafkaConsumer<String, String> createStringKafkaConsumer(final String groupId) {
+        Properties stringsProps = new Properties();
+
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return new KafkaConsumer<>(stringsProps);
+    }
+
+    private static KafkaConsumer<byte[], byte[]> createByteKafkaConsumer(final String groupId) {
+        Properties stringsProps = new Properties();
+
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return new KafkaConsumer<>(stringsProps);
     }
 
     private List<ConsumerRecord<String, String>> pollForRecords(KafkaConsumer<String, String> consumerConn, String topic, CountDownLatch messagesLatch) {

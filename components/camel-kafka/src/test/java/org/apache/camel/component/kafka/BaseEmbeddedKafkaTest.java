@@ -20,23 +20,30 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class BaseEmbeddedKafkaTest extends CamelTestSupport {
+public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
+    protected static AdminClient kafkaAdminClient;
+
     private static final String CONFLUENT_PLATFORM_VERSION = "5.5.0";
 
-    @ClassRule
-    public static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
+    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
+
+    protected static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
         .withEmbeddedZookeeper()
         .waitingFor(Wait.forListeningPort());
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
+    static {
+        kafkaBroker.start();
+        kafkaAdminClient = createAdminClient();
+    }
 
     @BeforeClass
     public static void beforeClass() {
@@ -70,5 +77,12 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     protected static String getBootstrapServers() {
         return kafkaBroker.getBootstrapServers();
+    }
+
+    private static AdminClient createAdminClient() {
+        final Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers());
+
+        return KafkaAdminClient.create(properties);
     }
 }
