@@ -141,23 +141,32 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     @Override
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
-        if (customBrokerURL) {
-            // okay a custom broker url was configured which we want to ensure
-            // the real target connection factory knows about
-            ConnectionFactory target = connectionFactory;
-            if (target instanceof CachingConnectionFactory) {
-                CachingConnectionFactory ccf = (CachingConnectionFactory) target;
-                target = ccf.getTargetConnectionFactory();
-            }
-            if (target instanceof DelegatingConnectionFactory) {
-                DelegatingConnectionFactory dcf = (DelegatingConnectionFactory) target;
-                target = dcf.getTargetConnectionFactory();
-            }
-            if (target instanceof ActiveMQConnectionFactory) {
-                ActiveMQConnectionFactory acf = (ActiveMQConnectionFactory) target;
+        ActiveMQConnectionFactory acf = null;
+
+        ConnectionFactory target = connectionFactory;
+        if (target instanceof CachingConnectionFactory) {
+            CachingConnectionFactory ccf = (CachingConnectionFactory) target;
+            target = ccf.getTargetConnectionFactory();
+        }
+        if (target instanceof DelegatingConnectionFactory) {
+            DelegatingConnectionFactory dcf = (DelegatingConnectionFactory) target;
+            target = dcf.getTargetConnectionFactory();
+        }
+        if (target instanceof ActiveMQConnectionFactory) {
+            acf = (ActiveMQConnectionFactory) target;
+        }
+
+        if (acf != null) {
+            if (customBrokerURL) {
+                // okay a custom broker url was configured which we want to ensure
+                // the real target connection factory knows about
                 acf.setBrokerURL(brokerURL);
+            } else {
+                // its the opposite the target has the brokerURL which we want to set on this
+                setBrokerURL(acf.getBrokerURL());
             }
         }
+
         super.setConnectionFactory(connectionFactory);
     }
 
