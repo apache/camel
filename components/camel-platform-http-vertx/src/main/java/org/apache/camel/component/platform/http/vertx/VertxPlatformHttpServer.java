@@ -16,20 +16,22 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,93 +44,69 @@ import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSe
  * This class implement a basic Vert.x Web based server that can be used by the {@link VertxPlatformHttpEngine} on
  * platforms that do not provide Vert.x based http services.
  */
-public class VertxPlatformHttpServer extends ServiceSupport {
+public class VertxPlatformHttpServer extends ServiceSupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpServer.class);
 
-    private final CamelContext context;
     private final VertxPlatformHttpServerConfiguration configuration;
 
+    private CamelContext context;
     private ExecutorService executor;
-    private Vertx vertx;
-    private boolean localVertx;
 
+    private boolean localVertx;
+    private Vertx vertx;
+    private Router router;
+    private Router subRouter;
     private HttpServer server;
 
-    public VertxPlatformHttpServer(CamelContext context, VertxPlatformHttpServerConfiguration configuration) {
-        this(context, configuration, null);
+    public VertxPlatformHttpServer(VertxPlatformHttpServerConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    public VertxPlatformHttpServer(CamelContext context, VertxPlatformHttpServerConfiguration configuration, Vertx vertx) {
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
         this.context = context;
-        this.configuration = configuration;
+    }
+
+    public Vertx getVertx() {
+        return vertx;
+    }
+
+    public void setVertx(Vertx vertx) {
+        if (ServiceHelper.isStarted(this)) {
+            throw new IllegalArgumentException("Can't set the Vertx instance after the service has been started");
+        }
+
         this.vertx = vertx;
+        this.localVertx = false;
     }
 
     @Override
     protected void doStart() throws Exception {
-        executor = context.getExecutorServiceManager().newSingleThreadExecutor(this, "platform-http-service");
-        vertx = lookupVertx();
-        if (vertx == null) {
-            LOGGER.info("Creating new Vert.x instance");
-            vertx = createVertxInstance();
-            localVertx = true;
-        } else {
-            LOGGER.info("Found Vert.x instance in registry: {}", vertx);
-        }
-
-        startAsync().toCompletableFuture().join();
+        initializeServer();
+        startServer();
     }
 
     @Override
     protected void doStop() throws Exception {
-        try {
-            if (server != null) {
-                stopAsync().toCompletableFuture().join();
-            }
-        } finally {
-            this.server = null;
-        }
+        stopServer();
+        stopVertx();
 
-        if (vertx != null && localVertx) {
-            try {
-                executor.submit(
-                    () -> {
-                        CountDownLatch latch = new CountDownLatch(1);
-
-                        vertx.close(result -> {
-                            try {
-                                if (result.failed()) {
-                                    LOGGER.warn("Failed to close Vert.x reason: {}",
-                                        result.cause().getMessage()
-                                    );
-
-                                    throw new RuntimeException(result.cause());
-                                }
-
-                                LOGGER.info("Vert.x stopped");
-                            } finally {
-                                latch.countDown();
-                            }
-                        });
-
-                        try {
-                            latch.await();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                ).get();
-            } finally {
-                vertx = null;
-                localVertx = false;
-            }
-        }
-
-        if (executor != null) {
-            context.getExecutorServiceManager().shutdown(executor);
-            executor = null;
+        if (this.executor != null) {
+            this.context.getExecutorServiceManager().shutdown(this.executor);
+            this.executor = null;
         }
     }
+
+    // *******************************
+    //
+    // Helpers
+    //
+    // *******************************
 
     protected Vertx lookupVertx() {
         return CamelContextHelper.findByType(context, Vertx.class);
@@ -143,9 +121,20 @@ public class VertxPlatformHttpServer extends ServiceSupport {
         return Vertx.vertx(options);
     }
 
-    private CompletionStage<Void> startAsync() {
-        final Router router = Router.router(vertx);
-        final Router subRouter = Router.router(vertx);
+    protected void initializeServer() {
+        if (vertx == null) {
+            vertx = lookupVertx();
+            if (vertx == null) {
+                LOGGER.info("Creating new Vert.x instance");
+                vertx = createVertxInstance();
+                localVertx = true;
+            } else {
+                LOGGER.info("Found Vert.x instance in registry: {}", vertx);
+            }
+        }
+
+        this.router = Router.router(vertx);
+        this.subRouter = Router.router(vertx);
 
         if (configuration.getCors().isEnabled()) {
             subRouter.route().handler(createCorsHandler(configuration));
@@ -154,17 +143,25 @@ public class VertxPlatformHttpServer extends ServiceSupport {
         router.mountSubRouter(configuration.getPath(), subRouter);
 
         context.getRegistry().bind(
-            VertxPlatformHttp.PLATFORM_HTTP_ROUTER_NAME,
-            new VertxPlatformHttp(vertx, subRouter, Collections.singletonList(createBodyHandler(configuration)))
+            VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
+            new VertxPlatformHttpRouter(vertx, subRouter) {
+                @Override
+                public Handler<RoutingContext> bodyHandler() {
+                    return createBodyHandler(configuration);
+                }
+            }
         );
+    }
 
+    protected void startServer() {
         HttpServerOptions options = new HttpServerOptions();
 
         configureSSL(options, configuration, context);
 
+        executor = context.getExecutorServiceManager().newSingleThreadExecutor(this, "platform-http-service");
         server = vertx.createHttpServer(options);
 
-        return CompletableFuture.runAsync(
+        CompletableFuture.runAsync(
             () -> {
                 CountDownLatch latch = new CountDownLatch(1);
                 server.requestHandler(router).listen(configuration.getBindPort(), configuration.getBindHost(), result -> {
@@ -192,40 +189,88 @@ public class VertxPlatformHttpServer extends ServiceSupport {
                 }
             },
             executor
-        );
+        ).toCompletableFuture().join();
     }
 
-    private CompletionStage<Void> stopAsync() {
-        return CompletableFuture.runAsync(
-            () -> {
-                CountDownLatch latch = new CountDownLatch(1);
+    protected void stopServer() {
+        if (this.server == null) {
+            return;
+        }
 
-                // remove the platform-http component
-                context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
+        try {
+            CompletableFuture.runAsync(
+                () -> {
+                    CountDownLatch latch = new CountDownLatch(1);
 
-                server.close(result -> {
-                    try {
-                        if (result.failed()) {
-                            LOGGER.warn("Failed to close Vert.x HttpServer reason: {}",
-                                result.cause().getMessage()
-                            );
+                    // remove the platform-http component
+                    context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
 
-                            throw new RuntimeException(result.cause());
+                    server.close(result -> {
+                        try {
+                            if (result.failed()) {
+                                LOGGER.warn("Failed to close Vert.x HttpServer reason: {}",
+                                    result.cause().getMessage()
+                                );
+
+                                throw new RuntimeException(result.cause());
+                            }
+
+                            LOGGER.info("Vert.x HttpServer stopped");
+                        } finally {
+                            latch.countDown();
                         }
+                    });
 
-                        LOGGER.info("Vert.x HttpServer stopped");
-                    } finally {
-                        latch.countDown();
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                });
+                },
+                executor
+            ).toCompletableFuture().join();
+        } finally {
+            this.server = null;
+        }
+    }
 
-                try {
-                    latch.await();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            },
-            executor
-        );
+    protected void stopVertx() {
+        if (this.vertx == null || this.localVertx) {
+            return;
+        }
+
+        try {
+            CompletableFuture.runAsync(
+                () -> {
+                    CountDownLatch latch = new CountDownLatch(1);
+
+                    vertx.close(result -> {
+                        try {
+                            if (result.failed()) {
+                                LOGGER.warn("Failed to close Vert.x reason: {}",
+                                    result.cause().getMessage()
+                                );
+
+                                throw new RuntimeException(result.cause());
+                            }
+
+                            LOGGER.info("Vert.x stopped");
+                        } finally {
+                            latch.countDown();
+                        }
+                    });
+
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                executor
+            ).toCompletableFuture().join();
+        } finally {
+            this.vertx = null;
+            this.localVertx = false;
+        }
     }
 }

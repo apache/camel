@@ -30,7 +30,6 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
-import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -57,24 +56,22 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
-    private final Router router;
     private final List<Handler<RoutingContext>> handlers;
-    private final String fileNameExtWhitelist;
     private final UploadAttacher uploadAttacher;
+    private final String fileNameExtWhitelist;
 
     private Route route;
 
-    public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint, Processor processor, Router router,
-                                       List<Handler<RoutingContext>> handlers, UploadAttacher uploadAttacher) {
+    public VertxPlatformHttpConsumer(
+            PlatformHttpEndpoint endpoint,
+            Processor processor,
+            List<Handler<RoutingContext>> handlers,
+            UploadAttacher uploadAttacher) {
         super(endpoint, processor);
 
-        this.router = router;
         this.handlers = handlers;
-
-        String list = endpoint.getFileNameExtWhitelist();
-
-        this.fileNameExtWhitelist = list == null ? null : list.toLowerCase(Locale.US);
         this.uploadAttacher = uploadAttacher;
+        this.fileNameExtWhitelist = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
     }
 
     @Override
@@ -83,17 +80,19 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
+        final VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
         final PlatformHttpEndpoint endpoint = getEndpoint();
         final String path = configureEndpointPath(endpoint);
         final Route newRoute = router.route(path);
 
         final Set<Method> methods = Method.parseList(endpoint.getHttpMethodRestrict());
         if (!methods.equals(Method.getAll())) {
-            methods.stream().forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
+            methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
         }
+
         if (endpoint.getConsumes() != null) {
             newRoute.consumes(endpoint.getConsumes());
         }
@@ -101,7 +100,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             newRoute.produces(endpoint.getProduces());
         }
 
-        handlers.forEach(newRoute::handler);
+        newRoute.handler(router.bodyHandler());
+        for (Handler<RoutingContext> handler: handlers) {
+            newRoute.handler(handler);
+        }
 
         newRoute.handler(
             ctx -> {
@@ -161,7 +163,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
 
     private Exchange toExchange(RoutingContext ctx) {
         final Exchange exchange = getEndpoint().createExchange();
-        Message in = toCamelMessage(ctx, exchange);
+        final Message in = toCamelMessage(ctx, exchange);
 
         final String charset = ctx.parsedHeaders().contentType().parameter("charset");
         if (charset != null) {
@@ -185,8 +187,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             final Map<String, Object> body = new HashMap<>();
             for (String key : formData.names()) {
                 for (String value : formData.getAll(key)) {
-                    if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                    if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
                         appendHeader(result.getHeaders(), key, value);
                         appendHeader(body, key, value);
                     }

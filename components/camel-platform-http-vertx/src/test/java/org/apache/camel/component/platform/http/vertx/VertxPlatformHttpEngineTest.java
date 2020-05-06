@@ -84,7 +84,7 @@ public class VertxPlatformHttpEngineTest {
             VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
             conf.setBindPort(port);
 
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -99,12 +99,9 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            assertThat(VertxPlatformHttp.lookup(context)).isNotNull();
+            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
             assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
-                assertThat(component.getEngine()).isInstanceOfSatisfying(VertxPlatformHttpEngine.class, e -> {
-                    assertThat(e.getRouter().router()).isNotNull();
-                    assertThat(e.getRouter().handlers()).isNotEmpty();
-                });
+                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
             });
 
             given()
@@ -138,13 +135,13 @@ public class VertxPlatformHttpEngineTest {
         CamelContext context = new DefaultCamelContext();
 
         try {
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addService(new VertxPlatformHttpServer(conf));
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    fromF("platform-http:/")
+                    from("platform-http:/")
                         .transform().body(String.class, b -> b.toUpperCase());
                 }
             });
@@ -172,13 +169,13 @@ public class VertxPlatformHttpEngineTest {
 
         try {
             context.setSSLContextParameters(serverSSLParameters);
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addService(new VertxPlatformHttpServer(conf));
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    fromF("platform-http:/")
+                    from("platform-http:/")
                         .transform().body(String.class, b -> b.toUpperCase());
                 }
             });
@@ -206,7 +203,7 @@ public class VertxPlatformHttpEngineTest {
         CamelContext context = new DefaultCamelContext();
 
         try {
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -246,12 +243,12 @@ public class VertxPlatformHttpEngineTest {
         CamelContext context = new DefaultCamelContext();
         try {
             final String greeting = "Hello Camel";
-            context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+            context.addService(new VertxPlatformHttpServer(conf));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
-                            .transform().simple("Hello ${header.name}");
+                        .transform().simple("Hello ${header.name}");
                 }
             });
 
