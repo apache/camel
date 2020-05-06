@@ -16,38 +16,56 @@
  */
 package org.apache.camel.component.mongodb.gridfs;
 
-import com.mongodb.MongoClient;
-import com.mongodb.gridfs.GridFS;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-
-import static org.apache.camel.component.mongodb.gridfs.EmbedMongoConfiguration.createMongoClient;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
+    protected static final String FILE_NAME = "filename.for.db.txt";
+    protected static final String FILE_DATA = "This is some stuff to go into the db";
+    protected static MongoDbContainer container;
     protected MongoClient mongo;
-    protected GridFS gridfs;
+    protected GridFSBucket gridFSBucket;
 
     public String getBucket() {
         return this.getClass().getSimpleName();
     }
-    
+
+    @BeforeAll
+    public static void doBeforeAll() {
+        container = new MongoDbContainer();
+        container.start();
+    }
+
+    @AfterAll
+    public static void doAfterAll() {
+        if (container != null) {
+            container.stop();
+        }
+    }
+
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
+        gridFSBucket.find().forEach(gridFSFile -> gridFSBucket.delete(gridFSFile.getId()));
         super.tearDown();
         mongo.close();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        mongo = createMongoClient();
-        gridfs = new GridFS(mongo.getDB("test"), getBucket());
+        mongo = container.createClient();
+        gridFSBucket = GridFSBuckets.create(mongo.getDatabase("test"), getBucket());
 
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
-        context.getRegistry().bind("test", gridfs);
+        context.getRegistry().bind("test", gridFSBucket);
         context.getRegistry().bind("myDb", mongo);
 
         return context;
