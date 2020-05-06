@@ -45,12 +45,6 @@ pipeline {
 
     stages {
 
-        stage('Cleanup workspace') {
-            steps {
-                cleanWs()
-            }
-        }
-
         stage('Build & Deploy') {
             when {
                 branch 'master'
@@ -104,6 +98,7 @@ pipeline {
                 body: '${DEFAULT_CONTENT}',
                 recipientProviders: [[$class: 'CulpritsRecipientProvider']]
             )
+            cleanWs()
         }
     }
 }
