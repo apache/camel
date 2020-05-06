@@ -5,7 +5,6 @@
     "title": "Any23",
     "description": "Extract RDF data from HTML documents.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "3.0.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.any23.Any23DataFormat",

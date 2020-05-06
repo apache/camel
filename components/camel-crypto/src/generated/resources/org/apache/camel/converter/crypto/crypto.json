@@ -5,7 +5,6 @@
     "title": "Crypto (Java Cryptographic Extension)",
     "description": "Encrypt and decrypt messages using Java Cryptography Extension (JCE).",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,security",
     "firstVersion": "2.3.0",
     "label": "dataformat,transformation,security",
     "javaType": "org.apache.camel.converter.crypto.CryptoDataFormat",

@@ -31,6 +31,10 @@
     <name>Camel :: Crypto CMS (deprecated)</name>
     <description>Camel Cryptographic Message Syntax Support</description>
 
+    <properties>
+        <deprecatedSince>3.2.0</deprecatedSince>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

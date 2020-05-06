@@ -5,7 +5,6 @@
     "title": "File",
     "description": "For expressions and predicates using the file\/simple language.",
     "deprecated": false,
-    "deprecationNote": "language,core,java",
     "firstVersion": "1.1.0",
     "label": "language,core,java",
     "javaType": "org.apache.camel.language.simple.FileLanguage",

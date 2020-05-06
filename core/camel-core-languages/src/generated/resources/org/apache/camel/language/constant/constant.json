@@ -5,7 +5,6 @@
     "title": "Constant",
     "description": "A fixed value set only once during the route startup.",
     "deprecated": false,
-    "deprecationNote": "language,core",
     "firstVersion": "1.5.0",
     "label": "language,core",
     "javaType": "org.apache.camel.language.constant.ConstantLanguage",

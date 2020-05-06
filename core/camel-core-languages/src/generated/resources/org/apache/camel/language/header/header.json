@@ -5,7 +5,6 @@
     "title": "Header",
     "description": "Get the value of the named Camel Message header.",
     "deprecated": false,
-    "deprecationNote": "language,core",
     "firstVersion": "1.5.0",
     "label": "language,core",
     "javaType": "org.apache.camel.language.header.HeaderLanguage",

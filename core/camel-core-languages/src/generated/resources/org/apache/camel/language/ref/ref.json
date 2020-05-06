@@ -5,7 +5,6 @@
     "title": "Ref",
     "description": "Look up an expression in the Camel Registry and evaluate it.",
     "deprecated": false,
-    "deprecationNote": "language,core",
     "firstVersion": "2.8.0",
     "label": "language,core",
     "javaType": "org.apache.camel.language.ref.RefLanguage",

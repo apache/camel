@@ -5,7 +5,6 @@
     "title": "XML Security",
     "description": "Encrypt and decrypt XML payloads using Apache Santuario.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,xml,security",
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,xml,security",
     "javaType": "org.apache.camel.dataformat.xmlsecurity.XMLSecurityDataFormat",

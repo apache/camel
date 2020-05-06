@@ -5,7 +5,6 @@
     "title": "JAXB",
     "description": "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,xml",
     "firstVersion": "1.0.0",
     "label": "dataformat,transformation,xml",
     "javaType": "org.apache.camel.converter.jaxb.JaxbDataFormat",

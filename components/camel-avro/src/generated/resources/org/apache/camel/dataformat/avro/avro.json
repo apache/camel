@@ -5,7 +5,6 @@
     "title": "Avro",
     "description": "Serialize and deserialize messages using Apache Avro binary data format.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.avro.AvroDataFormat",

@@ -5,7 +5,6 @@
     "title": "HL7",
     "description": "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,hl7",
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,hl7",
     "javaType": "org.apache.camel.component.hl7.HL7DataFormat",

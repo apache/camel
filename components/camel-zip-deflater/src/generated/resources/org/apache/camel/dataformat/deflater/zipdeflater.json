@@ -5,7 +5,6 @@
     "title": "Zip Deflate Compression",
     "description": "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.12.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.deflater.ZipDeflaterDataFormat",

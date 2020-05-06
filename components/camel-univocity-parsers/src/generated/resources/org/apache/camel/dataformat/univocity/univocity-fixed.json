@@ -5,7 +5,6 @@
     "title": "uniVocity Fixed Length",
     "description": "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.15.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.univocity.UniVocityFixedWidthDataFormat",

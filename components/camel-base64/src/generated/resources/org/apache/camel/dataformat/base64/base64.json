@@ -5,7 +5,6 @@
     "title": "Base64",
     "description": "Encode and decode data using Base64.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.11.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.base64.Base64DataFormat",

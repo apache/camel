@@ -5,7 +5,6 @@
     "title": "RSS",
     "description": "Transform from ROME SyndFeed Java Objects to XML and vice-versa.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.1.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.rss.RssDataFormat",

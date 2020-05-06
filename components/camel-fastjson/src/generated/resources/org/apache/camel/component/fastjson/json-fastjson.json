@@ -5,7 +5,6 @@
     "title": "JSon Fastjson",
     "description": "Marshal POJOs to JSON and back.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,json",
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation,json",
     "javaType": "org.apache.camel.component.fastjson.FastjsonDataFormat",

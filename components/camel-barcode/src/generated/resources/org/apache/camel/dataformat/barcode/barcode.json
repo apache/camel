@@ -5,7 +5,6 @@
     "title": "Barcode",
     "description": "Transform strings to various 1D\/2D barcode bitmap formats and back.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.14.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.barcode.BarcodeDataFormat",

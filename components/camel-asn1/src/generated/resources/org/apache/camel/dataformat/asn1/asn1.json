@@ -5,7 +5,6 @@
     "title": "ASN.1 File",
     "description": "Encode and decode data structures using Abstract Syntax Notation One (ASN.1).",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,file",
     "firstVersion": "2.20.0",
     "label": "dataformat,transformation,file",
     "javaType": "org.apache.camel.dataformat.asn1.ASN1DataFormat",

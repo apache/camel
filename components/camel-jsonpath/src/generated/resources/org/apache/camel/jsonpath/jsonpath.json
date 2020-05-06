@@ -5,7 +5,6 @@
     "title": "JsonPath",
     "description": "Evaluate a JsonPath expression against a JSON message body.",
     "deprecated": false,
-    "deprecationNote": "language,json",
     "firstVersion": "2.13.0",
     "label": "language,json",
     "javaType": "org.apache.camel.jsonpath.JsonPathLanguage",

@@ -5,7 +5,6 @@
     "title": "TidyMarkup",
     "description": "Parse (potentially invalid) HTML into valid HTML or DOM.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.tagsoup.TidyMarkupDataFormat",

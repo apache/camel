@@ -5,7 +5,6 @@
     "title": "XQuery",
     "description": "Evaluate an XQuery expressions against an XML payload.",
     "deprecated": false,
-    "deprecationNote": "language,xml",
     "firstVersion": "1.0.0",
     "label": "language,xml",
     "javaType": "org.apache.camel.language.xquery.XQueryLanguage",

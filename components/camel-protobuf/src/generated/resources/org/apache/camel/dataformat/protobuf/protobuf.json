@@ -5,7 +5,6 @@
     "title": "Protobuf",
     "description": "Serialize and deserialize Java objects using Google's Protocol buffers.",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation",
     "firstVersion": "2.2.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.protobuf.ProtobufDataFormat",

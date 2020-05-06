@@ -5,7 +5,6 @@
     "title": "Bindy Key Value Pair",
     "description": "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
     "deprecated": false,
-    "deprecationNote": "dataformat,transformation,csv",
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,csv",
     "javaType": "org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat",

@@ -5,7 +5,6 @@
     "title": "SpEL",
     "description": "Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.",
     "deprecated": false,
-    "deprecationNote": "language,spring",
     "firstVersion": "2.7.0",
     "label": "language,spring",
     "javaType": "org.apache.camel.language.spel.SpelLanguage",
