@@ -87,12 +87,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowTemplateFromHeader* (producer) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *configuration* (producer) | Sets the Freemarker configuration to use |  | Configuration
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
 | *encoding* (producer) | Sets the encoding to be used for loading the template file. |  | String

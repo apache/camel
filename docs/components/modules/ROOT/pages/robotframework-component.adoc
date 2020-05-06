@@ -53,13 +53,14 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The Robot Framework component supports 49 options, which are listed below.
+The Robot Framework component supports 50 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowTemplateFromHeader* (common) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *argumentFile* (common) | A text file to read more arguments from. |  | File
 | *combinedTagStats* (common) | Creates combined statistics based on tags. Use the format tags:title List |  | String
 | *criticalTags* (common) | Tests that have the given tags are considered critical. List |  | String
@@ -132,12 +133,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (68 parameters):
+=== Query Parameters (69 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowTemplateFromHeader* (common) | Whether to allow to use resource template from header or not (default false). Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care. | false | boolean
 | *argumentFile* (common) | A text file to read more arguments from. |  | File
 | *combinedTagStats* (common) | Creates combined statistics based on tags. Use the format tags:title List |  | String
 | *contentCache* (common) | Sets whether to use resource content cache or not | false | boolean
