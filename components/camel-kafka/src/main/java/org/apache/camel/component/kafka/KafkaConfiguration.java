@@ -319,6 +319,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
     private Map<String, Object> additionalProperties = new HashMap<>();
+    @UriParam(label = "common", defaultValue = "30000")
+    private int shutdownTimeout = 30000;
 
     public KafkaConfiguration() {
     }
@@ -659,6 +661,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setAllowManualCommit(boolean allowManualCommit) {
         this.allowManualCommit = allowManualCommit;
+    }
+
+    public int getShutdownTimeout() {
+        return shutdownTimeout;
+    }
+
+    /**
+     * Timeout in milli seconds to wait gracefully for the consumer or producer to shutdown and terminate its worker threads.
+     */
+    public void setShutdownTimeout(int shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
     }
 
     public StateRepository<String, String> getOffsetRepository() {

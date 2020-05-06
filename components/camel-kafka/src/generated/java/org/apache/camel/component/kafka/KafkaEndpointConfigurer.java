@@ -163,6 +163,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serializerClass": target.getConfiguration().setSerializerClass(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeoutms":
         case "sessionTimeoutMs": target.getConfiguration().setSessionTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "shutdowntimeout":
+        case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "specificavroreader":
         case "specificAvroReader": target.getConfiguration().setSpecificAvroReader(property(camelContext, boolean.class, value)); return true;
         case "sslciphersuites":
@@ -287,6 +289,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("sendBufferBytes", java.lang.Integer.class);
         answer.put("serializerClass", java.lang.String.class);
         answer.put("sessionTimeoutMs", java.lang.Integer.class);
+        answer.put("shutdownTimeout", int.class);
         answer.put("specificAvroReader", boolean.class);
         answer.put("sslCipherSuites", java.lang.String.class);
         answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
@@ -460,6 +463,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serializerClass": return target.getConfiguration().getSerializerClass();
         case "sessiontimeoutms":
         case "sessionTimeoutMs": return target.getConfiguration().getSessionTimeoutMs();
+        case "shutdowntimeout":
+        case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
         case "specificavroreader":
         case "specificAvroReader": return target.getConfiguration().isSpecificAvroReader();
         case "sslciphersuites":

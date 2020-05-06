@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -76,6 +77,11 @@ public class KafkaConsumer extends DefaultConsumer {
         if (ObjectHelper.isEmpty(brokers)) {
             throw new IllegalArgumentException("Brokers must be configured");
         }
+    }
+
+    @Override
+    public KafkaEndpoint getEndpoint() {
+        return (KafkaEndpoint) super.getEndpoint();
     }
 
     Properties getProps() {
@@ -142,7 +148,9 @@ public class KafkaConsumer extends DefaultConsumer {
 
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+                int timeout = getEndpoint().getConfiguration().getShutdownTimeout();
+                LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor, timeout);
             } else {
                 executor.shutdownNow();
             }

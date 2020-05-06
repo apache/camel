@@ -173,6 +173,33 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: common
+         */
+        default KafkaEndpointConsumerBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: common
+         */
+        default KafkaEndpointConsumerBuilder shutdownTimeout(
+                String shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
          * Whether to allow doing manual commits via KafkaManualCommit. If this
          * option is enabled then an instance of KafkaManualCommit is stored on
          * the Exchange message header, which allows end users to access this
@@ -1594,6 +1621,33 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
             doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            return this;
+        }
+        /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: common
+         */
+        default KafkaEndpointProducerBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: common
+         */
+        default KafkaEndpointProducerBuilder shutdownTimeout(
+                String shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
             return this;
         }
         /**
@@ -3187,6 +3241,32 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
             doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            return this;
+        }
+        /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: common
+         */
+        default KafkaEndpointBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: common
+         */
+        default KafkaEndpointBuilder shutdownTimeout(String shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
             return this;
         }
         /**
