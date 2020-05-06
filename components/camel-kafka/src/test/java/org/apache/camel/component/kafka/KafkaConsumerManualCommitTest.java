@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
@@ -55,6 +56,8 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
         if (producer != null) {
             producer.close();
         }
+        // clean all test topics
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
     @Override
