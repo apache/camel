@@ -37,7 +37,7 @@ final CamelContext context = new DefaultCamelContext();
 VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
 conf.setBindPort(port);
 
-context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+context.addService(new VertxPlatformHttpServer(conf));
 context.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
