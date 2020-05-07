@@ -122,7 +122,7 @@ public interface AwsS3ComponentBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the SQS client.
+         * To define a proxy host when instantiating the S3 client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
