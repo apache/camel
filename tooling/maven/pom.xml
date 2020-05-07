@@ -22,8 +22,9 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>tooling</artifactId>
+        <artifactId>tooling-parent</artifactId>
         <version>3.3.0-SNAPSHOT</version>
+        <relativePath>../parent</relativePath>
     </parent>
 
     <artifactId>maven-plugins</artifactId>
