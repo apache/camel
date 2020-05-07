@@ -20,15 +20,19 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
+import org.apache.camel.component.azure.storage.blob.client.BlobContainerClientWrapper;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -54,8 +58,9 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateAndDeleteContainer() throws InterruptedException {
-        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1"));
+    public void testCreateAndDeleteContainer() {
+        final BlobContainerClientWrapper containerClientWrapper = blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
+        final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(containerClientWrapper);
 
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
@@ -66,20 +71,30 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
         // delete everything
         blobContainerOperations.deleteContainer(null);
 
-        // give a grace period
-        TimeUnit.SECONDS.sleep(40);
-
         // test with options being set
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(BlobConstants.METADATA, Collections.singletonMap("testKeyMetadata", "testValueMetadata"));
         exchange.getIn().setHeader(BlobConstants.PUBLIC_ACCESS_TYPE, PublicAccessType.CONTAINER);
 
-        final BlobOperationResponse response1 = blobContainerOperations.createContainer(exchange);
 
-        assertNotNull(response1);
-        assertNotNull(response1.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS));
-        assertTrue((boolean) response1.getBody());
+        // try to create the container again, we try until we can
+        Awaitility.given()
+                .ignoreException(BlobStorageException.class)
+                .with()
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .await()
+                .atMost(60, TimeUnit.SECONDS)
+                .until(() -> {
+                    final BlobOperationResponse response1 = blobContainerOperations.createContainer(exchange);
+                    assertNotNull(response1);
+                    assertNotNull(response1.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS));
 
-        blobContainerOperations.deleteContainer(null);
+                    return (boolean) response1.getBody();
+                });
+    }
+
+    @AfterAll
+    public void cleanUp() {
+        blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1").deleteContainer(null, null);
     }
 }
