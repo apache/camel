@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>21</version>
+        <version>23</version>
     </parent>
 
     <groupId>org.apache.camel</groupId>
@@ -115,7 +115,7 @@
         <compiler.fork>false</compiler.fork>
 
         <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
-        <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
+        <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.0.0-M4</maven-surefire-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
