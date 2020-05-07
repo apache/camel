@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.robotframework;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -111,6 +113,9 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                RobotFrameworkComponent rf = context.getComponent("robotframework", RobotFrameworkComponent.class);
+                rf.getConfiguration().setOutputDirectory(new File("target"));
+
                 from("direct:setVariableCamelBody").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot?xunitFile=target/out.xml")
                     .to("mock:result");
 

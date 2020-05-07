@@ -319,6 +319,7 @@
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
                             </exclude>
                             <exclude>**/META-INF/MANIFEST.MF</exclude>
+                            <exclude>**/openapi.yaml</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                         </excludes>
