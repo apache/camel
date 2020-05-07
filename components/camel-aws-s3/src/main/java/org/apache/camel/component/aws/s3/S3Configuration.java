@@ -328,7 +328,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the S3 client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
