@@ -31,12 +31,9 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BaseJsonNode;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
-import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.execution.MavenSession;
@@ -114,6 +111,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Component
     private BuildPluginManager pluginManager;
 
+    @Parameter
+    private Map<String, String> configOptions;
+
     DestinationGenerator createDestinationGenerator() throws MojoExecutionException {
         final Class<DestinationGenerator> destinationGeneratorClass;
 
@@ -183,6 +183,10 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         }
         if (modelWithXml != null) {
             elements.add(new MojoExecutor.Element("withXml", modelPackage));
+        }
+        if (configOptions != null) {
+            elements.add(new MojoExecutor.Element("configOptions", configOptions.entrySet().stream()
+                .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue())).toArray(MojoExecutor.Element[]::new)));
         }
 
         executeMojo(
