@@ -117,7 +117,8 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:setVariableCamelExchange").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_exchange.robot?xunitFile=target/out.xml")
+                from("direct:setVariableCamelExchange")
+                    .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_exchange.robot?xunitFile=target/out.xml&outputDirectory=target")
                     .to("mock:result");
             }
         };
