@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Collections;
 import java.util.Properties;
 
 import org.apache.camel.Endpoint;
@@ -50,6 +51,8 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
         if (producer != null) {
             producer.close();
         }
+        // clean all test topics
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
     @Override

@@ -566,7 +566,7 @@ public interface GridFsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against GridRS.
+         * Sets the operation this endpoint will execute against GridFs.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -833,7 +833,7 @@ public interface GridFsEndpointBuilderFactory {
          * Syntax: <code>mongodb-gridfs:connectionBean</code>
          * 
          * Path parameter: connectionBean (required)
-         * Name of com.mongodb.MongoClient to use.
+         * Name of com.mongodb.client.MongoClient to use.
          */
         default GridFsEndpointBuilder mongodbGridfs(String path) {
             return GridFsEndpointBuilderFactory.mongodbGridfs(path);
@@ -850,7 +850,7 @@ public interface GridFsEndpointBuilderFactory {
      * Syntax: <code>mongodb-gridfs:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
-     * Name of com.mongodb.MongoClient to use.
+     * Name of com.mongodb.client.MongoClient to use.
      */
     static GridFsEndpointBuilder mongodbGridfs(String path) {
         class GridFsEndpointBuilderImpl extends AbstractEndpointBuilder implements GridFsEndpointBuilder, AdvancedGridFsEndpointBuilder {

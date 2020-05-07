@@ -134,7 +134,7 @@ To set up a route that generates an event every 60 seconds:
 
 [source,java]
 ----
-from("scheduler://foo?delay=60s").to("bean:myBean?method=someMethodName");
+from("scheduler://foo?delay=60000").to("bean:myBean?method=someMethodName");
 ----
 
 The above route will generate an event and then invoke the
@@ -146,7 +146,7 @@ And the route in Spring DSL:
 [source,xml]
 ----
 <route>
-  <from uri="scheduler://foo?delay=60s"/>
+  <from uri="scheduler://foo?delay=60000"/>
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
 ----

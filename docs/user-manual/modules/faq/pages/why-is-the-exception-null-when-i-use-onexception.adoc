@@ -16,9 +16,9 @@ If you use `onException` to handle exceptions, such as shown below:
 .end()
 ----
 
-Then make notice that because you use `handled(true)`, then the caused
+Then make notice the caused 
 exception is no longer available from `exchange.getException()`, because
-we told Camel that we will handle the exception.
+the message is in the onException block.
 
 Instead you can access the caused exception from a property on the
 exchange with the key `Exchange.EXCEPTION_CAUGHT`, as shown below:

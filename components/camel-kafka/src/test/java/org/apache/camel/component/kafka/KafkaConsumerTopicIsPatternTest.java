@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
@@ -54,6 +55,8 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
         if (producer != null) {
             producer.close();
         }
+        // clean all test topics
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
     @Override

@@ -17,11 +17,14 @@
 package org.apache.camel.maven.sync.properties;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -52,6 +55,12 @@ public class SyncPropertiesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${basedir}/../../../camel-dependencies/pom.xml")
     protected File targetPom;
 
+    /**
+     * The license header file.
+     */
+    @Parameter(defaultValue = "${basedir}/../../etc/apache-header.xml")
+    protected File licenceHeader;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -77,6 +86,16 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
                 mavenWriter.write(new FileWriter(targetPom), model);
             }
+
+            // add license header in top
+            String text = IOHelper.loadText(new FileInputStream(targetPom));
+            String text2 = IOHelper.loadText(new FileInputStream(licenceHeader));
+            StringBuffer sb = new StringBuffer(text);
+            int pos = sb.indexOf("<project");
+            sb.insert(pos, text2);
+
+            // write lines
+            Files.writeString(targetPom.toPath(), sb.toString());
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }

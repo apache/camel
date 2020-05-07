@@ -76,7 +76,7 @@
         <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.13.10</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.13.11</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -160,7 +160,6 @@
         <elasticsearch-rest-version>7.3.2</elasticsearch-rest-version>
         <elsql-version>1.3</elsql-version>
         <elytron-web>1.7.0.CR3</elytron-web>
-        <embedmongo-version>2.1.1</embedmongo-version>
         <etcd4j-version>2.18.0</etcd4j-version>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <fabric8-maven-plugin-version>4.4.0</fabric8-maven-plugin-version>
@@ -255,7 +254,7 @@
         <icu4j-version>65.1</icu4j-version>
         <ignite-version>2.7.6</ignite-version>
         <impsort-maven-plugin-version>1.3.2</impsort-maven-plugin-version>
-        <infinispan-version>10.1.6.Final</infinispan-version>
+        <infinispan-version>10.1.7.Final</infinispan-version>
         <influx-java-driver-version>2.18</influx-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
         <irclib-version>1.10</irclib-version>
@@ -352,7 +351,7 @@
         <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>2.4.1</kafka-version>
+        <kafka-version>2.5.0</kafka-version>
         <kie-version>7.36.1.Final</kie-version>
         <kubernetes-client-version>4.10.1</kubernetes-client-version>
         <kubernetes-model-version>4.10.1</kubernetes-model-version>
@@ -412,7 +411,6 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.8</mockwebserver-version>
         <mockito-version>3.3.3</mockito-version>
-        <mongo3-java-driver-version>3.12.3</mongo3-java-driver-version>
         <mongo-java-driver-version>4.0.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
@@ -2854,7 +2852,7 @@
 
             <dependency>
                 <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.11</artifactId>
+                <artifactId>kafka_2.12</artifactId>
                 <version>${kafka-version}</version>
             </dependency>
             <dependency>
@@ -3447,12 +3445,6 @@
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>de.flapdoodle.embed</groupId>
-                <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                <version>${embedmongo-version}</version>
                 <scope>test</scope>
             </dependency>
 
