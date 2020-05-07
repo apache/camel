@@ -18,6 +18,7 @@ package org.apache.camel.maven.sync.properties;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -95,7 +96,10 @@ public class SyncPropertiesMojo extends AbstractMojo {
             sb.insert(pos, text2);
 
             // write lines
-            Files.writeString(targetPom.toPath(), sb.toString());
+            FileOutputStream outputStream = new FileOutputStream(targetPom);
+            byte[] strToBytes = sb.toString().getBytes();
+            outputStream.write(strToBytes);     
+            outputStream.close();
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }
