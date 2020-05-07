@@ -371,7 +371,7 @@ and in XML:
 
 === Main class
 
-The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufty code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
+The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufty code for multiple Camels. The methods `getCamelContextMap` and `getCamelContexts` have been removed, and there is just a `getCamelContext` method now.
 
 === POJO annotations
 
