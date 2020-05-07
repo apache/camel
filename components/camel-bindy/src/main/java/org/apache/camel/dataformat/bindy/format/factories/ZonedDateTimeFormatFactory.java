@@ -42,7 +42,7 @@ public class ZonedDateTimeFormatFactory extends AbstractFormatFactory {
         private String pattern;
         private Locale locale;
 
-        ZonedDateTimePatternFormat(String pattern/*, String timezone*/, Locale locale) {
+        ZonedDateTimePatternFormat(String pattern, Locale locale) {
             this.pattern = pattern;
             this.locale = locale;
         }
@@ -56,12 +56,11 @@ public class ZonedDateTimeFormatFactory extends AbstractFormatFactory {
         @Override
         public ZonedDateTime parse(String string) throws Exception {
 
-            ZonedDateTime date;
             DateTimeFormatter df = this.getDateFormat();
 
             ObjectHelper.notNull(this.pattern, "pattern");
-            date = ZonedDateTime.parse(string, df);
-            return date;
+            
+            return ZonedDateTime.parse(string, df);
         }
 
         DateTimeFormatter getDateFormat() {
