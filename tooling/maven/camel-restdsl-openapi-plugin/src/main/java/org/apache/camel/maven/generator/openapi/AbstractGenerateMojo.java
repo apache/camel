@@ -84,7 +84,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter
     String modelPackage;
 
-    @Parameter(defaultValue = "true")
+    @Parameter(defaultValue = "false")
     String modelWithXml;
 
     @Parameter(defaultValue = "${project}")
@@ -182,7 +182,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             elements.add(new MojoExecutor.Element("modelNameSuffix", modelNameSuffix));
         }
         if (modelWithXml != null) {
-            elements.add(new MojoExecutor.Element("withXml", modelPackage));
+            elements.add(new MojoExecutor.Element("withXml", modelWithXml));
         }
         if (configOptions != null) {
             elements.add(new MojoExecutor.Element("configOptions", configOptions.entrySet().stream()
