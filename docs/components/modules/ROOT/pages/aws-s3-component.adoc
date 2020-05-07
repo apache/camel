@@ -59,7 +59,7 @@ The AWS S3 Storage Service component supports 38 options, which are listed below
 | *endpointConfiguration* (common) | Amazon AWS Endpoint Configuration |  | EndpointConfiguration
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
-| *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
+| *proxyHost* (common) | To define a proxy host when instantiating the S3 client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
@@ -134,7 +134,7 @@ with the following path and query parameters:
 | *endpointConfiguration* (common) | Amazon AWS Endpoint Configuration |  | EndpointConfiguration
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
-| *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
+| *proxyHost* (common) | To define a proxy host when instantiating the S3 client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
