@@ -114,7 +114,7 @@ The plugin supports the following *additional* options
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
 | `modelNameSuffix` | | Sets the pre- or suffix for model classes and enums
-| `modelWithXml` | false | Enable XML annotations inside the generated models (only works with ibraries that provide support for JSON and XML)
+| `modelWithXml` | false | Enable XML annotations inside the generated models (only works with libraries that provide support for JSON and XML)
 | `configOptions` | | Pass a map of language-specific parameters to `swagger-codegen-maven-plugin`
 |========================================
 
@@ -181,7 +181,7 @@ The plugin supports the following *additional* options
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
 | `modelNameSuffix` | | Sets the pre- or suffix for model classes and enums
-| `modelWithXml` | false | Enable XML annotations inside the generated models (only works with ibraries that provide support for JSON and XML)
+| `modelWithXml` | false | Enable XML annotations inside the generated models (only works with libraries that provide support for JSON and XML)
 | `configOptions` | | Pass a map of language-specific parameters to `swagger-codegen-maven-plugin`
 |========================================
 
