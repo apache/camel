@@ -50,7 +50,17 @@
         <!-- MongoDB driver dependency -->
         <dependency>
             <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-core</artifactId>
+            <version>${mongo-java-driver-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
+            <version>${mongo-java-driver-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
             <version>${mongo-java-driver-version}</version>
         </dependency>
 
