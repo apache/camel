@@ -171,15 +171,15 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
             this.receivedTime = receivedTime;
         }
 
-		public ZonedDateTime getDeletedDateTime() {
-			return deletedDateTime;
-		}
+        public ZonedDateTime getDeletedDateTime() {
+            return deletedDateTime;
+        }
 
-		public void setDeletedDateTime(ZonedDateTime deletedDateTime) {
-			this.deletedDateTime = deletedDateTime;
-		}
+        public void setDeletedDateTime(ZonedDateTime deletedDateTime) {
+            this.deletedDateTime = deletedDateTime;
+        }
 
-		public ReturnReason getReturnReason() {
+        public ReturnReason getReturnReason() {
             return returnReason;
         }
 
