@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// CHECKSTYLE:OFF
 package org.apache.maven.plugins.javadoc;
 
 import org.apache.commons.lang3.BooleanUtils;
