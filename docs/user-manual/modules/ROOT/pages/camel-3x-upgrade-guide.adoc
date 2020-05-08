@@ -1152,6 +1152,14 @@ you must turn on `allowTemplateFromHeader=true` on either the endpoint or compon
 This applies to the following templating components: camel-freemarker, camel-velocity, camel-mvel, camel-mustache,
 camel-string-template, camel-chunk, camel-jolt, camel-jslt, camel-robotframework.
 
+=== SupervisingRouteController
+
+The `SupervisingRouteController` has been refactored and its configuration has been simplified.
+And when configuring from spring boot, then the auto configuration parameters has
+been changed from `camel.supervising.controller` into the general `camel.springboot` which
+allows to share the same configuration across runtimes so its the same in Spring Boot, Camel Main,
+Camel K, Camel Quarkus, etc.
+
 === Camel Karaf
 
 The following components is no longer supported in OSGi and has been removed from the Camel Karaf features file:
