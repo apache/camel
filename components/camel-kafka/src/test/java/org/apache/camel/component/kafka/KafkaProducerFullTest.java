@@ -58,6 +58,7 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC_BYTES_IN_HEADER = "testBytesHeader";
     private static final String GROUP_BYTES = "groupStrings";
     private static final String TOPIC_PROPAGATED_HEADERS = "testPropagatedHeaders";
+    private static final String TOPIC_NO_RECORD_SPECIFIC_HEADERS = "noRecordSpecificHeaders";
 
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
@@ -81,6 +82,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     @EndpointInject("kafka:" + TOPIC_PROPAGATED_HEADERS + "?requestRequiredAcks=-1")
     private Endpoint toPropagatedHeaders;
 
+    @EndpointInject("kafka:" + TOPIC_NO_RECORD_SPECIFIC_HEADERS + "?requestRequiredAcks=-1")
+    private Endpoint toNoRecordSpecificHeaders;
+
     @Produce("direct:startStrings")
     private ProducerTemplate stringsTemplate;
 
@@ -95,6 +99,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     @Produce("direct:propagatedHeaders")
     private ProducerTemplate propagatedHeadersTemplate;
+
+    @Produce("direct:noRecordSpecificHeaders")
+    private ProducerTemplate noRecordSpecificHeadersTemplate;
 
     @BindToRegistry("myStrategy")
     private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
@@ -134,6 +141,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
                 from("direct:startTraced").to(toStringsWithInterceptor).to(mockEndpoint);
 
                 from("direct:propagatedHeaders").to(toPropagatedHeaders).to(mockEndpoint);
+
+                from("direct:noRecordSpecificHeaders").to(toNoRecordSpecificHeaders).to(mockEndpoint);
             }
         };
     }
@@ -341,6 +350,29 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         assertEquals("Propagated double value received", propagatedDoubleHeaderValue, new Double(ByteBuffer.wrap(getHeaderValue(propagatedDoubleHeaderKey, headers)).getDouble()));
         assertArrayEquals("Propagated byte array value received", propagatedBytesHeaderValue, getHeaderValue(propagatedBytesHeaderKey, headers));
         assertEquals("Propagated boolean value received", propagatedBooleanHeaderValue, Boolean.valueOf(new String(getHeaderValue(propagatedBooleanHeaderKey, headers))));
+    }
+
+    @Test
+    public void recordSpecificHeaderIsNotReceivedByKafka() throws Exception {
+        String propagatedStringHeaderKey = KafkaConstants.TOPIC;
+        String propagatedStringHeaderValue = "source topic";
+
+        Map<String, Object> camelHeaders = new HashMap<>();
+        camelHeaders.put(propagatedStringHeaderKey, propagatedStringHeaderValue);
+
+        CountDownLatch messagesLatch = new CountDownLatch(1);
+        noRecordSpecificHeadersTemplate.sendBodyAndHeaders("Some test message", camelHeaders);
+
+        List<ConsumerRecord<String, String>> records = pollForRecords(createStringKafkaConsumer("noRecordSpecificHeadersConsumer"), TOPIC_NO_RECORD_SPECIFIC_HEADERS, messagesLatch);
+        boolean allMessagesReceived = messagesLatch.await(10_000, TimeUnit.MILLISECONDS);
+
+        assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
+
+        ConsumerRecord<String, String> record = records.get(0);
+        Headers headers = record.headers();
+        assertNotNull("Kafka Headers should not be null.", headers);
+        // we have 0 headers
+        assertEquals("0 propagated headers are expected", 0, headers.toArray().length);
     }
 
     @Test
