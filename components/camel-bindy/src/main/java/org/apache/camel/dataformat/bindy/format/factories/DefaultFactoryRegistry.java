@@ -46,6 +46,7 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
                 .register(new LocalTimeFormatFactory())
                 .register(new LocalDateTimeFormatFactory())
                 .register(new LocalDateFormatFactory())
+                .register(new ZonedDateTimeFormatFactory())
                 .register(new CharacterFormatFactory())
                 .register(new EnumFormatFactory())
                 .register(new BigDecimalFormatFactory())
