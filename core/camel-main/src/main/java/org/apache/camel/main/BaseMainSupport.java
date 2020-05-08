@@ -456,7 +456,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
             if (!Objects.equals(locations, "false")) {
                 pc.addLocation(locations);
-                LOG.info("Using properties from: {}", propertyPlaceholderLocations);
+                LOG.info("Using properties from: {}", locations);
             }
         }
 
