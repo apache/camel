@@ -2522,8 +2522,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doInit() throws Exception {
-        // Start the route controller
-        this.routeController = getExtension(RouteController.class);
+        // start the route controller
+        this.routeController = getRouteController();
         ServiceHelper.initService(this.routeController);
 
         // optimize - before starting routes lets check if event notifications is possible

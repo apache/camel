@@ -119,6 +119,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerEnabled": target.setRouteControllerEnabled(property(camelContext, boolean.class, value)); return true;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": target.setRouteControllerInitialDelay(property(camelContext, long.class, value)); return true;
+        case "routecontrollerthreadpoolsize":
+        case "RouteControllerThreadPoolSize": target.setRouteControllerThreadPoolSize(property(camelContext, int.class, value)); return true;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": target.setRouteFilterExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterincludepattern":
@@ -232,6 +234,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("RouteControllerBackOffMultiplier", double.class);
         answer.put("RouteControllerEnabled", boolean.class);
         answer.put("RouteControllerInitialDelay", long.class);
+        answer.put("RouteControllerThreadPoolSize", int.class);
         answer.put("RouteFilterExcludePattern", java.lang.String.class);
         answer.put("RouteFilterIncludePattern", java.lang.String.class);
         answer.put("RoutesBuilderClasses", java.lang.String.class);
@@ -367,6 +370,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerEnabled": return target.isRouteControllerEnabled();
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return target.getRouteControllerInitialDelay();
+        case "routecontrollerthreadpoolsize":
+        case "RouteControllerThreadPoolSize": return target.getRouteControllerThreadPoolSize();
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return target.getRouteFilterExcludePattern();
         case "routefilterincludepattern":
