@@ -36,7 +36,7 @@ import org.apache.commons.validator.routines.DomainValidator;
         syntax = "splunk-hec:splunkURL/token", label = "log,monitoring")
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
-    private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?\\s*(.*?):(\\d+)\\s*/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
+    private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?(.*?):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
 
     @UriPath @Metadata(required = true)
     private String splunkURL;
