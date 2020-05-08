@@ -63,6 +63,9 @@ import org.slf4j.LoggerFactory;
  * settings for backoff between restarting routes.
  */
 public class SupervisingRouteController extends DefaultRouteController {
+
+    // TODO: Make SPI interface so we can separate this more nicely
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SupervisingRouteController.class);
     private final Object lock;
     private final AtomicBoolean contextStarted;
@@ -92,7 +95,7 @@ public class SupervisingRouteController extends DefaultRouteController {
             this.listener = new CamelContextStartupListener();
             this.listener.start();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw RuntimeCamelException.wrapRuntimeException(e);
         }
     }
 
@@ -169,6 +172,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     /**
      * Add a filter used to determine the routes to supervise.
      */
+    @Deprecated
     public void addFilter(Filter filter) {
         this.filters.add(filter);
     }
@@ -176,11 +180,13 @@ public class SupervisingRouteController extends DefaultRouteController {
     /**
      * Sets the filters user to determine the routes to supervise.
      */
+    @Deprecated
     public void setFilters(Collection<Filter> filters) {
         this.filters.clear();
         this.filters.addAll(filters);
     }
 
+    @Deprecated
     public Collection<Filter> getFilters() {
         return Collections.unmodifiableList(filters);
     }
@@ -432,7 +438,8 @@ public class SupervisingRouteController extends DefaultRouteController {
 
                     BackOffTimer.Task task = timer.schedule(backOff, context -> {
                         try {
-                            logger.info("Try to restart route: {}", r.getId());
+                            long attempt = getBackOffContext(r.getId()).map(BackOffTimer.Task::getCurrentAttempts).orElse(0L);
+                            logger.info("Restarting route: {} attempt: {}", r.getId(), attempt);
 
                             doStartRoute(r, false, rx -> SupervisingRouteController.super.startRoute(rx.getId()));
                             return false;
@@ -453,7 +460,9 @@ public class SupervisingRouteController extends DefaultRouteController {
                                 final boolean stopped = status.isStopped() || status.isStopping();
 
                                 if (backOffTask != null && backOffTask.getStatus() == BackOffTimer.Task.Status.Exhausted && stopped) {
-                                    LOGGER.info("Back-off for route {} is exhausted, no more attempts will be made and stop supervising it", route.getId());
+                                    LOGGER.warn("Restarting route: {} is exhausted after {} attempts. No more attempts will be made"
+                                                    + " and the route is no longer supervised by this route controller and remains as stopped.",
+                                            route.getId(), backOffTask.getCurrentAttempts() - 1);
                                     r.get().setRouteController(null);
                                 }
                             }
@@ -601,7 +610,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                 holder.get().setAutoStartup(false);
 
                 if (contextStarted.get()) {
-                    LOGGER.info("Context is already started: attempt to start route {}", route.getId());
+                    LOGGER.debug("Context is already started: attempt to start route {}", route.getId());
 
                     // Eventually delay the startup of the route a later time
                     if (initialDelay.toMillis() > 0) {
@@ -611,7 +620,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                         startRoute(holder);
                     }
                 } else {
-                    LOGGER.info("Context is not yet started: defer route {} start", holder.getId());
+                    LOGGER.debug("Context is not yet started: defer route {} start", holder.getId());
                 }
             }
         }

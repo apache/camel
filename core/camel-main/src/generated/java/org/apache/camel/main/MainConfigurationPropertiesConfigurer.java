@@ -105,6 +105,20 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "PackageScanRouteBuilders": target.setPackageScanRouteBuilders(property(camelContext, java.lang.String.class, value)); return true;
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": target.setProducerTemplateCacheSize(property(camelContext, int.class, value)); return true;
+        case "routecontrollerbackoffdelay":
+        case "RouteControllerBackOffDelay": target.setRouteControllerBackOffDelay(property(camelContext, long.class, value)); return true;
+        case "routecontrollerbackoffmaxattempts":
+        case "RouteControllerBackOffMaxAttempts": target.setRouteControllerBackOffMaxAttempts(property(camelContext, long.class, value)); return true;
+        case "routecontrollerbackoffmaxdelay":
+        case "RouteControllerBackOffMaxDelay": target.setRouteControllerBackOffMaxDelay(property(camelContext, long.class, value)); return true;
+        case "routecontrollerbackoffmaxelapsedtime":
+        case "RouteControllerBackOffMaxElapsedTime": target.setRouteControllerBackOffMaxElapsedTime(property(camelContext, long.class, value)); return true;
+        case "routecontrollerbackoffmultiplier":
+        case "RouteControllerBackOffMultiplier": target.setRouteControllerBackOffMultiplier(property(camelContext, double.class, value)); return true;
+        case "routecontrollerenabled":
+        case "RouteControllerEnabled": target.setRouteControllerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routecontrollerinitialdelay":
+        case "RouteControllerInitialDelay": target.setRouteControllerInitialDelay(property(camelContext, long.class, value)); return true;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": target.setRouteFilterExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterincludepattern":
@@ -211,6 +225,13 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("Name", java.lang.String.class);
         answer.put("PackageScanRouteBuilders", java.lang.String.class);
         answer.put("ProducerTemplateCacheSize", int.class);
+        answer.put("RouteControllerBackOffDelay", long.class);
+        answer.put("RouteControllerBackOffMaxAttempts", long.class);
+        answer.put("RouteControllerBackOffMaxDelay", long.class);
+        answer.put("RouteControllerBackOffMaxElapsedTime", long.class);
+        answer.put("RouteControllerBackOffMultiplier", double.class);
+        answer.put("RouteControllerEnabled", boolean.class);
+        answer.put("RouteControllerInitialDelay", long.class);
         answer.put("RouteFilterExcludePattern", java.lang.String.class);
         answer.put("RouteFilterIncludePattern", java.lang.String.class);
         answer.put("RoutesBuilderClasses", java.lang.String.class);
@@ -332,6 +353,20 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "PackageScanRouteBuilders": return target.getPackageScanRouteBuilders();
         case "producertemplatecachesize":
         case "ProducerTemplateCacheSize": return target.getProducerTemplateCacheSize();
+        case "routecontrollerbackoffdelay":
+        case "RouteControllerBackOffDelay": return target.getRouteControllerBackOffDelay();
+        case "routecontrollerbackoffmaxattempts":
+        case "RouteControllerBackOffMaxAttempts": return target.getRouteControllerBackOffMaxAttempts();
+        case "routecontrollerbackoffmaxdelay":
+        case "RouteControllerBackOffMaxDelay": return target.getRouteControllerBackOffMaxDelay();
+        case "routecontrollerbackoffmaxelapsedtime":
+        case "RouteControllerBackOffMaxElapsedTime": return target.getRouteControllerBackOffMaxElapsedTime();
+        case "routecontrollerbackoffmultiplier":
+        case "RouteControllerBackOffMultiplier": return target.getRouteControllerBackOffMultiplier();
+        case "routecontrollerenabled":
+        case "RouteControllerEnabled": return target.isRouteControllerEnabled();
+        case "routecontrollerinitialdelay":
+        case "RouteControllerInitialDelay": return target.getRouteControllerInitialDelay();
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return target.getRouteFilterExcludePattern();
         case "routefilterincludepattern":
