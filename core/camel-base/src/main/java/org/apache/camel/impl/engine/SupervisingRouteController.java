@@ -72,7 +72,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     private final AtomicInteger routeCount;
     private final List<Filter> filters;
     private final Set<RouteHolder> routes;
-    private final CamelContextStartupListener listener;
+    private CamelContextStartupListener listener;
     private final RouteManager routeManager;
     private BackOffTimer timer;
     private ScheduledExecutorService executorService;
@@ -91,12 +91,6 @@ public class SupervisingRouteController extends DefaultRouteController {
         this.backOffConfigurations = new HashMap<>();
         this.initialDelay = Duration.ofMillis(0);
 
-        try {
-            this.listener = new CamelContextStartupListener();
-            this.listener.start();
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
     }
 
     // *********************************
@@ -201,11 +195,19 @@ public class SupervisingRouteController extends DefaultRouteController {
 
     @Override
     protected void doInit() throws Exception {
+        this.listener = new CamelContextStartupListener();
+
         CamelContext context = getCamelContext();
         context.setAutoStartup(false);
         context.addRoutePolicyFactory(new ManagedRoutePolicyFactory());
         context.addStartupListener(this.listener);
         context.getManagementStrategy().addEventNotifier(this.listener);
+
+        try {
+            this.listener.start();
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     @Override
