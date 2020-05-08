@@ -56,6 +56,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 
@@ -553,6 +554,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets the {@link ConfigurerResolver} to use.
      */
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
+
+    /**
+     * Gets the {@link SupervisingRouteController} to use.
+     */
+    SupervisingRouteController getSupervisingRouteController();
+
+    /**
+     * Sets the {@link SupervisingRouteController} to use.
+     */
+    void setSupervisingRouteController(SupervisingRouteController supervisingRouteController);
 
     RouteController getInternalRouteController();
 

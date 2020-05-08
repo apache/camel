@@ -129,7 +129,6 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -141,6 +140,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -277,6 +277,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile UuidGenerator uuidGenerator;
     private volatile UnitOfWorkFactory unitOfWorkFactory;
     private volatile RouteController routeController;
+    private volatile SupervisingRouteController supervisingRouteController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private volatile BeanIntrospection beanIntrospection;
     private volatile Tracer tracer;
@@ -338,6 +339,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.startupListeners.add(deferStartupListener);
 
         setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
+        setDefaultExtension(RouteController.class, this::createRouteController);
 
         if (build) {
             try {
@@ -1094,6 +1096,23 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         return routeController;
+    }
+
+    @Override
+    public SupervisingRouteController getSupervisingRouteController() {
+        if (supervisingRouteController == null) {
+            synchronized (lock) {
+                if (supervisingRouteController == null) {
+                    setSupervisingRouteController(createSupervisingRouteController());
+                }
+            }
+        }
+        return supervisingRouteController;
+    }
+
+    @Override
+    public void setSupervisingRouteController(SupervisingRouteController supervisingRouteController) {
+        this.supervisingRouteController = supervisingRouteController;
     }
 
     @Override
@@ -2504,7 +2523,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void doInit() throws Exception {
         // Start the route controller
-        getRouteController();
+        this.routeController = getExtension(RouteController.class);
         ServiceHelper.initService(this.routeController);
 
         // optimize - before starting routes lets check if event notifications is possible
@@ -4510,6 +4529,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract AsyncProcessorAwaitManager createAsyncProcessorAwaitManager();
 
     protected abstract RouteController createRouteController();
+
+    protected abstract SupervisingRouteController createSupervisingRouteController();
 
     protected abstract ShutdownStrategy createShutdownStrategy();
 

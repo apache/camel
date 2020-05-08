@@ -117,6 +117,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -164,6 +165,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ClassLoader applicationContextClassLoader;
     private final UnitOfWorkFactory unitOfWorkFactory;
     private final RouteController routeController;
+    private final SupervisingRouteController supervisingRouteController;
     private final InflightRepository inflightRepository;
     private final Injector injector;
     private final ClassResolver classResolver;
@@ -208,6 +210,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         applicationContextClassLoader = context.getApplicationContextClassLoader();
         unitOfWorkFactory = context.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
         routeController = context.getRouteController();
+        supervisingRouteController = context.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
         inflightRepository = context.getInflightRepository();
         globalOptions = context.getGlobalOptions();
         injector = context.getInjector();
@@ -689,6 +692,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public RouteController getRouteController() {
         return routeController;
+    }
+
+    @Override
+    public SupervisingRouteController getSupervisingRouteController() {
+        return supervisingRouteController;
     }
 
     @Override
@@ -1602,6 +1610,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setRouteController(RouteController routeController) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSupervisingRouteController(SupervisingRouteController supervisingRouteController) {
         throw new UnsupportedOperationException();
     }
 
