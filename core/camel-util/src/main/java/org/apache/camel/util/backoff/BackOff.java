@@ -17,6 +17,7 @@
 package org.apache.camel.util.backoff;
 
 import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.ObjectHelper;
@@ -52,9 +53,6 @@ public final class BackOff {
     // Properties
     // *************************************
 
-    /**
-     * @return the delay to wait before retry the operation.
-     */
     public Duration getDelay() {
         return delay;
     }
@@ -96,8 +94,6 @@ public final class BackOff {
     /**
      * The maximum number of attempts after which the back-off should be considered
      * exhausted and no more attempts should be made.
-     *
-     * @param maxAttempts
      */
     public void setMaxAttempts(Long maxAttempts) {
         this.maxAttempts = maxAttempts;
@@ -116,13 +112,13 @@ public final class BackOff {
 
     @Override
     public String toString() {
-        return "BackOff{"
+        return "BackOff["
             + "delay=" + delay
-            + ", maxDelay=" + maxDelay
-            + ", maxElapsedTime=" + maxElapsedTime
+            + ", maxDelay=" + (maxDelay != MAX_DURATION ? maxDelay : "")
+            + ", maxElapsedTime=" + (maxElapsedTime != MAX_DURATION ? maxElapsedTime : "")
             + ", maxAttempts=" + maxAttempts
             + ", multiplier=" + multiplier
-            + '}';
+            + ']';
     }
 
     // *****************************************

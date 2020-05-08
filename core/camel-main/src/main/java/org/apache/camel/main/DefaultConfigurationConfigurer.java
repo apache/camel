@@ -31,6 +31,7 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
+import org.apache.camel.impl.engine.SupervisingRouteController;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -65,6 +66,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.backoff.BackOff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,6 +177,41 @@ public final class DefaultConfigurationConfigurer {
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
             camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
+        }
+
+        // supervisting route controller
+        if (config.isRouteControllerEnabled()) {
+            SupervisingRouteController src = new SupervisingRouteController();
+            src.setCamelContext(camelContext);
+            if (config.getRouteControllerInitialDelay() > 0) {
+                src.setInitialDelay(config.getRouteControllerInitialDelay());
+            }
+            BackOff.Builder builder = BackOff.builder();
+            boolean flag = false;
+            if (config.getRouteControllerBackOffDelay() > 0) {
+                builder.delay(config.getRouteControllerBackOffDelay());
+                flag = true;
+            }
+            if (config.getRouteControllerBackOffMaxDelay() > 0) {
+                builder.maxDelay(config.getRouteControllerBackOffMaxDelay());
+                flag = true;
+            }
+            if (config.getRouteControllerBackOffMaxAttempts() > 0) {
+                builder.maxAttempts(config.getRouteControllerBackOffMaxAttempts());
+                flag = true;
+            }
+            if (config.getRouteControllerBackOffMaxElapsedTime() > 0) {
+                builder.maxElapsedTime(config.getRouteControllerBackOffMaxElapsedTime());
+                flag = true;
+            }
+            if (config.getRouteControllerBackOffMultiplier() > 0) {
+                builder.multiplier(config.getRouteControllerBackOffMultiplier());
+                flag = true;
+            }
+            if (flag) {
+                src.setDefaultBackOff(builder.build());
+            }
+            camelContext.setRouteController(src);
         }
     }
 

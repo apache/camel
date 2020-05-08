@@ -81,6 +81,13 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRoutes = "classpath:camel/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
+    private boolean routeControllerEnabled;
+    private long routeControllerInitialDelay;
+    private long routeControllerBackOffDelay;
+    private long routeControllerBackOffMaxDelay;
+    private long routeControllerBackOffMaxElapsedTime;
+    private long routeControllerBackOffMaxAttempts;
+    private double routeControllerBackOffMultiplier;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -890,6 +897,95 @@ public abstract class DefaultConfigurationProperties<T> {
         this.lightweight = lightweight;
     }
 
+    public boolean isRouteControllerEnabled() {
+        return routeControllerEnabled;
+    }
+
+    /**
+     * To enable using supervising route controller which allows Camel to startup
+     * and then the controller takes care of starting the routes in a safe manner.
+     *
+     * This can be used when you want to startup Camel despite a route may otherwise
+     * fail fast during startup and cause Camel to fail to startup as well. By delegating
+     * the route startup to the supervising route controller then its manages the startup
+     * using a background thread. The controller allows to be configured with various
+     * settings to attempt to restart failing routes.
+     */
+    public void setRouteControllerEnabled(boolean routeControllerEnabled) {
+        this.routeControllerEnabled = routeControllerEnabled;
+    }
+
+    public long getRouteControllerInitialDelay() {
+        return routeControllerInitialDelay;
+    }
+
+    /**
+     * Initial delay in milli seconds before the route controller starts, after
+     * CamelContext has been started.
+     */
+    public void setRouteControllerInitialDelay(long routeControllerInitialDelay) {
+        this.routeControllerInitialDelay = routeControllerInitialDelay;
+    }
+
+    public long getRouteControllerBackOffDelay() {
+        return routeControllerBackOffDelay;
+    }
+
+    /**
+     * Backoff delay in millis when restarting a route that failed to startup.
+     */
+    public void setRouteControllerBackOffDelay(long routeControllerBackOffDelay) {
+        this.routeControllerBackOffDelay = routeControllerBackOffDelay;
+    }
+
+    public long getRouteControllerBackOffMaxDelay() {
+        return routeControllerBackOffMaxDelay;
+    }
+
+    /**
+     * Backoff maximum delay in millis when restarting a route that failed to startup.
+     */
+    public void setRouteControllerBackOffMaxDelay(long routeControllerBackOffMaxDelay) {
+        this.routeControllerBackOffMaxDelay = routeControllerBackOffMaxDelay;
+    }
+
+    public long getRouteControllerBackOffMaxElapsedTime() {
+        return routeControllerBackOffMaxElapsedTime;
+    }
+
+    /**
+     * Backoff maximum elapsed time in millis, after which the backoff should be considered
+     * exhausted and no more attempts should be made.
+     */
+    public void setRouteControllerBackOffMaxElapsedTime(long routeControllerBackOffMaxElapsedTime) {
+        this.routeControllerBackOffMaxElapsedTime = routeControllerBackOffMaxElapsedTime;
+    }
+
+    public long getRouteControllerBackOffMaxAttempts() {
+        return routeControllerBackOffMaxAttempts;
+    }
+
+    /**
+     * Backoff maximum number of attempts to restart a route that failed to startup.
+     * When this threshold has been exceeded then the controller will give up
+     * attempting to restart the route, and the route will remain as stopped.
+     */
+    public void setRouteControllerBackOffMaxAttempts(long routeControllerBackOffMaxAttempts) {
+        this.routeControllerBackOffMaxAttempts = routeControllerBackOffMaxAttempts;
+    }
+
+    public double getRouteControllerBackOffMultiplier() {
+        return routeControllerBackOffMultiplier;
+    }
+
+    /**
+     * Backoff multiplier to use for exponential backoff. This is used to extend the delay
+     * between restart attempts.
+     */
+    public void setRouteControllerBackOffMultiplier(double routeControllerBackOffMultiplier) {
+        this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1537,4 +1633,73 @@ public abstract class DefaultConfigurationProperties<T> {
         this.lightweight = lightweight;
         return (T) this;
     }
+
+    /**
+     * To enable using supervising route controller which allows Camel to startup
+     * and then the controller takes care of starting the routes in a safe manner.
+     *
+     * This can be used when you want to startup Camel despite a route may otherwise
+     * fail fast during startup and cause Camel to fail to startup as well. By delegating
+     * the route startup to the supervising route controller then its manages the startup
+     * using a background thread. The controller allows to be configured with various
+     * settings to attempt to restart failing routes.
+     */
+    public T withRouteControllerEnabled(boolean routeControllerEnabled) {
+        this.routeControllerEnabled = routeControllerEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Initial delay in milli seconds before the route controller starts, after
+     * CamelContext has been started.
+     */
+    public T withRouteControllerInitialDelay(long routeControllerInitialDelay) {
+        this.routeControllerInitialDelay = routeControllerInitialDelay;
+        return (T) this;
+    }
+
+    /**
+     * Backoff delay in millis when restarting a route that failed to startup.
+     */
+    public T withRouteControllerBackOffDelay(long routeControllerBackOffDelay) {
+        this.routeControllerBackOffDelay = routeControllerBackOffDelay;
+        return (T) this;
+    }
+
+    /**
+     * Backoff maximum delay in millis when restarting a route that failed to startup.
+     */
+    public T withRouteControllerBackOffMaxDelay(long routeControllerBackOffMaxDelay) {
+        this.routeControllerBackOffMaxDelay = routeControllerBackOffMaxDelay;
+        return (T) this;
+    }
+
+    /**
+     * Backoff maximum elapsed time in millis, after which the backoff should be considered
+     * exhausted and no more attempts should be made.
+     */
+    public T withRouteControllerBackOffMaxElapsedTime(long routeControllerBackOffMaxElapsedTime) {
+        this.routeControllerBackOffMaxElapsedTime = routeControllerBackOffMaxElapsedTime;
+        return (T) this;
+    }
+
+    /**
+     * Backoff maximum number of attempts to restart a route that failed to startup.
+     * When this threshold has been exceeded then the controller will give up
+     * attempting to restart the route, and the route will remain as stopped.
+     */
+    public T withRouteControllerBackOffMaxAttempts(long routeControllerBackOffMaxAttempts) {
+        this.routeControllerBackOffMaxAttempts = routeControllerBackOffMaxAttempts;
+        return (T) this;
+    }
+
+    /**
+     * Backoff multiplier to use for exponential backoff. This is used to extend the delay
+     * between restart attempts.
+     */
+    public T withRouteControllerBackOffMultiplier(double routeControllerBackOffMultiplier) {
+        this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
+        return (T) this;
+    }
+
 }
