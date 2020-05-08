@@ -22,15 +22,16 @@ import java.util.Map;
 
 import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DebeziumMySqlComponentTest {
 
     @Test
-    public void testIfMySqlEndpointCreatedWithConfig() throws Exception {
+    void testIfMySqlEndpointCreatedWithConfig() throws Exception {
         final Map<String, Object> params = new HashMap<>();
         params.put("offsetStorageFileName", "/offset_test_file");
         params.put("databaseHostname", "localhost");
@@ -45,27 +46,27 @@ public class DebeziumMySqlComponentTest {
                 + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
                 + "databaseServerName=test&databaseHistoryFileName=/test";
 
-        final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
-        debeziumComponent.start();
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
+        try (final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
+            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
 
-        assertNotNull(debeziumEndpoint);
+            assertNotNull(debeziumEndpoint);
 
-        // test for config
-        final MySqlConnectorEmbeddedDebeziumConfiguration configuration = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint
-                .getConfiguration();
-        assertEquals("test_name", configuration.getName());
-        assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
-        assertEquals("localhost", configuration.getDatabaseHostname());
-        assertEquals("dbz", configuration.getDatabaseUser());
-        assertEquals("pwd", configuration.getDatabasePassword());
-        assertEquals("test", configuration.getDatabaseServerName());
-        assertEquals(1234L, configuration.getDatabaseServerId());
-        assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
+            // test for config
+            final MySqlConnectorEmbeddedDebeziumConfiguration configuration = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            assertEquals("test_name", configuration.getName());
+            assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
+            assertEquals("localhost", configuration.getDatabaseHostname());
+            assertEquals("dbz", configuration.getDatabaseUser());
+            assertEquals("pwd", configuration.getDatabasePassword());
+            assertEquals("test", configuration.getDatabaseServerName());
+            assertEquals(1234L, configuration.getDatabaseServerId());
+            assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
+        }
     }
 
     @Test
-    public void testIfCreatesComponentWithExternalConfiguration() throws Exception {
+    void testIfCreatesComponentWithExternalConfiguration() throws Exception {
         final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -74,52 +75,54 @@ public class DebeziumMySqlComponentTest {
         configuration.setDatabaseServerName("test");
 
         final String uri = "debezium:dummy";
-        final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
-        debeziumComponent.start();
+        try (final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
 
-        // set configurations
-        debeziumComponent.setConfiguration(configuration);
+            // set configurations
+            debeziumComponent.setConfiguration(configuration);
 
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null,
-                Collections.emptyMap());
+            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
 
-        assertNotNull(debeziumEndpoint);
+            assertNotNull(debeziumEndpoint);
 
-        // assert configurations
-        final MySqlConnectorEmbeddedDebeziumConfiguration actualConfigurations = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint
-                .getConfiguration();
-        assertNotNull(actualConfigurations);
-        assertEquals(configuration.getName(), actualConfigurations.getName());
-        assertEquals(configuration.getDatabaseUser(),
-                actualConfigurations.getDatabaseUser());
-        assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
+            // assert configurations
+            final MySqlConnectorEmbeddedDebeziumConfiguration actualConfigurations = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            assertNotNull(actualConfigurations);
+            assertEquals(configuration.getName(), actualConfigurations.getName());
+            assertEquals(configuration.getDatabaseUser(), actualConfigurations.getDatabaseUser());
+            assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIfItHandlesNullExternalConfigurations() throws Exception {
+    @Test
+    void testIfItHandlesNullExternalConfigurations() throws Exception {
         final String remaining = "";
         final String uri = "debezium:";
-        final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
-        debeziumComponent.start();
+        try (final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
 
-        // set configurations
-        debeziumComponent.setConfiguration(null);
+            // set configurations
+            debeziumComponent.setConfiguration(null);
 
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                Collections.emptyMap());
+            assertThrows(IllegalArgumentException.class, () -> {
+                debeziumComponent.createEndpoint(uri, remaining, Collections.emptyMap());
+            });
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIfItHandlesNullExternalConfigurationsWithValidUri() throws Exception {
+    @Test
+    void testIfItHandlesNullExternalConfigurationsWithValidUri() throws Exception {
         final String remaining = "dummy";
         final String uri = "debezium:dummy";
-        final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
-        debeziumComponent.start();
+        try (final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext())) {
+            debeziumComponent.start();
 
-        // set configurations
-        debeziumComponent.setConfiguration(null);
+            // set configurations
+            debeziumComponent.setConfiguration(null);
 
-        final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                Collections.emptyMap());
+            assertThrows(IllegalArgumentException.class, () -> {
+                debeziumComponent.createEndpoint(uri, remaining, Collections.emptyMap());
+            });
+        }
     }
 }

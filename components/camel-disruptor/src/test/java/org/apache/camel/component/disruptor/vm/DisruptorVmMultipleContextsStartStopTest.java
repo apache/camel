@@ -18,12 +18,12 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorVmMultipleContextsStartStopTest extends AbstractVmTestSupport {
 
     @Test
-    public void testStartStop() throws Exception {
+    void testStartStop() throws Exception {
         /* Check that contexts are communicated */
         MockEndpoint mock = context2.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
@@ -42,20 +42,20 @@ public class DisruptorVmMultipleContextsStartStopTest extends AbstractVmTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").to("disruptor-vm:foo");
             }
         };
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:foo").to("mock:result");
             }
         };

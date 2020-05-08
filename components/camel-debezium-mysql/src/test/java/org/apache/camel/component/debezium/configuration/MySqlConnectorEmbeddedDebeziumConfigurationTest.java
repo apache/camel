@@ -22,14 +22,16 @@ import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.embedded.EmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
-    public void testIfCreatesConfig() {
+    void testIfCreatesConfig() {
         final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
@@ -53,7 +55,7 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testIfValidatesConfigurationCorrectly() {
+    void testIfValidatesConfigurationCorrectly() {
         final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
@@ -72,7 +74,7 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testValidateConfigurationsForAllRequiredFields() {
+    void testValidateConfigurationsForAllRequiredFields() {
         final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");

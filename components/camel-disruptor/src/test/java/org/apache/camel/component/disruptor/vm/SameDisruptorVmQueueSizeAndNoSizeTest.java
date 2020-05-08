@@ -19,8 +19,12 @@ package org.apache.camel.component.disruptor.vm;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
  *
@@ -28,7 +32,7 @@ import org.junit.Test;
 public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
 
     @Test
-    public void testSameQueue() throws Exception {
+    void testSameQueue() throws Exception {
         for (int i = 0; i < 128; i++) {
             template.sendBody("disruptor-vm:foo?blockWhenFull=false", "" + i);
         }
@@ -43,7 +47,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSameQueueDifferentSize() throws Exception {
+    void testSameQueueDifferentSize() throws Exception {
         try {
             template.sendBody("disruptor-vm:foo?size=256", "Should fail");
             fail("Should fail");
@@ -56,7 +60,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSameQueueDifferentSizeBar() throws Exception {
+    void testSameQueueDifferentSizeBar() throws Exception {
         try {
             template.sendBody("disruptor-vm:bar?size=256", "Should fail");
             fail("Should fail");
@@ -68,10 +72,10 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:foo?size=128&blockWhenFull=false").routeId("foo").noAutoStartup()
                         .to("mock:foo");
 
