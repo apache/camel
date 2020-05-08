@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.commons.validator.routines.DomainValidator;
 
 /**
  * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
@@ -35,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
         syntax = "splunk-hec:splunkURL/token", label = "log,monitoring")
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
-    private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?(\\w+):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
+    private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?(.*?):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");
 
     @UriPath @Metadata(required = true)
     private String splunkURL;
@@ -51,7 +52,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
         Matcher match = URI_PARSER.matcher(uri);
-        if (!match.matches()) {
+        if (!match.matches() || !DomainValidator.getInstance(true).isValid(match.group(1))) {
             throw new IllegalArgumentException("Invalid URI: " + uri);
         }
         int port = Integer.parseInt(match.group(2));
