@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.regex.Pattern;
+
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
