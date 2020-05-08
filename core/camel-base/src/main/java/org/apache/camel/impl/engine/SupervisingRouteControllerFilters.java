@@ -24,14 +24,14 @@ import java.util.Set;
 import org.apache.camel.Route;
 
 /**
- * A {@link SupervisingRouteController.Filter} which blacklists routes.
+ * A {@link DefaultSupervisingRouteController.Filter} which blacklists routes.
  */
 public final class SupervisingRouteControllerFilters {
 
     private SupervisingRouteControllerFilters() {
     }
 
-    public static final class BlackList implements SupervisingRouteController.Filter {
+    public static final class BlackList implements DefaultSupervisingRouteController.Filter {
         private final Set<String> names;
 
         public BlackList(String name) {
@@ -43,10 +43,10 @@ public final class SupervisingRouteControllerFilters {
         }
 
         @Override
-        public SupervisingRouteController.FilterResult apply(Route route) {
+        public DefaultSupervisingRouteController.FilterResult apply(Route route) {
             boolean supervised = !names.contains(route.getId());
 
-            return new SupervisingRouteController.FilterResult(
+            return new DefaultSupervisingRouteController.FilterResult(
                 supervised,
                 supervised ? null : "black-listed"
             );

@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +46,7 @@ import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
@@ -62,11 +62,9 @@ import org.slf4j.LoggerFactory;
  * This controller is able to retry starting failing routes, and have various options to configure
  * settings for backoff between restarting routes.
  */
-public class SupervisingRouteController extends DefaultRouteController {
+public class DefaultSupervisingRouteController extends DefaultRouteController implements SupervisingRouteController {
 
-    // TODO: Make SPI interface so we can separate this more nicely
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SupervisingRouteController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSupervisingRouteController.class);
     private final Object lock;
     private final AtomicBoolean contextStarted;
     private final AtomicInteger routeCount;
@@ -76,91 +74,73 @@ public class SupervisingRouteController extends DefaultRouteController {
     private final RouteManager routeManager;
     private BackOffTimer timer;
     private ScheduledExecutorService executorService;
-    private BackOff defaultBackOff;
-    private Map<String, BackOff> backOffConfigurations;
-    private Duration initialDelay;
+    private long initialDelay;
+    private long backOffDelay = 2000;
+    private long backOffMaxDelay;
+    private long backOffMaxElapsedTime;
+    private long backOffMaxAttempts;
+    private double backOffMultiplier = 1.0d;
+    private volatile BackOff backOff;
 
-    public SupervisingRouteController() {
+    public DefaultSupervisingRouteController() {
         this.lock = new Object();
         this.contextStarted = new AtomicBoolean(false);
         this.filters = new ArrayList<>();
         this.routeCount = new AtomicInteger(0);
         this.routes = new TreeSet<>();
         this.routeManager = new RouteManager();
-        this.defaultBackOff = BackOff.builder().build();
-        this.backOffConfigurations = new HashMap<>();
-        this.initialDelay = Duration.ofMillis(0);
-
     }
 
     // *********************************
     // Properties
     // *********************************
 
-    public BackOff getDefaultBackOff() {
-        return defaultBackOff;
-    }
-
-    /**
-     * Sets the default back-off.
-     */
-    public void setDefaultBackOff(BackOff defaultBackOff) {
-        this.defaultBackOff = defaultBackOff;
-    }
-
-    public Map<String, BackOff> getBackOffConfigurations() {
-        return backOffConfigurations;
-    }
-
-    /**
-     * Set the back-off for the given IDs.
-     */
-    public void setBackOffConfigurations(Map<String, BackOff> backOffConfigurations) {
-        this.backOffConfigurations = backOffConfigurations;
-    }
-
-    public BackOff getBackOff(String id) {
-        return backOffConfigurations.getOrDefault(id, defaultBackOff);
-    }
-
-    /**
-     * Sets the back-off to be applied to the given <code>id</code>.
-     */
-    public void setBackOff(String id, BackOff backOff) {
-        backOffConfigurations.put(id, backOff);
-    }
-
-    public Duration getInitialDelay() {
+    public long getInitialDelay() {
         return initialDelay;
     }
 
-    /**
-     * Set the amount of time the route controller should wait before to start
-     * the routes after the camel context is started or after the route is
-     * initialized if the route is created after the camel context is started.
-     *
-     * @param initialDelay the initial delay.
-     */
-    public void setInitialDelay(Duration initialDelay) {
+    public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
     }
 
-    /**
-     * #see {@link this#setInitialDelay(Duration)}
-     *
-     * @param initialDelay the initial delay amount.
-     */
-    public void setInitialDelay(long initialDelay, TimeUnit initialDelayUnit) {
-        this.initialDelay = Duration.ofMillis(initialDelayUnit.toMillis(initialDelay));
+    public long getBackOffDelay() {
+        return backOffDelay;
     }
 
-    /**
-     * #see {@link this#setInitialDelay(Duration)}
-     *
-     * @param initialDelay the initial delay in milliseconds.
-     */
-    public void setInitialDelay(long initialDelay) {
-        this.initialDelay = Duration.ofMillis(initialDelay);
+    public void setBackOffDelay(long backOffDelay) {
+        this.backOffDelay = backOffDelay;
+    }
+
+    public long getBackOffMaxDelay() {
+        return backOffMaxDelay;
+    }
+
+    public void setBackOffMaxDelay(long backOffMaxDelay) {
+        this.backOffMaxDelay = backOffMaxDelay;
+    }
+
+    public long getBackOffMaxElapsedTime() {
+        return backOffMaxElapsedTime;
+    }
+
+    public void setBackOffMaxElapsedTime(long backOffMaxElapsedTime) {
+        this.backOffMaxElapsedTime = backOffMaxElapsedTime;
+    }
+
+    public long getBackOffMaxAttempts() {
+        return backOffMaxAttempts;
+    }
+
+    public void setBackOffMaxAttempts(long backOffMaxAttempts) {
+        this.backOffMaxAttempts = backOffMaxAttempts;
+    }
+
+    public double getBackOffMultiplier() {
+        return backOffMultiplier;
+    }
+
+    public void setBackOffMultiplier(double backOffMultiplier) {
+        this.backOffMultiplier = backOffMultiplier;
     }
 
     /**
@@ -189,12 +169,23 @@ public class SupervisingRouteController extends DefaultRouteController {
         return routeManager.getBackOffContext(id);
     }
 
+    protected BackOff getBackOff(String id) {
+        // currently all routes use the same backoff
+        return backOff;
+    }
+
     // *********************************
     // Lifecycle
     // *********************************
 
     @Override
     protected void doInit() throws Exception {
+        this.backOff = new BackOff(
+                Duration.ofMillis(backOffDelay),
+                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : Duration.ofMillis(Long.MAX_VALUE),
+                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : Duration.ofMillis(Long.MAX_VALUE),
+                backOffMaxAttempts > 0 ? backOffMaxAttempts : Long.MAX_VALUE,
+                backOffMultiplier);
         this.listener = new CamelContextStartupListener();
 
         CamelContext context = getCamelContext();
@@ -351,7 +342,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                 routeManager.release(route);
             }
 
-            LOGGER.info("Route {} has been requested to stop: stop supervising it", route.getId());
+            LOGGER.debug("Route {} has been requested to stop", route.getId());
 
             // Mark the route as un-managed
             route.get().setRouteController(null);
@@ -429,7 +420,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
 
         void start(RouteHolder route) {
-            route.get().setRouteController(SupervisingRouteController.this);
+            route.get().setRouteController(DefaultSupervisingRouteController.this);
 
             routes.computeIfAbsent(
                 route,
@@ -443,7 +434,7 @@ public class SupervisingRouteController extends DefaultRouteController {
                             long attempt = getBackOffContext(r.getId()).map(BackOffTimer.Task::getCurrentAttempts).orElse(0L);
                             logger.info("Restarting route: {} attempt: {}", r.getId(), attempt);
 
-                            doStartRoute(r, false, rx -> SupervisingRouteController.super.startRoute(rx.getId()));
+                            doStartRoute(r, false, rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
                             return false;
                         } catch (Exception e) {
                             return true;
@@ -580,10 +571,10 @@ public class SupervisingRouteController extends DefaultRouteController {
 
         private void startRoute(RouteHolder holder) {
             try {
-                SupervisingRouteController.this.doStartRoute(
+                DefaultSupervisingRouteController.this.doStartRoute(
                     holder,
                     true,
-                    r -> SupervisingRouteController.super.startRoute(r.getId())
+                    r -> DefaultSupervisingRouteController.super.startRoute(r.getId())
                 );
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
@@ -593,7 +584,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         @Override
         public void onInit(Route route) {
             if (!route.isAutoStartup()) {
-                LOGGER.info("Route {} won't be supervised (reason: has explicit auto-startup flag set to false)", route.getId());
+                LOGGER.info("Route: {} will not be supervised (Reason: has explicit auto-startup flag set to false)", route.getId());
                 return;
             }
 
@@ -601,28 +592,28 @@ public class SupervisingRouteController extends DefaultRouteController {
                 FilterResult result = filter.apply(route);
 
                 if (!result.supervised()) {
-                    LOGGER.info("Route {} won't be supervised (reason: {})", route.getId(), result.reason());
+                    LOGGER.info("Route: {} will not be supervised (Reason: {})", route.getId(), result.reason());
                     return;
                 }
             }
 
             RouteHolder holder = new RouteHolder(route, routeCount.incrementAndGet());
             if (routes.add(holder)) {
-                holder.get().setRouteController(SupervisingRouteController.this);
+                holder.get().setRouteController(DefaultSupervisingRouteController.this);
                 holder.get().setAutoStartup(false);
 
                 if (contextStarted.get()) {
                     LOGGER.debug("Context is already started: attempt to start route {}", route.getId());
 
                     // Eventually delay the startup of the route a later time
-                    if (initialDelay.toMillis() > 0) {
-                        LOGGER.debug("Route {} will be started in {}", holder.getId(), initialDelay);
-                        executorService.schedule(() -> startRoute(holder), initialDelay.toMillis(), TimeUnit.MILLISECONDS);
+                    if (initialDelay > 0) {
+                        LOGGER.debug("Route {} will be started in {} millis", holder.getId(), initialDelay);
+                        executorService.schedule(() -> startRoute(holder), initialDelay, TimeUnit.MILLISECONDS);
                     } else {
                         startRoute(holder);
                     }
                 } else {
-                    LOGGER.debug("Context is not yet started: defer route {} start", holder.getId());
+                    LOGGER.debug("CamelContext is not yet started. Deferring staring route: {}", holder.getId());
                 }
             }
         }
@@ -673,9 +664,9 @@ public class SupervisingRouteController extends DefaultRouteController {
             if (contextStarted.compareAndSet(false, true)) {
 
                 // Eventually delay the startup of the routes a later time
-                if (initialDelay.toMillis() > 0) {
-                    LOGGER.debug("Routes will be started in {}", initialDelay);
-                    executorService.schedule(SupervisingRouteController.this::startRoutes, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
+                if (initialDelay > 0) {
+                    LOGGER.debug("Routes will be started in {} millis", initialDelay);
+                    executorService.schedule(DefaultSupervisingRouteController.this::startRoutes, initialDelay, TimeUnit.MILLISECONDS);
                 } else {
                     startRoutes();
                 }
