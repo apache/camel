@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.model.date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import org.apache.camel.EndpointInject;
@@ -55,7 +56,7 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,broken";
+        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,03-23-2017 11:17:43Z,broken";
 
         result.expectedBodiesReceived(expected + "\r\n");
 
@@ -103,7 +104,10 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
         @DataField(pos = 7, pattern = "HH:mm:ss")
         private LocalTime receivedTime;
 
-        @DataField(pos = 8)
+        @DataField(pos = 8, pattern = "MM-dd-yyyy HH:mm:ssX")
+        private ZonedDateTime deletedDateTime;
+
+        @DataField(pos = 9)
         private ReturnReason returnReason;
 
         public OrderNumber getOrderNr() {
@@ -165,6 +169,14 @@ public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringConte
 
         public void setReceivedTime(LocalTime receivedTime) {
             this.receivedTime = receivedTime;
+        }
+
+        public ZonedDateTime getDeletedDateTime() {
+            return deletedDateTime;
+        }
+
+        public void setDeletedDateTime(ZonedDateTime deletedDateTime) {
+            this.deletedDateTime = deletedDateTime;
         }
 
         public ReturnReason getReturnReason() {
