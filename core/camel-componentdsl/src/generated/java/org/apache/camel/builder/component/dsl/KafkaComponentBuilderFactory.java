@@ -1356,7 +1356,7 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2,TLSv1.1,TLSv1
+         * Default: TLSv1.2
          * Group: security
          */
         default KafkaComponentBuilder sslEnabledProtocols(
@@ -1454,7 +1454,7 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLS
+         * Default: TLSv1.2
          * Group: security
          */
         default KafkaComponentBuilder sslProtocol(java.lang.String sslProtocol) {
