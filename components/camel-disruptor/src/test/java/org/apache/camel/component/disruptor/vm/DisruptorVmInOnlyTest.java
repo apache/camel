@@ -17,12 +17,12 @@
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorVmInOnlyTest extends AbstractVmTestSupport {
 
     @Test
-    public void testInOnly() throws Exception {
+    void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template2.sendBody("direct:start", "Hello World");
@@ -31,20 +31,20 @@ public class DisruptorVmInOnlyTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:foo").to("mock:result");
             }
         };
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("disruptor-vm:foo");
             }
         };

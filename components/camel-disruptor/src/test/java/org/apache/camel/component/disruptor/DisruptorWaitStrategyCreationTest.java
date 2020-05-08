@@ -17,17 +17,17 @@
 package org.apache.camel.component.disruptor;
 
 import com.lmax.disruptor.WaitStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests correct creation of all supposedly possible wait strategies.
  */
 public class DisruptorWaitStrategyCreationTest {
     @Test
-    public void testCreateWaitStrategyInstance() throws Exception {
+    void testCreateWaitStrategyInstance() throws Exception {
         for (final DisruptorWaitStrategy strategy : DisruptorWaitStrategy.values()) {
             final WaitStrategy waitStrategyInstance = strategy.createWaitStrategyInstance();
 

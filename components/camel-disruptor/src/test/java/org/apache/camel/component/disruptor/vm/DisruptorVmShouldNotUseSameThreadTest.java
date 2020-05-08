@@ -20,7 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
@@ -31,7 +34,7 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
     private final ThreadLocal<String> local = new ThreadLocal<>();
 
     @Test
-    public void testNotUseSameThread() throws Exception {
+    void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -41,13 +44,13 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertNull(local.get());
-                        assertNotSame("Thread is should not be same", id, Thread.currentThread().getId());
+                        assertNotSame(id, Thread.currentThread().getId(), "Thread is should not be same");
                     }
                 }).to("mock:result");
             }
@@ -55,12 +58,12 @@ public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         local.set("Hello");
                         id = Thread.currentThread().getId();
                     }

@@ -18,12 +18,12 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorRingBufferTest extends CamelTestSupport {
     @Test
-    public void testQueue() throws Exception {
+    void testQueue() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Goodday World", "Bar");
 
@@ -36,10 +36,10 @@ public class DisruptorRingBufferTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo?concurrentConsumers=2").to("mock:result");
 
                 from("disruptor:bar").to("mock:result");

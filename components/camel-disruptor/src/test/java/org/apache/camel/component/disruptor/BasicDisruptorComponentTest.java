@@ -21,8 +21,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests some of the basic disruptor functionality
@@ -37,7 +37,7 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
     private ProducerTemplate template;
 
     @Test
-    public void testProduce() throws InterruptedException {
+    void testProduce() throws InterruptedException {
         resultEndpoint.expectedBodiesReceived(VALUE);
         resultEndpoint.setExpectedMessageCount(1);
 
@@ -47,10 +47,10 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:test")
                         .to("mock:result");
             }

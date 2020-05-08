@@ -22,8 +22,10 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify unit of work with disruptor. That the UnitOfWork is able to route using disruptor but keeping the
@@ -36,7 +38,7 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
     private static volatile String lastOne;
 
     @Test
-    public void testDisruptorUOW() throws Exception {
+    void testDisruptorUOW() throws Exception {
         final NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
@@ -53,22 +55,22 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 from("direct:start").process(new MyUOWProcessor("A")).to("disruptor:foo");
 
                 from("disruptor:foo").process(new Processor() {
                     @Override
-                    public void process(final Exchange exchange) throws Exception {
+                    public void process(final Exchange exchange) {
                         assertEquals(null, sync);
                     }
                 }).process(new Processor() {
                     @Override
-                    public void process(final Exchange exchange) throws Exception {
+                    public void process(final Exchange exchange) {
                         lastOne = "processor";
                     }
                 }).to("mock:result");
@@ -85,7 +87,7 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
         }
 
         @Override
-        public void process(final Exchange exchange) throws Exception {
+        public void process(final Exchange exchange) {
             exchange.getUnitOfWork().addSynchronization(new Synchronization() {
                 @Override
                 public void onComplete(final Exchange exchange) {

@@ -18,14 +18,16 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.Test;
 
 public class DisruptorVmInOnlyChainedTest extends AbstractVmTestSupport {
 
     @Test
-    public void testInOnlyDisruptorVmChained() throws Exception {
+    void testInOnlyDisruptorVmChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
-        resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");
+
+        TestSupport.resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b");
 
         template.sendBody("disruptor-vm:a", "start");
@@ -35,10 +37,10 @@ public class DisruptorVmInOnlyChainedTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:a").to("mock:a").setBody(simple("${body}-a")).to("disruptor-vm:b");
 
                 from("disruptor-vm:c").to("mock:c").setBody(simple("${body}-c"));
@@ -47,10 +49,10 @@ public class DisruptorVmInOnlyChainedTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:b").to("mock:b").setBody(simple("${body}-b")).to("disruptor-vm:c");
             }
         };

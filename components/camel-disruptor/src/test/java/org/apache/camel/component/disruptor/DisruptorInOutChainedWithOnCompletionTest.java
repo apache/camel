@@ -21,12 +21,14 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport {
     @Test
-    public void testInOutDisruptorChainedWithCustomOnCompletion() throws Exception {
+    void testInOutDisruptorChainedWithCustomOnCompletion() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         getMockEndpoint("mock:b").expectedBodiesReceived("start-a");
         // the onCustomCompletion should be send very last (as it will be handed over)
@@ -39,13 +41,13 @@ public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:a").process(new Processor() {
                     @Override
-                    public void process(final Exchange exchange) throws Exception {
+                    public void process(final Exchange exchange) {
                         // should come in last
                         exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                             @Override
