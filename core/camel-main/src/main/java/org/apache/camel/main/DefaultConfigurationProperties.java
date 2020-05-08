@@ -82,6 +82,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
     private boolean routeControllerEnabled;
+    private int routeControllerThreadPoolSize;
     private long routeControllerInitialDelay;
     private long routeControllerBackOffDelay;
     private long routeControllerBackOffMaxDelay;
@@ -913,6 +914,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRouteControllerEnabled(boolean routeControllerEnabled) {
         this.routeControllerEnabled = routeControllerEnabled;
+    }
+
+    public int getRouteControllerThreadPoolSize() {
+        return routeControllerThreadPoolSize;
+    }
+
+    /**
+     * The number of threads used by the route controller scheduled thread pool that are used for restarting
+     * routes. The pool uses 1 thread by default, but you can increase this to allow the controller
+     * to concurrently attempt to restart multiple routes in case more than one route has problems
+     * starting.
+     */
+    public void setRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
+        this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
     }
 
     public long getRouteControllerInitialDelay() {

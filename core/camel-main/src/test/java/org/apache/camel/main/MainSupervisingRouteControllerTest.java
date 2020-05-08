@@ -41,6 +41,7 @@ public class MainSupervisingRouteControllerTest extends Assert {
         main.configure().setRouteControllerBackOffDelay(250);
         main.configure().setRouteControllerBackOffMaxAttempts(3);
         main.configure().setRouteControllerInitialDelay(1000);
+        main.configure().setRouteControllerThreadPoolSize(2);
 
         main.start();
 
@@ -50,11 +51,16 @@ public class MainSupervisingRouteControllerTest extends Assert {
         MockEndpoint mock2 = main.getCamelContext().getEndpoint("mock:cheese", MockEndpoint.class);
         mock2.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2);
+        MockEndpoint mock3 = main.getCamelContext().getEndpoint("mock:cake", MockEndpoint.class);
+        mock3.expectedMessageCount(0);
+
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3);
 
         assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
+        // cake was not able to start
+        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cake").toString());
 
         main.stop();
     }
@@ -67,6 +73,8 @@ public class MainSupervisingRouteControllerTest extends Assert {
             from("timer:foo").to("mock:foo").routeId("foo");
 
             from("jms:cheese").to("mock:cheese").routeId("cheese");
+
+            from("jms:cake").to("mock:cake").routeId("cake");
         }
     }
 

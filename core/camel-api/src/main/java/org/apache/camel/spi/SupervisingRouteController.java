@@ -24,6 +24,16 @@ package org.apache.camel.spi;
  */
 public interface SupervisingRouteController extends RouteController {
 
+    int getThreadPoolSize();
+
+    /**
+     * The number of threads used by the scheduled thread pool that are used for restarting
+     * routes. The pool uses 1 thread by default, but you can increase this to allow the controller
+     * to concurrently attempt to restart multiple routes in case more than one route has problems
+     * starting.
+     */
+    void setThreadPoolSize(int threadPoolSize);
+
     long getInitialDelay();
 
     /**

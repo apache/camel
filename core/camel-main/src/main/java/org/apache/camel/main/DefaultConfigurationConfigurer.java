@@ -31,7 +31,6 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
-import org.apache.camel.impl.engine.DefaultSupervisingRouteController;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -60,13 +59,13 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.backoff.BackOff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,8 +180,11 @@ public final class DefaultConfigurationConfigurer {
 
         // supervisting route controller
         if (config.isRouteControllerEnabled()) {
-            DefaultSupervisingRouteController src = camelContext.getExtension(DefaultSupervisingRouteController.class);
+            SupervisingRouteController src = camelContext.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
             src.setCamelContext(camelContext);
+            if (config.getRouteControllerThreadPoolSize() > 0) {
+                src.setThreadPoolSize(config.getRouteControllerThreadPoolSize());
+            }
             if (config.getRouteControllerBackOffDelay() > 0) {
                 src.setBackOffDelay(config.getRouteControllerBackOffDelay());
             }
@@ -201,6 +203,7 @@ public final class DefaultConfigurationConfigurer {
             if (config.getRouteControllerBackOffMultiplier() > 0) {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
+            // use this as route controller
             camelContext.setRouteController(src);
         }
     }
