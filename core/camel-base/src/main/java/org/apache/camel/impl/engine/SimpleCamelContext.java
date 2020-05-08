@@ -222,7 +222,6 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RouteController createRouteController() {
-        // TODO:
         return new DefaultRouteController(getCamelContextReference());
     }
 
