@@ -20,8 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -94,9 +99,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     @Parameter
     protected Boolean failFast;
     
-    Pattern copyRE = Pattern.compile("(\\[\\[.*)|(= .*)|(//.*)");
-    Pattern attrRE = Pattern.compile(":([a-zA-Z0-9_-]*):( .*)?");
-
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
@@ -191,9 +193,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private void executeOther() throws MojoExecutionException {
-        // find the component names
-        List<String> componentNames = listDescriptorNamesOfType("other");
-
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles);
         getLog().debug("UpdateReadmeMojo jsonFiles: " + jsonFiles);
@@ -213,7 +212,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     File file = new File(componentDocDir, componentName + ".adoc");
                     boolean exists = file.exists();
-
 
                     // we only want the first scheme as the alternatives do not
                     boolean updated = updateHeader(componentName, file, model, " Component", "-component");
@@ -506,7 +504,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             newLines.add("");
 
             for (int i = 0; i < lines.length; i++) {
-                if (i == newLines.size() || newLines.get(i) != lines[i]) {
+                if (i > newLines.size() - 1) {
+                    break;
+                }
+                if (!newLines.get(i).equals(lines[i])) {
                     updated = true;
                     break;
                 }
@@ -521,9 +522,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         newLines.add(lines[i]);
                     }
                 }
-            }
-            if (!copy) {
-                throw new MojoFailureException("File " + file + " has unexpected structure with no empty line.");
+                if (!copy) {
+                    throw new MojoFailureException("File " + file + " has unexpected structure with no empty line.");
+                }
             }
 
             if (updated) {
