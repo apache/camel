@@ -117,6 +117,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerBackOffMultiplier": target.setRouteControllerBackOffMultiplier(property(camelContext, double.class, value)); return true;
         case "routecontrollerenabled":
         case "RouteControllerEnabled": target.setRouteControllerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routecontrollerexcluderoutes":
+        case "RouteControllerExcludeRoutes": target.setRouteControllerExcludeRoutes(property(camelContext, java.lang.String.class, value)); return true;
+        case "routecontrollerincluderoutes":
+        case "RouteControllerIncludeRoutes": target.setRouteControllerIncludeRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": target.setRouteControllerInitialDelay(property(camelContext, long.class, value)); return true;
         case "routecontrollerthreadpoolsize":
@@ -233,6 +237,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("RouteControllerBackOffMaxElapsedTime", long.class);
         answer.put("RouteControllerBackOffMultiplier", double.class);
         answer.put("RouteControllerEnabled", boolean.class);
+        answer.put("RouteControllerExcludeRoutes", java.lang.String.class);
+        answer.put("RouteControllerIncludeRoutes", java.lang.String.class);
         answer.put("RouteControllerInitialDelay", long.class);
         answer.put("RouteControllerThreadPoolSize", int.class);
         answer.put("RouteFilterExcludePattern", java.lang.String.class);
@@ -368,6 +374,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerBackOffMultiplier": return target.getRouteControllerBackOffMultiplier();
         case "routecontrollerenabled":
         case "RouteControllerEnabled": return target.isRouteControllerEnabled();
+        case "routecontrollerexcluderoutes":
+        case "RouteControllerExcludeRoutes": return target.getRouteControllerExcludeRoutes();
+        case "routecontrollerincluderoutes":
+        case "RouteControllerIncludeRoutes": return target.getRouteControllerIncludeRoutes();
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return target.getRouteControllerInitialDelay();
         case "routecontrollerthreadpoolsize":
