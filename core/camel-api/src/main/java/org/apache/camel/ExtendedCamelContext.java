@@ -565,12 +565,25 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setSupervisingRouteController(SupervisingRouteController supervisingRouteController);
 
+    /**
+     * Internal {@link RouteController} that are only used internally by Camel to
+     * perform basic route operations. Do not use this as end user.
+     */
     RouteController getInternalRouteController();
 
+    /**
+     * Internal API for adding routes. Do not use this as end user.
+     */
     void addRoute(Route route);
 
+    /**
+     * Internal API for removing routes. Do not use this as end user.
+     */
     void removeRoute(Route route);
 
+    /**
+     * Internal API for creating error handler. Do not use this as end user.
+     */
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
 }
