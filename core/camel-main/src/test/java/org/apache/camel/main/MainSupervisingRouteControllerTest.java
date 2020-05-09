@@ -54,13 +54,18 @@ public class MainSupervisingRouteControllerTest extends Assert {
         MockEndpoint mock3 = main.getCamelContext().getEndpoint("mock:cake", MockEndpoint.class);
         mock3.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3);
+        MockEndpoint mock4 = main.getCamelContext().getEndpoint("mock:bar", MockEndpoint.class);
+        mock4.expectedMessageCount(0);
+
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+        // bar is no auto startup
+        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
 
         main.stop();
     }
@@ -75,6 +80,8 @@ public class MainSupervisingRouteControllerTest extends Assert {
             from("jms:cheese").to("mock:cheese").routeId("cheese");
 
             from("jms:cake").to("mock:cake").routeId("cake");
+
+            from("seda:bar").routeId("bar").noAutoStartup().to("mock:bar");
         }
     }
 
