@@ -69,7 +69,7 @@ public class KafkaEndpointTest {
     }
 
     @Test
-    public void isSingletonShoudlReturnTrue() {
+    public void isSingletonShouldReturnTrue() {
         assertTrue(endpoint.isSingleton());
     }
 

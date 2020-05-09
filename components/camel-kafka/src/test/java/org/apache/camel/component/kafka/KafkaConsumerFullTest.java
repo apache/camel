@@ -108,6 +108,23 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
+    public void kafkaRecordSpecificHeadersAreNotOverwritten() throws InterruptedException, IOException {
+        String propagatedHeaderKey = KafkaConstants.TOPIC;
+        byte[] propagatedHeaderValue = "propagated incorrect topic".getBytes();
+        to.expectedHeaderReceived(KafkaConstants.TOPIC, TOPIC);
+
+        ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", "message");
+        data.headers().add(new RecordHeader(propagatedHeaderKey, propagatedHeaderValue));
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
+        assertTrue("Should receive KafkaEndpoint populated kafka.TOPIC header", headers.containsKey(KafkaConstants.TOPIC));
+        assertEquals("Topic name received", TOPIC, headers.get(KafkaConstants.TOPIC));
+    }
+
+    @Test
     @Ignore("Currently there is a bug in kafka which leads to an uninterruptable thread so a resub take too long (works manually)")
     public void kafkaMessageIsConsumedByCamelSeekedToBeginning() throws Exception {
         to.expectedMessageCount(5);
