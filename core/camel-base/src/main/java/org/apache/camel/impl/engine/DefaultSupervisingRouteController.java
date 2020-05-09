@@ -17,9 +17,8 @@
 package org.apache.camel.impl.engine;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,23 +30,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedStartupListener;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.StartupListener;
-import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.SupervisingRouteController;
-import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.backoff.BackOff;
@@ -68,13 +66,15 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private final Object lock;
     private final AtomicBoolean contextStarted;
     private final AtomicInteger routeCount;
-    private final List<Filter> filters;
     private final Set<RouteHolder> routes;
+    private final Set<String> nonSupervisedRoutes;
     private final RouteManager routeManager;
     private volatile CamelContextStartupListener listener;
     private volatile BackOffTimer timer;
     private volatile ScheduledExecutorService executorService;
     private volatile BackOff backOff;
+    private String includeRoutes;
+    private String excludeRoutes;
     private int threadPoolSize = 1;
     private long initialDelay;
     private long backOffDelay = 2000;
@@ -86,9 +86,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public DefaultSupervisingRouteController() {
         this.lock = new Object();
         this.contextStarted = new AtomicBoolean(false);
-        this.filters = new ArrayList<>();
         this.routeCount = new AtomicInteger(0);
         this.routes = new TreeSet<>();
+        this.nonSupervisedRoutes = new HashSet<>();
         this.routeManager = new RouteManager();
     }
 
@@ -96,12 +96,26 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     // Properties
     // *********************************
 
-    @Override
+    public String getIncludeRoutes() {
+        return includeRoutes;
+    }
+
+    public void setIncludeRoutes(String includeRoutes) {
+        this.includeRoutes = includeRoutes;
+    }
+
+    public String getExcludeRoutes() {
+        return excludeRoutes;
+    }
+
+    public void setExcludeRoutes(String excludeRoutes) {
+        this.excludeRoutes = excludeRoutes;
+    }
+
     public int getThreadPoolSize() {
         return threadPoolSize;
     }
 
-    @Override
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
     }
@@ -154,28 +168,6 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         this.backOffMultiplier = backOffMultiplier;
     }
 
-    /**
-     * Add a filter used to determine the routes to supervise.
-     */
-    @Deprecated
-    public void addFilter(Filter filter) {
-        this.filters.add(filter);
-    }
-
-    /**
-     * Sets the filters user to determine the routes to supervise.
-     */
-    @Deprecated
-    public void setFilters(Collection<Filter> filters) {
-        this.filters.clear();
-        this.filters.addAll(filters);
-    }
-
-    @Deprecated
-    public Collection<Filter> getFilters() {
-        return Collections.unmodifiableList(filters);
-    }
-
     protected BackOff getBackOff(String id) {
         // currently all routes use the same backoff
         return backOff;
@@ -196,16 +188,10 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         this.listener = new CamelContextStartupListener();
 
         CamelContext context = getCamelContext();
+        // prevent routes from automatic being started by default
         context.setAutoStartup(false);
         context.addRoutePolicyFactory(new ManagedRoutePolicyFactory());
         context.addStartupListener(this.listener);
-        context.getManagementStrategy().addEventNotifier(this.listener);
-
-        try {
-            this.listener.start();
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
     }
 
     @Override
@@ -225,13 +211,6 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             getCamelContext().getExecutorServiceManager().shutdown(executorService);
             executorService = null;
             timer = null;
-        }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        if (getCamelContext() != null) {
-            getCamelContext().getManagementStrategy().removeEventNotifier(listener);
         }
     }
 
@@ -388,7 +367,33 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         }
     }
 
-    private void startRoutes() {
+    private void startNonSupervisedRoutes() throws Exception {
+        if (!isRunAllowed()) {
+            return;
+        }
+
+        final List<String> routeList;
+
+        synchronized (lock) {
+            routeList = routes.stream()
+                    .filter(r -> r.getStatus() == ServiceStatus.Stopped)
+                    .filter(r -> !isSupervised(r.route))
+                    .map(RouteHolder::getId)
+                    .collect(Collectors.toList());
+        }
+
+        for (String route : routeList) {
+            try {
+                // let non supervising controller start the route by calling super
+                LOG.debug("Starting non-supervised route {}", route);
+                super.startRoute(route);
+            } catch (Exception e) {
+                throw new FailedToStartRouteException(route, e.getMessage(), e);
+            }
+        }
+    }
+
+    private void startSupervisedRoutes() {
         if (!isRunAllowed()) {
             return;
         }
@@ -398,10 +403,12 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         synchronized (lock) {
             routeList = routes.stream()
                 .filter(r -> r.getStatus() == ServiceStatus.Stopped)
+                .filter(r -> isSupervised(r.route))
                 .map(RouteHolder::getId)
                 .collect(Collectors.toList());
         }
 
+        LOG.debug("Starting {} supervised routes", routeList.size());
         for (String route: routeList) {
             try {
                 startRoute(route);
@@ -415,6 +422,10 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             routes.stream().filter(r -> r.getStatus() == ServiceStatus.Started).count(),
             routeManager.routes.size()
         );
+    }
+
+    private boolean isSupervised(Route route) {
+        return !nonSupervisedRoutes.contains(route.getId());
     }
 
     // *********************************
@@ -602,11 +613,44 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 return;
             }
 
-            for (Filter filter : filters) {
-                FilterResult result = filter.apply(route);
-
-                if (!result.supervised()) {
-                    LOG.info("Route: {} will not be supervised (Reason: {})", route.getId(), result.reason());
+            // exclude takes precedence
+            if (excludeRoutes != null) {
+                for (String part : excludeRoutes.split(",")) {
+                    String id = route.getRouteId();
+                    String uri = route.getEndpoint().getEndpointUri();
+                    boolean exclude = PatternHelper.matchPattern(id, part) || PatternHelper.matchPattern(uri, part);
+                    if (exclude) {
+                        LOG.debug("Route: {} excluded from being supervised", route.getId());
+                        RouteHolder holder = new RouteHolder(route, routeCount.incrementAndGet());
+                        if (routes.add(holder)) {
+                            nonSupervisedRoutes.add(route.getId());
+                            holder.get().setRouteController(DefaultSupervisingRouteController.this);
+                            // this route should be started
+                            holder.get().setAutoStartup(true);
+                        }
+                        return;
+                    }
+                }
+            }
+            if (includeRoutes != null) {
+                boolean include = false;
+                for (String part : includeRoutes.split(",")) {
+                    String id = route.getRouteId();
+                    String uri = route.getEndpoint().getEndpointUri();
+                    include = PatternHelper.matchPattern(id, part) || PatternHelper.matchPattern(uri, part);
+                    if (include) {
+                        break;
+                    }
+                }
+                if (!include) {
+                    LOG.debug("Route: {} excluded from being supervised", route.getId());
+                    RouteHolder holder = new RouteHolder(route, routeCount.incrementAndGet());
+                    if (routes.add(holder)) {
+                        nonSupervisedRoutes.add(route.getId());
+                        holder.get().setRouteController(DefaultSupervisingRouteController.this);
+                        // this route should be started
+                        holder.get().setAutoStartup(true);
+                    }
                     return;
                 }
             }
@@ -643,19 +687,20 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     }
 
-    private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
-        @Override
-        public void notify(CamelEvent event) throws Exception {
-            onCamelContextStarted();
-        }
+    private class CamelContextStartupListener implements ExtendedStartupListener {
 
         @Override
-        public boolean isEnabled(CamelEvent event) {
-            return event instanceof CamelContextStartedEvent;
+        public void onCamelContextStarting(CamelContext context, boolean alreadyStarted) throws Exception {
+            // noop
         }
 
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+            // noop
+        }
+
+        @Override
+        public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             if (alreadyStarted) {
                 // Invoke it only if the context was already started as this
                 // method is not invoked at last event as documented but after
@@ -671,52 +716,24 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             }
         }
 
-        private void onCamelContextStarted() {
+        private void onCamelContextStarted() throws Exception {
             // Start managing the routes only when the camel context is started
             // so start/stop of managed routes do not clash with CamelContext
             // startup
             if (contextStarted.compareAndSet(false, true)) {
+                // start non supervised routes first as if they fail then
+                // camel context fails to start which is the behaviour of non-supervised routes
+                startNonSupervisedRoutes();
 
                 // Eventually delay the startup of the routes a later time
                 if (initialDelay > 0) {
-                    LOG.debug("Routes will be started in {} millis", initialDelay);
-                    executorService.schedule(DefaultSupervisingRouteController.this::startRoutes, initialDelay, TimeUnit.MILLISECONDS);
+                    LOG.debug("Supervised routes will be started in {} millis", initialDelay);
+                    executorService.schedule(DefaultSupervisingRouteController.this::startSupervisedRoutes, initialDelay, TimeUnit.MILLISECONDS);
                 } else {
-                    startRoutes();
+                    startSupervisedRoutes();
                 }
             }
         }
-    }
-
-    // *********************************
-    // Filter
-    // *********************************
-
-    public static class FilterResult {
-        public static final FilterResult SUPERVISED = new FilterResult(true, null);
-
-        private final boolean controlled;
-        private final String reason;
-
-        public FilterResult(boolean controlled, String reason) {
-            this.controlled = controlled;
-            this.reason = reason;
-        }
-
-        public FilterResult(boolean controlled, String format, Object... args) {
-            this(controlled, String.format(format, args));
-        }
-
-        public boolean supervised() {
-            return controlled;
-        }
-
-        public String reason() {
-            return reason;
-        }
-    }
-
-    public interface Filter extends Function<Route, FilterResult> {
     }
 
 }

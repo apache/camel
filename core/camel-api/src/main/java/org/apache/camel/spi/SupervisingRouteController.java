@@ -24,6 +24,36 @@ package org.apache.camel.spi;
  */
 public interface SupervisingRouteController extends RouteController {
 
+    String getIncludeRoutes();
+
+    /**
+     * Pattern for filtering routes to be included as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route.
+     * Multiple patterns can be separated by comma.
+     *
+     * For example to include all kafka routes, you can say <tt>kafka:*</tt>.
+     * And to include routes with specific route ids <tt>myRoute,myOtherRoute</tt>.
+     * The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    void setIncludeRoutes(String includeRoutes);
+
+    String getExcludeRoutes();
+
+    /**
+     * Pattern for filtering routes to be excluded as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route.
+     * Multiple patterns can be separated by comma.
+     *
+     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>.
+     * And to exclude routes with specific route ids <tt>mySpecialRoute,myOtherSpecialRoute</tt>.
+     * The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    void setExcludeRoutes(String excludeRoutes);
+
     int getThreadPoolSize();
 
     /**

@@ -82,6 +82,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
     private boolean routeControllerEnabled;
+    private String routeControllerIncludeRoutes;
+    private String routeControllerExcludeRoutes;
     private int routeControllerThreadPoolSize;
     private long routeControllerInitialDelay;
     private long routeControllerBackOffDelay;
@@ -914,6 +916,44 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRouteControllerEnabled(boolean routeControllerEnabled) {
         this.routeControllerEnabled = routeControllerEnabled;
+    }
+
+    public String getRouteControllerIncludeRoutes() {
+        return routeControllerIncludeRoutes;
+    }
+
+    /**
+     * Pattern for filtering routes to be excluded as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route.
+     * Multiple patterns can be separated by comma.
+     *
+     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>.
+     * And to exclude routes with specific route ids <tt>mySpecialRoute,myOtherSpecialRoute</tt>.
+     * The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    public void setRouteControllerIncludeRoutes(String routeControllerIncludeRoutes) {
+        this.routeControllerIncludeRoutes = routeControllerIncludeRoutes;
+    }
+
+    public String getRouteControllerExcludeRoutes() {
+        return routeControllerExcludeRoutes;
+    }
+
+    /**
+     * Pattern for filtering routes to be included as supervised.
+     *
+     * The pattern is matching on route id, and endpoint uri for the route.
+     * Multiple patterns can be separated by comma.
+     *
+     * For example to include all kafka routes, you can say <tt>kafka:*</tt>.
+     * And to include routes with specific route ids <tt>myRoute,myOtherRoute</tt>.
+     * The pattern supports wildcards and uses the matcher from
+     * org.apache.camel.support.PatternHelper#matchPattern.
+     */
+    public void setRouteControllerExcludeRoutes(String routeControllerExcludeRoutes) {
+        this.routeControllerExcludeRoutes = routeControllerExcludeRoutes;
     }
 
     public int getRouteControllerThreadPoolSize() {

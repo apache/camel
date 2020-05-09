@@ -182,6 +182,12 @@ public final class DefaultConfigurationConfigurer {
         if (config.isRouteControllerEnabled()) {
             SupervisingRouteController src = camelContext.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
             src.setCamelContext(camelContext);
+            if (config.getRouteControllerIncludeRoutes() != null) {
+                src.setIncludeRoutes(config.getRouteControllerIncludeRoutes());
+            }
+            if (config.getRouteControllerExcludeRoutes() != null) {
+                src.setExcludeRoutes(config.getRouteControllerExcludeRoutes());
+            }
             if (config.getRouteControllerThreadPoolSize() > 0) {
                 src.setThreadPoolSize(config.getRouteControllerThreadPoolSize());
             }
