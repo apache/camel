@@ -17,15 +17,12 @@ independently.
 
 How this works is that the plugin will compile the source code in the
 maven project, then boot up a Spring ApplicationContext using the XML
-confiuration files on the classpath at
+configuration files on the classpath at
 
 [source,syntaxhighlighter-pre]
 ----
 META-INF/spring/*.xml
 ----
-
-If you want to boot up your Camel routes a little faster, you could try
-the xref:camel-embedded-maven-goal.adoc[camel:embedded] instead.
 
 == Running OSGi Blueprint
 

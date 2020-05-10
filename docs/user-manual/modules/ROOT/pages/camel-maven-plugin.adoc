@@ -19,13 +19,6 @@ runs your routing rules. From Camel 2.10 onwards also OSGi blueprint is
 supported to load from *OSGI-INF/blueprint/*.xml* (requires to configure
 the plugin to use blueprint).
 
-|xref:camel-embedded-maven-goal.adoc[camel:embedded] |camel:embedded
-|Boots up Camel using the xref:spring.adoc[Spring] configuration at
-*META-INF/spring/*.xml* and runs your routing rules. From Camel 2.10
-onwards also OSGi blueprint is supported to load from
-*OSGI-INF/blueprint/*.xml* (requires to configure the plugin to use
-blueprint).
-
 |=======================================================================
 
 == Adding the plugin to your pom.xml
