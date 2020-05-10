@@ -54,7 +54,6 @@
 ** xref:dependency-injection.adoc[Dependency Injection]
 ** xref:dozer-type-conversion.adoc[Dozer Type Conversion]
 ** xref:endpoint-annotations.adoc[Endpoint Annotations]
-** xref:endpoint-completer.adoc[EndpointCompleter]
 ** xref:exception-clause.adoc[Exception Clause]
 ** xref:fluent-builders.adoc[Fluent Builders]
 ** xref:http-session-handling.adoc[HTTP-Session Handling]
