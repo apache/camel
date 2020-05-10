@@ -1165,6 +1165,10 @@ Camel K, Camel Quarkus, etc.
 The following components is no longer supported in OSGi and has been removed from the Camel Karaf features file:
 camel-undertow, camel-jgroups, camel-jgroups-raft, camel-infinspan.
 
+=== camel-maven-plugin
+
+The `embedded` goal has been removed (was never really in use). Use `run` goal instead.
+
 === API changes
 
 The dump model classes in package `org.apache.camel.support.dump` has been removed
