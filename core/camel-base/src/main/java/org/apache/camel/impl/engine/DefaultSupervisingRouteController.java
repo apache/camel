@@ -318,6 +318,13 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Collection<Route> getRestartingRoutes() {
+        return routeManager.routes.keySet().stream()
+                .map(RouteHolder::get)
+                .collect(Collectors.toList());
+    }
+
     // *********************************
     // Helpers
     // *********************************

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Collection;
+
+import org.apache.camel.Route;
+
 /**
  * A supervising capable {@link RouteController} that delays the startup
  * of the routes after the camel context startup and takes control of starting the routes in a safe manner.
@@ -110,5 +114,13 @@ public interface SupervisingRouteController extends RouteController {
      * between restart attempts.
      */
     void setBackOffMultiplier(double backOffMultiplier);
+
+    /**
+     * Return the list of routes that are currently under restarting by this controller.
+     *
+     * In other words the routes which has failed during startup and are know managed
+     * to be restarted.
+     */
+    Collection<Route> getRestartingRoutes();
 
 }
