@@ -95,7 +95,6 @@ camel routes without them knowing
 * xref:dsl.adoc[DSL]
 * xref:endpoint.adoc[Endpoint]
 * xref:endpoint-annotations.adoc[Endpoint Annotations]
-* xref:endpoint-completer.adoc[EndpointCompleter]
 * xref:error-handler.adoc[Error Handler]
 * xref:exchange.adoc[Exchange]
 * xref:exchange-pattern.adoc[Exchange Pattern]
