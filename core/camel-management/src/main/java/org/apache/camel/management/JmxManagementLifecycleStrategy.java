@@ -65,6 +65,7 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
+import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
@@ -98,6 +99,7 @@ import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -549,6 +551,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedValidatorRegistry(context, (ValidatorRegistry)service);
         } else if (service instanceof CamelClusterService) {
             answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService)service);
+        } else if (service instanceof SupervisingRouteController) {
+            answer = new ManagedSupervisingRouteController(context, (SupervisingRouteController) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
