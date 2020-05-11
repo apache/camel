@@ -20,7 +20,7 @@ import java.util.Collection;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedRouteControllerMBean {
+public interface ManagedRouteControllerMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Controlled Routes")
     Collection<String> getControlledRoutes();

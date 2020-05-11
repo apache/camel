@@ -16,9 +16,14 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import javax.management.openmbean.TabularData;
 
-public interface ManagedSupervisingRouteControllerMBean extends ManagedServiceMBean {
+import java.util.Collection;
+
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+
+public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteControllerMBean {
 
     @ManagedAttribute(description = "Whether supervising is enabled")
     boolean isEnabled();
@@ -55,5 +60,11 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedServiceMB
 
     @ManagedAttribute(description = "Number of routes which have failed to startup and are currently managed to be restarted")
     int getNumberOfRestartingRoutes();
+
+    @ManagedAttribute(description = "Controlled Routes")
+    Collection<String> getRestartingRoutes();
+
+    @ManagedOperation(description = "Lists detailed status about all the routes (incl failure details for routes failed to start)")
+    TabularData routeStatus(boolean restartingOnly, boolean includeStacktrace);
 
 }

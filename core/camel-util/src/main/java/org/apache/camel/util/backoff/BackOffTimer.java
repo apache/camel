@@ -87,6 +87,11 @@ public class BackOffTimer {
         long getCurrentElapsedTime();
 
         /**
+         * The time the first attempt was performed.
+         */
+        long getFirstAttemptTime();
+
+        /**
          * The time the last attempt has been performed.
          */
         long getLastAttemptTime();

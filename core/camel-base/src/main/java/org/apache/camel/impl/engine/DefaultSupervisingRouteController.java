@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
@@ -58,6 +59,8 @@ import org.slf4j.LoggerFactory;
  * of the routes after the camel context startup and takes control of starting the routes in a safe manner.
  * This controller is able to retry starting failing routes, and have various options to configure
  * settings for backoff between restarting routes.
+ *
+ * @see DefaultRouteController
  */
 public class DefaultSupervisingRouteController extends DefaultRouteController implements SupervisingRouteController {
 
@@ -325,6 +328,16 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public BackOffTimer.Task getRestartingRouteState(String routeId) {
+        return routeManager.getBackOffContext(routeId).orElse(null);
+    }
+
+    @Override
+    public Throwable getRestartException(String routeId) {
+        return routeManager.exceptions.get(routeId);
+    }
+
     // *********************************
     // Helpers
     // *********************************
@@ -441,10 +454,12 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private class RouteManager {
         private final Logger logger;
         private final ConcurrentMap<RouteHolder, BackOffTimer.Task> routes;
+        private final ConcurrentMap<String, Throwable> exceptions;
 
         RouteManager() {
             this.logger = LoggerFactory.getLogger(RouteManager.class);
             this.routes = new ConcurrentHashMap<>();
+            this.exceptions = new ConcurrentHashMap<>();
         }
 
         void start(RouteHolder route) {
@@ -465,6 +480,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                             doStartRoute(r, false, rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
                             return false;
                         } catch (Exception e) {
+                            exceptions.put(r.getId(), e);
                             String cause = e.getClass().getName() + ": " + e.getMessage();
                             logger.info("Failed restarting route: {} attempt: {} due: {} (stacktrace in debug log level)", r.getId(), attempt, cause);
                             logger.debug("    Error restarting route caused by: " + e.getMessage(), e);
@@ -501,6 +517,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         }
 
         boolean release(RouteHolder route) {
+            exceptions.remove(route.getId());
             BackOffTimer.Task task = routes.remove(route);
             if (task != null) {
                 LOG.info("Cancel restart task for route {}", route.getId());
@@ -598,7 +615,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         }
     }
 
-    private class ManagedRoutePolicy extends RoutePolicySupport {
+    private class ManagedRoutePolicy extends RoutePolicySupport implements NonManagedService {
+
+        // we dont want this policy to be registed in JMX
 
         private void startRoute(RouteHolder holder) {
             try {

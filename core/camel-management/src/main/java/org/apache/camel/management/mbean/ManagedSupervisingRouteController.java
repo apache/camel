@@ -16,10 +16,26 @@
  */
 package org.apache.camel.management.mbean;
 
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedSupervisingRouteControllerMBean;
 import org.apache.camel.spi.SupervisingRouteController;
+import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.backoff.BackOffTimer;
 
 @ManagedResource(description = "Managed SupervisingRouteController")
 public class ManagedSupervisingRouteController extends ManagedService implements ManagedSupervisingRouteControllerMBean {
@@ -29,6 +45,10 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     public ManagedSupervisingRouteController(CamelContext context, SupervisingRouteController controller) {
         super(context, controller);
         this.controller = controller;
+    }
+
+    public SupervisingRouteController getRouteController() {
+        return controller;
     }
 
     @Override
@@ -89,5 +109,80 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     @Override
     public int getNumberOfRestartingRoutes() {
         return controller.getRestartingRoutes().size();
+    }
+
+    @Override
+    public Collection<String> getControlledRoutes() {
+        if (controller != null) {
+            return controller.getControlledRoutes().stream()
+                    .map(Route::getId)
+                    .collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<String> getRestartingRoutes() {
+        if (controller != null) {
+            return controller.getRestartingRoutes().stream()
+                    .map(Route::getId)
+                    .collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    @Override
+    public TabularData routeStatus(boolean restartingOnly, boolean includeStacktrace) {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusTabularType());
+
+            int index = 0;
+            Collection<Route> routes = restartingOnly ? controller.getRestartingRoutes() : controller.getControlledRoutes();
+            for (Route route : routes) {
+                CompositeType ct = CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusCompositeType();
+
+                String routeId = route.getRouteId();
+                String status = controller.getRouteStatus(routeId).name();
+                BackOffTimer.Task state = controller.getRestartingRouteState(routeId);
+                String supervising = state != null ? state.getStatus().name() : "";
+                long attempts = state != null ? state.getCurrentAttempts() : 0;
+                String elapsed = "";
+                String last = "";
+                long time = state != null ? state.getFirstAttemptTime() : 0;
+                if (time > 0) {
+                    long delta = System.currentTimeMillis() - time;
+                    elapsed = TimeUtils.printDuration(delta);
+                }
+                time = state != null ? state.getLastAttemptTime() : 0;
+                if (time > 0) {
+                    long delta = System.currentTimeMillis() - time;
+                    last = TimeUtils.printDuration(delta);
+                }
+                String error = "";
+                String stacktrace = "";
+                Throwable cause = controller.getRestartException(routeId);
+                if (cause != null) {
+                    error = cause.getMessage();
+                    if (includeStacktrace) {
+                        StringWriter writer = new StringWriter();
+                        cause.printStackTrace(new PrintWriter(writer));
+                        writer.flush();
+                        stacktrace = writer.toString();
+                    }
+                }
+
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"index", "routeId", "status", "supervising", "attempts", "elapsed", "last", "error", "stacktrace"},
+                        new Object[]{index, routeId, status, supervising, attempts, elapsed, last, error, stacktrace});
+                answer.put(data);
+
+                // use a counter as the single index in the TabularData as we do not want a multi-value index
+                index++;
+            }
+            return answer;
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 }

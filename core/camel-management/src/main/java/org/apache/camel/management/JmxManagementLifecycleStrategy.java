@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management;
 
+import javax.management.JMException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,10 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import javax.management.JMException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -65,7 +64,6 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
-import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
@@ -99,7 +97,6 @@ import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -248,7 +245,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         try {
-            Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext);
+            Object me = getManagementObjectStrategy().getManagedObjectForRouteController(camelContext, camelContext.getRouteController());
             if (me == null) {
                 // endpoint should not be managed
                 return;
@@ -311,7 +308,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         try {
-            Object mc = getManagementObjectStrategy().getManagedObjectForRouteController(context);
+            Object mc = getManagementObjectStrategy().getManagedObjectForRouteController(context, context.getRouteController());
             // the context could have been removed already
             if (getManagementStrategy().isManaged(mc)) {
                 unmanageObject(mc);
@@ -551,8 +548,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedValidatorRegistry(context, (ValidatorRegistry)service);
         } else if (service instanceof CamelClusterService) {
             answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService)service);
-        } else if (service instanceof SupervisingRouteController) {
-            answer = new ManagedSupervisingRouteController(context, (SupervisingRouteController) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
