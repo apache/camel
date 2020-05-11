@@ -26,6 +26,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -149,6 +150,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
+        addBeanDefinitionParser("routeController", CamelRouteControllerDefinition.class, false, false);
 
         // error handler could be the sub element of camelContext or defined outside camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
@@ -378,6 +380,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("camelPropertyPlaceholder", factoryBean.getCamelPropertyPlaceholder());
                 builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
                 builder.addPropertyValue("camelStreamCachingStrategy", factoryBean.getCamelStreamCachingStrategy());
+                builder.addPropertyValue("camelRouteController", factoryBean.getCamelRouteController());
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
                 builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
                 builder.addPropertyValue("beans", factoryBean.getBeans());
