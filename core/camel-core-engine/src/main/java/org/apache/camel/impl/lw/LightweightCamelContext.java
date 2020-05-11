@@ -498,16 +498,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public void setSupervisingRouteController(SupervisingRouteController supervisingRouteController) {
-        delegate.adapt(ExtendedCamelContext.class).setSupervisingRouteController(supervisingRouteController);
-    }
-
-    @Override
-    public SupervisingRouteController getSupervisingRouteController() {
-        return delegate.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
-    }
-
-    @Override
     public List<Route> getRoutes() {
         return delegate.getRoutes();
     }

@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -44,13 +43,12 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         // lets make a simple route
         context.addRoutes(new MyRoute());
 
-        // configure supervising
-        SupervisingRouteController src = context.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
+        // configure supervising route controller
+        SupervisingRouteController src = context.getRouteController().supervising();
         src.setBackOffDelay(25);
         src.setBackOffMaxAttempts(3);
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
-        context.setRouteController(src);
 
         context.start();
 
@@ -89,7 +87,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         context.addRoutes(new MyRoute());
 
         // configure supervising
-        SupervisingRouteController src = context.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
+        SupervisingRouteController src = context.getRouteController().supervising();
         src.setBackOffDelay(25);
         src.setBackOffMaxAttempts(10);
         src.setInitialDelay(100);

@@ -26,6 +26,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -123,6 +124,24 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     // ***************************************************
     //
     // ***************************************************
+
+    @Override
+    public <T extends RouteController> T adapt(Class<T> type) {
+        return type.cast(this);
+    }
+
+    @Override
+    public SupervisingRouteController supervising() {
+        if (this instanceof SupervisingRouteController) {
+            return (SupervisingRouteController) this;
+        } else {
+            // change current route controller to be supervising
+            SupervisingRouteController src = new DefaultSupervisingRouteController();
+            src.setCamelContext(camelContext);
+            camelContext.setRouteController(src);
+            return src;
+        }
+    }
 
     @Override
     public Collection<Route> getControlledRoutes() {

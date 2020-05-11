@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -53,7 +52,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
@@ -277,7 +275,6 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile UuidGenerator uuidGenerator;
     private volatile UnitOfWorkFactory unitOfWorkFactory;
     private volatile RouteController routeController;
-    private volatile SupervisingRouteController supervisingRouteController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private volatile BeanIntrospection beanIntrospection;
     private volatile Tracer tracer;
@@ -1096,23 +1093,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         return routeController;
-    }
-
-    @Override
-    public SupervisingRouteController getSupervisingRouteController() {
-        if (supervisingRouteController == null) {
-            synchronized (lock) {
-                if (supervisingRouteController == null) {
-                    setSupervisingRouteController(createSupervisingRouteController());
-                }
-            }
-        }
-        return supervisingRouteController;
-    }
-
-    @Override
-    public void setSupervisingRouteController(SupervisingRouteController supervisingRouteController) {
-        this.supervisingRouteController = supervisingRouteController;
     }
 
     @Override
@@ -4530,8 +4510,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract RouteController createRouteController();
 
-    protected abstract SupervisingRouteController createSupervisingRouteController();
-
     protected abstract ShutdownStrategy createShutdownStrategy();
 
     protected abstract PackageScanClassResolver createPackageScanClassResolver();
@@ -4592,6 +4570,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public RouteController getInternalRouteController() {
         return new RouteController() {
+            @Override
+            public SupervisingRouteController supervising() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public <T extends RouteController> T adapt(Class<T> type) {
+                return type.cast(this);
+            }
+
             @Override
             public Collection<Route> getControlledRoutes() {
                 return AbstractCamelContext.this.getRoutes();

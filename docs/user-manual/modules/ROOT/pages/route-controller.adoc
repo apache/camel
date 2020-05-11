@@ -74,7 +74,11 @@ recover starting the salesforce route.
 [source,java]
 -----
 CamelContext camel = ...
-camel.setRouteController(DefaultSupervisingRouteController());
+SupervisingRouteController src = camel.getRouteController().supervise();
+src.setBackOffDelay(5000);
+src.setBackOffMaxAttempts(3);
+src.setInitialDelay(1000);
+src.setThreadPoolSize(2);
 -----
 
 If you use Camel with Spring Boot or Camel Main you can also enable supervising
@@ -82,13 +86,13 @@ from `application.properties`:
 
 [source,properties]
 ----
-camel.main.route-controller-enabled = true
+camel.main.routeControllerSuperviseEnabled = true
 
 # and you can configure more options
-camel.main.route-controller-back-off-delay = 250
-camel.main.route-controller-back-off-max-attempts = 3
-camel.main.route-controller-initial-delay = 1000
-camel.main.route-controller-thread-pool-size = 2
+camel.main.routeControllerBackoffDelay = 5000
+camel.main.routeControllerBackoffMaxAttempts = 3
+camel.main.routeControllerInitialDelay = 1000
+camel.main.routeControllerThreadPoolSize = 2
 ----
 
 And in Spring Boot:
@@ -98,10 +102,10 @@ And in Spring Boot:
 camel.springboot.route-controller-enabled = true
 
 # and you can configure more options
-camel.springboot.route-controller-back-off-delay = 250
-camel.springboot.route-controller-back-off-max-attempts = 3
-camel.springboot.route-controller-initial-delay = 1000
-camel.springboot.route-controller-thread-pool-size = 2
+camel.springboot.routeControllerBackoffDelay = 5000
+camel.springboot.routeControllerBackoffMaxAttempts = 3
+camel.springboot.routeControllerInitialDelay = 1000
+camel.springboot.routeControllerThreadPoolSize = 2
 ----
 
 === Supervising Options
@@ -155,8 +159,12 @@ by excluding by pattern `aws*` (uri or route id)
 
 [source,java]
 -----
-camel.springboot.route-controller-exclude-routes = aws*
+camel.springboot.routeControllerExcludeRoutes = aws*
 -----
+
+== JMX management
+
+The route controllers are manageable in JMX, where you can find their MBean under the `routecontrollers` node.
 
 == See Also
 
