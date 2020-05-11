@@ -71,6 +71,8 @@ from("salesforce:cheese")
 Then we can tell Camel to use the supervising route controller to let Camel attempt to
 recover starting the salesforce route.
 
+Enabling and configuring supervising route controller from Java:
+
 [source,java]
 -----
 CamelContext camel = ...
@@ -106,6 +108,25 @@ camel.springboot.routeControllerBackoffDelay = 5000
 camel.springboot.routeControllerBackoffMaxAttempts = 3
 camel.springboot.routeControllerInitialDelay = 1000
 camel.springboot.routeControllerThreadPoolSize = 2
+----
+
+And for users with XML DSL in Spring or OSGi Blueprint, you can do as follows:
+
+[source,xml]
+----
+<camelContext>
+    <routeController id="myController"
+                     supervising="true" initialDelay="1000" threadPoolSize="2"
+                     backOffDelay="5000" backOffMaxAttempts="3"/>
+    <route>
+      <from uri="file:foo/cake"/>
+      <to uri="log:cake"/>
+    </route>
+    <route>
+      <from uri="salesforce:cheese"/>
+      <to uri="log:cheese"/>
+    </route>
+</camelContext>
 ----
 
 === Supervising Options
