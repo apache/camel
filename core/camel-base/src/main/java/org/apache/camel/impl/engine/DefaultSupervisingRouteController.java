@@ -478,6 +478,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                         try {
                             logger.info("Restarting route: {} attempt: {}", r.getId(), attempt);
                             doStartRoute(r, false, rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
+                            logger.info("Route: {} started after {} attempts", r.getId(), attempt);
                             return false;
                         } catch (Exception e) {
                             exceptions.put(r.getId(), e);
@@ -520,7 +521,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             exceptions.remove(route.getId());
             BackOffTimer.Task task = routes.remove(route);
             if (task != null) {
-                LOG.info("Cancel restart task for route {}", route.getId());
+                LOG.info("Cancelling restart task for route: {}", route.getId());
                 task.cancel();
             }
 

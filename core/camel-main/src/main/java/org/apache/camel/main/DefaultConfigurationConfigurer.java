@@ -178,8 +178,8 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
         }
 
-        // supervisting route controller
-        if (config.isRouteControllerEnabled()) {
+        // supervising route controller
+        if (config.isRouteControllerSuperviseEnabled()) {
             SupervisingRouteController src = camelContext.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
             src.setCamelContext(camelContext);
             if (config.getRouteControllerIncludeRoutes() != null) {

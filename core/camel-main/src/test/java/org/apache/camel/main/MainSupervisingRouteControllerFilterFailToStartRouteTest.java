@@ -36,7 +36,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest extends As
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().setRouteControllerEnabled(true);
+        main.configure().setRouteControllerSuperviseEnabled(true);
         main.configure().setRouteControllerBackOffDelay(250);
         main.configure().setRouteControllerBackOffMaxAttempts(3);
         main.configure().setRouteControllerInitialDelay(1000);

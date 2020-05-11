@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.impl.engine;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,90 +30,94 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.SupervisingRouteController;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class MainSupervisingRouteControllerTest extends Assert {
+public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Test
-    public void testMain() throws Exception {
+    public void testSupervising() throws Exception {
         // lets make a simple route
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().withRouteControllerSuperviseEnabled(true)
-                        .withRouteControllerBackOffDelay(25)
-                        .withRouteControllerBackOffMaxAttempts(3)
-                        .withRouteControllerInitialDelay(100)
-                        .withRouteControllerThreadPoolSize(2);
-        main.start();
+        context.addRoutes(new MyRoute());
 
-        MockEndpoint mock = main.getCamelContext().getEndpoint("mock:foo", MockEndpoint.class);
+        // configure supervising
+        SupervisingRouteController src = context.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
+        src.setBackOffDelay(25);
+        src.setBackOffMaxAttempts(3);
+        src.setInitialDelay(100);
+        src.setThreadPoolSize(2);
+        context.setRouteController(src);
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMinimumMessageCount(3);
 
-        MockEndpoint mock2 = main.getCamelContext().getEndpoint("mock:cheese", MockEndpoint.class);
+        MockEndpoint mock2 = context.getEndpoint("mock:cheese", MockEndpoint.class);
         mock2.expectedMessageCount(0);
 
-        MockEndpoint mock3 = main.getCamelContext().getEndpoint("mock:cake", MockEndpoint.class);
+        MockEndpoint mock3 = context.getEndpoint("mock:cake", MockEndpoint.class);
         mock3.expectedMessageCount(0);
 
-        MockEndpoint mock4 = main.getCamelContext().getEndpoint("mock:bar", MockEndpoint.class);
+        MockEndpoint mock4 = context.getEndpoint("mock:bar", MockEndpoint.class);
         mock4.expectedMessageCount(0);
 
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("cake").toString());
 
-        SupervisingRouteController src = (SupervisingRouteController) main.camelContext.getRouteController();
         Throwable e = src.getRestartException("cake");
         assertNotNull(e);
         assertEquals("Cannot start", e.getMessage());
         assertTrue(e instanceof IllegalArgumentException);
 
         // bar is no auto startup
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
-
-        main.stop();
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
     }
 
     @Test
-    public void testMainOk() throws Exception {
+    public void testSupervisingOk() throws Exception {
         // lets make a simple route
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().setRouteControllerSuperviseEnabled(true);
-        main.configure().setRouteControllerBackOffDelay(25);
-        main.configure().setRouteControllerBackOffMaxAttempts(10);
-        main.configure().setRouteControllerInitialDelay(100);
-        main.configure().setRouteControllerThreadPoolSize(2);
+        context.addRoutes(new MyRoute());
 
-        main.start();
+        // configure supervising
+        SupervisingRouteController src = context.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
+        src.setBackOffDelay(25);
+        src.setBackOffMaxAttempts(10);
+        src.setInitialDelay(100);
+        src.setThreadPoolSize(2);
+        context.setRouteController(src);
 
-        MockEndpoint mock = main.getCamelContext().getEndpoint("mock:foo", MockEndpoint.class);
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMinimumMessageCount(3);
 
-        MockEndpoint mock2 = main.getCamelContext().getEndpoint("mock:cheese", MockEndpoint.class);
+        MockEndpoint mock2 = context.getEndpoint("mock:cheese", MockEndpoint.class);
         mock2.expectedMessageCount(0);
 
-        MockEndpoint mock3 = main.getCamelContext().getEndpoint("mock:cake", MockEndpoint.class);
+        MockEndpoint mock3 = context.getEndpoint("mock:cake", MockEndpoint.class);
         mock3.expectedMessageCount(0);
 
-        MockEndpoint mock4 = main.getCamelContext().getEndpoint("mock:bar", MockEndpoint.class);
+        MockEndpoint mock4 = context.getEndpoint("mock:bar", MockEndpoint.class);
         mock4.expectedMessageCount(0);
 
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         // these should all start
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("foo").toString());
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
-        assertEquals("Started", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
+        assertEquals("Started", context.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals("Started", context.getRouteController().getRouteStatus("cake").toString());
         // bar is no auto startup
-        assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
-
-        main.stop();
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
     }
 
     private class MyRoute extends RouteBuilder {

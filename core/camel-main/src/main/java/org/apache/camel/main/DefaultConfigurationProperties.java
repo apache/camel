@@ -81,7 +81,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRoutes = "classpath:camel/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
-    private boolean routeControllerEnabled;
+    private boolean routeControllerSuperviseEnabled;
     private String routeControllerIncludeRoutes;
     private String routeControllerExcludeRoutes;
     private int routeControllerThreadPoolSize;
@@ -900,8 +900,8 @@ public abstract class DefaultConfigurationProperties<T> {
         this.lightweight = lightweight;
     }
 
-    public boolean isRouteControllerEnabled() {
-        return routeControllerEnabled;
+    public boolean isRouteControllerSuperviseEnabled() {
+        return routeControllerSuperviseEnabled;
     }
 
     /**
@@ -914,8 +914,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * using a background thread. The controller allows to be configured with various
      * settings to attempt to restart failing routes.
      */
-    public void setRouteControllerEnabled(boolean routeControllerEnabled) {
-        this.routeControllerEnabled = routeControllerEnabled;
+    public void setRouteControllerSuperviseEnabled(boolean routeControllerSuperviseEnabled) {
+        this.routeControllerSuperviseEnabled = routeControllerSuperviseEnabled;
     }
 
     public String getRouteControllerIncludeRoutes() {
@@ -1699,8 +1699,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * using a background thread. The controller allows to be configured with various
      * settings to attempt to restart failing routes.
      */
-    public T withRouteControllerEnabled(boolean routeControllerEnabled) {
-        this.routeControllerEnabled = routeControllerEnabled;
+    public T withRouteControllerSuperviseEnabled(boolean routeControllerSuperviseEnabled) {
+        this.routeControllerSuperviseEnabled = routeControllerSuperviseEnabled;
         return (T) this;
     }
 
@@ -1754,6 +1754,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerBackOffMultiplier(double routeControllerBackOffMultiplier) {
         this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
+        return (T) this;
+    }
+
+    /**
+     * The number of threads used by the route controller scheduled thread pool that are used for restarting
+     * routes. The pool uses 1 thread by default, but you can increase this to allow the controller
+     * to concurrently attempt to restart multiple routes in case more than one route has problems
+     * starting.
+     */
+    public T withRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
+        this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
         return (T) this;
     }
 
