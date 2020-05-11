@@ -260,7 +260,7 @@ to the original caller.
 
 [source,java]
 -------------------------------------------------
-public void configure() throws Exception {
+public void configure() {
     from("direct:start")
         // send it to the disruptor that is async
         .to("disruptor:next")
