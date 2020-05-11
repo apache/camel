@@ -16,10 +16,11 @@
  */
 package org.apache.camel.management;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
