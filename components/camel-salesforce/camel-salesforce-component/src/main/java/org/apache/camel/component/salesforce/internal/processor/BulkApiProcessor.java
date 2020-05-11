@@ -48,10 +48,22 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
     private BulkApiClient bulkClient;
 
-    public BulkApiProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
+    public BulkApiProcessor(SalesforceEndpoint endpoint) {
         super(endpoint);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         this.bulkClient = new DefaultBulkApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient, loginConfig);
+        ServiceHelper.startService(bulkClient);
+    }
+
+
+    @Override
+    public void doStop() {
+        // stop the client
+        ServiceHelper.stopService(bulkClient);
     }
 
     @Override
@@ -413,16 +425,5 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
         // signal exchange completion
         callback.done(false);
-    }
-
-    @Override
-    public void start() {
-        ServiceHelper.startService(bulkClient);
-    }
-
-    @Override
-    public void stop() {
-        // stop the client
-        ServiceHelper.stopService(bulkClient);
     }
 }

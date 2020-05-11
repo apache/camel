@@ -66,12 +66,10 @@ public class XmlRestProcessor extends AbstractRestProcessor {
 
     public XmlRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
-
     }
 
     @Override
     protected void processRequest(Exchange exchange) throws SalesforceException {
-
         switch (operationName) {
             case GET_VERSIONS:
                 exchange.setProperty(RESPONSE_CLASS, Versions.class);
