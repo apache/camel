@@ -36,7 +36,7 @@
     <activemq-artemis-version>2.12.0</activemq-artemis-version>
     <activemq-version>5.15.12</activemq-version>
     <aether-version>1.0.2.v20150114</aether-version>
-    <ahc-version>2.11.0</ahc-version>
+    <ahc-version>2.12.1</ahc-version>
     <android-annotations-version>4.1.1.4</android-annotations-version>
     <apache-any23-version>2.3</apache-any23-version>
     <apache-drill-version>1.17.0</apache-drill-version>
