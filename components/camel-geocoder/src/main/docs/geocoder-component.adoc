@@ -12,9 +12,10 @@
 *{component-header}*
 
 The Geocoder component is used for looking up geocodes (latitude and
-longitude) for a given address, or reverse lookup. The component uses
-the https://code.google.com/p/geocoder-java/[Java API for Google
-Geocoder] library.
+longitude) for a given address, or reverse lookup.
+
+The component uses either a hosted https://github.com/openstreetmap/Nominatim[Nominatim server] or
+the https://code.google.com/p/geocoder-java/[Java  API for Google Geocoder] library.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -76,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (15 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,18 +86,20 @@ with the following path and query parameters:
 | *headersOnly* (producer) | Whether to only enrich the Exchange with headers, and leave the body as-is. | false | boolean
 | *language* (producer) | The language to use. | en | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *serverUrl* (producer) | URL to the geocoder server. Mandatory for Nominatim server. |  | String
+| *type* (producer) | Type of GeoCoding server. Supported Nominatim and Google. The value can be one of: NOMINATIM, GOOGLE |  | GeoCoderType
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *proxyAuthDomain* (proxy) | Domain for proxy NTML authentication |  | String
-| *proxyAuthHost* (proxy) | Optional host for proxy NTML authentication |  | String
-| *proxyAuthMethod* (proxy) | Authentication method for proxy, either as Basic, Digest or NTLM. |  | String
-| *proxyAuthPassword* (proxy) | Password for proxy authentication |  | String
-| *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
-| *proxyHost* (proxy) | The proxy host name |  | String
-| *proxyPort* (proxy) | The proxy port number |  | Integer
-| *apiKey* (security) | To use google apiKey |  | String
-| *clientId* (security) | To use google premium with this client id |  | String
-| *clientKey* (security) | To use google premium with this client key |  | String
+| *proxyAuthDomain* (proxy) | Proxy Authentication Domain to access Google GeoCoding server. |  | String
+| *proxyAuthHost* (proxy) | Proxy Authentication Host to access Google GeoCoding server. |  | String
+| *proxyAuthMethod* (proxy) | Authentication Method to Google GeoCoding server. |  | String
+| *proxyAuthPassword* (proxy) | Proxy Password to access GeoCoding server. |  | String
+| *proxyAuthUsername* (proxy) | Proxy Username to access GeoCoding server. |  | String
+| *proxyHost* (proxy) | Proxy Host to access GeoCoding server. |  | String
+| *proxyPort* (proxy) | Proxy Port to access GeoCoding server. |  | Integer
+| *apiKey* (security) | API Key to access Google. Mandatory for Google GeoCoding server. |  | String
+| *clientId* (security) | Client ID to access Google GeoCoding server. |  | String
+| *clientKey* (security) | Client Key to access Google GeoCoding server. |  | String
 |===
 // endpoint options: END
 
@@ -104,15 +107,6 @@ with the following path and query parameters:
 
 
 == Exchange data format
-
-Camel will deliver the body as a
-`com.google.code.geocoder.model.GeocodeResponse` type. +
- And if the address is `"current"` then the response is a String type
-with a JSON representation of the current location.
-
-If the option `headersOnly` is set to `true` then the message body is
-left as-is, and only headers will be added to the
-Exchange.
 
 == Message Headers
 
@@ -147,6 +141,21 @@ Exchange.
 Notice not all headers may be provided depending on available data and
 mode in use (address vs latlng).
 
+=== Body using a Nominatim Server
+
+Camel will deliver the body as a JSONv2 type.
+
+=== Body using a Google Server
+
+Camel will deliver the body as a
+`com.google.code.geocoder.model.GeocodeResponse` type. +
+And if the address is `"current"` then the response is a String type
+with a JSON representation of the current location.
+
+If the option `headersOnly` is set to `true` then the message body is
+left as-is, and only headers will be added to the
+Exchange.
+
 == Samples
 
 In the example below we get the latitude and longitude for Paris, France
@@ -154,7 +163,7 @@ In the example below we get the latitude and longitude for Paris, France
 [source,java]
 -----------------------------------------
   from("direct:start")
-    .to("geocoder:address:Paris, France")
+    .to("geocoder:address:Paris, France?type=NOMINATIM&serverUrl=https://nominatim.openstreetmap.org")
 -----------------------------------------
 
 If you provide a header with the `CamelGeoCoderAddress` then that
@@ -182,8 +191,8 @@ Which will log
 Location 285 Bedford Avenue, Brooklyn, NY 11211, USA is at lat/lng: 40.71412890,-73.96140740 and in country US
 --------------------------------------------------------------------------------------------------------------
 
-To get the current location you can use "current" as the address as
-shown:
+To get the current location using the Google GeoCoder,
+you can use "current" as the address as shown:
 
 [source,java]
 -----------------------------------
