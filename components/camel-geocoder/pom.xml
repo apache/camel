@@ -46,6 +46,20 @@
             <artifactId>google-maps-services</artifactId>
             <version>${google-maps-services-version}</version>
         </dependency>
+
+        <!-- Client library for JSON responses -->
+        <!-- Used with Nominatim -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${json-path-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
