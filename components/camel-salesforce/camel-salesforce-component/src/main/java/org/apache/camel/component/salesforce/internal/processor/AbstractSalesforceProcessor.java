@@ -29,10 +29,11 @@ import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSalesforceProcessor implements SalesforceProcessor {
+public abstract class AbstractSalesforceProcessor extends ServiceSupport implements SalesforceProcessor {
 
     protected static final boolean NOT_OPTIONAL = false;
     protected static final boolean IS_OPTIONAL = true;
@@ -43,23 +44,32 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
     protected final SalesforceEndpoint endpoint;
     protected final Map<String, Object> endpointConfigMap;
-
     protected final OperationName operationName;
-    protected final SalesforceSession session;
-    protected final SalesforceHttpClient httpClient;
-    protected final SalesforceLoginConfig loginConfig;
-    protected final boolean rawPayload;
+
+    protected SalesforceSession session;
+    protected SalesforceHttpClient httpClient;
+    protected SalesforceLoginConfig loginConfig;
+    protected boolean rawPayload;
 
     public AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;
-        operationName = endpoint.getOperationName();
-        endpointConfigMap = endpoint.getConfiguration().toValueMap();
+        this.operationName = endpoint.getOperationName();
+        this.endpointConfigMap = endpoint.getConfiguration().toValueMap();
+    }
 
-        final SalesforceComponent component = endpoint.getComponent();
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        SalesforceComponent component = endpoint.getComponent();
         session = component.getSession();
         loginConfig = component.getLoginConfig();
-        httpClient = endpoint.getConfiguration().getHttpClient();
         rawPayload = endpoint.getConfiguration().isRawPayload();
+
+        httpClient = endpoint.getConfiguration().getHttpClient();
+        if (httpClient == null) {
+            httpClient = component.getHttpClient();
+        }
     }
 
     @Override

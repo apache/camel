@@ -67,20 +67,33 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     private RestClient restClient;
     private Map<String, Class<?>> classMap;
+    private NotFoundBehaviour notFoundBehaviour;
 
-    private final NotFoundBehaviour notFoundBehaviour;
-
-    public AbstractRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
+    public AbstractRestProcessor(SalesforceEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
-        notFoundBehaviour = configuration.getNotFoundBehaviour();
-
+        this.notFoundBehaviour = configuration.getNotFoundBehaviour();
         final SalesforceComponent salesforceComponent = endpoint.getComponent();
+        if (restClient == null) {
+            this.restClient = salesforceComponent.createRestClientFor(endpoint);
+        }
+        if (classMap == null) {
+            this.classMap = endpoint.getComponent().getClassMap();
+        }
 
-        this.restClient = salesforceComponent.createRestClientFor(endpoint);
+        ServiceHelper.startService(restClient);
+    }
 
-        this.classMap = endpoint.getComponent().getClassMap();
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(restClient);
     }
 
     // used in unit tests
@@ -90,16 +103,6 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         this.classMap = classMap;
         final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
         notFoundBehaviour = configuration.getNotFoundBehaviour();
-    }
-
-    @Override
-    public void start() {
-        ServiceHelper.startService(restClient);
-    }
-
-    @Override
-    public void stop() {
-        ServiceHelper.stopService(restClient);
     }
 
     @Override

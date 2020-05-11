@@ -37,8 +37,6 @@ import java.util.concurrent.TimeoutException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -48,6 +46,7 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginError;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpConversation;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -59,7 +58,7 @@ import org.eclipse.jetty.util.Fields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SalesforceSession implements Service {
+public class SalesforceSession extends ServiceSupport {
 
     private static final String JWT_SIGNATURE_ALGORITHM = "SHA256withRSA";
 
@@ -345,23 +344,15 @@ public class SalesforceSession implements Service {
     }
 
     @Override
-    public void start() {
+    public void doStart() throws Exception {
         // auto-login at start if needed
-        try {
-            login(accessToken);
-        } catch (SalesforceException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+        login(accessToken);
     }
 
     @Override
-    public void stop() {
+    public void doStop() throws Exception {
         // logout
-        try {
-            logout();
-        } catch (SalesforceException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+        logout();
     }
 
     public long getTimeout() {

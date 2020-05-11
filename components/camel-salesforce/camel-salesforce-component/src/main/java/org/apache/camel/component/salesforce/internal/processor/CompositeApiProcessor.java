@@ -48,13 +48,16 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
     }
 
-    private final CompositeApiClient compositeClient;
+    private CompositeApiClient compositeClient;
+    private PayloadFormat format;
 
-    private final PayloadFormat format;
-
-    public CompositeApiProcessor(final SalesforceEndpoint endpoint) throws SalesforceException {
+    public CompositeApiProcessor(final SalesforceEndpoint endpoint) {
         super(endpoint);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
         final String apiVersion = configuration.getApiVersion();
 
@@ -63,9 +66,14 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         if (!EnumSet.of(PayloadFormat.JSON, PayloadFormat.XML).contains(format)) {
             throw new SalesforceException("Unsupported format: " + format, 0);
         }
-
         compositeClient = new DefaultCompositeApiClient(configuration, format, apiVersion, session, httpClient, loginConfig);
+        ServiceHelper.startService(compositeClient);
+    }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(compositeClient);
     }
 
     @Override
@@ -87,16 +95,6 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             final SalesforceException exception = new SalesforceException(String.format("Unexpected Error processing %s: \"%s\"", operationName.value(), e.getMessage()), e);
             return processException(exchange, callback, exception);
         }
-    }
-
-    @Override
-    public void start() {
-        ServiceHelper.startService(compositeClient);
-    }
-
-    @Override
-    public void stop() {
-        ServiceHelper.stopService(compositeClient);
     }
 
     void processCompositeBatchResponse(final Exchange exchange, final Optional<SObjectBatchResponse> responseBody, final Map<String, String> headers,

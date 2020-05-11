@@ -34,10 +34,8 @@ import org.apache.camel.component.salesforce.internal.client.AnalyticsApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultAnalyticsApiClient;
 import org.apache.camel.support.service.ServiceHelper;
 
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INCLUDE_DETAILS;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INSTANCE_ID;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.REPORT_ID;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.REPORT_METADATA;
+
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
 
 /**
  * Exchange processor for Analytics API.
@@ -46,10 +44,21 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
 
     private AnalyticsApiClient analyticsClient;
 
-    public AnalyticsApiProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
+    public AnalyticsApiProcessor(SalesforceEndpoint endpoint) {
         super(endpoint);
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         this.analyticsClient = new DefaultAnalyticsApiClient((String)endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient, loginConfig);
+        ServiceHelper.startService(analyticsClient);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(analyticsClient);
     }
 
     @Override
@@ -208,14 +217,4 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
         callback.done(false);
     }
 
-    @Override
-    public void start() {
-        ServiceHelper.startService(analyticsClient);
-    }
-
-    @Override
-    public void stop() {
-        // stop the client
-        ServiceHelper.stopService(analyticsClient);
-    }
 }

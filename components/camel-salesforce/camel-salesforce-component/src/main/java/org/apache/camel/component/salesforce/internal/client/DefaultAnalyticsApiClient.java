@@ -61,13 +61,11 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
     public DefaultAnalyticsApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient, SalesforceLoginConfig loginConfig) throws SalesforceException {
         super(version, session, httpClient, loginConfig);
-
         objectMapper = JsonUtils.createObjectMapper();
     }
 
     @Override
     public void getRecentReports(final Map<String, List<String>> headers, final RecentReportsResponseCallback callback) {
-
         final Request request = getRequest(HttpMethod.GET, reportsUrl(), headers);
 
         doHttpRequest(request, new ClientResponseCallback() {

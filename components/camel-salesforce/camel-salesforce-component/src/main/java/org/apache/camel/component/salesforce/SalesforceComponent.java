@@ -302,7 +302,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return result;
     }
 
-    protected SalesforceHttpClient getHttpClient() {
+    public SalesforceHttpClient getHttpClient() {
         return httpClient;
     }
 
