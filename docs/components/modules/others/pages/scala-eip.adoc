@@ -205,5 +205,5 @@ transformation and pass that to the `process` method instead. The
 example below uses pattern matching to enrich the message content:
 
 Off course, you can also use any other Camel component (e.g.
-xref:velocity-component.adoc[Velocity]) to enrich the content and add it to a
+xref:ROOT:velocity-component.adoc[Velocity]) to enrich the content and add it to a
 pipeline

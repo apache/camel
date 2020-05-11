@@ -11,16 +11,16 @@
 *Since Camel {since}*
 
 The `camel-urlrewrite` component allows to plugin url rewrite
-functionality to xref:http-component.adoc[HTTP], xref:http4-component.adoc[HTTP4],
-xref:jetty-component.adoc[Jetty], or xref:ahc-component.adoc[AHC] components. This component
+functionality to xref:ROOT:http-component.adoc[HTTP], xref:ROOT:http4-component.adoc[HTTP4],
+xref:ROOT:jetty-component.adoc[Jetty], or xref:ROOT:ahc-component.adoc[AHC] components. This component
 integrates the
 http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] project
 with Apache Camel. This allows you to use the capabilities from the url
 rewrite project with your Camel routes.
 
 This component *requires* that your Camel routes starts from a servlet
-based endpoint such as xref:jetty-component.adoc[Jetty] or
-xref:servlet-component.adoc[Servlet component].
+based endpoint such as xref:ROOT:jetty-component.adoc[Jetty] or
+xref:ROOT:servlet-component.adoc[Servlet component].
 
 [[UrlRewrite-Options]]
 == Options
@@ -57,8 +57,8 @@ remove the context-path.
 == Usage
 
 The following component producers supports using together with the
-`camel-urlrewrite` component: xref:http-component.adoc[HTTP],
-xref:http4-component.adoc[HTTP4] and xref:jetty-component.adoc[Jetty].
+`camel-urlrewrite` component: xref:ROOT:http-component.adoc[HTTP],
+xref:ROOT:http4-component.adoc[HTTP4] and xref:ROOT:jetty-component.adoc[Jetty].
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -80,7 +80,7 @@ with any of the components.
 
 You setup the url rewrite as a bean of the type
 `org.apache.camel.component.urlrewrite.http.HttpUrlRewrite` (when using
-xref:http-component.adoc[HTTP] component) as shown below:
+xref:ROOT:http-component.adoc[HTTP] component) as shown below:
 
 And in XML DSL you can do:
 
@@ -153,8 +153,8 @@ Component(s): camel-http4
 
 The former is a simple and generic interface, which is not dependent on
 the Servlet API. The later is servlet based which requires the Camel route to start from
-a servlet based component such as xref:jetty-component.adoc[Jetty] or
-xref:servlet-component.adoc[Servlet component]. The servlet based is more feature rich and
+a servlet based component such as xref:ROOT:jetty-component.adoc[Jetty] or
+xref:ROOT:servlet-component.adoc[Servlet component]. The servlet based is more feature rich and
 that's the API we use to integrate with the
 http://code.google.com/p/urlrewritefilter/[UrlRewriteFilter] project in
 this `camel-urlrewrite` component.
