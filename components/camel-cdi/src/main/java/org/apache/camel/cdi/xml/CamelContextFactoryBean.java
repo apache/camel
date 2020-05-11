@@ -41,6 +41,7 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
+import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -176,6 +177,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
+
+    @XmlElement(name = "routeController", type = CamelRouteControllerDefinition.class)
+    private CamelRouteControllerDefinition camelRouteController;
 
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class)
     private CamelJMXAgentDefinition camelJMXAgent;
@@ -600,6 +604,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setCamelStreamCachingStrategy(CamelStreamCachingStrategyDefinition camelStreamCachingStrategy) {
         this.camelStreamCachingStrategy = camelStreamCachingStrategy;
+    }
+
+    @Override
+    public CamelRouteControllerDefinition getCamelRouteController() {
+        return camelRouteController;
+    }
+
+    public void setCamelRouteController(CamelRouteControllerDefinition camelRouteController) {
+        this.camelRouteController = camelRouteController;
     }
 
     @Override

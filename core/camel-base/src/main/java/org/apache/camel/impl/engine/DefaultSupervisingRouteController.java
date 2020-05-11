@@ -181,16 +181,10 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     @Override
     protected void doInit() throws Exception {
-        this.backOff = new BackOff(
-                Duration.ofMillis(backOffDelay),
-                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : Duration.ofMillis(Long.MAX_VALUE),
-                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : Duration.ofMillis(Long.MAX_VALUE),
-                backOffMaxAttempts > 0 ? backOffMaxAttempts : Long.MAX_VALUE,
-                backOffMultiplier);
         this.listener = new CamelContextStartupListener();
 
-        CamelContext context = getCamelContext();
         // prevent routes from automatic being started by default
+        CamelContext context = getCamelContext();
         context.setAutoStartup(false);
         context.addRoutePolicyFactory(new ManagedRoutePolicyFactory());
         context.addStartupListener(this.listener);
@@ -198,6 +192,13 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     @Override
     protected void doStart() throws Exception {
+        this.backOff = new BackOff(
+                Duration.ofMillis(backOffDelay),
+                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : Duration.ofMillis(Long.MAX_VALUE),
+                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : Duration.ofMillis(Long.MAX_VALUE),
+                backOffMaxAttempts > 0 ? backOffMaxAttempts : Long.MAX_VALUE,
+                backOffMultiplier);
+
         CamelContext context = getCamelContext();
         if (threadPoolSize == 1) {
             executorService = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SupervisingRouteController");

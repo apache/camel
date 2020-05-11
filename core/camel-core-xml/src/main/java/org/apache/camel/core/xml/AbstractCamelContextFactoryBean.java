@@ -117,6 +117,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.Transformer;
@@ -382,12 +383,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using HealthCheckService: {}", healthCheckService);
             getContext().addService(healthCheckService);
         }
-        // Route controller
-        RouteController routeController = getBeanForType(RouteController.class);
-        if (routeController != null) {
-            LOG.info("Using RouteController: {}", routeController);
-            getContext().setRouteController(routeController);
-        }
         // UuidGenerator
         UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);
         if (uuidGenerator != null) {
@@ -417,6 +412,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // init stream caching strategy
         initStreamCachingStrategy();
+
+        // init route controller
+        initRouteController();
     }
     //CHECKSTYLE:ON
 
@@ -647,6 +645,64 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
+    protected void initRouteController() throws Exception {
+        // Route controller
+        RouteController routeController = getBeanForType(RouteController.class);
+        if (routeController != null) {
+            LOG.info("Using RouteController: {}", routeController);
+            getContext().setRouteController(routeController);
+            // we are using custom so dont attempt to use the default below
+            return;
+        }
+
+        CamelRouteControllerDefinition rc = getCamelRouteController();
+        if (rc == null) {
+            return;
+        }
+
+        SupervisingRouteController src = null;
+        Boolean enabled = CamelContextHelper.parseBoolean(getContext(), rc.getSupervising());
+        if (enabled != null) {
+            src = getContext().getRouteController().supervising();
+        }
+        String includeRoutes = CamelContextHelper.parseText(getContext(), rc.getIncludeRoutes());
+        if (includeRoutes != null && src != null) {
+            src.setIncludeRoutes(includeRoutes);
+        }
+        String excludeRoutes = CamelContextHelper.parseText(getContext(), rc.getExcludeRoutes());
+        if (excludeRoutes != null && src != null) {
+            src.setExcludeRoutes(excludeRoutes);
+        }
+        Integer threadPoolSize = CamelContextHelper.parseInteger(getContext(), rc.getThreadPoolSize());
+        if (threadPoolSize != null && src != null) {
+            src.setThreadPoolSize(threadPoolSize);
+        }
+        Long initialDelay = CamelContextHelper.parseLong(getContext(), rc.getInitialDelay());
+        if (initialDelay != null && src != null) {
+            src.setInitialDelay(initialDelay);
+        }
+        Long backoffDelay = CamelContextHelper.parseLong(getContext(), rc.getBackOffDelay());
+        if (backoffDelay != null && src != null) {
+            src.setBackOffDelay(backoffDelay);
+        }
+        Long backOffMaxDelay = CamelContextHelper.parseLong(getContext(), rc.getBackOffMaxDelay());
+        if (backOffMaxDelay != null && src != null) {
+            src.setBackOffMaxDelay(backOffMaxDelay);
+        }
+        Long backOffMaxElapsedTime = CamelContextHelper.parseLong(getContext(), rc.getBackOffMaxElapsedTime());
+        if (backOffMaxElapsedTime != null && src != null) {
+            src.setBackOffMaxElapsedTime(backOffMaxElapsedTime);
+        }
+        Long backOffMaxAttempts = CamelContextHelper.parseLong(getContext(), rc.getBackOffMaxAttempts());
+        if (backOffMaxAttempts != null && src != null) {
+            src.setBackOffMaxAttempts(backOffMaxAttempts);
+        }
+        Double backOffMultiplier = CamelContextHelper.parseDouble(getContext(), rc.getBackOffMultiplier());
+        if (backOffMultiplier != null && src != null) {
+            src.setBackOffMultiplier(backOffMultiplier);
+        }
+    }
+
     protected void initPropertyPlaceholder() throws Exception {
         if (getCamelPropertyPlaceholder() != null) {
             CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
@@ -824,6 +880,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
 
     public abstract CamelStreamCachingStrategyDefinition getCamelStreamCachingStrategy();
+
+    public abstract CamelRouteControllerDefinition getCamelRouteController();
 
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
 
