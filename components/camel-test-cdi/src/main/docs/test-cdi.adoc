@@ -284,7 +284,7 @@ Using ShrinkWarp Descriptors, you have a complete control over the
 configuration and kind of Camel CDI applications you want to test. For
 example, to test a Camel CDI application that uses the Camel
 REST DSL configured with the
-xref:servlet-component.adoc[Servlet component], you need to create a Web archive,
+xref:ROOT:servlet-component.adoc[Servlet component], you need to create a Web archive,
 e.g.:
 
 [source,java]

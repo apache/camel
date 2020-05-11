@@ -8,7 +8,7 @@
 
 *Since Camel {since}*
 
-The *OpenShift Build Config* component is one of xref:kubernetes.adoc[Kubernetes Components] which
+The *OpenShift Build Config* component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes build config operations. 
 
 

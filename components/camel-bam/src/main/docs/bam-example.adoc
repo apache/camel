@@ -62,8 +62,8 @@ occurs in this example we just send it to the log component
 component to log out an error level message to commons-logging / log4j.
 You could change this to use some of the other
 Components such as ActiveMQ,
-xref:jms-component.adoc[JMS], xref:irc-component.adoc[IRC], xref:mail-component.adoc[Mail],
-xref:xmpp-component.adoc[XMPP] etc.
+xref:ROOT:jms-component.adoc[JMS], xref:ROOT:irc-component.adoc[IRC], xref:ROOT:mail-component.adoc[Mail],
+xref:ROOT:xmpp-component.adoc[XMPP] etc.
 
 == Running the example
 
