@@ -212,4 +212,17 @@ public final class CamelOpenMBeanTypes {
         CompositeType ct = camelRoutePropertiesCompositeType();
         return new TabularType("routeProperties", "Route Properties", ct, new String[]{"key"});
     }
+
+    public static TabularType supervisingRouteControllerRouteStatusTabularType() throws OpenDataException {
+        CompositeType ct = supervisingRouteControllerRouteStatusCompositeType();
+        return new TabularType("routeStatus", "Lists detailed status about all the routes (incl failure details for routes failed to start)", ct, new String[]{"index"});
+    }
+
+    public static CompositeType supervisingRouteControllerRouteStatusCompositeType() throws OpenDataException {
+        return new CompositeType("routes", "Routes",
+                new String[]{"index", "routeId", "status", "supervising", "attempts", "elapsed", "last", "error", "stacktrace"},
+                new String[]{"Index", "Route Id", "Status", "Supervising", "Attempts", "Elapsed", "Since Last Attempt", "Error", "Stacktrace"},
+                new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+    }
+
 }

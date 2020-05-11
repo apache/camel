@@ -89,6 +89,7 @@ import org.apache.camel.management.mbean.ManagedSplitter;
 import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
 import org.apache.camel.management.mbean.ManagedStop;
+import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
@@ -174,6 +175,8 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.PredicateValidatingProcessor;
@@ -243,8 +246,13 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForRouteController(CamelContext context) {
-        ManagedRouteController mrc = new ManagedRouteController(context);
+    public Object getManagedObjectForRouteController(CamelContext context, RouteController routeController) {
+        ManagedService mrc;
+        if (routeController instanceof SupervisingRouteController) {
+            mrc = new ManagedSupervisingRouteController(context, (SupervisingRouteController) routeController);
+        } else {
+            mrc = new ManagedRouteController(context, routeController);
+        }
         mrc.init(context.getManagementStrategy());
         return mrc;
     }

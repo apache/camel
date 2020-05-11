@@ -16,11 +16,11 @@
  */
 package org.apache.camel.management;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -44,7 +44,7 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
         SupervisingRouteController src = new DefaultSupervisingRouteController();
         src.setThreadPoolSize(2);
         src.setBackOffDelay(250);
-        src.setBackOffMaxAttempts(3);
+        src.setBackOffMaxAttempts(100);
         context.setRouteController(src);
         return context;
     }
@@ -60,7 +60,7 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultSupervisingRouteController");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routecontrollers,name=DefaultSupervisingRouteController");
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
@@ -79,6 +79,10 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
             Integer restarting = (Integer) mbeanServer.getAttribute(on, "NumberOfRestartingRoutes");
             assertEquals(2, restarting.intValue());
         });
+
+        TabularData data = (TabularData) mbeanServer.invoke(on, "routeStatus", new Object[]{true, true}, new String[]{"boolean", "boolean"});
+        assertNotNull(data);
+        assertEquals(2, data.size());
     }
 
     @Override

@@ -22,12 +22,22 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class DefaultRouteController extends ServiceSupport implements RouteController  {
+/**
+ * A default {@link RouteController} that starts the routes in a fail-fast mode, which means
+ * if any of the routes fail to startup then this causes Camel to fail to startup as well.
+ *
+ * @see DefaultSupervisingRouteController
+ */
+public class DefaultRouteController extends ServiceSupport implements RouteController, NonManagedService {
+
+    // mark this as non managed service as its registered specially as a route controller
+
     private CamelContext camelContext;
 
     public DefaultRouteController() {

@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.Collection;
 
 import org.apache.camel.Route;
+import org.apache.camel.util.backoff.BackOffTimer;
 
 /**
  * A supervising capable {@link RouteController} that delays the startup
@@ -122,5 +123,21 @@ public interface SupervisingRouteController extends RouteController {
      * to be restarted.
      */
     Collection<Route> getRestartingRoutes();
+
+    /**
+     * Gets the state of the backoff for the given route if its managed and under restarting.
+     *
+     * @param routeId  the route id
+     * @return the state, or <tt>null</tt> if the route is not under restarting
+     */
+    BackOffTimer.Task getRestartingRouteState(String routeId);
+
+    /**
+     * Gets the last exception that caused the route to not startup for the given route
+     *
+     * @param routeId  the route id
+     * @return the caused exception
+     */
+    Throwable getRestartException(String routeId);
 
 }

@@ -34,6 +34,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     private final List<BiConsumer<BackOffTimer.Task, Throwable>> consumers;
 
     private Status status;
+    private long firstAttemptTime;
     private long currentAttempts;
     private long currentDelay;
     private long currentElapsedTime;
@@ -48,6 +49,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         this.currentAttempts = 0;
         this.currentDelay = backOff.getDelay().toMillis();
         this.currentElapsedTime = 0;
+        this.firstAttemptTime = BackOff.NEVER;
         this.lastAttemptTime = BackOff.NEVER;
         this.nextAttemptTime = BackOff.NEVER;
 
@@ -86,6 +88,11 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     }
 
     @Override
+    public long getFirstAttemptTime() {
+        return firstAttemptTime;
+    }
+
+    @Override
     public long getLastAttemptTime() {
         return lastAttemptTime;
     }
@@ -100,6 +107,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         this.currentAttempts = 0;
         this.currentDelay = 0;
         this.currentElapsedTime = 0;
+        this.firstAttemptTime = 0;
         this.lastAttemptTime = BackOff.NEVER;
         this.nextAttemptTime = BackOff.NEVER;
         this.status = Status.Active;
@@ -134,6 +142,9 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         if (status == Status.Active) {
             try {
                 lastAttemptTime = System.currentTimeMillis();
+                if (firstAttemptTime < 0) {
+                    firstAttemptTime = lastAttemptTime;
+                }
 
                 if (function.apply(this)) {
                     long delay = next();
@@ -167,6 +178,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
         this.currentAttempts = 0;
         this.currentDelay = BackOff.NEVER;
         this.currentElapsedTime = 0;
+        this.firstAttemptTime = BackOff.NEVER;
         this.lastAttemptTime = BackOff.NEVER;
         this.nextAttemptTime = BackOff.NEVER;
         this.status = Status.Inactive;
@@ -220,6 +232,7 @@ final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
             + ", currentAttempts=" + currentAttempts
             + ", currentDelay=" + currentDelay
             + ", currentElapsedTime=" + currentElapsedTime
+            + ", firstAttemptTime=" + firstAttemptTime
             + ", lastAttemptTime=" + lastAttemptTime
             + ", nextAttemptTime=" + nextAttemptTime
             + ']';

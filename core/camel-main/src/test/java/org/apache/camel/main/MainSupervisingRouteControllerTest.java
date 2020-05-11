@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -64,6 +65,13 @@ public class MainSupervisingRouteControllerTest extends Assert {
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("cake").toString());
+
+        SupervisingRouteController src = (SupervisingRouteController) main.camelContext.getRouteController();
+        Throwable e = src.getRestartException("cake");
+        assertNotNull(e);
+        assertEquals("Cannot start", e.getMessage());
+        assertTrue(e instanceof IllegalArgumentException);
+
         // bar is no auto startup
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
 

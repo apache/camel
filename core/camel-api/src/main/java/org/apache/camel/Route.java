@@ -180,8 +180,14 @@ public interface Route extends RuntimeConfiguration {
      */
     void setLastError(RouteError error);
 
+    /**
+     * Gets the route startup order
+     */
     Integer getStartupOrder();
 
+    /**
+     * Sets the route startup order
+     */
     void setStartupOrder(Integer startupOrder);
 
     /**

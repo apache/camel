@@ -53,12 +53,14 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStep;
+import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -131,7 +133,10 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             objectName = getObjectNameForCamelHealth(mch.getContext());
         } else if (managedObject instanceof ManagedRouteController) {
             ManagedRouteController mrc = (ManagedRouteController) managedObject;
-            objectName = getObjectNameForRouteController(mrc.getContext());
+            objectName = getObjectNameForRouteController(mrc.getContext(), mrc.getRouteController());
+        } else if (managedObject instanceof ManagedSupervisingRouteController) {
+            ManagedSupervisingRouteController mrc = (ManagedSupervisingRouteController) managedObject;
+            objectName = getObjectNameForRouteController(mrc.getContext(), mrc.getRouteController());
         } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
             objectName = getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
@@ -231,7 +236,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForRouteController(CamelContext context) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForRouteController(CamelContext context, RouteController routeController) throws MalformedObjectNameException {
         // prefer to use the given management name if previously assigned
         String managementName = context.getManagementName();
         if (managementName == null) {
@@ -242,7 +247,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE_CONTROLLER + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
+        buffer.append(KEY_NAME + "=").append(routeController.getClass().getSimpleName());
 
         return createObjectName(buffer);
     }
