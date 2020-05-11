@@ -17,7 +17,6 @@
 package org.apache.camel.component.geocoder;
 
 import java.util.Locale;
-
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.GeolocationApi;
@@ -39,15 +38,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The GeoCoder producer.
+ * The GeoCoder producer for Google.
  */
-public class GeoCoderProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(GeoCoderProducer.class);
+public class GeoCoderGoogleProducer extends DefaultProducer {
+    private static final Logger LOG = LoggerFactory.getLogger(GeoCoderGoogleProducer.class);
 
     private GeoCoderEndpoint endpoint;
     private GeoApiContext context;
 
-    public GeoCoderProducer(GeoCoderEndpoint endpoint) {
+    public GeoCoderGoogleProducer(GeoCoderEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
