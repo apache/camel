@@ -180,8 +180,7 @@ public final class DefaultConfigurationConfigurer {
 
         // supervising route controller
         if (config.isRouteControllerSuperviseEnabled()) {
-            SupervisingRouteController src = camelContext.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
-            src.setCamelContext(camelContext);
+            SupervisingRouteController src = camelContext.getRouteController().supervising();
             if (config.getRouteControllerIncludeRoutes() != null) {
                 src.setIncludeRoutes(config.getRouteControllerIncludeRoutes());
             }
@@ -209,8 +208,6 @@ public final class DefaultConfigurationConfigurer {
             if (config.getRouteControllerBackOffMultiplier() > 0) {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
-            // use this as route controller
-            camelContext.setRouteController(src);
         }
     }
 

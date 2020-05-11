@@ -131,8 +131,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "StreamCaching": target.setStreamCaching(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "streamcachingstrategy":
         case "StreamCachingStrategy": target.setStreamCachingStrategy(property(camelContext, org.apache.camel.spi.StreamCachingStrategy.class, value)); return true;
-        case "supervisingroutecontroller":
-        case "SupervisingRouteController": target.setSupervisingRouteController(property(camelContext, org.apache.camel.spi.SupervisingRouteController.class, value)); return true;
         case "tracer":
         case "Tracer": target.setTracer(property(camelContext, org.apache.camel.spi.Tracer.class, value)); return true;
         case "tracing":
@@ -218,7 +216,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         answer.put("ShutdownStrategy", org.apache.camel.spi.ShutdownStrategy.class);
         answer.put("StreamCaching", java.lang.Boolean.class);
         answer.put("StreamCachingStrategy", org.apache.camel.spi.StreamCachingStrategy.class);
-        answer.put("SupervisingRouteController", org.apache.camel.spi.SupervisingRouteController.class);
         answer.put("Tracer", org.apache.camel.spi.Tracer.class);
         answer.put("Tracing", java.lang.Boolean.class);
         answer.put("TracingPattern", java.lang.String.class);
@@ -349,8 +346,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "StreamCaching": return target.isStreamCaching();
         case "streamcachingstrategy":
         case "StreamCachingStrategy": return target.getStreamCachingStrategy();
-        case "supervisingroutecontroller":
-        case "SupervisingRouteController": return target.getSupervisingRouteController();
         case "tracer":
         case "Tracer": return target.getTracer();
         case "tracing":

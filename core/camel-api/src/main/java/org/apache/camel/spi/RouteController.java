@@ -30,6 +30,21 @@ import org.apache.camel.StaticService;
 public interface RouteController extends CamelContextAware, StaticService {
 
     /**
+     * Enables supervising {@link RouteController}.
+     */
+    SupervisingRouteController supervising();
+
+    /**
+     * Adapts this {@link org.apache.camel.spi.RouteController} to the specialized type.
+     * <p/>
+     * For example to adapt to <tt>SupervisingRouteController</tt>.
+     *
+     * @param type the type to adapt to
+     * @return this {@link org.apache.camel.CamelContext} adapted to the given type
+     */
+    <T extends RouteController> T adapt(Class<T> type);
+
+    /**
      * Return the list of routes controlled by this controller.
      *
      * @return the list of controlled routes

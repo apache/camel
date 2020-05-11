@@ -68,7 +68,6 @@ import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -224,11 +223,6 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected RouteController createRouteController() {
         return new DefaultRouteController(getCamelContextReference());
-    }
-
-    @Override
-    protected SupervisingRouteController createSupervisingRouteController() {
-        return new DefaultSupervisingRouteController();
     }
 
     @Override

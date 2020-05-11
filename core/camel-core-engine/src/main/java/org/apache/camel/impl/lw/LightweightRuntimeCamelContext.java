@@ -165,7 +165,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ClassLoader applicationContextClassLoader;
     private final UnitOfWorkFactory unitOfWorkFactory;
     private final RouteController routeController;
-    private final SupervisingRouteController supervisingRouteController;
     private final InflightRepository inflightRepository;
     private final Injector injector;
     private final ClassResolver classResolver;
@@ -210,7 +209,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         applicationContextClassLoader = context.getApplicationContextClassLoader();
         unitOfWorkFactory = context.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
         routeController = context.getRouteController();
-        supervisingRouteController = context.adapt(ExtendedCamelContext.class).getSupervisingRouteController();
         inflightRepository = context.getInflightRepository();
         globalOptions = context.getGlobalOptions();
         injector = context.getInjector();
@@ -692,11 +690,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public RouteController getRouteController() {
         return routeController;
-    }
-
-    @Override
-    public SupervisingRouteController getSupervisingRouteController() {
-        return supervisingRouteController;
     }
 
     @Override
@@ -1614,11 +1607,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setSupervisingRouteController(SupervisingRouteController supervisingRouteController) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void addRoutes(RoutesBuilder builder) throws Exception {
         throw new UnsupportedOperationException();
     }
@@ -1762,61 +1750,85 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     public RouteController getInternalRouteController() {
         return new RouteController() {
             @Override
+            public SupervisingRouteController supervising() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public <T extends RouteController> T adapt(Class<T> type) {
+                return type.cast(this);
+            }
+
+            @Override
             public Collection<Route> getControlledRoutes() {
                 return routes;
             }
+
             @Override
             public void startAllRoutes() throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public boolean isStartingRoutes() {
                 return false;
             }
+
             @Override
             public ServiceStatus getRouteStatus(String routeId) {
                 return ServiceStatus.Started;
             }
+
             @Override
             public void startRoute(String routeId) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void stopRoute(String routeId) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void suspendRoute(String routeId) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void resumeRoute(String routeId) throws Exception {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void setCamelContext(CamelContext camelContext) {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public CamelContext getCamelContext() {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void start() {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void stop() {
                 throw new UnsupportedOperationException();
