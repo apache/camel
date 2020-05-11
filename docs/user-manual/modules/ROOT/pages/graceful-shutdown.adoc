@@ -415,3 +415,9 @@ xref:batch-consumer.adoc[Batch Consumer] should implement
 `ShutdownAware` so they properly support the `ShutdownRunningTask`
 option. See `GenericFileConsumer` for an example.
 
+
+== See Also
+
+When Camel is starting up, then its xref:route-controller.adoc[Route Controller]
+that handles this to ensure all the routes are started with support for managing
+troublesome routes with restaring.
