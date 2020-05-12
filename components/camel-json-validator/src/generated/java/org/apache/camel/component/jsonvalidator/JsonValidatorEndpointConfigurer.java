@@ -19,6 +19,8 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonValidatorEndpoint target = (JsonValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
@@ -43,6 +45,7 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("allowContextMapAll", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("contentCache", boolean.class);
         answer.put("errorHandler", org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class);
@@ -59,6 +62,8 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JsonValidatorEndpoint target = (JsonValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return target.isAllowContextMapAll();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
