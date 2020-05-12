@@ -111,7 +111,7 @@ public class MvelEndpoint extends ResourceEndpoint {
 
         CompiledTemplate compiled;
         ParserContext mvelContext = ParserContext.create();
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
 
         String content = null;
         if (allowTemplateFromHeader) {

@@ -73,7 +73,7 @@ public class MvelComponentTest extends CamelTestSupport {
                         to("mvel:template.mvel");
 
                 from("direct:b").
-                        to("mvel:template.mvel?allowTemplateFromHeader=true");
+                        to("mvel:template.mvel?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };
