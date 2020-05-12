@@ -160,7 +160,7 @@
                                 <api>
                                     <apiName />
                                     <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
-                                    <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
+                                    <fromSignatureFile>${basedir}/src/signatures/olingo-api-signature.txt</fromSignatureFile>
                                     <extraOptions>
                                         <extraOption>
                                             <name>keyPredicate</name>
