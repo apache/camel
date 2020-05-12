@@ -96,6 +96,40 @@ public interface ChunkEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the context map is limited to only include the message body
+         * and headers (default). However access to the current Exchange and
+         * CamelContext can be enabled by turning this option off. Doing so
+         * impose a potential security risk as this opens access to the full
+         * power of CamelContext API.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default ChunkEndpointBuilder contextMapBodyAndHeadersOnly(
+                boolean contextMapBodyAndHeadersOnly) {
+            doSetProperty("contextMapBodyAndHeadersOnly", contextMapBodyAndHeadersOnly);
+            return this;
+        }
+        /**
+         * Whether the context map is limited to only include the message body
+         * and headers (default). However access to the current Exchange and
+         * CamelContext can be enabled by turning this option off. Doing so
+         * impose a potential security risk as this opens access to the full
+         * power of CamelContext API.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default ChunkEndpointBuilder contextMapBodyAndHeadersOnly(
+                String contextMapBodyAndHeadersOnly) {
+            doSetProperty("contextMapBodyAndHeadersOnly", contextMapBodyAndHeadersOnly);
+            return this;
+        }
+        /**
          * Define the encoding of the body.
          * 
          * The option is a: <code>java.lang.String</code> type.

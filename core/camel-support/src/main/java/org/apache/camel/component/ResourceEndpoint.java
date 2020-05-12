@@ -54,6 +54,11 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     private String resourceUri;
     @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
+    @UriParam(defaultValue = "false", description = "Sets whether the context map should allow access to all details."
+            + " By default only the message body and headers can be accessed."
+            + " This option can be enabled for full access to the current Exchange and CamelContext."
+            + " Doing so impose a potential security risk as this opens access to the full power of CamelContext API.")
+    private boolean allowContextMapAll;
 
     public ResourceEndpoint() {
     }
@@ -122,6 +127,21 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
 
     public boolean isContentCacheCleared() {
         return buffer == null;
+    }
+
+    @ManagedAttribute(description = "Whether the context map is limited to only include the message body and headers")
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details.
+     * By default only the message body and headers can be accessed.
+     * This option can be enabled for full access to the current Exchange and CamelContext.
+     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
     }
 
     @Override
