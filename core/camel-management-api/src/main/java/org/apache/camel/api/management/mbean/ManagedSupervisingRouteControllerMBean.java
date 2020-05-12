@@ -16,9 +16,9 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import java.util.Collection;
+
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
