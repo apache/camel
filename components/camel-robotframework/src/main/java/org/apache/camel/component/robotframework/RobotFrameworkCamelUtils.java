@@ -42,8 +42,8 @@ public final class RobotFrameworkCamelUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<String> createRobotVariablesFromCamelExchange(Exchange exchange) throws TypeConversionException, NoTypeConversionAvailableException {
-        Map<String, Object> variablesMap = ExchangeHelper.createVariableMap(exchange);
+    public static List<String> createRobotVariablesFromCamelExchange(Exchange exchange, boolean allowContextMapAll) throws TypeConversionException, NoTypeConversionAvailableException {
+        Map<String, Object> variablesMap = ExchangeHelper.createVariableMap(exchange, allowContextMapAll);
         List<String> variableKeyValuePairList = new ArrayList<>();
         for (Map.Entry<String, Object> variableEntry : variablesMap.entrySet()) {
             if (ROBOT_VAR_CAMEL_BODY.equals(variableEntry.getKey())) {
