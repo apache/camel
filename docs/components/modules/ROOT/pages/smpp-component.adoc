@@ -321,7 +321,7 @@ SMPP producer
 
 |`CamelSmppDestAddr` |`List`/`String` |*only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the
 destination SME address(es). For mobile terminated messages, this is the
-directory number of the recipient MS. Is must be a `List<String>` for
+directory number of the recipient MS. It must be a `List<String>` for
 SubmitMulti and a `String` otherwise.
 
 |`CamelSmppDestAddrTon` |`Byte` |*only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the type
