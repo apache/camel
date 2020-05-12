@@ -205,16 +205,19 @@ public class GitProducer extends DefaultProducer {
                 if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
                     UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
                     if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), ""))
+                            .call();
                     } else {
-                    	result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName()).call();
+                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), ""))
+                            .setBranch(endpoint.getBranchName()).call();
                     }
                 } else {
-                	if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
+                    if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
                         result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
-                	} else {
-                		result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName()).call();
-                	}
+                    } else {
+                        result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName())
+                            .call();
+                    }
                 }
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
