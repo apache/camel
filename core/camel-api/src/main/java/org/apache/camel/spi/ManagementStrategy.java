@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * Strategy for management.
@@ -31,7 +32,7 @@ import org.apache.camel.Service;
  * @see ManagementObjectNameStrategy
  * @see org.apache.camel.spi.ManagementAgent
  */
-public interface ManagementStrategy extends Service {
+public interface ManagementStrategy extends StaticService {
 
     /**
      * Adds a managed object allowing the ManagementStrategy implementation to record or expose
