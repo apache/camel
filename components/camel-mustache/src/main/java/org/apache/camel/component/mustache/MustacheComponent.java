@@ -40,6 +40,8 @@ public class MustacheComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
 
     @Metadata(label = "advanced")
     private MustacheFactory mustacheFactory = new DefaultMustacheFactory();
@@ -52,6 +54,7 @@ public class MustacheComponent extends DefaultComponent {
         MustacheEndpoint endpoint = new MustacheEndpoint(uri, this, remaining);
         endpoint.setMustacheFactory(getMustacheFactory());
         endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        endpoint.setAllowContextMapAll(allowContextMapAll);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -80,5 +83,20 @@ public class MustacheComponent extends DefaultComponent {
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details.
+     * By default only the message body and headers can be accessed.
+     * This option can be enabled for full access to the current Exchange and CamelContext.
+     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
+    }
+
 
 }

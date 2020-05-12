@@ -49,6 +49,23 @@ public interface MustacheComponentBuilderFactory {
             extends
                 ComponentBuilder<MustacheComponent> {
         /**
+         * Sets whether the context map should allow access to all details. By
+         * default only the message body and headers can be accessed. This
+         * option can be enabled for full access to the current Exchange and
+         * CamelContext. Doing so impose a potential security risk as this opens
+         * access to the full power of CamelContext API.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default MustacheComponentBuilder allowContextMapAll(
+                boolean allowContextMapAll) {
+            doSetProperty("allowContextMapAll", allowContextMapAll);
+            return this;
+        }
+        /**
          * Whether to allow to use resource template from header or not (default
          * false). Enabling this allows to specify dynamic templates via message
          * header. However this can be seen as a potential security
@@ -130,6 +147,7 @@ public interface MustacheComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "allowContextMapAll": ((MustacheComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((MustacheComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((MustacheComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((MustacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
