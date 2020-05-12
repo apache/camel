@@ -28,9 +28,9 @@ import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.junit.Test;
 
 public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
 
