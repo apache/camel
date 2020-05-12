@@ -16,20 +16,19 @@
  */
 package org.apache.camel.management;
 
+import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.ObjectName;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +40,13 @@ import org.slf4j.LoggerFactory;
  *
  * @see org.apache.camel.spi.ManagementStrategy
  */
+@ManagedResource(description = "Managed JmxManagementStrategy")
 public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmxManagementStrategy.class);
 
     private final List<Object> managed = new ArrayList<>();
+    private int counter;
 
     public JmxManagementStrategy() {
     }
@@ -65,6 +66,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().register(managedObject, objectName);
+            counter++;
         }
     }
 
@@ -77,6 +79,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().unregister(objectName);
+            counter--;
         }
     }
 
@@ -108,6 +111,11 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
     @Override
     public boolean manageProcessor(NamedNode definition) {
         return true;
+    }
+
+    @ManagedAttribute(description = "Number of managed MBean instances")
+    public int getManagedCount() {
+        return counter;
     }
 
     @Override
