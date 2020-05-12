@@ -17,15 +17,7 @@
 package org.apache.camel.component.geocoder;
 
 public enum GeocoderStatus {
-    ERROR,
-    INVALID_REQUEST,
-    ACCESS_NOT_CONFIGURED,
-    OK,
-    OVER_QUERY_LIMIT,
-    OVER_DAILY_LIMIT,
-    REQUEST_DENIED,
-    UNKNOWN_ERROR,
-    ZERO_RESULTS;
+    ERROR, INVALID_REQUEST, ACCESS_NOT_CONFIGURED, OK, OVER_QUERY_LIMIT, OVER_DAILY_LIMIT, REQUEST_DENIED, UNKNOWN_ERROR, ZERO_RESULTS;
 
     public String value() {
         return name();

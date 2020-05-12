@@ -31,7 +31,7 @@ public class GeoCoderLatLngComponentTest extends GeoCoderApiKeyTestBase {
 
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Hello");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -39,11 +39,9 @@ public class GeoCoderLatLngComponentTest extends GeoCoderApiKeyTestBase {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("geocoder:latlng:40.714224,-73.961452?apiKey=" + getApiKey())
-                    .to("log:result")
+                from("direct:start").to("geocoder:latlng:40.714224,-73.961452?apiKey=" + getApiKey()).to("log:result")
                     .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
-                        + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
+                         + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
                     .to("mock:result");
             }
         };
