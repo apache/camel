@@ -30,7 +30,7 @@ public class GoogleMailConfiguration {
     @UriPath @Metadata(required = true)
     private GoogleMailApiName apiName;
 
-    @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,trash,untrash,update")
+    @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,stop,trash,untrash,update,watch")
     @Metadata(required = true)
     private String methodName;
 
