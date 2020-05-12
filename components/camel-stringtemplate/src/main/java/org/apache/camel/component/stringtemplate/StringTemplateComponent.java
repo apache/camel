@@ -30,6 +30,8 @@ public class StringTemplateComponent extends UriEndpointComponent {
 
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
 
     public StringTemplateComponent() {
         super(StringTemplateEndpoint.class);
@@ -38,6 +40,7 @@ public class StringTemplateComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         StringTemplateEndpoint answer = new StringTemplateEndpoint(uri, this, remaining);
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        answer.setAllowContextMapAll(allowContextMapAll);
         setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
@@ -63,5 +66,18 @@ public class StringTemplateComponent extends UriEndpointComponent {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details.
+     * By default only the message body and headers can be accessed.
+     * This option can be enabled for full access to the current Exchange and CamelContext.
+     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
+    }
 
 }

@@ -105,7 +105,7 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
             variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
         }
         if (variableMap == null) {
-            variableMap = ExchangeHelper.createVariableMap(exchange);
+            variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         }
 
         // getResourceAsInputStream also considers the content cache
