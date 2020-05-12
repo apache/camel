@@ -469,9 +469,24 @@ public final class ExchangeHelper {
      * @param exchange the exchange to make available
      * @return a Map populated with the require variables
      */
+    @Deprecated
     public static Map<String, Object> createVariableMap(Exchange exchange) {
         Map<String, Object> answer = new HashMap<>();
-        populateVariableMap(exchange, answer);
+        populateVariableMap(exchange, answer, true);
+        return answer;
+    }
+
+    /**
+     * Creates a Map of the variables which are made available to a script or template
+     *
+     * @param exchange the exchange to make available
+     * @param allowContextMapAll whether to allow access to all context map or not
+     *                           (prefer to use false due to security reasons preferred to only allow access to body/headers)
+     * @return a Map populated with the require variables
+     */
+    public static Map<String, Object> createVariableMap(Exchange exchange, boolean allowContextMapAll) {
+        Map<String, Object> answer = new HashMap<>();
+        populateVariableMap(exchange, answer, allowContextMapAll);
         return answer;
     }
 
@@ -481,22 +496,37 @@ public final class ExchangeHelper {
      * @param exchange the exchange to make available
      * @param map      the map to populate
      */
+    @Deprecated
     public static void populateVariableMap(Exchange exchange, Map<String, Object> map) {
-        map.put("exchange", exchange);
+        populateVariableMap(exchange, map, true);
+    }
+
+    /**
+     * Populates the Map with the variables which are made available to a script or template
+     *
+     * @param exchange the exchange to make available
+     * @param map      the map to populate
+     * @param allowContextMapAll whether to allow access to all context map or not
+     *                           (prefer to use false due to security reasons preferred to only allow access to body/headers)
+     */
+    public static void populateVariableMap(Exchange exchange, Map<String, Object> map, boolean allowContextMapAll) {
         Message in = exchange.getIn();
-        map.put("in", in);
-        map.put("request", in);
         map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
-        if (isOutCapable(exchange)) {
-            // if we are out capable then set out and response as well
-            // however only grab OUT if it exists, otherwise reuse IN
-            // this prevents side effects to alter the Exchange if we force creating an OUT message
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            map.put("out", msg);
-            map.put("response", msg);
+        if (allowContextMapAll) {
+            map.put("in", in);
+            map.put("exchange", exchange);
+            map.put("request", in);
+            if (isOutCapable(exchange)) {
+                // if we are out capable then set out and response as well
+                // however only grab OUT if it exists, otherwise reuse IN
+                // this prevents side effects to alter the Exchange if we force creating an OUT message
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                map.put("out", msg);
+                map.put("response", msg);
+            }
+            map.put("camelContext", exchange.getContext());
         }
-        map.put("camelContext", exchange.getContext());
     }
 
     /**

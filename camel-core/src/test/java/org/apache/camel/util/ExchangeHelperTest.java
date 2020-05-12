@@ -141,6 +141,26 @@ public class ExchangeHelperTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPopulateVariableMapBodyAndHeaderOnly() throws Exception {
+        exchange.setPattern(ExchangePattern.InOut);
+        exchange.getOut().setBody("bar");
+        exchange.getOut().setHeader("quote", "Camel rocks");
+
+        Map<String, Object> map = new HashMap<>();
+        ExchangeHelper.populateVariableMap(exchange, map, false);
+
+        assertEquals(2, map.size());
+        assertNull(map.get("exchange"));
+        assertNull(map.get("in"));
+        assertNull(map.get("request"));
+        assertNull(map.get("out"));
+        assertNull(map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("headers"));
+        assertSame(exchange.getIn().getBody(), map.get("body"));
+        assertNull(map.get("camelContext"));
+    }
+
+    @Test
     public void testCreateVariableMap() throws Exception {
         exchange.setPattern(ExchangePattern.InOut);
         exchange.getOut().setBody("bar");
