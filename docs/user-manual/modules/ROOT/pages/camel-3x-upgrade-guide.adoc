@@ -1176,3 +1176,16 @@ as they were not in use by Camel.
 
 In relation to the dump model classes removal, in camel-karaf the following commands were removed: `context-info`, `route-info`, `route-profile` and `route-step`.
 
+
+== Upgrading Camel 3.3 to 3.4
+
+=== Template components
+
+The template components which allows access to the current `Exchange` and `CamelContext` API
+from the context map available for templating has now been restricted to only the message body and headers.
+
+This option can be enabled (`allowContextMapAll=true`) for full access to the current Exchange and CamelContext.
+Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+
+This applies to the following templating components: camel-freemarker, camel-velocity, camel-mvel, camel-mustache,
+camel-string-template, camel-chunk, camel-robotframework.
