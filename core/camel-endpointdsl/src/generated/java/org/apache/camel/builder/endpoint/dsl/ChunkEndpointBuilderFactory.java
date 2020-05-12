@@ -38,6 +38,40 @@ public interface ChunkEndpointBuilderFactory {
             return (AdvancedChunkEndpointBuilder) this;
         }
         /**
+         * Sets whether the context map should allow access to all details. By
+         * default only the message body and headers can be accessed. This
+         * option can be enabled for full access to the current Exchange and
+         * CamelContext. Doing so impose a potential security risk as this opens
+         * access to the full power of CamelContext API.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ChunkEndpointBuilder allowContextMapAll(
+                boolean allowContextMapAll) {
+            doSetProperty("allowContextMapAll", allowContextMapAll);
+            return this;
+        }
+        /**
+         * Sets whether the context map should allow access to all details. By
+         * default only the message body and headers can be accessed. This
+         * option can be enabled for full access to the current Exchange and
+         * CamelContext. Doing so impose a potential security risk as this opens
+         * access to the full power of CamelContext API.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ChunkEndpointBuilder allowContextMapAll(
+                String allowContextMapAll) {
+            doSetProperty("allowContextMapAll", allowContextMapAll);
+            return this;
+        }
+        /**
          * Whether to allow to use resource template from header or not (default
          * false). Enabling this allows to specify dynamic templates via message
          * header. However this can be seen as a potential security
@@ -93,40 +127,6 @@ public interface ChunkEndpointBuilderFactory {
          */
         default ChunkEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
-            return this;
-        }
-        /**
-         * Whether the context map is limited to only include the message body
-         * and headers (default). However access to the current Exchange and
-         * CamelContext can be enabled by turning this option off. Doing so
-         * impose a potential security risk as this opens access to the full
-         * power of CamelContext API.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         */
-        default ChunkEndpointBuilder contextMapBodyAndHeadersOnly(
-                boolean contextMapBodyAndHeadersOnly) {
-            doSetProperty("contextMapBodyAndHeadersOnly", contextMapBodyAndHeadersOnly);
-            return this;
-        }
-        /**
-         * Whether the context map is limited to only include the message body
-         * and headers (default). However access to the current Exchange and
-         * CamelContext can be enabled by turning this option off. Doing so
-         * impose a potential security risk as this opens access to the full
-         * power of CamelContext API.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         */
-        default ChunkEndpointBuilder contextMapBodyAndHeadersOnly(
-                String contextMapBodyAndHeadersOnly) {
-            doSetProperty("contextMapBodyAndHeadersOnly", contextMapBodyAndHeadersOnly);
             return this;
         }
         /**
