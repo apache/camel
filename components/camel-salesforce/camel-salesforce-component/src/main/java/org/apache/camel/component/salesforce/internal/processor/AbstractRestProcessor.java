@@ -69,6 +69,15 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private Map<String, Class<?>> classMap;
     private NotFoundBehaviour notFoundBehaviour;
 
+    // used in unit tests
+    AbstractRestProcessor(final SalesforceEndpoint endpoint, final RestClient restClient, final Map<String, Class<?>> classMap) {
+        super(endpoint);
+        this.restClient = restClient;
+        this.classMap = classMap;
+        final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
+        notFoundBehaviour = configuration.getNotFoundBehaviour();
+    }
+
     public AbstractRestProcessor(SalesforceEndpoint endpoint) {
         super(endpoint);
     }
@@ -94,15 +103,6 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     protected void doStop() throws Exception {
         super.doStop();
         ServiceHelper.stopService(restClient);
-    }
-
-    // used in unit tests
-    AbstractRestProcessor(final SalesforceEndpoint endpoint, final RestClient restClient, final Map<String, Class<?>> classMap) {
-        super(endpoint);
-        this.restClient = restClient;
-        this.classMap = classMap;
-        final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
-        notFoundBehaviour = configuration.getNotFoundBehaviour();
     }
 
     @Override
