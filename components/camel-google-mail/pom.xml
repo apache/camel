@@ -170,7 +170,7 @@
                                     <apiName>users</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users</proxyClass>
                                     <fromJavadoc>
-                                        <includeMethods>getProfile</includeMethods>
+                                        <includeMethods>getProfile|watch|stop</includeMethods>
                                     </fromJavadoc>
                                 </api>
                             </apis>
