@@ -50,6 +50,7 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 FreemarkerComponent fc = context.getComponent("freemarker", FreemarkerComponent.class);
                 fc.setAllowTemplateFromHeader(true);
+                fc.setAllowContextMapAll(true);
 
                 from("direct:a")
                     .to("freemarker:dummy")

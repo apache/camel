@@ -41,7 +41,7 @@ public class FreemarkerSetHeaderTest extends CamelSpringTestSupport {
         assertRespondsWith("orange", "I am an orange");
     }
 
-    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException, InterruptedException {
+    protected void assertRespondsWith(final String value, String expectedBody) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         //mock.expectedHeaderReceived("fruit", value);

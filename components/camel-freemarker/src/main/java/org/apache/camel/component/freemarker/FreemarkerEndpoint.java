@@ -162,7 +162,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             dataModel = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_DATA_MODEL, Object.class);
         }
         if (dataModel == null) {
-            dataModel = ExchangeHelper.createVariableMap(exchange);
+            dataModel = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         }
         // let freemarker parse and generate the result in buffer
         Template template;
