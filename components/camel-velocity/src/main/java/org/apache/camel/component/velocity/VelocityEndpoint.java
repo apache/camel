@@ -224,7 +224,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
             velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
         }
         if (velocityContext == null) {
-            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
             if (allowTemplateFromHeader) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);

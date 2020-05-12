@@ -50,7 +50,7 @@ public class VelocityMethodInvokationTest extends CamelTestSupport {
             public void configure() {
                 from("direct:a")
                     .setHeader("esc", constant(new EscapeTool()))
-                    .to("velocity:org/apache/camel/component/velocity/escape.vm");
+                    .to("velocity:org/apache/camel/component/velocity/escape.vm?allowContextMapAll=true");
             }
         };
     }

@@ -30,6 +30,7 @@ public class VelocityEndpointTest extends VelocityTest {
                 endpoint.setCamelContext(context);
                 endpoint.setResourceUri("org/apache/camel/component/velocity/example.vm");
                 endpoint.setAllowTemplateFromHeader(true);
+                endpoint.setAllowContextMapAll(true);
 
                 context.addEndpoint("velo", endpoint);
 
