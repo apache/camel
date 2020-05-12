@@ -17,6 +17,7 @@
 package org.apache.camel.component.geocoder;
 
 import java.util.Locale;
+
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.GeolocationApi;
@@ -118,14 +119,14 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
         GeolocationResult result = GeolocationApi.geolocate(context, payload).await();
 
         LOG.debug("Geolocation response {}", result);
-        //status
+        // status
         exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
-        //latlng
+        // latlng
         String resLatlng = result.location.toString();
         exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
 
-        //address - reverse geocode
+        // address - reverse geocode
         LOG.debug("Geocode - reverse geocode for location {}", resLatlng);
         GeocodingResult[] results = GeocodingApi.reverseGeocode(context, result.location).await();
 
@@ -150,7 +151,7 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
         if (!endpoint.isHeadersOnly()) {
             exchange.getIn().setBody(res);
         }
-        //no results
+        // no results
         if (res.length == 0) {
             exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.ZERO_RESULTS);
             return;
@@ -163,7 +164,7 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
         // just grab the first element and its lat and lon
         setLatLngToExchangeHeader(first.geometry.location, exchange);
 
-        //additional details
+        // additional details
         AddressComponent country = getCountry(res);
         if (country != null) {
             exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, country.shortName);

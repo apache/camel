@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -107,8 +108,7 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
         }
         url += operation;
 
-        final RequestBuilder builder =
-            RequestBuilder.get().setUri(url);
+        final RequestBuilder builder = RequestBuilder.get().setUri(url);
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
             builder.addParameter(entry.getKey(), entry.getValue());
@@ -127,31 +127,23 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
         }
 
         if (place == null || place.isEmpty()) {
-            exchange.getIn().setHeader(GeoCoderConstants.STATUS,
-                GeocoderStatus.ZERO_RESULTS);
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.ZERO_RESULTS);
             return;
         }
         exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
-        if(place.startsWith("[") && place.endsWith("]")) {
+        if (place.startsWith("[") && place.endsWith("]")) {
             place = place.substring(1, place.length() - 1);
         }
 
-        //additional details
-        final Configuration conf =
-            Configuration.defaultConfiguration()
-                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        // additional details
+        final Configuration conf = Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS);
         final DocumentContext doc = JsonPath.using(conf).parse(place);
 
-
-        exchange.getIn().setHeader(GeoCoderConstants.ADDRESS,
-            doc.read("$['display_name']"));
+        exchange.getIn().setHeader(GeoCoderConstants.ADDRESS, doc.read("$['display_name']"));
 
         // just grab the first element and its lat and lon
-        setLatLngToExchangeHeader(
-            doc.read("$['lat']"),
-            doc.read("$['lon']"),
-            exchange);
+        setLatLngToExchangeHeader(doc.read("$['lat']"), doc.read("$['lon']"), exchange);
 
         extractCountry(doc, exchange.getIn());
         extractCity(doc, exchange.getIn());
@@ -167,39 +159,32 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
     }
 
     private void extractCountry(DocumentContext doc, Message in) {
-        String code =
-            doc.read("$['address']['country_code']");
+        String code = doc.read("$['address']['country_code']");
         if (code != null) {
             code = code.toUpperCase();
         }
         in.setHeader(GeoCoderConstants.COUNTRY_SHORT, code);
-        in.setHeader(GeoCoderConstants.COUNTRY_LONG,
-            doc.read("$['address']['country']"));
+        in.setHeader(GeoCoderConstants.COUNTRY_LONG, doc.read("$['address']['country']"));
     }
 
     private void extractCity(DocumentContext doc, Message in) {
-        in.setHeader(GeoCoderConstants.CITY,
-            doc.read("$['address']['city']"));
+        in.setHeader(GeoCoderConstants.CITY, doc.read("$['address']['city']"));
     }
 
     private void extractPostalCode(DocumentContext doc, Message in) {
-        in.setHeader(GeoCoderConstants.POSTAL_CODE,
-            doc.read("$['address']['postcode']"));
+        in.setHeader(GeoCoderConstants.POSTAL_CODE, doc.read("$['address']['postcode']"));
     }
 
     private void extractRegion(DocumentContext doc, Message in) {
-        String code =
-            doc.read("$['address']['state_code']");
+        String code = doc.read("$['address']['state_code']");
         if (code != null) {
             code = code.toUpperCase();
         }
         in.setHeader(GeoCoderConstants.REGION_CODE, code);
-        in.setHeader(GeoCoderConstants.REGION_NAME,
-            doc.read("$['address']['state']"));
+        in.setHeader(GeoCoderConstants.REGION_NAME, doc.read("$['address']['state']"));
     }
 
     private String formatLatOrLon(String value) {
-        return String.format(Locale.ENGLISH, "%.8f",
-            Double.parseDouble(value));
+        return String.format(Locale.ENGLISH, "%.8f", Double.parseDouble(value));
     }
 }

@@ -17,8 +17,7 @@
 package org.apache.camel.component.geocoder;
 
 public enum GeoCoderType {
-    NOMINATIM,
-    GOOGLE;
+    NOMINATIM, GOOGLE;
 
     public String value() {
         return name();
@@ -26,7 +25,7 @@ public enum GeoCoderType {
 
     public static GeoCoderType fromValue(String v) {
         if (v == null || v.isEmpty()) {
-            //Default to Google for backwards compatibility
+            // Default to Google for backwards compatibility
             return GOOGLE;
         }
 
