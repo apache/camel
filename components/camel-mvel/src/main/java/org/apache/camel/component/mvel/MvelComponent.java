@@ -33,6 +33,8 @@ public class MvelComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
 
     public MvelComponent() {
     }
@@ -44,6 +46,7 @@ public class MvelComponent extends DefaultComponent {
         MvelEndpoint answer = new MvelEndpoint(uri, this, remaining);
         answer.setContentCache(cache);
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        answer.setAllowContextMapAll(allowContextMapAll);
 
         setProperties(answer, parameters);
 
@@ -68,6 +71,20 @@ public class MvelComponent extends DefaultComponent {
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details.
+     * By default only the message body and headers can be accessed.
+     * This option can be enabled for full access to the current Exchange and CamelContext.
+     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
     }
 
 }
