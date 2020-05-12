@@ -16,9 +16,10 @@
  */
 package org.apache.camel.management;
 
-import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
