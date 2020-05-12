@@ -130,7 +130,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
                 from("direct:setVariableCamelBodyAndHeader").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_header.robot?xunitFile=target/out.xml")
                     .to("mock:resultHeader");
                 
-                from("direct:setVariableCamelBodyAndProperty").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_property.robot?xunitFile=target/out.xml")
+                from("direct:setVariableCamelBodyAndProperty").to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_property.robot?xunitFile=target/out.xml&allowContextMapAll=true")
                     .to("mock:resultProperty");
                 
                 from("direct:setVariableCamelBodyResourceUri")
