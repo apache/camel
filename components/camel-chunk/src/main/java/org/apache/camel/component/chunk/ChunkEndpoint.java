@@ -119,7 +119,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             }
 
             // Execute Chunk
-            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
             StringWriter writer = new StringWriter();
             newChunk.putAll(variableMap);
             newChunk.render(writer);

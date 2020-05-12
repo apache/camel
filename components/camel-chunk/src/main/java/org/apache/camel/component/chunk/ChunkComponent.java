@@ -26,6 +26,8 @@ public class ChunkComponent extends UriEndpointComponent {
 
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
 
     public ChunkComponent() {
         super(ChunkEndpoint.class);
@@ -35,6 +37,7 @@ public class ChunkComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ChunkEndpoint endpoint = new ChunkEndpoint(uri, this, remaining);
         endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        endpoint.setAllowContextMapAll(allowContextMapAll);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -51,6 +54,20 @@ public class ChunkComponent extends UriEndpointComponent {
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details.
+     * By default only the message body and headers can be accessed.
+     * This option can be enabled for full access to the current Exchange and CamelContext.
+     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
     }
 
 }
