@@ -112,7 +112,7 @@ public class MustacheEndpoint extends ResourceEndpoint {
         }
 
         // Execute Mustache
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         StringWriter writer = new StringWriter();
         newMustache.execute(writer, variableMap);
         writer.flush();
