@@ -1070,8 +1070,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
          * The value can be one of: attachments, create, delete, get,
-         * getProfile, gmailImport, insert, list, modify, patch, send, trash,
-         * untrash, update
+         * getProfile, gmailImport, insert, list, modify, patch, send, stop,
+         * trash, untrash, update, watch
          */
         default GoogleMailEndpointBuilder googleMail(String path) {
             return GoogleMailEndpointBuilderFactory.googleMail(path);
@@ -1095,7 +1095,8 @@ public interface GoogleMailEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * The value can be one of: attachments, create, delete, get, getProfile,
-     * gmailImport, insert, list, modify, patch, send, trash, untrash, update
+     * gmailImport, insert, list, modify, patch, send, stop, trash, untrash,
+     * update, watch
      */
     static GoogleMailEndpointBuilder googleMail(String path) {
         class GoogleMailEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailEndpointBuilder, AdvancedGoogleMailEndpointBuilder {
