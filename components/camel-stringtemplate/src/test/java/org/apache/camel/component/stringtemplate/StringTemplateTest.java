@@ -64,7 +64,7 @@ public class StringTemplateTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").
-                        to("string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true");
+                        to("string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };
