@@ -33,7 +33,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -74,8 +73,8 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
 import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
+import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -94,8 +93,6 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String SENSITIVE_KEYS = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
     private static final String VALID_THREAD_POOL_KEYS = "id|poolSize|maxPoolSize|keepAliveTime|timeUnit|maxQueueSize|allowCoreThreadTimeout|rejectedPolicy";
-
-    protected final AtomicBoolean completed = new AtomicBoolean(false);
 
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
