@@ -244,28 +244,39 @@ public interface DrillEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * Host name or IP address
+         * 
+         * @param path host
          */
         default DrillEndpointBuilder drill(String path) {
-            return DrillEndpointBuilderFactory.drill(path);
+            return DrillEndpointBuilderFactory.endpointBuilder("drill", path);
+        }
+        /**
+         * Drill (camel-drill)
+         * Perform queries against an Apache Drill cluster.
+         * 
+         * Category: database,sql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-drill
+         * 
+         * Syntax: <code>drill:host</code>
+         * 
+         * Path parameter: host (required)
+         * Host name or IP address
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default DrillEndpointBuilder drill(String componentName, String path) {
+            return DrillEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Drill (camel-drill)
-     * Perform queries against an Apache Drill cluster.
-     * 
-     * Category: database,sql
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-drill
-     * 
-     * Syntax: <code>drill:host</code>
-     * 
-     * Path parameter: host (required)
-     * Host name or IP address
-     */
-    static DrillEndpointBuilder drill(String path) {
+    static DrillEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder, AdvancedDrillEndpointBuilder {
             public DrillEndpointBuilderImpl(String path) {
-                super("drill", path);
+                super(componentName, path);
             }
         }
         return new DrillEndpointBuilderImpl(path);

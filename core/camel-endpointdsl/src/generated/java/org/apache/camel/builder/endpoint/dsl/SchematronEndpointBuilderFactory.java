@@ -235,29 +235,42 @@ public interface SchematronEndpointBuilderFactory {
          * Path parameter: path (required)
          * The path to the schematron rules file. Can either be in class path or
          * location in the file system.
+         * 
+         * @param path path
          */
         default SchematronEndpointBuilder schematron(String path) {
-            return SchematronEndpointBuilderFactory.schematron(path);
+            return SchematronEndpointBuilderFactory.endpointBuilder("schematron", path);
+        }
+        /**
+         * Schematron (camel-schematron)
+         * Validate XML payload using the Schematron Library.
+         * 
+         * Category: validation
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-schematron
+         * 
+         * Syntax: <code>schematron:path</code>
+         * 
+         * Path parameter: path (required)
+         * The path to the schematron rules file. Can either be in class path or
+         * location in the file system.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path
+         */
+        default SchematronEndpointBuilder schematron(
+                String componentName,
+                String path) {
+            return SchematronEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Schematron (camel-schematron)
-     * Validate XML payload using the Schematron Library.
-     * 
-     * Category: validation
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-schematron
-     * 
-     * Syntax: <code>schematron:path</code>
-     * 
-     * Path parameter: path (required)
-     * The path to the schematron rules file. Can either be in class path or
-     * location in the file system.
-     */
-    static SchematronEndpointBuilder schematron(String path) {
+    static SchematronEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SchematronEndpointBuilderImpl extends AbstractEndpointBuilder implements SchematronEndpointBuilder, AdvancedSchematronEndpointBuilder {
             public SchematronEndpointBuilderImpl(String path) {
-                super("schematron", path);
+                super(componentName, path);
             }
         }
         return new SchematronEndpointBuilderImpl(path);

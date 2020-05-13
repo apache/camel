@@ -1454,28 +1454,39 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * Path parameter: apiEndpoint (required)
          * The API endpoint
+         * 
+         * @param path apiEndpoint
          */
         default ConsulEndpointBuilder consul(String path) {
-            return ConsulEndpointBuilderFactory.consul(path);
+            return ConsulEndpointBuilderFactory.endpointBuilder("consul", path);
+        }
+        /**
+         * Consul (camel-consul)
+         * Integrate with Consul service discovery and configuration store.
+         * 
+         * Category: api,cloud
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-consul
+         * 
+         * Syntax: <code>consul:apiEndpoint</code>
+         * 
+         * Path parameter: apiEndpoint (required)
+         * The API endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiEndpoint
+         */
+        default ConsulEndpointBuilder consul(String componentName, String path) {
+            return ConsulEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
-     * 
-     * Category: api,cloud
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-consul
-     * 
-     * Syntax: <code>consul:apiEndpoint</code>
-     * 
-     * Path parameter: apiEndpoint (required)
-     * The API endpoint
-     */
-    static ConsulEndpointBuilder consul(String path) {
+    static ConsulEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ConsulEndpointBuilderImpl extends AbstractEndpointBuilder implements ConsulEndpointBuilder, AdvancedConsulEndpointBuilder {
             public ConsulEndpointBuilderImpl(String path) {
-                super("consul", path);
+                super(componentName, path);
             }
         }
         return new ConsulEndpointBuilderImpl(path);

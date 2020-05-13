@@ -1288,31 +1288,43 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
                 String path) {
-            return KubernetesReplicationControllersEndpointBuilderFactory.kubernetesReplicationControllers(path);
+            return KubernetesReplicationControllersEndpointBuilderFactory.endpointBuilder("kubernetes-replication-controllers", path);
+        }
+        /**
+         * Kubernetes Replication Controller (camel-kubernetes)
+         * Perform operations on Kubernetes Replication Controllers and get
+         * notified on Replication Controllers changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
+                String componentName,
+                String path) {
+            return KubernetesReplicationControllersEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Replication Controller (camel-kubernetes)
-     * Perform operations on Kubernetes Replication Controllers and get notified
-     * on Replication Controllers changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
+    static KubernetesReplicationControllersEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class KubernetesReplicationControllersEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesReplicationControllersEndpointBuilder, AdvancedKubernetesReplicationControllersEndpointBuilder {
             public KubernetesReplicationControllersEndpointBuilderImpl(String path) {
-                super("kubernetes-replication-controllers", path);
+                super(componentName, path);
             }
         }
         return new KubernetesReplicationControllersEndpointBuilderImpl(path);

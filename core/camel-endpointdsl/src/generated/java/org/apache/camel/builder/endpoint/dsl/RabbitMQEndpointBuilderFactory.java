@@ -3497,30 +3497,43 @@ public interface RabbitMQEndpointBuilderFactory {
          * The exchange name determines which exchange produced messages will
          * sent to. In the case of consumers, the exchange name determines which
          * exchange the queue will bind to.
+         * 
+         * @param path exchangeName
          */
         default RabbitMQEndpointBuilder rabbitmq(String path) {
-            return RabbitMQEndpointBuilderFactory.rabbitmq(path);
+            return RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq", path);
+        }
+        /**
+         * RabbitMQ (camel-rabbitmq)
+         * Send and receive messages from RabbitMQ instances.
+         * 
+         * Category: messaging
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-rabbitmq
+         * 
+         * Syntax: <code>rabbitmq:exchangeName</code>
+         * 
+         * Path parameter: exchangeName (required)
+         * The exchange name determines which exchange produced messages will
+         * sent to. In the case of consumers, the exchange name determines which
+         * exchange the queue will bind to.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path exchangeName
+         */
+        default RabbitMQEndpointBuilder rabbitmq(
+                String componentName,
+                String path) {
+            return RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * RabbitMQ (camel-rabbitmq)
-     * Send and receive messages from RabbitMQ instances.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-rabbitmq
-     * 
-     * Syntax: <code>rabbitmq:exchangeName</code>
-     * 
-     * Path parameter: exchangeName (required)
-     * The exchange name determines which exchange produced messages will sent
-     * to. In the case of consumers, the exchange name determines which exchange
-     * the queue will bind to.
-     */
-    static RabbitMQEndpointBuilder rabbitmq(String path) {
+    static RabbitMQEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class RabbitMQEndpointBuilderImpl extends AbstractEndpointBuilder implements RabbitMQEndpointBuilder, AdvancedRabbitMQEndpointBuilder {
             public RabbitMQEndpointBuilderImpl(String path) {
-                super("rabbitmq", path);
+                super(componentName, path);
             }
         }
         return new RabbitMQEndpointBuilderImpl(path);

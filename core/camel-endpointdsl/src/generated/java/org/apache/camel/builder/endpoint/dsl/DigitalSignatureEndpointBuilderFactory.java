@@ -535,34 +535,47 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The logical name of this operation.
+         * 
+         * @param path cryptoOperation:name
          */
         default DigitalSignatureEndpointBuilder crypto(String path) {
-            return DigitalSignatureEndpointBuilderFactory.crypto(path);
+            return DigitalSignatureEndpointBuilderFactory.endpointBuilder("crypto", path);
+        }
+        /**
+         * Crypto (JCE) (camel-crypto)
+         * Sign and verify exchanges using the Signature Service of the Java
+         * Cryptographic Extension (JCE).
+         * 
+         * Category: security,transformation
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-crypto
+         * 
+         * Syntax: <code>crypto:cryptoOperation:name</code>
+         * 
+         * Path parameter: cryptoOperation (required)
+         * Set the Crypto operation from that supplied after the crypto scheme
+         * in the endpoint uri e.g. crypto:sign sets sign as the operation.
+         * The value can be one of: sign, verify
+         * 
+         * Path parameter: name (required)
+         * The logical name of this operation.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cryptoOperation:name
+         */
+        default DigitalSignatureEndpointBuilder crypto(
+                String componentName,
+                String path) {
+            return DigitalSignatureEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Crypto (JCE) (camel-crypto)
-     * Sign and verify exchanges using the Signature Service of the Java
-     * Cryptographic Extension (JCE).
-     * 
-     * Category: security,transformation
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-crypto
-     * 
-     * Syntax: <code>crypto:cryptoOperation:name</code>
-     * 
-     * Path parameter: cryptoOperation (required)
-     * Set the Crypto operation from that supplied after the crypto scheme in
-     * the endpoint uri e.g. crypto:sign sets sign as the operation.
-     * The value can be one of: sign, verify
-     * 
-     * Path parameter: name (required)
-     * The logical name of this operation.
-     */
-    static DigitalSignatureEndpointBuilder crypto(String path) {
+    static DigitalSignatureEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DigitalSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalSignatureEndpointBuilder, AdvancedDigitalSignatureEndpointBuilder {
             public DigitalSignatureEndpointBuilderImpl(String path) {
-                super("crypto", path);
+                super(componentName, path);
             }
         }
         return new DigitalSignatureEndpointBuilderImpl(path);

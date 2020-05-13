@@ -321,28 +321,37 @@ public interface ECSEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default ECSEndpointBuilder awsEcs(String path) {
-            return ECSEndpointBuilderFactory.awsEcs(path);
+            return ECSEndpointBuilderFactory.endpointBuilder("aws-ecs", path);
+        }
+        /**
+         * AWS ECS (camel-aws-ecs)
+         * Manage AWS ECS cluster instances.
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-ecs
+         * 
+         * Syntax: <code>aws-ecs:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default ECSEndpointBuilder awsEcs(String componentName, String path) {
+            return ECSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS ECS (camel-aws-ecs)
-     * Manage AWS ECS cluster instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-ecs
-     * 
-     * Syntax: <code>aws-ecs:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static ECSEndpointBuilder awsEcs(String path) {
+    static ECSEndpointBuilder endpointBuilder(String componentName, String path) {
         class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder, AdvancedECSEndpointBuilder {
             public ECSEndpointBuilderImpl(String path) {
-                super("aws-ecs", path);
+                super(componentName, path);
             }
         }
         return new ECSEndpointBuilderImpl(path);

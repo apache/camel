@@ -1264,28 +1264,42 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
-            return KubernetesNodesEndpointBuilderFactory.kubernetesNodes(path);
+            return KubernetesNodesEndpointBuilderFactory.endpointBuilder("kubernetes-nodes", path);
+        }
+        /**
+         * Kubernetes Nodes (camel-kubernetes)
+         * Perform operations on Kubernetes Nodes and get notified on Node
+         * changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-nodes:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesNodesEndpointBuilder kubernetesNodes(
+                String componentName,
+                String path) {
+            return KubernetesNodesEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Nodes (camel-kubernetes)
-     * Perform operations on Kubernetes Nodes and get notified on Node changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-nodes:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
+    static KubernetesNodesEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesNodesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNodesEndpointBuilder, AdvancedKubernetesNodesEndpointBuilder {
             public KubernetesNodesEndpointBuilderImpl(String path) {
-                super("kubernetes-nodes", path);
+                super(componentName, path);
             }
         }
         return new KubernetesNodesEndpointBuilderImpl(path);

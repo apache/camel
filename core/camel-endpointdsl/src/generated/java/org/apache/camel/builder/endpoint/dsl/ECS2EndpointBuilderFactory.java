@@ -346,28 +346,37 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default ECS2EndpointBuilder aws2Ecs(String path) {
-            return ECS2EndpointBuilderFactory.aws2Ecs(path);
+            return ECS2EndpointBuilderFactory.endpointBuilder("aws2-ecs", path);
+        }
+        /**
+         * AWS 2 ECS (camel-aws2-ecs)
+         * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ecs
+         * 
+         * Syntax: <code>aws2-ecs:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default ECS2EndpointBuilder aws2Ecs(String componentName, String path) {
+            return ECS2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 ECS (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-ecs
-     * 
-     * Syntax: <code>aws2-ecs:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static ECS2EndpointBuilder aws2Ecs(String path) {
+    static ECS2EndpointBuilder endpointBuilder(String componentName, String path) {
         class ECS2EndpointBuilderImpl extends AbstractEndpointBuilder implements ECS2EndpointBuilder, AdvancedECS2EndpointBuilder {
             public ECS2EndpointBuilderImpl(String path) {
-                super("aws2-ecs", path);
+                super(componentName, path);
             }
         }
         return new ECS2EndpointBuilderImpl(path);

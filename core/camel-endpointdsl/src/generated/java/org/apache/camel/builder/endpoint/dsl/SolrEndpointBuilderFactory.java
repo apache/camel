@@ -432,9 +432,31 @@ public interface SolrEndpointBuilderFactory {
          * 
          * Path parameter: url (required)
          * Hostname and port for the solr server
+         * 
+         * @param path url
          */
         default SolrEndpointBuilder solr(String path) {
-            return SolrEndpointBuilderFactory.solr(path);
+            return SolrEndpointBuilderFactory.endpointBuilder("solr", path);
+        }
+        /**
+         * Solr (camel-solr)
+         * Perform operations against Apache Lucene Solr.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solr:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the solr server
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path url
+         */
+        default SolrEndpointBuilder solr(String componentName, String path) {
+            return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * Solr (camel-solr)
@@ -448,9 +470,31 @@ public interface SolrEndpointBuilderFactory {
          * 
          * Path parameter: url (required)
          * Hostname and port for the solr server
+         * 
+         * @param path url
          */
         default SolrEndpointBuilder solrCloud(String path) {
-            return SolrEndpointBuilderFactory.solrCloud(path);
+            return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
+        }
+        /**
+         * Solr (camel-solr)
+         * Perform operations against Apache Lucene Solr.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solrCloud:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the solr server
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path url
+         */
+        default SolrEndpointBuilder solrCloud(String componentName, String path) {
+            return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * Solr (Secure) (camel-solr)
@@ -464,84 +508,39 @@ public interface SolrEndpointBuilderFactory {
          * 
          * Path parameter: url (required)
          * Hostname and port for the solr server
+         * 
+         * @param path url
          */
         default SolrEndpointBuilder solrs(String path) {
-            return SolrEndpointBuilderFactory.solrs(path);
+            return SolrEndpointBuilderFactory.endpointBuilder("solrs", path);
         }
         /**
-         * Solr (camel-solr)
+         * Solr (Secure) (camel-solr)
          * Perform operations against Apache Lucene Solr.
          * 
          * Category: monitoring,search
          * Since: 2.9
          * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solrs:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the solr server
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path url
          */
-        default SolrEndpointBuilder solr(String scheme, String path) {
-            return SolrEndpointBuilderFactory.solr(scheme,path);
+        default SolrEndpointBuilder solrs(String componentName, String path) {
+            return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * Syntax: <code>solr:url</code>
-     * 
-     * Path parameter: url (required)
-     * Hostname and port for the solr server
-     */
-    static SolrEndpointBuilder solr(String path) {
-        return solr("solr", path);
-    }
-    /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * Syntax: <code>solrCloud:url</code>
-     * 
-     * Path parameter: url (required)
-     * Hostname and port for the solr server
-     */
-    static SolrEndpointBuilder solrCloud(String path) {
-        return solr("solrCloud", path);
-    }
-    /**
-     * Solr (Secure) (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * Syntax: <code>solrs:url</code>
-     * 
-     * Path parameter: url (required)
-     * Hostname and port for the solr server
-     */
-    static SolrEndpointBuilder solrs(String path) {
-        return solr("solrs", path);
-    }
-    /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     */
-    static SolrEndpointBuilder solr(String scheme, String path) {
+    static SolrEndpointBuilder endpointBuilder(String componentName, String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {
-            public SolrEndpointBuilderImpl(String scheme, String path) {
-                super(scheme, path);
+            public SolrEndpointBuilderImpl(String path) {
+                super(componentName, path);
             }
         }
-        return new SolrEndpointBuilderImpl(scheme, path);
+        return new SolrEndpointBuilderImpl(path);
     }
 }

@@ -18,43 +18,38 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaComponent;
 import org.junit.Test;
 
-// import static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.direct;
-
-@Ignore("TODO: endpoint-dsl static")
-public class LanguageEndpointStaticTest extends ContextTestSupport {
+public class CustomSedaTest extends ContextTestSupport {
 
     @Test
-    public void testLanguage() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+    public void testCustomSeda() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Hello", "World", "Camel");
 
-        template.sendBody("direct:start", "World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testLanguageFluent() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-
-//        context.createFluentProducerTemplate()
-//            .to(direct("start"))
-//            .withBody("World")
-//            .send();
+        template.sendBody("seda:foo", "Hello");
+        template.sendBody("seda2:foo", "World");
+        template.sendBody("direct:foo", "Camel");
 
         assertMockEndpointsSatisfied();
+
+        assertTrue(context.hasComponent("seda") != null);
+        assertTrue(context.hasComponent("seda2") != null);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+        return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-//                from(direct("start"))
-//                    .to(language("simple").script("Hello ${body}"))
-//                    .to(mock("result"));
+                SedaComponent seda2 = new SedaComponent();
+                context.addComponent("seda2", seda2);
+
+                from(seda("foo")).to(mock("result"));
+                from(seda("seda2", "foo")).to(mock("result"));
+                from("direct:foo").to(seda("seda2", "foo"));
             }
         };
     }

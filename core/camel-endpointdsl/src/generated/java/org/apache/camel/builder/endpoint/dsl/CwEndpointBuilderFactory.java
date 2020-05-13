@@ -351,28 +351,37 @@ public interface CwEndpointBuilderFactory {
          * 
          * Path parameter: namespace (required)
          * The metric namespace
+         * 
+         * @param path namespace
          */
         default CwEndpointBuilder awsCw(String path) {
-            return CwEndpointBuilderFactory.awsCw(path);
+            return CwEndpointBuilderFactory.endpointBuilder("aws-cw", path);
+        }
+        /**
+         * AWS CloudWatch (camel-aws-cw)
+         * Send metrics to AWS CloudWatch.
+         * 
+         * Category: cloud,monitoring
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-aws-cw
+         * 
+         * Syntax: <code>aws-cw:namespace</code>
+         * 
+         * Path parameter: namespace (required)
+         * The metric namespace
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path namespace
+         */
+        default CwEndpointBuilder awsCw(String componentName, String path) {
+            return CwEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS CloudWatch (camel-aws-cw)
-     * Send metrics to AWS CloudWatch.
-     * 
-     * Category: cloud,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-aws-cw
-     * 
-     * Syntax: <code>aws-cw:namespace</code>
-     * 
-     * Path parameter: namespace (required)
-     * The metric namespace
-     */
-    static CwEndpointBuilder awsCw(String path) {
+    static CwEndpointBuilder endpointBuilder(String componentName, String path) {
         class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder, AdvancedCwEndpointBuilder {
             public CwEndpointBuilderImpl(String path) {
-                super("aws-cw", path);
+                super(componentName, path);
             }
         }
         return new CwEndpointBuilderImpl(path);

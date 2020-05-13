@@ -253,28 +253,41 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * OpenStack host url
+         * 
+         * @param path host
          */
         default GlanceEndpointBuilder openstackGlance(String path) {
-            return GlanceEndpointBuilderFactory.openstackGlance(path);
+            return GlanceEndpointBuilderFactory.endpointBuilder("openstack-glance", path);
+        }
+        /**
+         * OpenStack Glance (camel-openstack)
+         * Manage VM images and metadata definitions in OpenStack Glance.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-glance:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default GlanceEndpointBuilder openstackGlance(
+                String componentName,
+                String path) {
+            return GlanceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OpenStack Glance (camel-openstack)
-     * Manage VM images and metadata definitions in OpenStack Glance.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     * 
-     * Syntax: <code>openstack-glance:host</code>
-     * 
-     * Path parameter: host (required)
-     * OpenStack host url
-     */
-    static GlanceEndpointBuilder openstackGlance(String path) {
+    static GlanceEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
-                super("openstack-glance", path);
+                super(componentName, path);
             }
         }
         return new GlanceEndpointBuilderImpl(path);

@@ -514,28 +514,41 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * the cache name
+         * 
+         * @param path cacheName
          */
         default CaffeineCacheEndpointBuilder caffeineCache(String path) {
-            return CaffeineCacheEndpointBuilderFactory.caffeineCache(path);
+            return CaffeineCacheEndpointBuilderFactory.endpointBuilder("caffeine-cache", path);
+        }
+        /**
+         * Caffeine Cache (camel-caffeine)
+         * Perform caching operations using Caffeine Cache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-caffeine
+         * 
+         * Syntax: <code>caffeine-cache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * the cache name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default CaffeineCacheEndpointBuilder caffeineCache(
+                String componentName,
+                String path) {
+            return CaffeineCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Caffeine Cache (camel-caffeine)
-     * Perform caching operations using Caffeine Cache.
-     * 
-     * Category: cache,datagrid,clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
-     * Syntax: <code>caffeine-cache:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * the cache name
-     */
-    static CaffeineCacheEndpointBuilder caffeineCache(String path) {
+    static CaffeineCacheEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CaffeineCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements CaffeineCacheEndpointBuilder, AdvancedCaffeineCacheEndpointBuilder {
             public CaffeineCacheEndpointBuilderImpl(String path) {
-                super("caffeine-cache", path);
+                super(componentName, path);
             }
         }
         return new CaffeineCacheEndpointBuilderImpl(path);

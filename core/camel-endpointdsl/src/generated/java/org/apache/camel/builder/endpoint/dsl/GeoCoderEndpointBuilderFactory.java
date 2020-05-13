@@ -370,32 +370,45 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * Path parameter: latlng
          * The geo latitude and longitude which should be prefixed with latlng:
+         * 
+         * @param path address:latlng
          */
         default GeoCoderEndpointBuilder geocoder(String path) {
-            return GeoCoderEndpointBuilderFactory.geocoder(path);
+            return GeoCoderEndpointBuilderFactory.endpointBuilder("geocoder", path);
+        }
+        /**
+         * Geocoder (camel-geocoder)
+         * Find geocodes (latitude and longitude) for a given address or the
+         * other way round.
+         * 
+         * Category: api,location
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-geocoder
+         * 
+         * Syntax: <code>geocoder:address:latlng</code>
+         * 
+         * Path parameter: address
+         * The geo address which should be prefixed with address:
+         * 
+         * Path parameter: latlng
+         * The geo latitude and longitude which should be prefixed with latlng:
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path address:latlng
+         */
+        default GeoCoderEndpointBuilder geocoder(
+                String componentName,
+                String path) {
+            return GeoCoderEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
-     * 
-     * Category: api,location
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-geocoder
-     * 
-     * Syntax: <code>geocoder:address:latlng</code>
-     * 
-     * Path parameter: address
-     * The geo address which should be prefixed with address:
-     * 
-     * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with latlng:
-     */
-    static GeoCoderEndpointBuilder geocoder(String path) {
+    static GeoCoderEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder, AdvancedGeoCoderEndpointBuilder {
             public GeoCoderEndpointBuilderImpl(String path) {
-                super("geocoder", path);
+                super(componentName, path);
             }
         }
         return new GeoCoderEndpointBuilderImpl(path);

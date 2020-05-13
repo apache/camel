@@ -205,35 +205,48 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * Path parameter: botName (required)
          * Name of the Bot in CS to converse with
+         * 
+         * @param path host:port/botName
          */
         default ChatScriptEndpointBuilder chatscript(String path) {
-            return ChatScriptEndpointBuilderFactory.chatscript(path);
+            return ChatScriptEndpointBuilderFactory.endpointBuilder("chatscript", path);
+        }
+        /**
+         * ChatScript (camel-chatscript)
+         * Chat with a ChatScript Server.
+         * 
+         * Category: ai,chatscript
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-chatscript
+         * 
+         * Syntax: <code>chatscript:host:port/botName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname or IP of the server on which CS server is running
+         * 
+         * Path parameter: port
+         * Port on which ChatScript is listening to
+         * Default value: 1024
+         * 
+         * Path parameter: botName (required)
+         * Name of the Bot in CS to converse with
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/botName
+         */
+        default ChatScriptEndpointBuilder chatscript(
+                String componentName,
+                String path) {
+            return ChatScriptEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * ChatScript (camel-chatscript)
-     * Chat with a ChatScript Server.
-     * 
-     * Category: ai,chatscript
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-chatscript
-     * 
-     * Syntax: <code>chatscript:host:port/botName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname or IP of the server on which CS server is running
-     * 
-     * Path parameter: port
-     * Port on which ChatScript is listening to
-     * Default value: 1024
-     * 
-     * Path parameter: botName (required)
-     * Name of the Bot in CS to converse with
-     */
-    static ChatScriptEndpointBuilder chatscript(String path) {
+    static ChatScriptEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {
             public ChatScriptEndpointBuilderImpl(String path) {
-                super("chatscript", path);
+                super(componentName, path);
             }
         }
         return new ChatScriptEndpointBuilderImpl(path);

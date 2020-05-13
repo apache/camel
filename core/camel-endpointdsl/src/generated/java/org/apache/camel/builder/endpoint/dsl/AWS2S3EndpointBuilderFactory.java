@@ -2142,29 +2142,40 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * Path parameter: bucketNameOrArn (required)
          * Bucket name or ARN
+         * 
+         * @param path //bucketNameOrArn
          */
         default AWS2S3EndpointBuilder aws2S3(String path) {
-            return AWS2S3EndpointBuilderFactory.aws2S3(path);
+            return AWS2S3EndpointBuilderFactory.endpointBuilder("aws2-s3", path);
+        }
+        /**
+         * AWS 2 S3 Storage Service (camel-aws2-s3)
+         * Store and retrie objects from AWS S3 Storage Service using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,file
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-s3
+         * 
+         * Syntax: <code>aws2-s3://bucketNameOrArn</code>
+         * 
+         * Path parameter: bucketNameOrArn (required)
+         * Bucket name or ARN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path //bucketNameOrArn
+         */
+        default AWS2S3EndpointBuilder aws2S3(String componentName, String path) {
+            return AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 S3 Storage Service (camel-aws2-s3)
-     * Store and retrie objects from AWS S3 Storage Service using AWS SDK
-     * version 2.x.
-     * 
-     * Category: cloud,file
-     * Since: 3.2
-     * Maven coordinates: org.apache.camel:camel-aws2-s3
-     * 
-     * Syntax: <code>aws2-s3://bucketNameOrArn</code>
-     * 
-     * Path parameter: bucketNameOrArn (required)
-     * Bucket name or ARN
-     */
-    static AWS2S3EndpointBuilder aws2S3(String path) {
+    static AWS2S3EndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AWS2S3EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2S3EndpointBuilder, AdvancedAWS2S3EndpointBuilder {
             public AWS2S3EndpointBuilderImpl(String path) {
-                super("aws2-s3", path);
+                super(componentName, path);
             }
         }
         return new AWS2S3EndpointBuilderImpl(path);

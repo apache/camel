@@ -1631,29 +1631,42 @@ public interface ClientEndpointBuilderFactory {
          * 
          * Path parameter: uriPath (required)
          * The object information address
+         * 
+         * @param path uriPath
          */
         default ClientEndpointBuilder iec60870Client(String path) {
-            return ClientEndpointBuilderFactory.iec60870Client(path);
+            return ClientEndpointBuilderFactory.endpointBuilder("iec60870-client", path);
+        }
+        /**
+         * IEC 60870 Client (camel-iec60870)
+         * IEC 60870 supervisory control and data acquisition (SCADA) client
+         * using NeoSCADA implementation.
+         * 
+         * Category: iot
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-iec60870
+         * 
+         * Syntax: <code>iec60870-client:uriPath</code>
+         * 
+         * Path parameter: uriPath (required)
+         * The object information address
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path uriPath
+         */
+        default ClientEndpointBuilder iec60870Client(
+                String componentName,
+                String path) {
+            return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-client:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     */
-    static ClientEndpointBuilder iec60870Client(String path) {
+    static ClientEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ClientEndpointBuilderImpl extends AbstractEndpointBuilder implements ClientEndpointBuilder, AdvancedClientEndpointBuilder {
             public ClientEndpointBuilderImpl(String path) {
-                super("iec60870-client", path);
+                super(componentName, path);
             }
         }
         return new ClientEndpointBuilderImpl(path);

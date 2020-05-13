@@ -830,28 +830,41 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * Path parameter: containerAndQueueUri (required)
          * Container Queue compact Uri
+         * 
+         * @param path containerAndQueueUri
          */
         default QueueServiceEndpointBuilder azureQueue(String path) {
-            return QueueServiceEndpointBuilderFactory.azureQueue(path);
+            return QueueServiceEndpointBuilderFactory.endpointBuilder("azure-queue", path);
+        }
+        /**
+         * Azure Storage Queue Service (Legacy) (camel-azure)
+         * Store and retrieve messages from Azure Storage Queue Service.
+         * 
+         * Category: cloud,queue,azure
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-azure
+         * 
+         * Syntax: <code>azure-queue:containerAndQueueUri</code>
+         * 
+         * Path parameter: containerAndQueueUri (required)
+         * Container Queue compact Uri
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path containerAndQueueUri
+         */
+        default QueueServiceEndpointBuilder azureQueue(
+                String componentName,
+                String path) {
+            return QueueServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Azure Storage Queue Service (Legacy) (camel-azure)
-     * Store and retrieve messages from Azure Storage Queue Service.
-     * 
-     * Category: cloud,queue,azure
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * Syntax: <code>azure-queue:containerAndQueueUri</code>
-     * 
-     * Path parameter: containerAndQueueUri (required)
-     * Container Queue compact Uri
-     */
-    static QueueServiceEndpointBuilder azureQueue(String path) {
+    static QueueServiceEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class QueueServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements QueueServiceEndpointBuilder, AdvancedQueueServiceEndpointBuilder {
             public QueueServiceEndpointBuilderImpl(String path) {
-                super("azure-queue", path);
+                super(componentName, path);
             }
         }
         return new QueueServiceEndpointBuilderImpl(path);

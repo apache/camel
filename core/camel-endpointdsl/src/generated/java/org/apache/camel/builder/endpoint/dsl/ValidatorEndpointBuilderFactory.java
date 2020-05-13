@@ -380,30 +380,43 @@ public interface ValidatorEndpointBuilderFactory {
          * URL to a local resource on the classpath, or a reference to lookup a
          * bean in the Registry, or a full URL to a remote resource or resource
          * on the file system which contains the XSD to validate against.
+         * 
+         * @param path resourceUri
          */
         default ValidatorEndpointBuilder validator(String path) {
-            return ValidatorEndpointBuilderFactory.validator(path);
+            return ValidatorEndpointBuilderFactory.endpointBuilder("validator", path);
+        }
+        /**
+         * Validator (camel-validator)
+         * Validate the payload using XML Schema and JAXP Validation.
+         * 
+         * Category: core,validation
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-validator
+         * 
+         * Syntax: <code>validator:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * URL to a local resource on the classpath, or a reference to lookup a
+         * bean in the Registry, or a full URL to a remote resource or resource
+         * on the file system which contains the XSD to validate against.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default ValidatorEndpointBuilder validator(
+                String componentName,
+                String path) {
+            return ValidatorEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Validator (camel-validator)
-     * Validate the payload using XML Schema and JAXP Validation.
-     * 
-     * Category: core,validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-validator
-     * 
-     * Syntax: <code>validator:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath, or a reference to lookup a bean
-     * in the Registry, or a full URL to a remote resource or resource on the
-     * file system which contains the XSD to validate against.
-     */
-    static ValidatorEndpointBuilder validator(String path) {
+    static ValidatorEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements ValidatorEndpointBuilder, AdvancedValidatorEndpointBuilder {
             public ValidatorEndpointBuilderImpl(String path) {
-                super("validator", path);
+                super(componentName, path);
             }
         }
         return new ValidatorEndpointBuilderImpl(path);

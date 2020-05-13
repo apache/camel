@@ -239,28 +239,41 @@ public interface SpringBatchEndpointBuilderFactory {
          * 
          * Path parameter: jobName (required)
          * The name of the Spring Batch job located in the registry.
+         * 
+         * @param path jobName
          */
         default SpringBatchEndpointBuilder springBatch(String path) {
-            return SpringBatchEndpointBuilderFactory.springBatch(path);
+            return SpringBatchEndpointBuilderFactory.endpointBuilder("spring-batch", path);
+        }
+        /**
+         * Spring Batch (camel-spring-batch)
+         * Send messages to Spring Batch for further processing.
+         * 
+         * Category: spring,batch,scheduling
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-spring-batch
+         * 
+         * Syntax: <code>spring-batch:jobName</code>
+         * 
+         * Path parameter: jobName (required)
+         * The name of the Spring Batch job located in the registry.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path jobName
+         */
+        default SpringBatchEndpointBuilder springBatch(
+                String componentName,
+                String path) {
+            return SpringBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
-     * 
-     * Category: spring,batch,scheduling
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-spring-batch
-     * 
-     * Syntax: <code>spring-batch:jobName</code>
-     * 
-     * Path parameter: jobName (required)
-     * The name of the Spring Batch job located in the registry.
-     */
-    static SpringBatchEndpointBuilder springBatch(String path) {
+    static SpringBatchEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {
             public SpringBatchEndpointBuilderImpl(String path) {
-                super("spring-batch", path);
+                super(componentName, path);
             }
         }
         return new SpringBatchEndpointBuilderImpl(path);

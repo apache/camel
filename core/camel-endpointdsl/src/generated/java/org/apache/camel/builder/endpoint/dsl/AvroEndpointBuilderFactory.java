@@ -769,38 +769,47 @@ public interface AvroEndpointBuilderFactory {
          * 
          * Path parameter: messageName
          * The name of the message to send.
+         * 
+         * @param path transport:host:port/messageName
          */
         default AvroEndpointBuilder avro(String path) {
-            return AvroEndpointBuilderFactory.avro(path);
+            return AvroEndpointBuilderFactory.endpointBuilder("avro", path);
+        }
+        /**
+         * Avro (camel-avro-rpc)
+         * Produce or consume Apache Avro RPC services.
+         * 
+         * Category: messaging,transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-avro-rpc
+         * 
+         * Syntax: <code>avro:transport:host:port/messageName</code>
+         * 
+         * Path parameter: transport (required)
+         * Transport to use, can be either http or netty
+         * The value can be one of: http, netty
+         * 
+         * Path parameter: port (required)
+         * Port number to use
+         * 
+         * Path parameter: host (required)
+         * Hostname to use
+         * 
+         * Path parameter: messageName
+         * The name of the message to send.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path transport:host:port/messageName
+         */
+        default AvroEndpointBuilder avro(String componentName, String path) {
+            return AvroEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Avro (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
-     * 
-     * Category: messaging,transformation
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-avro-rpc
-     * 
-     * Syntax: <code>avro:transport:host:port/messageName</code>
-     * 
-     * Path parameter: transport (required)
-     * Transport to use, can be either http or netty
-     * The value can be one of: http, netty
-     * 
-     * Path parameter: port (required)
-     * Port number to use
-     * 
-     * Path parameter: host (required)
-     * Hostname to use
-     * 
-     * Path parameter: messageName
-     * The name of the message to send.
-     */
-    static AvroEndpointBuilder avro(String path) {
+    static AvroEndpointBuilder endpointBuilder(String componentName, String path) {
         class AvroEndpointBuilderImpl extends AbstractEndpointBuilder implements AvroEndpointBuilder, AdvancedAvroEndpointBuilder {
             public AvroEndpointBuilderImpl(String path) {
-                super("avro", path);
+                super(componentName, path);
             }
         }
         return new AvroEndpointBuilderImpl(path);

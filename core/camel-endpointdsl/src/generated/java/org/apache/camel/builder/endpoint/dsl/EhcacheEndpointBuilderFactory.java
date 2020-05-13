@@ -1034,28 +1034,39 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * the cache name
+         * 
+         * @param path cacheName
          */
         default EhcacheEndpointBuilder ehcache(String path) {
-            return EhcacheEndpointBuilderFactory.ehcache(path);
+            return EhcacheEndpointBuilderFactory.endpointBuilder("ehcache", path);
+        }
+        /**
+         * Ehcache (camel-ehcache)
+         * Perform caching operations using Ehcache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-ehcache
+         * 
+         * Syntax: <code>ehcache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * the cache name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default EhcacheEndpointBuilder ehcache(String componentName, String path) {
+            return EhcacheEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ehcache (camel-ehcache)
-     * Perform caching operations using Ehcache.
-     * 
-     * Category: cache,datagrid,clustering
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-ehcache
-     * 
-     * Syntax: <code>ehcache:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * the cache name
-     */
-    static EhcacheEndpointBuilder ehcache(String path) {
+    static EhcacheEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class EhcacheEndpointBuilderImpl extends AbstractEndpointBuilder implements EhcacheEndpointBuilder, AdvancedEhcacheEndpointBuilder {
             public EhcacheEndpointBuilderImpl(String path) {
-                super("ehcache", path);
+                super(componentName, path);
             }
         }
         return new EhcacheEndpointBuilderImpl(path);

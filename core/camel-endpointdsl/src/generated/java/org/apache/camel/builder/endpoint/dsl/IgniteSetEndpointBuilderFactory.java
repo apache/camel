@@ -293,28 +293,41 @@ public interface IgniteSetEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The set name.
+         * 
+         * @param path name
          */
         default IgniteSetEndpointBuilder igniteSet(String path) {
-            return IgniteSetEndpointBuilderFactory.igniteSet(path);
+            return IgniteSetEndpointBuilderFactory.endpointBuilder("ignite-set", path);
+        }
+        /**
+         * Ignite Sets (camel-ignite)
+         * Interact with Ignite Set data structures.
+         * 
+         * Category: nosql,cache
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-set:name</code>
+         * 
+         * Path parameter: name (required)
+         * The set name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default IgniteSetEndpointBuilder igniteSet(
+                String componentName,
+                String path) {
+            return IgniteSetEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite Sets (camel-ignite)
-     * Interact with Ignite Set data structures.
-     * 
-     * Category: nosql,cache
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-set:name</code>
-     * 
-     * Path parameter: name (required)
-     * The set name.
-     */
-    static IgniteSetEndpointBuilder igniteSet(String path) {
+    static IgniteSetEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteSetEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteSetEndpointBuilder, AdvancedIgniteSetEndpointBuilder {
             public IgniteSetEndpointBuilderImpl(String path) {
-                super("ignite-set", path);
+                super(componentName, path);
             }
         }
         return new IgniteSetEndpointBuilderImpl(path);

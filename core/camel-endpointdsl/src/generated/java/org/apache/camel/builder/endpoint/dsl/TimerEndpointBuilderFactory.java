@@ -432,28 +432,39 @@ public interface TimerEndpointBuilderFactory {
          * 
          * Path parameter: timerName (required)
          * The name of the timer
+         * 
+         * @param path timerName
          */
         default TimerEndpointBuilder timer(String path) {
-            return TimerEndpointBuilderFactory.timer(path);
+            return TimerEndpointBuilderFactory.endpointBuilder("timer", path);
+        }
+        /**
+         * Timer (camel-timer)
+         * Generate messages in specified intervals using java.util.Timer.
+         * 
+         * Category: core,scheduling
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-timer
+         * 
+         * Syntax: <code>timer:timerName</code>
+         * 
+         * Path parameter: timerName (required)
+         * The name of the timer
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path timerName
+         */
+        default TimerEndpointBuilder timer(String componentName, String path) {
+            return TimerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Timer (camel-timer)
-     * Generate messages in specified intervals using java.util.Timer.
-     * 
-     * Category: core,scheduling
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-timer
-     * 
-     * Syntax: <code>timer:timerName</code>
-     * 
-     * Path parameter: timerName (required)
-     * The name of the timer
-     */
-    static TimerEndpointBuilder timer(String path) {
+    static TimerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class TimerEndpointBuilderImpl extends AbstractEndpointBuilder implements TimerEndpointBuilder, AdvancedTimerEndpointBuilder {
             public TimerEndpointBuilderImpl(String path) {
-                super("timer", path);
+                super(componentName, path);
             }
         }
         return new TimerEndpointBuilderImpl(path);

@@ -1263,29 +1263,42 @@ public interface TelegramEndpointBuilderFactory {
          * Path parameter: type (required)
          * The endpoint type. Currently, only the 'bots' type is supported.
          * The value can be one of: bots
+         * 
+         * @param path type
          */
         default TelegramEndpointBuilder telegram(String path) {
-            return TelegramEndpointBuilderFactory.telegram(path);
+            return TelegramEndpointBuilderFactory.endpointBuilder("telegram", path);
+        }
+        /**
+         * Telegram (camel-telegram)
+         * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+         * 
+         * Category: chat
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-telegram
+         * 
+         * Syntax: <code>telegram:type</code>
+         * 
+         * Path parameter: type (required)
+         * The endpoint type. Currently, only the 'bots' type is supported.
+         * The value can be one of: bots
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path type
+         */
+        default TelegramEndpointBuilder telegram(
+                String componentName,
+                String path) {
+            return TelegramEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Telegram (camel-telegram)
-     * Send and receive messages acting as a Telegram Bot Telegram Bot API.
-     * 
-     * Category: chat
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-telegram
-     * 
-     * Syntax: <code>telegram:type</code>
-     * 
-     * Path parameter: type (required)
-     * The endpoint type. Currently, only the 'bots' type is supported.
-     * The value can be one of: bots
-     */
-    static TelegramEndpointBuilder telegram(String path) {
+    static TelegramEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class TelegramEndpointBuilderImpl extends AbstractEndpointBuilder implements TelegramEndpointBuilder, AdvancedTelegramEndpointBuilder {
             public TelegramEndpointBuilderImpl(String path) {
-                super("telegram", path);
+                super(componentName, path);
             }
         }
         return new TelegramEndpointBuilderImpl(path);

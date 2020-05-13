@@ -423,28 +423,41 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
-            return KubernetesSecretsEndpointBuilderFactory.kubernetesSecrets(path);
+            return KubernetesSecretsEndpointBuilderFactory.endpointBuilder("kubernetes-secrets", path);
+        }
+        /**
+         * Kubernetes Secrets (camel-kubernetes)
+         * Perform operations on Kubernetes Secrets.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-secrets:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesSecretsEndpointBuilder kubernetesSecrets(
+                String componentName,
+                String path) {
+            return KubernetesSecretsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Secrets (camel-kubernetes)
-     * Perform operations on Kubernetes Secrets.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-secrets:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
+    static KubernetesSecretsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesSecretsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesSecretsEndpointBuilder, AdvancedKubernetesSecretsEndpointBuilder {
             public KubernetesSecretsEndpointBuilderImpl(String path) {
-                super("kubernetes-secrets", path);
+                super(componentName, path);
             }
         }
         return new KubernetesSecretsEndpointBuilderImpl(path);

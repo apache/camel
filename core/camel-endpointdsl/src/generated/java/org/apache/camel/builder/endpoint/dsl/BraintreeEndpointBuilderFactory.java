@@ -1443,35 +1443,49 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: methodName
          * What sub operation to use for the selected operation
+         * 
+         * @param path apiName/methodName
          */
         default BraintreeEndpointBuilder braintree(String path) {
-            return BraintreeEndpointBuilderFactory.braintree(path);
+            return BraintreeEndpointBuilderFactory.endpointBuilder("braintree", path);
+        }
+        /**
+         * Braintree (camel-braintree)
+         * Process payments using Braintree Payments.
+         * 
+         * Category: api,cloud,payment
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-braintree
+         * 
+         * Syntax: <code>braintree:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
+         * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
+         * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
+         * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
+         * WEBHOOKNOTIFICATION
+         * 
+         * Path parameter: methodName
+         * What sub operation to use for the selected operation
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default BraintreeEndpointBuilder braintree(
+                String componentName,
+                String path) {
+            return BraintreeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Braintree (camel-braintree)
-     * Process payments using Braintree Payments.
-     * 
-     * Category: api,cloud,payment
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-braintree
-     * 
-     * Syntax: <code>braintree:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-     * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-     * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-     * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION
-     * 
-     * Path parameter: methodName
-     * What sub operation to use for the selected operation
-     */
-    static BraintreeEndpointBuilder braintree(String path) {
+    static BraintreeEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class BraintreeEndpointBuilderImpl extends AbstractEndpointBuilder implements BraintreeEndpointBuilder, AdvancedBraintreeEndpointBuilder {
             public BraintreeEndpointBuilderImpl(String path) {
-                super("braintree", path);
+                super(componentName, path);
             }
         }
         return new BraintreeEndpointBuilderImpl(path);

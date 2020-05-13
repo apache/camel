@@ -1428,9 +1428,32 @@ public interface WsEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The URI to use such as http://hostname:port/path
+         * 
+         * @param path httpUri
          */
         default WsEndpointBuilder ahcWs(String path) {
-            return WsEndpointBuilderFactory.ahcWs(path);
+            return WsEndpointBuilderFactory.endpointBuilder("ahc-ws", path);
+        }
+        /**
+         * AHC Websocket (camel-ahc-ws)
+         * Exchange data with external Websocket servers using Async Http
+         * Client.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-ahc-ws
+         * 
+         * Syntax: <code>ahc-ws:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The URI to use such as http://hostname:port/path
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
+         */
+        default WsEndpointBuilder ahcWs(String componentName, String path) {
+            return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * AHC Secure Websocket (Secure) (camel-ahc-ws)
@@ -1445,69 +1468,40 @@ public interface WsEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The URI to use such as http://hostname:port/path
+         * 
+         * @param path httpUri
          */
         default WsEndpointBuilder ahcWss(String path) {
-            return WsEndpointBuilderFactory.ahcWss(path);
+            return WsEndpointBuilderFactory.endpointBuilder("ahc-wss", path);
         }
         /**
-         * AHC Websocket (camel-ahc-ws)
+         * AHC Secure Websocket (Secure) (camel-ahc-ws)
          * Exchange data with external Websocket servers using Async Http
          * Client.
          * 
          * Category: websocket
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-ahc-ws
+         * 
+         * Syntax: <code>ahc-wss:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The URI to use such as http://hostname:port/path
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
          */
-        default WsEndpointBuilder ahcWs(String scheme, String path) {
-            return WsEndpointBuilderFactory.ahcWs(scheme,path);
+        default WsEndpointBuilder ahcWss(String componentName, String path) {
+            return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AHC Websocket (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     * 
-     * Syntax: <code>ahc-ws:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The URI to use such as http://hostname:port/path
-     */
-    static WsEndpointBuilder ahcWs(String path) {
-        return ahcWs("ahc-ws", path);
-    }
-    /**
-     * AHC Secure Websocket (Secure) (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     * 
-     * Syntax: <code>ahc-wss:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The URI to use such as http://hostname:port/path
-     */
-    static WsEndpointBuilder ahcWss(String path) {
-        return ahcWs("ahc-wss", path);
-    }
-    /**
-     * AHC Websocket (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     */
-    static WsEndpointBuilder ahcWs(String scheme, String path) {
+    static WsEndpointBuilder endpointBuilder(String componentName, String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {
-            public WsEndpointBuilderImpl(String scheme, String path) {
-                super(scheme, path);
+            public WsEndpointBuilderImpl(String path) {
+                super(componentName, path);
             }
         }
-        return new WsEndpointBuilderImpl(scheme, path);
+        return new WsEndpointBuilderImpl(path);
     }
 }

@@ -158,29 +158,38 @@ public interface SagaEndpointBuilderFactory {
          * Path parameter: action (required)
          * Action to execute (complete or compensate)
          * The value can be one of: COMPLETE, COMPENSATE
+         * 
+         * @param path action
          */
         default SagaEndpointBuilder saga(String path) {
-            return SagaEndpointBuilderFactory.saga(path);
+            return SagaEndpointBuilderFactory.endpointBuilder("saga", path);
+        }
+        /**
+         * Saga (camel-saga)
+         * Execute custom actions within a route using the Saga EIP.
+         * 
+         * Category: core,endpoint
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-saga
+         * 
+         * Syntax: <code>saga:action</code>
+         * 
+         * Path parameter: action (required)
+         * Action to execute (complete or compensate)
+         * The value can be one of: COMPLETE, COMPENSATE
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path action
+         */
+        default SagaEndpointBuilder saga(String componentName, String path) {
+            return SagaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Saga (camel-saga)
-     * Execute custom actions within a route using the Saga EIP.
-     * 
-     * Category: core,endpoint
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-saga
-     * 
-     * Syntax: <code>saga:action</code>
-     * 
-     * Path parameter: action (required)
-     * Action to execute (complete or compensate)
-     * The value can be one of: COMPLETE, COMPENSATE
-     */
-    static SagaEndpointBuilder saga(String path) {
+    static SagaEndpointBuilder endpointBuilder(String componentName, String path) {
         class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder, AdvancedSagaEndpointBuilder {
             public SagaEndpointBuilderImpl(String path) {
-                super("saga", path);
+                super(componentName, path);
             }
         }
         return new SagaEndpointBuilderImpl(path);

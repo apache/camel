@@ -5482,33 +5482,42 @@ public interface JmsEndpointBuilderFactory {
          * 
          * Path parameter: destinationName (required)
          * Name of the queue or topic to use as destination
+         * 
+         * @param path destinationType:destinationName
          */
         default JmsEndpointBuilder jms(String path) {
-            return JmsEndpointBuilderFactory.jms(path);
+            return JmsEndpointBuilderFactory.endpointBuilder("jms", path);
+        }
+        /**
+         * JMS (camel-jms)
+         * Sent and receive messages to/from a JMS Queue or Topic.
+         * 
+         * Category: messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-jms
+         * 
+         * Syntax: <code>jms:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic, temp-queue, temp-topic
+         * 
+         * Path parameter: destinationName (required)
+         * Name of the queue or topic to use as destination
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path destinationType:destinationName
+         */
+        default JmsEndpointBuilder jms(String componentName, String path) {
+            return JmsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JMS (camel-jms)
-     * Sent and receive messages to/from a JMS Queue or Topic.
-     * 
-     * Category: messaging
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-jms
-     * 
-     * Syntax: <code>jms:destinationType:destinationName</code>
-     * 
-     * Path parameter: destinationType
-     * The kind of destination to use
-     * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
-     * 
-     * Path parameter: destinationName (required)
-     * Name of the queue or topic to use as destination
-     */
-    static JmsEndpointBuilder jms(String path) {
+    static JmsEndpointBuilder endpointBuilder(String componentName, String path) {
         class JmsEndpointBuilderImpl extends AbstractEndpointBuilder implements JmsEndpointBuilder, AdvancedJmsEndpointBuilder {
             public JmsEndpointBuilderImpl(String path) {
-                super("jms", path);
+                super(componentName, path);
             }
         }
         return new JmsEndpointBuilderImpl(path);

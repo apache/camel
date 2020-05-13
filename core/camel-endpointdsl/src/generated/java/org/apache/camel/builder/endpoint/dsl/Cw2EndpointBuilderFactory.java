@@ -353,28 +353,37 @@ public interface Cw2EndpointBuilderFactory {
          * 
          * Path parameter: namespace (required)
          * The metric namespace
+         * 
+         * @param path namespace
          */
         default Cw2EndpointBuilder aws2Cw(String path) {
-            return Cw2EndpointBuilderFactory.aws2Cw(path);
+            return Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw", path);
+        }
+        /**
+         * AWS 2 CloudWatch (camel-aws2-cw)
+         * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
+         * 
+         * Category: cloud,monitoring
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-cw
+         * 
+         * Syntax: <code>aws2-cw:namespace</code>
+         * 
+         * Path parameter: namespace (required)
+         * The metric namespace
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path namespace
+         */
+        default Cw2EndpointBuilder aws2Cw(String componentName, String path) {
+            return Cw2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 CloudWatch (camel-aws2-cw)
-     * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
-     * 
-     * Category: cloud,monitoring
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-cw
-     * 
-     * Syntax: <code>aws2-cw:namespace</code>
-     * 
-     * Path parameter: namespace (required)
-     * The metric namespace
-     */
-    static Cw2EndpointBuilder aws2Cw(String path) {
+    static Cw2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Cw2EndpointBuilderImpl extends AbstractEndpointBuilder implements Cw2EndpointBuilder, AdvancedCw2EndpointBuilder {
             public Cw2EndpointBuilderImpl(String path) {
-                super("aws2-cw", path);
+                super(componentName, path);
             }
         }
         return new Cw2EndpointBuilderImpl(path);

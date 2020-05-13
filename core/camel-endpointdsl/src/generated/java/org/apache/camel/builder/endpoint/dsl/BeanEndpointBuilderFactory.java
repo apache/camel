@@ -272,28 +272,37 @@ public interface BeanEndpointBuilderFactory {
          * 
          * Path parameter: beanName (required)
          * Sets the name of the bean to invoke
+         * 
+         * @param path beanName
          */
         default BeanEndpointBuilder bean(String path) {
-            return BeanEndpointBuilderFactory.bean(path);
+            return BeanEndpointBuilderFactory.endpointBuilder("bean", path);
+        }
+        /**
+         * Bean (camel-bean)
+         * Invoke methods of Java beans stored in Camel registry.
+         * 
+         * Category: core,java
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-bean
+         * 
+         * Syntax: <code>bean:beanName</code>
+         * 
+         * Path parameter: beanName (required)
+         * Sets the name of the bean to invoke
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path beanName
+         */
+        default BeanEndpointBuilder bean(String componentName, String path) {
+            return BeanEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
-     * 
-     * Category: core,java
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-bean
-     * 
-     * Syntax: <code>bean:beanName</code>
-     * 
-     * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
-     */
-    static BeanEndpointBuilder bean(String path) {
+    static BeanEndpointBuilder endpointBuilder(String componentName, String path) {
         class BeanEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanEndpointBuilder, AdvancedBeanEndpointBuilder {
             public BeanEndpointBuilderImpl(String path) {
-                super("bean", path);
+                super(componentName, path);
             }
         }
         return new BeanEndpointBuilderImpl(path);

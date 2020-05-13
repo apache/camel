@@ -4470,40 +4470,53 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * Path parameter: path
          * Resource path
+         * 
+         * @param path protocol:host:port/path
          */
         default NettyHttpEndpointBuilder nettyHttp(String path) {
-            return NettyHttpEndpointBuilderFactory.nettyHttp(path);
+            return NettyHttpEndpointBuilderFactory.endpointBuilder("netty-http", path);
+        }
+        /**
+         * Netty HTTP (camel-netty-http)
+         * Netty HTTP server and client using the Netty 4.x.
+         * 
+         * Category: http
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-netty-http
+         * 
+         * Syntax: <code>netty-http:protocol:host:port/path</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol to use which is either http, https or proxy - a consumer
+         * only option.
+         * The value can be one of: http, https
+         * 
+         * Path parameter: host (required)
+         * The local hostname such as localhost, or 0.0.0.0 when being a
+         * consumer. The remote HTTP server hostname when using producer.
+         * 
+         * Path parameter: port
+         * The host port number
+         * 
+         * Path parameter: path
+         * Resource path
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path protocol:host:port/path
+         */
+        default NettyHttpEndpointBuilder nettyHttp(
+                String componentName,
+                String path) {
+            return NettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Netty HTTP (camel-netty-http)
-     * Netty HTTP server and client using the Netty 4.x.
-     * 
-     * Category: http
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-netty-http
-     * 
-     * Syntax: <code>netty-http:protocol:host:port/path</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol to use which is either http, https or proxy - a consumer
-     * only option.
-     * The value can be one of: http, https
-     * 
-     * Path parameter: host (required)
-     * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
-     * The remote HTTP server hostname when using producer.
-     * 
-     * Path parameter: port
-     * The host port number
-     * 
-     * Path parameter: path
-     * Resource path
-     */
-    static NettyHttpEndpointBuilder nettyHttp(String path) {
+    static NettyHttpEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class NettyHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyHttpEndpointBuilder, AdvancedNettyHttpEndpointBuilder {
             public NettyHttpEndpointBuilderImpl(String path) {
-                super("netty-http", path);
+                super(componentName, path);
             }
         }
         return new NettyHttpEndpointBuilderImpl(path);

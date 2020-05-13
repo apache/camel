@@ -3339,32 +3339,46 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default RobotFrameworkEndpointBuilder robotframework(String path) {
-            return RobotFrameworkEndpointBuilderFactory.robotframework(path);
+            return RobotFrameworkEndpointBuilderFactory.endpointBuilder("robotframework", path);
+        }
+        /**
+         * Robot Framework (camel-robotframework)
+         * Pass camel exchanges to acceptence test written in Robot DSL.
+         * 
+         * Category: testing
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-robotframework
+         * 
+         * Syntax: <code>robotframework:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default RobotFrameworkEndpointBuilder robotframework(
+                String componentName,
+                String path) {
+            return RobotFrameworkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Robot Framework (camel-robotframework)
-     * Pass camel exchanges to acceptence test written in Robot DSL.
-     * 
-     * Category: testing
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-robotframework
-     * 
-     * Syntax: <code>robotframework:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static RobotFrameworkEndpointBuilder robotframework(String path) {
+    static RobotFrameworkEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class RobotFrameworkEndpointBuilderImpl extends AbstractEndpointBuilder implements RobotFrameworkEndpointBuilder, AdvancedRobotFrameworkEndpointBuilder {
             public RobotFrameworkEndpointBuilderImpl(String path) {
-                super("robotframework", path);
+                super(componentName, path);
             }
         }
         return new RobotFrameworkEndpointBuilderImpl(path);

@@ -317,28 +317,42 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * Path parameter: endpointId
          * The endpoint ID (not used).
+         * 
+         * @param path endpointId
          */
         default IgniteEventsEndpointBuilder igniteEvents(String path) {
-            return IgniteEventsEndpointBuilderFactory.igniteEvents(path);
+            return IgniteEventsEndpointBuilderFactory.endpointBuilder("ignite-events", path);
+        }
+        /**
+         * Ignite Events (camel-ignite)
+         * Receive events from an Ignite cluster by creating a local event
+         * listener.
+         * 
+         * Category: nosql,cache,compute,messaging,data
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-events:endpointId</code>
+         * 
+         * Path parameter: endpointId
+         * The endpoint ID (not used).
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path endpointId
+         */
+        default IgniteEventsEndpointBuilder igniteEvents(
+                String componentName,
+                String path) {
+            return IgniteEventsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite Events (camel-ignite)
-     * Receive events from an Ignite cluster by creating a local event listener.
-     * 
-     * Category: nosql,cache,compute,messaging,data
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-events:endpointId</code>
-     * 
-     * Path parameter: endpointId
-     * The endpoint ID (not used).
-     */
-    static IgniteEventsEndpointBuilder igniteEvents(String path) {
+    static IgniteEventsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteEventsEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteEventsEndpointBuilder, AdvancedIgniteEventsEndpointBuilder {
             public IgniteEventsEndpointBuilderImpl(String path) {
-                super("ignite-events", path);
+                super(componentName, path);
             }
         }
         return new IgniteEventsEndpointBuilderImpl(path);

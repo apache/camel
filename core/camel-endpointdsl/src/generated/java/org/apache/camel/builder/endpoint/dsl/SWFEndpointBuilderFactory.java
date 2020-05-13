@@ -1295,29 +1295,38 @@ public interface SWFEndpointBuilderFactory {
          * Path parameter: type (required)
          * Activity or workflow
          * The value can be one of: activity, workflow
+         * 
+         * @param path type
          */
         default SWFEndpointBuilder awsSwf(String path) {
-            return SWFEndpointBuilderFactory.awsSwf(path);
+            return SWFEndpointBuilderFactory.endpointBuilder("aws-swf", path);
+        }
+        /**
+         * AWS Simple Workflow (camel-aws-swf)
+         * Manage workflows in the AWS Simple Workflow service.
+         * 
+         * Category: cloud,workflow
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-aws-swf
+         * 
+         * Syntax: <code>aws-swf:type</code>
+         * 
+         * Path parameter: type (required)
+         * Activity or workflow
+         * The value can be one of: activity, workflow
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path type
+         */
+        default SWFEndpointBuilder awsSwf(String componentName, String path) {
+            return SWFEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Simple Workflow (camel-aws-swf)
-     * Manage workflows in the AWS Simple Workflow service.
-     * 
-     * Category: cloud,workflow
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-aws-swf
-     * 
-     * Syntax: <code>aws-swf:type</code>
-     * 
-     * Path parameter: type (required)
-     * Activity or workflow
-     * The value can be one of: activity, workflow
-     */
-    static SWFEndpointBuilder awsSwf(String path) {
+    static SWFEndpointBuilder endpointBuilder(String componentName, String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {
             public SWFEndpointBuilderImpl(String path) {
-                super("aws-swf", path);
+                super(componentName, path);
             }
         }
         return new SWFEndpointBuilderImpl(path);

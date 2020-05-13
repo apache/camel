@@ -341,28 +341,41 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * Path parameter: function (required)
          * Name of the Lambda function.
+         * 
+         * @param path function
          */
         default LambdaEndpointBuilder awsLambda(String path) {
-            return LambdaEndpointBuilderFactory.awsLambda(path);
+            return LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
+        }
+        /**
+         * AWS Lambda (camel-aws-lambda)
+         * Manage and invoke AWS Lambda functions.
+         * 
+         * Category: cloud,computing,serverless
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-aws-lambda
+         * 
+         * Syntax: <code>aws-lambda:function</code>
+         * 
+         * Path parameter: function (required)
+         * Name of the Lambda function.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path function
+         */
+        default LambdaEndpointBuilder awsLambda(
+                String componentName,
+                String path) {
+            return LambdaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Lambda (camel-aws-lambda)
-     * Manage and invoke AWS Lambda functions.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     * 
-     * Syntax: <code>aws-lambda:function</code>
-     * 
-     * Path parameter: function (required)
-     * Name of the Lambda function.
-     */
-    static LambdaEndpointBuilder awsLambda(String path) {
+    static LambdaEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {
             public LambdaEndpointBuilderImpl(String path) {
-                super("aws-lambda", path);
+                super(componentName, path);
             }
         }
         return new LambdaEndpointBuilderImpl(path);

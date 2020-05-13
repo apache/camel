@@ -1258,38 +1258,51 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * Path parameter: resourceUri (required)
          * Name of the websocket channel to use
+         * 
+         * @param path host:port/resourceUri
          */
         default WebsocketEndpointBuilder websocket(String path) {
-            return WebsocketEndpointBuilderFactory.websocket(path);
+            return WebsocketEndpointBuilderFactory.endpointBuilder("websocket", path);
+        }
+        /**
+         * Jetty Websocket (camel-websocket)
+         * Expose websocket endpoints using Jetty.
+         * 
+         * Category: websocket
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-websocket
+         * 
+         * Syntax: <code>websocket:host:port/resourceUri</code>
+         * 
+         * Path parameter: host
+         * The hostname. The default value is 0.0.0.0. Setting this option on
+         * the component will use the component configured value as default.
+         * Default value: 0.0.0.0
+         * 
+         * Path parameter: port
+         * The port number. The default value is 9292. Setting this option on
+         * the component will use the component configured value as default.
+         * Default value: 9292
+         * 
+         * Path parameter: resourceUri (required)
+         * Name of the websocket channel to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/resourceUri
+         */
+        default WebsocketEndpointBuilder websocket(
+                String componentName,
+                String path) {
+            return WebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Jetty Websocket (camel-websocket)
-     * Expose websocket endpoints using Jetty.
-     * 
-     * Category: websocket
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-websocket
-     * 
-     * Syntax: <code>websocket:host:port/resourceUri</code>
-     * 
-     * Path parameter: host
-     * The hostname. The default value is 0.0.0.0. Setting this option on the
-     * component will use the component configured value as default.
-     * Default value: 0.0.0.0
-     * 
-     * Path parameter: port
-     * The port number. The default value is 9292. Setting this option on the
-     * component will use the component configured value as default.
-     * Default value: 9292
-     * 
-     * Path parameter: resourceUri (required)
-     * Name of the websocket channel to use
-     */
-    static WebsocketEndpointBuilder websocket(String path) {
+    static WebsocketEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class WebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements WebsocketEndpointBuilder, AdvancedWebsocketEndpointBuilder {
             public WebsocketEndpointBuilderImpl(String path) {
-                super("websocket", path);
+                super(componentName, path);
             }
         }
         return new WebsocketEndpointBuilderImpl(path);

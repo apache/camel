@@ -1442,28 +1442,39 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default JCacheEndpointBuilder jcache(String path) {
-            return JCacheEndpointBuilderFactory.jcache(path);
+            return JCacheEndpointBuilderFactory.endpointBuilder("jcache", path);
+        }
+        /**
+         * JCache (camel-jcache)
+         * Perform caching operations against JSR107/JCache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-jcache
+         * 
+         * Syntax: <code>jcache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default JCacheEndpointBuilder jcache(String componentName, String path) {
+            return JCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JCache (camel-jcache)
-     * Perform caching operations against JSR107/JCache.
-     * 
-     * Category: cache,datagrid,clustering
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-jcache
-     * 
-     * Syntax: <code>jcache:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static JCacheEndpointBuilder jcache(String path) {
+    static JCacheEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class JCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements JCacheEndpointBuilder, AdvancedJCacheEndpointBuilder {
             public JCacheEndpointBuilderImpl(String path) {
-                super("jcache", path);
+                super(componentName, path);
             }
         }
         return new JCacheEndpointBuilderImpl(path);

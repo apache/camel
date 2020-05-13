@@ -1895,31 +1895,40 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * Path parameter: eventListenerType
          * Sets the event listener type to attach to
+         * 
+         * @param path connectionURL
          */
         default JBPMEndpointBuilder jbpm(String path) {
-            return JBPMEndpointBuilderFactory.jbpm(path);
+            return JBPMEndpointBuilderFactory.endpointBuilder("jbpm", path);
+        }
+        /**
+         * JBPM (camel-jbpm)
+         * Interact with jBPM workflow engine over REST.
+         * 
+         * Category: process
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-jbpm
+         * 
+         * Syntax: <code>jbpm:connectionURL</code>
+         * 
+         * Path parameter: connectionURL (required)
+         * The URL to the jBPM server.
+         * 
+         * Path parameter: eventListenerType
+         * Sets the event listener type to attach to
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path connectionURL
+         */
+        default JBPMEndpointBuilder jbpm(String componentName, String path) {
+            return JBPMEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JBPM (camel-jbpm)
-     * Interact with jBPM workflow engine over REST.
-     * 
-     * Category: process
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jbpm
-     * 
-     * Syntax: <code>jbpm:connectionURL</code>
-     * 
-     * Path parameter: connectionURL (required)
-     * The URL to the jBPM server.
-     * 
-     * Path parameter: eventListenerType
-     * Sets the event listener type to attach to
-     */
-    static JBPMEndpointBuilder jbpm(String path) {
+    static JBPMEndpointBuilder endpointBuilder(String componentName, String path) {
         class JBPMEndpointBuilderImpl extends AbstractEndpointBuilder implements JBPMEndpointBuilder, AdvancedJBPMEndpointBuilder {
             public JBPMEndpointBuilderImpl(String path) {
-                super("jbpm", path);
+                super(componentName, path);
             }
         }
         return new JBPMEndpointBuilderImpl(path);

@@ -371,28 +371,41 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default TranslateEndpointBuilder awsTranslate(String path) {
-            return TranslateEndpointBuilderFactory.awsTranslate(path);
+            return TranslateEndpointBuilderFactory.endpointBuilder("aws-translate", path);
+        }
+        /**
+         * AWS Translate (camel-aws-translate)
+         * Translate texts using AWS Translate.
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-translate
+         * 
+         * Syntax: <code>aws-translate:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default TranslateEndpointBuilder awsTranslate(
+                String componentName,
+                String path) {
+            return TranslateEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * Translate texts using AWS Translate.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     * 
-     * Syntax: <code>aws-translate:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static TranslateEndpointBuilder awsTranslate(String path) {
+    static TranslateEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class TranslateEndpointBuilderImpl extends AbstractEndpointBuilder implements TranslateEndpointBuilder, AdvancedTranslateEndpointBuilder {
             public TranslateEndpointBuilderImpl(String path) {
-                super("aws-translate", path);
+                super(componentName, path);
             }
         }
         return new TranslateEndpointBuilderImpl(path);

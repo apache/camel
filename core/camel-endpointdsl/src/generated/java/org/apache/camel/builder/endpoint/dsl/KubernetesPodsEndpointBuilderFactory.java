@@ -1257,28 +1257,42 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesPodsEndpointBuilder kubernetesPods(String path) {
-            return KubernetesPodsEndpointBuilderFactory.kubernetesPods(path);
+            return KubernetesPodsEndpointBuilderFactory.endpointBuilder("kubernetes-pods", path);
+        }
+        /**
+         * Kubernetes Pods (camel-kubernetes)
+         * Perform operations on Kubernetes Pods and get notified on Pod
+         * changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-pods:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesPodsEndpointBuilder kubernetesPods(
+                String componentName,
+                String path) {
+            return KubernetesPodsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Pods (camel-kubernetes)
-     * Perform operations on Kubernetes Pods and get notified on Pod changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-pods:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesPodsEndpointBuilder kubernetesPods(String path) {
+    static KubernetesPodsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesPodsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPodsEndpointBuilder, AdvancedKubernetesPodsEndpointBuilder {
             public KubernetesPodsEndpointBuilderImpl(String path) {
-                super("kubernetes-pods", path);
+                super(componentName, path);
             }
         }
         return new KubernetesPodsEndpointBuilderImpl(path);

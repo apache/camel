@@ -872,29 +872,42 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * 
          * Path parameter: tableName (required)
          * Name of the dynamodb table
+         * 
+         * @param path tableName
          */
         default Ddb2StreamEndpointBuilder aws2Ddbstream(String path) {
-            return Ddb2StreamEndpointBuilderFactory.aws2Ddbstream(path);
+            return Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
+        }
+        /**
+         * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+         * Receive messages from AWS DynamoDB Stream service using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,messaging,streams
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ddb
+         * 
+         * Syntax: <code>aws2-ddbstream:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * Name of the dynamodb table
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path tableName
+         */
+        default Ddb2StreamEndpointBuilder aws2Ddbstream(
+                String componentName,
+                String path) {
+            return Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
-     * Receive messages from AWS DynamoDB Stream service using AWS SDK version
-     * 2.x.
-     * 
-     * Category: cloud,messaging,streams
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
-     * Syntax: <code>aws2-ddbstream:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * Name of the dynamodb table
-     */
-    static Ddb2StreamEndpointBuilder aws2Ddbstream(String path) {
+    static Ddb2StreamEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class Ddb2StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2StreamEndpointBuilder, AdvancedDdb2StreamEndpointBuilder {
             public Ddb2StreamEndpointBuilderImpl(String path) {
-                super("aws2-ddbstream", path);
+                super(componentName, path);
             }
         }
         return new Ddb2StreamEndpointBuilderImpl(path);

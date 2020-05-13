@@ -1362,28 +1362,41 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * Path parameter: streamName (required)
          * Name of the stream
+         * 
+         * @param path streamName
          */
         default KinesisEndpointBuilder awsKinesis(String path) {
-            return KinesisEndpointBuilderFactory.awsKinesis(path);
+            return KinesisEndpointBuilderFactory.endpointBuilder("aws-kinesis", path);
+        }
+        /**
+         * AWS Kinesis (camel-aws-kinesis)
+         * Consume and produce records from AWS Kinesis Streams.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-aws-kinesis
+         * 
+         * Syntax: <code>aws-kinesis:streamName</code>
+         * 
+         * Path parameter: streamName (required)
+         * Name of the stream
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path streamName
+         */
+        default KinesisEndpointBuilder awsKinesis(
+                String componentName,
+                String path) {
+            return KinesisEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Kinesis (camel-aws-kinesis)
-     * Consume and produce records from AWS Kinesis Streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * Syntax: <code>aws-kinesis:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     */
-    static KinesisEndpointBuilder awsKinesis(String path) {
+    static KinesisEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KinesisEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisEndpointBuilder, AdvancedKinesisEndpointBuilder {
             public KinesisEndpointBuilderImpl(String path) {
-                super("aws-kinesis", path);
+                super(componentName, path);
             }
         }
         return new KinesisEndpointBuilderImpl(path);

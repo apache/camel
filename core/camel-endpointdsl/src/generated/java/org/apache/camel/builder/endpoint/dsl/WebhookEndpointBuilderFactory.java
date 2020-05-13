@@ -294,29 +294,40 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * Path parameter: endpointUri (required)
          * The delegate uri. Must belong to a component that supports webhooks.
+         * 
+         * @param path endpointUri
          */
         default WebhookEndpointBuilder webhook(String path) {
-            return WebhookEndpointBuilderFactory.webhook(path);
+            return WebhookEndpointBuilderFactory.endpointBuilder("webhook", path);
+        }
+        /**
+         * Webhook (camel-webhook)
+         * Expose webhook endpoints to receive push notifications for other
+         * Camel components.
+         * 
+         * Category: cloud
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-webhook
+         * 
+         * Syntax: <code>webhook:endpointUri</code>
+         * 
+         * Path parameter: endpointUri (required)
+         * The delegate uri. Must belong to a component that supports webhooks.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path endpointUri
+         */
+        default WebhookEndpointBuilder webhook(String componentName, String path) {
+            return WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
-     * 
-     * Category: cloud
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-webhook
-     * 
-     * Syntax: <code>webhook:endpointUri</code>
-     * 
-     * Path parameter: endpointUri (required)
-     * The delegate uri. Must belong to a component that supports webhooks.
-     */
-    static WebhookEndpointBuilder webhook(String path) {
+    static WebhookEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class WebhookEndpointBuilderImpl extends AbstractEndpointBuilder implements WebhookEndpointBuilder, AdvancedWebhookEndpointBuilder {
             public WebhookEndpointBuilderImpl(String path) {
-                super("webhook", path);
+                super(componentName, path);
             }
         }
         return new WebhookEndpointBuilderImpl(path);

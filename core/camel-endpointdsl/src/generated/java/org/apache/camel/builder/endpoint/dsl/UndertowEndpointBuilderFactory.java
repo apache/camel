@@ -1575,29 +1575,42 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * Path parameter: httpURI (required)
          * The url of the HTTP endpoint to use.
+         * 
+         * @param path httpURI
          */
         default UndertowEndpointBuilder undertow(String path) {
-            return UndertowEndpointBuilderFactory.undertow(path);
+            return UndertowEndpointBuilderFactory.endpointBuilder("undertow", path);
+        }
+        /**
+         * Undertow (camel-undertow)
+         * Expose HTTP and WebSocket endpoints and access external
+         * HTTP/WebSocket servers.
+         * 
+         * Category: http,websocket
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-undertow
+         * 
+         * Syntax: <code>undertow:httpURI</code>
+         * 
+         * Path parameter: httpURI (required)
+         * The url of the HTTP endpoint to use.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpURI
+         */
+        default UndertowEndpointBuilder undertow(
+                String componentName,
+                String path) {
+            return UndertowEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Undertow (camel-undertow)
-     * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
-     * servers.
-     * 
-     * Category: http,websocket
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-undertow
-     * 
-     * Syntax: <code>undertow:httpURI</code>
-     * 
-     * Path parameter: httpURI (required)
-     * The url of the HTTP endpoint to use.
-     */
-    static UndertowEndpointBuilder undertow(String path) {
+    static UndertowEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class UndertowEndpointBuilderImpl extends AbstractEndpointBuilder implements UndertowEndpointBuilder, AdvancedUndertowEndpointBuilder {
             public UndertowEndpointBuilderImpl(String path) {
-                super("undertow", path);
+                super(componentName, path);
             }
         }
         return new UndertowEndpointBuilderImpl(path);

@@ -504,28 +504,41 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * Path parameter: configFile (required)
          * Specifies the location to the solver file
+         * 
+         * @param path configFile
          */
         default OptaPlannerEndpointBuilder optaplanner(String path) {
-            return OptaPlannerEndpointBuilderFactory.optaplanner(path);
+            return OptaPlannerEndpointBuilderFactory.endpointBuilder("optaplanner", path);
+        }
+        /**
+         * OptaPlanner (camel-optaplanner)
+         * Solve planning problems with OptaPlanner.
+         * 
+         * Category: engine,planning
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-optaplanner
+         * 
+         * Syntax: <code>optaplanner:configFile</code>
+         * 
+         * Path parameter: configFile (required)
+         * Specifies the location to the solver file
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path configFile
+         */
+        default OptaPlannerEndpointBuilder optaplanner(
+                String componentName,
+                String path) {
+            return OptaPlannerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OptaPlanner (camel-optaplanner)
-     * Solve planning problems with OptaPlanner.
-     * 
-     * Category: engine,planning
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
-     * Syntax: <code>optaplanner:configFile</code>
-     * 
-     * Path parameter: configFile (required)
-     * Specifies the location to the solver file
-     */
-    static OptaPlannerEndpointBuilder optaplanner(String path) {
+    static OptaPlannerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class OptaPlannerEndpointBuilderImpl extends AbstractEndpointBuilder implements OptaPlannerEndpointBuilder, AdvancedOptaPlannerEndpointBuilder {
             public OptaPlannerEndpointBuilderImpl(String path) {
-                super("optaplanner", path);
+                super(componentName, path);
             }
         }
         return new OptaPlannerEndpointBuilderImpl(path);

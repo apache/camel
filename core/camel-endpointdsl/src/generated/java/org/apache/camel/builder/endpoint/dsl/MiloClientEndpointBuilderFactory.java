@@ -1663,29 +1663,42 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * Path parameter: endpointUri (required)
          * The OPC UA server endpoint
+         * 
+         * @param path endpointUri
          */
         default MiloClientEndpointBuilder miloClient(String path) {
-            return MiloClientEndpointBuilderFactory.miloClient(path);
+            return MiloClientEndpointBuilderFactory.endpointBuilder("milo-client", path);
+        }
+        /**
+         * OPC UA Client (camel-milo)
+         * Connect to OPC UA servers using the binary protocol for acquiring
+         * telemetry data.
+         * 
+         * Category: iot
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-milo
+         * 
+         * Syntax: <code>milo-client:endpointUri</code>
+         * 
+         * Path parameter: endpointUri (required)
+         * The OPC UA server endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path endpointUri
+         */
+        default MiloClientEndpointBuilder miloClient(
+                String componentName,
+                String path) {
+            return MiloClientEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
-     * 
-     * Category: iot
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-milo
-     * 
-     * Syntax: <code>milo-client:endpointUri</code>
-     * 
-     * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
-     */
-    static MiloClientEndpointBuilder miloClient(String path) {
+    static MiloClientEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MiloClientEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloClientEndpointBuilder, AdvancedMiloClientEndpointBuilder {
             public MiloClientEndpointBuilderImpl(String path) {
-                super("milo-client", path);
+                super(componentName, path);
             }
         }
         return new MiloClientEndpointBuilderImpl(path);

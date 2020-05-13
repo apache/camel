@@ -334,28 +334,41 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
-            return HazelcastInstanceEndpointBuilderFactory.hazelcastInstance(path);
+            return HazelcastInstanceEndpointBuilderFactory.endpointBuilder("hazelcast-instance", path);
+        }
+        /**
+         * Hazelcast Instance (camel-hazelcast)
+         * Consume join/leave events of a cache instance in a Hazelcast cluster.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-instance:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastInstanceEndpointBuilder hazelcastInstance(
+                String componentName,
+                String path) {
+            return HazelcastInstanceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Instance (camel-hazelcast)
-     * Consume join/leave events of a cache instance in a Hazelcast cluster.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-instance:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
+    static HazelcastInstanceEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastInstanceEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastInstanceEndpointBuilder, AdvancedHazelcastInstanceEndpointBuilder {
             public HazelcastInstanceEndpointBuilderImpl(String path) {
-                super("hazelcast-instance", path);
+                super(componentName, path);
             }
         }
         return new HazelcastInstanceEndpointBuilderImpl(path);

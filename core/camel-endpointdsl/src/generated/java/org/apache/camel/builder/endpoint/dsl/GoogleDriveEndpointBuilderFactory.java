@@ -1249,37 +1249,50 @@ public interface GoogleDriveEndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * The value can be one of: copy, delete, get, getIdForEmail, insert,
          * list, patch, stop, touch, trash, untrash, update, watch
+         * 
+         * @param path apiName/methodName
          */
         default GoogleDriveEndpointBuilder googleDrive(String path) {
-            return GoogleDriveEndpointBuilderFactory.googleDrive(path);
+            return GoogleDriveEndpointBuilderFactory.endpointBuilder("google-drive", path);
+        }
+        /**
+         * Google Drive (camel-google-drive)
+         * Manage files in Google Drive.
+         * 
+         * Category: api,cloud,file
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-google-drive
+         * 
+         * Syntax: <code>google-drive:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: drive-about, drive-apps, drive-changes,
+         * drive-channels, drive-children, drive-comments, drive-files,
+         * drive-parents, drive-permissions, drive-properties, drive-realtime,
+         * drive-replies, drive-revisions
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: copy, delete, get, getIdForEmail, insert,
+         * list, patch, stop, touch, trash, untrash, update, watch
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default GoogleDriveEndpointBuilder googleDrive(
+                String componentName,
+                String path) {
+            return GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Drive (camel-google-drive)
-     * Manage files in Google Drive.
-     * 
-     * Category: api,cloud,file
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-google-drive
-     * 
-     * Syntax: <code>google-drive:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: drive-about, drive-apps, drive-changes,
-     * drive-channels, drive-children, drive-comments, drive-files,
-     * drive-parents, drive-permissions, drive-properties, drive-realtime,
-     * drive-replies, drive-revisions
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
-     * patch, stop, touch, trash, untrash, update, watch
-     */
-    static GoogleDriveEndpointBuilder googleDrive(String path) {
+    static GoogleDriveEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {
             public GoogleDriveEndpointBuilderImpl(String path) {
-                super("google-drive", path);
+                super(componentName, path);
             }
         }
         return new GoogleDriveEndpointBuilderImpl(path);

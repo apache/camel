@@ -437,31 +437,43 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
                 String path) {
-            return KubernetesPersistentVolumesEndpointBuilderFactory.kubernetesPersistentVolumes(path);
+            return KubernetesPersistentVolumesEndpointBuilderFactory.endpointBuilder("kubernetes-persistent-volumes", path);
+        }
+        /**
+         * Kubernetes Persistent Volume (camel-kubernetes)
+         * Perform operations on Kubernetes Persistent Volumes and get notified
+         * on Persistent Volume changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
+                String componentName,
+                String path) {
+            return KubernetesPersistentVolumesEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Persistent Volume (camel-kubernetes)
-     * Perform operations on Kubernetes Persistent Volumes and get notified on
-     * Persistent Volume changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
+    static KubernetesPersistentVolumesEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class KubernetesPersistentVolumesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPersistentVolumesEndpointBuilder, AdvancedKubernetesPersistentVolumesEndpointBuilder {
             public KubernetesPersistentVolumesEndpointBuilderImpl(String path) {
-                super("kubernetes-persistent-volumes", path);
+                super(componentName, path);
             }
         }
         return new KubernetesPersistentVolumesEndpointBuilderImpl(path);

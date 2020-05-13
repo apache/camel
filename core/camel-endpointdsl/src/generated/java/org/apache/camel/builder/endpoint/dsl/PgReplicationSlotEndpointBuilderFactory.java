@@ -776,44 +776,57 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * Path parameter: outputPlugin (required)
          * Output plugin name
+         * 
+         * @param path host:port/database/slot:outputPlugin
          */
         default PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
-            return PgReplicationSlotEndpointBuilderFactory.pgReplicationSlot(path);
+            return PgReplicationSlotEndpointBuilderFactory.endpointBuilder("pg-replication-slot", path);
+        }
+        /**
+         * PostgresSQL Replication Slot (camel-pg-replication-slot)
+         * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
+         * Replication Slots.
+         * 
+         * Category: database,sql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+         * 
+         * Syntax:
+         * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
+         * 
+         * Path parameter: slot (required)
+         * Replication Slot name
+         * 
+         * Path parameter: host
+         * Postgres host
+         * Default value: localhost
+         * 
+         * Path parameter: port
+         * Postgres port
+         * Default value: 5432
+         * 
+         * Path parameter: database (required)
+         * Postgres database name
+         * 
+         * Path parameter: outputPlugin (required)
+         * Output plugin name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/database/slot:outputPlugin
+         */
+        default PgReplicationSlotEndpointBuilder pgReplicationSlot(
+                String componentName,
+                String path) {
+            return PgReplicationSlotEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
-     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
-     * Replication Slots.
-     * 
-     * Category: database,sql
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
-     * 
-     * Syntax:
-     * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
-     * 
-     * Path parameter: slot (required)
-     * Replication Slot name
-     * 
-     * Path parameter: host
-     * Postgres host
-     * Default value: localhost
-     * 
-     * Path parameter: port
-     * Postgres port
-     * Default value: 5432
-     * 
-     * Path parameter: database (required)
-     * Postgres database name
-     * 
-     * Path parameter: outputPlugin (required)
-     * Output plugin name
-     */
-    static PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
+    static PgReplicationSlotEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class PgReplicationSlotEndpointBuilderImpl extends AbstractEndpointBuilder implements PgReplicationSlotEndpointBuilder, AdvancedPgReplicationSlotEndpointBuilder {
             public PgReplicationSlotEndpointBuilderImpl(String path) {
-                super("pg-replication-slot", path);
+                super(componentName, path);
             }
         }
         return new PgReplicationSlotEndpointBuilderImpl(path);

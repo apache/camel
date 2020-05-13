@@ -1119,30 +1119,41 @@ public interface MyBatisEndpointBuilderFactory {
          * Path parameter: statement (required)
          * The statement name in the MyBatis XML mapping file which maps to the
          * query, insert, update or delete operation you wish to evaluate.
+         * 
+         * @param path statement
          */
         default MyBatisEndpointBuilder mybatis(String path) {
-            return MyBatisEndpointBuilderFactory.mybatis(path);
+            return MyBatisEndpointBuilderFactory.endpointBuilder("mybatis", path);
+        }
+        /**
+         * MyBatis (camel-mybatis)
+         * Performs a query, poll, insert, update or delete in a relational
+         * database using MyBatis.
+         * 
+         * Category: database,sql
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-mybatis
+         * 
+         * Syntax: <code>mybatis:statement</code>
+         * 
+         * Path parameter: statement (required)
+         * The statement name in the MyBatis XML mapping file which maps to the
+         * query, insert, update or delete operation you wish to evaluate.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path statement
+         */
+        default MyBatisEndpointBuilder mybatis(String componentName, String path) {
+            return MyBatisEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * MyBatis (camel-mybatis)
-     * Performs a query, poll, insert, update or delete in a relational database
-     * using MyBatis.
-     * 
-     * Category: database,sql
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
-     * Syntax: <code>mybatis:statement</code>
-     * 
-     * Path parameter: statement (required)
-     * The statement name in the MyBatis XML mapping file which maps to the
-     * query, insert, update or delete operation you wish to evaluate.
-     */
-    static MyBatisEndpointBuilder mybatis(String path) {
+    static MyBatisEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MyBatisEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisEndpointBuilder, AdvancedMyBatisEndpointBuilder {
             public MyBatisEndpointBuilderImpl(String path) {
-                super("mybatis", path);
+                super(componentName, path);
             }
         }
         return new MyBatisEndpointBuilderImpl(path);

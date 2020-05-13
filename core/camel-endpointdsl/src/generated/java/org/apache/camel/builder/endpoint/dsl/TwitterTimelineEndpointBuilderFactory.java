@@ -1578,30 +1578,43 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The timeline type to produce/consume.
          * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
          * UNKNOWN
+         * 
+         * @param path timelineType
          */
         default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
-            return TwitterTimelineEndpointBuilderFactory.twitterTimeline(path);
+            return TwitterTimelineEndpointBuilderFactory.endpointBuilder("twitter-timeline", path);
+        }
+        /**
+         * Twitter Timeline (camel-twitter)
+         * Send tweets and receive tweets from user's timeline.
+         * 
+         * Category: api,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
+         * Syntax: <code>twitter-timeline:timelineType</code>
+         * 
+         * Path parameter: timelineType (required)
+         * The timeline type to produce/consume.
+         * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
+         * UNKNOWN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path timelineType
+         */
+        default TwitterTimelineEndpointBuilder twitterTimeline(
+                String componentName,
+                String path) {
+            return TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Twitter Timeline (camel-twitter)
-     * Send tweets and receive tweets from user's timeline.
-     * 
-     * Category: api,social
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-twitter
-     * 
-     * Syntax: <code>twitter-timeline:timelineType</code>
-     * 
-     * Path parameter: timelineType (required)
-     * The timeline type to produce/consume.
-     * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-     * UNKNOWN
-     */
-    static TwitterTimelineEndpointBuilder twitterTimeline(String path) {
+    static TwitterTimelineEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class TwitterTimelineEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterTimelineEndpointBuilder, AdvancedTwitterTimelineEndpointBuilder {
             public TwitterTimelineEndpointBuilderImpl(String path) {
-                super("twitter-timeline", path);
+                super(componentName, path);
             }
         }
         return new TwitterTimelineEndpointBuilderImpl(path);

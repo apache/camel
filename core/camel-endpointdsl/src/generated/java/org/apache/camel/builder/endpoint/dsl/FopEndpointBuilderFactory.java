@@ -198,31 +198,41 @@ public interface FopEndpointBuilderFactory {
          * supported.
          * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
          * txt
+         * 
+         * @param path outputType
          */
         default FopEndpointBuilder fop(String path) {
-            return FopEndpointBuilderFactory.fop(path);
+            return FopEndpointBuilderFactory.endpointBuilder("fop", path);
+        }
+        /**
+         * FOP (camel-fop)
+         * Render messages into PDF and other output formats supported by Apache
+         * FOP.
+         * 
+         * Category: transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-fop
+         * 
+         * Syntax: <code>fop:outputType</code>
+         * 
+         * Path parameter: outputType (required)
+         * The primary output format is PDF but other output formats are also
+         * supported.
+         * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
+         * txt
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path outputType
+         */
+        default FopEndpointBuilder fop(String componentName, String path) {
+            return FopEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
-     * 
-     * Category: transformation
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-fop
-     * 
-     * Syntax: <code>fop:outputType</code>
-     * 
-     * Path parameter: outputType (required)
-     * The primary output format is PDF but other output formats are also
-     * supported.
-     * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
-     */
-    static FopEndpointBuilder fop(String path) {
+    static FopEndpointBuilder endpointBuilder(String componentName, String path) {
         class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {
             public FopEndpointBuilderImpl(String path) {
-                super("fop", path);
+                super(componentName, path);
             }
         }
         return new FopEndpointBuilderImpl(path);

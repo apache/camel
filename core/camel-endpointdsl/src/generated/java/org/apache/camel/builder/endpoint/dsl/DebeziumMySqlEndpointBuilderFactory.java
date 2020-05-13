@@ -1721,29 +1721,42 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * Path parameter: name (required)
          * Unique name for the connector. Attempting to register again with the
          * same name will fail.
+         * 
+         * @param path name
          */
         default DebeziumMySqlEndpointBuilder debeziumMysql(String path) {
-            return DebeziumMySqlEndpointBuilderFactory.debeziumMysql(path);
+            return DebeziumMySqlEndpointBuilderFactory.endpointBuilder("debezium-mysql", path);
+        }
+        /**
+         * Debezium MySQL Connector (camel-debezium-mysql)
+         * Capture changes from a MySQL database.
+         * 
+         * Category: database,sql,mysql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-mysql
+         * 
+         * Syntax: <code>debezium-mysql:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DebeziumMySqlEndpointBuilder debeziumMysql(
+                String componentName,
+                String path) {
+            return DebeziumMySqlEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Debezium MySQL Connector (camel-debezium-mysql)
-     * Capture changes from a MySQL database.
-     * 
-     * Category: database,sql,mysql
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-debezium-mysql
-     * 
-     * Syntax: <code>debezium-mysql:name</code>
-     * 
-     * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
-     */
-    static DebeziumMySqlEndpointBuilder debeziumMysql(String path) {
+    static DebeziumMySqlEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DebeziumMySqlEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumMySqlEndpointBuilder, AdvancedDebeziumMySqlEndpointBuilder {
             public DebeziumMySqlEndpointBuilderImpl(String path) {
-                super("debezium-mysql", path);
+                super(componentName, path);
             }
         }
         return new DebeziumMySqlEndpointBuilderImpl(path);

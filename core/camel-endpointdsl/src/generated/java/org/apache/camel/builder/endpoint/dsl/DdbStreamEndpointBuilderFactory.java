@@ -868,28 +868,41 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * Path parameter: tableName (required)
          * Name of the dynamodb table
+         * 
+         * @param path tableName
          */
         default DdbStreamEndpointBuilder awsDdbstream(String path) {
-            return DdbStreamEndpointBuilderFactory.awsDdbstream(path);
+            return DdbStreamEndpointBuilderFactory.endpointBuilder("aws-ddbstream", path);
+        }
+        /**
+         * AWS DynamoDB Streams (camel-aws-ddb)
+         * Receive messages from AWS DynamoDB Stream service.
+         * 
+         * Category: cloud,messaging,streams
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-aws-ddb
+         * 
+         * Syntax: <code>aws-ddbstream:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * Name of the dynamodb table
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path tableName
+         */
+        default DdbStreamEndpointBuilder awsDdbstream(
+                String componentName,
+                String path) {
+            return DdbStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS DynamoDB Streams (camel-aws-ddb)
-     * Receive messages from AWS DynamoDB Stream service.
-     * 
-     * Category: cloud,messaging,streams
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     * 
-     * Syntax: <code>aws-ddbstream:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * Name of the dynamodb table
-     */
-    static DdbStreamEndpointBuilder awsDdbstream(String path) {
+    static DdbStreamEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DdbStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbStreamEndpointBuilder, AdvancedDdbStreamEndpointBuilder {
             public DdbStreamEndpointBuilderImpl(String path) {
-                super("aws-ddbstream", path);
+                super(componentName, path);
             }
         }
         return new DdbStreamEndpointBuilderImpl(path);

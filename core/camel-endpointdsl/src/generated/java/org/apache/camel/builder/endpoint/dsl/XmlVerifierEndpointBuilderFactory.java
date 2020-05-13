@@ -643,29 +643,42 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Path parameter: name (required)
          * The name part in the URI can be chosen by the user to distinguish
          * between different verify endpoints within the camel context.
+         * 
+         * @param path name
          */
         default XmlVerifierEndpointBuilder xmlsecurityVerify(String path) {
-            return XmlVerifierEndpointBuilderFactory.xmlsecurityVerify(path);
+            return XmlVerifierEndpointBuilderFactory.endpointBuilder("xmlsecurity-verify", path);
+        }
+        /**
+         * XML Security Verify (camel-xmlsecurity)
+         * Verify XML payloads using the XML signature specification.
+         * 
+         * Category: security,transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-xmlsecurity
+         * 
+         * Syntax: <code>xmlsecurity-verify:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name part in the URI can be chosen by the user to distinguish
+         * between different verify endpoints within the camel context.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default XmlVerifierEndpointBuilder xmlsecurityVerify(
+                String componentName,
+                String path) {
+            return XmlVerifierEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
-     * 
-     * Category: security,transformation
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
-     * Syntax: <code>xmlsecurity-verify:name</code>
-     * 
-     * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different verify endpoints within the camel context.
-     */
-    static XmlVerifierEndpointBuilder xmlsecurityVerify(String path) {
+    static XmlVerifierEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class XmlVerifierEndpointBuilderImpl extends AbstractEndpointBuilder implements XmlVerifierEndpointBuilder, AdvancedXmlVerifierEndpointBuilder {
             public XmlVerifierEndpointBuilderImpl(String path) {
-                super("xmlsecurity-verify", path);
+                super(componentName, path);
             }
         }
         return new XmlVerifierEndpointBuilderImpl(path);

@@ -1254,28 +1254,41 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesJobEndpointBuilder kubernetesJob(String path) {
-            return KubernetesJobEndpointBuilderFactory.kubernetesJob(path);
+            return KubernetesJobEndpointBuilderFactory.endpointBuilder("kubernetes-job", path);
+        }
+        /**
+         * Kubernetes Job (camel-kubernetes)
+         * Perform operations on Kubernetes Jobs.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-job:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesJobEndpointBuilder kubernetesJob(
+                String componentName,
+                String path) {
+            return KubernetesJobEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Job (camel-kubernetes)
-     * Perform operations on Kubernetes Jobs.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-job:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesJobEndpointBuilder kubernetesJob(String path) {
+    static KubernetesJobEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesJobEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesJobEndpointBuilder, AdvancedKubernetesJobEndpointBuilder {
             public KubernetesJobEndpointBuilderImpl(String path) {
-                super("kubernetes-job", path);
+                super(componentName, path);
             }
         }
         return new KubernetesJobEndpointBuilderImpl(path);

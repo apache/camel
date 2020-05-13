@@ -366,34 +366,47 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricName (required)
          * Metric name
+         * 
+         * @param path metricType:metricName
          */
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String path) {
-            return MicroProfileMetricsEndpointBuilderFactory.microprofileMetrics(path);
+            return MicroProfileMetricsEndpointBuilderFactory.endpointBuilder("microprofile-metrics", path);
+        }
+        /**
+         * MicroProfile Metrics (camel-microprofile-metrics)
+         * Expose metrics from Camel routes.
+         * 
+         * Category: monitoring
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-microprofile-metrics
+         * 
+         * Syntax: <code>microprofile-metrics:metricType:metricName</code>
+         * 
+         * Path parameter: metricType (required)
+         * Metric type
+         * The value can be one of: concurrent gauge, counter, gauge, meter,
+         * histogram, timer, simple timer, invalid
+         * 
+         * Path parameter: metricName (required)
+         * Metric name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path metricType:metricName
+         */
+        default MicroProfileMetricsEndpointBuilder microprofileMetrics(
+                String componentName,
+                String path) {
+            return MicroProfileMetricsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * MicroProfile Metrics (camel-microprofile-metrics)
-     * Expose metrics from Camel routes.
-     * 
-     * Category: monitoring
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-microprofile-metrics
-     * 
-     * Syntax: <code>microprofile-metrics:metricType:metricName</code>
-     * 
-     * Path parameter: metricType (required)
-     * Metric type
-     * The value can be one of: concurrent gauge, counter, gauge, meter,
-     * histogram, timer, simple timer, invalid
-     * 
-     * Path parameter: metricName (required)
-     * Metric name
-     */
-    static MicroProfileMetricsEndpointBuilder microprofileMetrics(String path) {
+    static MicroProfileMetricsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder, AdvancedMicroProfileMetricsEndpointBuilder {
             public MicroProfileMetricsEndpointBuilderImpl(String path) {
-                super("microprofile-metrics", path);
+                super(componentName, path);
             }
         }
         return new MicroProfileMetricsEndpointBuilderImpl(path);

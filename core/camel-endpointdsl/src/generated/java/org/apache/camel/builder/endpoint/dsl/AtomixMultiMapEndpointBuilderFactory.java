@@ -505,28 +505,41 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * Path parameter: resourceName (required)
          * The distributed resource name
+         * 
+         * @param path resourceName
          */
         default AtomixMultiMapEndpointBuilder atomixMultimap(String path) {
-            return AtomixMultiMapEndpointBuilderFactory.atomixMultimap(path);
+            return AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap", path);
+        }
+        /**
+         * Atomix MultiMap (camel-atomix)
+         * Access Atomix's distributed multi map.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-multimap:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceName
+         */
+        default AtomixMultiMapEndpointBuilder atomixMultimap(
+                String componentName,
+                String path) {
+            return AtomixMultiMapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atomix MultiMap (camel-atomix)
-     * Access Atomix's distributed multi map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-multimap:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     */
-    static AtomixMultiMapEndpointBuilder atomixMultimap(String path) {
+    static AtomixMultiMapEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtomixMultiMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMultiMapEndpointBuilder, AdvancedAtomixMultiMapEndpointBuilder {
             public AtomixMultiMapEndpointBuilderImpl(String path) {
-                super("atomix-multimap", path);
+                super(componentName, path);
             }
         }
         return new AtomixMultiMapEndpointBuilderImpl(path);

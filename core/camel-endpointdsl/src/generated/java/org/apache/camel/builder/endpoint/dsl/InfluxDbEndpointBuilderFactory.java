@@ -230,28 +230,41 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * Path parameter: connectionBean (required)
          * Connection to the influx database, of class InfluxDB.class
+         * 
+         * @param path connectionBean
          */
         default InfluxDbEndpointBuilder influxdb(String path) {
-            return InfluxDbEndpointBuilderFactory.influxdb(path);
+            return InfluxDbEndpointBuilderFactory.endpointBuilder("influxdb", path);
+        }
+        /**
+         * InfluxDB (camel-influxdb)
+         * Interact with InfluxDB, a time series database.
+         * 
+         * Category: database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-influxdb
+         * 
+         * Syntax: <code>influxdb:connectionBean</code>
+         * 
+         * Path parameter: connectionBean (required)
+         * Connection to the influx database, of class InfluxDB.class
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path connectionBean
+         */
+        default InfluxDbEndpointBuilder influxdb(
+                String componentName,
+                String path) {
+            return InfluxDbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB, a time series database.
-     * 
-     * Category: database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-influxdb
-     * 
-     * Syntax: <code>influxdb:connectionBean</code>
-     * 
-     * Path parameter: connectionBean (required)
-     * Connection to the influx database, of class InfluxDB.class
-     */
-    static InfluxDbEndpointBuilder influxdb(String path) {
+    static InfluxDbEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder, AdvancedInfluxDbEndpointBuilder {
             public InfluxDbEndpointBuilderImpl(String path) {
-                super("influxdb", path);
+                super(componentName, path);
             }
         }
         return new InfluxDbEndpointBuilderImpl(path);

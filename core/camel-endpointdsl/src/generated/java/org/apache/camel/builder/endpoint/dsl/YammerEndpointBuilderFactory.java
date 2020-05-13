@@ -1229,30 +1229,41 @@ public interface YammerEndpointBuilderFactory {
          * The function to use
          * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
          * PRIVATE, RECEIVED, USERS, CURRENT
+         * 
+         * @param path function
          */
         default YammerEndpointBuilder yammer(String path) {
-            return YammerEndpointBuilderFactory.yammer(path);
+            return YammerEndpointBuilderFactory.endpointBuilder("yammer", path);
+        }
+        /**
+         * Yammer (camel-yammer)
+         * Interact with the Yammer enterprise social network.
+         * 
+         * Category: social
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-yammer
+         * 
+         * Syntax: <code>yammer:function</code>
+         * 
+         * Path parameter: function (required)
+         * The function to use
+         * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
+         * PRIVATE, RECEIVED, USERS, CURRENT
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path function
+         */
+        default YammerEndpointBuilder yammer(String componentName, String path) {
+            return YammerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * Syntax: <code>yammer:function</code>
-     * 
-     * Path parameter: function (required)
-     * The function to use
-     * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-     * PRIVATE, RECEIVED, USERS, CURRENT
-     */
-    static YammerEndpointBuilder yammer(String path) {
+    static YammerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {
             public YammerEndpointBuilderImpl(String path) {
-                super("yammer", path);
+                super(componentName, path);
             }
         }
         return new YammerEndpointBuilderImpl(path);

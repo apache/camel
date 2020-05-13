@@ -561,28 +561,41 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * Path parameter: clusterName (required)
          * Name of the cluster
+         * 
+         * @param path clusterName
          */
         default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
-            return ElasticsearchEndpointBuilderFactory.elasticsearchRest(path);
+            return ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
+        }
+        /**
+         * Elasticsearch Rest (camel-elasticsearch-rest)
+         * Send requests to with an ElasticSearch via REST API.
+         * 
+         * Category: monitoring,search
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
+         * 
+         * Syntax: <code>elasticsearch-rest:clusterName</code>
+         * 
+         * Path parameter: clusterName (required)
+         * Name of the cluster
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path clusterName
+         */
+        default ElasticsearchEndpointBuilder elasticsearchRest(
+                String componentName,
+                String path) {
+            return ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Elasticsearch Rest (camel-elasticsearch-rest)
-     * Send requests to with an ElasticSearch via REST API.
-     * 
-     * Category: monitoring,search
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
-     * 
-     * Syntax: <code>elasticsearch-rest:clusterName</code>
-     * 
-     * Path parameter: clusterName (required)
-     * Name of the cluster
-     */
-    static ElasticsearchEndpointBuilder elasticsearchRest(String path) {
+    static ElasticsearchEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
-                super("elasticsearch-rest", path);
+                super(componentName, path);
             }
         }
         return new ElasticsearchEndpointBuilderImpl(path);

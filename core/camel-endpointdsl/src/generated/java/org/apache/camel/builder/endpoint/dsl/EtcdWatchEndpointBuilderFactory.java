@@ -382,28 +382,41 @@ public interface EtcdWatchEndpointBuilderFactory {
          * 
          * Path parameter: path
          * The path the endpoint refers to
+         * 
+         * @param path path
          */
         default EtcdWatchEndpointBuilder etcdWatch(String path) {
-            return EtcdWatchEndpointBuilderFactory.etcdWatch(path);
+            return EtcdWatchEndpointBuilderFactory.endpointBuilder("etcd-watch", path);
+        }
+        /**
+         * Etcd Watch (camel-etcd)
+         * Watch specific etcd keys or directories for changes.
+         * 
+         * Category: clustering,database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-etcd
+         * 
+         * Syntax: <code>etcd-watch:path</code>
+         * 
+         * Path parameter: path
+         * The path the endpoint refers to
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path
+         */
+        default EtcdWatchEndpointBuilder etcdWatch(
+                String componentName,
+                String path) {
+            return EtcdWatchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Etcd Watch (camel-etcd)
-     * Watch specific etcd keys or directories for changes.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     * 
-     * Syntax: <code>etcd-watch:path</code>
-     * 
-     * Path parameter: path
-     * The path the endpoint refers to
-     */
-    static EtcdWatchEndpointBuilder etcdWatch(String path) {
+    static EtcdWatchEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class EtcdWatchEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdWatchEndpointBuilder, AdvancedEtcdWatchEndpointBuilder {
             public EtcdWatchEndpointBuilderImpl(String path) {
-                super("etcd-watch", path);
+                super(componentName, path);
             }
         }
         return new EtcdWatchEndpointBuilderImpl(path);

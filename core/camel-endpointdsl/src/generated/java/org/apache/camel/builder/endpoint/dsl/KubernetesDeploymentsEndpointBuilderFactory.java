@@ -1281,31 +1281,43 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
                 String path) {
-            return KubernetesDeploymentsEndpointBuilderFactory.kubernetesDeployments(path);
+            return KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder("kubernetes-deployments", path);
+        }
+        /**
+         * Kubernetes Deployments (camel-kubernetes)
+         * Perform operations on Kubernetes Deployments and get notified on
+         * Deployment changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-deployments:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
+                String componentName,
+                String path) {
+            return KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Deployments (camel-kubernetes)
-     * Perform operations on Kubernetes Deployments and get notified on
-     * Deployment changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-deployments:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
+    static KubernetesDeploymentsEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class KubernetesDeploymentsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesDeploymentsEndpointBuilder, AdvancedKubernetesDeploymentsEndpointBuilder {
             public KubernetesDeploymentsEndpointBuilderImpl(String path) {
-                super("kubernetes-deployments", path);
+                super(componentName, path);
             }
         }
         return new KubernetesDeploymentsEndpointBuilderImpl(path);

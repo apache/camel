@@ -1988,29 +1988,42 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * Path parameter: servicePath (required)
          * Name of websocket endpoint
+         * 
+         * @param path servicePath
          */
         default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
                 String path) {
-            return AtmosphereWebsocketEndpointBuilderFactory.atmosphereWebsocket(path);
+            return AtmosphereWebsocketEndpointBuilderFactory.endpointBuilder("atmosphere-websocket", path);
+        }
+        /**
+         * Atmosphere Websocket (camel-atmosphere-websocket)
+         * Expose WebSocket endpoints using the Atmosphere framework.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
+         * 
+         * Syntax: <code>atmosphere-websocket:servicePath</code>
+         * 
+         * Path parameter: servicePath (required)
+         * Name of websocket endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path servicePath
+         */
+        default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
+                String componentName,
+                String path) {
+            return AtmosphereWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atmosphere Websocket (camel-atmosphere-websocket)
-     * Expose WebSocket endpoints using the Atmosphere framework.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
-     * 
-     * Syntax: <code>atmosphere-websocket:servicePath</code>
-     * 
-     * Path parameter: servicePath (required)
-     * Name of websocket endpoint
-     */
-    static AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
+    static AtmosphereWebsocketEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtmosphereWebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosphereWebsocketEndpointBuilder, AdvancedAtmosphereWebsocketEndpointBuilder {
             public AtmosphereWebsocketEndpointBuilderImpl(String path) {
-                super("atmosphere-websocket", path);
+                super(componentName, path);
             }
         }
         return new AtmosphereWebsocketEndpointBuilderImpl(path);

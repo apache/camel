@@ -893,29 +893,40 @@ public interface StreamEndpointBuilderFactory {
          * Path parameter: kind (required)
          * Kind of stream to use such as System.in or System.out.
          * The value can be one of: in, out, err, header, file
+         * 
+         * @param path kind
          */
         default StreamEndpointBuilder stream(String path) {
-            return StreamEndpointBuilderFactory.stream(path);
+            return StreamEndpointBuilderFactory.endpointBuilder("stream", path);
+        }
+        /**
+         * Stream (camel-stream)
+         * Read from system-in and write to system-out and system-err streams.
+         * 
+         * Category: file,system
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-stream
+         * 
+         * Syntax: <code>stream:kind</code>
+         * 
+         * Path parameter: kind (required)
+         * Kind of stream to use such as System.in or System.out.
+         * The value can be one of: in, out, err, header, file
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path kind
+         */
+        default StreamEndpointBuilder stream(String componentName, String path) {
+            return StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Stream (camel-stream)
-     * Read from system-in and write to system-out and system-err streams.
-     * 
-     * Category: file,system
-     * Since: 1.3
-     * Maven coordinates: org.apache.camel:camel-stream
-     * 
-     * Syntax: <code>stream:kind</code>
-     * 
-     * Path parameter: kind (required)
-     * Kind of stream to use such as System.in or System.out.
-     * The value can be one of: in, out, err, header, file
-     */
-    static StreamEndpointBuilder stream(String path) {
+    static StreamEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements StreamEndpointBuilder, AdvancedStreamEndpointBuilder {
             public StreamEndpointBuilderImpl(String path) {
-                super("stream", path);
+                super(componentName, path);
             }
         }
         return new StreamEndpointBuilderImpl(path);

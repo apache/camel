@@ -322,28 +322,37 @@ public interface KMSEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default KMSEndpointBuilder awsKms(String path) {
-            return KMSEndpointBuilderFactory.awsKms(path);
+            return KMSEndpointBuilderFactory.endpointBuilder("aws-kms", path);
+        }
+        /**
+         * AWS KMS (camel-aws-kms)
+         * Manage keys stored in AWS KMS instances.
+         * 
+         * Category: cloud,management
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-aws-kms
+         * 
+         * Syntax: <code>aws-kms:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default KMSEndpointBuilder awsKms(String componentName, String path) {
+            return KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS KMS (camel-aws-kms)
-     * Manage keys stored in AWS KMS instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-kms
-     * 
-     * Syntax: <code>aws-kms:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static KMSEndpointBuilder awsKms(String path) {
+    static KMSEndpointBuilder endpointBuilder(String componentName, String path) {
         class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder, AdvancedKMSEndpointBuilder {
             public KMSEndpointBuilderImpl(String path) {
-                super("aws-kms", path);
+                super(componentName, path);
             }
         }
         return new KMSEndpointBuilderImpl(path);

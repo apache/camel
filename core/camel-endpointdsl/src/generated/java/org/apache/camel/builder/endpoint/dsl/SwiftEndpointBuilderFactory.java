@@ -264,28 +264,41 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * OpenStack host url
+         * 
+         * @param path host
          */
         default SwiftEndpointBuilder openstackSwift(String path) {
-            return SwiftEndpointBuilderFactory.openstackSwift(path);
+            return SwiftEndpointBuilderFactory.endpointBuilder("openstack-swift", path);
+        }
+        /**
+         * OpenStack Swift (camel-openstack)
+         * Access OpenStack Swift object/blob store.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-swift:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default SwiftEndpointBuilder openstackSwift(
+                String componentName,
+                String path) {
+            return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OpenStack Swift (camel-openstack)
-     * Access OpenStack Swift object/blob store.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     * 
-     * Syntax: <code>openstack-swift:host</code>
-     * 
-     * Path parameter: host (required)
-     * OpenStack host url
-     */
-    static SwiftEndpointBuilder openstackSwift(String path) {
+    static SwiftEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder, AdvancedSwiftEndpointBuilder {
             public SwiftEndpointBuilderImpl(String path) {
-                super("openstack-swift", path);
+                super(componentName, path);
             }
         }
         return new SwiftEndpointBuilderImpl(path);

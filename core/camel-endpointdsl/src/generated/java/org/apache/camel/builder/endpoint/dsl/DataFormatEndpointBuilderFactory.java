@@ -166,32 +166,45 @@ public interface DataFormatEndpointBuilderFactory {
          * Path parameter: operation (required)
          * Operation to use either marshal or unmarshal
          * The value can be one of: marshal, unmarshal
+         * 
+         * @param path name:operation
          */
         default DataFormatEndpointBuilder dataformat(String path) {
-            return DataFormatEndpointBuilderFactory.dataformat(path);
+            return DataFormatEndpointBuilderFactory.endpointBuilder("dataformat", path);
+        }
+        /**
+         * Data Format (camel-dataformat)
+         * Use a Camel Data Format as a regular Camel Component.
+         * 
+         * Category: core,transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-dataformat
+         * 
+         * Syntax: <code>dataformat:name:operation</code>
+         * 
+         * Path parameter: name (required)
+         * Name of data format
+         * 
+         * Path parameter: operation (required)
+         * Operation to use either marshal or unmarshal
+         * The value can be one of: marshal, unmarshal
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name:operation
+         */
+        default DataFormatEndpointBuilder dataformat(
+                String componentName,
+                String path) {
+            return DataFormatEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
-     * 
-     * Category: core,transformation
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-dataformat
-     * 
-     * Syntax: <code>dataformat:name:operation</code>
-     * 
-     * Path parameter: name (required)
-     * Name of data format
-     * 
-     * Path parameter: operation (required)
-     * Operation to use either marshal or unmarshal
-     * The value can be one of: marshal, unmarshal
-     */
-    static DataFormatEndpointBuilder dataformat(String path) {
+    static DataFormatEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder, AdvancedDataFormatEndpointBuilder {
             public DataFormatEndpointBuilderImpl(String path) {
-                super("dataformat", path);
+                super(componentName, path);
             }
         }
         return new DataFormatEndpointBuilderImpl(path);

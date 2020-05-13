@@ -765,28 +765,41 @@ public interface DisruptorEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of queue
+         * 
+         * @param path name
          */
         default DisruptorEndpointBuilder disruptor(String path) {
-            return DisruptorEndpointBuilderFactory.disruptor(path);
+            return DisruptorEndpointBuilderFactory.endpointBuilder("disruptor", path);
+        }
+        /**
+         * Disruptor (camel-disruptor)
+         * Provides asynchronous SEDA behavior using LMAX Disruptor.
+         * 
+         * Category: endpoint
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-disruptor
+         * 
+         * Syntax: <code>disruptor:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DisruptorEndpointBuilder disruptor(
+                String componentName,
+                String path) {
+            return DisruptorEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Disruptor (camel-disruptor)
-     * Provides asynchronous SEDA behavior using LMAX Disruptor.
-     * 
-     * Category: endpoint
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-disruptor
-     * 
-     * Syntax: <code>disruptor:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     */
-    static DisruptorEndpointBuilder disruptor(String path) {
+    static DisruptorEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DisruptorEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorEndpointBuilder, AdvancedDisruptorEndpointBuilder {
             public DisruptorEndpointBuilderImpl(String path) {
-                super("disruptor", path);
+                super(componentName, path);
             }
         }
         return new DisruptorEndpointBuilderImpl(path);

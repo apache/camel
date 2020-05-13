@@ -309,32 +309,46 @@ public interface StringTemplateEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default StringTemplateEndpointBuilder stringTemplate(String path) {
-            return StringTemplateEndpointBuilderFactory.stringTemplate(path);
+            return StringTemplateEndpointBuilderFactory.endpointBuilder("string-template", path);
+        }
+        /**
+         * String Template (camel-stringtemplate)
+         * Transform messages using StringTemplate engine.
+         * 
+         * Category: transformation
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-stringtemplate
+         * 
+         * Syntax: <code>string-template:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default StringTemplateEndpointBuilder stringTemplate(
+                String componentName,
+                String path) {
+            return StringTemplateEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * String Template (camel-stringtemplate)
-     * Transform messages using StringTemplate engine.
-     * 
-     * Category: transformation
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-stringtemplate
-     * 
-     * Syntax: <code>string-template:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static StringTemplateEndpointBuilder stringTemplate(String path) {
+    static StringTemplateEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {
             public StringTemplateEndpointBuilderImpl(String path) {
-                super("string-template", path);
+                super(componentName, path);
             }
         }
         return new StringTemplateEndpointBuilderImpl(path);

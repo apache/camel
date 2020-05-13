@@ -192,29 +192,38 @@ public interface DJLEndpointBuilderFactory {
          * 
          * Path parameter: application (required)
          * Application name
+         * 
+         * @param path application
          */
         default DJLEndpointBuilder djl(String path) {
-            return DJLEndpointBuilderFactory.djl(path);
+            return DJLEndpointBuilderFactory.endpointBuilder("djl", path);
+        }
+        /**
+         * Deep Java Library (camel-djl)
+         * Infer Deep Learning models from message exchanges data using Deep
+         * Java Library (DJL).
+         * 
+         * Category: ai,deeplearning
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-djl
+         * 
+         * Syntax: <code>djl:application</code>
+         * 
+         * Path parameter: application (required)
+         * Application name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path application
+         */
+        default DJLEndpointBuilder djl(String componentName, String path) {
+            return DJLEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Deep Java Library (camel-djl)
-     * Infer Deep Learning models from message exchanges data using Deep Java
-     * Library (DJL).
-     * 
-     * Category: ai,deeplearning
-     * Since: 3.3
-     * Maven coordinates: org.apache.camel:camel-djl
-     * 
-     * Syntax: <code>djl:application</code>
-     * 
-     * Path parameter: application (required)
-     * Application name
-     */
-    static DJLEndpointBuilder djl(String path) {
+    static DJLEndpointBuilder endpointBuilder(String componentName, String path) {
         class DJLEndpointBuilderImpl extends AbstractEndpointBuilder implements DJLEndpointBuilder, AdvancedDJLEndpointBuilder {
             public DJLEndpointBuilderImpl(String path) {
-                super("djl", path);
+                super(componentName, path);
             }
         }
         return new DJLEndpointBuilderImpl(path);

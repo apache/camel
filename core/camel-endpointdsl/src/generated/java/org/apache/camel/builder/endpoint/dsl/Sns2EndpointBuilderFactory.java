@@ -447,29 +447,38 @@ public interface Sns2EndpointBuilderFactory {
          * 
          * Path parameter: topicNameOrArn (required)
          * Topic name or ARN
+         * 
+         * @param path topicNameOrArn
          */
         default Sns2EndpointBuilder aws2Sns(String path) {
-            return Sns2EndpointBuilderFactory.aws2Sns(path);
+            return Sns2EndpointBuilderFactory.endpointBuilder("aws2-sns", path);
+        }
+        /**
+         * AWS 2 Simple Notification System (camel-aws2-sns)
+         * Send messages to an AWS Simple Notification Topic using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,mobile,messaging
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-sns
+         * 
+         * Syntax: <code>aws2-sns:topicNameOrArn</code>
+         * 
+         * Path parameter: topicNameOrArn (required)
+         * Topic name or ARN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topicNameOrArn
+         */
+        default Sns2EndpointBuilder aws2Sns(String componentName, String path) {
+            return Sns2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 Simple Notification System (camel-aws2-sns)
-     * Send messages to an AWS Simple Notification Topic using AWS SDK version
-     * 2.x.
-     * 
-     * Category: cloud,mobile,messaging
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-sns
-     * 
-     * Syntax: <code>aws2-sns:topicNameOrArn</code>
-     * 
-     * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
-     */
-    static Sns2EndpointBuilder aws2Sns(String path) {
+    static Sns2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Sns2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sns2EndpointBuilder, AdvancedSns2EndpointBuilder {
             public Sns2EndpointBuilderImpl(String path) {
-                super("aws2-sns", path);
+                super(componentName, path);
             }
         }
         return new Sns2EndpointBuilderImpl(path);

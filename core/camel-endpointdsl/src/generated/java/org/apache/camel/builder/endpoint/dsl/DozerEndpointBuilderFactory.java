@@ -256,28 +256,39 @@ public interface DozerEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * A human readable name of the mapping.
+         * 
+         * @param path name
          */
         default DozerEndpointBuilder dozer(String path) {
-            return DozerEndpointBuilderFactory.dozer(path);
+            return DozerEndpointBuilderFactory.endpointBuilder("dozer", path);
+        }
+        /**
+         * Dozer (camel-dozer)
+         * Map between Java beans using the Dozer mapping library.
+         * 
+         * Category: transformation
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-dozer
+         * 
+         * Syntax: <code>dozer:name</code>
+         * 
+         * Path parameter: name (required)
+         * A human readable name of the mapping.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DozerEndpointBuilder dozer(String componentName, String path) {
+            return DozerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Dozer (camel-dozer)
-     * Map between Java beans using the Dozer mapping library.
-     * 
-     * Category: transformation
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-dozer
-     * 
-     * Syntax: <code>dozer:name</code>
-     * 
-     * Path parameter: name (required)
-     * A human readable name of the mapping.
-     */
-    static DozerEndpointBuilder dozer(String path) {
+    static DozerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DozerEndpointBuilderImpl extends AbstractEndpointBuilder implements DozerEndpointBuilder, AdvancedDozerEndpointBuilder {
             public DozerEndpointBuilderImpl(String path) {
-                super("dozer", path);
+                super(componentName, path);
             }
         }
         return new DozerEndpointBuilderImpl(path);

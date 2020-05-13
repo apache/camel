@@ -929,31 +929,44 @@ public interface RedisEndpointBuilderFactory {
          * 
          * Path parameter: port (required)
          * Redis server port number
+         * 
+         * @param path host:port
          */
         default RedisEndpointBuilder springRedis(String path) {
-            return RedisEndpointBuilderFactory.springRedis(path);
+            return RedisEndpointBuilderFactory.endpointBuilder("spring-redis", path);
+        }
+        /**
+         * Spring Redis (camel-spring-redis)
+         * Send and receive messages from Redis.
+         * 
+         * Category: spring,nosql
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-spring-redis
+         * 
+         * Syntax: <code>spring-redis:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The host where Redis server is running.
+         * 
+         * Path parameter: port (required)
+         * Redis server port number
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port
+         */
+        default RedisEndpointBuilder springRedis(
+                String componentName,
+                String path) {
+            return RedisEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Spring Redis (camel-spring-redis)
-     * Send and receive messages from Redis.
-     * 
-     * Category: spring,nosql
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-spring-redis
-     * 
-     * Syntax: <code>spring-redis:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * The host where Redis server is running.
-     * 
-     * Path parameter: port (required)
-     * Redis server port number
-     */
-    static RedisEndpointBuilder springRedis(String path) {
+    static RedisEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class RedisEndpointBuilderImpl extends AbstractEndpointBuilder implements RedisEndpointBuilder, AdvancedRedisEndpointBuilder {
             public RedisEndpointBuilderImpl(String path) {
-                super("spring-redis", path);
+                super(componentName, path);
             }
         }
         return new RedisEndpointBuilderImpl(path);

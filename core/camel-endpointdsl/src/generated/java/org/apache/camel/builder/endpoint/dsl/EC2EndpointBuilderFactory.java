@@ -334,28 +334,37 @@ public interface EC2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default EC2EndpointBuilder awsEc2(String path) {
-            return EC2EndpointBuilderFactory.awsEc2(path);
+            return EC2EndpointBuilderFactory.endpointBuilder("aws-ec2", path);
+        }
+        /**
+         * AWS EC2 (camel-aws-ec2)
+         * Manage AWS EC2 instances.
+         * 
+         * Category: cloud,management
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-aws-ec2
+         * 
+         * Syntax: <code>aws-ec2:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default EC2EndpointBuilder awsEc2(String componentName, String path) {
+            return EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS EC2 (camel-aws-ec2)
-     * Manage AWS EC2 instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-aws-ec2
-     * 
-     * Syntax: <code>aws-ec2:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static EC2EndpointBuilder awsEc2(String path) {
+    static EC2EndpointBuilder endpointBuilder(String componentName, String path) {
         class EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements EC2EndpointBuilder, AdvancedEC2EndpointBuilder {
             public EC2EndpointBuilderImpl(String path) {
-                super("aws-ec2", path);
+                super(componentName, path);
             }
         }
         return new EC2EndpointBuilderImpl(path);

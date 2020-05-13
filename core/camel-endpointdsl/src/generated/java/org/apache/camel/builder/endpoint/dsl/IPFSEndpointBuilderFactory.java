@@ -169,29 +169,38 @@ public interface IPFSEndpointBuilderFactory {
          * Path parameter: ipfsCmd (required)
          * The ipfs command
          * The value can be one of: add, cat, get, version
+         * 
+         * @param path ipfsCmd
          */
         default IPFSEndpointBuilder ipfs(String path) {
-            return IPFSEndpointBuilderFactory.ipfs(path);
+            return IPFSEndpointBuilderFactory.endpointBuilder("ipfs", path);
+        }
+        /**
+         * IPFS (camel-ipfs)
+         * Access the Interplanetary File System (IPFS).
+         * 
+         * Category: file,ipfs
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-ipfs
+         * 
+         * Syntax: <code>ipfs:ipfsCmd</code>
+         * 
+         * Path parameter: ipfsCmd (required)
+         * The ipfs command
+         * The value can be one of: add, cat, get, version
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path ipfsCmd
+         */
+        default IPFSEndpointBuilder ipfs(String componentName, String path) {
+            return IPFSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * IPFS (camel-ipfs)
-     * Access the Interplanetary File System (IPFS).
-     * 
-     * Category: file,ipfs
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-ipfs
-     * 
-     * Syntax: <code>ipfs:ipfsCmd</code>
-     * 
-     * Path parameter: ipfsCmd (required)
-     * The ipfs command
-     * The value can be one of: add, cat, get, version
-     */
-    static IPFSEndpointBuilder ipfs(String path) {
+    static IPFSEndpointBuilder endpointBuilder(String componentName, String path) {
         class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {
-                super("ipfs", path);
+                super(componentName, path);
             }
         }
         return new IPFSEndpointBuilderImpl(path);

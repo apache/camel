@@ -189,31 +189,40 @@ public interface JingEndpointBuilderFactory {
          * URL to a local resource on the classpath or a full URL to a remote
          * resource or resource on the file system which contains the schema to
          * validate against.
+         * 
+         * @param path resourceUri
          */
         default JingEndpointBuilder jing(String path) {
-            return JingEndpointBuilderFactory.jing(path);
+            return JingEndpointBuilderFactory.endpointBuilder("jing", path);
+        }
+        /**
+         * Jing (camel-jing)
+         * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
+         * using Jing library.
+         * 
+         * Category: validation
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-jing
+         * 
+         * Syntax: <code>jing:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * URL to a local resource on the classpath or a full URL to a remote
+         * resource or resource on the file system which contains the schema to
+         * validate against.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default JingEndpointBuilder jing(String componentName, String path) {
+            return JingEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * Syntax: <code>jing:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath or a full URL to a remote
-     * resource or resource on the file system which contains the schema to
-     * validate against.
-     */
-    static JingEndpointBuilder jing(String path) {
+    static JingEndpointBuilder endpointBuilder(String componentName, String path) {
         class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder, AdvancedJingEndpointBuilder {
             public JingEndpointBuilderImpl(String path) {
-                super("jing", path);
+                super(componentName, path);
             }
         }
         return new JingEndpointBuilderImpl(path);

@@ -2340,34 +2340,43 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
+         * 
+         * @param path apiName/methodName
          */
         default FhirEndpointBuilder fhir(String path) {
-            return FhirEndpointBuilderFactory.fhir(path);
+            return FhirEndpointBuilderFactory.endpointBuilder("fhir", path);
+        }
+        /**
+         * FHIR (camel-fhir)
+         * Exchange information in the healthcare domain using the FHIR (Fast
+         * Healthcare Interoperability Resources) standard.
+         * 
+         * Category: hl7,api
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-fhir
+         * 
+         * Syntax: <code>fhir:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: capabilities, create, delete, history,
+         * load-page, meta, patch, read, search, transaction, update, validate
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default FhirEndpointBuilder fhir(String componentName, String path) {
+            return FhirEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * FHIR (camel-fhir)
-     * Exchange information in the healthcare domain using the FHIR (Fast
-     * Healthcare Interoperability Resources) standard.
-     * 
-     * Category: hl7,api
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-fhir
-     * 
-     * Syntax: <code>fhir:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: capabilities, create, delete, history,
-     * load-page, meta, patch, read, search, transaction, update, validate
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     */
-    static FhirEndpointBuilder fhir(String path) {
+    static FhirEndpointBuilder endpointBuilder(String componentName, String path) {
         class FhirEndpointBuilderImpl extends AbstractEndpointBuilder implements FhirEndpointBuilder, AdvancedFhirEndpointBuilder {
             public FhirEndpointBuilderImpl(String path) {
-                super("fhir", path);
+                super(componentName, path);
             }
         }
         return new FhirEndpointBuilderImpl(path);

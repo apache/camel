@@ -1189,3 +1189,23 @@ Doing so impose a potential security risk as this opens access to the full power
 
 This applies to the following templating components: camel-freemarker, camel-velocity, camel-mvel, camel-mustache,
 camel-string-template, camel-chunk, camel-robotframework.
+
+=== Using custom language in RouteBuilder
+
+The Java DSL `RouteBuilder` allows referring to a custom language as shown below:
+
+[source,java]
+----
+from("direct:start")
+    .filter(language("foo", "Bla bla bla"))
+      .to("mock:camel");
+----
+
+This functionality is seldom in use, as you would use the provided languages from Camel.
+If using, then the `language` method now requires a static import as shown below:
+
+[source,java]
+----
+import static org.apache.camel.builder.Builder.language;
+----
+

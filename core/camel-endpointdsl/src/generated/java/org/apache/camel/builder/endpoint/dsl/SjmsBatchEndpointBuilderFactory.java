@@ -827,30 +827,43 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Path parameter: destinationName (required)
          * The destination name. Only queues are supported, names may be
          * prefixed by 'queue:'.
+         * 
+         * @param path destinationName
          */
         default SjmsBatchEndpointBuilder sjmsBatch(String path) {
-            return SjmsBatchEndpointBuilderFactory.sjmsBatch(path);
+            return SjmsBatchEndpointBuilderFactory.endpointBuilder("sjms-batch", path);
+        }
+        /**
+         * Simple JMS Batch (camel-sjms)
+         * Highly performant and transactional batch consumption of messages
+         * from a JMS queue.
+         * 
+         * Category: messaging
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-sjms
+         * 
+         * Syntax: <code>sjms-batch:destinationName</code>
+         * 
+         * Path parameter: destinationName (required)
+         * The destination name. Only queues are supported, names may be
+         * prefixed by 'queue:'.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path destinationName
+         */
+        default SjmsBatchEndpointBuilder sjmsBatch(
+                String componentName,
+                String path) {
+            return SjmsBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     */
-    static SjmsBatchEndpointBuilder sjmsBatch(String path) {
+    static SjmsBatchEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SjmsBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SjmsBatchEndpointBuilder, AdvancedSjmsBatchEndpointBuilder {
             public SjmsBatchEndpointBuilderImpl(String path) {
-                super("sjms-batch", path);
+                super(componentName, path);
             }
         }
         return new SjmsBatchEndpointBuilderImpl(path);

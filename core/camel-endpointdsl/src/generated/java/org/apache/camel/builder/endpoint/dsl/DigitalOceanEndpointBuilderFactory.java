@@ -361,34 +361,48 @@ public interface DigitalOceanEndpointBuilderFactory {
          * rename, changeKernel, enableIpv6, enablePrivateNetworking,
          * takeSnapshot, transfer, convert, attach, detach, assign, unassign,
          * tag, untag
+         * 
+         * @param path operation
          */
         default DigitalOceanEndpointBuilder digitalocean(String path) {
-            return DigitalOceanEndpointBuilderFactory.digitalocean(path);
+            return DigitalOceanEndpointBuilderFactory.endpointBuilder("digitalocean", path);
+        }
+        /**
+         * DigitalOcean (camel-digitalocean)
+         * Manage Droplets and resources within the DigitalOcean cloud.
+         * 
+         * Category: cloud,management
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-digitalocean
+         * 
+         * Syntax: <code>digitalocean:operation</code>
+         * 
+         * Path parameter: operation
+         * The operation to perform to the given resource.
+         * The value can be one of: create, update, delete, list, ownList, get,
+         * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
+         * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
+         * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
+         * rename, changeKernel, enableIpv6, enablePrivateNetworking,
+         * takeSnapshot, transfer, convert, attach, detach, assign, unassign,
+         * tag, untag
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         */
+        default DigitalOceanEndpointBuilder digitalocean(
+                String componentName,
+                String path) {
+            return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * Syntax: <code>digitalocean:operation</code>
-     * 
-     * Path parameter: operation
-     * The operation to perform to the given resource.
-     * The value can be one of: create, update, delete, list, ownList, get,
-     * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-     * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-     * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-     * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
-     * transfer, convert, attach, detach, assign, unassign, tag, untag
-     */
-    static DigitalOceanEndpointBuilder digitalocean(String path) {
+    static DigitalOceanEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DigitalOceanEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalOceanEndpointBuilder, AdvancedDigitalOceanEndpointBuilder {
             public DigitalOceanEndpointBuilderImpl(String path) {
-                super("digitalocean", path);
+                super(componentName, path);
             }
         }
         return new DigitalOceanEndpointBuilderImpl(path);

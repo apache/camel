@@ -1277,29 +1277,40 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * Path parameter: queueName (required)
          * The name of the IronMQ queue
+         * 
+         * @param path queueName
          */
         default IronMQEndpointBuilder ironmq(String path) {
-            return IronMQEndpointBuilderFactory.ironmq(path);
+            return IronMQEndpointBuilderFactory.endpointBuilder("ironmq", path);
+        }
+        /**
+         * IronMQ (camel-ironmq)
+         * Send and receive messages to/from IronMQ an elastic and durable
+         * hosted message queue as a service.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ironmq
+         * 
+         * Syntax: <code>ironmq:queueName</code>
+         * 
+         * Path parameter: queueName (required)
+         * The name of the IronMQ queue
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path queueName
+         */
+        default IronMQEndpointBuilder ironmq(String componentName, String path) {
+            return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     */
-    static IronMQEndpointBuilder ironmq(String path) {
+    static IronMQEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IronMQEndpointBuilderImpl extends AbstractEndpointBuilder implements IronMQEndpointBuilder, AdvancedIronMQEndpointBuilder {
             public IronMQEndpointBuilderImpl(String path) {
-                super("ironmq", path);
+                super(componentName, path);
             }
         }
         return new IronMQEndpointBuilderImpl(path);

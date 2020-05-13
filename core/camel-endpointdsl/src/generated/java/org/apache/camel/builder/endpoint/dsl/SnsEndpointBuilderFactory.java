@@ -469,28 +469,37 @@ public interface SnsEndpointBuilderFactory {
          * 
          * Path parameter: topicNameOrArn (required)
          * Topic name or ARN
+         * 
+         * @param path topicNameOrArn
          */
         default SnsEndpointBuilder awsSns(String path) {
-            return SnsEndpointBuilderFactory.awsSns(path);
+            return SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
+        }
+        /**
+         * AWS Simple Notification System (camel-aws-sns)
+         * Send messages to an AWS Simple Notification Topic.
+         * 
+         * Category: cloud,mobile,messaging
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-aws-sns
+         * 
+         * Syntax: <code>aws-sns:topicNameOrArn</code>
+         * 
+         * Path parameter: topicNameOrArn (required)
+         * Topic name or ARN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topicNameOrArn
+         */
+        default SnsEndpointBuilder awsSns(String componentName, String path) {
+            return SnsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Simple Notification System (camel-aws-sns)
-     * Send messages to an AWS Simple Notification Topic.
-     * 
-     * Category: cloud,mobile,messaging
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     * 
-     * Syntax: <code>aws-sns:topicNameOrArn</code>
-     * 
-     * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
-     */
-    static SnsEndpointBuilder awsSns(String path) {
+    static SnsEndpointBuilder endpointBuilder(String componentName, String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {
-                super("aws-sns", path);
+                super(componentName, path);
             }
         }
         return new SnsEndpointBuilderImpl(path);

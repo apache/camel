@@ -2235,32 +2235,42 @@ public interface CxfEndpointBuilderFactory {
          * 
          * Path parameter: address
          * The service publish address.
+         * 
+         * @param path beanId:address
          */
         default CxfEndpointBuilder cxf(String path) {
-            return CxfEndpointBuilderFactory.cxf(path);
+            return CxfEndpointBuilderFactory.endpointBuilder("cxf", path);
+        }
+        /**
+         * CXF (camel-cxf)
+         * Expose SOAP WebServices using Apache CXF or connect to external
+         * WebServices using CXF WS client.
+         * 
+         * Category: soap,webservice
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-cxf
+         * 
+         * Syntax: <code>cxf:beanId:address</code>
+         * 
+         * Path parameter: beanId
+         * To lookup an existing configured CxfEndpoint. Must used bean: as
+         * prefix.
+         * 
+         * Path parameter: address
+         * The service publish address.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path beanId:address
+         */
+        default CxfEndpointBuilder cxf(String componentName, String path) {
+            return CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * CXF (camel-cxf)
-     * Expose SOAP WebServices using Apache CXF or connect to external
-     * WebServices using CXF WS client.
-     * 
-     * Category: soap,webservice
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-cxf
-     * 
-     * Syntax: <code>cxf:beanId:address</code>
-     * 
-     * Path parameter: beanId
-     * To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
-     * 
-     * Path parameter: address
-     * The service publish address.
-     */
-    static CxfEndpointBuilder cxf(String path) {
+    static CxfEndpointBuilder endpointBuilder(String componentName, String path) {
         class CxfEndpointBuilderImpl extends AbstractEndpointBuilder implements CxfEndpointBuilder, AdvancedCxfEndpointBuilder {
             public CxfEndpointBuilderImpl(String path) {
-                super("cxf", path);
+                super(componentName, path);
             }
         }
         return new CxfEndpointBuilderImpl(path);

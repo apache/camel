@@ -377,28 +377,37 @@ public interface SdbEndpointBuilderFactory {
          * 
          * Path parameter: domainName (required)
          * The name of the domain currently worked with.
+         * 
+         * @param path domainName
          */
         default SdbEndpointBuilder awsSdb(String path) {
-            return SdbEndpointBuilderFactory.awsSdb(path);
+            return SdbEndpointBuilderFactory.endpointBuilder("aws-sdb", path);
+        }
+        /**
+         * AWS SimpleDB (camel-aws-sdb)
+         * Store and Retrieve data from/to AWS SDB service.
+         * 
+         * Category: cloud,database,nosql
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-aws-sdb
+         * 
+         * Syntax: <code>aws-sdb:domainName</code>
+         * 
+         * Path parameter: domainName (required)
+         * The name of the domain currently worked with.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path domainName
+         */
+        default SdbEndpointBuilder awsSdb(String componentName, String path) {
+            return SdbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS SimpleDB (camel-aws-sdb)
-     * Store and Retrieve data from/to AWS SDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-sdb
-     * 
-     * Syntax: <code>aws-sdb:domainName</code>
-     * 
-     * Path parameter: domainName (required)
-     * The name of the domain currently worked with.
-     */
-    static SdbEndpointBuilder awsSdb(String path) {
+    static SdbEndpointBuilder endpointBuilder(String componentName, String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {
             public SdbEndpointBuilderImpl(String path) {
-                super("aws-sdb", path);
+                super(componentName, path);
             }
         }
         return new SdbEndpointBuilderImpl(path);

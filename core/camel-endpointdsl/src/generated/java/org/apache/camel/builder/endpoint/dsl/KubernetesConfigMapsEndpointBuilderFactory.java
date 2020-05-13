@@ -426,30 +426,43 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
                 String path) {
-            return KubernetesConfigMapsEndpointBuilderFactory.kubernetesConfigMaps(path);
+            return KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder("kubernetes-config-maps", path);
+        }
+        /**
+         * Kubernetes ConfigMap (camel-kubernetes)
+         * Perform operations on Kubernetes ConfigMaps and get notified on
+         * ConfigMaps changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-config-maps:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
+                String componentName,
+                String path) {
+            return KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes ConfigMap (camel-kubernetes)
-     * Perform operations on Kubernetes ConfigMaps and get notified on
-     * ConfigMaps changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-config-maps:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String path) {
+    static KubernetesConfigMapsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesConfigMapsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesConfigMapsEndpointBuilder, AdvancedKubernetesConfigMapsEndpointBuilder {
             public KubernetesConfigMapsEndpointBuilderImpl(String path) {
-                super("kubernetes-config-maps", path);
+                super(componentName, path);
             }
         }
         return new KubernetesConfigMapsEndpointBuilderImpl(path);

@@ -522,29 +522,42 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * the cache name
+         * 
+         * @param path cacheName
          */
         default CaffeineLoadCacheEndpointBuilder caffeineLoadcache(String path) {
-            return CaffeineLoadCacheEndpointBuilderFactory.caffeineLoadcache(path);
+            return CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder("caffeine-loadcache", path);
+        }
+        /**
+         * Caffeine LoadCache (camel-caffeine)
+         * Perform caching operations using Caffeine Cache with an attached
+         * CacheLoader.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-caffeine
+         * 
+         * Syntax: <code>caffeine-loadcache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * the cache name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
+                String componentName,
+                String path) {
+            return CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Caffeine LoadCache (camel-caffeine)
-     * Perform caching operations using Caffeine Cache with an attached
-     * CacheLoader.
-     * 
-     * Category: cache,datagrid,clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
-     * Syntax: <code>caffeine-loadcache:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * the cache name
-     */
-    static CaffeineLoadCacheEndpointBuilder caffeineLoadcache(String path) {
+    static CaffeineLoadCacheEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CaffeineLoadCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements CaffeineLoadCacheEndpointBuilder, AdvancedCaffeineLoadCacheEndpointBuilder {
             public CaffeineLoadCacheEndpointBuilderImpl(String path) {
-                super("caffeine-loadcache", path);
+                super(componentName, path);
             }
         }
         return new CaffeineLoadCacheEndpointBuilderImpl(path);

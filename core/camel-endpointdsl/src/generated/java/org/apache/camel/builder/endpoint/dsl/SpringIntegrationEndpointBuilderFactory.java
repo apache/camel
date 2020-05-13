@@ -533,31 +533,44 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Spring context. It will equal to the inputChannel name for the Spring
          * Integration consumer and the outputChannel name for the Spring
          * Integration provider.
+         * 
+         * @param path defaultChannel
          */
         default SpringIntegrationEndpointBuilder springIntegration(String path) {
-            return SpringIntegrationEndpointBuilderFactory.springIntegration(path);
+            return SpringIntegrationEndpointBuilderFactory.endpointBuilder("spring-integration", path);
+        }
+        /**
+         * Spring Integration (camel-spring-integration)
+         * Bridge Camel with Spring Integration.
+         * 
+         * Category: spring,eventbus
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-spring-integration
+         * 
+         * Syntax: <code>spring-integration:defaultChannel</code>
+         * 
+         * Path parameter: defaultChannel (required)
+         * The default channel name which is used by the Spring Integration
+         * Spring context. It will equal to the inputChannel name for the Spring
+         * Integration consumer and the outputChannel name for the Spring
+         * Integration provider.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path defaultChannel
+         */
+        default SpringIntegrationEndpointBuilder springIntegration(
+                String componentName,
+                String path) {
+            return SpringIntegrationEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Spring Integration (camel-spring-integration)
-     * Bridge Camel with Spring Integration.
-     * 
-     * Category: spring,eventbus
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-spring-integration
-     * 
-     * Syntax: <code>spring-integration:defaultChannel</code>
-     * 
-     * Path parameter: defaultChannel (required)
-     * The default channel name which is used by the Spring Integration Spring
-     * context. It will equal to the inputChannel name for the Spring
-     * Integration consumer and the outputChannel name for the Spring
-     * Integration provider.
-     */
-    static SpringIntegrationEndpointBuilder springIntegration(String path) {
+    static SpringIntegrationEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SpringIntegrationEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringIntegrationEndpointBuilder, AdvancedSpringIntegrationEndpointBuilder {
             public SpringIntegrationEndpointBuilderImpl(String path) {
-                super("spring-integration", path);
+                super(componentName, path);
             }
         }
         return new SpringIntegrationEndpointBuilderImpl(path);

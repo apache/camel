@@ -280,30 +280,43 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
                 String path) {
-            return HazelcastAtomicnumberEndpointBuilderFactory.hazelcastAtomicvalue(path);
+            return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder("hazelcast-atomicvalue", path);
+        }
+        /**
+         * Hazelcast Atomic Number (camel-hazelcast)
+         * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+         * number).
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
+                String componentName,
+                String path) {
+            return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
+    static HazelcastAtomicnumberEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastAtomicnumberEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastAtomicnumberEndpointBuilder, AdvancedHazelcastAtomicnumberEndpointBuilder {
             public HazelcastAtomicnumberEndpointBuilderImpl(String path) {
-                super("hazelcast-atomicvalue", path);
+                super(componentName, path);
             }
         }
         return new HazelcastAtomicnumberEndpointBuilderImpl(path);

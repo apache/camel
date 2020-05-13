@@ -242,33 +242,46 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * Name of the method on the bean that has the SQL query to be executed.
+         * 
+         * @param path beanName:methodName
          */
         default MyBatisBeanEndpointBuilder mybatisBean(String path) {
-            return MyBatisBeanEndpointBuilderFactory.mybatisBean(path);
+            return MyBatisBeanEndpointBuilderFactory.endpointBuilder("mybatis-bean", path);
+        }
+        /**
+         * MyBatis Bean (camel-mybatis)
+         * Perform queries, inserts, updates or deletes in a relational database
+         * using MyBatis.
+         * 
+         * Category: database,sql
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-mybatis
+         * 
+         * Syntax: <code>mybatis-bean:beanName:methodName</code>
+         * 
+         * Path parameter: beanName (required)
+         * Name of the bean with the MyBatis annotations. This can either by a
+         * type alias or a FQN class name.
+         * 
+         * Path parameter: methodName (required)
+         * Name of the method on the bean that has the SQL query to be executed.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path beanName:methodName
+         */
+        default MyBatisBeanEndpointBuilder mybatisBean(
+                String componentName,
+                String path) {
+            return MyBatisBeanEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * MyBatis Bean (camel-mybatis)
-     * Perform queries, inserts, updates or deletes in a relational database
-     * using MyBatis.
-     * 
-     * Category: database,sql
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
-     * Syntax: <code>mybatis-bean:beanName:methodName</code>
-     * 
-     * Path parameter: beanName (required)
-     * Name of the bean with the MyBatis annotations. This can either by a type
-     * alias or a FQN class name.
-     * 
-     * Path parameter: methodName (required)
-     * Name of the method on the bean that has the SQL query to be executed.
-     */
-    static MyBatisBeanEndpointBuilder mybatisBean(String path) {
+    static MyBatisBeanEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder, AdvancedMyBatisBeanEndpointBuilder {
             public MyBatisBeanEndpointBuilderImpl(String path) {
-                super("mybatis-bean", path);
+                super(componentName, path);
             }
         }
         return new MyBatisBeanEndpointBuilderImpl(path);

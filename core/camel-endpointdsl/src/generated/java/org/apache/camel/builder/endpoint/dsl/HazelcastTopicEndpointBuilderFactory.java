@@ -752,28 +752,41 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
-            return HazelcastTopicEndpointBuilderFactory.hazelcastTopic(path);
+            return HazelcastTopicEndpointBuilderFactory.endpointBuilder("hazelcast-topic", path);
+        }
+        /**
+         * Hazelcast Topic (camel-hazelcast)
+         * Send and receive messages to/from Hazelcast distributed topic.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-topic:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastTopicEndpointBuilder hazelcastTopic(
+                String componentName,
+                String path) {
+            return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Topic (camel-hazelcast)
-     * Send and receive messages to/from Hazelcast distributed topic.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-topic:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
+    static HazelcastTopicEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastTopicEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastTopicEndpointBuilder, AdvancedHazelcastTopicEndpointBuilder {
             public HazelcastTopicEndpointBuilderImpl(String path) {
-                super("hazelcast-topic", path);
+                super(componentName, path);
             }
         }
         return new HazelcastTopicEndpointBuilderImpl(path);

@@ -804,29 +804,42 @@ public interface XmlSignerEndpointBuilderFactory {
          * Path parameter: name (required)
          * The name part in the URI can be chosen by the user to distinguish
          * between different signer endpoints within the camel context.
+         * 
+         * @param path name
          */
         default XmlSignerEndpointBuilder xmlsecuritySign(String path) {
-            return XmlSignerEndpointBuilderFactory.xmlsecuritySign(path);
+            return XmlSignerEndpointBuilderFactory.endpointBuilder("xmlsecurity-sign", path);
+        }
+        /**
+         * XML Security Sign (camel-xmlsecurity)
+         * Sign XML payloads using the XML signature specification.
+         * 
+         * Category: security,transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-xmlsecurity
+         * 
+         * Syntax: <code>xmlsecurity-sign:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name part in the URI can be chosen by the user to distinguish
+         * between different signer endpoints within the camel context.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default XmlSignerEndpointBuilder xmlsecuritySign(
+                String componentName,
+                String path) {
+            return XmlSignerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
-     * 
-     * Category: security,transformation
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
-     * Syntax: <code>xmlsecurity-sign:name</code>
-     * 
-     * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different signer endpoints within the camel context.
-     */
-    static XmlSignerEndpointBuilder xmlsecuritySign(String path) {
+    static XmlSignerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class XmlSignerEndpointBuilderImpl extends AbstractEndpointBuilder implements XmlSignerEndpointBuilder, AdvancedXmlSignerEndpointBuilder {
             public XmlSignerEndpointBuilderImpl(String path) {
-                super("xmlsecurity-sign", path);
+                super(componentName, path);
             }
         }
         return new XmlSignerEndpointBuilderImpl(path);

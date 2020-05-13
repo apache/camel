@@ -609,30 +609,43 @@ public interface DataSetTestEndpointBuilderFactory {
          * Path parameter: name (required)
          * Name of endpoint to lookup in the registry to use for polling
          * messages used for testing
+         * 
+         * @param path name
          */
         default DataSetTestEndpointBuilder datasetTest(String path) {
-            return DataSetTestEndpointBuilderFactory.datasetTest(path);
+            return DataSetTestEndpointBuilderFactory.endpointBuilder("dataset-test", path);
+        }
+        /**
+         * DataSet Test (camel-dataset)
+         * Extends the mock component by pulling messages from another endpoint
+         * on startup to set the expected message bodies.
+         * 
+         * Category: core,testing
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-dataset
+         * 
+         * Syntax: <code>dataset-test:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of endpoint to lookup in the registry to use for polling
+         * messages used for testing
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DataSetTestEndpointBuilder datasetTest(
+                String componentName,
+                String path) {
+            return DataSetTestEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * DataSet Test (camel-dataset)
-     * Extends the mock component by pulling messages from another endpoint on
-     * startup to set the expected message bodies.
-     * 
-     * Category: core,testing
-     * Since: 1.3
-     * Maven coordinates: org.apache.camel:camel-dataset
-     * 
-     * Syntax: <code>dataset-test:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of endpoint to lookup in the registry to use for polling messages
-     * used for testing
-     */
-    static DataSetTestEndpointBuilder datasetTest(String path) {
+    static DataSetTestEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DataSetTestEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetTestEndpointBuilder, AdvancedDataSetTestEndpointBuilder {
             public DataSetTestEndpointBuilderImpl(String path) {
-                super("dataset-test", path);
+                super(componentName, path);
             }
         }
         return new DataSetTestEndpointBuilderImpl(path);

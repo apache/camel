@@ -1319,28 +1319,41 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * Path parameter: resourceName (required)
          * The distributed resource name
+         * 
+         * @param path resourceName
          */
         default AtomixSetEndpointBuilder atomixSet(String path) {
-            return AtomixSetEndpointBuilderFactory.atomixSet(path);
+            return AtomixSetEndpointBuilderFactory.endpointBuilder("atomix-set", path);
+        }
+        /**
+         * Atomix Set (camel-atomix)
+         * Access Atomix's distributed set.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-set:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceName
+         */
+        default AtomixSetEndpointBuilder atomixSet(
+                String componentName,
+                String path) {
+            return AtomixSetEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atomix Set (camel-atomix)
-     * Access Atomix's distributed set.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-set:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     */
-    static AtomixSetEndpointBuilder atomixSet(String path) {
+    static AtomixSetEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtomixSetEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixSetEndpointBuilder, AdvancedAtomixSetEndpointBuilder {
             public AtomixSetEndpointBuilderImpl(String path) {
-                super("atomix-set", path);
+                super(componentName, path);
             }
         }
         return new AtomixSetEndpointBuilderImpl(path);

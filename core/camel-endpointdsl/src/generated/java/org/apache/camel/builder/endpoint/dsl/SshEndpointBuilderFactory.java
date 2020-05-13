@@ -1495,32 +1495,41 @@ public interface SshEndpointBuilderFactory {
          * Path parameter: port
          * Sets the port number for the remote SSH server.
          * Default value: 22
+         * 
+         * @param path host:port
          */
         default SshEndpointBuilder ssh(String path) {
-            return SshEndpointBuilderFactory.ssh(path);
+            return SshEndpointBuilderFactory.endpointBuilder("ssh", path);
+        }
+        /**
+         * SSH (camel-ssh)
+         * Execute commands on remote hosts using SSH.
+         * 
+         * Category: file
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-ssh
+         * 
+         * Syntax: <code>ssh:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * Sets the hostname of the remote SSH server.
+         * 
+         * Path parameter: port
+         * Sets the port number for the remote SSH server.
+         * Default value: 22
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port
+         */
+        default SshEndpointBuilder ssh(String componentName, String path) {
+            return SshEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SSH (camel-ssh)
-     * Execute commands on remote hosts using SSH.
-     * 
-     * Category: file
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-ssh
-     * 
-     * Syntax: <code>ssh:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * Sets the hostname of the remote SSH server.
-     * 
-     * Path parameter: port
-     * Sets the port number for the remote SSH server.
-     * Default value: 22
-     */
-    static SshEndpointBuilder ssh(String path) {
+    static SshEndpointBuilder endpointBuilder(String componentName, String path) {
         class SshEndpointBuilderImpl extends AbstractEndpointBuilder implements SshEndpointBuilder, AdvancedSshEndpointBuilder {
             public SshEndpointBuilderImpl(String path) {
-                super("ssh", path);
+                super(componentName, path);
             }
         }
         return new SshEndpointBuilderImpl(path);

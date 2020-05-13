@@ -881,28 +881,41 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * Path parameter: apiName
          * Sets the apiName.
+         * 
+         * @param path apiName
          */
         default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
-            return GoogleSheetsStreamEndpointBuilderFactory.googleSheetsStream(path);
+            return GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder("google-sheets-stream", path);
+        }
+        /**
+         * Google Sheets Stream (camel-google-sheets)
+         * Poll for changes in Google Sheets.
+         * 
+         * Category: api,cloud,sheets
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-sheets
+         * 
+         * Syntax: <code>google-sheets-stream:apiName</code>
+         * 
+         * Path parameter: apiName
+         * Sets the apiName.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName
+         */
+        default GoogleSheetsStreamEndpointBuilder googleSheetsStream(
+                String componentName,
+                String path) {
+            return GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Sheets Stream (camel-google-sheets)
-     * Poll for changes in Google Sheets.
-     * 
-     * Category: api,cloud,sheets
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
-     * Syntax: <code>google-sheets-stream:apiName</code>
-     * 
-     * Path parameter: apiName
-     * Sets the apiName.
-     */
-    static GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
+    static GoogleSheetsStreamEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleSheetsStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsStreamEndpointBuilder, AdvancedGoogleSheetsStreamEndpointBuilder {
             public GoogleSheetsStreamEndpointBuilderImpl(String path) {
-                super("google-sheets-stream", path);
+                super(componentName, path);
             }
         }
         return new GoogleSheetsStreamEndpointBuilderImpl(path);

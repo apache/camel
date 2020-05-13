@@ -1420,28 +1420,41 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * Path parameter: resourceName (required)
          * The distributed resource name
+         * 
+         * @param path resourceName
          */
         default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
-            return AtomixMessagingEndpointBuilderFactory.atomixMessaging(path);
+            return AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging", path);
+        }
+        /**
+         * Atomix Messaging (camel-atomix)
+         * Access Atomix's group messaging.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-messaging:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceName
+         */
+        default AtomixMessagingEndpointBuilder atomixMessaging(
+                String componentName,
+                String path) {
+            return AtomixMessagingEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atomix Messaging (camel-atomix)
-     * Access Atomix's group messaging.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-messaging:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     */
-    static AtomixMessagingEndpointBuilder atomixMessaging(String path) {
+    static AtomixMessagingEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtomixMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMessagingEndpointBuilder, AdvancedAtomixMessagingEndpointBuilder {
             public AtomixMessagingEndpointBuilderImpl(String path) {
-                super("atomix-messaging", path);
+                super(componentName, path);
             }
         }
         return new AtomixMessagingEndpointBuilderImpl(path);

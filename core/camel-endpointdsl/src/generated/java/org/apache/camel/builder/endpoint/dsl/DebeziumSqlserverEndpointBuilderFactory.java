@@ -1142,29 +1142,42 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Path parameter: name (required)
          * Unique name for the connector. Attempting to register again with the
          * same name will fail.
+         * 
+         * @param path name
          */
         default DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
-            return DebeziumSqlserverEndpointBuilderFactory.debeziumSqlserver(path);
+            return DebeziumSqlserverEndpointBuilderFactory.endpointBuilder("debezium-sqlserver", path);
+        }
+        /**
+         * Debezium SQL Server Connector (camel-debezium-sqlserver)
+         * Capture changes from an SQL Server database.
+         * 
+         * Category: database,sql,sqlserver
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
+         * 
+         * Syntax: <code>debezium-sqlserver:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DebeziumSqlserverEndpointBuilder debeziumSqlserver(
+                String componentName,
+                String path) {
+            return DebeziumSqlserverEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Debezium SQL Server Connector (camel-debezium-sqlserver)
-     * Capture changes from an SQL Server database.
-     * 
-     * Category: database,sql,sqlserver
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
-     * 
-     * Syntax: <code>debezium-sqlserver:name</code>
-     * 
-     * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
-     */
-    static DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
+    static DebeziumSqlserverEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DebeziumSqlserverEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumSqlserverEndpointBuilder, AdvancedDebeziumSqlserverEndpointBuilder {
             public DebeziumSqlserverEndpointBuilderImpl(String path) {
-                super("debezium-sqlserver", path);
+                super(componentName, path);
             }
         }
         return new DebeziumSqlserverEndpointBuilderImpl(path);

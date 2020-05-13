@@ -824,29 +824,38 @@ public interface NsqEndpointBuilderFactory {
          * 
          * Path parameter: topic (required)
          * The NSQ topic
+         * 
+         * @param path topic
          */
         default NsqEndpointBuilder nsq(String path) {
-            return NsqEndpointBuilderFactory.nsq(path);
+            return NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
+        }
+        /**
+         * NSQ (camel-nsq)
+         * Send and receive messages from NSQ realtime distributed messaging
+         * platform.
+         * 
+         * Category: messaging
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-nsq
+         * 
+         * Syntax: <code>nsq:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The NSQ topic
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topic
+         */
+        default NsqEndpointBuilder nsq(String componentName, String path) {
+            return NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     */
-    static NsqEndpointBuilder nsq(String path) {
+    static NsqEndpointBuilder endpointBuilder(String componentName, String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {
             public NsqEndpointBuilderImpl(String path) {
-                super("nsq", path);
+                super(componentName, path);
             }
         }
         return new NsqEndpointBuilderImpl(path);

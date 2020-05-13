@@ -808,31 +808,42 @@ public interface DropboxEndpointBuilderFactory {
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
          * The value can be one of: put, del, search, get, move
+         * 
+         * @param path operation
          */
         default DropboxEndpointBuilder dropbox(String path) {
-            return DropboxEndpointBuilderFactory.dropbox(path);
+            return DropboxEndpointBuilderFactory.endpointBuilder("dropbox", path);
+        }
+        /**
+         * Dropbox (camel-dropbox)
+         * Upload, download and manage files, folders, groups, collaborations,
+         * etc on Dropbox.
+         * 
+         * Category: api,file
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-dropbox
+         * 
+         * Syntax: <code>dropbox:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * The specific action (typically is a CRUD action) to perform on
+         * Dropbox remote folder.
+         * The value can be one of: put, del, search, get, move
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         */
+        default DropboxEndpointBuilder dropbox(String componentName, String path) {
+            return DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Dropbox (camel-dropbox)
-     * Upload, download and manage files, folders, groups, collaborations, etc
-     * on Dropbox.
-     * 
-     * Category: api,file
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-dropbox
-     * 
-     * Syntax: <code>dropbox:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * The specific action (typically is a CRUD action) to perform on Dropbox
-     * remote folder.
-     * The value can be one of: put, del, search, get, move
-     */
-    static DropboxEndpointBuilder dropbox(String path) {
+    static DropboxEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {
             public DropboxEndpointBuilderImpl(String path) {
-                super("dropbox", path);
+                super(componentName, path);
             }
         }
         return new DropboxEndpointBuilderImpl(path);

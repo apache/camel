@@ -223,32 +223,45 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * 
          * Path parameter: consumerEndpointUri (required)
          * The consumer endpoint to use in master/slave mode
+         * 
+         * @param path groupName:consumerEndpointUri
          */
         default ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
-            return ZooKeeperMasterEndpointBuilderFactory.zookeeperMaster(path);
+            return ZooKeeperMasterEndpointBuilderFactory.endpointBuilder("zookeeper-master", path);
+        }
+        /**
+         * ZooKeeper Master (camel-zookeeper-master)
+         * Have only a single consumer in a cluster consuming from a given
+         * endpoint; with automatic failover if the JVM dies.
+         * 
+         * Category: clustering
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-zookeeper-master
+         * 
+         * Syntax: <code>zookeeper-master:groupName:consumerEndpointUri</code>
+         * 
+         * Path parameter: groupName (required)
+         * The name of the cluster group to use
+         * 
+         * Path parameter: consumerEndpointUri (required)
+         * The consumer endpoint to use in master/slave mode
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path groupName:consumerEndpointUri
+         */
+        default ZooKeeperMasterEndpointBuilder zookeeperMaster(
+                String componentName,
+                String path) {
+            return ZooKeeperMasterEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * ZooKeeper Master (camel-zookeeper-master)
-     * Have only a single consumer in a cluster consuming from a given endpoint;
-     * with automatic failover if the JVM dies.
-     * 
-     * Category: clustering
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-zookeeper-master
-     * 
-     * Syntax: <code>zookeeper-master:groupName:consumerEndpointUri</code>
-     * 
-     * Path parameter: groupName (required)
-     * The name of the cluster group to use
-     * 
-     * Path parameter: consumerEndpointUri (required)
-     * The consumer endpoint to use in master/slave mode
-     */
-    static ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
+    static ZooKeeperMasterEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ZooKeeperMasterEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperMasterEndpointBuilder, AdvancedZooKeeperMasterEndpointBuilder {
             public ZooKeeperMasterEndpointBuilderImpl(String path) {
-                super("zookeeper-master", path);
+                super(componentName, path);
             }
         }
         return new ZooKeeperMasterEndpointBuilderImpl(path);

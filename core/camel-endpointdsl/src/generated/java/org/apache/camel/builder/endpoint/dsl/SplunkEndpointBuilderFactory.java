@@ -1574,28 +1574,39 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name has no purpose
+         * 
+         * @param path name
          */
         default SplunkEndpointBuilder splunk(String path) {
-            return SplunkEndpointBuilderFactory.splunk(path);
+            return SplunkEndpointBuilderFactory.endpointBuilder("splunk", path);
+        }
+        /**
+         * Splunk (camel-splunk)
+         * Publish or search for events in Splunk.
+         * 
+         * Category: log,monitoring
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-splunk
+         * 
+         * Syntax: <code>splunk:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name has no purpose
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default SplunkEndpointBuilder splunk(String componentName, String path) {
+            return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Splunk (camel-splunk)
-     * Publish or search for events in Splunk.
-     * 
-     * Category: log,monitoring
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-splunk
-     * 
-     * Syntax: <code>splunk:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name has no purpose
-     */
-    static SplunkEndpointBuilder splunk(String path) {
+    static SplunkEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SplunkEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkEndpointBuilder, AdvancedSplunkEndpointBuilder {
             public SplunkEndpointBuilderImpl(String path) {
-                super("splunk", path);
+                super(componentName, path);
             }
         }
         return new SplunkEndpointBuilderImpl(path);

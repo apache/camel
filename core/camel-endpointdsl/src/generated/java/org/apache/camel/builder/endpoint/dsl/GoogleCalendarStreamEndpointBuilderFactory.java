@@ -847,29 +847,42 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * Path parameter: index
          * Specifies an index for the endpoint
+         * 
+         * @param path index
          */
         default GoogleCalendarStreamEndpointBuilder googleCalendarStream(
                 String path) {
-            return GoogleCalendarStreamEndpointBuilderFactory.googleCalendarStream(path);
+            return GoogleCalendarStreamEndpointBuilderFactory.endpointBuilder("google-calendar-stream", path);
+        }
+        /**
+         * Google Calendar Stream (camel-google-calendar)
+         * Poll for changes in a Google Calendar.
+         * 
+         * Category: api,cloud
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-calendar
+         * 
+         * Syntax: <code>google-calendar-stream:index</code>
+         * 
+         * Path parameter: index
+         * Specifies an index for the endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path index
+         */
+        default GoogleCalendarStreamEndpointBuilder googleCalendarStream(
+                String componentName,
+                String path) {
+            return GoogleCalendarStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Calendar Stream (camel-google-calendar)
-     * Poll for changes in a Google Calendar.
-     * 
-     * Category: api,cloud
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
-     * Syntax: <code>google-calendar-stream:index</code>
-     * 
-     * Path parameter: index
-     * Specifies an index for the endpoint
-     */
-    static GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
+    static GoogleCalendarStreamEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleCalendarStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarStreamEndpointBuilder, AdvancedGoogleCalendarStreamEndpointBuilder {
             public GoogleCalendarStreamEndpointBuilderImpl(String path) {
-                super("google-calendar-stream", path);
+                super(componentName, path);
             }
         }
         return new GoogleCalendarStreamEndpointBuilderImpl(path);

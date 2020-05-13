@@ -432,30 +432,42 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
                 String path) {
-            return KubernetesResourcesQuotaEndpointBuilderFactory.kubernetesResourcesQuota(path);
+            return KubernetesResourcesQuotaEndpointBuilderFactory.endpointBuilder("kubernetes-resources-quota", path);
+        }
+        /**
+         * Kubernetes Resources Quota (camel-kubernetes)
+         * Perform operations on Kubernetes Resources Quotas.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
+                String componentName,
+                String path) {
+            return KubernetesResourcesQuotaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Resources Quota (camel-kubernetes)
-     * Perform operations on Kubernetes Resources Quotas.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
+    static KubernetesResourcesQuotaEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class KubernetesResourcesQuotaEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesResourcesQuotaEndpointBuilder, AdvancedKubernetesResourcesQuotaEndpointBuilder {
             public KubernetesResourcesQuotaEndpointBuilderImpl(String path) {
-                super("kubernetes-resources-quota", path);
+                super(componentName, path);
             }
         }
         return new KubernetesResourcesQuotaEndpointBuilderImpl(path);

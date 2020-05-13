@@ -422,28 +422,41 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default OpenshiftBuildsEndpointBuilder openshiftBuilds(String path) {
-            return OpenshiftBuildsEndpointBuilderFactory.openshiftBuilds(path);
+            return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder("openshift-builds", path);
+        }
+        /**
+         * Openshift Builds (camel-kubernetes)
+         * Perform operations on OpenShift Builds.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>openshift-builds:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default OpenshiftBuildsEndpointBuilder openshiftBuilds(
+                String componentName,
+                String path) {
+            return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Openshift Builds (camel-kubernetes)
-     * Perform operations on OpenShift Builds.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>openshift-builds:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static OpenshiftBuildsEndpointBuilder openshiftBuilds(String path) {
+    static OpenshiftBuildsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class OpenshiftBuildsEndpointBuilderImpl extends AbstractEndpointBuilder implements OpenshiftBuildsEndpointBuilder, AdvancedOpenshiftBuildsEndpointBuilder {
             public OpenshiftBuildsEndpointBuilderImpl(String path) {
-                super("openshift-builds", path);
+                super(componentName, path);
             }
         }
         return new OpenshiftBuildsEndpointBuilderImpl(path);

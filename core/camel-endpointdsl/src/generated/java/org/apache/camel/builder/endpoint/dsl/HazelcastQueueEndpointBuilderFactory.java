@@ -767,28 +767,41 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastQueueEndpointBuilder hazelcastQueue(String path) {
-            return HazelcastQueueEndpointBuilderFactory.hazelcastQueue(path);
+            return HazelcastQueueEndpointBuilderFactory.endpointBuilder("hazelcast-queue", path);
+        }
+        /**
+         * Hazelcast Queue (camel-hazelcast)
+         * Perform operations on Hazelcast distributed queue.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-queue:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastQueueEndpointBuilder hazelcastQueue(
+                String componentName,
+                String path) {
+            return HazelcastQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Queue (camel-hazelcast)
-     * Perform operations on Hazelcast distributed queue.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-queue:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastQueueEndpointBuilder hazelcastQueue(String path) {
+    static HazelcastQueueEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastQueueEndpointBuilder, AdvancedHazelcastQueueEndpointBuilder {
             public HazelcastQueueEndpointBuilderImpl(String path) {
-                super("hazelcast-queue", path);
+                super(componentName, path);
             }
         }
         return new HazelcastQueueEndpointBuilderImpl(path);

@@ -282,37 +282,50 @@ public interface ControlBusEndpointBuilderFactory {
          * The value can be one of: bean, constant, el, exchangeProperty, file,
          * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
          * tokenize, xpath, xquery, xtokenize
+         * 
+         * @param path command:language
          */
         default ControlBusEndpointBuilder controlbus(String path) {
-            return ControlBusEndpointBuilderFactory.controlbus(path);
+            return ControlBusEndpointBuilderFactory.endpointBuilder("controlbus", path);
+        }
+        /**
+         * Control Bus (camel-controlbus)
+         * Manage and monitor Camel routes.
+         * 
+         * Category: core,monitoring
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-controlbus
+         * 
+         * Syntax: <code>controlbus:command:language</code>
+         * 
+         * Path parameter: command (required)
+         * Command can be either route or language
+         * The value can be one of: route, language
+         * 
+         * Path parameter: language
+         * Allows you to specify the name of a Language to use for evaluating
+         * the message body. If there is any result from the evaluation, then
+         * the result is put in the message body.
+         * The value can be one of: bean, constant, el, exchangeProperty, file,
+         * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
+         * tokenize, xpath, xquery, xtokenize
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path command:language
+         */
+        default ControlBusEndpointBuilder controlbus(
+                String componentName,
+                String path) {
+            return ControlBusEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Control Bus (camel-controlbus)
-     * Manage and monitor Camel routes.
-     * 
-     * Category: core,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-controlbus
-     * 
-     * Syntax: <code>controlbus:command:language</code>
-     * 
-     * Path parameter: command (required)
-     * Command can be either route or language
-     * The value can be one of: route, language
-     * 
-     * Path parameter: language
-     * Allows you to specify the name of a Language to use for evaluating the
-     * message body. If there is any result from the evaluation, then the result
-     * is put in the message body.
-     * The value can be one of: bean, constant, el, exchangeProperty, file,
-     * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-     * tokenize, xpath, xquery, xtokenize
-     */
-    static ControlBusEndpointBuilder controlbus(String path) {
+    static ControlBusEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder, AdvancedControlBusEndpointBuilder {
             public ControlBusEndpointBuilderImpl(String path) {
-                super("controlbus", path);
+                super(componentName, path);
             }
         }
         return new ControlBusEndpointBuilderImpl(path);

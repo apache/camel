@@ -680,31 +680,45 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * Path parameter: path (required)
          * The node in the ZooKeeper server (aka znode)
+         * 
+         * @param path serverUrls/path
          */
         default ZooKeeperEndpointBuilder zookeeper(String path) {
-            return ZooKeeperEndpointBuilderFactory.zookeeper(path);
+            return ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
+        }
+        /**
+         * ZooKeeper (camel-zookeeper)
+         * Manage ZooKeeper clusters.
+         * 
+         * Category: clustering
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-zookeeper
+         * 
+         * Syntax: <code>zookeeper:serverUrls/path</code>
+         * 
+         * Path parameter: serverUrls (required)
+         * The zookeeper server hosts (multiple servers can be separated by
+         * comma)
+         * 
+         * Path parameter: path (required)
+         * The node in the ZooKeeper server (aka znode)
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path serverUrls/path
+         */
+        default ZooKeeperEndpointBuilder zookeeper(
+                String componentName,
+                String path) {
+            return ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * ZooKeeper (camel-zookeeper)
-     * Manage ZooKeeper clusters.
-     * 
-     * Category: clustering
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-zookeeper
-     * 
-     * Syntax: <code>zookeeper:serverUrls/path</code>
-     * 
-     * Path parameter: serverUrls (required)
-     * The zookeeper server hosts (multiple servers can be separated by comma)
-     * 
-     * Path parameter: path (required)
-     * The node in the ZooKeeper server (aka znode)
-     */
-    static ZooKeeperEndpointBuilder zookeeper(String path) {
+    static ZooKeeperEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ZooKeeperEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperEndpointBuilder, AdvancedZooKeeperEndpointBuilder {
             public ZooKeeperEndpointBuilderImpl(String path) {
-                super("zookeeper", path);
+                super(componentName, path);
             }
         }
         return new ZooKeeperEndpointBuilderImpl(path);

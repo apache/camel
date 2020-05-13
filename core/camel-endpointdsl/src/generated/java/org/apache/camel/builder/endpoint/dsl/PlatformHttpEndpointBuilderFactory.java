@@ -357,29 +357,42 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * Path parameter: path (required)
          * The path under which this endpoint serves the HTTP requests
+         * 
+         * @param path path
          */
         default PlatformHttpEndpointBuilder platformHttp(String path) {
-            return PlatformHttpEndpointBuilderFactory.platformHttp(path);
+            return PlatformHttpEndpointBuilderFactory.endpointBuilder("platform-http", path);
+        }
+        /**
+         * Platform HTTP (camel-platform-http)
+         * Expose HTTP endpoints using the HTTP server available in the current
+         * platform.
+         * 
+         * Category: http
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-platform-http
+         * 
+         * Syntax: <code>platform-http:path</code>
+         * 
+         * Path parameter: path (required)
+         * The path under which this endpoint serves the HTTP requests
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path
+         */
+        default PlatformHttpEndpointBuilder platformHttp(
+                String componentName,
+                String path) {
+            return PlatformHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Platform HTTP (camel-platform-http)
-     * Expose HTTP endpoints using the HTTP server available in the current
-     * platform.
-     * 
-     * Category: http
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-platform-http
-     * 
-     * Syntax: <code>platform-http:path</code>
-     * 
-     * Path parameter: path (required)
-     * The path under which this endpoint serves the HTTP requests
-     */
-    static PlatformHttpEndpointBuilder platformHttp(String path) {
+    static PlatformHttpEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class PlatformHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements PlatformHttpEndpointBuilder, AdvancedPlatformHttpEndpointBuilder {
             public PlatformHttpEndpointBuilderImpl(String path) {
-                super("platform-http", path);
+                super(componentName, path);
             }
         }
         return new PlatformHttpEndpointBuilderImpl(path);

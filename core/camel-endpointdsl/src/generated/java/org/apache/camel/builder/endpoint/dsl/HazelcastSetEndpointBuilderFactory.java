@@ -678,28 +678,41 @@ public interface HazelcastSetEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastSetEndpointBuilder hazelcastSet(String path) {
-            return HazelcastSetEndpointBuilderFactory.hazelcastSet(path);
+            return HazelcastSetEndpointBuilderFactory.endpointBuilder("hazelcast-set", path);
+        }
+        /**
+         * Hazelcast Set (camel-hazelcast)
+         * Perform operations on Hazelcast distributed set.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-set:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastSetEndpointBuilder hazelcastSet(
+                String componentName,
+                String path) {
+            return HazelcastSetEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Set (camel-hazelcast)
-     * Perform operations on Hazelcast distributed set.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-set:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastSetEndpointBuilder hazelcastSet(String path) {
+    static HazelcastSetEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastSetEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastSetEndpointBuilder, AdvancedHazelcastSetEndpointBuilder {
             public HazelcastSetEndpointBuilderImpl(String path) {
-                super("hazelcast-set", path);
+                super(componentName, path);
             }
         }
         return new HazelcastSetEndpointBuilderImpl(path);

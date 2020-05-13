@@ -1752,28 +1752,39 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * Path parameter: resourceUri (required)
          * The name of the template to load from classpath or file system
+         * 
+         * @param path resourceUri
          */
         default XQueryEndpointBuilder xquery(String path) {
-            return XQueryEndpointBuilderFactory.xquery(path);
+            return XQueryEndpointBuilderFactory.endpointBuilder("xquery", path);
+        }
+        /**
+         * XQuery (camel-saxon)
+         * Query and/or transform XML payloads using XQuery and Saxon.
+         * 
+         * Category: transformation
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-saxon
+         * 
+         * Syntax: <code>xquery:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * The name of the template to load from classpath or file system
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default XQueryEndpointBuilder xquery(String componentName, String path) {
+            return XQueryEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XQuery (camel-saxon)
-     * Query and/or transform XML payloads using XQuery and Saxon.
-     * 
-     * Category: transformation
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-saxon
-     * 
-     * Syntax: <code>xquery:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * The name of the template to load from classpath or file system
-     */
-    static XQueryEndpointBuilder xquery(String path) {
+    static XQueryEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class XQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements XQueryEndpointBuilder, AdvancedXQueryEndpointBuilder {
             public XQueryEndpointBuilderImpl(String path) {
-                super("xquery", path);
+                super(componentName, path);
             }
         }
         return new XQueryEndpointBuilderImpl(path);

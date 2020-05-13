@@ -310,28 +310,41 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The sequence name.
+         * 
+         * @param path name
          */
         default IgniteIdGenEndpointBuilder igniteIdgen(String path) {
-            return IgniteIdGenEndpointBuilderFactory.igniteIdgen(path);
+            return IgniteIdGenEndpointBuilderFactory.endpointBuilder("ignite-idgen", path);
+        }
+        /**
+         * Ignite ID Generator (camel-ignite)
+         * Interact with Ignite Atomic Sequences and ID Generators .
+         * 
+         * Category: nosql,cache,compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-idgen:name</code>
+         * 
+         * Path parameter: name (required)
+         * The sequence name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default IgniteIdGenEndpointBuilder igniteIdgen(
+                String componentName,
+                String path) {
+            return IgniteIdGenEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite ID Generator (camel-ignite)
-     * Interact with Ignite Atomic Sequences and ID Generators .
-     * 
-     * Category: nosql,cache,compute
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-idgen:name</code>
-     * 
-     * Path parameter: name (required)
-     * The sequence name.
-     */
-    static IgniteIdGenEndpointBuilder igniteIdgen(String path) {
+    static IgniteIdGenEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder, AdvancedIgniteIdGenEndpointBuilder {
             public IgniteIdGenEndpointBuilderImpl(String path) {
-                super("ignite-idgen", path);
+                super(componentName, path);
             }
         }
         return new IgniteIdGenEndpointBuilderImpl(path);

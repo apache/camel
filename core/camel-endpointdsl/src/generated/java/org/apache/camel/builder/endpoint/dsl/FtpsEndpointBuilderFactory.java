@@ -5569,35 +5569,44 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * Path parameter: directoryName
          * The starting directory
+         * 
+         * @param path host:port/directoryName
          */
         default FtpsEndpointBuilder ftps(String path) {
-            return FtpsEndpointBuilderFactory.ftps(path);
+            return FtpsEndpointBuilderFactory.endpointBuilder("ftps", path);
+        }
+        /**
+         * FTPS (camel-ftp)
+         * Upload and download files to/from FTP servers supporting the FTPS
+         * protocol.
+         * 
+         * Category: file
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
+         * Syntax: <code>ftps:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/directoryName
+         */
+        default FtpsEndpointBuilder ftps(String componentName, String path) {
+            return FtpsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * FTPS (camel-ftp)
-     * Upload and download files to/from FTP servers supporting the FTPS
-     * protocol.
-     * 
-     * Category: file
-     * Since: 2.2
-     * Maven coordinates: org.apache.camel:camel-ftp
-     * 
-     * Syntax: <code>ftps:host:port/directoryName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
-     * 
-     * Path parameter: port
-     * Port of the FTP server
-     * 
-     * Path parameter: directoryName
-     * The starting directory
-     */
-    static FtpsEndpointBuilder ftps(String path) {
+    static FtpsEndpointBuilder endpointBuilder(String componentName, String path) {
         class FtpsEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpsEndpointBuilder, AdvancedFtpsEndpointBuilder {
             public FtpsEndpointBuilderImpl(String path) {
-                super("ftps", path);
+                super(componentName, path);
             }
         }
         return new FtpsEndpointBuilderImpl(path);

@@ -363,28 +363,39 @@ public interface AWS2EC2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default AWS2EC2EndpointBuilder aws2Ec2(String path) {
-            return AWS2EC2EndpointBuilderFactory.aws2Ec2(path);
+            return AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
+        }
+        /**
+         * AWS 2 EC2 (camel-aws2-ec2)
+         * Manage AWS EC2 instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ec2
+         * 
+         * Syntax: <code>aws2-ec2:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default AWS2EC2EndpointBuilder aws2Ec2(String componentName, String path) {
+            return AWS2EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 EC2 (camel-aws2-ec2)
-     * Manage AWS EC2 instances using AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-ec2
-     * 
-     * Syntax: <code>aws2-ec2:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static AWS2EC2EndpointBuilder aws2Ec2(String path) {
+    static AWS2EC2EndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AWS2EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2EC2EndpointBuilder, AdvancedAWS2EC2EndpointBuilder {
             public AWS2EC2EndpointBuilderImpl(String path) {
-                super("aws2-ec2", path);
+                super(componentName, path);
             }
         }
         return new AWS2EC2EndpointBuilderImpl(path);

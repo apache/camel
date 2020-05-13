@@ -1349,36 +1349,45 @@ public interface GrpcEndpointBuilderFactory {
          * Path parameter: service (required)
          * Fully qualified service name from the protocol buffer descriptor file
          * (package dot service definition name)
+         * 
+         * @param path host:port/service
          */
         default GrpcEndpointBuilder grpc(String path) {
-            return GrpcEndpointBuilderFactory.grpc(path);
+            return GrpcEndpointBuilderFactory.endpointBuilder("grpc", path);
+        }
+        /**
+         * gRPC (camel-grpc)
+         * Expose gRPC endpoints and access external gRPC endpoints.
+         * 
+         * Category: rpc
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-grpc
+         * 
+         * Syntax: <code>grpc:host:port/service</code>
+         * 
+         * Path parameter: host (required)
+         * The gRPC server host name. This is localhost or 0.0.0.0 when being a
+         * consumer or remote server host name when using producer.
+         * 
+         * Path parameter: port (required)
+         * The gRPC local or remote server port
+         * 
+         * Path parameter: service (required)
+         * Fully qualified service name from the protocol buffer descriptor file
+         * (package dot service definition name)
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/service
+         */
+        default GrpcEndpointBuilder grpc(String componentName, String path) {
+            return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * gRPC (camel-grpc)
-     * Expose gRPC endpoints and access external gRPC endpoints.
-     * 
-     * Category: rpc
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-grpc
-     * 
-     * Syntax: <code>grpc:host:port/service</code>
-     * 
-     * Path parameter: host (required)
-     * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-     * consumer or remote server host name when using producer.
-     * 
-     * Path parameter: port (required)
-     * The gRPC local or remote server port
-     * 
-     * Path parameter: service (required)
-     * Fully qualified service name from the protocol buffer descriptor file
-     * (package dot service definition name)
-     */
-    static GrpcEndpointBuilder grpc(String path) {
+    static GrpcEndpointBuilder endpointBuilder(String componentName, String path) {
         class GrpcEndpointBuilderImpl extends AbstractEndpointBuilder implements GrpcEndpointBuilder, AdvancedGrpcEndpointBuilder {
             public GrpcEndpointBuilderImpl(String path) {
-                super("grpc", path);
+                super(componentName, path);
             }
         }
         return new GrpcEndpointBuilderImpl(path);

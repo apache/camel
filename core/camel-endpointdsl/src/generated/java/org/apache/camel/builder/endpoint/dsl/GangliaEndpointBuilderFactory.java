@@ -444,33 +444,44 @@ public interface GangliaEndpointBuilderFactory {
          * Path parameter: port
          * Port for Ganglia server
          * Default value: 8649
+         * 
+         * @param path host:port
          */
         default GangliaEndpointBuilder ganglia(String path) {
-            return GangliaEndpointBuilderFactory.ganglia(path);
+            return GangliaEndpointBuilderFactory.endpointBuilder("ganglia", path);
+        }
+        /**
+         * Ganglia (camel-ganglia)
+         * Send metrics to Ganglia monitoring system.
+         * 
+         * Category: monitoring
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-ganglia
+         * 
+         * Syntax: <code>ganglia:host:port</code>
+         * 
+         * Path parameter: host
+         * Host name for Ganglia server
+         * Default value: 239.2.11.71
+         * 
+         * Path parameter: port
+         * Port for Ganglia server
+         * Default value: 8649
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port
+         */
+        default GangliaEndpointBuilder ganglia(String componentName, String path) {
+            return GangliaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * Syntax: <code>ganglia:host:port</code>
-     * 
-     * Path parameter: host
-     * Host name for Ganglia server
-     * Default value: 239.2.11.71
-     * 
-     * Path parameter: port
-     * Port for Ganglia server
-     * Default value: 8649
-     */
-    static GangliaEndpointBuilder ganglia(String path) {
+    static GangliaEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder, AdvancedGangliaEndpointBuilder {
             public GangliaEndpointBuilderImpl(String path) {
-                super("ganglia", path);
+                super(componentName, path);
             }
         }
         return new GangliaEndpointBuilderImpl(path);

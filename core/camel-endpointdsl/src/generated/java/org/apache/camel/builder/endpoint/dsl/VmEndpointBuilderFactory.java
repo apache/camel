@@ -943,28 +943,37 @@ public interface VmEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of queue
+         * 
+         * @param path name
          */
         default VmEndpointBuilder vm(String path) {
-            return VmEndpointBuilderFactory.vm(path);
+            return VmEndpointBuilderFactory.endpointBuilder("vm", path);
+        }
+        /**
+         * VM (camel-vm)
+         * Call another endpoint in the same CamelContext asynchronously.
+         * 
+         * Category: core,endpoint
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-vm
+         * 
+         * Syntax: <code>vm:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default VmEndpointBuilder vm(String componentName, String path) {
+            return VmEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * VM (camel-vm)
-     * Call another endpoint in the same CamelContext asynchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-vm
-     * 
-     * Syntax: <code>vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     */
-    static VmEndpointBuilder vm(String path) {
+    static VmEndpointBuilder endpointBuilder(String componentName, String path) {
         class VmEndpointBuilderImpl extends AbstractEndpointBuilder implements VmEndpointBuilder, AdvancedVmEndpointBuilder {
             public VmEndpointBuilderImpl(String path) {
-                super("vm", path);
+                super(componentName, path);
             }
         }
         return new VmEndpointBuilderImpl(path);

@@ -948,29 +948,38 @@ public interface SedaEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of queue
+         * 
+         * @param path name
          */
         default SedaEndpointBuilder seda(String path) {
-            return SedaEndpointBuilderFactory.seda(path);
+            return SedaEndpointBuilderFactory.endpointBuilder("seda", path);
+        }
+        /**
+         * SEDA (camel-seda)
+         * Asynchronously call another endpoint from any Camel Context in the
+         * same JVM.
+         * 
+         * Category: core,endpoint
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-seda
+         * 
+         * Syntax: <code>seda:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default SedaEndpointBuilder seda(String componentName, String path) {
+            return SedaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SEDA (camel-seda)
-     * Asynchronously call another endpoint from any Camel Context in the same
-     * JVM.
-     * 
-     * Category: core,endpoint
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-seda
-     * 
-     * Syntax: <code>seda:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     */
-    static SedaEndpointBuilder seda(String path) {
+    static SedaEndpointBuilder endpointBuilder(String componentName, String path) {
         class SedaEndpointBuilderImpl extends AbstractEndpointBuilder implements SedaEndpointBuilder, AdvancedSedaEndpointBuilder {
             public SedaEndpointBuilderImpl(String path) {
-                super("seda", path);
+                super(componentName, path);
             }
         }
         return new SedaEndpointBuilderImpl(path);

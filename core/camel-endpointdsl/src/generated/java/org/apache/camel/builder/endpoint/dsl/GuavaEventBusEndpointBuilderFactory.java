@@ -626,28 +626,41 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * Path parameter: eventBusRef
          * To lookup the Guava EventBus from the registry with the given name
+         * 
+         * @param path eventBusRef
          */
         default GuavaEventBusEndpointBuilder guavaEventbus(String path) {
-            return GuavaEventBusEndpointBuilderFactory.guavaEventbus(path);
+            return GuavaEventBusEndpointBuilderFactory.endpointBuilder("guava-eventbus", path);
+        }
+        /**
+         * Guava EventBus (camel-guava-eventbus)
+         * Send and receive messages to/from Guava EventBus.
+         * 
+         * Category: eventbus
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-guava-eventbus
+         * 
+         * Syntax: <code>guava-eventbus:eventBusRef</code>
+         * 
+         * Path parameter: eventBusRef
+         * To lookup the Guava EventBus from the registry with the given name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path eventBusRef
+         */
+        default GuavaEventBusEndpointBuilder guavaEventbus(
+                String componentName,
+                String path) {
+            return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: eventbus
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     */
-    static GuavaEventBusEndpointBuilder guavaEventbus(String path) {
+    static GuavaEventBusEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GuavaEventBusEndpointBuilderImpl extends AbstractEndpointBuilder implements GuavaEventBusEndpointBuilder, AdvancedGuavaEventBusEndpointBuilder {
             public GuavaEventBusEndpointBuilderImpl(String path) {
-                super("guava-eventbus", path);
+                super(componentName, path);
             }
         }
         return new GuavaEventBusEndpointBuilderImpl(path);

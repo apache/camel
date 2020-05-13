@@ -336,29 +336,38 @@ public interface ExecEndpointBuilderFactory {
          * Path parameter: executable (required)
          * Sets the executable to be executed. The executable must not be empty
          * or null.
+         * 
+         * @param path executable
          */
         default ExecEndpointBuilder exec(String path) {
-            return ExecEndpointBuilderFactory.exec(path);
+            return ExecEndpointBuilderFactory.endpointBuilder("exec", path);
+        }
+        /**
+         * Exec (camel-exec)
+         * Execute commands on the underlying operating system.
+         * 
+         * Category: system
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-exec
+         * 
+         * Syntax: <code>exec:executable</code>
+         * 
+         * Path parameter: executable (required)
+         * Sets the executable to be executed. The executable must not be empty
+         * or null.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path executable
+         */
+        default ExecEndpointBuilder exec(String componentName, String path) {
+            return ExecEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Exec (camel-exec)
-     * Execute commands on the underlying operating system.
-     * 
-     * Category: system
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-exec
-     * 
-     * Syntax: <code>exec:executable</code>
-     * 
-     * Path parameter: executable (required)
-     * Sets the executable to be executed. The executable must not be empty or
-     * null.
-     */
-    static ExecEndpointBuilder exec(String path) {
+    static ExecEndpointBuilder endpointBuilder(String componentName, String path) {
         class ExecEndpointBuilderImpl extends AbstractEndpointBuilder implements ExecEndpointBuilder, AdvancedExecEndpointBuilder {
             public ExecEndpointBuilderImpl(String path) {
-                super("exec", path);
+                super(componentName, path);
             }
         }
         return new ExecEndpointBuilderImpl(path);

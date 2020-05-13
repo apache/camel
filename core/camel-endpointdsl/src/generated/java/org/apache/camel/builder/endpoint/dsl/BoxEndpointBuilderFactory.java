@@ -1635,34 +1635,43 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
+         * 
+         * @param path apiName/methodName
          */
         default BoxEndpointBuilder box(String path) {
-            return BoxEndpointBuilderFactory.box(path);
+            return BoxEndpointBuilderFactory.endpointBuilder("box", path);
+        }
+        /**
+         * Box (camel-box)
+         * Upload, download and manage files, folders, groups, collaborations,
+         * etc. on box.com.
+         * 
+         * Category: api,file,cloud
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-box
+         * 
+         * Syntax: <code>box:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
+         * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default BoxEndpointBuilder box(String componentName, String path) {
+            return BoxEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Box (camel-box)
-     * Upload, download and manage files, folders, groups, collaborations, etc.
-     * on box.com.
-     * 
-     * Category: api,file,cloud
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-box
-     * 
-     * Syntax: <code>box:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-     * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     */
-    static BoxEndpointBuilder box(String path) {
+    static BoxEndpointBuilder endpointBuilder(String componentName, String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {
             public BoxEndpointBuilderImpl(String path) {
-                super("box", path);
+                super(componentName, path);
             }
         }
         return new BoxEndpointBuilderImpl(path);

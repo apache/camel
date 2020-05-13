@@ -721,29 +721,40 @@ public interface CordaEndpointBuilderFactory {
          * 
          * Path parameter: node (required)
          * The url for the corda node
+         * 
+         * @param path node
          */
         default CordaEndpointBuilder corda(String path) {
-            return CordaEndpointBuilderFactory.corda(path);
+            return CordaEndpointBuilderFactory.endpointBuilder("corda", path);
+        }
+        /**
+         * Corda (camel-corda)
+         * Perform operations against Corda blockchain platform using corda-rpc
+         * library.
+         * 
+         * Category: corda,blockchain
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-corda
+         * 
+         * Syntax: <code>corda:node</code>
+         * 
+         * Path parameter: node (required)
+         * The url for the corda node
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path node
+         */
+        default CordaEndpointBuilder corda(String componentName, String path) {
+            return CordaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Corda (camel-corda)
-     * Perform operations against Corda blockchain platform using corda-rpc
-     * library.
-     * 
-     * Category: corda,blockchain
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-corda
-     * 
-     * Syntax: <code>corda:node</code>
-     * 
-     * Path parameter: node (required)
-     * The url for the corda node
-     */
-    static CordaEndpointBuilder corda(String path) {
+    static CordaEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CordaEndpointBuilderImpl extends AbstractEndpointBuilder implements CordaEndpointBuilder, AdvancedCordaEndpointBuilder {
             public CordaEndpointBuilderImpl(String path) {
-                super("corda", path);
+                super(componentName, path);
             }
         }
         return new CordaEndpointBuilderImpl(path);

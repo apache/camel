@@ -325,28 +325,37 @@ public interface MQEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default MQEndpointBuilder awsMq(String path) {
-            return MQEndpointBuilderFactory.awsMq(path);
+            return MQEndpointBuilderFactory.endpointBuilder("aws-mq", path);
+        }
+        /**
+         * AWS MQ (camel-aws-mq)
+         * Manage AWS MQ instances.
+         * 
+         * Category: cloud,management
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-aws-mq
+         * 
+         * Syntax: <code>aws-mq:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default MQEndpointBuilder awsMq(String componentName, String path) {
+            return MQEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS MQ (camel-aws-mq)
-     * Manage AWS MQ instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     * 
-     * Syntax: <code>aws-mq:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static MQEndpointBuilder awsMq(String path) {
+    static MQEndpointBuilder endpointBuilder(String componentName, String path) {
         class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder, AdvancedMQEndpointBuilder {
             public MQEndpointBuilderImpl(String path) {
-                super("aws-mq", path);
+                super(componentName, path);
             }
         }
         return new MQEndpointBuilderImpl(path);

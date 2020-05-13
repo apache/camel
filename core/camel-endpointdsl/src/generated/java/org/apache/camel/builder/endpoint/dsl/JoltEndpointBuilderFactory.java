@@ -358,32 +358,42 @@ public interface JoltEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default JoltEndpointBuilder jolt(String path) {
-            return JoltEndpointBuilderFactory.jolt(path);
+            return JoltEndpointBuilderFactory.endpointBuilder("jolt", path);
+        }
+        /**
+         * JOLT (camel-jolt)
+         * JSON to JSON transformation using JOLT.
+         * 
+         * Category: transformation
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-jolt
+         * 
+         * Syntax: <code>jolt:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default JoltEndpointBuilder jolt(String componentName, String path) {
+            return JoltEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JOLT (camel-jolt)
-     * JSON to JSON transformation using JOLT.
-     * 
-     * Category: transformation
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-jolt
-     * 
-     * Syntax: <code>jolt:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static JoltEndpointBuilder jolt(String path) {
+    static JoltEndpointBuilder endpointBuilder(String componentName, String path) {
         class JoltEndpointBuilderImpl extends AbstractEndpointBuilder implements JoltEndpointBuilder, AdvancedJoltEndpointBuilder {
             public JoltEndpointBuilderImpl(String path) {
-                super("jolt", path);
+                super(componentName, path);
             }
         }
         return new JoltEndpointBuilderImpl(path);

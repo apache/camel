@@ -315,35 +315,48 @@ public interface LanguageEndpointBuilderFactory {
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
          * to use as the resource
+         * 
+         * @param path languageName:resourceUri
          */
         default LanguageEndpointBuilder language(String path) {
-            return LanguageEndpointBuilderFactory.language(path);
+            return LanguageEndpointBuilderFactory.endpointBuilder("language", path);
+        }
+        /**
+         * Language (camel-language)
+         * Execute scripts in any of the languages supported by Camel.
+         * 
+         * Category: core,script
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-language
+         * 
+         * Syntax: <code>language:languageName:resourceUri</code>
+         * 
+         * Path parameter: languageName (required)
+         * Sets the name of the language to use
+         * The value can be one of: bean, constant, exchangeProperty, file,
+         * groovy, header, javascript, jsonpath, mvel, ognl, , ref, simple,
+         * spel, sql, terser, tokenize, xpath, xquery, xtokenize
+         * 
+         * Path parameter: resourceUri
+         * Path to the resource, or a reference to lookup a bean in the Registry
+         * to use as the resource
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path languageName:resourceUri
+         */
+        default LanguageEndpointBuilder language(
+                String componentName,
+                String path) {
+            return LanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Language (camel-language)
-     * Execute scripts in any of the languages supported by Camel.
-     * 
-     * Category: core,script
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-language
-     * 
-     * Syntax: <code>language:languageName:resourceUri</code>
-     * 
-     * Path parameter: languageName (required)
-     * Sets the name of the language to use
-     * The value can be one of: bean, constant, exchangeProperty, file, groovy,
-     * header, javascript, jsonpath, mvel, ognl, , ref, simple, spel, sql,
-     * terser, tokenize, xpath, xquery, xtokenize
-     * 
-     * Path parameter: resourceUri
-     * Path to the resource, or a reference to lookup a bean in the Registry to
-     * use as the resource
-     */
-    static LanguageEndpointBuilder language(String path) {
+    static LanguageEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class LanguageEndpointBuilderImpl extends AbstractEndpointBuilder implements LanguageEndpointBuilder, AdvancedLanguageEndpointBuilder {
             public LanguageEndpointBuilderImpl(String path) {
-                super("language", path);
+                super(componentName, path);
             }
         }
         return new LanguageEndpointBuilderImpl(path);

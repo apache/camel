@@ -158,29 +158,38 @@ public interface DnsEndpointBuilderFactory {
          * Path parameter: dnsType (required)
          * The type of the lookup.
          * The value can be one of: dig, ip, lookup, wikipedia
+         * 
+         * @param path dnsType
          */
         default DnsEndpointBuilder dns(String path) {
-            return DnsEndpointBuilderFactory.dns(path);
+            return DnsEndpointBuilderFactory.endpointBuilder("dns", path);
+        }
+        /**
+         * DNS (camel-dns)
+         * Perform DNS queries using DNSJava.
+         * 
+         * Category: networking
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-dns
+         * 
+         * Syntax: <code>dns:dnsType</code>
+         * 
+         * Path parameter: dnsType (required)
+         * The type of the lookup.
+         * The value can be one of: dig, ip, lookup, wikipedia
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path dnsType
+         */
+        default DnsEndpointBuilder dns(String componentName, String path) {
+            return DnsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
-     * 
-     * Category: networking
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-dns
-     * 
-     * Syntax: <code>dns:dnsType</code>
-     * 
-     * Path parameter: dnsType (required)
-     * The type of the lookup.
-     * The value can be one of: dig, ip, lookup, wikipedia
-     */
-    static DnsEndpointBuilder dns(String path) {
+    static DnsEndpointBuilder endpointBuilder(String componentName, String path) {
         class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {
             public DnsEndpointBuilderImpl(String path) {
-                super("dns", path);
+                super(componentName, path);
             }
         }
         return new DnsEndpointBuilderImpl(path);

@@ -1319,28 +1319,41 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * Path parameter: resourceName (required)
          * The distributed resource name
+         * 
+         * @param path resourceName
          */
         default AtomixValueEndpointBuilder atomixValue(String path) {
-            return AtomixValueEndpointBuilderFactory.atomixValue(path);
+            return AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
+        }
+        /**
+         * Atomix Value (camel-atomix)
+         * Access Atomix's distributed value.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-value:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceName
+         */
+        default AtomixValueEndpointBuilder atomixValue(
+                String componentName,
+                String path) {
+            return AtomixValueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atomix Value (camel-atomix)
-     * Access Atomix's distributed value.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-value:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     */
-    static AtomixValueEndpointBuilder atomixValue(String path) {
+    static AtomixValueEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtomixValueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixValueEndpointBuilder, AdvancedAtomixValueEndpointBuilder {
             public AtomixValueEndpointBuilderImpl(String path) {
-                super("atomix-value", path);
+                super(componentName, path);
             }
         }
         return new AtomixValueEndpointBuilderImpl(path);

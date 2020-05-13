@@ -1334,9 +1334,31 @@ public interface HttpEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
+         * 
+         * @param path httpUri
          */
         default HttpEndpointBuilder http(String path) {
-            return HttpEndpointBuilderFactory.http(path);
+            return HttpEndpointBuilderFactory.endpointBuilder("http", path);
+        }
+        /**
+         * HTTP (camel-http)
+         * Send requests to external HTTP servers using Apache HTTP Client 4.x.
+         * 
+         * Category: http
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-http
+         * 
+         * Syntax: <code>http:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The url of the HTTP endpoint to call.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
+         */
+        default HttpEndpointBuilder http(String componentName, String path) {
+            return HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * HTTPS (Secure) (camel-http)
@@ -1350,68 +1372,39 @@ public interface HttpEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
+         * 
+         * @param path httpUri
          */
         default HttpEndpointBuilder https(String path) {
-            return HttpEndpointBuilderFactory.https(path);
+            return HttpEndpointBuilderFactory.endpointBuilder("https", path);
         }
         /**
-         * HTTP (camel-http)
+         * HTTPS (Secure) (camel-http)
          * Send requests to external HTTP servers using Apache HTTP Client 4.x.
          * 
          * Category: http
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
+         * 
+         * Syntax: <code>https:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The url of the HTTP endpoint to call.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
          */
-        default HttpEndpointBuilder http(String scheme, String path) {
-            return HttpEndpointBuilderFactory.http(scheme,path);
+        default HttpEndpointBuilder https(String componentName, String path) {
+            return HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * HTTP (camel-http)
-     * Send requests to external HTTP servers using Apache HTTP Client 4.x.
-     * 
-     * Category: http
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-http
-     * 
-     * Syntax: <code>http:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The url of the HTTP endpoint to call.
-     */
-    static HttpEndpointBuilder http(String path) {
-        return http("http", path);
-    }
-    /**
-     * HTTPS (Secure) (camel-http)
-     * Send requests to external HTTP servers using Apache HTTP Client 4.x.
-     * 
-     * Category: http
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-http
-     * 
-     * Syntax: <code>https:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The url of the HTTP endpoint to call.
-     */
-    static HttpEndpointBuilder https(String path) {
-        return http("https", path);
-    }
-    /**
-     * HTTP (camel-http)
-     * Send requests to external HTTP servers using Apache HTTP Client 4.x.
-     * 
-     * Category: http
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-http
-     */
-    static HttpEndpointBuilder http(String scheme, String path) {
+    static HttpEndpointBuilder endpointBuilder(String componentName, String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {
-            public HttpEndpointBuilderImpl(String scheme, String path) {
-                super(scheme, path);
+            public HttpEndpointBuilderImpl(String path) {
+                super(componentName, path);
             }
         }
-        return new HttpEndpointBuilderImpl(scheme, path);
+        return new HttpEndpointBuilderImpl(path);
     }
 }

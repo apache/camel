@@ -509,28 +509,37 @@ public interface AhcEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The URI to use such as http://hostname:port/path
+         * 
+         * @param path httpUri
          */
         default AhcEndpointBuilder ahc(String path) {
-            return AhcEndpointBuilderFactory.ahc(path);
+            return AhcEndpointBuilderFactory.endpointBuilder("ahc", path);
+        }
+        /**
+         * AHC (camel-ahc)
+         * Call external HTTP services using Async Http Client.
+         * 
+         * Category: http
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-ahc
+         * 
+         * Syntax: <code>ahc:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The URI to use such as http://hostname:port/path
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
+         */
+        default AhcEndpointBuilder ahc(String componentName, String path) {
+            return AhcEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AHC (camel-ahc)
-     * Call external HTTP services using Async Http Client.
-     * 
-     * Category: http
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-ahc
-     * 
-     * Syntax: <code>ahc:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The URI to use such as http://hostname:port/path
-     */
-    static AhcEndpointBuilder ahc(String path) {
+    static AhcEndpointBuilder endpointBuilder(String componentName, String path) {
         class AhcEndpointBuilderImpl extends AbstractEndpointBuilder implements AhcEndpointBuilder, AdvancedAhcEndpointBuilder {
             public AhcEndpointBuilderImpl(String path) {
-                super("ahc", path);
+                super(componentName, path);
             }
         }
         return new AhcEndpointBuilderImpl(path);

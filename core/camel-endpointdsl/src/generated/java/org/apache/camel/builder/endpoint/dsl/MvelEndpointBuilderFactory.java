@@ -264,32 +264,42 @@ public interface MvelEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default MvelEndpointBuilder mvel(String path) {
-            return MvelEndpointBuilderFactory.mvel(path);
+            return MvelEndpointBuilderFactory.endpointBuilder("mvel", path);
+        }
+        /**
+         * MVEL (camel-mvel)
+         * Transform messages using an MVEL template.
+         * 
+         * Category: transformation,script
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-mvel
+         * 
+         * Syntax: <code>mvel:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default MvelEndpointBuilder mvel(String componentName, String path) {
+            return MvelEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * MVEL (camel-mvel)
-     * Transform messages using an MVEL template.
-     * 
-     * Category: transformation,script
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-mvel
-     * 
-     * Syntax: <code>mvel:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static MvelEndpointBuilder mvel(String path) {
+    static MvelEndpointBuilder endpointBuilder(String componentName, String path) {
         class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder, AdvancedMvelEndpointBuilder {
             public MvelEndpointBuilderImpl(String path) {
-                super("mvel", path);
+                super(componentName, path);
             }
         }
         return new MvelEndpointBuilderImpl(path);

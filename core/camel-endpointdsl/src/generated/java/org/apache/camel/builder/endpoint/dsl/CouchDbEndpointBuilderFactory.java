@@ -671,41 +671,52 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * Path parameter: database (required)
          * Name of the database to use
+         * 
+         * @param path protocol:hostname:port/database
          */
         default CouchDbEndpointBuilder couchdb(String path) {
-            return CouchDbEndpointBuilderFactory.couchdb(path);
+            return CouchDbEndpointBuilderFactory.endpointBuilder("couchdb", path);
+        }
+        /**
+         * CouchDB (camel-couchdb)
+         * Consume changesets for inserts, updates and deletes in a CouchDB
+         * database, as well as get, save, update and delete documents from a
+         * CouchDB database.
+         * 
+         * Category: database,nosql
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-couchdb
+         * 
+         * Syntax: <code>couchdb:protocol:hostname:port/database</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol to use for communicating with the database.
+         * The value can be one of: http, https
+         * 
+         * Path parameter: hostname (required)
+         * Hostname of the running couchdb instance
+         * 
+         * Path parameter: port
+         * Port number for the running couchdb instance
+         * Default value: 5984
+         * 
+         * Path parameter: database (required)
+         * Name of the database to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path protocol:hostname:port/database
+         */
+        default CouchDbEndpointBuilder couchdb(String componentName, String path) {
+            return CouchDbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * CouchDB (camel-couchdb)
-     * Consume changesets for inserts, updates and deletes in a CouchDB
-     * database, as well as get, save, update and delete documents from a
-     * CouchDB database.
-     * 
-     * Category: database,nosql
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-couchdb
-     * 
-     * Syntax: <code>couchdb:protocol:hostname:port/database</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol to use for communicating with the database.
-     * The value can be one of: http, https
-     * 
-     * Path parameter: hostname (required)
-     * Hostname of the running couchdb instance
-     * 
-     * Path parameter: port
-     * Port number for the running couchdb instance
-     * Default value: 5984
-     * 
-     * Path parameter: database (required)
-     * Name of the database to use
-     */
-    static CouchDbEndpointBuilder couchdb(String path) {
+    static CouchDbEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CouchDbEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchDbEndpointBuilder, AdvancedCouchDbEndpointBuilder {
             public CouchDbEndpointBuilderImpl(String path) {
-                super("couchdb", path);
+                super(componentName, path);
             }
         }
         return new CouchDbEndpointBuilderImpl(path);

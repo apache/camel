@@ -266,28 +266,41 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * OpenStack host url
+         * 
+         * @param path host
          */
         default NeutronEndpointBuilder openstackNeutron(String path) {
-            return NeutronEndpointBuilderFactory.openstackNeutron(path);
+            return NeutronEndpointBuilderFactory.endpointBuilder("openstack-neutron", path);
+        }
+        /**
+         * OpenStack Neutron (camel-openstack)
+         * Access OpenStack Neutron for network services.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-neutron:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default NeutronEndpointBuilder openstackNeutron(
+                String componentName,
+                String path) {
+            return NeutronEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OpenStack Neutron (camel-openstack)
-     * Access OpenStack Neutron for network services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     * 
-     * Syntax: <code>openstack-neutron:host</code>
-     * 
-     * Path parameter: host (required)
-     * OpenStack host url
-     */
-    static NeutronEndpointBuilder openstackNeutron(String path) {
+    static NeutronEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class NeutronEndpointBuilderImpl extends AbstractEndpointBuilder implements NeutronEndpointBuilder, AdvancedNeutronEndpointBuilder {
             public NeutronEndpointBuilderImpl(String path) {
-                super("openstack-neutron", path);
+                super(componentName, path);
             }
         }
         return new NeutronEndpointBuilderImpl(path);

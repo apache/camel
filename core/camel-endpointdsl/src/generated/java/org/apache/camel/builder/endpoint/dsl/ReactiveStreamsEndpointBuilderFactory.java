@@ -613,29 +613,42 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * Path parameter: stream
          * Name of the stream channel used by the endpoint to exchange messages.
+         * 
+         * @param path stream
          */
         default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
-            return ReactiveStreamsEndpointBuilderFactory.reactiveStreams(path);
+            return ReactiveStreamsEndpointBuilderFactory.endpointBuilder("reactive-streams", path);
+        }
+        /**
+         * Reactive Streams (camel-reactive-streams)
+         * Exchange messages with reactive stream processing libraries
+         * compatible with the reactive streams standard.
+         * 
+         * Category: reactive,streams
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-reactive-streams
+         * 
+         * Syntax: <code>reactive-streams:stream</code>
+         * 
+         * Path parameter: stream
+         * Name of the stream channel used by the endpoint to exchange messages.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path stream
+         */
+        default ReactiveStreamsEndpointBuilder reactiveStreams(
+                String componentName,
+                String path) {
+            return ReactiveStreamsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Reactive Streams (camel-reactive-streams)
-     * Exchange messages with reactive stream processing libraries compatible
-     * with the reactive streams standard.
-     * 
-     * Category: reactive,streams
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-reactive-streams
-     * 
-     * Syntax: <code>reactive-streams:stream</code>
-     * 
-     * Path parameter: stream
-     * Name of the stream channel used by the endpoint to exchange messages.
-     */
-    static ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
+    static ReactiveStreamsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ReactiveStreamsEndpointBuilderImpl extends AbstractEndpointBuilder implements ReactiveStreamsEndpointBuilder, AdvancedReactiveStreamsEndpointBuilder {
             public ReactiveStreamsEndpointBuilderImpl(String path) {
-                super("reactive-streams", path);
+                super(componentName, path);
             }
         }
         return new ReactiveStreamsEndpointBuilderImpl(path);

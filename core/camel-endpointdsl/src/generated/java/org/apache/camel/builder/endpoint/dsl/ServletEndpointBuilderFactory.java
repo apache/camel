@@ -744,28 +744,39 @@ public interface ServletEndpointBuilderFactory {
          * 
          * Path parameter: contextPath (required)
          * The context-path to use
+         * 
+         * @param path contextPath
          */
         default ServletEndpointBuilder servlet(String path) {
-            return ServletEndpointBuilderFactory.servlet(path);
+            return ServletEndpointBuilderFactory.endpointBuilder("servlet", path);
+        }
+        /**
+         * Servlet (camel-servlet)
+         * Serve HTTP requests by a Servlet.
+         * 
+         * Category: http
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-servlet
+         * 
+         * Syntax: <code>servlet:contextPath</code>
+         * 
+         * Path parameter: contextPath (required)
+         * The context-path to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path contextPath
+         */
+        default ServletEndpointBuilder servlet(String componentName, String path) {
+            return ServletEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Servlet (camel-servlet)
-     * Serve HTTP requests by a Servlet.
-     * 
-     * Category: http
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-servlet
-     * 
-     * Syntax: <code>servlet:contextPath</code>
-     * 
-     * Path parameter: contextPath (required)
-     * The context-path to use
-     */
-    static ServletEndpointBuilder servlet(String path) {
+    static ServletEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ServletEndpointBuilderImpl extends AbstractEndpointBuilder implements ServletEndpointBuilder, AdvancedServletEndpointBuilder {
             public ServletEndpointBuilderImpl(String path) {
-                super("servlet", path);
+                super(componentName, path);
             }
         }
         return new ServletEndpointBuilderImpl(path);

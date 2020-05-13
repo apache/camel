@@ -2503,28 +2503,37 @@ public interface S3EndpointBuilderFactory {
          * 
          * Path parameter: bucketNameOrArn (required)
          * Bucket name or ARN
+         * 
+         * @param path //bucketNameOrArn
          */
         default S3EndpointBuilder awsS3(String path) {
-            return S3EndpointBuilderFactory.awsS3(path);
+            return S3EndpointBuilderFactory.endpointBuilder("aws-s3", path);
+        }
+        /**
+         * AWS S3 Storage Service (camel-aws-s3)
+         * Store and retrie objects from AWS S3 Storage Service.
+         * 
+         * Category: cloud,file
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-aws-s3
+         * 
+         * Syntax: <code>aws-s3://bucketNameOrArn</code>
+         * 
+         * Path parameter: bucketNameOrArn (required)
+         * Bucket name or ARN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path //bucketNameOrArn
+         */
+        default S3EndpointBuilder awsS3(String componentName, String path) {
+            return S3EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS S3 Storage Service (camel-aws-s3)
-     * Store and retrie objects from AWS S3 Storage Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-s3
-     * 
-     * Syntax: <code>aws-s3://bucketNameOrArn</code>
-     * 
-     * Path parameter: bucketNameOrArn (required)
-     * Bucket name or ARN
-     */
-    static S3EndpointBuilder awsS3(String path) {
+    static S3EndpointBuilder endpointBuilder(String componentName, String path) {
         class S3EndpointBuilderImpl extends AbstractEndpointBuilder implements S3EndpointBuilder, AdvancedS3EndpointBuilder {
             public S3EndpointBuilderImpl(String path) {
-                super("aws-s3", path);
+                super(componentName, path);
             }
         }
         return new S3EndpointBuilderImpl(path);

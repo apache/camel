@@ -491,28 +491,39 @@ public interface VertxEndpointBuilderFactory {
          * 
          * Path parameter: address (required)
          * Sets the event bus address used to communicate
+         * 
+         * @param path address
          */
         default VertxEndpointBuilder vertx(String path) {
-            return VertxEndpointBuilderFactory.vertx(path);
+            return VertxEndpointBuilderFactory.endpointBuilder("vertx", path);
+        }
+        /**
+         * Vert.x (camel-vertx)
+         * Send and receive messages to/from Vert.x Event Bus.
+         * 
+         * Category: eventbus,reactive
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-vertx
+         * 
+         * Syntax: <code>vertx:address</code>
+         * 
+         * Path parameter: address (required)
+         * Sets the event bus address used to communicate
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path address
+         */
+        default VertxEndpointBuilder vertx(String componentName, String path) {
+            return VertxEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Vert.x (camel-vertx)
-     * Send and receive messages to/from Vert.x Event Bus.
-     * 
-     * Category: eventbus,reactive
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-vertx
-     * 
-     * Syntax: <code>vertx:address</code>
-     * 
-     * Path parameter: address (required)
-     * Sets the event bus address used to communicate
-     */
-    static VertxEndpointBuilder vertx(String path) {
+    static VertxEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class VertxEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxEndpointBuilder, AdvancedVertxEndpointBuilder {
             public VertxEndpointBuilderImpl(String path) {
-                super("vertx", path);
+                super(componentName, path);
             }
         }
         return new VertxEndpointBuilderImpl(path);

@@ -278,29 +278,40 @@ public interface SparkEndpointBuilderFactory {
          * Path parameter: endpointType (required)
          * Type of the endpoint (rdd, dataframe, hive).
          * The value can be one of: rdd, dataframe, hive
+         * 
+         * @param path endpointType
          */
         default SparkEndpointBuilder spark(String path) {
-            return SparkEndpointBuilderFactory.spark(path);
+            return SparkEndpointBuilderFactory.endpointBuilder("spark", path);
+        }
+        /**
+         * Spark (camel-spark)
+         * Send RDD or DataFrame jobs to Apache Spark clusters.
+         * 
+         * Category: bigdata,iot
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-spark
+         * 
+         * Syntax: <code>spark:endpointType</code>
+         * 
+         * Path parameter: endpointType (required)
+         * Type of the endpoint (rdd, dataframe, hive).
+         * The value can be one of: rdd, dataframe, hive
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path endpointType
+         */
+        default SparkEndpointBuilder spark(String componentName, String path) {
+            return SparkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Spark (camel-spark)
-     * Send RDD or DataFrame jobs to Apache Spark clusters.
-     * 
-     * Category: bigdata,iot
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-spark
-     * 
-     * Syntax: <code>spark:endpointType</code>
-     * 
-     * Path parameter: endpointType (required)
-     * Type of the endpoint (rdd, dataframe, hive).
-     * The value can be one of: rdd, dataframe, hive
-     */
-    static SparkEndpointBuilder spark(String path) {
+    static SparkEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {
             public SparkEndpointBuilderImpl(String path) {
-                super("spark", path);
+                super(componentName, path);
             }
         }
         return new SparkEndpointBuilderImpl(path);

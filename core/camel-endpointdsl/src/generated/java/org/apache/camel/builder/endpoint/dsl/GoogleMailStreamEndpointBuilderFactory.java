@@ -781,28 +781,41 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * Path parameter: index
          * Specifies an index for the endpoint
+         * 
+         * @param path index
          */
         default GoogleMailStreamEndpointBuilder googleMailStream(String path) {
-            return GoogleMailStreamEndpointBuilderFactory.googleMailStream(path);
+            return GoogleMailStreamEndpointBuilderFactory.endpointBuilder("google-mail-stream", path);
+        }
+        /**
+         * Google Mail Stream (camel-google-mail)
+         * Poll for incoming messages in Google Mail.
+         * 
+         * Category: api,cloud,mail
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-google-mail
+         * 
+         * Syntax: <code>google-mail-stream:index</code>
+         * 
+         * Path parameter: index
+         * Specifies an index for the endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path index
+         */
+        default GoogleMailStreamEndpointBuilder googleMailStream(
+                String componentName,
+                String path) {
+            return GoogleMailStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Mail Stream (camel-google-mail)
-     * Poll for incoming messages in Google Mail.
-     * 
-     * Category: api,cloud,mail
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
-     * Syntax: <code>google-mail-stream:index</code>
-     * 
-     * Path parameter: index
-     * Specifies an index for the endpoint
-     */
-    static GoogleMailStreamEndpointBuilder googleMailStream(String path) {
+    static GoogleMailStreamEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleMailStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailStreamEndpointBuilder, AdvancedGoogleMailStreamEndpointBuilder {
             public GoogleMailStreamEndpointBuilderImpl(String path) {
-                super("google-mail-stream", path);
+                super(componentName, path);
             }
         }
         return new GoogleMailStreamEndpointBuilderImpl(path);

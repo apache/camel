@@ -682,30 +682,42 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
                 String path) {
-            return HazelcastReplicatedmapEndpointBuilderFactory.hazelcastReplicatedmap(path);
+            return HazelcastReplicatedmapEndpointBuilderFactory.endpointBuilder("hazelcast-replicatedmap", path);
+        }
+        /**
+         * Hazelcast Replicated Map (camel-hazelcast)
+         * Perform operations on Hazelcast replicated map.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
+                String componentName,
+                String path) {
+            return HazelcastReplicatedmapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Replicated Map (camel-hazelcast)
-     * Perform operations on Hazelcast replicated map.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
+    static HazelcastReplicatedmapEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class HazelcastReplicatedmapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastReplicatedmapEndpointBuilder, AdvancedHazelcastReplicatedmapEndpointBuilder {
             public HazelcastReplicatedmapEndpointBuilderImpl(String path) {
-                super("hazelcast-replicatedmap", path);
+                super(componentName, path);
             }
         }
         return new HazelcastReplicatedmapEndpointBuilderImpl(path);

@@ -674,28 +674,41 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * Path parameter: topic (required)
          * The topic name.
+         * 
+         * @param path topic
          */
         default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
-            return IgniteMessagingEndpointBuilderFactory.igniteMessaging(path);
+            return IgniteMessagingEndpointBuilderFactory.endpointBuilder("ignite-messaging", path);
+        }
+        /**
+         * Ignite Messaging (camel-ignite)
+         * Send and receive messages from an Ignite topic.
+         * 
+         * Category: nosql,cache,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-messaging:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The topic name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topic
+         */
+        default IgniteMessagingEndpointBuilder igniteMessaging(
+                String componentName,
+                String path) {
+            return IgniteMessagingEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite Messaging (camel-ignite)
-     * Send and receive messages from an Ignite topic.
-     * 
-     * Category: nosql,cache,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-messaging:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The topic name.
-     */
-    static IgniteMessagingEndpointBuilder igniteMessaging(String path) {
+    static IgniteMessagingEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteMessagingEndpointBuilder, AdvancedIgniteMessagingEndpointBuilder {
             public IgniteMessagingEndpointBuilderImpl(String path) {
-                super("ignite-messaging", path);
+                super(componentName, path);
             }
         }
         return new IgniteMessagingEndpointBuilderImpl(path);

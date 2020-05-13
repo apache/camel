@@ -1008,32 +1008,41 @@ public interface JcrEndpointBuilderFactory {
          * 
          * Path parameter: base
          * Get the base node when accessing the repository
+         * 
+         * @param path host/base
          */
         default JcrEndpointBuilder jcr(String path) {
-            return JcrEndpointBuilderFactory.jcr(path);
+            return JcrEndpointBuilderFactory.endpointBuilder("jcr", path);
+        }
+        /**
+         * JCR (camel-jcr)
+         * Read and write nodes to/from a JCR compliant content repository.
+         * 
+         * Category: cms,database
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-jcr
+         * 
+         * Syntax: <code>jcr:host/base</code>
+         * 
+         * Path parameter: host (required)
+         * Name of the javax.jcr.Repository to lookup from the Camel registry to
+         * be used.
+         * 
+         * Path parameter: base
+         * Get the base node when accessing the repository
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host/base
+         */
+        default JcrEndpointBuilder jcr(String componentName, String path) {
+            return JcrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JCR (camel-jcr)
-     * Read and write nodes to/from a JCR compliant content repository.
-     * 
-     * Category: cms,database
-     * Since: 1.3
-     * Maven coordinates: org.apache.camel:camel-jcr
-     * 
-     * Syntax: <code>jcr:host/base</code>
-     * 
-     * Path parameter: host (required)
-     * Name of the javax.jcr.Repository to lookup from the Camel registry to be
-     * used.
-     * 
-     * Path parameter: base
-     * Get the base node when accessing the repository
-     */
-    static JcrEndpointBuilder jcr(String path) {
+    static JcrEndpointBuilder endpointBuilder(String componentName, String path) {
         class JcrEndpointBuilderImpl extends AbstractEndpointBuilder implements JcrEndpointBuilder, AdvancedJcrEndpointBuilder {
             public JcrEndpointBuilderImpl(String path) {
-                super("jcr", path);
+                super(componentName, path);
             }
         }
         return new JcrEndpointBuilderImpl(path);

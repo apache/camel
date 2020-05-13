@@ -260,28 +260,39 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The GraphQL server URI.
+         * 
+         * @param path httpUri
          */
         default GraphqlEndpointBuilder graphql(String path) {
-            return GraphqlEndpointBuilderFactory.graphql(path);
+            return GraphqlEndpointBuilderFactory.endpointBuilder("graphql", path);
+        }
+        /**
+         * GraphQL (camel-graphql)
+         * Send GraphQL queries and mutations to external systems.
+         * 
+         * Category: api
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-graphql
+         * 
+         * Syntax: <code>graphql:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The GraphQL server URI.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
+         */
+        default GraphqlEndpointBuilder graphql(String componentName, String path) {
+            return GraphqlEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * GraphQL (camel-graphql)
-     * Send GraphQL queries and mutations to external systems.
-     * 
-     * Category: api
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-graphql
-     * 
-     * Syntax: <code>graphql:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The GraphQL server URI.
-     */
-    static GraphqlEndpointBuilder graphql(String path) {
+    static GraphqlEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GraphqlEndpointBuilderImpl extends AbstractEndpointBuilder implements GraphqlEndpointBuilder, AdvancedGraphqlEndpointBuilder {
             public GraphqlEndpointBuilderImpl(String path) {
-                super("graphql", path);
+                super(componentName, path);
             }
         }
         return new GraphqlEndpointBuilderImpl(path);

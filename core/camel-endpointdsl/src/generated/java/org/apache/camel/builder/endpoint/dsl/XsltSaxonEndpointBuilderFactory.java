@@ -600,33 +600,47 @@ public interface XsltSaxonEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod
+         * 
+         * @param path resourceUri
          */
         default XsltSaxonEndpointBuilder xsltSaxon(String path) {
-            return XsltSaxonEndpointBuilderFactory.xsltSaxon(path);
+            return XsltSaxonEndpointBuilderFactory.endpointBuilder("xslt-saxon", path);
+        }
+        /**
+         * XSLT Saxon (camel-xslt-saxon)
+         * Transform XML payloads using an XSLT template using Saxon.
+         * 
+         * Category: core,transformation
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-xslt-saxon
+         * 
+         * Syntax: <code>xslt-saxon:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the template. The following is supported by the default
+         * URIResolver. You can prefix with: classpath, file, http, ref, or
+         * bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default XsltSaxonEndpointBuilder xsltSaxon(
+                String componentName,
+                String path) {
+            return XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XSLT Saxon (camel-xslt-saxon)
-     * Transform XML payloads using an XSLT template using Saxon.
-     * 
-     * Category: core,transformation
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-xslt-saxon
-     * 
-     * Syntax: <code>xslt-saxon:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the template. The following is supported by the default
-     * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
-     * classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod
-     */
-    static XsltSaxonEndpointBuilder xsltSaxon(String path) {
+    static XsltSaxonEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class XsltSaxonEndpointBuilderImpl extends AbstractEndpointBuilder implements XsltSaxonEndpointBuilder, AdvancedXsltSaxonEndpointBuilder {
             public XsltSaxonEndpointBuilderImpl(String path) {
-                super("xslt-saxon", path);
+                super(componentName, path);
             }
         }
         return new XsltSaxonEndpointBuilderImpl(path);

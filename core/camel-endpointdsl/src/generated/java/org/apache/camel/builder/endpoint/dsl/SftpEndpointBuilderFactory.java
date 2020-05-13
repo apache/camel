@@ -5537,34 +5537,43 @@ public interface SftpEndpointBuilderFactory {
          * 
          * Path parameter: directoryName
          * The starting directory
+         * 
+         * @param path host:port/directoryName
          */
         default SftpEndpointBuilder sftp(String path) {
-            return SftpEndpointBuilderFactory.sftp(path);
+            return SftpEndpointBuilderFactory.endpointBuilder("sftp", path);
+        }
+        /**
+         * SFTP (camel-ftp)
+         * Upload and download files to/from SFTP servers.
+         * 
+         * Category: file
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
+         * Syntax: <code>sftp:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/directoryName
+         */
+        default SftpEndpointBuilder sftp(String componentName, String path) {
+            return SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SFTP (camel-ftp)
-     * Upload and download files to/from SFTP servers.
-     * 
-     * Category: file
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-ftp
-     * 
-     * Syntax: <code>sftp:host:port/directoryName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
-     * 
-     * Path parameter: port
-     * Port of the FTP server
-     * 
-     * Path parameter: directoryName
-     * The starting directory
-     */
-    static SftpEndpointBuilder sftp(String path) {
+    static SftpEndpointBuilder endpointBuilder(String componentName, String path) {
         class SftpEndpointBuilderImpl extends AbstractEndpointBuilder implements SftpEndpointBuilder, AdvancedSftpEndpointBuilder {
             public SftpEndpointBuilderImpl(String path) {
-                super("sftp", path);
+                super(componentName, path);
             }
         }
         return new SftpEndpointBuilderImpl(path);

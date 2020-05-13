@@ -2442,32 +2442,41 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
+         * 
+         * @param path apiName/methodName
          */
         default AS2EndpointBuilder as2(String path) {
-            return AS2EndpointBuilderFactory.as2(path);
+            return AS2EndpointBuilderFactory.endpointBuilder("as2", path);
+        }
+        /**
+         * AS2 (camel-as2)
+         * Transfer data securely and reliably using the AS2 protocol (RFC4130).
+         * 
+         * Category: file
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-as2
+         * 
+         * Syntax: <code>as2:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: CLIENT, SERVER
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default AS2EndpointBuilder as2(String componentName, String path) {
+            return AS2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AS2 (camel-as2)
-     * Transfer data securely and reliably using the AS2 protocol (RFC4130).
-     * 
-     * Category: file
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-as2
-     * 
-     * Syntax: <code>as2:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: CLIENT, SERVER
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     */
-    static AS2EndpointBuilder as2(String path) {
+    static AS2EndpointBuilder endpointBuilder(String componentName, String path) {
         class AS2EndpointBuilderImpl extends AbstractEndpointBuilder implements AS2EndpointBuilder, AdvancedAS2EndpointBuilder {
             public AS2EndpointBuilderImpl(String path) {
-                super("as2", path);
+                super(componentName, path);
             }
         }
         return new AS2EndpointBuilderImpl(path);

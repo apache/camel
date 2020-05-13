@@ -2745,41 +2745,54 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
+         * 
+         * @param path operationName:topicName
          */
         default SalesforceEndpointBuilder salesforce(String path) {
-            return SalesforceEndpointBuilderFactory.salesforce(path);
+            return SalesforceEndpointBuilderFactory.endpointBuilder("salesforce", path);
+        }
+        /**
+         * Salesforce (camel-salesforce)
+         * Communicate with Salesforce using Java DTOs.
+         * 
+         * Category: api,cloud,crm
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-salesforce
+         * 
+         * Syntax: <code>salesforce:operationName:topicName</code>
+         * 
+         * Path parameter: operationName
+         * The operation to use
+         * The value can be one of: getVersions, getResources, getGlobalObjects,
+         * getBasicInfo, getDescription, getSObject, createSObject,
+         * updateSObject, deleteSObject, getSObjectWithId, upsertSObject,
+         * deleteSObjectWithId, getBlobField, query, queryMore, queryAll,
+         * search, apexCall, recent, createJob, getJob, closeJob, abortJob,
+         * createBatch, getBatch, getAllBatches, getRequest, getResults,
+         * createBatchQuery, getQueryResultIds, getQueryResult,
+         * getRecentReports, getReportDescription, executeSyncReport,
+         * executeAsyncReport, getReportInstances, getReportResults, limits,
+         * approval, approvals, composite-tree, composite-batch, composite
+         * 
+         * Path parameter: topicName
+         * The name of the topic/channel to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operationName:topicName
+         */
+        default SalesforceEndpointBuilder salesforce(
+                String componentName,
+                String path) {
+            return SalesforceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Salesforce (camel-salesforce)
-     * Communicate with Salesforce using Java DTOs.
-     * 
-     * Category: api,cloud,crm
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-salesforce
-     * 
-     * Syntax: <code>salesforce:operationName:topicName</code>
-     * 
-     * Path parameter: operationName
-     * The operation to use
-     * The value can be one of: getVersions, getResources, getGlobalObjects,
-     * getBasicInfo, getDescription, getSObject, createSObject, updateSObject,
-     * deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId,
-     * getBlobField, query, queryMore, queryAll, search, apexCall, recent,
-     * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
-     * getAllBatches, getRequest, getResults, createBatchQuery,
-     * getQueryResultIds, getQueryResult, getRecentReports,
-     * getReportDescription, executeSyncReport, executeAsyncReport,
-     * getReportInstances, getReportResults, limits, approval, approvals,
-     * composite-tree, composite-batch, composite
-     * 
-     * Path parameter: topicName
-     * The name of the topic/channel to use
-     */
-    static SalesforceEndpointBuilder salesforce(String path) {
+    static SalesforceEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SalesforceEndpointBuilderImpl extends AbstractEndpointBuilder implements SalesforceEndpointBuilder, AdvancedSalesforceEndpointBuilder {
             public SalesforceEndpointBuilderImpl(String path) {
-                super("salesforce", path);
+                super(componentName, path);
             }
         }
         return new SalesforceEndpointBuilderImpl(path);

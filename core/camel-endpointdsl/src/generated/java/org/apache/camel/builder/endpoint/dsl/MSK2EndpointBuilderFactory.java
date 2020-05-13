@@ -346,28 +346,37 @@ public interface MSK2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default MSK2EndpointBuilder aws2Msk(String path) {
-            return MSK2EndpointBuilderFactory.aws2Msk(path);
+            return MSK2EndpointBuilderFactory.endpointBuilder("aws2-msk", path);
+        }
+        /**
+         * AWS 2 MSK (camel-aws2-msk)
+         * Manage AWS MSK instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-msk
+         * 
+         * Syntax: <code>aws2-msk:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default MSK2EndpointBuilder aws2Msk(String componentName, String path) {
+            return MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 MSK (camel-aws2-msk)
-     * Manage AWS MSK instances using AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-msk
-     * 
-     * Syntax: <code>aws2-msk:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static MSK2EndpointBuilder aws2Msk(String path) {
+    static MSK2EndpointBuilder endpointBuilder(String componentName, String path) {
         class MSK2EndpointBuilderImpl extends AbstractEndpointBuilder implements MSK2EndpointBuilder, AdvancedMSK2EndpointBuilder {
             public MSK2EndpointBuilderImpl(String path) {
-                super("aws2-msk", path);
+                super(componentName, path);
             }
         }
         return new MSK2EndpointBuilderImpl(path);

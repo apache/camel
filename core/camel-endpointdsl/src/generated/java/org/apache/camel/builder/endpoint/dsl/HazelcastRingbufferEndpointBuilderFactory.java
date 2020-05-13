@@ -279,29 +279,42 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
                 String path) {
-            return HazelcastRingbufferEndpointBuilderFactory.hazelcastRingbuffer(path);
+            return HazelcastRingbufferEndpointBuilderFactory.endpointBuilder("hazelcast-ringbuffer", path);
+        }
+        /**
+         * Hazelcast Ringbuffer (camel-hazelcast)
+         * Perform operations on Hazelcast distributed ringbuffer.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
+                String componentName,
+                String path) {
+            return HazelcastRingbufferEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Ringbuffer (camel-hazelcast)
-     * Perform operations on Hazelcast distributed ringbuffer.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
+    static HazelcastRingbufferEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder, AdvancedHazelcastRingbufferEndpointBuilder {
             public HazelcastRingbufferEndpointBuilderImpl(String path) {
-                super("hazelcast-ringbuffer", path);
+                super(componentName, path);
             }
         }
         return new HazelcastRingbufferEndpointBuilderImpl(path);

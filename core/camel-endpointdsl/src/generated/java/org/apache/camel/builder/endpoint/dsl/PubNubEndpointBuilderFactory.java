@@ -818,29 +818,40 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * Path parameter: channel (required)
          * The channel used for subscribing/publishing events
+         * 
+         * @param path channel
          */
         default PubNubEndpointBuilder pubnub(String path) {
-            return PubNubEndpointBuilderFactory.pubnub(path);
+            return PubNubEndpointBuilderFactory.endpointBuilder("pubnub", path);
+        }
+        /**
+         * PubNub (camel-pubnub)
+         * Send and receive messages to/from PubNub data stream network for
+         * connected devices.
+         * 
+         * Category: cloud,iot,messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-pubnub
+         * 
+         * Syntax: <code>pubnub:channel</code>
+         * 
+         * Path parameter: channel (required)
+         * The channel used for subscribing/publishing events
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path channel
+         */
+        default PubNubEndpointBuilder pubnub(String componentName, String path) {
+            return PubNubEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * PubNub (camel-pubnub)
-     * Send and receive messages to/from PubNub data stream network for
-     * connected devices.
-     * 
-     * Category: cloud,iot,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-pubnub
-     * 
-     * Syntax: <code>pubnub:channel</code>
-     * 
-     * Path parameter: channel (required)
-     * The channel used for subscribing/publishing events
-     */
-    static PubNubEndpointBuilder pubnub(String path) {
+    static PubNubEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class PubNubEndpointBuilderImpl extends AbstractEndpointBuilder implements PubNubEndpointBuilder, AdvancedPubNubEndpointBuilder {
             public PubNubEndpointBuilderImpl(String path) {
-                super("pubnub", path);
+                super(componentName, path);
             }
         }
         return new PubNubEndpointBuilderImpl(path);

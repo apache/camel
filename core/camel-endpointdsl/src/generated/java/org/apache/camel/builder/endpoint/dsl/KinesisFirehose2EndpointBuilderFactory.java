@@ -305,28 +305,42 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * 
          * Path parameter: streamName (required)
          * Name of the stream
+         * 
+         * @param path streamName
          */
         default KinesisFirehose2EndpointBuilder aws2KinesisFirehose(String path) {
-            return KinesisFirehose2EndpointBuilderFactory.aws2KinesisFirehose(path);
+            return KinesisFirehose2EndpointBuilderFactory.endpointBuilder("aws2-kinesis-firehose", path);
+        }
+        /**
+         * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+         * Consume data from AWS Kinesis Firehose streams using AWS SDK version
+         * 2.x.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+         * 
+         * Syntax: <code>aws2-kinesis-firehose:streamName</code>
+         * 
+         * Path parameter: streamName (required)
+         * Name of the stream
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path streamName
+         */
+        default KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
+                String componentName,
+                String path) {
+            return KinesisFirehose2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
-     * Consume data from AWS Kinesis Firehose streams using AWS SDK version 2.x.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.2
-     * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
-     * Syntax: <code>aws2-kinesis-firehose:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     */
-    static KinesisFirehose2EndpointBuilder aws2KinesisFirehose(String path) {
+    static KinesisFirehose2EndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KinesisFirehose2EndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehose2EndpointBuilder, AdvancedKinesisFirehose2EndpointBuilder {
             public KinesisFirehose2EndpointBuilderImpl(String path) {
-                super("aws2-kinesis-firehose", path);
+                super(componentName, path);
             }
         }
         return new KinesisFirehose2EndpointBuilderImpl(path);

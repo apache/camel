@@ -1044,9 +1044,31 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * Path parameter: uri
          * The URI for the CoAP endpoint
+         * 
+         * @param path uri
          */
         default CoAPEndpointBuilder coap(String path) {
-            return CoAPEndpointBuilderFactory.coap(path);
+            return CoAPEndpointBuilderFactory.endpointBuilder("coap", path);
+        }
+        /**
+         * CoAP (camel-coap)
+         * Send and receive messages to/from COAP capable devices.
+         * 
+         * Category: iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-coap
+         * 
+         * Syntax: <code>coap:uri</code>
+         * 
+         * Path parameter: uri
+         * The URI for the CoAP endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path uri
+         */
+        default CoAPEndpointBuilder coap(String componentName, String path) {
+            return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * CoAP (camel-coap)
@@ -1060,9 +1082,31 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * Path parameter: uri
          * The URI for the CoAP endpoint
+         * 
+         * @param path uri
          */
         default CoAPEndpointBuilder coapTcp(String path) {
-            return CoAPEndpointBuilderFactory.coapTcp(path);
+            return CoAPEndpointBuilderFactory.endpointBuilder("coap+tcp", path);
+        }
+        /**
+         * CoAP (camel-coap)
+         * Send and receive messages to/from COAP capable devices.
+         * 
+         * Category: iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-coap
+         * 
+         * Syntax: <code>coap+tcp:uri</code>
+         * 
+         * Path parameter: uri
+         * The URI for the CoAP endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path uri
+         */
+        default CoAPEndpointBuilder coapTcp(String componentName, String path) {
+            return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * CoAP (Secure) (camel-coap)
@@ -1076,9 +1120,31 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * Path parameter: uri
          * The URI for the CoAP endpoint
+         * 
+         * @param path uri
          */
         default CoAPEndpointBuilder coaps(String path) {
-            return CoAPEndpointBuilderFactory.coaps(path);
+            return CoAPEndpointBuilderFactory.endpointBuilder("coaps", path);
+        }
+        /**
+         * CoAP (Secure) (camel-coap)
+         * Send and receive messages to/from COAP capable devices.
+         * 
+         * Category: iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-coap
+         * 
+         * Syntax: <code>coaps:uri</code>
+         * 
+         * Path parameter: uri
+         * The URI for the CoAP endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path uri
+         */
+        default CoAPEndpointBuilder coaps(String componentName, String path) {
+            return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * CoAP (camel-coap)
@@ -1092,9 +1158,11 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * Path parameter: uri
          * The URI for the CoAP endpoint
+         * 
+         * @param path uri
          */
         default CoAPEndpointBuilder coapsTcp(String path) {
-            return CoAPEndpointBuilderFactory.coapsTcp(path);
+            return CoAPEndpointBuilderFactory.endpointBuilder("coaps+tcp", path);
         }
         /**
          * CoAP (camel-coap)
@@ -1103,89 +1171,26 @@ public interface CoAPEndpointBuilderFactory {
          * Category: iot
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-coap
+         * 
+         * Syntax: <code>coaps+tcp:uri</code>
+         * 
+         * Path parameter: uri
+         * The URI for the CoAP endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path uri
          */
-        default CoAPEndpointBuilder coap(String scheme, String path) {
-            return CoAPEndpointBuilderFactory.coap(scheme,path);
+        default CoAPEndpointBuilder coapsTcp(String componentName, String path) {
+            return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * Syntax: <code>coap:uri</code>
-     * 
-     * Path parameter: uri
-     * The URI for the CoAP endpoint
-     */
-    static CoAPEndpointBuilder coap(String path) {
-        return coap("coap", path);
-    }
-    /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * Syntax: <code>coap+tcp:uri</code>
-     * 
-     * Path parameter: uri
-     * The URI for the CoAP endpoint
-     */
-    static CoAPEndpointBuilder coapTcp(String path) {
-        return coap("coap+tcp", path);
-    }
-    /**
-     * CoAP (Secure) (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * Syntax: <code>coaps:uri</code>
-     * 
-     * Path parameter: uri
-     * The URI for the CoAP endpoint
-     */
-    static CoAPEndpointBuilder coaps(String path) {
-        return coap("coaps", path);
-    }
-    /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * Syntax: <code>coaps+tcp:uri</code>
-     * 
-     * Path parameter: uri
-     * The URI for the CoAP endpoint
-     */
-    static CoAPEndpointBuilder coapsTcp(String path) {
-        return coap("coaps+tcp", path);
-    }
-    /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     */
-    static CoAPEndpointBuilder coap(String scheme, String path) {
+    static CoAPEndpointBuilder endpointBuilder(String componentName, String path) {
         class CoAPEndpointBuilderImpl extends AbstractEndpointBuilder implements CoAPEndpointBuilder, AdvancedCoAPEndpointBuilder {
-            public CoAPEndpointBuilderImpl(String scheme, String path) {
-                super(scheme, path);
+            public CoAPEndpointBuilderImpl(String path) {
+                super(componentName, path);
             }
         }
-        return new CoAPEndpointBuilderImpl(scheme, path);
+        return new CoAPEndpointBuilderImpl(path);
     }
 }

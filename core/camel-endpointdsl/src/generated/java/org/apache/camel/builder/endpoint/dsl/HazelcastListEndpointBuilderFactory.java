@@ -678,28 +678,41 @@ public interface HazelcastListEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastListEndpointBuilder hazelcastList(String path) {
-            return HazelcastListEndpointBuilderFactory.hazelcastList(path);
+            return HazelcastListEndpointBuilderFactory.endpointBuilder("hazelcast-list", path);
+        }
+        /**
+         * Hazelcast List (camel-hazelcast)
+         * Perform operations on Hazelcast distributed list.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-list:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastListEndpointBuilder hazelcastList(
+                String componentName,
+                String path) {
+            return HazelcastListEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast List (camel-hazelcast)
-     * Perform operations on Hazelcast distributed list.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-list:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastListEndpointBuilder hazelcastList(String path) {
+    static HazelcastListEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastListEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastListEndpointBuilder, AdvancedHazelcastListEndpointBuilder {
             public HazelcastListEndpointBuilderImpl(String path) {
-                super("hazelcast-list", path);
+                super(componentName, path);
             }
         }
         return new HazelcastListEndpointBuilderImpl(path);

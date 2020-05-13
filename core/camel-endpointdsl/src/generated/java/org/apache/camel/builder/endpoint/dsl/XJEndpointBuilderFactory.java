@@ -627,33 +627,43 @@ public interface XJEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod
+         * 
+         * @param path resourceUri
          */
         default XJEndpointBuilder xj(String path) {
-            return XJEndpointBuilderFactory.xj(path);
+            return XJEndpointBuilderFactory.endpointBuilder("xj", path);
+        }
+        /**
+         * XJ (camel-xj)
+         * Transform JSON and XML message using a XSLT.
+         * 
+         * Category: transformation
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-xj
+         * 
+         * Syntax: <code>xj:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the template. The following is supported by the default
+         * URIResolver. You can prefix with: classpath, file, http, ref, or
+         * bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default XJEndpointBuilder xj(String componentName, String path) {
+            return XJEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XJ (camel-xj)
-     * Transform JSON and XML message using a XSLT.
-     * 
-     * Category: transformation
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-xj
-     * 
-     * Syntax: <code>xj:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the template. The following is supported by the default
-     * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
-     * classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod
-     */
-    static XJEndpointBuilder xj(String path) {
+    static XJEndpointBuilder endpointBuilder(String componentName, String path) {
         class XJEndpointBuilderImpl extends AbstractEndpointBuilder implements XJEndpointBuilder, AdvancedXJEndpointBuilder {
             public XJEndpointBuilderImpl(String path) {
-                super("xj", path);
+                super(componentName, path);
             }
         }
         return new XJEndpointBuilderImpl(path);

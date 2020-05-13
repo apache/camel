@@ -3421,28 +3421,37 @@ public interface FileEndpointBuilderFactory {
          * 
          * Path parameter: directoryName (required)
          * The starting directory
+         * 
+         * @param path directoryName
          */
         default FileEndpointBuilder file(String path) {
-            return FileEndpointBuilderFactory.file(path);
+            return FileEndpointBuilderFactory.endpointBuilder("file", path);
+        }
+        /**
+         * File (camel-file)
+         * Read and write files.
+         * 
+         * Category: core,file
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-file
+         * 
+         * Syntax: <code>file:directoryName</code>
+         * 
+         * Path parameter: directoryName (required)
+         * The starting directory
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path directoryName
+         */
+        default FileEndpointBuilder file(String componentName, String path) {
+            return FileEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * File (camel-file)
-     * Read and write files.
-     * 
-     * Category: core,file
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-file
-     * 
-     * Syntax: <code>file:directoryName</code>
-     * 
-     * Path parameter: directoryName (required)
-     * The starting directory
-     */
-    static FileEndpointBuilder file(String path) {
+    static FileEndpointBuilder endpointBuilder(String componentName, String path) {
         class FileEndpointBuilderImpl extends AbstractEndpointBuilder implements FileEndpointBuilder, AdvancedFileEndpointBuilder {
             public FileEndpointBuilderImpl(String path) {
-                super("file", path);
+                super(componentName, path);
             }
         }
         return new FileEndpointBuilderImpl(path);

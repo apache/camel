@@ -890,29 +890,42 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The cache name.
+         * 
+         * @param path cacheName
          */
         default IgniteCacheEndpointBuilder igniteCache(String path) {
-            return IgniteCacheEndpointBuilderFactory.igniteCache(path);
+            return IgniteCacheEndpointBuilderFactory.endpointBuilder("ignite-cache", path);
+        }
+        /**
+         * Ignite Cache (camel-ignite)
+         * Perform cache operations on an Ignite cache or consume changes from a
+         * continuous query.
+         * 
+         * Category: nosql,cache,compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-cache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The cache name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default IgniteCacheEndpointBuilder igniteCache(
+                String componentName,
+                String path) {
+            return IgniteCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite Cache (camel-ignite)
-     * Perform cache operations on an Ignite cache or consume changes from a
-     * continuous query.
-     * 
-     * Category: nosql,cache,compute
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-cache:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The cache name.
-     */
-    static IgniteCacheEndpointBuilder igniteCache(String path) {
+    static IgniteCacheEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteCacheEndpointBuilder, AdvancedIgniteCacheEndpointBuilder {
             public IgniteCacheEndpointBuilderImpl(String path) {
-                super("ignite-cache", path);
+                super(componentName, path);
             }
         }
         return new IgniteCacheEndpointBuilderImpl(path);

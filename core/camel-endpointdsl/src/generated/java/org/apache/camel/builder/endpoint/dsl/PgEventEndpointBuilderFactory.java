@@ -573,39 +573,50 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * Path parameter: channel (required)
          * The channel name
+         * 
+         * @param path host:port/database/channel
          */
         default PgEventEndpointBuilder pgevent(String path) {
-            return PgEventEndpointBuilderFactory.pgevent(path);
+            return PgEventEndpointBuilderFactory.endpointBuilder("pgevent", path);
+        }
+        /**
+         * PostgresSQL Event (camel-pgevent)
+         * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
+         * 
+         * Category: database,sql
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-pgevent
+         * 
+         * Syntax: <code>pgevent:host:port/database/channel</code>
+         * 
+         * Path parameter: host
+         * To connect using hostname and port to the database.
+         * Default value: localhost
+         * 
+         * Path parameter: port
+         * To connect using hostname and port to the database.
+         * Default value: 5432
+         * 
+         * Path parameter: database (required)
+         * The database name
+         * 
+         * Path parameter: channel (required)
+         * The channel name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/database/channel
+         */
+        default PgEventEndpointBuilder pgevent(String componentName, String path) {
+            return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * PostgresSQL Event (camel-pgevent)
-     * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
-     * 
-     * Category: database,sql
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-pgevent
-     * 
-     * Syntax: <code>pgevent:host:port/database/channel</code>
-     * 
-     * Path parameter: host
-     * To connect using hostname and port to the database.
-     * Default value: localhost
-     * 
-     * Path parameter: port
-     * To connect using hostname and port to the database.
-     * Default value: 5432
-     * 
-     * Path parameter: database (required)
-     * The database name
-     * 
-     * Path parameter: channel (required)
-     * The channel name
-     */
-    static PgEventEndpointBuilder pgevent(String path) {
+    static PgEventEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class PgEventEndpointBuilderImpl extends AbstractEndpointBuilder implements PgEventEndpointBuilder, AdvancedPgEventEndpointBuilder {
             public PgEventEndpointBuilderImpl(String path) {
-                super("pgevent", path);
+                super(componentName, path);
             }
         }
         return new PgEventEndpointBuilderImpl(path);

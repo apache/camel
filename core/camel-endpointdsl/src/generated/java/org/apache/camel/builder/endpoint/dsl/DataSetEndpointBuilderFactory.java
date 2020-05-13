@@ -949,28 +949,39 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of DataSet to lookup in the registry
+         * 
+         * @param path name
          */
         default DataSetEndpointBuilder dataset(String path) {
-            return DataSetEndpointBuilderFactory.dataset(path);
+            return DataSetEndpointBuilderFactory.endpointBuilder("dataset", path);
+        }
+        /**
+         * Dataset (camel-dataset)
+         * Provide data for load & soak testing of your Camel application.
+         * 
+         * Category: core,testing
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-dataset
+         * 
+         * Syntax: <code>dataset:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of DataSet to lookup in the registry
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DataSetEndpointBuilder dataset(String componentName, String path) {
+            return DataSetEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Dataset (camel-dataset)
-     * Provide data for load & soak testing of your Camel application.
-     * 
-     * Category: core,testing
-     * Since: 1.3
-     * Maven coordinates: org.apache.camel:camel-dataset
-     * 
-     * Syntax: <code>dataset:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of DataSet to lookup in the registry
-     */
-    static DataSetEndpointBuilder dataset(String path) {
+    static DataSetEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DataSetEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetEndpointBuilder, AdvancedDataSetEndpointBuilder {
             public DataSetEndpointBuilderImpl(String path) {
-                super("dataset", path);
+                super(componentName, path);
             }
         }
         return new DataSetEndpointBuilderImpl(path);

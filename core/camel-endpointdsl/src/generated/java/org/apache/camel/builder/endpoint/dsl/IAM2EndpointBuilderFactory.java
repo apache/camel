@@ -355,28 +355,37 @@ public interface IAM2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default IAM2EndpointBuilder aws2Iam(String path) {
-            return IAM2EndpointBuilderFactory.aws2Iam(path);
+            return IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
+        }
+        /**
+         * AWS 2 IAM (camel-aws2-iam)
+         * Manage AWS IAM instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-iam
+         * 
+         * Syntax: <code>aws2-iam:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default IAM2EndpointBuilder aws2Iam(String componentName, String path) {
+            return IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 IAM (camel-aws2-iam)
-     * Manage AWS IAM instances using AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-iam
-     * 
-     * Syntax: <code>aws2-iam:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static IAM2EndpointBuilder aws2Iam(String path) {
+    static IAM2EndpointBuilder endpointBuilder(String componentName, String path) {
         class IAM2EndpointBuilderImpl extends AbstractEndpointBuilder implements IAM2EndpointBuilder, AdvancedIAM2EndpointBuilder {
             public IAM2EndpointBuilderImpl(String path) {
-                super("aws2-iam", path);
+                super(componentName, path);
             }
         }
         return new IAM2EndpointBuilderImpl(path);

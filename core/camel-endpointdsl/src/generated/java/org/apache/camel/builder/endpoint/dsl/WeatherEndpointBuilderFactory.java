@@ -1864,28 +1864,39 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The name value is not used.
+         * 
+         * @param path name
          */
         default WeatherEndpointBuilder weather(String path) {
-            return WeatherEndpointBuilderFactory.weather(path);
+            return WeatherEndpointBuilderFactory.endpointBuilder("weather", path);
+        }
+        /**
+         * Weather (camel-weather)
+         * Poll the weather information from Open Weather Map.
+         * 
+         * Category: api
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-weather
+         * 
+         * Syntax: <code>weather:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name value is not used.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default WeatherEndpointBuilder weather(String componentName, String path) {
+            return WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Weather (camel-weather)
-     * Poll the weather information from Open Weather Map.
-     * 
-     * Category: api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-weather
-     * 
-     * Syntax: <code>weather:name</code>
-     * 
-     * Path parameter: name (required)
-     * The name value is not used.
-     */
-    static WeatherEndpointBuilder weather(String path) {
+    static WeatherEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class WeatherEndpointBuilderImpl extends AbstractEndpointBuilder implements WeatherEndpointBuilder, AdvancedWeatherEndpointBuilder {
             public WeatherEndpointBuilderImpl(String path) {
-                super("weather", path);
+                super(componentName, path);
             }
         }
         return new WeatherEndpointBuilderImpl(path);

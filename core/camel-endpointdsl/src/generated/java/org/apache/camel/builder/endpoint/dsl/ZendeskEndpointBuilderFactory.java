@@ -1047,28 +1047,39 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What operation to use
+         * 
+         * @param path methodName
          */
         default ZendeskEndpointBuilder zendesk(String path) {
-            return ZendeskEndpointBuilderFactory.zendesk(path);
+            return ZendeskEndpointBuilderFactory.endpointBuilder("zendesk", path);
+        }
+        /**
+         * Zendesk (camel-zendesk)
+         * Manage Zendesk tickets, users, organizations, etc.
+         * 
+         * Category: api,support,cloud
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-zendesk
+         * 
+         * Syntax: <code>zendesk:methodName</code>
+         * 
+         * Path parameter: methodName (required)
+         * What operation to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path methodName
+         */
+        default ZendeskEndpointBuilder zendesk(String componentName, String path) {
+            return ZendeskEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Zendesk (camel-zendesk)
-     * Manage Zendesk tickets, users, organizations, etc.
-     * 
-     * Category: api,support,cloud
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-zendesk
-     * 
-     * Syntax: <code>zendesk:methodName</code>
-     * 
-     * Path parameter: methodName (required)
-     * What operation to use
-     */
-    static ZendeskEndpointBuilder zendesk(String path) {
+    static ZendeskEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ZendeskEndpointBuilderImpl extends AbstractEndpointBuilder implements ZendeskEndpointBuilder, AdvancedZendeskEndpointBuilder {
             public ZendeskEndpointBuilderImpl(String path) {
-                super("zendesk", path);
+                super(componentName, path);
             }
         }
         return new ZendeskEndpointBuilderImpl(path);

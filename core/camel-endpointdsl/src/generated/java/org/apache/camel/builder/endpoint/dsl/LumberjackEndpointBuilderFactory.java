@@ -247,32 +247,45 @@ public interface LumberjackEndpointBuilderFactory {
          * Path parameter: port
          * Network port on which to listen for Lumberjack
          * Default value: 5044
+         * 
+         * @param path host:port
          */
         default LumberjackEndpointBuilder lumberjack(String path) {
-            return LumberjackEndpointBuilderFactory.lumberjack(path);
+            return LumberjackEndpointBuilderFactory.endpointBuilder("lumberjack", path);
+        }
+        /**
+         * Lumberjack (camel-lumberjack)
+         * Receive logs messages using the Lumberjack protocol.
+         * 
+         * Category: log
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-lumberjack
+         * 
+         * Syntax: <code>lumberjack:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * Network interface on which to listen for Lumberjack
+         * 
+         * Path parameter: port
+         * Network port on which to listen for Lumberjack
+         * Default value: 5044
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port
+         */
+        default LumberjackEndpointBuilder lumberjack(
+                String componentName,
+                String path) {
+            return LumberjackEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Lumberjack (camel-lumberjack)
-     * Receive logs messages using the Lumberjack protocol.
-     * 
-     * Category: log
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-lumberjack
-     * 
-     * Syntax: <code>lumberjack:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * Network interface on which to listen for Lumberjack
-     * 
-     * Path parameter: port
-     * Network port on which to listen for Lumberjack
-     * Default value: 5044
-     */
-    static LumberjackEndpointBuilder lumberjack(String path) {
+    static LumberjackEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class LumberjackEndpointBuilderImpl extends AbstractEndpointBuilder implements LumberjackEndpointBuilder, AdvancedLumberjackEndpointBuilder {
             public LumberjackEndpointBuilderImpl(String path) {
-                super("lumberjack", path);
+                super(componentName, path);
             }
         }
         return new LumberjackEndpointBuilderImpl(path);

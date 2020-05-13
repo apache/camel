@@ -1152,9 +1152,39 @@ public interface CometdEndpointBuilderFactory {
          * Path parameter: channelName (required)
          * The channelName represents a topic that can be subscribed to by the
          * Camel endpoints.
+         * 
+         * @param path host:port/channelName
          */
         default CometdEndpointBuilder cometd(String path) {
-            return CometdEndpointBuilderFactory.cometd(path);
+            return CometdEndpointBuilderFactory.endpointBuilder("cometd", path);
+        }
+        /**
+         * CometD (camel-cometd)
+         * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
+         * messaging using the CometD/Bayeux protocol.
+         * 
+         * Category: websocket
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-cometd
+         * 
+         * Syntax: <code>cometd:host:port/channelName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname
+         * 
+         * Path parameter: port (required)
+         * Host port number
+         * 
+         * Path parameter: channelName (required)
+         * The channelName represents a topic that can be subscribed to by the
+         * Camel endpoints.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/channelName
+         */
+        default CometdEndpointBuilder cometd(String componentName, String path) {
+            return CometdEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * CometD (Secure) (camel-cometd)
@@ -1176,86 +1206,49 @@ public interface CometdEndpointBuilderFactory {
          * Path parameter: channelName (required)
          * The channelName represents a topic that can be subscribed to by the
          * Camel endpoints.
+         * 
+         * @param path host:port/channelName
          */
         default CometdEndpointBuilder cometds(String path) {
-            return CometdEndpointBuilderFactory.cometds(path);
+            return CometdEndpointBuilderFactory.endpointBuilder("cometds", path);
         }
         /**
-         * CometD (camel-cometd)
+         * CometD (Secure) (camel-cometd)
          * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
          * messaging using the CometD/Bayeux protocol.
          * 
          * Category: websocket
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-cometd
+         * 
+         * Syntax: <code>cometds:host:port/channelName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname
+         * 
+         * Path parameter: port (required)
+         * Host port number
+         * 
+         * Path parameter: channelName (required)
+         * The channelName represents a topic that can be subscribed to by the
+         * Camel endpoints.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/channelName
          */
-        default CometdEndpointBuilder cometd(String scheme, String path) {
-            return CometdEndpointBuilderFactory.cometd(scheme,path);
+        default CometdEndpointBuilder cometds(String componentName, String path) {
+            return CometdEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
-     * 
-     * Category: websocket
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cometd
-     * 
-     * Syntax: <code>cometd:host:port/channelName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname
-     * 
-     * Path parameter: port (required)
-     * Host port number
-     * 
-     * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
-     */
-    static CometdEndpointBuilder cometd(String path) {
-        return cometd("cometd", path);
-    }
-    /**
-     * CometD (Secure) (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
-     * 
-     * Category: websocket
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cometd
-     * 
-     * Syntax: <code>cometds:host:port/channelName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname
-     * 
-     * Path parameter: port (required)
-     * Host port number
-     * 
-     * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
-     */
-    static CometdEndpointBuilder cometds(String path) {
-        return cometd("cometds", path);
-    }
-    /**
-     * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
-     * 
-     * Category: websocket
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cometd
-     */
-    static CometdEndpointBuilder cometd(String scheme, String path) {
+    static CometdEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CometdEndpointBuilderImpl extends AbstractEndpointBuilder implements CometdEndpointBuilder, AdvancedCometdEndpointBuilder {
-            public CometdEndpointBuilderImpl(String scheme, String path) {
-                super(scheme, path);
+            public CometdEndpointBuilderImpl(String path) {
+                super(componentName, path);
             }
         }
-        return new CometdEndpointBuilderImpl(scheme, path);
+        return new CometdEndpointBuilderImpl(path);
     }
 }
