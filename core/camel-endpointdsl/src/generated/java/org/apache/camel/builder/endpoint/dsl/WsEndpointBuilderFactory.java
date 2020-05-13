@@ -1474,27 +1474,6 @@ public interface WsEndpointBuilderFactory {
         default WsEndpointBuilder ahcWss(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-wss", path);
         }
-        /**
-         * AHC Secure Websocket (Secure) (camel-ahc-ws)
-         * Exchange data with external Websocket servers using Async Http
-         * Client.
-         * 
-         * Category: websocket
-         * Since: 2.14
-         * Maven coordinates: org.apache.camel:camel-ahc-ws
-         * 
-         * Syntax: <code>ahc-wss:httpUri</code>
-         * 
-         * Path parameter: httpUri (required)
-         * The URI to use such as http://hostname:port/path
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path httpUri
-         */
-        default WsEndpointBuilder ahcWss(String componentName, String path) {
-            return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
     }
     static WsEndpointBuilder endpointBuilder(String componentName, String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {

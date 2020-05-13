@@ -2941,28 +2941,6 @@ public interface SipEndpointBuilderFactory {
         default SipEndpointBuilder sips(String path) {
             return SipEndpointBuilderFactory.endpointBuilder("sips", path);
         }
-        /**
-         * SIP (Secure) (camel-sip)
-         * Send and receive messages using the SIP protocol (used in
-         * telecommunications).
-         * 
-         * Category: mobile
-         * Since: 2.5
-         * Maven coordinates: org.apache.camel:camel-sip
-         * 
-         * Syntax: <code>sips:uri</code>
-         * 
-         * Path parameter: uri (required)
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999)
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path uri
-         */
-        default SipEndpointBuilder sips(String componentName, String path) {
-            return SipEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
     }
     static SipEndpointBuilder endpointBuilder(String componentName, String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {

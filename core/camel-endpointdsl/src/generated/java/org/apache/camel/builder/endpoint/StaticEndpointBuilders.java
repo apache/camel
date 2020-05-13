@@ -111,33 +111,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * AHC Secure Websocket (Secure) (camel-ahc-ws) Exchange data with external
-     * Websocket servers using Async Http Client. Category: websocket Since:
-     * 2.14 Maven coordinates: org.apache.camel:camel-ahc-ws Syntax:
-     * <code>ahc-wss:httpUri</code> Path parameter: httpUri (required) The URI
-     * to use such as http://hostname:port/path
-     * @param path httpUri
-     */
-    static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWss(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder("ahc-wss",path);
-    }
-    /**
-     * AHC Secure Websocket (Secure) (camel-ahc-ws) Exchange data with external
-     * Websocket servers using Async Http Client. Category: websocket Since:
-     * 2.14 Maven coordinates: org.apache.camel:camel-ahc-ws Syntax:
-     * <code>ahc-wss:httpUri</code> Path parameter: httpUri (required) The URI
-     * to use such as http://hostname:port/path
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path httpUri
-     */
-    static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWss(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
      * AMQP (camel-amqp) Messaging with AMQP protocol using Apache QPid Client.
      * Category: messaging Since: 1.2 Maven coordinates:
      * org.apache.camel:camel-amqp Syntax:
@@ -2055,81 +2028,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * CoAP (Secure) (camel-coap) Send and receive messages to/from COAP capable
-     * devices. Category: iot Since: 2.16 Maven coordinates:
-     * org.apache.camel:camel-coap Syntax: <code>coaps:uri</code> Path
-     * parameter: uri The URI for the CoAP endpoint
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder("coaps",path);
-    }
-    /**
-     * CoAP (Secure) (camel-coap) Send and receive messages to/from COAP capable
-     * devices. Category: iot Since: 2.16 Maven coordinates:
-     * org.apache.camel:camel-coap Syntax: <code>coaps:uri</code> Path
-     * parameter: uri The URI for the CoAP endpoint
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * CoAP (camel-coap) Send and receive messages to/from COAP capable devices.
-     * Category: iot Since: 2.16 Maven coordinates: org.apache.camel:camel-coap
-     * Syntax: <code>coaps+tcp:uri</code> Path parameter: uri The URI for the
-     * CoAP endpoint
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder("coaps+tcp",path);
-    }
-    /**
-     * CoAP (camel-coap) Send and receive messages to/from COAP capable devices.
-     * Category: iot Since: 2.16 Maven coordinates: org.apache.camel:camel-coap
-     * Syntax: <code>coaps+tcp:uri</code> Path parameter: uri The URI for the
-     * CoAP endpoint
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * CoAP (camel-coap) Send and receive messages to/from COAP capable devices.
-     * Category: iot Since: 2.16 Maven coordinates: org.apache.camel:camel-coap
-     * Syntax: <code>coap+tcp:uri</code> Path parameter: uri The URI for the
-     * CoAP endpoint
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder("coap+tcp",path);
-    }
-    /**
-     * CoAP (camel-coap) Send and receive messages to/from COAP capable devices.
-     * Category: iot Since: 2.16 Maven coordinates: org.apache.camel:camel-coap
-     * Syntax: <code>coap+tcp:uri</code> Path parameter: uri The URI for the
-     * CoAP endpoint
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
      * CometD (camel-cometd) Offers publish/subscribe, peer-to-peer (via a
      * server), and RPC style messaging using the CometD/Bayeux protocol.
      * Category: websocket Since: 2.0 Maven coordinates:
@@ -2158,39 +2056,6 @@ public class StaticEndpointBuilders {
      * @param path host:port/channelName
      */
     static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * CometD (Secure) (camel-cometd) Offers publish/subscribe, peer-to-peer
-     * (via a server), and RPC style messaging using the CometD/Bayeux protocol.
-     * Category: websocket Since: 2.0 Maven coordinates:
-     * org.apache.camel:camel-cometd Syntax:
-     * <code>cometds:host:port/channelName</code> Path parameter: host
-     * (required) Hostname Path parameter: port (required) Host port number Path
-     * parameter: channelName (required) The channelName represents a topic that
-     * can be subscribed to by the Camel endpoints.
-     * @param path host:port/channelName
-     */
-    static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder("cometds",path);
-    }
-    /**
-     * CometD (Secure) (camel-cometd) Offers publish/subscribe, peer-to-peer
-     * (via a server), and RPC style messaging using the CometD/Bayeux protocol.
-     * Category: websocket Since: 2.0 Maven coordinates:
-     * org.apache.camel:camel-cometd Syntax:
-     * <code>cometds:host:port/channelName</code> Path parameter: host
-     * (required) Hostname Path parameter: port (required) Host port number Path
-     * parameter: channelName (required) The channelName represents a topic that
-     * can be subscribed to by the Camel endpoints.
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port/channelName
-     */
-    static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(
             java.lang.String componentName,
             java.lang.String path) {
         return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder(componentName,path);
@@ -4522,31 +4387,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * HTTPS (Secure) (camel-http) Send requests to external HTTP servers using
-     * Apache HTTP Client 4.x. Category: http Since: 2.3 Maven coordinates:
-     * org.apache.camel:camel-http Syntax: <code>https:httpUri</code> Path
-     * parameter: httpUri (required) The url of the HTTP endpoint to call.
-     * @param path httpUri
-     */
-    static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder https(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder("https",path);
-    }
-    /**
-     * HTTPS (Secure) (camel-http) Send requests to external HTTP servers using
-     * Apache HTTP Client 4.x. Category: http Since: 2.3 Maven coordinates:
-     * org.apache.camel:camel-http Syntax: <code>https:httpUri</code> Path
-     * parameter: httpUri (required) The url of the HTTP endpoint to call.
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path httpUri
-     */
-    static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder https(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
      * IEC 60870 Client (camel-iec60870) IEC 60870 supervisory control and data
      * acquisition (SCADA) client using NeoSCADA implementation. Category: iot
      * Since: 2.20 Maven coordinates: org.apache.camel:camel-iec60870 Syntax:
@@ -4808,33 +4648,6 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imap(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * IMAPS (Secure) (camel-mail) Send and receive emails using imap, pop3 and
-     * smtp protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>imaps:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imaps(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("imaps",path);
-    }
-    /**
-     * IMAPS (Secure) (camel-mail) Send and receive emails using imap, pop3 and
-     * smtp protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>imaps:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imaps(
             java.lang.String componentName,
             java.lang.String path) {
         return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
@@ -7337,60 +7150,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * POP3 (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>pop3:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder pop3(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("pop3",path);
-    }
-    /**
-     * POP3 (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>pop3:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder pop3(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * POP3S (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>pop3s:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder pop3s(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("pop3s",path);
-    }
-    /**
-     * POP3S (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>pop3s:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder pop3s(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
      * PubNub (camel-pubnub) Send and receive messages to/from PubNub data
      * stream network for connected devices. Category: cloud,iot,messaging
      * Since: 2.19 Maven coordinates: org.apache.camel:camel-pubnub Syntax:
@@ -8184,33 +7943,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * SIP (Secure) (camel-sip) Send and receive messages using the SIP protocol
-     * (used in telecommunications). Category: mobile Since: 2.5 Maven
-     * coordinates: org.apache.camel:camel-sip Syntax: <code>sips:uri</code>
-     * Path parameter: uri (required) URI of the SIP server to connect to (the
-     * username and password can be included such as: john:secretmyserver:9999)
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sips(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder("sips",path);
-    }
-    /**
-     * SIP (Secure) (camel-sip) Send and receive messages using the SIP protocol
-     * (used in telecommunications). Category: mobile Since: 2.5 Maven
-     * coordinates: org.apache.camel:camel-sip Syntax: <code>sips:uri</code>
-     * Path parameter: uri (required) URI of the SIP server to connect to (the
-     * username and password can be included such as: john:secretmyserver:9999)
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     */
-    static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sips(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
      * Simple JMS (camel-sjms) Send and receive messages to/from a JMS Queue or
      * Topic using plain JMS 1.x API. Category: messaging Since: 2.11 Maven
      * coordinates: org.apache.camel:camel-sjms Syntax:
@@ -8362,89 +8094,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * SMPP (Secure) (camel-smpp) Send and receive SMS messages using a SMSC
-     * (Short Message Service Center). Category: mobile Since: 2.2 Maven
-     * coordinates: org.apache.camel:camel-smpp Syntax:
-     * <code>smpps:host:port</code> Path parameter: host Hostname for the SMSC
-     * server to use. Default value: localhost Path parameter: port Port number
-     * for the SMSC server to use. Default value: 2775
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.endpointBuilder("smpps",path);
-    }
-    /**
-     * SMPP (Secure) (camel-smpp) Send and receive SMS messages using a SMSC
-     * (Short Message Service Center). Category: mobile Since: 2.2 Maven
-     * coordinates: org.apache.camel:camel-smpp Syntax:
-     * <code>smpps:host:port</code> Path parameter: host Hostname for the SMSC
-     * server to use. Default value: localhost Path parameter: port Port number
-     * for the SMSC server to use. Default value: 2775
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * SMTP (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>smtp:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder smtp(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("smtp",path);
-    }
-    /**
-     * SMTP (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>smtp:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder smtp(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * SMTPS (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>smtps:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder smtps(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("smtps",path);
-    }
-    /**
-     * SMTPS (camel-mail) Send and receive emails using imap, pop3 and smtp
-     * protocols. Category: mail Since: 1.0 Maven coordinates:
-     * org.apache.camel:camel-mail Syntax: <code>smtps:host:port</code> Path
-     * parameter: host (required) The mail server host name Path parameter: port
-     * The port number of the mail server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     */
-    static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder smtps(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
      * SNMP (camel-snmp) Receive traps and poll SNMP (Simple Network Management
      * Protocol) capable devices. Category: monitoring Since: 2.1 Maven
      * coordinates: org.apache.camel:camel-snmp Syntax:
@@ -8494,56 +8143,6 @@ public class StaticEndpointBuilders {
      * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * Solr (camel-solr) Perform operations against Apache Lucene Solr.
-     * Category: monitoring,search Since: 2.9 Maven coordinates:
-     * org.apache.camel:camel-solr Syntax: <code>solrCloud:url</code> Path
-     * parameter: url (required) Hostname and port for the solr server
-     * @param path url
-     */
-    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solrCloud(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder("solrCloud",path);
-    }
-    /**
-     * Solr (camel-solr) Perform operations against Apache Lucene Solr.
-     * Category: monitoring,search Since: 2.9 Maven coordinates:
-     * org.apache.camel:camel-solr Syntax: <code>solrCloud:url</code> Path
-     * parameter: url (required) Hostname and port for the solr server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path url
-     */
-    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solrCloud(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName,path);
-    }
-    /**
-     * Solr (Secure) (camel-solr) Perform operations against Apache Lucene Solr.
-     * Category: monitoring,search Since: 2.9 Maven coordinates:
-     * org.apache.camel:camel-solr Syntax: <code>solrs:url</code> Path
-     * parameter: url (required) Hostname and port for the solr server
-     * @param path url
-     */
-    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solrs(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder("solrs",path);
-    }
-    /**
-     * Solr (Secure) (camel-solr) Perform operations against Apache Lucene Solr.
-     * Category: monitoring,search Since: 2.9 Maven coordinates:
-     * org.apache.camel:camel-solr Syntax: <code>solrs:url</code> Path
-     * parameter: url (required) Hostname and port for the solr server
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path url
-     */
-    static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solrs(
             java.lang.String componentName,
             java.lang.String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName,path);
