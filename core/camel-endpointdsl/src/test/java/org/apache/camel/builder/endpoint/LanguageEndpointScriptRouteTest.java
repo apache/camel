@@ -18,12 +18,10 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
-// import static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.direct;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.direct;
 
-@Ignore("TODO: endpoint-dsl static")
 public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
 
     @Test
@@ -39,10 +37,10 @@ public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
     public void testLanguageFluent() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-//        context.createFluentProducerTemplate()
-//            .to(direct("start"))
-//            .withBody("World")
-//            .send();
+        context.createFluentProducerTemplate()
+            .to(direct("start"))
+            .withBody("World")
+            .send();
 
         assertMockEndpointsSatisfied();
     }

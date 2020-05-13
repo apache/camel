@@ -109,7 +109,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.EhcacheBuilders,
             org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchBuilders,
             org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlBuilders,
-            org.apache.camel.builder.endpoint.dsl.ElytronEndpointBuilderFactory.ElytronBuilders,
             org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysBuilders,
             org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsBuilders,
             org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchBuilders,

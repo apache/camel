@@ -18,12 +18,12 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
-// import static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.direct;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.direct;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.language;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
 
-@Ignore("TODO: endpoint-dsl static")
 public class LanguageEndpointStaticTest extends ContextTestSupport {
 
     @Test
@@ -39,10 +39,10 @@ public class LanguageEndpointStaticTest extends ContextTestSupport {
     public void testLanguageFluent() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-//        context.createFluentProducerTemplate()
-//            .to(direct("start"))
-//            .withBody("World")
-//            .send();
+        context.createFluentProducerTemplate()
+            .to(direct("start"))
+            .withBody("World")
+            .send();
 
         assertMockEndpointsSatisfied();
     }
@@ -52,9 +52,9 @@ public class LanguageEndpointStaticTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-//                from(direct("start"))
-//                    .to(language("simple").script("Hello ${body}"))
-//                    .to(mock("result"));
+                from(direct("start"))
+                    .to(language("simple").script("Hello ${body}"))
+                    .to(mock("result"));
             }
         };
     }
