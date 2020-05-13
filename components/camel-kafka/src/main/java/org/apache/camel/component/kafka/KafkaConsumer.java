@@ -355,7 +355,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                         // we are failing and we should break
                                         // out
                                         LOG.warn("Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.", exchange,
-                                                 topicName, partitionLastOffset);
+                                                 topicName, partitionLastOffset, exchange.getException());
                                         // force commit so we resume on next
                                         // poll where we failed
                                         commitOffset(offsetRepository, partition, partitionLastOffset, true);
