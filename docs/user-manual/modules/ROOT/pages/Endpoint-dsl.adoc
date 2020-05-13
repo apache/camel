@@ -1,27 +1,38 @@
 [[Endpoint-DSL]]
 = Endpoint DSL
 
-Endpoint-dsl is a new API that allows to use type-safe endpoint URL configurations.
+Endpoint-dsl is a new API that allows using type-safe endpoint URL configurations.
 
-The following is an example of an FTP consumer endpoint definition:
-
-[source,java]
-----
-from("ftp://foo@myserver?password=secret&recursive=true&
-           ftpClient.dataTimeout=30000&
-           ftpClientConfig.serverLanguageCode=fr")
-    .to("bean:doSomething");
-----
-
-The same Java statement can be rewritten in the following more readable way:
+The following is an example of an FTP route using the standard `RouteBuilder`:
 
 [source,java]
 ----
-from(ftp("myserver").account("foo").password("secret").recursive(true)
-        .advanced()
-        .ftpClientParameters(Collections.singletonMap("dataTimeout", 30000))
-        .ftpClientConfig(Collections.singletonMap("serverLanguageCode", "fr")))
-    .to(bean("something"));
+public class MyRoutes extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("ftp://foo@myserver?password=secret&recursive=true&
+               ftpClient.dataTimeout=30000&
+               ftpClientConfig.serverLanguageCode=fr")
+        .to("bean:doSomething");
+    }
+}
+----
+
+The same Java statement can be rewritten in the following more readable way using
+the new `EndpointRouteBuilder` that allows using the endpoint DSL:
+
+[source,java]
+----
+public class MyRoutes extends EndpointRouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from(ftp("myserver").account("foo").password("secret").recursive(true)
+            .advanced()
+                .ftpClientParameters(Collections.singletonMap("dataTimeout", 30000))
+                .ftpClientConfig(Collections.singletonMap("serverLanguageCode", "fr")))
+            .to(bean("something"));
+    }
+}
 ----
 
 == The fluent DSL now provides type safety for parameters
@@ -49,10 +60,45 @@ from(jms("myWMQ", "cheese").concurrentConsumers(5))
 Notice how we can refer to their names as the first parameter in the `jms` fluent builder.
 The example would then consume messages from WebSphereMQ queue named cheese and route to ActiveMQ on a queue named smelly.
 
+== Using endpoint-dsl outside route builders
+
+You can use the type-safe endpoint-dsl outside route builders with:
+
+* With the `FluentProducerTemplate` to send messages
+* Creating an `Endpoint`
+
+For example to send a message to Kafka you can use the `FluentProducerTemplate`
+
+[source,java]
+----
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.kafka;
+
+context.createFluentProducerTemplate()
+    .to(kafka("start").clientId("myClient").brokers("{{myBrokers}}").partitionKey("myKey"))
+    .withBody("Hello World")
+    .send();
+----
+
+To use the endpoint-dsl with kafka you need to static import `kafka` from the class:
+`org.apache.camel.builder.endpoint.StaticEndpointBuilders` which has all the Camel components.
+
+An endpoint can also be created in Java code via the endpoint-dsl as shown:
+
+[source,java]
+----
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.paho;
+
+Endpoint mqtt = paho("sensor").clientId("myClient").userName("scott").password("tiger")
+    .resolve(context);
+----
+
+You can then set all the options via the type-safe DSL and then the endpoint can be resolved (created)
+by calling `resolve` with `CamelContext` as parameter.
+
 == How to use
 
 The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual 
-`RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `EndpointRouteBuilder`.
+`RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `org.apache.camel.builder.endpoint.EndpointRouteBuilder`.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 

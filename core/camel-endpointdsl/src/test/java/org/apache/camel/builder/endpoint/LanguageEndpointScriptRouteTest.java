@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -28,7 +29,8 @@ public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("direct:start", "World");
+        Endpoint start = direct("start").resolve(context);
+        template.sendBody(start, "World");
 
         assertMockEndpointsSatisfied();
     }

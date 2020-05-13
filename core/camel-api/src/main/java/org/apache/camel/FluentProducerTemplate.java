@@ -274,7 +274,7 @@ public interface FluentProducerTemplate extends Service {
      *
      * @param resolver the {@link EndpointConsumerResolver} that supply the endpoint to send to.
      */
-    default FluentProducerTemplate to(EndpointConsumerResolver resolver) {
+    default FluentProducerTemplate to(EndpointProducerResolver resolver) {
         final CamelContext context = ObjectHelper.notNull(getCamelContext(), "camel context");
         final Endpoint endpoint = resolver.resolve(context);
 
