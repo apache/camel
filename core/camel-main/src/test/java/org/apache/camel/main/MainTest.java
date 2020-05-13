@@ -55,10 +55,13 @@ public class MainTest extends Assert {
 
     @Test
     public void testDisableHangupSupport() throws Exception {
+        DefaultMainShutdownStrategy shutdownStrategy = new DefaultMainShutdownStrategy();
+        shutdownStrategy.disableHangupSupport();
+
         // lets make a simple route
         Main main = new Main();
+        main.setShutdownStrategy(shutdownStrategy);
         main.configure().addRoutesBuilder(new MyRouteBuilder());
-        main.disableHangupSupport();
         main.enableTrace();
         main.bind("foo", 31);
         main.start();

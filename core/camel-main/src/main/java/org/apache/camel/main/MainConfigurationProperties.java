@@ -37,7 +37,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autowireComponentPropertiesNonNullOnly;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
-    private boolean hangupInterceptorEnabled = true;
     private String packageScanRouteBuilders;
 
     private String routesBuilderClasses;
@@ -209,17 +208,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
         this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
-    }
-
-    public boolean isHangupInterceptorEnabled() {
-        return hangupInterceptorEnabled;
-    }
-
-    /**
-     * Whether to use graceful hangup when Camel is stopping or when the JVM terminates.
-     */
-    public void setHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
-        this.hangupInterceptorEnabled = hangupInterceptorEnabled;
     }
 
     public String getPackageScanRouteBuilders() {
@@ -452,14 +440,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
         this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
-        return this;
-    }
-
-    /**
-     * Whether to use graceful hangup when Camel is stopping or when the JVM terminates.
-     */
-    public MainConfigurationProperties withHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
-        this.hangupInterceptorEnabled = hangupInterceptorEnabled;
         return this;
     }
 
