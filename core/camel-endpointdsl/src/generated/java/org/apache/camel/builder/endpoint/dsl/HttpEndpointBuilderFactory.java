@@ -1378,26 +1378,6 @@ public interface HttpEndpointBuilderFactory {
         default HttpEndpointBuilder https(String path) {
             return HttpEndpointBuilderFactory.endpointBuilder("https", path);
         }
-        /**
-         * HTTPS (Secure) (camel-http)
-         * Send requests to external HTTP servers using Apache HTTP Client 4.x.
-         * 
-         * Category: http
-         * Since: 2.3
-         * Maven coordinates: org.apache.camel:camel-http
-         * 
-         * Syntax: <code>https:httpUri</code>
-         * 
-         * Path parameter: httpUri (required)
-         * The url of the HTTP endpoint to call.
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path httpUri
-         */
-        default HttpEndpointBuilder https(String componentName, String path) {
-            return HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
     }
     static HttpEndpointBuilder endpointBuilder(String componentName, String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {

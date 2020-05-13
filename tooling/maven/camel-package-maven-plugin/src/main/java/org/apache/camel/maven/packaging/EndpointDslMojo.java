@@ -540,8 +540,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
             method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
             staticBuilders.add(method);
-
         } else {
+            // we only want the first alias (master scheme) as static builders
+            boolean firstAlias = true;
+
             for (ComponentModel componentModel : aliases) {
                 String desc = getMainDescription(componentModel);
                 String methodName = camelCaseLower(componentModel.getScheme());
@@ -557,33 +559,44 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     method.addAnnotation(Deprecated.class);
                 }
 
-                // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
-                method = method.copy();
-                method.setStatic();
-                method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-                method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "\"" + componentModel.getScheme() + "\", path");
-                staticBuilders.add(method);
-
-                method = dslClass.addMethod().setStatic().setName(methodName)
-                        .addParameter(String.class, "componentName")
-                        .addParameter(String.class, "path")
-                        .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                        .setDefault()
-                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
-                javaDoc = desc;
-                javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
-                javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
-                method.getJavaDoc().setText(javaDoc);
-                if (componentModel.isDeprecated()) {
-                    method.addAnnotation(Deprecated.class);
+                // we only want the first alias (master scheme) as static builders
+                if (firstAlias) {
+                    // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+                    method = method.copy();
+                    method.setStatic();
+                    method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "\"" + componentModel.getScheme() + "\", path");
+                    staticBuilders.add(method);
                 }
 
-                // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
-                method = method.copy();
-                method.setStatic();
-                method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-                method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
-                staticBuilders.add(method);
+                // we only want first alias for variation with custom component name
+                if (firstAlias) {
+                    method = dslClass.addMethod().setStatic().setName(methodName)
+                            .addParameter(String.class, "componentName")
+                            .addParameter(String.class, "path")
+                            .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                            .setDefault()
+                            .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
+                    javaDoc = desc;
+                    javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
+                    javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
+                    method.getJavaDoc().setText(javaDoc);
+                    if (componentModel.isDeprecated()) {
+                        method.addAnnotation(Deprecated.class);
+                    }
+                }
+
+                // we only want the first alias (master scheme) as static builders
+                if (firstAlias) {
+                    // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+                    method = method.copy();
+                    method.setStatic();
+                    method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
+                    staticBuilders.add(method);
+                }
+
+                firstAlias = false;
             }
         }
 

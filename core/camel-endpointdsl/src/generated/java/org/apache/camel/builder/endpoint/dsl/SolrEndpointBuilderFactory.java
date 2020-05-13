@@ -477,26 +477,6 @@ public interface SolrEndpointBuilderFactory {
             return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
         }
         /**
-         * Solr (camel-solr)
-         * Perform operations against Apache Lucene Solr.
-         * 
-         * Category: monitoring,search
-         * Since: 2.9
-         * Maven coordinates: org.apache.camel:camel-solr
-         * 
-         * Syntax: <code>solrCloud:url</code>
-         * 
-         * Path parameter: url (required)
-         * Hostname and port for the solr server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path url
-         */
-        default SolrEndpointBuilder solrCloud(String componentName, String path) {
-            return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
-        /**
          * Solr (Secure) (camel-solr)
          * Perform operations against Apache Lucene Solr.
          * 
@@ -513,26 +493,6 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder solrs(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrs", path);
-        }
-        /**
-         * Solr (Secure) (camel-solr)
-         * Perform operations against Apache Lucene Solr.
-         * 
-         * Category: monitoring,search
-         * Since: 2.9
-         * Maven coordinates: org.apache.camel:camel-solr
-         * 
-         * Syntax: <code>solrs:url</code>
-         * 
-         * Path parameter: url (required)
-         * Hostname and port for the solr server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path url
-         */
-        default SolrEndpointBuilder solrs(String componentName, String path) {
-            return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
     static SolrEndpointBuilder endpointBuilder(String componentName, String path) {

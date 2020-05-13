@@ -2917,29 +2917,6 @@ public interface MailEndpointBuilderFactory {
             return MailEndpointBuilderFactory.endpointBuilder("imaps", path);
         }
         /**
-         * IMAPS (Secure) (camel-mail)
-         * Send and receive emails using imap, pop3 and smtp protocols.
-         * 
-         * Category: mail
-         * Since: 1.0
-         * Maven coordinates: org.apache.camel:camel-mail
-         * 
-         * Syntax: <code>imaps:host:port</code>
-         * 
-         * Path parameter: host (required)
-         * The mail server host name
-         * 
-         * Path parameter: port
-         * The port number of the mail server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path host:port
-         */
-        default MailEndpointBuilder imaps(String componentName, String path) {
-            return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
-        /**
          * POP3 (camel-mail)
          * Send and receive emails using imap, pop3 and smtp protocols.
          * 
@@ -2959,29 +2936,6 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointBuilder pop3(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("pop3", path);
-        }
-        /**
-         * POP3 (camel-mail)
-         * Send and receive emails using imap, pop3 and smtp protocols.
-         * 
-         * Category: mail
-         * Since: 1.0
-         * Maven coordinates: org.apache.camel:camel-mail
-         * 
-         * Syntax: <code>pop3:host:port</code>
-         * 
-         * Path parameter: host (required)
-         * The mail server host name
-         * 
-         * Path parameter: port
-         * The port number of the mail server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path host:port
-         */
-        default MailEndpointBuilder pop3(String componentName, String path) {
-            return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
          * POP3S (camel-mail)
@@ -3005,29 +2959,6 @@ public interface MailEndpointBuilderFactory {
             return MailEndpointBuilderFactory.endpointBuilder("pop3s", path);
         }
         /**
-         * POP3S (camel-mail)
-         * Send and receive emails using imap, pop3 and smtp protocols.
-         * 
-         * Category: mail
-         * Since: 1.0
-         * Maven coordinates: org.apache.camel:camel-mail
-         * 
-         * Syntax: <code>pop3s:host:port</code>
-         * 
-         * Path parameter: host (required)
-         * The mail server host name
-         * 
-         * Path parameter: port
-         * The port number of the mail server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path host:port
-         */
-        default MailEndpointBuilder pop3s(String componentName, String path) {
-            return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
-        /**
          * SMTP (camel-mail)
          * Send and receive emails using imap, pop3 and smtp protocols.
          * 
@@ -3049,29 +2980,6 @@ public interface MailEndpointBuilderFactory {
             return MailEndpointBuilderFactory.endpointBuilder("smtp", path);
         }
         /**
-         * SMTP (camel-mail)
-         * Send and receive emails using imap, pop3 and smtp protocols.
-         * 
-         * Category: mail
-         * Since: 1.0
-         * Maven coordinates: org.apache.camel:camel-mail
-         * 
-         * Syntax: <code>smtp:host:port</code>
-         * 
-         * Path parameter: host (required)
-         * The mail server host name
-         * 
-         * Path parameter: port
-         * The port number of the mail server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path host:port
-         */
-        default MailEndpointBuilder smtp(String componentName, String path) {
-            return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
-        /**
          * SMTPS (camel-mail)
          * Send and receive emails using imap, pop3 and smtp protocols.
          * 
@@ -3091,29 +2999,6 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointBuilder smtps(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("smtps", path);
-        }
-        /**
-         * SMTPS (camel-mail)
-         * Send and receive emails using imap, pop3 and smtp protocols.
-         * 
-         * Category: mail
-         * Since: 1.0
-         * Maven coordinates: org.apache.camel:camel-mail
-         * 
-         * Syntax: <code>smtps:host:port</code>
-         * 
-         * Path parameter: host (required)
-         * The mail server host name
-         * 
-         * Path parameter: port
-         * The port number of the mail server
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path host:port
-         */
-        default MailEndpointBuilder smtps(String componentName, String path) {
-            return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
     static MailEndpointBuilder endpointBuilder(String componentName, String path) {

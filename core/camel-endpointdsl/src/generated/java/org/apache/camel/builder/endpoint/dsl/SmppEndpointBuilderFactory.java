@@ -2184,32 +2184,6 @@ public interface SmppEndpointBuilderFactory {
         default SmppEndpointBuilder smpps(String path) {
             return SmppEndpointBuilderFactory.endpointBuilder("smpps", path);
         }
-        /**
-         * SMPP (Secure) (camel-smpp)
-         * Send and receive SMS messages using a SMSC (Short Message Service
-         * Center).
-         * 
-         * Category: mobile
-         * Since: 2.2
-         * Maven coordinates: org.apache.camel:camel-smpp
-         * 
-         * Syntax: <code>smpps:host:port</code>
-         * 
-         * Path parameter: host
-         * Hostname for the SMSC server to use.
-         * Default value: localhost
-         * 
-         * Path parameter: port
-         * Port number for the SMSC server to use.
-         * Default value: 2775
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path host:port
-         */
-        default SmppEndpointBuilder smpps(String componentName, String path) {
-            return SmppEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
     }
     static SmppEndpointBuilder endpointBuilder(String componentName, String path) {
         class SmppEndpointBuilderImpl extends AbstractEndpointBuilder implements SmppEndpointBuilder, AdvancedSmppEndpointBuilder {
