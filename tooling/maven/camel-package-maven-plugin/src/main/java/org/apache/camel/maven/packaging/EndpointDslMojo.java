@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging;
 
+import javax.annotation.Generated;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +37,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import javax.annotation.Generated;
 
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.spi.UriEndpoint;
@@ -60,6 +60,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
@@ -225,7 +230,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
-        boolean updated = doCreateEndpointDsl(model, aliases, overrideComponentName);
+        List<Method> staticBuilders = new ArrayList<>();
+        boolean updated = doCreateEndpointDsl(model, aliases, staticBuilders);
 
         // Update components metadata
         getLog().debug("Load components EndpointFactories");
@@ -239,13 +245,17 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         // make sure EndpointBuilders is synced
         updated |= synchronizeEndpointBuildersInterface(endpointFactories);
 
+        getLog().debug("Regenerate StaticEndpointBuilders");
+        // make sure StaticEndpointBuilders is synced
+        updated |= synchronizeEndpointBuildersStaticClass(staticBuilders);
+
         if (updated) {
             getLog().info("Updated EndpointDsl: " + model.getScheme());
         }
     }
 
     @SuppressWarnings("checkstyle:methodlength")
-    private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
+    private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, List<Method> staticBuilders) throws MojoFailureException {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
         Class<?> realComponentClass = loadClass(componentClassName);
@@ -502,6 +512,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
+
+            // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+            method = method.copy();
+            method.setStatic();
+            method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+            method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "\"" + model.getScheme() + "\", path");
+            staticBuilders.add(method);
+
             method = dslClass.addMethod().setStatic().setName(methodName)
                     .addParameter(String.class, "componentName")
                     .addParameter(String.class, "path")
@@ -515,6 +533,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
+
+            // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+            method = method.copy();
+            method.setStatic();
+            method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+            method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
+            staticBuilders.add(method);
+
         } else {
             for (ComponentModel componentModel : aliases) {
                 String desc = getMainDescription(componentModel);
@@ -530,6 +556,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 if (componentModel.isDeprecated()) {
                     method.addAnnotation(Deprecated.class);
                 }
+
+                // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+                method = method.copy();
+                method.setStatic();
+                method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+                method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "\"" + componentModel.getScheme() + "\", path");
+                staticBuilders.add(method);
+
                 method = dslClass.addMethod().setStatic().setName(methodName)
                         .addParameter(String.class, "componentName")
                         .addParameter(String.class, "path")
@@ -543,6 +577,13 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 if (componentModel.isDeprecated()) {
                     method.addAnnotation(Deprecated.class);
                 }
+
+                // copy method for the static builders (which allows to use the endpoint-dsl from outside EndpointRouteBuilder)
+                method = method.copy();
+                method.setStatic();
+                method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
+                method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
+                staticBuilders.add(method);
             }
         }
 
@@ -599,6 +640,67 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
+    }
+
+
+
+    private boolean synchronizeEndpointBuildersStaticClass(List<Method> methods) throws MojoFailureException {
+        File file = new File(sourcesOutputDir.getPath() + "/" + endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+        if (file.exists()) {
+            // does the file already exists
+            try {
+                // parse existing source file with roaster to find existing methods which we should keep
+                JavaClassSource source = (JavaClassSource) Roaster.parse(file);
+                // add existing methods
+                for (MethodSource ms : source.getMethods()) {
+                    boolean exist = methods.stream().anyMatch(m ->
+                            m.getName().equals(ms.getName()) && m.getParameters().size() == ms.getParameters().size());
+                    if (!exist) {
+                        // the existing file has a method we dont have so create a method and add
+                        Method method = new Method();
+                        if (ms.isStatic()) {
+                            method.setStatic();
+                        }
+                        method.setName(ms.getName());
+                        method.setBody(ms.getBody());
+                        method.setReturnType(ms.getReturnType().getQualifiedName());
+                        for (Object o : ms.getParameters()) {
+                            if (o instanceof ParameterSource) {
+                                ParameterSource ps = (ParameterSource) o;
+                                method.addParameter(ps.getType().getQualifiedName(), ps.getName());
+                            }
+                        }
+                        // the javadoc is mengled by roaster (sadly it does not preserve newlines)
+                        method.getJavaDoc().setFullText(ms.getJavaDoc().getFullText());
+                        if (ms.getAnnotation(Deprecated.class) != null) {
+                            method.addAnnotation(Deprecated.class);
+                        }
+                        methods.add(method);
+                    }
+                }
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot parse existing java source file: " + file + " due to " + e.getMessage(), e);
+            }
+        }
+
+        JavaClass javaClass = new JavaClass(getProjectClassLoader());
+        javaClass.setPackage(endpointFactoriesPackageName);
+        javaClass.setName("StaticEndpointBuilders");
+        javaClass.setClass(true);
+        javaClass.setPublic();
+        javaClass.getJavaDoc().setText(GENERATED_MSG);
+        javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
+
+        // sort methods
+        Collections.sort(methods, (m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName()));
+        // create method
+        for (Method method : methods) {
+            javaClass.addMethod(method);
+        }
+
+        String printClass = javaClass.printClass();
+
+        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + printClass + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
