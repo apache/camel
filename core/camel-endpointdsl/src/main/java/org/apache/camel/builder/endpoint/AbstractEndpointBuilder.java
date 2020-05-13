@@ -21,8 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
@@ -34,7 +32,6 @@ import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.util.URISupport;
 
-@XmlTransient
 public class AbstractEndpointBuilder {
 
     protected final String scheme;
