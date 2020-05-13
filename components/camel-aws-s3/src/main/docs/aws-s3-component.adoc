@@ -24,7 +24,7 @@ https://aws.amazon.com/s3[Amazon S3].
 
 [source,java]
 ------------------------------
-aws-s3://bucketNameOrArn[?options]
+aws-s3://[bucketName|arn][?options]
 ------------------------------
 
 The bucket will be created if it don't already exists. +
@@ -106,7 +106,7 @@ The AWS S3 Storage Service component supports 38 options, which are listed below
 The AWS S3 Storage Service endpoint is configured using URI syntax:
 
 ----
-aws-s3://bucketNameOrArn
+aws-s3://[bucketName|arn][?options]
 ----
 
 with the following path and query parameters:
