@@ -2748,28 +2748,37 @@ public interface PahoEndpointBuilderFactory {
          * 
          * Path parameter: topic (required)
          * Name of the topic
+         * 
+         * @param path topic
          */
         default PahoEndpointBuilder paho(String path) {
-            return PahoEndpointBuilderFactory.paho(path);
+            return PahoEndpointBuilderFactory.endpointBuilder("paho", path);
+        }
+        /**
+         * Paho (camel-paho)
+         * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
+         * 
+         * Category: messaging,iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-paho
+         * 
+         * Syntax: <code>paho:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * Name of the topic
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topic
+         */
+        default PahoEndpointBuilder paho(String componentName, String path) {
+            return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Paho (camel-paho)
-     * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
-     * 
-     * Category: messaging,iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-paho
-     * 
-     * Syntax: <code>paho:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * Name of the topic
-     */
-    static PahoEndpointBuilder paho(String path) {
+    static PahoEndpointBuilder endpointBuilder(String componentName, String path) {
         class PahoEndpointBuilderImpl extends AbstractEndpointBuilder implements PahoEndpointBuilder, AdvancedPahoEndpointBuilder {
             public PahoEndpointBuilderImpl(String path) {
-                super("paho", path);
+                super(componentName, path);
             }
         }
         return new PahoEndpointBuilderImpl(path);

@@ -1060,28 +1060,39 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
+         * 
+         * @param path httpUri
          */
         default JettyHttpEndpointBuilder jetty(String path) {
-            return JettyHttpEndpointBuilderFactory.jetty(path);
+            return JettyHttpEndpointBuilderFactory.endpointBuilder("jetty", path);
+        }
+        /**
+         * Jetty (camel-jetty)
+         * Expose HTTP endpoints using Jetty 9.
+         * 
+         * Category: http
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-jetty
+         * 
+         * Syntax: <code>jetty:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The url of the HTTP endpoint to call.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path httpUri
+         */
+        default JettyHttpEndpointBuilder jetty(String componentName, String path) {
+            return JettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Jetty (camel-jetty)
-     * Expose HTTP endpoints using Jetty 9.
-     * 
-     * Category: http
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-jetty
-     * 
-     * Syntax: <code>jetty:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The url of the HTTP endpoint to call.
-     */
-    static JettyHttpEndpointBuilder jetty(String path) {
+    static JettyHttpEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class JettyHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements JettyHttpEndpointBuilder, AdvancedJettyHttpEndpointBuilder {
             public JettyHttpEndpointBuilderImpl(String path) {
-                super("jetty", path);
+                super(componentName, path);
             }
         }
         return new JettyHttpEndpointBuilderImpl(path);

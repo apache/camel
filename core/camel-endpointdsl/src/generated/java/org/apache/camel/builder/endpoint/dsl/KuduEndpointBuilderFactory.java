@@ -199,35 +199,44 @@ public interface KuduEndpointBuilderFactory {
          * 
          * Path parameter: tableName
          * Table to connect to
+         * 
+         * @param path host:port/tableName
          */
         default KuduEndpointBuilder kudu(String path) {
-            return KuduEndpointBuilderFactory.kudu(path);
+            return KuduEndpointBuilderFactory.endpointBuilder("kudu", path);
+        }
+        /**
+         * Kudu (camel-kudu)
+         * Interact with Apache Kudu, a free and open source column-oriented
+         * data store of the Apache Hadoop ecosystem.
+         * 
+         * Category: cloud,database,iot
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-kudu
+         * 
+         * Syntax: <code>kudu:host:port/tableName</code>
+         * 
+         * Path parameter: host
+         * Host of the server to connect to
+         * 
+         * Path parameter: port
+         * Port of the server to connect to
+         * 
+         * Path parameter: tableName
+         * Table to connect to
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/tableName
+         */
+        default KuduEndpointBuilder kudu(String componentName, String path) {
+            return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kudu (camel-kudu)
-     * Interact with Apache Kudu, a free and open source column-oriented data
-     * store of the Apache Hadoop ecosystem.
-     * 
-     * Category: cloud,database,iot
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-kudu
-     * 
-     * Syntax: <code>kudu:host:port/tableName</code>
-     * 
-     * Path parameter: host
-     * Host of the server to connect to
-     * 
-     * Path parameter: port
-     * Port of the server to connect to
-     * 
-     * Path parameter: tableName
-     * Table to connect to
-     */
-    static KuduEndpointBuilder kudu(String path) {
+    static KuduEndpointBuilder endpointBuilder(String componentName, String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {
             public KuduEndpointBuilderImpl(String path) {
-                super("kudu", path);
+                super(componentName, path);
             }
         }
         return new KuduEndpointBuilderImpl(path);

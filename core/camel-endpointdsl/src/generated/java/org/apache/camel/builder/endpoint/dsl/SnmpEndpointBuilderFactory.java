@@ -1754,32 +1754,41 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * Path parameter: port (required)
          * Port number of the SNMP enabled device
+         * 
+         * @param path host:port
          */
         default SnmpEndpointBuilder snmp(String path) {
-            return SnmpEndpointBuilderFactory.snmp(path);
+            return SnmpEndpointBuilderFactory.endpointBuilder("snmp", path);
+        }
+        /**
+         * SNMP (camel-snmp)
+         * Receive traps and poll SNMP (Simple Network Management Protocol)
+         * capable devices.
+         * 
+         * Category: monitoring
+         * Since: 2.1
+         * Maven coordinates: org.apache.camel:camel-snmp
+         * 
+         * Syntax: <code>snmp:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the SNMP enabled device
+         * 
+         * Path parameter: port (required)
+         * Port number of the SNMP enabled device
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port
+         */
+        default SnmpEndpointBuilder snmp(String componentName, String path) {
+            return SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SNMP (camel-snmp)
-     * Receive traps and poll SNMP (Simple Network Management Protocol) capable
-     * devices.
-     * 
-     * Category: monitoring
-     * Since: 2.1
-     * Maven coordinates: org.apache.camel:camel-snmp
-     * 
-     * Syntax: <code>snmp:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname of the SNMP enabled device
-     * 
-     * Path parameter: port (required)
-     * Port number of the SNMP enabled device
-     */
-    static SnmpEndpointBuilder snmp(String path) {
+    static SnmpEndpointBuilder endpointBuilder(String componentName, String path) {
         class SnmpEndpointBuilderImpl extends AbstractEndpointBuilder implements SnmpEndpointBuilder, AdvancedSnmpEndpointBuilder {
             public SnmpEndpointBuilderImpl(String path) {
-                super("snmp", path);
+                super(componentName, path);
             }
         }
         return new SnmpEndpointBuilderImpl(path);

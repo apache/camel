@@ -208,34 +208,47 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * 
          * Path parameter: tableId
          * BigQuery table id
+         * 
+         * @param path projectId:datasetId:tableId
          */
         default GoogleBigQueryEndpointBuilder googleBigquery(String path) {
-            return GoogleBigQueryEndpointBuilderFactory.googleBigquery(path);
+            return GoogleBigQueryEndpointBuilderFactory.endpointBuilder("google-bigquery", path);
+        }
+        /**
+         * Google BigQuery (camel-google-bigquery)
+         * Google BigQuery data warehouse for analytics.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-google-bigquery
+         * 
+         * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
+         * 
+         * Path parameter: projectId (required)
+         * Google Cloud Project Id
+         * 
+         * Path parameter: datasetId (required)
+         * BigQuery Dataset Id
+         * 
+         * Path parameter: tableId
+         * BigQuery table id
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path projectId:datasetId:tableId
+         */
+        default GoogleBigQueryEndpointBuilder googleBigquery(
+                String componentName,
+                String path) {
+            return GoogleBigQueryEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
-     * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
-     * 
-     * Path parameter: projectId (required)
-     * Google Cloud Project Id
-     * 
-     * Path parameter: datasetId (required)
-     * BigQuery Dataset Id
-     * 
-     * Path parameter: tableId
-     * BigQuery table id
-     */
-    static GoogleBigQueryEndpointBuilder googleBigquery(String path) {
+    static GoogleBigQueryEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleBigQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQueryEndpointBuilder, AdvancedGoogleBigQueryEndpointBuilder {
             public GoogleBigQueryEndpointBuilderImpl(String path) {
-                super("google-bigquery", path);
+                super(componentName, path);
             }
         }
         return new GoogleBigQueryEndpointBuilderImpl(path);

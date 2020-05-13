@@ -272,28 +272,39 @@ public interface ClassEndpointBuilderFactory {
          * 
          * Path parameter: beanName (required)
          * Sets the name of the bean to invoke
+         * 
+         * @param path beanName
          */
         default ClassEndpointBuilder clas(String path) {
-            return ClassEndpointBuilderFactory.clas(path);
+            return ClassEndpointBuilderFactory.endpointBuilder("class", path);
+        }
+        /**
+         * Class (camel-bean)
+         * Invoke methods of Java beans specified by class name.
+         * 
+         * Category: core,java
+         * Since: 2.4
+         * Maven coordinates: org.apache.camel:camel-bean
+         * 
+         * Syntax: <code>class:beanName</code>
+         * 
+         * Path parameter: beanName (required)
+         * Sets the name of the bean to invoke
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path beanName
+         */
+        default ClassEndpointBuilder clas(String componentName, String path) {
+            return ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
-     * 
-     * Category: core,java
-     * Since: 2.4
-     * Maven coordinates: org.apache.camel:camel-bean
-     * 
-     * Syntax: <code>class:beanName</code>
-     * 
-     * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
-     */
-    static ClassEndpointBuilder clas(String path) {
+    static ClassEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ClassEndpointBuilderImpl extends AbstractEndpointBuilder implements ClassEndpointBuilder, AdvancedClassEndpointBuilder {
             public ClassEndpointBuilderImpl(String path) {
-                super("class", path);
+                super(componentName, path);
             }
         }
         return new ClassEndpointBuilderImpl(path);

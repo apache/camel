@@ -309,32 +309,44 @@ public interface ChunkEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default ChunkEndpointBuilder chunk(String path) {
-            return ChunkEndpointBuilderFactory.chunk(path);
+            return ChunkEndpointBuilderFactory.endpointBuilder("chunk", path);
+        }
+        /**
+         * Chunk (camel-chunk)
+         * Transform messages using Chunk templating engine.
+         * 
+         * Category: transformation
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-chunk
+         * 
+         * Syntax: <code>chunk:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default ChunkEndpointBuilder chunk(String componentName, String path) {
+            return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
-     * 
-     * Category: transformation
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-chunk
-     * 
-     * Syntax: <code>chunk:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static ChunkEndpointBuilder chunk(String path) {
+    static ChunkEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ChunkEndpointBuilderImpl extends AbstractEndpointBuilder implements ChunkEndpointBuilder, AdvancedChunkEndpointBuilder {
             public ChunkEndpointBuilderImpl(String path) {
-                super("chunk", path);
+                super(componentName, path);
             }
         }
         return new ChunkEndpointBuilderImpl(path);

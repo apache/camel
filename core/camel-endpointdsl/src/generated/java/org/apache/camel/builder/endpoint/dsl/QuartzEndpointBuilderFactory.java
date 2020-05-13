@@ -614,34 +614,45 @@ public interface QuartzEndpointBuilderFactory {
          * Path parameter: triggerName (required)
          * The quartz timer name to use. The combination of group name and timer
          * name should be unique.
+         * 
+         * @param path groupName/triggerName
          */
         default QuartzEndpointBuilder quartz(String path) {
-            return QuartzEndpointBuilderFactory.quartz(path);
+            return QuartzEndpointBuilderFactory.endpointBuilder("quartz", path);
+        }
+        /**
+         * Quartz (camel-quartz)
+         * Schedule sending of messages using the Quartz 2.x scheduler.
+         * 
+         * Category: scheduling
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-quartz
+         * 
+         * Syntax: <code>quartz:groupName/triggerName</code>
+         * 
+         * Path parameter: groupName
+         * The quartz group name to use. The combination of group name and timer
+         * name should be unique.
+         * Default value: Camel
+         * 
+         * Path parameter: triggerName (required)
+         * The quartz timer name to use. The combination of group name and timer
+         * name should be unique.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path groupName/triggerName
+         */
+        default QuartzEndpointBuilder quartz(String componentName, String path) {
+            return QuartzEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Quartz (camel-quartz)
-     * Schedule sending of messages using the Quartz 2.x scheduler.
-     * 
-     * Category: scheduling
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-quartz
-     * 
-     * Syntax: <code>quartz:groupName/triggerName</code>
-     * 
-     * Path parameter: groupName
-     * The quartz group name to use. The combination of group name and timer
-     * name should be unique.
-     * Default value: Camel
-     * 
-     * Path parameter: triggerName (required)
-     * The quartz timer name to use. The combination of group name and timer
-     * name should be unique.
-     */
-    static QuartzEndpointBuilder quartz(String path) {
+    static QuartzEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class QuartzEndpointBuilderImpl extends AbstractEndpointBuilder implements QuartzEndpointBuilder, AdvancedQuartzEndpointBuilder {
             public QuartzEndpointBuilderImpl(String path) {
-                super("quartz", path);
+                super(componentName, path);
             }
         }
         return new QuartzEndpointBuilderImpl(path);

@@ -1427,38 +1427,49 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * Path parameter: keyspace
          * Keyspace to use
+         * 
+         * @param path beanRef:hosts:port/keyspace
          */
         default CassandraEndpointBuilder cql(String path) {
-            return CassandraEndpointBuilderFactory.cql(path);
+            return CassandraEndpointBuilderFactory.endpointBuilder("cql", path);
+        }
+        /**
+         * Cassandra CQL (camel-cassandraql)
+         * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+         * 
+         * Category: database,nosql
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-cassandraql
+         * 
+         * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
+         * 
+         * Path parameter: beanRef
+         * beanRef is defined using bean:id
+         * 
+         * Path parameter: hosts
+         * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
+         * comma.
+         * 
+         * Path parameter: port
+         * Port number of cassansdra server(s)
+         * 
+         * Path parameter: keyspace
+         * Keyspace to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path beanRef:hosts:port/keyspace
+         */
+        default CassandraEndpointBuilder cql(String componentName, String path) {
+            return CassandraEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
-     * 
-     * Category: database,nosql
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-cassandraql
-     * 
-     * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
-     * 
-     * Path parameter: beanRef
-     * beanRef is defined using bean:id
-     * 
-     * Path parameter: hosts
-     * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
-     * comma.
-     * 
-     * Path parameter: port
-     * Port number of cassansdra server(s)
-     * 
-     * Path parameter: keyspace
-     * Keyspace to use
-     */
-    static CassandraEndpointBuilder cql(String path) {
+    static CassandraEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CassandraEndpointBuilderImpl extends AbstractEndpointBuilder implements CassandraEndpointBuilder, AdvancedCassandraEndpointBuilder {
             public CassandraEndpointBuilderImpl(String path) {
-                super("cql", path);
+                super(componentName, path);
             }
         }
         return new CassandraEndpointBuilderImpl(path);

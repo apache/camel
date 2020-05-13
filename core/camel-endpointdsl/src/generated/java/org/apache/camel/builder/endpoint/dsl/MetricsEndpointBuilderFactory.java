@@ -310,33 +310,44 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
+         * 
+         * @param path metricsType:metricsName
          */
         default MetricsEndpointBuilder metrics(String path) {
-            return MetricsEndpointBuilderFactory.metrics(path);
+            return MetricsEndpointBuilderFactory.endpointBuilder("metrics", path);
+        }
+        /**
+         * Metrics (camel-metrics)
+         * Collect various metrics directly from Camel routes using the
+         * DropWizard metrics library.
+         * 
+         * Category: monitoring
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-metrics
+         * 
+         * Syntax: <code>metrics:metricsType:metricsName</code>
+         * 
+         * Path parameter: metricsType (required)
+         * Type of metrics
+         * The value can be one of: gauge, counter, histogram, meter, timer
+         * 
+         * Path parameter: metricsName (required)
+         * Name of metrics
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path metricsType:metricsName
+         */
+        default MetricsEndpointBuilder metrics(String componentName, String path) {
+            return MetricsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Metrics (camel-metrics)
-     * Collect various metrics directly from Camel routes using the DropWizard
-     * metrics library.
-     * 
-     * Category: monitoring
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-metrics
-     * 
-     * Syntax: <code>metrics:metricsType:metricsName</code>
-     * 
-     * Path parameter: metricsType (required)
-     * Type of metrics
-     * The value can be one of: gauge, counter, histogram, meter, timer
-     * 
-     * Path parameter: metricsName (required)
-     * Name of metrics
-     */
-    static MetricsEndpointBuilder metrics(String path) {
+    static MetricsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MetricsEndpointBuilder, AdvancedMetricsEndpointBuilder {
             public MetricsEndpointBuilderImpl(String path) {
-                super("metrics", path);
+                super(componentName, path);
             }
         }
         return new MetricsEndpointBuilderImpl(path);

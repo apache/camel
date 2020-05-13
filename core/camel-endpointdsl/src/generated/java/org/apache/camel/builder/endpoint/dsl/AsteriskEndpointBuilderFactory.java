@@ -560,28 +560,41 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of component
+         * 
+         * @param path name
          */
         default AsteriskEndpointBuilder asterisk(String path) {
-            return AsteriskEndpointBuilderFactory.asterisk(path);
+            return AsteriskEndpointBuilderFactory.endpointBuilder("asterisk", path);
+        }
+        /**
+         * Asterisk (camel-asterisk)
+         * Interact with Asterisk PBX Server.
+         * 
+         * Category: voip
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-asterisk
+         * 
+         * Syntax: <code>asterisk:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of component
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default AsteriskEndpointBuilder asterisk(
+                String componentName,
+                String path) {
+            return AsteriskEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Asterisk (camel-asterisk)
-     * Interact with Asterisk PBX Server.
-     * 
-     * Category: voip
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-asterisk
-     * 
-     * Syntax: <code>asterisk:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of component
-     */
-    static AsteriskEndpointBuilder asterisk(String path) {
+    static AsteriskEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AsteriskEndpointBuilderImpl extends AbstractEndpointBuilder implements AsteriskEndpointBuilder, AdvancedAsteriskEndpointBuilder {
             public AsteriskEndpointBuilderImpl(String path) {
-                super("asterisk", path);
+                super(componentName, path);
             }
         }
         return new AsteriskEndpointBuilderImpl(path);

@@ -438,31 +438,43 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
                 String path) {
-            return KubernetesPersistentVolumesClaimsEndpointBuilderFactory.kubernetesPersistentVolumesClaims(path);
+            return KubernetesPersistentVolumesClaimsEndpointBuilderFactory.endpointBuilder("kubernetes-persistent-volumes-claims", path);
+        }
+        /**
+         * Kubernetes Persistent Volume Claim (camel-kubernetes)
+         * Perform operations on Kubernetes Persistent Volumes Claims and get
+         * notified on Persistent Volumes Claim changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
+                String componentName,
+                String path) {
+            return KubernetesPersistentVolumesClaimsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Persistent Volume Claim (camel-kubernetes)
-     * Perform operations on Kubernetes Persistent Volumes Claims and get
-     * notified on Persistent Volumes Claim changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
+    static KubernetesPersistentVolumesClaimsEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class KubernetesPersistentVolumesClaimsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPersistentVolumesClaimsEndpointBuilder, AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder {
             public KubernetesPersistentVolumesClaimsEndpointBuilderImpl(String path) {
-                super("kubernetes-persistent-volumes-claims", path);
+                super(componentName, path);
             }
         }
         return new KubernetesPersistentVolumesClaimsEndpointBuilderImpl(path);

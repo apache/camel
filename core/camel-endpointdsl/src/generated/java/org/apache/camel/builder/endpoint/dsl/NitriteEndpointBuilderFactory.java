@@ -645,28 +645,39 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * Path parameter: database (required)
          * Path to database file. Will be created if not exists.
+         * 
+         * @param path database
          */
         default NitriteEndpointBuilder nitrite(String path) {
-            return NitriteEndpointBuilderFactory.nitrite(path);
+            return NitriteEndpointBuilderFactory.endpointBuilder("nitrite", path);
+        }
+        /**
+         * Nitrite (camel-nitrite)
+         * Access Nitrite databases.
+         * 
+         * Category: database,nosql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-nitrite
+         * 
+         * Syntax: <code>nitrite:database</code>
+         * 
+         * Path parameter: database (required)
+         * Path to database file. Will be created if not exists.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path database
+         */
+        default NitriteEndpointBuilder nitrite(String componentName, String path) {
+            return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database,nosql
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * Syntax: <code>nitrite:database</code>
-     * 
-     * Path parameter: database (required)
-     * Path to database file. Will be created if not exists.
-     */
-    static NitriteEndpointBuilder nitrite(String path) {
+    static NitriteEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class NitriteEndpointBuilderImpl extends AbstractEndpointBuilder implements NitriteEndpointBuilder, AdvancedNitriteEndpointBuilder {
             public NitriteEndpointBuilderImpl(String path) {
-                super("nitrite", path);
+                super(componentName, path);
             }
         }
         return new NitriteEndpointBuilderImpl(path);

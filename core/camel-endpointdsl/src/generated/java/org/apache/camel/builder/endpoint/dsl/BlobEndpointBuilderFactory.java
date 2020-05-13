@@ -1353,31 +1353,44 @@ public interface BlobEndpointBuilderFactory {
          * 
          * Path parameter: containerName
          * The blob container name
+         * 
+         * @param path containerName
          */
         default BlobEndpointBuilder azureStorageBlob(String path) {
-            return BlobEndpointBuilderFactory.azureStorageBlob(path);
+            return BlobEndpointBuilderFactory.endpointBuilder("azure-storage-blob", path);
+        }
+        /**
+         * Azure Storage Blob Service (camel-azure-storage-blob)
+         * Store and retrieve blobs from Azure Storage Blob Service using SDK
+         * v12.
+         * 
+         * Category: cloud,file
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-azure-storage-blob
+         * 
+         * Syntax: <code>azure-storage-blob:containerName</code>
+         * 
+         * Path parameter: accountName
+         * Azure account name to be used for authentication with azure blob
+         * services
+         * 
+         * Path parameter: containerName
+         * The blob container name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path containerName
+         */
+        default BlobEndpointBuilder azureStorageBlob(
+                String componentName,
+                String path) {
+            return BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Azure Storage Blob Service (camel-azure-storage-blob)
-     * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
-     * 
-     * Category: cloud,file
-     * Since: 3.3
-     * Maven coordinates: org.apache.camel:camel-azure-storage-blob
-     * 
-     * Syntax: <code>azure-storage-blob:containerName</code>
-     * 
-     * Path parameter: accountName
-     * Azure account name to be used for authentication with azure blob services
-     * 
-     * Path parameter: containerName
-     * The blob container name
-     */
-    static BlobEndpointBuilder azureStorageBlob(String path) {
+    static BlobEndpointBuilder endpointBuilder(String componentName, String path) {
         class BlobEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobEndpointBuilder, AdvancedBlobEndpointBuilder {
             public BlobEndpointBuilderImpl(String path) {
-                super("azure-storage-blob", path);
+                super(componentName, path);
             }
         }
         return new BlobEndpointBuilderImpl(path);

@@ -261,32 +261,43 @@ public interface WorkdayEndpointBuilderFactory {
          * 
          * Path parameter: path (required)
          * The API path to access an entity structure.
+         * 
+         * @param path entity:path
          */
         default WorkdayEndpointBuilder workday(String path) {
-            return WorkdayEndpointBuilderFactory.workday(path);
+            return WorkdayEndpointBuilderFactory.endpointBuilder("workday", path);
+        }
+        /**
+         * Workday (camel-workday)
+         * Detect and parse documents using Workday.
+         * 
+         * Category: hcm
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-workday
+         * 
+         * Syntax: <code>workday:entity:path</code>
+         * 
+         * Path parameter: entity (required)
+         * The entity to be requested or subscribed via API.
+         * The value can be one of: report
+         * 
+         * Path parameter: path (required)
+         * The API path to access an entity structure.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path entity:path
+         */
+        default WorkdayEndpointBuilder workday(String componentName, String path) {
+            return WorkdayEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Workday (camel-workday)
-     * Detect and parse documents using Workday.
-     * 
-     * Category: hcm
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-workday
-     * 
-     * Syntax: <code>workday:entity:path</code>
-     * 
-     * Path parameter: entity (required)
-     * The entity to be requested or subscribed via API.
-     * The value can be one of: report
-     * 
-     * Path parameter: path (required)
-     * The API path to access an entity structure.
-     */
-    static WorkdayEndpointBuilder workday(String path) {
+    static WorkdayEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class WorkdayEndpointBuilderImpl extends AbstractEndpointBuilder implements WorkdayEndpointBuilder, AdvancedWorkdayEndpointBuilder {
             public WorkdayEndpointBuilderImpl(String path) {
-                super("workday", path);
+                super(componentName, path);
             }
         }
         return new WorkdayEndpointBuilderImpl(path);

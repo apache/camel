@@ -2169,29 +2169,38 @@ public interface SqlEndpointBuilderFactory {
          * Path parameter: query (required)
          * Sets the SQL query to perform. You can externalize the query by using
          * file: or classpath: as prefix and specify the location of the file.
+         * 
+         * @param path query
          */
         default SqlEndpointBuilder sql(String path) {
-            return SqlEndpointBuilderFactory.sql(path);
+            return SqlEndpointBuilderFactory.endpointBuilder("sql", path);
+        }
+        /**
+         * SQL (camel-sql)
+         * Perform SQL queries using Spring JDBC.
+         * 
+         * Category: database,sql
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-sql
+         * 
+         * Syntax: <code>sql:query</code>
+         * 
+         * Path parameter: query (required)
+         * Sets the SQL query to perform. You can externalize the query by using
+         * file: or classpath: as prefix and specify the location of the file.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path query
+         */
+        default SqlEndpointBuilder sql(String componentName, String path) {
+            return SqlEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SQL (camel-sql)
-     * Perform SQL queries using Spring JDBC.
-     * 
-     * Category: database,sql
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-sql
-     * 
-     * Syntax: <code>sql:query</code>
-     * 
-     * Path parameter: query (required)
-     * Sets the SQL query to perform. You can externalize the query by using
-     * file: or classpath: as prefix and specify the location of the file.
-     */
-    static SqlEndpointBuilder sql(String path) {
+    static SqlEndpointBuilder endpointBuilder(String componentName, String path) {
         class SqlEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlEndpointBuilder, AdvancedSqlEndpointBuilder {
             public SqlEndpointBuilderImpl(String path) {
-                super("sql", path);
+                super(componentName, path);
             }
         }
         return new SqlEndpointBuilderImpl(path);

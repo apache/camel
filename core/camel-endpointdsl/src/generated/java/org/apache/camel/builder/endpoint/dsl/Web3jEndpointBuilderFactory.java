@@ -1431,28 +1431,39 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * Path parameter: nodeAddress (required)
          * Sets the node address used to communicate
+         * 
+         * @param path nodeAddress
          */
         default Web3jEndpointBuilder web3j(String path) {
-            return Web3jEndpointBuilderFactory.web3j(path);
+            return Web3jEndpointBuilderFactory.endpointBuilder("web3j", path);
+        }
+        /**
+         * Web3j Ethereum Blockchain (camel-web3j)
+         * Interact with Ethereum nodes using web3j client API.
+         * 
+         * Category: bitcoin,blockchain
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-web3j
+         * 
+         * Syntax: <code>web3j:nodeAddress</code>
+         * 
+         * Path parameter: nodeAddress (required)
+         * Sets the node address used to communicate
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path nodeAddress
+         */
+        default Web3jEndpointBuilder web3j(String componentName, String path) {
+            return Web3jEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Web3j Ethereum Blockchain (camel-web3j)
-     * Interact with Ethereum nodes using web3j client API.
-     * 
-     * Category: bitcoin,blockchain
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-web3j
-     * 
-     * Syntax: <code>web3j:nodeAddress</code>
-     * 
-     * Path parameter: nodeAddress (required)
-     * Sets the node address used to communicate
-     */
-    static Web3jEndpointBuilder web3j(String path) {
+    static Web3jEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class Web3jEndpointBuilderImpl extends AbstractEndpointBuilder implements Web3jEndpointBuilder, AdvancedWeb3jEndpointBuilder {
             public Web3jEndpointBuilderImpl(String path) {
-                super("web3j", path);
+                super(componentName, path);
             }
         }
         return new Web3jEndpointBuilderImpl(path);

@@ -1072,36 +1072,49 @@ public interface GoogleMailEndpointBuilderFactory {
          * The value can be one of: attachments, create, delete, get,
          * getProfile, gmailImport, insert, list, modify, patch, send, stop,
          * trash, untrash, update, watch
+         * 
+         * @param path apiName/methodName
          */
         default GoogleMailEndpointBuilder googleMail(String path) {
-            return GoogleMailEndpointBuilderFactory.googleMail(path);
+            return GoogleMailEndpointBuilderFactory.endpointBuilder("google-mail", path);
+        }
+        /**
+         * Google Mail (camel-google-mail)
+         * Manage messages in Google Mail.
+         * 
+         * Category: api,cloud,mail
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-google-mail
+         * 
+         * Syntax: <code>google-mail:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS,
+         * HISTORY, DRAFTS, USERS
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: attachments, create, delete, get,
+         * getProfile, gmailImport, insert, list, modify, patch, send, stop,
+         * trash, untrash, update, watch
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default GoogleMailEndpointBuilder googleMail(
+                String componentName,
+                String path) {
+            return GoogleMailEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Mail (camel-google-mail)
-     * Manage messages in Google Mail.
-     * 
-     * Category: api,cloud,mail
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
-     * Syntax: <code>google-mail:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY,
-     * DRAFTS, USERS
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     * The value can be one of: attachments, create, delete, get, getProfile,
-     * gmailImport, insert, list, modify, patch, send, stop, trash, untrash,
-     * update, watch
-     */
-    static GoogleMailEndpointBuilder googleMail(String path) {
+    static GoogleMailEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleMailEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailEndpointBuilder, AdvancedGoogleMailEndpointBuilder {
             public GoogleMailEndpointBuilderImpl(String path) {
-                super("google-mail", path);
+                super(componentName, path);
             }
         }
         return new GoogleMailEndpointBuilderImpl(path);

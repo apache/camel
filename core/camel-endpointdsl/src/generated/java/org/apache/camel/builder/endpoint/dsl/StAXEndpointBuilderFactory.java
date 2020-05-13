@@ -157,28 +157,37 @@ public interface StAXEndpointBuilderFactory {
          * 
          * Path parameter: contentHandlerClass (required)
          * The FQN class name for the ContentHandler implementation to use.
+         * 
+         * @param path contentHandlerClass
          */
         default StAXEndpointBuilder stax(String path) {
-            return StAXEndpointBuilderFactory.stax(path);
+            return StAXEndpointBuilderFactory.endpointBuilder("stax", path);
+        }
+        /**
+         * StAX (camel-stax)
+         * Process XML payloads by a SAX ContentHandler.
+         * 
+         * Category: transformation
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-stax
+         * 
+         * Syntax: <code>stax:contentHandlerClass</code>
+         * 
+         * Path parameter: contentHandlerClass (required)
+         * The FQN class name for the ContentHandler implementation to use.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path contentHandlerClass
+         */
+        default StAXEndpointBuilder stax(String componentName, String path) {
+            return StAXEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * StAX (camel-stax)
-     * Process XML payloads by a SAX ContentHandler.
-     * 
-     * Category: transformation
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-stax
-     * 
-     * Syntax: <code>stax:contentHandlerClass</code>
-     * 
-     * Path parameter: contentHandlerClass (required)
-     * The FQN class name for the ContentHandler implementation to use.
-     */
-    static StAXEndpointBuilder stax(String path) {
+    static StAXEndpointBuilder endpointBuilder(String componentName, String path) {
         class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder, AdvancedStAXEndpointBuilder {
             public StAXEndpointBuilderImpl(String path) {
-                super("stax", path);
+                super(componentName, path);
             }
         }
         return new StAXEndpointBuilderImpl(path);

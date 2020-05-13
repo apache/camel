@@ -461,29 +461,42 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * Path parameter: path (required)
          * Path of directory to consume events from.
+         * 
+         * @param path path
          */
         default FileWatchEndpointBuilder fileWatch(String path) {
-            return FileWatchEndpointBuilderFactory.fileWatch(path);
+            return FileWatchEndpointBuilderFactory.endpointBuilder("file-watch", path);
+        }
+        /**
+         * File Watch (camel-file-watch)
+         * Get notified about file events in a directory using
+         * java.nio.file.WatchService.
+         * 
+         * Category: file
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-file-watch
+         * 
+         * Syntax: <code>file-watch:path</code>
+         * 
+         * Path parameter: path (required)
+         * Path of directory to consume events from.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path
+         */
+        default FileWatchEndpointBuilder fileWatch(
+                String componentName,
+                String path) {
+            return FileWatchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * File Watch (camel-file-watch)
-     * Get notified about file events in a directory using
-     * java.nio.file.WatchService.
-     * 
-     * Category: file
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-file-watch
-     * 
-     * Syntax: <code>file-watch:path</code>
-     * 
-     * Path parameter: path (required)
-     * Path of directory to consume events from.
-     */
-    static FileWatchEndpointBuilder fileWatch(String path) {
+    static FileWatchEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class FileWatchEndpointBuilderImpl extends AbstractEndpointBuilder implements FileWatchEndpointBuilder, AdvancedFileWatchEndpointBuilder {
             public FileWatchEndpointBuilderImpl(String path) {
-                super("file-watch", path);
+                super(componentName, path);
             }
         }
         return new FileWatchEndpointBuilderImpl(path);

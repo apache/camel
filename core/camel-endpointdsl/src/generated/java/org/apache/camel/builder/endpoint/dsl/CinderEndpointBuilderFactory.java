@@ -265,28 +265,41 @@ public interface CinderEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * OpenStack host url
+         * 
+         * @param path host
          */
         default CinderEndpointBuilder openstackCinder(String path) {
-            return CinderEndpointBuilderFactory.openstackCinder(path);
+            return CinderEndpointBuilderFactory.endpointBuilder("openstack-cinder", path);
+        }
+        /**
+         * OpenStack Cinder (camel-openstack)
+         * Access data in OpenStack Cinder block storage.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-cinder:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default CinderEndpointBuilder openstackCinder(
+                String componentName,
+                String path) {
+            return CinderEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OpenStack Cinder (camel-openstack)
-     * Access data in OpenStack Cinder block storage.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     * 
-     * Syntax: <code>openstack-cinder:host</code>
-     * 
-     * Path parameter: host (required)
-     * OpenStack host url
-     */
-    static CinderEndpointBuilder openstackCinder(String path) {
+    static CinderEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CinderEndpointBuilderImpl extends AbstractEndpointBuilder implements CinderEndpointBuilder, AdvancedCinderEndpointBuilder {
             public CinderEndpointBuilderImpl(String path) {
-                super("openstack-cinder", path);
+                super(componentName, path);
             }
         }
         return new CinderEndpointBuilderImpl(path);

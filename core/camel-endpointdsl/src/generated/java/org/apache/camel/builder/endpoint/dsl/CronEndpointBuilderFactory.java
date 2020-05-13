@@ -227,29 +227,38 @@ public interface CronEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The name of the cron trigger
+         * 
+         * @param path name
          */
         default CronEndpointBuilder cron(String path) {
-            return CronEndpointBuilderFactory.cron(path);
+            return CronEndpointBuilderFactory.endpointBuilder("cron", path);
+        }
+        /**
+         * Cron (camel-cron)
+         * A generic interface for triggering events at times specified through
+         * the Unix cron syntax.
+         * 
+         * Category: scheduling
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-cron
+         * 
+         * Syntax: <code>cron:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name of the cron trigger
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default CronEndpointBuilder cron(String componentName, String path) {
+            return CronEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Cron (camel-cron)
-     * A generic interface for triggering events at times specified through the
-     * Unix cron syntax.
-     * 
-     * Category: scheduling
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-cron
-     * 
-     * Syntax: <code>cron:name</code>
-     * 
-     * Path parameter: name (required)
-     * The name of the cron trigger
-     */
-    static CronEndpointBuilder cron(String path) {
+    static CronEndpointBuilder endpointBuilder(String componentName, String path) {
         class CronEndpointBuilderImpl extends AbstractEndpointBuilder implements CronEndpointBuilder, AdvancedCronEndpointBuilder {
             public CronEndpointBuilderImpl(String path) {
-                super("cron", path);
+                super(componentName, path);
             }
         }
         return new CronEndpointBuilderImpl(path);

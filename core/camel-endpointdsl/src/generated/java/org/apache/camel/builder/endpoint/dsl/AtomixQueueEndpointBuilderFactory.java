@@ -1258,28 +1258,41 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * Path parameter: resourceName (required)
          * The distributed resource name
+         * 
+         * @param path resourceName
          */
         default AtomixQueueEndpointBuilder atomixQueue(String path) {
-            return AtomixQueueEndpointBuilderFactory.atomixQueue(path);
+            return AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue", path);
+        }
+        /**
+         * Atomix Queue (camel-atomix)
+         * Access Atomix's distributed queue.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-queue:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceName
+         */
+        default AtomixQueueEndpointBuilder atomixQueue(
+                String componentName,
+                String path) {
+            return AtomixQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atomix Queue (camel-atomix)
-     * Access Atomix's distributed queue.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-queue:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     */
-    static AtomixQueueEndpointBuilder atomixQueue(String path) {
+    static AtomixQueueEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtomixQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixQueueEndpointBuilder, AdvancedAtomixQueueEndpointBuilder {
             public AtomixQueueEndpointBuilderImpl(String path) {
-                super("atomix-queue", path);
+                super(componentName, path);
             }
         }
         return new AtomixQueueEndpointBuilderImpl(path);

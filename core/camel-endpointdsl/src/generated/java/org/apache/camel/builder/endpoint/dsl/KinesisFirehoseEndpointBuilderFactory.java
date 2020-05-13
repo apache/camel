@@ -301,28 +301,41 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * Path parameter: streamName (required)
          * Name of the stream
+         * 
+         * @param path streamName
          */
         default KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
-            return KinesisFirehoseEndpointBuilderFactory.awsKinesisFirehose(path);
+            return KinesisFirehoseEndpointBuilderFactory.endpointBuilder("aws-kinesis-firehose", path);
+        }
+        /**
+         * AWS Kinesis Firehose (camel-aws-kinesis)
+         * Consume data from AWS Kinesis Firehose streams.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-aws-kinesis
+         * 
+         * Syntax: <code>aws-kinesis-firehose:streamName</code>
+         * 
+         * Path parameter: streamName (required)
+         * Name of the stream
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path streamName
+         */
+        default KinesisFirehoseEndpointBuilder awsKinesisFirehose(
+                String componentName,
+                String path) {
+            return KinesisFirehoseEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Kinesis Firehose (camel-aws-kinesis)
-     * Consume data from AWS Kinesis Firehose streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     * 
-     * Syntax: <code>aws-kinesis-firehose:streamName</code>
-     * 
-     * Path parameter: streamName (required)
-     * Name of the stream
-     */
-    static KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
+    static KinesisFirehoseEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder, AdvancedKinesisFirehoseEndpointBuilder {
             public KinesisFirehoseEndpointBuilderImpl(String path) {
-                super("aws-kinesis-firehose", path);
+                super(componentName, path);
             }
         }
         return new KinesisFirehoseEndpointBuilderImpl(path);

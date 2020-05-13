@@ -5414,28 +5414,41 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What operation to perform
+         * 
+         * @param path methodName
          */
         default FacebookEndpointBuilder facebook(String path) {
-            return FacebookEndpointBuilderFactory.facebook(path);
+            return FacebookEndpointBuilderFactory.endpointBuilder("facebook", path);
+        }
+        /**
+         * Facebook (camel-facebook)
+         * Send requests to Facebook APIs supported by Facebook4J.
+         * 
+         * Category: social
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-facebook
+         * 
+         * Syntax: <code>facebook:methodName</code>
+         * 
+         * Path parameter: methodName (required)
+         * What operation to perform
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path methodName
+         */
+        default FacebookEndpointBuilder facebook(
+                String componentName,
+                String path) {
+            return FacebookEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Facebook (camel-facebook)
-     * Send requests to Facebook APIs supported by Facebook4J.
-     * 
-     * Category: social
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-facebook
-     * 
-     * Syntax: <code>facebook:methodName</code>
-     * 
-     * Path parameter: methodName (required)
-     * What operation to perform
-     */
-    static FacebookEndpointBuilder facebook(String path) {
+    static FacebookEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class FacebookEndpointBuilderImpl extends AbstractEndpointBuilder implements FacebookEndpointBuilder, AdvancedFacebookEndpointBuilder {
             public FacebookEndpointBuilderImpl(String path) {
-                super("facebook", path);
+                super(componentName, path);
             }
         }
         return new FacebookEndpointBuilderImpl(path);

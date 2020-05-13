@@ -1086,33 +1086,46 @@ public interface QueueEndpointBuilderFactory {
          * 
          * Path parameter: queueName
          * The queue resource name
+         * 
+         * @param path queueName
          */
         default QueueEndpointBuilder azureStorageQueue(String path) {
-            return QueueEndpointBuilderFactory.azureStorageQueue(path);
+            return QueueEndpointBuilderFactory.endpointBuilder("azure-storage-queue", path);
+        }
+        /**
+         * Azure Storage Queue Service (camel-azure-storage-queue)
+         * The azure-storage-queue component is used for storing and retrieving
+         * the messages to/from Azure Storage Queue using Azure SDK v12.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-azure-storage-queue
+         * 
+         * Syntax: <code>azure-storage-queue:queueName</code>
+         * 
+         * Path parameter: accountName
+         * Azure account name to be used for authentication with azure queue
+         * services
+         * 
+         * Path parameter: queueName
+         * The queue resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path queueName
+         */
+        default QueueEndpointBuilder azureStorageQueue(
+                String componentName,
+                String path) {
+            return QueueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Azure Storage Queue Service (camel-azure-storage-queue)
-     * The azure-storage-queue component is used for storing and retrieving the
-     * messages to/from Azure Storage Queue using Azure SDK v12.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.3
-     * Maven coordinates: org.apache.camel:camel-azure-storage-queue
-     * 
-     * Syntax: <code>azure-storage-queue:queueName</code>
-     * 
-     * Path parameter: accountName
-     * Azure account name to be used for authentication with azure queue
-     * services
-     * 
-     * Path parameter: queueName
-     * The queue resource name
-     */
-    static QueueEndpointBuilder azureStorageQueue(String path) {
+    static QueueEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class QueueEndpointBuilderImpl extends AbstractEndpointBuilder implements QueueEndpointBuilder, AdvancedQueueEndpointBuilder {
             public QueueEndpointBuilderImpl(String path) {
-                super("azure-storage-queue", path);
+                super(componentName, path);
             }
         }
         return new QueueEndpointBuilderImpl(path);

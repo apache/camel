@@ -300,28 +300,41 @@ public interface EtcdKeysEndpointBuilderFactory {
          * 
          * Path parameter: path
          * The path the endpoint refers to
+         * 
+         * @param path path
          */
         default EtcdKeysEndpointBuilder etcdKeys(String path) {
-            return EtcdKeysEndpointBuilderFactory.etcdKeys(path);
+            return EtcdKeysEndpointBuilderFactory.endpointBuilder("etcd-keys", path);
+        }
+        /**
+         * Etcd Keys (camel-etcd)
+         * Get, set or delete keys in etcd key-value store.
+         * 
+         * Category: clustering,database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-etcd
+         * 
+         * Syntax: <code>etcd-keys:path</code>
+         * 
+         * Path parameter: path
+         * The path the endpoint refers to
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path
+         */
+        default EtcdKeysEndpointBuilder etcdKeys(
+                String componentName,
+                String path) {
+            return EtcdKeysEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Etcd Keys (camel-etcd)
-     * Get, set or delete keys in etcd key-value store.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     * 
-     * Syntax: <code>etcd-keys:path</code>
-     * 
-     * Path parameter: path
-     * The path the endpoint refers to
-     */
-    static EtcdKeysEndpointBuilder etcdKeys(String path) {
+    static EtcdKeysEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class EtcdKeysEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdKeysEndpointBuilder, AdvancedEtcdKeysEndpointBuilder {
             public EtcdKeysEndpointBuilderImpl(String path) {
-                super("etcd-keys", path);
+                super(componentName, path);
             }
         }
         return new EtcdKeysEndpointBuilderImpl(path);

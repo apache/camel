@@ -216,29 +216,40 @@ public interface ServiceEndpointBuilderFactory {
          * 
          * Path parameter: delegateUri (required)
          * The endpoint uri to expose as service
+         * 
+         * @param path delegateUri
          */
         default ServiceEndpointBuilder service(String path) {
-            return ServiceEndpointBuilderFactory.service(path);
+            return ServiceEndpointBuilderFactory.endpointBuilder("service", path);
+        }
+        /**
+         * Service (camel-service)
+         * Register a Camel endpoint to a Service Registry (such as Consul,
+         * Etcd) and delegate to it.
+         * 
+         * Category: cloud
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-service
+         * 
+         * Syntax: <code>service:delegateUri</code>
+         * 
+         * Path parameter: delegateUri (required)
+         * The endpoint uri to expose as service
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path delegateUri
+         */
+        default ServiceEndpointBuilder service(String componentName, String path) {
+            return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * Syntax: <code>service:delegateUri</code>
-     * 
-     * Path parameter: delegateUri (required)
-     * The endpoint uri to expose as service
-     */
-    static ServiceEndpointBuilder service(String path) {
+    static ServiceEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceEndpointBuilder, AdvancedServiceEndpointBuilder {
             public ServiceEndpointBuilderImpl(String path) {
-                super("service", path);
+                super(componentName, path);
             }
         }
         return new ServiceEndpointBuilderImpl(path);

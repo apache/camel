@@ -812,28 +812,37 @@ public interface RssEndpointBuilderFactory {
          * 
          * Path parameter: feedUri (required)
          * The URI to the feed to poll.
+         * 
+         * @param path feedUri
          */
         default RssEndpointBuilder rss(String path) {
-            return RssEndpointBuilderFactory.rss(path);
+            return RssEndpointBuilderFactory.endpointBuilder("rss", path);
+        }
+        /**
+         * RSS (camel-rss)
+         * Poll RSS feeds.
+         * 
+         * Category: rss
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-rss
+         * 
+         * Syntax: <code>rss:feedUri</code>
+         * 
+         * Path parameter: feedUri (required)
+         * The URI to the feed to poll.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path feedUri
+         */
+        default RssEndpointBuilder rss(String componentName, String path) {
+            return RssEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * RSS (camel-rss)
-     * Poll RSS feeds.
-     * 
-     * Category: rss
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-rss
-     * 
-     * Syntax: <code>rss:feedUri</code>
-     * 
-     * Path parameter: feedUri (required)
-     * The URI to the feed to poll.
-     */
-    static RssEndpointBuilder rss(String path) {
+    static RssEndpointBuilder endpointBuilder(String componentName, String path) {
         class RssEndpointBuilderImpl extends AbstractEndpointBuilder implements RssEndpointBuilder, AdvancedRssEndpointBuilder {
             public RssEndpointBuilderImpl(String path) {
-                super("rss", path);
+                super(componentName, path);
             }
         }
         return new RssEndpointBuilderImpl(path);

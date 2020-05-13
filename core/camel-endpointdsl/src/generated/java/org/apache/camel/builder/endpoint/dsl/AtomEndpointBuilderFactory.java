@@ -814,28 +814,37 @@ public interface AtomEndpointBuilderFactory {
          * 
          * Path parameter: feedUri (required)
          * The URI to the feed to poll.
+         * 
+         * @param path feedUri
          */
         default AtomEndpointBuilder atom(String path) {
-            return AtomEndpointBuilderFactory.atom(path);
+            return AtomEndpointBuilderFactory.endpointBuilder("atom", path);
+        }
+        /**
+         * Atom (camel-atom)
+         * Poll Atom RSS feeds.
+         * 
+         * Category: rss
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-atom
+         * 
+         * Syntax: <code>atom:feedUri</code>
+         * 
+         * Path parameter: feedUri (required)
+         * The URI to the feed to poll.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path feedUri
+         */
+        default AtomEndpointBuilder atom(String componentName, String path) {
+            return AtomEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atom (camel-atom)
-     * Poll Atom RSS feeds.
-     * 
-     * Category: rss
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-atom
-     * 
-     * Syntax: <code>atom:feedUri</code>
-     * 
-     * Path parameter: feedUri (required)
-     * The URI to the feed to poll.
-     */
-    static AtomEndpointBuilder atom(String path) {
+    static AtomEndpointBuilder endpointBuilder(String componentName, String path) {
         class AtomEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomEndpointBuilder, AdvancedAtomEndpointBuilder {
             public AtomEndpointBuilderImpl(String path) {
-                super("atom", path);
+                super(componentName, path);
             }
         }
         return new AtomEndpointBuilderImpl(path);

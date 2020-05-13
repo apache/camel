@@ -251,29 +251,38 @@ public interface TikaEndpointBuilderFactory {
          * Path parameter: operation (required)
          * Operation type
          * The value can be one of: parse, detect
+         * 
+         * @param path operation
          */
         default TikaEndpointBuilder tika(String path) {
-            return TikaEndpointBuilderFactory.tika(path);
+            return TikaEndpointBuilderFactory.endpointBuilder("tika", path);
+        }
+        /**
+         * Tika (camel-tika)
+         * Parse documents and extract metadata and text using Apache Tika.
+         * 
+         * Category: document,transformation
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-tika
+         * 
+         * Syntax: <code>tika:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * Operation type
+         * The value can be one of: parse, detect
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         */
+        default TikaEndpointBuilder tika(String componentName, String path) {
+            return TikaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Tika (camel-tika)
-     * Parse documents and extract metadata and text using Apache Tika.
-     * 
-     * Category: document,transformation
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-tika
-     * 
-     * Syntax: <code>tika:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * Operation type
-     * The value can be one of: parse, detect
-     */
-    static TikaEndpointBuilder tika(String path) {
+    static TikaEndpointBuilder endpointBuilder(String componentName, String path) {
         class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {
             public TikaEndpointBuilderImpl(String path) {
-                super("tika", path);
+                super(componentName, path);
             }
         }
         return new TikaEndpointBuilderImpl(path);

@@ -1944,36 +1944,49 @@ public interface CouchbaseEndpointBuilderFactory {
          * Path parameter: port
          * The port number to use
          * Default value: 8091
+         * 
+         * @param path protocol:hostname:port
          */
         default CouchbaseEndpointBuilder couchbase(String path) {
-            return CouchbaseEndpointBuilderFactory.couchbase(path);
+            return CouchbaseEndpointBuilderFactory.endpointBuilder("couchbase", path);
+        }
+        /**
+         * Couchbase (camel-couchbase)
+         * Query Couchbase Views with a poll strategy and/or perform various
+         * operations against Couchbase databases.
+         * 
+         * Category: database,nosql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-couchbase
+         * 
+         * Syntax: <code>couchbase:protocol:hostname:port</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol to use
+         * 
+         * Path parameter: hostname (required)
+         * The hostname to use
+         * 
+         * Path parameter: port
+         * The port number to use
+         * Default value: 8091
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path protocol:hostname:port
+         */
+        default CouchbaseEndpointBuilder couchbase(
+                String componentName,
+                String path) {
+            return CouchbaseEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Couchbase (camel-couchbase)
-     * Query Couchbase Views with a poll strategy and/or perform various
-     * operations against Couchbase databases.
-     * 
-     * Category: database,nosql
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-couchbase
-     * 
-     * Syntax: <code>couchbase:protocol:hostname:port</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol to use
-     * 
-     * Path parameter: hostname (required)
-     * The hostname to use
-     * 
-     * Path parameter: port
-     * The port number to use
-     * Default value: 8091
-     */
-    static CouchbaseEndpointBuilder couchbase(String path) {
+    static CouchbaseEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class CouchbaseEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchbaseEndpointBuilder, AdvancedCouchbaseEndpointBuilder {
             public CouchbaseEndpointBuilderImpl(String path) {
-                super("couchbase", path);
+                super(componentName, path);
             }
         }
         return new CouchbaseEndpointBuilderImpl(path);

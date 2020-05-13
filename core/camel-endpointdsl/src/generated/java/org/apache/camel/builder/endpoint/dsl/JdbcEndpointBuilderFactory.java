@@ -505,31 +505,40 @@ public interface JdbcEndpointBuilderFactory {
          * dataSource or default, then Camel will attempt to lookup a default
          * DataSource from the registry, meaning if there is a only one instance
          * of DataSource found, then this DataSource will be used.
+         * 
+         * @param path dataSourceName
          */
         default JdbcEndpointBuilder jdbc(String path) {
-            return JdbcEndpointBuilderFactory.jdbc(path);
+            return JdbcEndpointBuilderFactory.endpointBuilder("jdbc", path);
+        }
+        /**
+         * JDBC (camel-jdbc)
+         * Access databases through SQL and JDBC.
+         * 
+         * Category: database,sql
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-jdbc
+         * 
+         * Syntax: <code>jdbc:dataSourceName</code>
+         * 
+         * Path parameter: dataSourceName (required)
+         * Name of DataSource to lookup in the Registry. If the name is
+         * dataSource or default, then Camel will attempt to lookup a default
+         * DataSource from the registry, meaning if there is a only one instance
+         * of DataSource found, then this DataSource will be used.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path dataSourceName
+         */
+        default JdbcEndpointBuilder jdbc(String componentName, String path) {
+            return JdbcEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JDBC (camel-jdbc)
-     * Access databases through SQL and JDBC.
-     * 
-     * Category: database,sql
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-jdbc
-     * 
-     * Syntax: <code>jdbc:dataSourceName</code>
-     * 
-     * Path parameter: dataSourceName (required)
-     * Name of DataSource to lookup in the Registry. If the name is dataSource
-     * or default, then Camel will attempt to lookup a default DataSource from
-     * the registry, meaning if there is a only one instance of DataSource
-     * found, then this DataSource will be used.
-     */
-    static JdbcEndpointBuilder jdbc(String path) {
+    static JdbcEndpointBuilder endpointBuilder(String componentName, String path) {
         class JdbcEndpointBuilderImpl extends AbstractEndpointBuilder implements JdbcEndpointBuilder, AdvancedJdbcEndpointBuilder {
             public JdbcEndpointBuilderImpl(String path) {
-                super("jdbc", path);
+                super(componentName, path);
             }
         }
         return new JdbcEndpointBuilderImpl(path);

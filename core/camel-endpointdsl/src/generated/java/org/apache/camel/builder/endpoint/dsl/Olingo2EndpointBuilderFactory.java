@@ -1662,32 +1662,43 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
+         * 
+         * @param path apiName/methodName
          */
         default Olingo2EndpointBuilder olingo2(String path) {
-            return Olingo2EndpointBuilderFactory.olingo2(path);
+            return Olingo2EndpointBuilderFactory.endpointBuilder("olingo2", path);
+        }
+        /**
+         * Olingo2 (camel-olingo2)
+         * Communicate with OData 2.0 services using Apache Olingo.
+         * 
+         * Category: cloud
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-olingo2
+         * 
+         * Syntax: <code>olingo2:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: DEFAULT
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default Olingo2EndpointBuilder olingo2(String componentName, String path) {
+            return Olingo2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Olingo2 (camel-olingo2)
-     * Communicate with OData 2.0 services using Apache Olingo.
-     * 
-     * Category: cloud
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-olingo2
-     * 
-     * Syntax: <code>olingo2:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: DEFAULT
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     */
-    static Olingo2EndpointBuilder olingo2(String path) {
+    static Olingo2EndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class Olingo2EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo2EndpointBuilder, AdvancedOlingo2EndpointBuilder {
             public Olingo2EndpointBuilderImpl(String path) {
-                super("olingo2", path);
+                super(componentName, path);
             }
         }
         return new Olingo2EndpointBuilderImpl(path);

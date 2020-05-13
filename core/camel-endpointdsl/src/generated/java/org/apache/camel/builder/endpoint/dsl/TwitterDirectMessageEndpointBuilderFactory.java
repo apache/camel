@@ -1553,30 +1553,43 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Path parameter: user (required)
          * The user name to send a direct message. This will be ignored for
          * consumer.
+         * 
+         * @param path user
          */
         default TwitterDirectMessageEndpointBuilder twitterDirectmessage(
                 String path) {
-            return TwitterDirectMessageEndpointBuilderFactory.twitterDirectmessage(path);
+            return TwitterDirectMessageEndpointBuilderFactory.endpointBuilder("twitter-directmessage", path);
+        }
+        /**
+         * Twitter Direct Message (camel-twitter)
+         * Send and receive Twitter direct messages.
+         * 
+         * Category: api,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
+         * Syntax: <code>twitter-directmessage:user</code>
+         * 
+         * Path parameter: user (required)
+         * The user name to send a direct message. This will be ignored for
+         * consumer.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path user
+         */
+        default TwitterDirectMessageEndpointBuilder twitterDirectmessage(
+                String componentName,
+                String path) {
+            return TwitterDirectMessageEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Twitter Direct Message (camel-twitter)
-     * Send and receive Twitter direct messages.
-     * 
-     * Category: api,social
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-twitter
-     * 
-     * Syntax: <code>twitter-directmessage:user</code>
-     * 
-     * Path parameter: user (required)
-     * The user name to send a direct message. This will be ignored for
-     * consumer.
-     */
-    static TwitterDirectMessageEndpointBuilder twitterDirectmessage(String path) {
+    static TwitterDirectMessageEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class TwitterDirectMessageEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterDirectMessageEndpointBuilder, AdvancedTwitterDirectMessageEndpointBuilder {
             public TwitterDirectMessageEndpointBuilderImpl(String path) {
-                super("twitter-directmessage", path);
+                super(componentName, path);
             }
         }
         return new TwitterDirectMessageEndpointBuilderImpl(path);

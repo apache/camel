@@ -321,28 +321,37 @@ public interface EKSEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default EKSEndpointBuilder awsEks(String path) {
-            return EKSEndpointBuilderFactory.awsEks(path);
+            return EKSEndpointBuilderFactory.endpointBuilder("aws-eks", path);
+        }
+        /**
+         * AWS EKS (camel-aws-eks)
+         * Manage AWS EKS cluster instances.
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-eks
+         * 
+         * Syntax: <code>aws-eks:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default EKSEndpointBuilder awsEks(String componentName, String path) {
+            return EKSEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS EKS (camel-aws-eks)
-     * Manage AWS EKS cluster instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-eks
-     * 
-     * Syntax: <code>aws-eks:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static EKSEndpointBuilder awsEks(String path) {
+    static EKSEndpointBuilder endpointBuilder(String componentName, String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder, AdvancedEKSEndpointBuilder {
             public EKSEndpointBuilderImpl(String path) {
-                super("aws-eks", path);
+                super(componentName, path);
             }
         }
         return new EKSEndpointBuilderImpl(path);

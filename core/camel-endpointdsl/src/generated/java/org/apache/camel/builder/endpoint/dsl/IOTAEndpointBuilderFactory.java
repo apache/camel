@@ -275,28 +275,37 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Component name
+         * 
+         * @param path name
          */
         default IOTAEndpointBuilder iota(String path) {
-            return IOTAEndpointBuilderFactory.iota(path);
+            return IOTAEndpointBuilderFactory.endpointBuilder("iota", path);
+        }
+        /**
+         * IOTA (camel-iota)
+         * Manage financial transactions using IOTA distributed ledger.
+         * 
+         * Category: ledger
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-iota
+         * 
+         * Syntax: <code>iota:name</code>
+         * 
+         * Path parameter: name (required)
+         * Component name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default IOTAEndpointBuilder iota(String componentName, String path) {
+            return IOTAEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * IOTA (camel-iota)
-     * Manage financial transactions using IOTA distributed ledger.
-     * 
-     * Category: ledger
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-iota
-     * 
-     * Syntax: <code>iota:name</code>
-     * 
-     * Path parameter: name (required)
-     * Component name
-     */
-    static IOTAEndpointBuilder iota(String path) {
+    static IOTAEndpointBuilder endpointBuilder(String componentName, String path) {
         class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder, AdvancedIOTAEndpointBuilder {
             public IOTAEndpointBuilderImpl(String path) {
-                super("iota", path);
+                super(componentName, path);
             }
         }
         return new IOTAEndpointBuilderImpl(path);

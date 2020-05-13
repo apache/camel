@@ -417,28 +417,41 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * Path parameter: itemId (required)
          * ID of the item
+         * 
+         * @param path itemId
          */
         default MiloServerEndpointBuilder miloServer(String path) {
-            return MiloServerEndpointBuilderFactory.miloServer(path);
+            return MiloServerEndpointBuilderFactory.endpointBuilder("milo-server", path);
+        }
+        /**
+         * OPC UA Server (camel-milo)
+         * Make telemetry data available as an OPC UA server.
+         * 
+         * Category: iot
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-milo
+         * 
+         * Syntax: <code>milo-server:itemId</code>
+         * 
+         * Path parameter: itemId (required)
+         * ID of the item
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path itemId
+         */
+        default MiloServerEndpointBuilder miloServer(
+                String componentName,
+                String path) {
+            return MiloServerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
-     * 
-     * Category: iot
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-milo
-     * 
-     * Syntax: <code>milo-server:itemId</code>
-     * 
-     * Path parameter: itemId (required)
-     * ID of the item
-     */
-    static MiloServerEndpointBuilder miloServer(String path) {
+    static MiloServerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MiloServerEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloServerEndpointBuilder, AdvancedMiloServerEndpointBuilder {
             public MiloServerEndpointBuilderImpl(String path) {
-                super("milo-server", path);
+                super(componentName, path);
             }
         }
         return new MiloServerEndpointBuilderImpl(path);

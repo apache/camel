@@ -305,32 +305,46 @@ public interface VelocityEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default VelocityEndpointBuilder velocity(String path) {
-            return VelocityEndpointBuilderFactory.velocity(path);
+            return VelocityEndpointBuilderFactory.endpointBuilder("velocity", path);
+        }
+        /**
+         * Velocity (camel-velocity)
+         * Transform messages using a Velocity template.
+         * 
+         * Category: transformation
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-velocity
+         * 
+         * Syntax: <code>velocity:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default VelocityEndpointBuilder velocity(
+                String componentName,
+                String path) {
+            return VelocityEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Velocity (camel-velocity)
-     * Transform messages using a Velocity template.
-     * 
-     * Category: transformation
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-velocity
-     * 
-     * Syntax: <code>velocity:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static VelocityEndpointBuilder velocity(String path) {
+    static VelocityEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class VelocityEndpointBuilderImpl extends AbstractEndpointBuilder implements VelocityEndpointBuilder, AdvancedVelocityEndpointBuilder {
             public VelocityEndpointBuilderImpl(String path) {
-                super("velocity", path);
+                super(componentName, path);
             }
         }
         return new VelocityEndpointBuilderImpl(path);

@@ -880,38 +880,49 @@ public interface ThriftEndpointBuilderFactory {
          * Path parameter: service (required)
          * Fully qualified service name from the thrift descriptor file (package
          * dot service definition name)
+         * 
+         * @param path host:port/service
          */
         default ThriftEndpointBuilder thrift(String path) {
-            return ThriftEndpointBuilderFactory.thrift(path);
+            return ThriftEndpointBuilderFactory.endpointBuilder("thrift", path);
+        }
+        /**
+         * Thrift (camel-thrift)
+         * Call and expose remote procedures (RPC) with Apache Thrift data
+         * format and serialization mechanism.
+         * 
+         * Category: rpc
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-thrift
+         * 
+         * Syntax: <code>thrift:host:port/service</code>
+         * 
+         * Path parameter: host
+         * The Thrift server host name. This is localhost or 0.0.0.0 (if not
+         * defined) when being a consumer or remote server host name when using
+         * producer.
+         * 
+         * Path parameter: port (required)
+         * The Thrift server port
+         * 
+         * Path parameter: service (required)
+         * Fully qualified service name from the thrift descriptor file (package
+         * dot service definition name)
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/service
+         */
+        default ThriftEndpointBuilder thrift(String componentName, String path) {
+            return ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Thrift (camel-thrift)
-     * Call and expose remote procedures (RPC) with Apache Thrift data format
-     * and serialization mechanism.
-     * 
-     * Category: rpc
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-thrift
-     * 
-     * Syntax: <code>thrift:host:port/service</code>
-     * 
-     * Path parameter: host
-     * The Thrift server host name. This is localhost or 0.0.0.0 (if not
-     * defined) when being a consumer or remote server host name when using
-     * producer.
-     * 
-     * Path parameter: port (required)
-     * The Thrift server port
-     * 
-     * Path parameter: service (required)
-     * Fully qualified service name from the thrift descriptor file (package dot
-     * service definition name)
-     */
-    static ThriftEndpointBuilder thrift(String path) {
+    static ThriftEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ThriftEndpointBuilderImpl extends AbstractEndpointBuilder implements ThriftEndpointBuilder, AdvancedThriftEndpointBuilder {
             public ThriftEndpointBuilderImpl(String path) {
-                super("thrift", path);
+                super(componentName, path);
             }
         }
         return new ThriftEndpointBuilderImpl(path);

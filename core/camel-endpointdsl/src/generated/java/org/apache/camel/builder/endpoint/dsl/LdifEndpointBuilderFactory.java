@@ -159,30 +159,39 @@ public interface LdifEndpointBuilderFactory {
          * The name of the LdapConnection bean to pull from the registry. Note
          * that this must be of scope prototype to avoid it being shared among
          * threads or using a connection that has timed out.
+         * 
+         * @param path ldapConnectionName
          */
         default LdifEndpointBuilder ldif(String path) {
-            return LdifEndpointBuilderFactory.ldif(path);
+            return LdifEndpointBuilderFactory.endpointBuilder("ldif", path);
+        }
+        /**
+         * LDIF (camel-ldif)
+         * Perform updates on an LDAP server from an LDIF body content.
+         * 
+         * Category: ldap
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-ldif
+         * 
+         * Syntax: <code>ldif:ldapConnectionName</code>
+         * 
+         * Path parameter: ldapConnectionName (required)
+         * The name of the LdapConnection bean to pull from the registry. Note
+         * that this must be of scope prototype to avoid it being shared among
+         * threads or using a connection that has timed out.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path ldapConnectionName
+         */
+        default LdifEndpointBuilder ldif(String componentName, String path) {
+            return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * LDIF (camel-ldif)
-     * Perform updates on an LDAP server from an LDIF body content.
-     * 
-     * Category: ldap
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-ldif
-     * 
-     * Syntax: <code>ldif:ldapConnectionName</code>
-     * 
-     * Path parameter: ldapConnectionName (required)
-     * The name of the LdapConnection bean to pull from the registry. Note that
-     * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
-     */
-    static LdifEndpointBuilder ldif(String path) {
+    static LdifEndpointBuilder endpointBuilder(String componentName, String path) {
         class LdifEndpointBuilderImpl extends AbstractEndpointBuilder implements LdifEndpointBuilder, AdvancedLdifEndpointBuilder {
             public LdifEndpointBuilderImpl(String path) {
-                super("ldif", path);
+                super(componentName, path);
             }
         }
         return new LdifEndpointBuilderImpl(path);

@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
 
-import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -156,7 +155,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-
         Path root = findCamelDirectory(baseDir, "core/camel-endpointdsl").toPath();
         if (sourcesOutputDir == null) {
             sourcesOutputDir = root.resolve("src/generated/java").toFile();
@@ -246,18 +244,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final ComponentModel componentModel, final String className) {
-        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry =
-                new ComponentsDslMetadataRegistry(sourcesOutputDir.toPath()
-                        .resolve(componentsFactoriesPackageName.replace('.', '/')).toFile(),
-                            componentsMetadata);
-        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
-
-        getLog().debug("Update components metadata with " + className);
-
-        return componentsDslMetadataRegistry;
-    }
-
     @SuppressWarnings("checkstyle:methodlength")
     private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
         String componentClassName = model.getJavaType();
@@ -295,14 +281,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             consumerClass.implementInterface("EndpointConsumerBuilder");
             generateDummyClass(consumerClass.getCanonicalName());
             consumerClass.getJavaDoc().setText("Builder for endpoint consumers for the " + model.getTitle() + " component.");
-
             if (hasAdvanced) {
                 advancedConsumerClass = javaClass.addNestedType().setPublic().setClass(false);
                 advancedConsumerClass.setName("Advanced" + consumerName);
                 advancedConsumerClass.implementInterface("EndpointConsumerBuilder");
                 generateDummyClass(advancedConsumerClass.getCanonicalName());
                 advancedConsumerClass.getJavaDoc().setText("Advanced builder for endpoint consumers for the " + model.getTitle() + " component.");
-
                 consumerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedConsumerClass.getCanonicalName())).setDefault()
                     .setBody("return (Advanced" + consumerName + ") this;");
                 advancedConsumerClass.addMethod().setName("basic").setReturnType(loadClass(consumerClass.getCanonicalName())).setDefault()
@@ -315,7 +299,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             producerClass.implementInterface("EndpointProducerBuilder");
             generateDummyClass(producerClass.getCanonicalName());
             producerClass.getJavaDoc().setText("Builder for endpoint producers for the " + model.getTitle() + " component.");
-
             if (hasAdvanced) {
                 advancedProducerClass = javaClass.addNestedType().setPublic().setClass(false);
                 advancedProducerClass.setName("Advanced" + producerName);
@@ -344,6 +327,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
         generateDummyClass(builderClass.getCanonicalName());
         builderClass.getJavaDoc().setText("Builder for endpoint for the " + model.getTitle() + " component.");
+
         if (hasAdvanced) {
             advancedBuilderClass = javaClass.addNestedType().setPublic().setClass(false);
             advancedBuilderClass.setName("Advanced" + builderName);
@@ -493,58 +477,85 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         dslClass.setName(getComponentNameFromType(componentClassName) + "Builders");
         dslClass.setClass(false);
 
-        if (aliases.size() == 1) {
-            Method method = javaClass.addMethod().setStatic().setName(camelCaseLower(model.getScheme())).addParameter(String.class, "path")
+        Method method = javaClass.addMethod().setStatic().setName("endpointBuilder")
+                .addParameter(String.class, "componentName")
+                .addParameter(String.class, "path")
                 .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
                 .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName + ", Advanced" + builderName + " {",
-                         "    public " + builderName + "Impl(String path) {", "        super(\"" + model.getScheme() + "\", path);", "    }", "}",
-                         "return new " + builderName + "Impl(path);", "");
+                        "    public " + builderName + "Impl(String path) {", "        super(componentName, path);", "    }", "}",
+                        "return new " + builderName + "Impl(path);", "");
+        if (model.isDeprecated()) {
+            method.addAnnotation(Deprecated.class);
+        }
 
+        if (aliases.size() == 1) {
+            String desc = getMainDescription(model);
+            String methodName = camelCaseLower(model.getScheme());
+            method = dslClass.addMethod().setStatic().setName(methodName)
+                    .addParameter(String.class, "path")
+                    .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                    .setDefault()
+                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "\"" + model.getScheme() + "\", path");
+            String javaDoc = desc;
+            javaDoc += "\n\n@param path " + pathParameterJavaDoc(model);
+            method.getJavaDoc().setText(javaDoc);
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
-            String desc = getMainDescription(model);
-            method.getJavaDoc().setText(desc);
-
-            dslClass.addMethod(method.copy()).setDefault().setBodyF("return %s.%s(%s);", javaClass.getName(), method.getName(), String.join(",", method.getParametersNames()));
-
+            method = dslClass.addMethod().setStatic().setName(methodName)
+                    .addParameter(String.class, "componentName")
+                    .addParameter(String.class, "path")
+                    .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                    .setDefault()
+                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
+            javaDoc = desc;
+            javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
+            javaDoc += "\n@param path " + pathParameterJavaDoc(model);
+            method.getJavaDoc().setText(javaDoc);
+            if (model.isDeprecated()) {
+                method.addAnnotation(Deprecated.class);
+            }
         } else {
             for (ComponentModel componentModel : aliases) {
-                Method method = javaClass.addMethod().setStatic().setName(camelCaseLower(componentModel.getScheme())).addParameter(String.class, "path")
-                    .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                    .setBody("return " + camelCaseLower(model.getScheme()) + "(\"" + componentModel.getScheme() + "\", path);\n");
-
-                if (model.isDeprecated()) {
+                String desc = getMainDescription(componentModel);
+                String methodName = camelCaseLower(componentModel.getScheme());
+                method = dslClass.addMethod().setStatic().setName(methodName)
+                        .addParameter(String.class, "path")
+                        .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                        .setDefault()
+                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "\"" + componentModel.getScheme() + "\", path");
+                String javaDoc = desc;
+                javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
+                method.getJavaDoc().setText(javaDoc);
+                if (componentModel.isDeprecated()) {
                     method.addAnnotation(Deprecated.class);
                 }
-                String desc = getMainDescription(componentModel);
-                method.getJavaDoc().setText(desc);
-
-                dslClass.addMethod(method.copy()).setDefault().setBodyF("return %s.%s(%s);", javaClass.getName(), method.getName(), String.join(",", method.getParametersNames()));
+                method = dslClass.addMethod().setStatic().setName(methodName)
+                        .addParameter(String.class, "componentName")
+                        .addParameter(String.class, "path")
+                        .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
+                        .setDefault()
+                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
+                javaDoc = desc;
+                javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
+                javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
+                method.getJavaDoc().setText(javaDoc);
+                if (componentModel.isDeprecated()) {
+                    method.addAnnotation(Deprecated.class);
+                }
             }
-
-            Method method = javaClass.addMethod().setStatic().setName(camelCaseLower(model.getScheme())).addParameter(String.class, "scheme").addParameter(String.class, "path")
-                .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName + ", Advanced" + builderName + " {",
-                         "    public " + builderName + "Impl(String scheme, String path) {", "        super(scheme, path);", "    }", "}",
-                         "return new " + builderName + "Impl(scheme, path);\n");
-
-            if (model.isDeprecated()) {
-                method.addAnnotation(Deprecated.class);
-            }
-
-            String desc = model.getTitle() + " (" + model.getArtifactId() + ")";
-            desc += "\n" + model.getDescription();
-            desc += "\n";
-            desc += "\nCategory: " + model.getLabel();
-            desc += "\nSince: " + model.getFirstVersionShort();
-            desc += "\nMaven coordinates: " + project.getGroupId() + ":" + project.getArtifactId();
-            method.getJavaDoc().setText(desc);
-
-            dslClass.addMethod(method.copy()).setDefault().setBodyF("return %s.%s(%s);", javaClass.getName(), method.getName(), String.join(",", method.getParametersNames()));
         }
 
         return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java", false);
+    }
+
+    private static String pathParameterJavaDoc(ComponentModel model) {
+        int pos = model.getSyntax().indexOf(':');
+        if (pos != -1) {
+            return model.getSyntax().substring(pos + 1);
+        } else {
+            return model.getSyntax();
+        }
     }
 
     private boolean synchronizeEndpointBuilderFactoryInterface(List<File> factories) throws MojoFailureException {

@@ -1323,33 +1323,47 @@ public interface FlatpackEndpointBuilderFactory {
          * Path parameter: resourceUri (required)
          * URL for loading the flatpack mapping file from classpath or file
          * system
+         * 
+         * @param path type:resourceUri
          */
         default FlatpackEndpointBuilder flatpack(String path) {
-            return FlatpackEndpointBuilderFactory.flatpack(path);
+            return FlatpackEndpointBuilderFactory.endpointBuilder("flatpack", path);
+        }
+        /**
+         * Flatpack (camel-flatpack)
+         * Parse fixed width and delimited files using the FlatPack library.
+         * 
+         * Category: transformation
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-flatpack
+         * 
+         * Syntax: <code>flatpack:type:resourceUri</code>
+         * 
+         * Path parameter: type
+         * Whether to use fixed or delimiter
+         * Default value: delim
+         * The value can be one of: fixed, delim
+         * 
+         * Path parameter: resourceUri (required)
+         * URL for loading the flatpack mapping file from classpath or file
+         * system
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path type:resourceUri
+         */
+        default FlatpackEndpointBuilder flatpack(
+                String componentName,
+                String path) {
+            return FlatpackEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Flatpack (camel-flatpack)
-     * Parse fixed width and delimited files using the FlatPack library.
-     * 
-     * Category: transformation
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-flatpack
-     * 
-     * Syntax: <code>flatpack:type:resourceUri</code>
-     * 
-     * Path parameter: type
-     * Whether to use fixed or delimiter
-     * Default value: delim
-     * The value can be one of: fixed, delim
-     * 
-     * Path parameter: resourceUri (required)
-     * URL for loading the flatpack mapping file from classpath or file system
-     */
-    static FlatpackEndpointBuilder flatpack(String path) {
+    static FlatpackEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class FlatpackEndpointBuilderImpl extends AbstractEndpointBuilder implements FlatpackEndpointBuilder, AdvancedFlatpackEndpointBuilder {
             public FlatpackEndpointBuilderImpl(String path) {
-                super("flatpack", path);
+                super(componentName, path);
             }
         }
         return new FlatpackEndpointBuilderImpl(path);

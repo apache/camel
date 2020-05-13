@@ -864,28 +864,38 @@ public interface CMISEndpointBuilderFactory {
          * 
          * Path parameter: cmsUrl (required)
          * URL to the cmis repository
+         * 
+         * @param path cmsUrl
          */
         default CMISEndpointBuilder cmis(String path) {
-            return CMISEndpointBuilderFactory.cmis(path);
+            return CMISEndpointBuilderFactory.endpointBuilder("cmis", path);
+        }
+        /**
+         * CMIS (camel-cmis)
+         * Read and write data from to/from a CMIS compliant content
+         * repositories.
+         * 
+         * Category: cms,database
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-cmis
+         * 
+         * Syntax: <code>cmis:cmsUrl</code>
+         * 
+         * Path parameter: cmsUrl (required)
+         * URL to the cmis repository
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cmsUrl
+         */
+        default CMISEndpointBuilder cmis(String componentName, String path) {
+            return CMISEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * CMIS (camel-cmis)
-     * Read and write data from to/from a CMIS compliant content repositories.
-     * 
-     * Category: cms,database
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-cmis
-     * 
-     * Syntax: <code>cmis:cmsUrl</code>
-     * 
-     * Path parameter: cmsUrl (required)
-     * URL to the cmis repository
-     */
-    static CMISEndpointBuilder cmis(String path) {
+    static CMISEndpointBuilder endpointBuilder(String componentName, String path) {
         class CMISEndpointBuilderImpl extends AbstractEndpointBuilder implements CMISEndpointBuilder, AdvancedCMISEndpointBuilder {
             public CMISEndpointBuilderImpl(String path) {
-                super("cmis", path);
+                super(componentName, path);
             }
         }
         return new CMISEndpointBuilderImpl(path);

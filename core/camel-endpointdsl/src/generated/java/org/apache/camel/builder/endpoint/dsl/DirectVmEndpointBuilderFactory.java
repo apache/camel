@@ -612,29 +612,42 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of direct-vm endpoint
+         * 
+         * @param path name
          */
         default DirectVmEndpointBuilder directVm(String path) {
-            return DirectVmEndpointBuilderFactory.directVm(path);
+            return DirectVmEndpointBuilderFactory.endpointBuilder("direct-vm", path);
+        }
+        /**
+         * Direct VM (camel-directvm)
+         * Call another endpoint from any Camel Context in the same JVM
+         * synchronously.
+         * 
+         * Category: core,endpoint
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-directvm
+         * 
+         * Syntax: <code>direct-vm:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of direct-vm endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DirectVmEndpointBuilder directVm(
+                String componentName,
+                String path) {
+            return DirectVmEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Direct VM (camel-directvm)
-     * Call another endpoint from any Camel Context in the same JVM
-     * synchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-directvm
-     * 
-     * Syntax: <code>direct-vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of direct-vm endpoint
-     */
-    static DirectVmEndpointBuilder directVm(String path) {
+    static DirectVmEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DirectVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectVmEndpointBuilder, AdvancedDirectVmEndpointBuilder {
             public DirectVmEndpointBuilderImpl(String path) {
-                super("direct-vm", path);
+                super(componentName, path);
             }
         }
         return new DirectVmEndpointBuilderImpl(path);

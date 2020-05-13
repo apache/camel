@@ -1053,28 +1053,39 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * Path parameter: tableName (required)
          * The name of the table
+         * 
+         * @param path tableName
          */
         default HBaseEndpointBuilder hbase(String path) {
-            return HBaseEndpointBuilderFactory.hbase(path);
+            return HBaseEndpointBuilderFactory.endpointBuilder("hbase", path);
+        }
+        /**
+         * HBase (camel-hbase)
+         * Reading and write from/to an HBase store (Hadoop database).
+         * 
+         * Category: hadoop
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-hbase
+         * 
+         * Syntax: <code>hbase:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * The name of the table
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path tableName
+         */
+        default HBaseEndpointBuilder hbase(String componentName, String path) {
+            return HBaseEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * HBase (camel-hbase)
-     * Reading and write from/to an HBase store (Hadoop database).
-     * 
-     * Category: hadoop
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-hbase
-     * 
-     * Syntax: <code>hbase:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * The name of the table
-     */
-    static HBaseEndpointBuilder hbase(String path) {
+    static HBaseEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HBaseEndpointBuilderImpl extends AbstractEndpointBuilder implements HBaseEndpointBuilder, AdvancedHBaseEndpointBuilder {
             public HBaseEndpointBuilderImpl(String path) {
-                super("hbase", path);
+                super(componentName, path);
             }
         }
         return new HBaseEndpointBuilderImpl(path);

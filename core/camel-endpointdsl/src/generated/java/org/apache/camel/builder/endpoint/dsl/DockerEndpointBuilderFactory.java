@@ -1437,36 +1437,47 @@ public interface DockerEndpointBuilderFactory {
          * containerlog, containerpause, containerrestart, containerremove,
          * containerstartcontainerstop, containertop, containerunpause,
          * containerwait, execcreate, execstart
+         * 
+         * @param path operation
          */
         default DockerEndpointBuilder docker(String path) {
-            return DockerEndpointBuilderFactory.docker(path);
+            return DockerEndpointBuilderFactory.endpointBuilder("docker", path);
+        }
+        /**
+         * Docker (camel-docker)
+         * Manage Docker containers.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-docker
+         * 
+         * Syntax: <code>docker:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * Which operation to use
+         * The value can be one of: events, stats, auth, info, ping, version,
+         * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
+         * imagepushimageremove, imagesearch, imagetag, containerattach,
+         * containercommit, containercopyfile, containercreate,
+         * containerdiffinspectcontainer, containerkill, containerlist,
+         * containerlog, containerpause, containerrestart, containerremove,
+         * containerstartcontainerstop, containertop, containerunpause,
+         * containerwait, execcreate, execstart
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         */
+        default DockerEndpointBuilder docker(String componentName, String path) {
+            return DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Docker (camel-docker)
-     * Manage Docker containers.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-docker
-     * 
-     * Syntax: <code>docker:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * Which operation to use
-     * The value can be one of: events, stats, auth, info, ping, version,
-     * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-     * imagepushimageremove, imagesearch, imagetag, containerattach,
-     * containercommit, containercopyfile, containercreate,
-     * containerdiffinspectcontainer, containerkill, containerlist,
-     * containerlog, containerpause, containerrestart, containerremove,
-     * containerstartcontainerstop, containertop, containerunpause,
-     * containerwait, execcreate, execstart
-     */
-    static DockerEndpointBuilder docker(String path) {
+    static DockerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DockerEndpointBuilderImpl extends AbstractEndpointBuilder implements DockerEndpointBuilder, AdvancedDockerEndpointBuilder {
             public DockerEndpointBuilderImpl(String path) {
-                super("docker", path);
+                super(componentName, path);
             }
         }
         return new DockerEndpointBuilderImpl(path);

@@ -364,28 +364,37 @@ public interface Ses2EndpointBuilderFactory {
          * 
          * Path parameter: from (required)
          * The sender's email address.
+         * 
+         * @param path from
          */
         default Ses2EndpointBuilder aws2Ses(String path) {
-            return Ses2EndpointBuilderFactory.aws2Ses(path);
+            return Ses2EndpointBuilderFactory.endpointBuilder("aws2-ses", path);
+        }
+        /**
+         * AWS 2 Simple Email Service (camel-aws2-ses)
+         * Send e-mails through AWS SES service using AWS SDK version 2.x.
+         * 
+         * Category: cloud,mail
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ses
+         * 
+         * Syntax: <code>aws2-ses:from</code>
+         * 
+         * Path parameter: from (required)
+         * The sender's email address.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path from
+         */
+        default Ses2EndpointBuilder aws2Ses(String componentName, String path) {
+            return Ses2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 Simple Email Service (camel-aws2-ses)
-     * Send e-mails through AWS SES service using AWS SDK version 2.x.
-     * 
-     * Category: cloud,mail
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-ses
-     * 
-     * Syntax: <code>aws2-ses:from</code>
-     * 
-     * Path parameter: from (required)
-     * The sender's email address.
-     */
-    static Ses2EndpointBuilder aws2Ses(String path) {
+    static Ses2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Ses2EndpointBuilderImpl extends AbstractEndpointBuilder implements Ses2EndpointBuilder, AdvancedSes2EndpointBuilder {
             public Ses2EndpointBuilderImpl(String path) {
-                super("aws2-ses", path);
+                super(componentName, path);
             }
         }
         return new Ses2EndpointBuilderImpl(path);

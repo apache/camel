@@ -2382,29 +2382,38 @@ public interface Sqs2EndpointBuilderFactory {
          * 
          * Path parameter: queueNameOrArn (required)
          * Queue name or ARN
+         * 
+         * @param path queueNameOrArn
          */
         default Sqs2EndpointBuilder aws2Sqs(String path) {
-            return Sqs2EndpointBuilderFactory.aws2Sqs(path);
+            return Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs", path);
+        }
+        /**
+         * AWS 2 Simple Queue Service (camel-aws2-sqs)
+         * Sending and receive messages to/from AWS SQS service using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-sqs
+         * 
+         * Syntax: <code>aws2-sqs:queueNameOrArn</code>
+         * 
+         * Path parameter: queueNameOrArn (required)
+         * Queue name or ARN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path queueNameOrArn
+         */
+        default Sqs2EndpointBuilder aws2Sqs(String componentName, String path) {
+            return Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 Simple Queue Service (camel-aws2-sqs)
-     * Sending and receive messages to/from AWS SQS service using AWS SDK
-     * version 2.x.
-     * 
-     * Category: cloud,messaging
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-sqs
-     * 
-     * Syntax: <code>aws2-sqs:queueNameOrArn</code>
-     * 
-     * Path parameter: queueNameOrArn (required)
-     * Queue name or ARN
-     */
-    static Sqs2EndpointBuilder aws2Sqs(String path) {
+    static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Sqs2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sqs2EndpointBuilder, AdvancedSqs2EndpointBuilder {
             public Sqs2EndpointBuilderImpl(String path) {
-                super("aws2-sqs", path);
+                super(componentName, path);
             }
         }
         return new Sqs2EndpointBuilderImpl(path);

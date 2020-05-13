@@ -485,28 +485,39 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * Path parameter: clusterName (required)
          * The name of the JGroups cluster the component should connect to.
+         * 
+         * @param path clusterName
          */
         default JGroupsEndpointBuilder jgroups(String path) {
-            return JGroupsEndpointBuilderFactory.jgroups(path);
+            return JGroupsEndpointBuilderFactory.endpointBuilder("jgroups", path);
+        }
+        /**
+         * JGroups (camel-jgroups)
+         * Exchange messages with JGroups clusters.
+         * 
+         * Category: clustering,messaging
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-jgroups
+         * 
+         * Syntax: <code>jgroups:clusterName</code>
+         * 
+         * Path parameter: clusterName (required)
+         * The name of the JGroups cluster the component should connect to.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path clusterName
+         */
+        default JGroupsEndpointBuilder jgroups(String componentName, String path) {
+            return JGroupsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JGroups (camel-jgroups)
-     * Exchange messages with JGroups clusters.
-     * 
-     * Category: clustering,messaging
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-jgroups
-     * 
-     * Syntax: <code>jgroups:clusterName</code>
-     * 
-     * Path parameter: clusterName (required)
-     * The name of the JGroups cluster the component should connect to.
-     */
-    static JGroupsEndpointBuilder jgroups(String path) {
+    static JGroupsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class JGroupsEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsEndpointBuilder, AdvancedJGroupsEndpointBuilder {
             public JGroupsEndpointBuilderImpl(String path) {
-                super("jgroups", path);
+                super(componentName, path);
             }
         }
         return new JGroupsEndpointBuilderImpl(path);

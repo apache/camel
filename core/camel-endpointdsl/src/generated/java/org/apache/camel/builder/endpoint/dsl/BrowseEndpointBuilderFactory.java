@@ -417,28 +417,40 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * A name which can be any string to uniquely identify the endpoint
+         * 
+         * @param path name
          */
         default BrowseEndpointBuilder browse(String path) {
-            return BrowseEndpointBuilderFactory.browse(path);
+            return BrowseEndpointBuilderFactory.endpointBuilder("browse", path);
+        }
+        /**
+         * Browse (camel-browse)
+         * Inspect the messages received on endpoints supporting
+         * BrowsableEndpoint.
+         * 
+         * Category: core,monitoring
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-browse
+         * 
+         * Syntax: <code>browse:name</code>
+         * 
+         * Path parameter: name (required)
+         * A name which can be any string to uniquely identify the endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default BrowseEndpointBuilder browse(String componentName, String path) {
+            return BrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Browse (camel-browse)
-     * Inspect the messages received on endpoints supporting BrowsableEndpoint.
-     * 
-     * Category: core,monitoring
-     * Since: 1.3
-     * Maven coordinates: org.apache.camel:camel-browse
-     * 
-     * Syntax: <code>browse:name</code>
-     * 
-     * Path parameter: name (required)
-     * A name which can be any string to uniquely identify the endpoint
-     */
-    static BrowseEndpointBuilder browse(String path) {
+    static BrowseEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class BrowseEndpointBuilderImpl extends AbstractEndpointBuilder implements BrowseEndpointBuilder, AdvancedBrowseEndpointBuilder {
             public BrowseEndpointBuilderImpl(String path) {
-                super("browse", path);
+                super(componentName, path);
             }
         }
         return new BrowseEndpointBuilderImpl(path);

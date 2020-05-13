@@ -678,28 +678,41 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastMapEndpointBuilder hazelcastMap(String path) {
-            return HazelcastMapEndpointBuilderFactory.hazelcastMap(path);
+            return HazelcastMapEndpointBuilderFactory.endpointBuilder("hazelcast-map", path);
+        }
+        /**
+         * Hazelcast Map (camel-hazelcast)
+         * Perform operations on Hazelcast distributed map.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-map:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastMapEndpointBuilder hazelcastMap(
+                String componentName,
+                String path) {
+            return HazelcastMapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Map (camel-hazelcast)
-     * Perform operations on Hazelcast distributed map.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-map:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastMapEndpointBuilder hazelcastMap(String path) {
+    static HazelcastMapEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastMapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMapEndpointBuilder, AdvancedHazelcastMapEndpointBuilder {
             public HazelcastMapEndpointBuilderImpl(String path) {
-                super("hazelcast-map", path);
+                super(componentName, path);
             }
         }
         return new HazelcastMapEndpointBuilderImpl(path);

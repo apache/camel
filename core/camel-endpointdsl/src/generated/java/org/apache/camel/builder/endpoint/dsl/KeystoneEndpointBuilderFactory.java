@@ -256,29 +256,42 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * OpenStack host url
+         * 
+         * @param path host
          */
         default KeystoneEndpointBuilder openstackKeystone(String path) {
-            return KeystoneEndpointBuilderFactory.openstackKeystone(path);
+            return KeystoneEndpointBuilderFactory.endpointBuilder("openstack-keystone", path);
+        }
+        /**
+         * OpenStack Keystone (camel-openstack)
+         * Access OpenStack Keystone for API client authentication, service
+         * discovery and distributed multi-tenant authorization.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-keystone:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default KeystoneEndpointBuilder openstackKeystone(
+                String componentName,
+                String path) {
+            return KeystoneEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OpenStack Keystone (camel-openstack)
-     * Access OpenStack Keystone for API client authentication, service
-     * discovery and distributed multi-tenant authorization.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     * 
-     * Syntax: <code>openstack-keystone:host</code>
-     * 
-     * Path parameter: host (required)
-     * OpenStack host url
-     */
-    static KeystoneEndpointBuilder openstackKeystone(String path) {
+    static KeystoneEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KeystoneEndpointBuilderImpl extends AbstractEndpointBuilder implements KeystoneEndpointBuilder, AdvancedKeystoneEndpointBuilder {
             public KeystoneEndpointBuilderImpl(String path) {
-                super("openstack-keystone", path);
+                super(componentName, path);
             }
         }
         return new KeystoneEndpointBuilderImpl(path);

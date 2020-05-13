@@ -319,32 +319,46 @@ public interface FreemarkerEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default FreemarkerEndpointBuilder freemarker(String path) {
-            return FreemarkerEndpointBuilderFactory.freemarker(path);
+            return FreemarkerEndpointBuilderFactory.endpointBuilder("freemarker", path);
+        }
+        /**
+         * Freemarker (camel-freemarker)
+         * Transform messages using FreeMarker templates.
+         * 
+         * Category: transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-freemarker
+         * 
+         * Syntax: <code>freemarker:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default FreemarkerEndpointBuilder freemarker(
+                String componentName,
+                String path) {
+            return FreemarkerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Freemarker (camel-freemarker)
-     * Transform messages using FreeMarker templates.
-     * 
-     * Category: transformation
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-freemarker
-     * 
-     * Syntax: <code>freemarker:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static FreemarkerEndpointBuilder freemarker(String path) {
+    static FreemarkerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder, AdvancedFreemarkerEndpointBuilder {
             public FreemarkerEndpointBuilderImpl(String path) {
-                super("freemarker", path);
+                super(componentName, path);
             }
         }
         return new FreemarkerEndpointBuilderImpl(path);

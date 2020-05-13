@@ -4991,34 +4991,43 @@ public interface FtpEndpointBuilderFactory {
          * 
          * Path parameter: directoryName
          * The starting directory
+         * 
+         * @param path host:port/directoryName
          */
         default FtpEndpointBuilder ftp(String path) {
-            return FtpEndpointBuilderFactory.ftp(path);
+            return FtpEndpointBuilderFactory.endpointBuilder("ftp", path);
+        }
+        /**
+         * FTP (camel-ftp)
+         * Upload and download files to/from FTP servers.
+         * 
+         * Category: file
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
+         * Syntax: <code>ftp:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/directoryName
+         */
+        default FtpEndpointBuilder ftp(String componentName, String path) {
+            return FtpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * FTP (camel-ftp)
-     * Upload and download files to/from FTP servers.
-     * 
-     * Category: file
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-ftp
-     * 
-     * Syntax: <code>ftp:host:port/directoryName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
-     * 
-     * Path parameter: port
-     * Port of the FTP server
-     * 
-     * Path parameter: directoryName
-     * The starting directory
-     */
-    static FtpEndpointBuilder ftp(String path) {
+    static FtpEndpointBuilder endpointBuilder(String componentName, String path) {
         class FtpEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpEndpointBuilder, AdvancedFtpEndpointBuilder {
             public FtpEndpointBuilderImpl(String path) {
-                super("ftp", path);
+                super(componentName, path);
             }
         }
         return new FtpEndpointBuilderImpl(path);

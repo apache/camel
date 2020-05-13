@@ -330,28 +330,41 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Where label is an arbitrary text value describing the endpoint
+         * 
+         * @param path label
          */
         default BeanValidatorEndpointBuilder beanValidator(String path) {
-            return BeanValidatorEndpointBuilderFactory.beanValidator(path);
+            return BeanValidatorEndpointBuilderFactory.endpointBuilder("bean-validator", path);
+        }
+        /**
+         * Bean Validator (camel-bean-validator)
+         * Validate the message body using the Java Bean Validation API.
+         * 
+         * Category: validation
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-bean-validator
+         * 
+         * Syntax: <code>bean-validator:label</code>
+         * 
+         * Path parameter: label (required)
+         * Where label is an arbitrary text value describing the endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default BeanValidatorEndpointBuilder beanValidator(
+                String componentName,
+                String path) {
+            return BeanValidatorEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Bean Validator (camel-bean-validator)
-     * Validate the message body using the Java Bean Validation API.
-     * 
-     * Category: validation
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-bean-validator
-     * 
-     * Syntax: <code>bean-validator:label</code>
-     * 
-     * Path parameter: label (required)
-     * Where label is an arbitrary text value describing the endpoint
-     */
-    static BeanValidatorEndpointBuilder beanValidator(String path) {
+    static BeanValidatorEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class BeanValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanValidatorEndpointBuilder, AdvancedBeanValidatorEndpointBuilder {
             public BeanValidatorEndpointBuilderImpl(String path) {
-                super("bean-validator", path);
+                super(componentName, path);
             }
         }
         return new BeanValidatorEndpointBuilderImpl(path);

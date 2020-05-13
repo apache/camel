@@ -448,28 +448,41 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * Path parameter: clusterName (required)
          * The name of the JGroupsraft cluster the component should connect to.
+         * 
+         * @param path clusterName
          */
         default JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
-            return JGroupsRaftEndpointBuilderFactory.jgroupsRaft(path);
+            return JGroupsRaftEndpointBuilderFactory.endpointBuilder("jgroups-raft", path);
+        }
+        /**
+         * JGroups raft (camel-jgroups-raft)
+         * Exchange messages with JGroups-raft clusters.
+         * 
+         * Category: clustering,messaging
+         * Since: 2.24
+         * Maven coordinates: org.apache.camel:camel-jgroups-raft
+         * 
+         * Syntax: <code>jgroups-raft:clusterName</code>
+         * 
+         * Path parameter: clusterName (required)
+         * The name of the JGroupsraft cluster the component should connect to.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path clusterName
+         */
+        default JGroupsRaftEndpointBuilder jgroupsRaft(
+                String componentName,
+                String path) {
+            return JGroupsRaftEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JGroups raft (camel-jgroups-raft)
-     * Exchange messages with JGroups-raft clusters.
-     * 
-     * Category: clustering,messaging
-     * Since: 2.24
-     * Maven coordinates: org.apache.camel:camel-jgroups-raft
-     * 
-     * Syntax: <code>jgroups-raft:clusterName</code>
-     * 
-     * Path parameter: clusterName (required)
-     * The name of the JGroupsraft cluster the component should connect to.
-     */
-    static JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
+    static JGroupsRaftEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class JGroupsRaftEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsRaftEndpointBuilder, AdvancedJGroupsRaftEndpointBuilder {
             public JGroupsRaftEndpointBuilderImpl(String path) {
-                super("jgroups-raft", path);
+                super(componentName, path);
             }
         }
         return new JGroupsRaftEndpointBuilderImpl(path);

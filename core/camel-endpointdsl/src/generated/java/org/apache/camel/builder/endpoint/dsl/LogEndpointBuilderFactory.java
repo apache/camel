@@ -782,28 +782,37 @@ public interface LogEndpointBuilderFactory {
          * 
          * Path parameter: loggerName (required)
          * Name of the logging category to use
+         * 
+         * @param path loggerName
          */
         default LogEndpointBuilder log(String path) {
-            return LogEndpointBuilderFactory.log(path);
+            return LogEndpointBuilderFactory.endpointBuilder("log", path);
+        }
+        /**
+         * Log (camel-log)
+         * Log messages to the underlying logging mechanism.
+         * 
+         * Category: core,monitoring
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-log
+         * 
+         * Syntax: <code>log:loggerName</code>
+         * 
+         * Path parameter: loggerName (required)
+         * Name of the logging category to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path loggerName
+         */
+        default LogEndpointBuilder log(String componentName, String path) {
+            return LogEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Log (camel-log)
-     * Log messages to the underlying logging mechanism.
-     * 
-     * Category: core,monitoring
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-log
-     * 
-     * Syntax: <code>log:loggerName</code>
-     * 
-     * Path parameter: loggerName (required)
-     * Name of the logging category to use
-     */
-    static LogEndpointBuilder log(String path) {
+    static LogEndpointBuilder endpointBuilder(String componentName, String path) {
         class LogEndpointBuilderImpl extends AbstractEndpointBuilder implements LogEndpointBuilder, AdvancedLogEndpointBuilder {
             public LogEndpointBuilderImpl(String path) {
-                super("log", path);
+                super(componentName, path);
             }
         }
         return new LogEndpointBuilderImpl(path);

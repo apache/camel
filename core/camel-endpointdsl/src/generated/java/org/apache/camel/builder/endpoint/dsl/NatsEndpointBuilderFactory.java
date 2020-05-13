@@ -1756,28 +1756,37 @@ public interface NatsEndpointBuilderFactory {
          * 
          * Path parameter: topic (required)
          * The name of topic we want to use
+         * 
+         * @param path topic
          */
         default NatsEndpointBuilder nats(String path) {
-            return NatsEndpointBuilderFactory.nats(path);
+            return NatsEndpointBuilderFactory.endpointBuilder("nats", path);
+        }
+        /**
+         * Nats (camel-nats)
+         * Send and receive messages from NATS messaging system.
+         * 
+         * Category: messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-nats
+         * 
+         * Syntax: <code>nats:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The name of topic we want to use
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topic
+         */
+        default NatsEndpointBuilder nats(String componentName, String path) {
+            return NatsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Nats (camel-nats)
-     * Send and receive messages from NATS messaging system.
-     * 
-     * Category: messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-nats
-     * 
-     * Syntax: <code>nats:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The name of topic we want to use
-     */
-    static NatsEndpointBuilder nats(String path) {
+    static NatsEndpointBuilder endpointBuilder(String componentName, String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {
             public NatsEndpointBuilderImpl(String path) {
-                super("nats", path);
+                super(componentName, path);
             }
         }
         return new NatsEndpointBuilderImpl(path);

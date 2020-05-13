@@ -1341,30 +1341,43 @@ public interface SoroushBotEndpointBuilderFactory {
          * The action to do.
          * The value can be one of: sendMessage, getMessage, uploadFile,
          * downloadFile
+         * 
+         * @param path action
          */
         default SoroushBotEndpointBuilder soroush(String path) {
-            return SoroushBotEndpointBuilderFactory.soroush(path);
+            return SoroushBotEndpointBuilderFactory.endpointBuilder("soroush", path);
+        }
+        /**
+         * Soroush (camel-soroush)
+         * Send and receive messages as a Soroush chat bot.
+         * 
+         * Category: chat
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-soroush
+         * 
+         * Syntax: <code>soroush:action</code>
+         * 
+         * Path parameter: action (required)
+         * The action to do.
+         * The value can be one of: sendMessage, getMessage, uploadFile,
+         * downloadFile
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path action
+         */
+        default SoroushBotEndpointBuilder soroush(
+                String componentName,
+                String path) {
+            return SoroushBotEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * Syntax: <code>soroush:action</code>
-     * 
-     * Path parameter: action (required)
-     * The action to do.
-     * The value can be one of: sendMessage, getMessage, uploadFile,
-     * downloadFile
-     */
-    static SoroushBotEndpointBuilder soroush(String path) {
+    static SoroushBotEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SoroushBotEndpointBuilderImpl extends AbstractEndpointBuilder implements SoroushBotEndpointBuilder, AdvancedSoroushBotEndpointBuilder {
             public SoroushBotEndpointBuilderImpl(String path) {
-                super("soroush", path);
+                super(componentName, path);
             }
         }
         return new SoroushBotEndpointBuilderImpl(path);

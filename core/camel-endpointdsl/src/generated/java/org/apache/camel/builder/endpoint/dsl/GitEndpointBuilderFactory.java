@@ -683,28 +683,37 @@ public interface GitEndpointBuilderFactory {
          * 
          * Path parameter: localPath (required)
          * Local repository path
+         * 
+         * @param path localPath
          */
         default GitEndpointBuilder git(String path) {
-            return GitEndpointBuilderFactory.git(path);
+            return GitEndpointBuilderFactory.endpointBuilder("git", path);
+        }
+        /**
+         * Git (camel-git)
+         * Perform operations on git repositories.
+         * 
+         * Category: file
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-git
+         * 
+         * Syntax: <code>git:localPath</code>
+         * 
+         * Path parameter: localPath (required)
+         * Local repository path
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path localPath
+         */
+        default GitEndpointBuilder git(String componentName, String path) {
+            return GitEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Git (camel-git)
-     * Perform operations on git repositories.
-     * 
-     * Category: file
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-git
-     * 
-     * Syntax: <code>git:localPath</code>
-     * 
-     * Path parameter: localPath (required)
-     * Local repository path
-     */
-    static GitEndpointBuilder git(String path) {
+    static GitEndpointBuilder endpointBuilder(String componentName, String path) {
         class GitEndpointBuilderImpl extends AbstractEndpointBuilder implements GitEndpointBuilder, AdvancedGitEndpointBuilder {
             public GitEndpointBuilderImpl(String path) {
-                super("git", path);
+                super(componentName, path);
             }
         }
         return new GitEndpointBuilderImpl(path);

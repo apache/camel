@@ -371,30 +371,39 @@ public interface MsvEndpointBuilderFactory {
          * URL to a local resource on the classpath, or a reference to lookup a
          * bean in the Registry, or a full URL to a remote resource or resource
          * on the file system which contains the XSD to validate against.
+         * 
+         * @param path resourceUri
          */
         default MsvEndpointBuilder msv(String path) {
-            return MsvEndpointBuilderFactory.msv(path);
+            return MsvEndpointBuilderFactory.endpointBuilder("msv", path);
+        }
+        /**
+         * MSV (camel-msv)
+         * Validate XML payloads using Multi-Schema Validator (MSV).
+         * 
+         * Category: validation
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-msv
+         * 
+         * Syntax: <code>msv:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * URL to a local resource on the classpath, or a reference to lookup a
+         * bean in the Registry, or a full URL to a remote resource or resource
+         * on the file system which contains the XSD to validate against.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default MsvEndpointBuilder msv(String componentName, String path) {
+            return MsvEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * Syntax: <code>msv:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath, or a reference to lookup a bean
-     * in the Registry, or a full URL to a remote resource or resource on the
-     * file system which contains the XSD to validate against.
-     */
-    static MsvEndpointBuilder msv(String path) {
+    static MsvEndpointBuilder endpointBuilder(String componentName, String path) {
         class MsvEndpointBuilderImpl extends AbstractEndpointBuilder implements MsvEndpointBuilder, AdvancedMsvEndpointBuilder {
             public MsvEndpointBuilderImpl(String path) {
-                super("msv", path);
+                super(componentName, path);
             }
         }
         return new MsvEndpointBuilderImpl(path);

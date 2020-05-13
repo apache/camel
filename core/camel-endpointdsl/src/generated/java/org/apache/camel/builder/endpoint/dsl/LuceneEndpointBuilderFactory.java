@@ -265,32 +265,43 @@ public interface LuceneEndpointBuilderFactory {
          * Path parameter: operation (required)
          * Operation to do such as insert or query.
          * The value can be one of: insert, query
+         * 
+         * @param path host:operation
          */
         default LuceneEndpointBuilder lucene(String path) {
-            return LuceneEndpointBuilderFactory.lucene(path);
+            return LuceneEndpointBuilderFactory.endpointBuilder("lucene", path);
+        }
+        /**
+         * Lucene (camel-lucene)
+         * Perform inserts or queries against Apache Lucene databases.
+         * 
+         * Category: database,search
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-lucene
+         * 
+         * Syntax: <code>lucene:host:operation</code>
+         * 
+         * Path parameter: host (required)
+         * The URL to the lucene server
+         * 
+         * Path parameter: operation (required)
+         * Operation to do such as insert or query.
+         * The value can be one of: insert, query
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:operation
+         */
+        default LuceneEndpointBuilder lucene(String componentName, String path) {
+            return LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Lucene (camel-lucene)
-     * Perform inserts or queries against Apache Lucene databases.
-     * 
-     * Category: database,search
-     * Since: 2.2
-     * Maven coordinates: org.apache.camel:camel-lucene
-     * 
-     * Syntax: <code>lucene:host:operation</code>
-     * 
-     * Path parameter: host (required)
-     * The URL to the lucene server
-     * 
-     * Path parameter: operation (required)
-     * Operation to do such as insert or query.
-     * The value can be one of: insert, query
-     */
-    static LuceneEndpointBuilder lucene(String path) {
+    static LuceneEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder, AdvancedLuceneEndpointBuilder {
             public LuceneEndpointBuilderImpl(String path) {
-                super("lucene", path);
+                super(componentName, path);
             }
         }
         return new LuceneEndpointBuilderImpl(path);

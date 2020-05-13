@@ -1306,31 +1306,44 @@ public interface InfinispanEndpointBuilderFactory {
          * The name of the cache to use. Use current to use the existing cache
          * name from the currently configured cached manager. Or use default for
          * the default cache manager name.
+         * 
+         * @param path cacheName
          */
         default InfinispanEndpointBuilder infinispan(String path) {
-            return InfinispanEndpointBuilderFactory.infinispan(path);
+            return InfinispanEndpointBuilderFactory.endpointBuilder("infinispan", path);
+        }
+        /**
+         * Infinispan (camel-infinispan)
+         * Read and write from/to Infinispan distributed key/value store and
+         * data grid.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-infinispan
+         * 
+         * Syntax: <code>infinispan:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache to use. Use current to use the existing cache
+         * name from the currently configured cached manager. Or use default for
+         * the default cache manager name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default InfinispanEndpointBuilder infinispan(
+                String componentName,
+                String path) {
+            return InfinispanEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Infinispan (camel-infinispan)
-     * Read and write from/to Infinispan distributed key/value store and data
-     * grid.
-     * 
-     * Category: cache,datagrid,clustering
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-infinispan
-     * 
-     * Syntax: <code>infinispan:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache to use. Use current to use the existing cache name
-     * from the currently configured cached manager. Or use default for the
-     * default cache manager name.
-     */
-    static InfinispanEndpointBuilder infinispan(String path) {
+    static InfinispanEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class InfinispanEndpointBuilderImpl extends AbstractEndpointBuilder implements InfinispanEndpointBuilder, AdvancedInfinispanEndpointBuilder {
             public InfinispanEndpointBuilderImpl(String path) {
-                super("infinispan", path);
+                super(componentName, path);
             }
         }
         return new InfinispanEndpointBuilderImpl(path);

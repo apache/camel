@@ -435,30 +435,42 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
                 String path) {
-            return KubernetesServiceAccountsEndpointBuilderFactory.kubernetesServiceAccounts(path);
+            return KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder("kubernetes-service-accounts", path);
+        }
+        /**
+         * Kubernetes Service Account (camel-kubernetes)
+         * Perform operations on Kubernetes Service Accounts.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+                String componentName,
+                String path) {
+            return KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Service Account (camel-kubernetes)
-     * Perform operations on Kubernetes Service Accounts.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    static KubernetesServiceAccountsEndpointBuilder endpointBuilder(
+            String componentName,
             String path) {
         class KubernetesServiceAccountsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesServiceAccountsEndpointBuilder, AdvancedKubernetesServiceAccountsEndpointBuilder {
             public KubernetesServiceAccountsEndpointBuilderImpl(String path) {
-                super("kubernetes-service-accounts", path);
+                super(componentName, path);
             }
         }
         return new KubernetesServiceAccountsEndpointBuilderImpl(path);

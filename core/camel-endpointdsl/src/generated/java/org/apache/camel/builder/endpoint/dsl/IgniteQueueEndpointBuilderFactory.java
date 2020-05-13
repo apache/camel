@@ -347,28 +347,41 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The queue name.
+         * 
+         * @param path name
          */
         default IgniteQueueEndpointBuilder igniteQueue(String path) {
-            return IgniteQueueEndpointBuilderFactory.igniteQueue(path);
+            return IgniteQueueEndpointBuilderFactory.endpointBuilder("ignite-queue", path);
+        }
+        /**
+         * Ignite Queues (camel-ignite)
+         * Interact with Ignite Queue data structures.
+         * 
+         * Category: nosql,cache
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-queue:name</code>
+         * 
+         * Path parameter: name (required)
+         * The queue name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default IgniteQueueEndpointBuilder igniteQueue(
+                String componentName,
+                String path) {
+            return IgniteQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite Queues (camel-ignite)
-     * Interact with Ignite Queue data structures.
-     * 
-     * Category: nosql,cache
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-queue:name</code>
-     * 
-     * Path parameter: name (required)
-     * The queue name.
-     */
-    static IgniteQueueEndpointBuilder igniteQueue(String path) {
+    static IgniteQueueEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteQueueEndpointBuilder, AdvancedIgniteQueueEndpointBuilder {
             public IgniteQueueEndpointBuilderImpl(String path) {
-                super("ignite-queue", path);
+                super(componentName, path);
             }
         }
         return new IgniteQueueEndpointBuilderImpl(path);

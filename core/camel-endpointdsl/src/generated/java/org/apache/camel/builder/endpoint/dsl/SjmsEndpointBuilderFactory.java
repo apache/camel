@@ -2162,35 +2162,44 @@ public interface SjmsEndpointBuilderFactory {
          * Path parameter: destinationName (required)
          * DestinationName is a JMS queue or topic name. By default, the
          * destinationName is interpreted as a queue name.
+         * 
+         * @param path destinationType:destinationName
          */
         default SjmsEndpointBuilder sjms(String path) {
-            return SjmsEndpointBuilderFactory.sjms(path);
+            return SjmsEndpointBuilderFactory.endpointBuilder("sjms", path);
+        }
+        /**
+         * Simple JMS (camel-sjms)
+         * Send and receive messages to/from a JMS Queue or Topic using plain
+         * JMS 1.x API.
+         * 
+         * Category: messaging
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-sjms
+         * 
+         * Syntax: <code>sjms:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic
+         * 
+         * Path parameter: destinationName (required)
+         * DestinationName is a JMS queue or topic name. By default, the
+         * destinationName is interpreted as a queue name.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path destinationType:destinationName
+         */
+        default SjmsEndpointBuilder sjms(String componentName, String path) {
+            return SjmsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Simple JMS (camel-sjms)
-     * Send and receive messages to/from a JMS Queue or Topic using plain JMS
-     * 1.x API.
-     * 
-     * Category: messaging
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms:destinationType:destinationName</code>
-     * 
-     * Path parameter: destinationType
-     * The kind of destination to use
-     * Default value: queue
-     * The value can be one of: queue, topic
-     * 
-     * Path parameter: destinationName (required)
-     * DestinationName is a JMS queue or topic name. By default, the
-     * destinationName is interpreted as a queue name.
-     */
-    static SjmsEndpointBuilder sjms(String path) {
+    static SjmsEndpointBuilder endpointBuilder(String componentName, String path) {
         class SjmsEndpointBuilderImpl extends AbstractEndpointBuilder implements SjmsEndpointBuilder, AdvancedSjmsEndpointBuilder {
             public SjmsEndpointBuilderImpl(String path) {
-                super("sjms", path);
+                super(componentName, path);
             }
         }
         return new SjmsEndpointBuilderImpl(path);

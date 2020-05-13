@@ -219,32 +219,43 @@ public interface MasterEndpointBuilderFactory {
          * 
          * Path parameter: delegateUri (required)
          * The endpoint uri to use in master/slave mode
+         * 
+         * @param path namespace:delegateUri
          */
         default MasterEndpointBuilder master(String path) {
-            return MasterEndpointBuilderFactory.master(path);
+            return MasterEndpointBuilderFactory.endpointBuilder("master", path);
+        }
+        /**
+         * Master (camel-master)
+         * Have only a single consumer in a cluster consuming from a given
+         * endpoint; with automatic failover if the JVM dies.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-master
+         * 
+         * Syntax: <code>master:namespace:delegateUri</code>
+         * 
+         * Path parameter: namespace (required)
+         * The name of the cluster namespace to use
+         * 
+         * Path parameter: delegateUri (required)
+         * The endpoint uri to use in master/slave mode
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path namespace:delegateUri
+         */
+        default MasterEndpointBuilder master(String componentName, String path) {
+            return MasterEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Master (camel-master)
-     * Have only a single consumer in a cluster consuming from a given endpoint;
-     * with automatic failover if the JVM dies.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-master
-     * 
-     * Syntax: <code>master:namespace:delegateUri</code>
-     * 
-     * Path parameter: namespace (required)
-     * The name of the cluster namespace to use
-     * 
-     * Path parameter: delegateUri (required)
-     * The endpoint uri to use in master/slave mode
-     */
-    static MasterEndpointBuilder master(String path) {
+    static MasterEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MasterEndpointBuilderImpl extends AbstractEndpointBuilder implements MasterEndpointBuilder, AdvancedMasterEndpointBuilder {
             public MasterEndpointBuilderImpl(String path) {
-                super("master", path);
+                super(componentName, path);
             }
         }
         return new MasterEndpointBuilderImpl(path);

@@ -399,28 +399,41 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default Translate2EndpointBuilder aws2Translate(String path) {
-            return Translate2EndpointBuilderFactory.aws2Translate(path);
+            return Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
+        }
+        /**
+         * AWS 2 Translate (camel-aws2-translate)
+         * Translate texts using AWS Translate and AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-translate
+         * 
+         * Syntax: <code>aws2-translate:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default Translate2EndpointBuilder aws2Translate(
+                String componentName,
+                String path) {
+            return Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 Translate (camel-aws2-translate)
-     * Translate texts using AWS Translate and AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-translate
-     * 
-     * Syntax: <code>aws2-translate:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static Translate2EndpointBuilder aws2Translate(String path) {
+    static Translate2EndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class Translate2EndpointBuilderImpl extends AbstractEndpointBuilder implements Translate2EndpointBuilder, AdvancedTranslate2EndpointBuilder {
             public Translate2EndpointBuilderImpl(String path) {
-                super("aws2-translate", path);
+                super(componentName, path);
             }
         }
         return new Translate2EndpointBuilderImpl(path);

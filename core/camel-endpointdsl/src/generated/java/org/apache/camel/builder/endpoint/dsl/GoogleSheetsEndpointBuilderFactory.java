@@ -1079,33 +1079,47 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * The value can be one of: create, get, update, append, batchUpdate,
          * clear
+         * 
+         * @param path apiName/methodName
          */
         default GoogleSheetsEndpointBuilder googleSheets(String path) {
-            return GoogleSheetsEndpointBuilderFactory.googleSheets(path);
+            return GoogleSheetsEndpointBuilderFactory.endpointBuilder("google-sheets", path);
+        }
+        /**
+         * Google Sheets (camel-google-sheets)
+         * Manage spreadsheets in Google Sheets.
+         * 
+         * Category: api,cloud,sheets
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-sheets
+         * 
+         * Syntax: <code>google-sheets:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: SPREADSHEETS, DATA
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: create, get, update, append, batchUpdate,
+         * clear
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default GoogleSheetsEndpointBuilder googleSheets(
+                String componentName,
+                String path) {
+            return GoogleSheetsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Sheets (camel-google-sheets)
-     * Manage spreadsheets in Google Sheets.
-     * 
-     * Category: api,cloud,sheets
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
-     * Syntax: <code>google-sheets:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: SPREADSHEETS, DATA
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     * The value can be one of: create, get, update, append, batchUpdate, clear
-     */
-    static GoogleSheetsEndpointBuilder googleSheets(String path) {
+    static GoogleSheetsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {
             public GoogleSheetsEndpointBuilderImpl(String path) {
-                super("google-sheets", path);
+                super(componentName, path);
             }
         }
         return new GoogleSheetsEndpointBuilderImpl(path);

@@ -108,7 +108,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *apiName* | *Required* What kind of operation to perform. The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS |  | GoogleMailApiName
-| *methodName* | *Required* What sub operation to use for the selected operation. The value can be one of: attachments, create, delete, get, getProfile, gmailImport, insert, list, modify, patch, send, trash, untrash, update |  | String
+| *methodName* | *Required* What sub operation to use for the selected operation. The value can be one of: attachments, create, delete, get, getProfile, gmailImport, insert, list, modify, patch, send, stop, trash, untrash, update, watch |  | String
 |===
 
 

@@ -342,28 +342,41 @@ public interface IgniteComputeEndpointBuilderFactory {
          * 
          * Path parameter: endpointId (required)
          * The endpoint ID (not used).
+         * 
+         * @param path endpointId
          */
         default IgniteComputeEndpointBuilder igniteCompute(String path) {
-            return IgniteComputeEndpointBuilderFactory.igniteCompute(path);
+            return IgniteComputeEndpointBuilderFactory.endpointBuilder("ignite-compute", path);
+        }
+        /**
+         * Ignite Compute (camel-ignite)
+         * Run compute operations on an Ignite cluster.
+         * 
+         * Category: nosql,cache,compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-compute:endpointId</code>
+         * 
+         * Path parameter: endpointId (required)
+         * The endpoint ID (not used).
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path endpointId
+         */
+        default IgniteComputeEndpointBuilder igniteCompute(
+                String componentName,
+                String path) {
+            return IgniteComputeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ignite Compute (camel-ignite)
-     * Run compute operations on an Ignite cluster.
-     * 
-     * Category: nosql,cache,compute
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ignite
-     * 
-     * Syntax: <code>ignite-compute:endpointId</code>
-     * 
-     * Path parameter: endpointId (required)
-     * The endpoint ID (not used).
-     */
-    static IgniteComputeEndpointBuilder igniteCompute(String path) {
+    static IgniteComputeEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder, AdvancedIgniteComputeEndpointBuilder {
             public IgniteComputeEndpointBuilderImpl(String path) {
-                super("ignite-compute", path);
+                super(componentName, path);
             }
         }
         return new IgniteComputeEndpointBuilderImpl(path);

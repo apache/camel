@@ -426,28 +426,37 @@ public interface DdbEndpointBuilderFactory {
          * 
          * Path parameter: tableName (required)
          * The name of the table currently worked with.
+         * 
+         * @param path tableName
          */
         default DdbEndpointBuilder awsDdb(String path) {
-            return DdbEndpointBuilderFactory.awsDdb(path);
+            return DdbEndpointBuilderFactory.endpointBuilder("aws-ddb", path);
+        }
+        /**
+         * AWS DynamoDB (camel-aws-ddb)
+         * Store and retrieve data from AWS DynamoDB service.
+         * 
+         * Category: cloud,database,nosql
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-aws-ddb
+         * 
+         * Syntax: <code>aws-ddb:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * The name of the table currently worked with.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path tableName
+         */
+        default DdbEndpointBuilder awsDdb(String componentName, String path) {
+            return DdbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS DynamoDB (camel-aws-ddb)
-     * Store and retrieve data from AWS DynamoDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     * 
-     * Syntax: <code>aws-ddb:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * The name of the table currently worked with.
-     */
-    static DdbEndpointBuilder awsDdb(String path) {
+    static DdbEndpointBuilder endpointBuilder(String componentName, String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder, AdvancedDdbEndpointBuilder {
             public DdbEndpointBuilderImpl(String path) {
-                super("aws-ddb", path);
+                super(componentName, path);
             }
         }
         return new DdbEndpointBuilderImpl(path);

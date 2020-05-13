@@ -264,28 +264,39 @@ public interface NovaEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * OpenStack host url
+         * 
+         * @param path host
          */
         default NovaEndpointBuilder openstackNova(String path) {
-            return NovaEndpointBuilderFactory.openstackNova(path);
+            return NovaEndpointBuilderFactory.endpointBuilder("openstack-nova", path);
+        }
+        /**
+         * OpenStack Nova (camel-openstack)
+         * Access OpenStack to manage compute resources.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-nova:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default NovaEndpointBuilder openstackNova(
+                String componentName,
+                String path) {
+            return NovaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * OpenStack Nova (camel-openstack)
-     * Access OpenStack to manage compute resources.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     * 
-     * Syntax: <code>openstack-nova:host</code>
-     * 
-     * Path parameter: host (required)
-     * OpenStack host url
-     */
-    static NovaEndpointBuilder openstackNova(String path) {
+    static NovaEndpointBuilder endpointBuilder(String componentName, String path) {
         class NovaEndpointBuilderImpl extends AbstractEndpointBuilder implements NovaEndpointBuilder, AdvancedNovaEndpointBuilder {
             public NovaEndpointBuilderImpl(String path) {
-                super("openstack-nova", path);
+                super(componentName, path);
             }
         }
         return new NovaEndpointBuilderImpl(path);

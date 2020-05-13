@@ -1122,38 +1122,49 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * Path parameter: topic (required)
          * The topic
+         * 
+         * @param path persistence://tenant/namespace/topic
          */
         default PulsarEndpointBuilder pulsar(String path) {
-            return PulsarEndpointBuilderFactory.pulsar(path);
+            return PulsarEndpointBuilderFactory.endpointBuilder("pulsar", path);
+        }
+        /**
+         * Pulsar (camel-pulsar)
+         * Send and receive messages from/to Apache Pulsar messaging system.
+         * 
+         * Category: messaging
+         * Since: 2.24
+         * Maven coordinates: org.apache.camel:camel-pulsar
+         * 
+         * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
+         * 
+         * Path parameter: persistence (required)
+         * Whether the topic is persistent or non-persistent
+         * The value can be one of: persistent, non-persistent
+         * 
+         * Path parameter: tenant (required)
+         * The tenant
+         * 
+         * Path parameter: namespace (required)
+         * The namespace
+         * 
+         * Path parameter: topic (required)
+         * The topic
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path persistence://tenant/namespace/topic
+         */
+        default PulsarEndpointBuilder pulsar(String componentName, String path) {
+            return PulsarEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Pulsar (camel-pulsar)
-     * Send and receive messages from/to Apache Pulsar messaging system.
-     * 
-     * Category: messaging
-     * Since: 2.24
-     * Maven coordinates: org.apache.camel:camel-pulsar
-     * 
-     * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
-     * 
-     * Path parameter: persistence (required)
-     * Whether the topic is persistent or non-persistent
-     * The value can be one of: persistent, non-persistent
-     * 
-     * Path parameter: tenant (required)
-     * The tenant
-     * 
-     * Path parameter: namespace (required)
-     * The namespace
-     * 
-     * Path parameter: topic (required)
-     * The topic
-     */
-    static PulsarEndpointBuilder pulsar(String path) {
+    static PulsarEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class PulsarEndpointBuilderImpl extends AbstractEndpointBuilder implements PulsarEndpointBuilder, AdvancedPulsarEndpointBuilder {
             public PulsarEndpointBuilderImpl(String path) {
-                super("pulsar", path);
+                super(componentName, path);
             }
         }
         return new PulsarEndpointBuilderImpl(path);

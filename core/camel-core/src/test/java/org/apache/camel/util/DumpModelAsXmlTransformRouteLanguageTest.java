@@ -26,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.junit.Test;
 
+import static org.apache.camel.builder.Builder.language;
+
 /**
  *
  */

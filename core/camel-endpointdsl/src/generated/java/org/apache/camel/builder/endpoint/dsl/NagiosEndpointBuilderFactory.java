@@ -286,31 +286,42 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * Path parameter: port (required)
          * The port number of the host.
+         * 
+         * @param path host:port
          */
         default NagiosEndpointBuilder nagios(String path) {
-            return NagiosEndpointBuilderFactory.nagios(path);
+            return NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
+        }
+        /**
+         * Nagios (camel-nagios)
+         * Send passive checks to Nagios using JSendNSCA.
+         * 
+         * Category: monitoring
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-nagios
+         * 
+         * Syntax: <code>nagios:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * This is the address of the Nagios host where checks should be send.
+         * 
+         * Path parameter: port (required)
+         * The port number of the host.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port
+         */
+        default NagiosEndpointBuilder nagios(String componentName, String path) {
+            return NagiosEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * Syntax: <code>nagios:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * This is the address of the Nagios host where checks should be send.
-     * 
-     * Path parameter: port (required)
-     * The port number of the host.
-     */
-    static NagiosEndpointBuilder nagios(String path) {
+    static NagiosEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class NagiosEndpointBuilderImpl extends AbstractEndpointBuilder implements NagiosEndpointBuilder, AdvancedNagiosEndpointBuilder {
             public NagiosEndpointBuilderImpl(String path) {
-                super("nagios", path);
+                super(componentName, path);
             }
         }
         return new NagiosEndpointBuilderImpl(path);

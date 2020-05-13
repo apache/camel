@@ -680,28 +680,41 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
-            return HazelcastMultimapEndpointBuilderFactory.hazelcastMultimap(path);
+            return HazelcastMultimapEndpointBuilderFactory.endpointBuilder("hazelcast-multimap", path);
+        }
+        /**
+         * Hazelcast Multimap (camel-hazelcast)
+         * Perform operations on Hazelcast distributed multimap.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-multimap:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastMultimapEndpointBuilder hazelcastMultimap(
+                String componentName,
+                String path) {
+            return HazelcastMultimapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast Multimap (camel-hazelcast)
-     * Perform operations on Hazelcast distributed multimap.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-multimap:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
+    static HazelcastMultimapEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastMultimapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMultimapEndpointBuilder, AdvancedHazelcastMultimapEndpointBuilder {
             public HazelcastMultimapEndpointBuilderImpl(String path) {
-                super("hazelcast-multimap", path);
+                super(componentName, path);
             }
         }
         return new HazelcastMultimapEndpointBuilderImpl(path);

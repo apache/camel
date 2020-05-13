@@ -5484,33 +5484,42 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * Path parameter: destinationName (required)
          * Name of the queue or topic to use as destination
+         * 
+         * @param path destinationType:destinationName
          */
         default AMQPEndpointBuilder amqp(String path) {
-            return AMQPEndpointBuilderFactory.amqp(path);
+            return AMQPEndpointBuilderFactory.endpointBuilder("amqp", path);
+        }
+        /**
+         * AMQP (camel-amqp)
+         * Messaging with AMQP protocol using Apache QPid Client.
+         * 
+         * Category: messaging
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-amqp
+         * 
+         * Syntax: <code>amqp:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic, temp-queue, temp-topic
+         * 
+         * Path parameter: destinationName (required)
+         * Name of the queue or topic to use as destination
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path destinationType:destinationName
+         */
+        default AMQPEndpointBuilder amqp(String componentName, String path) {
+            return AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
-     * 
-     * Category: messaging
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-amqp
-     * 
-     * Syntax: <code>amqp:destinationType:destinationName</code>
-     * 
-     * Path parameter: destinationType
-     * The kind of destination to use
-     * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
-     * 
-     * Path parameter: destinationName (required)
-     * Name of the queue or topic to use as destination
-     */
-    static AMQPEndpointBuilder amqp(String path) {
+    static AMQPEndpointBuilder endpointBuilder(String componentName, String path) {
         class AMQPEndpointBuilderImpl extends AbstractEndpointBuilder implements AMQPEndpointBuilder, AdvancedAMQPEndpointBuilder {
             public AMQPEndpointBuilderImpl(String path) {
-                super("amqp", path);
+                super(componentName, path);
             }
         }
         return new AMQPEndpointBuilderImpl(path);

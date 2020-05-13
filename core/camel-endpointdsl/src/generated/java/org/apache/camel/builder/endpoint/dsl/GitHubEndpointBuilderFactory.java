@@ -626,34 +626,45 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: branchName
          * Name of branch
+         * 
+         * @param path type/branchName
          */
         default GitHubEndpointBuilder github(String path) {
-            return GitHubEndpointBuilderFactory.github(path);
+            return GitHubEndpointBuilderFactory.endpointBuilder("github", path);
+        }
+        /**
+         * GitHub (camel-github)
+         * Interact with the GitHub API.
+         * 
+         * Category: api,file
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-github
+         * 
+         * Syntax: <code>github:type/branchName</code>
+         * 
+         * Path parameter: type (required)
+         * What git operation to execute
+         * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT,
+         * COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES,
+         * GETCOMMITFILE, CREATEISSUE
+         * 
+         * Path parameter: branchName
+         * Name of branch
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path type/branchName
+         */
+        default GitHubEndpointBuilder github(String componentName, String path) {
+            return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * GitHub (camel-github)
-     * Interact with the GitHub API.
-     * 
-     * Category: api,file
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-github
-     * 
-     * Syntax: <code>github:type/branchName</code>
-     * 
-     * Path parameter: type (required)
-     * What git operation to execute
-     * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT,
-     * PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE,
-     * CREATEISSUE
-     * 
-     * Path parameter: branchName
-     * Name of branch
-     */
-    static GitHubEndpointBuilder github(String path) {
+    static GitHubEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GitHubEndpointBuilderImpl extends AbstractEndpointBuilder implements GitHubEndpointBuilder, AdvancedGitHubEndpointBuilder {
             public GitHubEndpointBuilderImpl(String path) {
-                super("github", path);
+                super(componentName, path);
             }
         }
         return new GitHubEndpointBuilderImpl(path);

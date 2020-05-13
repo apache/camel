@@ -2375,28 +2375,37 @@ public interface SqsEndpointBuilderFactory {
          * 
          * Path parameter: queueNameOrArn (required)
          * Queue name or ARN
+         * 
+         * @param path queueNameOrArn
          */
         default SqsEndpointBuilder awsSqs(String path) {
-            return SqsEndpointBuilderFactory.awsSqs(path);
+            return SqsEndpointBuilderFactory.endpointBuilder("aws-sqs", path);
+        }
+        /**
+         * AWS Simple Queue Service (camel-aws-sqs)
+         * Sending and receive messages to/from AWS SQS service.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-aws-sqs
+         * 
+         * Syntax: <code>aws-sqs:queueNameOrArn</code>
+         * 
+         * Path parameter: queueNameOrArn (required)
+         * Queue name or ARN
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path queueNameOrArn
+         */
+        default SqsEndpointBuilder awsSqs(String componentName, String path) {
+            return SqsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Simple Queue Service (camel-aws-sqs)
-     * Sending and receive messages to/from AWS SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     * 
-     * Syntax: <code>aws-sqs:queueNameOrArn</code>
-     * 
-     * Path parameter: queueNameOrArn (required)
-     * Queue name or ARN
-     */
-    static SqsEndpointBuilder awsSqs(String path) {
+    static SqsEndpointBuilder endpointBuilder(String componentName, String path) {
         class SqsEndpointBuilderImpl extends AbstractEndpointBuilder implements SqsEndpointBuilder, AdvancedSqsEndpointBuilder {
             public SqsEndpointBuilderImpl(String path) {
-                super("aws-sqs", path);
+                super(componentName, path);
             }
         }
         return new SqsEndpointBuilderImpl(path);

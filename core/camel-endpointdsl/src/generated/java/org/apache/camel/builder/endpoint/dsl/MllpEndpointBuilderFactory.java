@@ -1724,32 +1724,41 @@ public interface MllpEndpointBuilderFactory {
          * 
          * Path parameter: port (required)
          * Port number for the TCP connection
+         * 
+         * @param path hostname:port
          */
         default MllpEndpointBuilder mllp(String path) {
-            return MllpEndpointBuilderFactory.mllp(path);
+            return MllpEndpointBuilderFactory.endpointBuilder("mllp", path);
+        }
+        /**
+         * MLLP (camel-mllp)
+         * Communicate with external systems using the MLLP protocol.
+         * 
+         * Category: mllp
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-mllp
+         * 
+         * Syntax: <code>mllp:hostname:port</code>
+         * 
+         * Path parameter: hostname (required)
+         * Hostname or IP for connection for the TCP connection. The default
+         * value is null, which means any local IP address
+         * 
+         * Path parameter: port (required)
+         * Port number for the TCP connection
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path hostname:port
+         */
+        default MllpEndpointBuilder mllp(String componentName, String path) {
+            return MllpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * MLLP (camel-mllp)
-     * Communicate with external systems using the MLLP protocol.
-     * 
-     * Category: mllp
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-mllp
-     * 
-     * Syntax: <code>mllp:hostname:port</code>
-     * 
-     * Path parameter: hostname (required)
-     * Hostname or IP for connection for the TCP connection. The default value
-     * is null, which means any local IP address
-     * 
-     * Path parameter: port (required)
-     * Port number for the TCP connection
-     */
-    static MllpEndpointBuilder mllp(String path) {
+    static MllpEndpointBuilder endpointBuilder(String componentName, String path) {
         class MllpEndpointBuilderImpl extends AbstractEndpointBuilder implements MllpEndpointBuilder, AdvancedMllpEndpointBuilder {
             public MllpEndpointBuilderImpl(String path) {
-                super("mllp", path);
+                super(componentName, path);
             }
         }
         return new MllpEndpointBuilderImpl(path);

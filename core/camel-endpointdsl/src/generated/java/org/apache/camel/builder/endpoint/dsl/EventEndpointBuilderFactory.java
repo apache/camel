@@ -416,28 +416,41 @@ public interface EventEndpointBuilderFactory {
          * 
          * Path parameter: name
          * Name of endpoint
+         * 
+         * @param path name
          */
         default EventEndpointBuilder springEvent(String path) {
-            return EventEndpointBuilderFactory.springEvent(path);
+            return EventEndpointBuilderFactory.endpointBuilder("spring-event", path);
+        }
+        /**
+         * Spring Event (camel-spring)
+         * Listen for Spring Application Events.
+         * 
+         * Category: spring,eventbus
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-spring
+         * 
+         * Syntax: <code>spring-event:name</code>
+         * 
+         * Path parameter: name
+         * Name of endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default EventEndpointBuilder springEvent(
+                String componentName,
+                String path) {
+            return EventEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Spring Event (camel-spring)
-     * Listen for Spring Application Events.
-     * 
-     * Category: spring,eventbus
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-spring
-     * 
-     * Syntax: <code>spring-event:name</code>
-     * 
-     * Path parameter: name
-     * Name of endpoint
-     */
-    static EventEndpointBuilder springEvent(String path) {
+    static EventEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class EventEndpointBuilderImpl extends AbstractEndpointBuilder implements EventEndpointBuilder, AdvancedEventEndpointBuilder {
             public EventEndpointBuilderImpl(String path) {
-                super("spring-event", path);
+                super(componentName, path);
             }
         }
         return new EventEndpointBuilderImpl(path);

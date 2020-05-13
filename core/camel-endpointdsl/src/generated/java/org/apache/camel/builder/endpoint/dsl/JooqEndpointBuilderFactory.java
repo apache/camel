@@ -992,28 +992,37 @@ public interface JooqEndpointBuilderFactory {
          * 
          * Path parameter: entityType
          * JOOQ entity class
+         * 
+         * @param path entityType
          */
         default JooqEndpointBuilder jooq(String path) {
-            return JooqEndpointBuilderFactory.jooq(path);
+            return JooqEndpointBuilderFactory.endpointBuilder("jooq", path);
+        }
+        /**
+         * JOOQ (camel-jooq)
+         * Store and retrieve Java objects from an SQL database using JOOQ.
+         * 
+         * Category: database
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-jooq
+         * 
+         * Syntax: <code>jooq:entityType</code>
+         * 
+         * Path parameter: entityType
+         * JOOQ entity class
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path entityType
+         */
+        default JooqEndpointBuilder jooq(String componentName, String path) {
+            return JooqEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JOOQ (camel-jooq)
-     * Store and retrieve Java objects from an SQL database using JOOQ.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-jooq
-     * 
-     * Syntax: <code>jooq:entityType</code>
-     * 
-     * Path parameter: entityType
-     * JOOQ entity class
-     */
-    static JooqEndpointBuilder jooq(String path) {
+    static JooqEndpointBuilder endpointBuilder(String componentName, String path) {
         class JooqEndpointBuilderImpl extends AbstractEndpointBuilder implements JooqEndpointBuilder, AdvancedJooqEndpointBuilder {
             public JooqEndpointBuilderImpl(String path) {
-                super("jooq", path);
+                super(componentName, path);
             }
         }
         return new JooqEndpointBuilderImpl(path);

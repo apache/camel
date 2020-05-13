@@ -1496,29 +1496,42 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Path parameter: name (required)
          * Unique name for the connector. Attempting to register again with the
          * same name will fail.
+         * 
+         * @param path name
          */
         default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
-            return DebeziumPostgresEndpointBuilderFactory.debeziumPostgres(path);
+            return DebeziumPostgresEndpointBuilderFactory.endpointBuilder("debezium-postgres", path);
+        }
+        /**
+         * Debezium PostgresSQL Connector (camel-debezium-postgres)
+         * Capture changes from a PostgresSQL database.
+         * 
+         * Category: database,sql,postgres
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-postgres
+         * 
+         * Syntax: <code>debezium-postgres:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DebeziumPostgresEndpointBuilder debeziumPostgres(
+                String componentName,
+                String path) {
+            return DebeziumPostgresEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Debezium PostgresSQL Connector (camel-debezium-postgres)
-     * Capture changes from a PostgresSQL database.
-     * 
-     * Category: database,sql,postgres
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-debezium-postgres
-     * 
-     * Syntax: <code>debezium-postgres:name</code>
-     * 
-     * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
-     */
-    static DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
+    static DebeziumPostgresEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DebeziumPostgresEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumPostgresEndpointBuilder, AdvancedDebeziumPostgresEndpointBuilder {
             public DebeziumPostgresEndpointBuilderImpl(String path) {
-                super("debezium-postgres", path);
+                super(componentName, path);
             }
         }
         return new DebeziumPostgresEndpointBuilderImpl(path);

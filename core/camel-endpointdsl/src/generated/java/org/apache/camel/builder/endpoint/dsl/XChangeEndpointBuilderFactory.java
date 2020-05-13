@@ -271,28 +271,39 @@ public interface XChangeEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The exchange to connect to
+         * 
+         * @param path name
          */
         default XChangeEndpointBuilder xchange(String path) {
-            return XChangeEndpointBuilderFactory.xchange(path);
+            return XChangeEndpointBuilderFactory.endpointBuilder("xchange", path);
+        }
+        /**
+         * XChange (camel-xchange)
+         * Access market data and trade on Bitcoin and Altcoin exchanges.
+         * 
+         * Category: bitcoin,blockchain
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-xchange
+         * 
+         * Syntax: <code>xchange:name</code>
+         * 
+         * Path parameter: name (required)
+         * The exchange to connect to
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default XChangeEndpointBuilder xchange(String componentName, String path) {
+            return XChangeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XChange (camel-xchange)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
-     * 
-     * Category: bitcoin,blockchain
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-xchange
-     * 
-     * Syntax: <code>xchange:name</code>
-     * 
-     * Path parameter: name (required)
-     * The exchange to connect to
-     */
-    static XChangeEndpointBuilder xchange(String path) {
+    static XChangeEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {
             public XChangeEndpointBuilderImpl(String path) {
-                super("xchange", path);
+                super(componentName, path);
             }
         }
         return new XChangeEndpointBuilderImpl(path);

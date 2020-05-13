@@ -666,34 +666,43 @@ public interface ScpEndpointBuilderFactory {
          * 
          * Path parameter: directoryName
          * The starting directory
+         * 
+         * @param path host:port/directoryName
          */
         default ScpEndpointBuilder scp(String path) {
-            return ScpEndpointBuilderFactory.scp(path);
+            return ScpEndpointBuilderFactory.endpointBuilder("scp", path);
+        }
+        /**
+         * SCP (camel-jsch)
+         * Copy files to/from remote hosts using the secure copy protocol (SCP).
+         * 
+         * Category: file
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-jsch
+         * 
+         * Syntax: <code>scp:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/directoryName
+         */
+        default ScpEndpointBuilder scp(String componentName, String path) {
+            return ScpEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SCP (camel-jsch)
-     * Copy files to/from remote hosts using the secure copy protocol (SCP).
-     * 
-     * Category: file
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-jsch
-     * 
-     * Syntax: <code>scp:host:port/directoryName</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
-     * 
-     * Path parameter: port
-     * Port of the FTP server
-     * 
-     * Path parameter: directoryName
-     * The starting directory
-     */
-    static ScpEndpointBuilder scp(String path) {
+    static ScpEndpointBuilder endpointBuilder(String componentName, String path) {
         class ScpEndpointBuilderImpl extends AbstractEndpointBuilder implements ScpEndpointBuilder, AdvancedScpEndpointBuilder {
             public ScpEndpointBuilderImpl(String path) {
-                super("scp", path);
+                super(componentName, path);
             }
         }
         return new ScpEndpointBuilderImpl(path);

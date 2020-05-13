@@ -371,28 +371,41 @@ public interface Lambda2EndpointBuilderFactory {
          * 
          * Path parameter: function (required)
          * Name of the Lambda function.
+         * 
+         * @param path function
          */
         default Lambda2EndpointBuilder aws2Lambda(String path) {
-            return Lambda2EndpointBuilderFactory.aws2Lambda(path);
+            return Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
+        }
+        /**
+         * AWS Lambda (camel-aws2-lambda)
+         * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
+         * 
+         * Category: cloud,computing,serverless
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-lambda
+         * 
+         * Syntax: <code>aws2-lambda:function</code>
+         * 
+         * Path parameter: function (required)
+         * Name of the Lambda function.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path function
+         */
+        default Lambda2EndpointBuilder aws2Lambda(
+                String componentName,
+                String path) {
+            return Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Lambda (camel-aws2-lambda)
-     * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 3.2
-     * Maven coordinates: org.apache.camel:camel-aws2-lambda
-     * 
-     * Syntax: <code>aws2-lambda:function</code>
-     * 
-     * Path parameter: function (required)
-     * Name of the Lambda function.
-     */
-    static Lambda2EndpointBuilder aws2Lambda(String path) {
+    static Lambda2EndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class Lambda2EndpointBuilderImpl extends AbstractEndpointBuilder implements Lambda2EndpointBuilder, AdvancedLambda2EndpointBuilder {
             public Lambda2EndpointBuilderImpl(String path) {
-                super("aws2-lambda", path);
+                super(componentName, path);
             }
         }
         return new Lambda2EndpointBuilderImpl(path);

@@ -297,29 +297,39 @@ public interface WekaEndpointBuilderFactory {
          * The command to use.
          * The value can be one of: filter, model, read, write, push, pop,
          * version
+         * 
+         * @param path command
          */
         default WekaEndpointBuilder weka(String path) {
-            return WekaEndpointBuilderFactory.weka(path);
+            return WekaEndpointBuilderFactory.endpointBuilder("weka", path);
+        }
+        /**
+         * Weka (camel-weka)
+         * Perform machine learning tasks using Weka.
+         * 
+         * Category: Datamining
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-weka
+         * 
+         * Syntax: <code>weka:command</code>
+         * 
+         * Path parameter: command (required)
+         * The command to use.
+         * The value can be one of: filter, model, read, write, push, pop,
+         * version
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path command
+         */
+        default WekaEndpointBuilder weka(String componentName, String path) {
+            return WekaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: Datamining
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * Syntax: <code>weka:command</code>
-     * 
-     * Path parameter: command (required)
-     * The command to use.
-     * The value can be one of: filter, model, read, write, push, pop, version
-     */
-    static WekaEndpointBuilder weka(String path) {
+    static WekaEndpointBuilder endpointBuilder(String componentName, String path) {
         class WekaEndpointBuilderImpl extends AbstractEndpointBuilder implements WekaEndpointBuilder, AdvancedWekaEndpointBuilder {
             public WekaEndpointBuilderImpl(String path) {
-                super("weka", path);
+                super(componentName, path);
             }
         }
         return new WekaEndpointBuilderImpl(path);

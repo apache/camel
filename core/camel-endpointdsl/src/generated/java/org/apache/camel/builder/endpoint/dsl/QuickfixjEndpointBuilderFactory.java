@@ -608,30 +608,43 @@ public interface QuickfixjEndpointBuilderFactory {
          * Path parameter: configurationName (required)
          * The configFile is the name of the QuickFIX/J configuration to use for
          * the FIX engine (located as a resource found in your classpath).
+         * 
+         * @param path configurationName
          */
         default QuickfixjEndpointBuilder quickfix(String path) {
-            return QuickfixjEndpointBuilderFactory.quickfix(path);
+            return QuickfixjEndpointBuilderFactory.endpointBuilder("quickfix", path);
+        }
+        /**
+         * QuickFix (camel-quickfix)
+         * Open a Financial Interchange (FIX) session using an embedded
+         * QuickFix/J engine.
+         * 
+         * Category: messaging
+         * Since: 2.1
+         * Maven coordinates: org.apache.camel:camel-quickfix
+         * 
+         * Syntax: <code>quickfix:configurationName</code>
+         * 
+         * Path parameter: configurationName (required)
+         * The configFile is the name of the QuickFIX/J configuration to use for
+         * the FIX engine (located as a resource found in your classpath).
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path configurationName
+         */
+        default QuickfixjEndpointBuilder quickfix(
+                String componentName,
+                String path) {
+            return QuickfixjEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * QuickFix (camel-quickfix)
-     * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
-     * engine.
-     * 
-     * Category: messaging
-     * Since: 2.1
-     * Maven coordinates: org.apache.camel:camel-quickfix
-     * 
-     * Syntax: <code>quickfix:configurationName</code>
-     * 
-     * Path parameter: configurationName (required)
-     * The configFile is the name of the QuickFIX/J configuration to use for the
-     * FIX engine (located as a resource found in your classpath).
-     */
-    static QuickfixjEndpointBuilder quickfix(String path) {
+    static QuickfixjEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class QuickfixjEndpointBuilderImpl extends AbstractEndpointBuilder implements QuickfixjEndpointBuilder, AdvancedQuickfixjEndpointBuilder {
             public QuickfixjEndpointBuilderImpl(String path) {
-                super("quickfix", path);
+                super(componentName, path);
             }
         }
         return new QuickfixjEndpointBuilderImpl(path);

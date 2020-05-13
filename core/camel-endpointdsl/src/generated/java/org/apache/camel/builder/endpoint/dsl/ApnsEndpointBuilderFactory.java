@@ -882,28 +882,37 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * Path parameter: name
          * Name of the endpoint
+         * 
+         * @param path name
          */
         default ApnsEndpointBuilder apns(String path) {
-            return ApnsEndpointBuilderFactory.apns(path);
+            return ApnsEndpointBuilderFactory.endpointBuilder("apns", path);
+        }
+        /**
+         * APNS (camel-apns)
+         * Send notifications to Apple iOS devices.
+         * 
+         * Category: eventbus,mobile
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-apns
+         * 
+         * Syntax: <code>apns:name</code>
+         * 
+         * Path parameter: name
+         * Name of the endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default ApnsEndpointBuilder apns(String componentName, String path) {
+            return ApnsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * APNS (camel-apns)
-     * Send notifications to Apple iOS devices.
-     * 
-     * Category: eventbus,mobile
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-apns
-     * 
-     * Syntax: <code>apns:name</code>
-     * 
-     * Path parameter: name
-     * Name of the endpoint
-     */
-    static ApnsEndpointBuilder apns(String path) {
+    static ApnsEndpointBuilder endpointBuilder(String componentName, String path) {
         class ApnsEndpointBuilderImpl extends AbstractEndpointBuilder implements ApnsEndpointBuilder, AdvancedApnsEndpointBuilder {
             public ApnsEndpointBuilderImpl(String path) {
-                super("apns", path);
+                super(componentName, path);
             }
         }
         return new ApnsEndpointBuilderImpl(path);

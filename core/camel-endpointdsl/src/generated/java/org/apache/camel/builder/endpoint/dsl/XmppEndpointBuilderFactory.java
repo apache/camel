@@ -1262,35 +1262,44 @@ public interface XmppEndpointBuilderFactory {
          * Path parameter: participant
          * JID (Jabber ID) of person to receive messages. room parameter has
          * precedence over participant.
+         * 
+         * @param path host:port/participant
          */
         default XmppEndpointBuilder xmpp(String path) {
-            return XmppEndpointBuilderFactory.xmpp(path);
+            return XmppEndpointBuilderFactory.endpointBuilder("xmpp", path);
+        }
+        /**
+         * XMPP (camel-xmpp)
+         * Send and receive messages to/from an XMPP chat server.
+         * 
+         * Category: chat,messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-xmpp
+         * 
+         * Syntax: <code>xmpp:host:port/participant</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname for the chat server
+         * 
+         * Path parameter: port (required)
+         * Port number for the chat server
+         * 
+         * Path parameter: participant
+         * JID (Jabber ID) of person to receive messages. room parameter has
+         * precedence over participant.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host:port/participant
+         */
+        default XmppEndpointBuilder xmpp(String componentName, String path) {
+            return XmppEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * XMPP (camel-xmpp)
-     * Send and receive messages to/from an XMPP chat server.
-     * 
-     * Category: chat,messaging
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-xmpp
-     * 
-     * Syntax: <code>xmpp:host:port/participant</code>
-     * 
-     * Path parameter: host (required)
-     * Hostname for the chat server
-     * 
-     * Path parameter: port (required)
-     * Port number for the chat server
-     * 
-     * Path parameter: participant
-     * JID (Jabber ID) of person to receive messages. room parameter has
-     * precedence over participant.
-     */
-    static XmppEndpointBuilder xmpp(String path) {
+    static XmppEndpointBuilder endpointBuilder(String componentName, String path) {
         class XmppEndpointBuilderImpl extends AbstractEndpointBuilder implements XmppEndpointBuilder, AdvancedXmppEndpointBuilder {
             public XmppEndpointBuilderImpl(String path) {
-                super("xmpp", path);
+                super(componentName, path);
             }
         }
         return new XmppEndpointBuilderImpl(path);

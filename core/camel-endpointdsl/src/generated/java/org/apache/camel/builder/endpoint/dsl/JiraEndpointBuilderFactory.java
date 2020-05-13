@@ -790,33 +790,42 @@ public interface JiraEndpointBuilderFactory {
          * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
          * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
          * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+         * 
+         * @param path type
          */
         default JiraEndpointBuilder jira(String path) {
-            return JiraEndpointBuilderFactory.jira(path);
+            return JiraEndpointBuilderFactory.endpointBuilder("jira", path);
+        }
+        /**
+         * Jira (camel-jira)
+         * Interact with JIRA issue tracker.
+         * 
+         * Category: api,reporting
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-jira
+         * 
+         * Syntax: <code>jira:type</code>
+         * 
+         * Path parameter: type (required)
+         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
+         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
+         * Watchers. See this class javadoc description for more information.
+         * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
+         * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
+         * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path type
+         */
+        default JiraEndpointBuilder jira(String componentName, String path) {
+            return JiraEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
-     * 
-     * Category: api,reporting
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-jira
-     * 
-     * Syntax: <code>jira:type</code>
-     * 
-     * Path parameter: type (required)
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-     * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-     * Watchers. See this class javadoc description for more information.
-     * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
-     * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
-     */
-    static JiraEndpointBuilder jira(String path) {
+    static JiraEndpointBuilder endpointBuilder(String componentName, String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {
             public JiraEndpointBuilderImpl(String path) {
-                super("jira", path);
+                super(componentName, path);
             }
         }
         return new JiraEndpointBuilderImpl(path);

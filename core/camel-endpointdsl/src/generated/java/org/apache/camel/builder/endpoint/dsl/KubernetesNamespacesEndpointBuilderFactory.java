@@ -1276,30 +1276,43 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
                 String path) {
-            return KubernetesNamespacesEndpointBuilderFactory.kubernetesNamespaces(path);
+            return KubernetesNamespacesEndpointBuilderFactory.endpointBuilder("kubernetes-namespaces", path);
+        }
+        /**
+         * Kubernetes Namespaces (camel-kubernetes)
+         * Perform operations on Kubernetes Namespaces and get notified on
+         * Namespace changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-namespaces:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
+                String componentName,
+                String path) {
+            return KubernetesNamespacesEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Namespaces (camel-kubernetes)
-     * Perform operations on Kubernetes Namespaces and get notified on Namespace
-     * changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-namespaces:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
+    static KubernetesNamespacesEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesNamespacesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNamespacesEndpointBuilder, AdvancedKubernetesNamespacesEndpointBuilder {
             public KubernetesNamespacesEndpointBuilderImpl(String path) {
-                super("kubernetes-namespaces", path);
+                super(componentName, path);
             }
         }
         return new KubernetesNamespacesEndpointBuilderImpl(path);

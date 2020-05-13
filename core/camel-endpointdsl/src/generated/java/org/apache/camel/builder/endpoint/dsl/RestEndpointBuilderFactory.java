@@ -721,36 +721,47 @@ public interface RestEndpointBuilderFactory {
          * 
          * Path parameter: uriTemplate
          * The uri template
+         * 
+         * @param path method:path:uriTemplate
          */
         default RestEndpointBuilder restEndpoint(String path) {
-            return RestEndpointBuilderFactory.restEndpoint(path);
+            return RestEndpointBuilderFactory.endpointBuilder("rest", path);
+        }
+        /**
+         * REST (camel-rest)
+         * Expose REST services or call external REST services.
+         * 
+         * Category: core,rest
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-rest
+         * 
+         * Syntax: <code>rest:method:path:uriTemplate</code>
+         * 
+         * Path parameter: method (required)
+         * HTTP method to use.
+         * The value can be one of: get, post, put, delete, patch, head, trace,
+         * connect, options
+         * 
+         * Path parameter: path (required)
+         * The base path
+         * 
+         * Path parameter: uriTemplate
+         * The uri template
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path method:path:uriTemplate
+         */
+        default RestEndpointBuilder restEndpoint(
+                String componentName,
+                String path) {
+            return RestEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * REST (camel-rest)
-     * Expose REST services or call external REST services.
-     * 
-     * Category: core,rest
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-rest
-     * 
-     * Syntax: <code>rest:method:path:uriTemplate</code>
-     * 
-     * Path parameter: method (required)
-     * HTTP method to use.
-     * The value can be one of: get, post, put, delete, patch, head, trace,
-     * connect, options
-     * 
-     * Path parameter: path (required)
-     * The base path
-     * 
-     * Path parameter: uriTemplate
-     * The uri template
-     */
-    static RestEndpointBuilder restEndpoint(String path) {
+    static RestEndpointBuilder endpointBuilder(String componentName, String path) {
         class RestEndpointBuilderImpl extends AbstractEndpointBuilder implements RestEndpointBuilder, AdvancedRestEndpointBuilder {
             public RestEndpointBuilderImpl(String path) {
-                super("rest", path);
+                super(componentName, path);
             }
         }
         return new RestEndpointBuilderImpl(path);

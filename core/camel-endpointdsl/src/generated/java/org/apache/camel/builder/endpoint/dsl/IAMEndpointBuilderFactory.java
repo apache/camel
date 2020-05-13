@@ -330,28 +330,37 @@ public interface IAMEndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default IAMEndpointBuilder awsIam(String path) {
-            return IAMEndpointBuilderFactory.awsIam(path);
+            return IAMEndpointBuilderFactory.endpointBuilder("aws-iam", path);
+        }
+        /**
+         * AWS IAM (camel-aws-iam)
+         * Manage AWS IAM instances.
+         * 
+         * Category: cloud,management
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-aws-iam
+         * 
+         * Syntax: <code>aws-iam:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default IAMEndpointBuilder awsIam(String componentName, String path) {
+            return IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS IAM (camel-aws-iam)
-     * Manage AWS IAM instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-aws-iam
-     * 
-     * Syntax: <code>aws-iam:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static IAMEndpointBuilder awsIam(String path) {
+    static IAMEndpointBuilder endpointBuilder(String componentName, String path) {
         class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {
             public IAMEndpointBuilderImpl(String path) {
-                super("aws-iam", path);
+                super(componentName, path);
             }
         }
         return new IAMEndpointBuilderImpl(path);

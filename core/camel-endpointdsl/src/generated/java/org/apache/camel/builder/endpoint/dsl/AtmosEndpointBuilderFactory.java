@@ -727,32 +727,44 @@ public interface AtmosEndpointBuilderFactory {
          * Path parameter: operation (required)
          * Operation to perform
          * The value can be one of: put, del, search, get, move
+         * 
+         * @param path name/operation
          */
         default AtmosEndpointBuilder atmos(String path) {
-            return AtmosEndpointBuilderFactory.atmos(path);
+            return AtmosEndpointBuilderFactory.endpointBuilder("atmos", path);
+        }
+        /**
+         * Atmos (camel-atmos)
+         * Integract with EMC's ViPR object data services using the Atmos
+         * Client.
+         * 
+         * Category: file,cloud
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-atmos
+         * 
+         * Syntax: <code>atmos:name/operation</code>
+         * 
+         * Path parameter: name
+         * Atmos name
+         * 
+         * Path parameter: operation (required)
+         * Operation to perform
+         * The value can be one of: put, del, search, get, move
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name/operation
+         */
+        default AtmosEndpointBuilder atmos(String componentName, String path) {
+            return AtmosEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atmos (camel-atmos)
-     * Integract with EMC's ViPR object data services using the Atmos Client.
-     * 
-     * Category: file,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-atmos
-     * 
-     * Syntax: <code>atmos:name/operation</code>
-     * 
-     * Path parameter: name
-     * Atmos name
-     * 
-     * Path parameter: operation (required)
-     * Operation to perform
-     * The value can be one of: put, del, search, get, move
-     */
-    static AtmosEndpointBuilder atmos(String path) {
+    static AtmosEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtmosEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosEndpointBuilder, AdvancedAtmosEndpointBuilder {
             public AtmosEndpointBuilderImpl(String path) {
-                super("atmos", path);
+                super(componentName, path);
             }
         }
         return new AtmosEndpointBuilderImpl(path);

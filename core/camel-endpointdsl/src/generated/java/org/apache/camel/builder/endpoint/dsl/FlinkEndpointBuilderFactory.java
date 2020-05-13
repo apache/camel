@@ -283,29 +283,40 @@ public interface FlinkEndpointBuilderFactory {
          * Path parameter: endpointType (required)
          * Type of the endpoint (dataset, datastream).
          * The value can be one of: dataset, datastream
+         * 
+         * @param path endpointType
          */
         default FlinkEndpointBuilder flink(String path) {
-            return FlinkEndpointBuilderFactory.flink(path);
+            return FlinkEndpointBuilderFactory.endpointBuilder("flink", path);
+        }
+        /**
+         * Flink (camel-flink)
+         * Send DataSet jobs to an Apache Flink cluster.
+         * 
+         * Category: hadoop
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-flink
+         * 
+         * Syntax: <code>flink:endpointType</code>
+         * 
+         * Path parameter: endpointType (required)
+         * Type of the endpoint (dataset, datastream).
+         * The value can be one of: dataset, datastream
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path endpointType
+         */
+        default FlinkEndpointBuilder flink(String componentName, String path) {
+            return FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Flink (camel-flink)
-     * Send DataSet jobs to an Apache Flink cluster.
-     * 
-     * Category: hadoop
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-flink
-     * 
-     * Syntax: <code>flink:endpointType</code>
-     * 
-     * Path parameter: endpointType (required)
-     * Type of the endpoint (dataset, datastream).
-     * The value can be one of: dataset, datastream
-     */
-    static FlinkEndpointBuilder flink(String path) {
+    static FlinkEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder, AdvancedFlinkEndpointBuilder {
             public FlinkEndpointBuilderImpl(String path) {
-                super("flink", path);
+                super(componentName, path);
             }
         }
         return new FlinkEndpointBuilderImpl(path);

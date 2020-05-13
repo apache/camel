@@ -496,28 +496,39 @@ public interface DirectEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of direct endpoint
+         * 
+         * @param path name
          */
         default DirectEndpointBuilder direct(String path) {
-            return DirectEndpointBuilderFactory.direct(path);
+            return DirectEndpointBuilderFactory.endpointBuilder("direct", path);
+        }
+        /**
+         * Direct (camel-direct)
+         * Call another endpoint from the same Camel Context synchronously.
+         * 
+         * Category: core,endpoint
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-direct
+         * 
+         * Syntax: <code>direct:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of direct endpoint
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DirectEndpointBuilder direct(String componentName, String path) {
+            return DirectEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Direct (camel-direct)
-     * Call another endpoint from the same Camel Context synchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-direct
-     * 
-     * Syntax: <code>direct:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of direct endpoint
-     */
-    static DirectEndpointBuilder direct(String path) {
+    static DirectEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DirectEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectEndpointBuilder, AdvancedDirectEndpointBuilder {
             public DirectEndpointBuilderImpl(String path) {
-                super("direct", path);
+                super(componentName, path);
             }
         }
         return new DirectEndpointBuilderImpl(path);

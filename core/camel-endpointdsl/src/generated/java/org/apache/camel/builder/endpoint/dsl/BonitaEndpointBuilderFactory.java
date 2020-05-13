@@ -216,29 +216,40 @@ public interface BonitaEndpointBuilderFactory {
          * Path parameter: operation (required)
          * Operation to use
          * The value can be one of: startCase
+         * 
+         * @param path operation
          */
         default BonitaEndpointBuilder bonita(String path) {
-            return BonitaEndpointBuilderFactory.bonita(path);
+            return BonitaEndpointBuilderFactory.endpointBuilder("bonita", path);
+        }
+        /**
+         * Bonita (camel-bonita)
+         * Communicate with a remote Bonita BPM process engine.
+         * 
+         * Category: process
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-bonita
+         * 
+         * Syntax: <code>bonita:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * Operation to use
+         * The value can be one of: startCase
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         */
+        default BonitaEndpointBuilder bonita(String componentName, String path) {
+            return BonitaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Bonita (camel-bonita)
-     * Communicate with a remote Bonita BPM process engine.
-     * 
-     * Category: process
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-bonita
-     * 
-     * Syntax: <code>bonita:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * Operation to use
-     * The value can be one of: startCase
-     */
-    static BonitaEndpointBuilder bonita(String path) {
+    static BonitaEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {
             public BonitaEndpointBuilderImpl(String path) {
-                super("bonita", path);
+                super(componentName, path);
             }
         }
         return new BonitaEndpointBuilderImpl(path);

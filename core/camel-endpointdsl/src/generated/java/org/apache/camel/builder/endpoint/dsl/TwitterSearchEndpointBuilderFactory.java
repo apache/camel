@@ -1534,29 +1534,42 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Path parameter: keywords (required)
          * The search query, use the keywords AND, OR, - and () to narrow the
          * search results.
+         * 
+         * @param path keywords
          */
         default TwitterSearchEndpointBuilder twitterSearch(String path) {
-            return TwitterSearchEndpointBuilderFactory.twitterSearch(path);
+            return TwitterSearchEndpointBuilderFactory.endpointBuilder("twitter-search", path);
+        }
+        /**
+         * Twitter Search (camel-twitter)
+         * Access Twitter Search.
+         * 
+         * Category: api,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
+         * Syntax: <code>twitter-search:keywords</code>
+         * 
+         * Path parameter: keywords (required)
+         * The search query, use the keywords AND, OR, - and () to narrow the
+         * search results.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path keywords
+         */
+        default TwitterSearchEndpointBuilder twitterSearch(
+                String componentName,
+                String path) {
+            return TwitterSearchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Twitter Search (camel-twitter)
-     * Access Twitter Search.
-     * 
-     * Category: api,social
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-twitter
-     * 
-     * Syntax: <code>twitter-search:keywords</code>
-     * 
-     * Path parameter: keywords (required)
-     * The search query, use the keywords AND, OR, - and () to narrow the search
-     * results.
-     */
-    static TwitterSearchEndpointBuilder twitterSearch(String path) {
+    static TwitterSearchEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class TwitterSearchEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterSearchEndpointBuilder, AdvancedTwitterSearchEndpointBuilder {
             public TwitterSearchEndpointBuilderImpl(String path) {
-                super("twitter-search", path);
+                super(componentName, path);
             }
         }
         return new TwitterSearchEndpointBuilderImpl(path);

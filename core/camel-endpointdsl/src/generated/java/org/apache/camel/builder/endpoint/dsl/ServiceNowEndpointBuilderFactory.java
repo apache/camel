@@ -1044,28 +1044,41 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * Path parameter: instanceName (required)
          * The ServiceNow instance name
+         * 
+         * @param path instanceName
          */
         default ServiceNowEndpointBuilder servicenow(String path) {
-            return ServiceNowEndpointBuilderFactory.servicenow(path);
+            return ServiceNowEndpointBuilderFactory.endpointBuilder("servicenow", path);
+        }
+        /**
+         * ServiceNow (camel-servicenow)
+         * Interact with ServiceNow via its REST API.
+         * 
+         * Category: api,cloud,management
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-servicenow
+         * 
+         * Syntax: <code>servicenow:instanceName</code>
+         * 
+         * Path parameter: instanceName (required)
+         * The ServiceNow instance name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path instanceName
+         */
+        default ServiceNowEndpointBuilder servicenow(
+                String componentName,
+                String path) {
+            return ServiceNowEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
-     * 
-     * Category: api,cloud,management
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-servicenow
-     * 
-     * Syntax: <code>servicenow:instanceName</code>
-     * 
-     * Path parameter: instanceName (required)
-     * The ServiceNow instance name
-     */
-    static ServiceNowEndpointBuilder servicenow(String path) {
+    static ServiceNowEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ServiceNowEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceNowEndpointBuilder, AdvancedServiceNowEndpointBuilder {
             public ServiceNowEndpointBuilderImpl(String path) {
-                super("servicenow", path);
+                super(componentName, path);
             }
         }
         return new ServiceNowEndpointBuilderImpl(path);

@@ -362,28 +362,37 @@ public interface SesEndpointBuilderFactory {
          * 
          * Path parameter: from (required)
          * The sender's email address.
+         * 
+         * @param path from
          */
         default SesEndpointBuilder awsSes(String path) {
-            return SesEndpointBuilderFactory.awsSes(path);
+            return SesEndpointBuilderFactory.endpointBuilder("aws-ses", path);
+        }
+        /**
+         * AWS Simple Email Service (camel-aws-ses)
+         * Send e-mails through AWS SES service.
+         * 
+         * Category: cloud,mail
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-aws-ses
+         * 
+         * Syntax: <code>aws-ses:from</code>
+         * 
+         * Path parameter: from (required)
+         * The sender's email address.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path from
+         */
+        default SesEndpointBuilder awsSes(String componentName, String path) {
+            return SesEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS Simple Email Service (camel-aws-ses)
-     * Send e-mails through AWS SES service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     * 
-     * Syntax: <code>aws-ses:from</code>
-     * 
-     * Path parameter: from (required)
-     * The sender's email address.
-     */
-    static SesEndpointBuilder awsSes(String path) {
+    static SesEndpointBuilder endpointBuilder(String componentName, String path) {
         class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder, AdvancedSesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {
-                super("aws-ses", path);
+                super(componentName, path);
             }
         }
         return new SesEndpointBuilderImpl(path);

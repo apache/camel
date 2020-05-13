@@ -1707,29 +1707,42 @@ public interface ServerEndpointBuilderFactory {
          * 
          * Path parameter: uriPath (required)
          * The object information address
+         * 
+         * @param path uriPath
          */
         default ServerEndpointBuilder iec60870Server(String path) {
-            return ServerEndpointBuilderFactory.iec60870Server(path);
+            return ServerEndpointBuilderFactory.endpointBuilder("iec60870-server", path);
+        }
+        /**
+         * IEC 60870 Server (camel-iec60870)
+         * IEC 60870 supervisory control and data acquisition (SCADA) server
+         * using NeoSCADA implementation.
+         * 
+         * Category: iot
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-iec60870
+         * 
+         * Syntax: <code>iec60870-server:uriPath</code>
+         * 
+         * Path parameter: uriPath (required)
+         * The object information address
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path uriPath
+         */
+        default ServerEndpointBuilder iec60870Server(
+                String componentName,
+                String path) {
+            return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-server:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     */
-    static ServerEndpointBuilder iec60870Server(String path) {
+    static ServerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ServerEndpointBuilderImpl extends AbstractEndpointBuilder implements ServerEndpointBuilder, AdvancedServerEndpointBuilder {
             public ServerEndpointBuilderImpl(String path) {
-                super("iec60870-server", path);
+                super(componentName, path);
             }
         }
         return new ServerEndpointBuilderImpl(path);

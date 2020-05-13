@@ -1274,29 +1274,42 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesServicesEndpointBuilder kubernetesServices(String path) {
-            return KubernetesServicesEndpointBuilderFactory.kubernetesServices(path);
+            return KubernetesServicesEndpointBuilderFactory.endpointBuilder("kubernetes-services", path);
+        }
+        /**
+         * Kubernetes Services (camel-kubernetes)
+         * Perform operations on Kubernetes Services and get notified on Service
+         * changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-services:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesServicesEndpointBuilder kubernetesServices(
+                String componentName,
+                String path) {
+            return KubernetesServicesEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes Services (camel-kubernetes)
-     * Perform operations on Kubernetes Services and get notified on Service
-     * changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-services:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesServicesEndpointBuilder kubernetesServices(String path) {
+    static KubernetesServicesEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesServicesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesServicesEndpointBuilder, AdvancedKubernetesServicesEndpointBuilder {
             public KubernetesServicesEndpointBuilderImpl(String path) {
-                super("kubernetes-services", path);
+                super(componentName, path);
             }
         }
         return new KubernetesServicesEndpointBuilderImpl(path);

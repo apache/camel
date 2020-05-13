@@ -259,28 +259,41 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * Path parameter: url (required)
          * Url to the SAP net-weaver gateway server.
+         * 
+         * @param path url
          */
         default NetWeaverEndpointBuilder sapNetweaver(String path) {
-            return NetWeaverEndpointBuilderFactory.sapNetweaver(path);
+            return NetWeaverEndpointBuilderFactory.endpointBuilder("sap-netweaver", path);
+        }
+        /**
+         * SAP NetWeaver (camel-sap-netweaver)
+         * Send requests to SAP NetWeaver Gateway using HTTP.
+         * 
+         * Category: sap
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-sap-netweaver
+         * 
+         * Syntax: <code>sap-netweaver:url</code>
+         * 
+         * Path parameter: url (required)
+         * Url to the SAP net-weaver gateway server.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path url
+         */
+        default NetWeaverEndpointBuilder sapNetweaver(
+                String componentName,
+                String path) {
+            return NetWeaverEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SAP NetWeaver (camel-sap-netweaver)
-     * Send requests to SAP NetWeaver Gateway using HTTP.
-     * 
-     * Category: sap
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-sap-netweaver
-     * 
-     * Syntax: <code>sap-netweaver:url</code>
-     * 
-     * Path parameter: url (required)
-     * Url to the SAP net-weaver gateway server.
-     */
-    static NetWeaverEndpointBuilder sapNetweaver(String path) {
+    static NetWeaverEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class NetWeaverEndpointBuilderImpl extends AbstractEndpointBuilder implements NetWeaverEndpointBuilder, AdvancedNetWeaverEndpointBuilder {
             public NetWeaverEndpointBuilderImpl(String path) {
-                super("sap-netweaver", path);
+                super(componentName, path);
             }
         }
         return new NetWeaverEndpointBuilderImpl(path);

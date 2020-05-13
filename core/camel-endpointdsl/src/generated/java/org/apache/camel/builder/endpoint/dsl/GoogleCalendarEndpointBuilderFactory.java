@@ -1237,35 +1237,48 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * The value can be one of: calendarImport, clear, delete, get, insert,
          * instances, list, move, patch, query, quickAdd, stop, update, watch
+         * 
+         * @param path apiName/methodName
          */
         default GoogleCalendarEndpointBuilder googleCalendar(String path) {
-            return GoogleCalendarEndpointBuilderFactory.googleCalendar(path);
+            return GoogleCalendarEndpointBuilderFactory.endpointBuilder("google-calendar", path);
+        }
+        /**
+         * Google Calendar (camel-google-calendar)
+         * Perform various operations on a Google Calendar.
+         * 
+         * Category: api,cloud
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-google-calendar
+         * 
+         * Syntax: <code>google-calendar:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
+         * FREEBUSY, EVENTS, SETTINGS
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: calendarImport, clear, delete, get, insert,
+         * instances, list, move, patch, query, quickAdd, stop, update, watch
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path apiName/methodName
+         */
+        default GoogleCalendarEndpointBuilder googleCalendar(
+                String componentName,
+                String path) {
+            return GoogleCalendarEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Calendar (camel-google-calendar)
-     * Perform various operations on a Google Calendar.
-     * 
-     * Category: api,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
-     * Syntax: <code>google-calendar:apiName/methodName</code>
-     * 
-     * Path parameter: apiName (required)
-     * What kind of operation to perform
-     * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-     * FREEBUSY, EVENTS, SETTINGS
-     * 
-     * Path parameter: methodName (required)
-     * What sub operation to use for the selected operation
-     * The value can be one of: calendarImport, clear, delete, get, insert,
-     * instances, list, move, patch, query, quickAdd, stop, update, watch
-     */
-    static GoogleCalendarEndpointBuilder googleCalendar(String path) {
+    static GoogleCalendarEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleCalendarEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarEndpointBuilder, AdvancedGoogleCalendarEndpointBuilder {
             public GoogleCalendarEndpointBuilderImpl(String path) {
-                super("google-calendar", path);
+                super(componentName, path);
             }
         }
         return new GoogleCalendarEndpointBuilderImpl(path);

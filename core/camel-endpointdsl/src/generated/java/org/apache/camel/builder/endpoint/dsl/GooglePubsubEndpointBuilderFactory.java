@@ -794,31 +794,45 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * Path parameter: destinationName (required)
          * Destination Name
+         * 
+         * @param path projectId:destinationName
          */
         default GooglePubsubEndpointBuilder googlePubsub(String path) {
-            return GooglePubsubEndpointBuilderFactory.googlePubsub(path);
+            return GooglePubsubEndpointBuilderFactory.endpointBuilder("google-pubsub", path);
+        }
+        /**
+         * Google Pubsub (camel-google-pubsub)
+         * Send and receive messages to/from Google Cloud Platform PubSub
+         * Service.
+         * 
+         * Category: messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-google-pubsub
+         * 
+         * Syntax: <code>google-pubsub:projectId:destinationName</code>
+         * 
+         * Path parameter: projectId (required)
+         * Project Id
+         * 
+         * Path parameter: destinationName (required)
+         * Destination Name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path projectId:destinationName
+         */
+        default GooglePubsubEndpointBuilder googlePubsub(
+                String componentName,
+                String path) {
+            return GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google Pubsub (camel-google-pubsub)
-     * Send and receive messages to/from Google Cloud Platform PubSub Service.
-     * 
-     * Category: messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-google-pubsub
-     * 
-     * Syntax: <code>google-pubsub:projectId:destinationName</code>
-     * 
-     * Path parameter: projectId (required)
-     * Project Id
-     * 
-     * Path parameter: destinationName (required)
-     * Destination Name
-     */
-    static GooglePubsubEndpointBuilder googlePubsub(String path) {
+    static GooglePubsubEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GooglePubsubEndpointBuilderImpl extends AbstractEndpointBuilder implements GooglePubsubEndpointBuilder, AdvancedGooglePubsubEndpointBuilder {
             public GooglePubsubEndpointBuilderImpl(String path) {
-                super("google-pubsub", path);
+                super(componentName, path);
             }
         }
         return new GooglePubsubEndpointBuilderImpl(path);

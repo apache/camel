@@ -353,29 +353,38 @@ public interface PdfEndpointBuilderFactory {
          * Path parameter: operation (required)
          * Operation type
          * The value can be one of: create, append, extractText
+         * 
+         * @param path operation
          */
         default PdfEndpointBuilder pdf(String path) {
-            return PdfEndpointBuilderFactory.pdf(path);
+            return PdfEndpointBuilderFactory.endpointBuilder("pdf", path);
+        }
+        /**
+         * PDF (camel-pdf)
+         * Create, modify or extract content from PDF documents.
+         * 
+         * Category: document,transformation,printing
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-pdf
+         * 
+         * Syntax: <code>pdf:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * Operation type
+         * The value can be one of: create, append, extractText
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         */
+        default PdfEndpointBuilder pdf(String componentName, String path) {
+            return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * PDF (camel-pdf)
-     * Create, modify or extract content from PDF documents.
-     * 
-     * Category: document,transformation,printing
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-pdf
-     * 
-     * Syntax: <code>pdf:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * Operation type
-     * The value can be one of: create, append, extractText
-     */
-    static PdfEndpointBuilder pdf(String path) {
+    static PdfEndpointBuilder endpointBuilder(String componentName, String path) {
         class PdfEndpointBuilderImpl extends AbstractEndpointBuilder implements PdfEndpointBuilder, AdvancedPdfEndpointBuilder {
             public PdfEndpointBuilderImpl(String path) {
-                super("pdf", path);
+                super(componentName, path);
             }
         }
         return new PdfEndpointBuilderImpl(path);

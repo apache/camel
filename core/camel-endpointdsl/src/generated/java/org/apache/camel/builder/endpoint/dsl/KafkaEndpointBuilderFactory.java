@@ -3706,29 +3706,41 @@ public interface KafkaEndpointBuilderFactory {
          * Name of the topic to use. On the consumer you can use comma to
          * separate multiple topics. A producer can only send a message to a
          * single topic.
+         * 
+         * @param path topic
          */
         default KafkaEndpointBuilder kafka(String path) {
-            return KafkaEndpointBuilderFactory.kafka(path);
+            return KafkaEndpointBuilderFactory.endpointBuilder("kafka", path);
+        }
+        /**
+         * Kafka (camel-kafka)
+         * Sent and receive messages to/from an Apache Kafka broker.
+         * 
+         * Category: messaging
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-kafka
+         * 
+         * Syntax: <code>kafka:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * Name of the topic to use. On the consumer you can use comma to
+         * separate multiple topics. A producer can only send a message to a
+         * single topic.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path topic
+         */
+        default KafkaEndpointBuilder kafka(String componentName, String path) {
+            return KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kafka (camel-kafka)
-     * Sent and receive messages to/from an Apache Kafka broker.
-     * 
-     * Category: messaging
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-kafka
-     * 
-     * Syntax: <code>kafka:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * Name of the topic to use. On the consumer you can use comma to separate
-     * multiple topics. A producer can only send a message to a single topic.
-     */
-    static KafkaEndpointBuilder kafka(String path) {
+    static KafkaEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KafkaEndpointBuilderImpl extends AbstractEndpointBuilder implements KafkaEndpointBuilder, AdvancedKafkaEndpointBuilder {
             public KafkaEndpointBuilderImpl(String path) {
-                super("kafka", path);
+                super(componentName, path);
             }
         }
         return new KafkaEndpointBuilderImpl(path);

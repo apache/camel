@@ -1104,29 +1104,42 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * Path parameter: cacheName (required)
          * The name of the cache
+         * 
+         * @param path cacheName
          */
         default HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
-            return HazelcastSedaEndpointBuilderFactory.hazelcastSeda(path);
+            return HazelcastSedaEndpointBuilderFactory.endpointBuilder("hazelcast-seda", path);
+        }
+        /**
+         * Hazelcast SEDA (camel-hazelcast)
+         * Asynchronously send/receive Exchanges between Camel routes running on
+         * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-seda:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path cacheName
+         */
+        default HazelcastSedaEndpointBuilder hazelcastSeda(
+                String componentName,
+                String path) {
+            return HazelcastSedaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Hazelcast SEDA (camel-hazelcast)
-     * Asynchronously send/receive Exchanges between Camel routes running on
-     * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
-     * 
-     * Category: cache,datagrid
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-seda:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     */
-    static HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
+    static HazelcastSedaEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class HazelcastSedaEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastSedaEndpointBuilder, AdvancedHazelcastSedaEndpointBuilder {
             public HazelcastSedaEndpointBuilderImpl(String path) {
-                super("hazelcast-seda", path);
+                super(componentName, path);
             }
         }
         return new HazelcastSedaEndpointBuilderImpl(path);

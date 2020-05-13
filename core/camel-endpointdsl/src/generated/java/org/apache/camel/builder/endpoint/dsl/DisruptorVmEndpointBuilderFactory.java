@@ -767,28 +767,41 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of queue
+         * 
+         * @param path name
          */
         default DisruptorVmEndpointBuilder disruptorVm(String path) {
-            return DisruptorVmEndpointBuilderFactory.disruptorVm(path);
+            return DisruptorVmEndpointBuilderFactory.endpointBuilder("disruptor-vm", path);
+        }
+        /**
+         * Disruptor VM (camel-disruptor)
+         * Provides asynchronous SEDA behavior using LMAX Disruptor.
+         * 
+         * Category: endpoint
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-disruptor
+         * 
+         * Syntax: <code>disruptor-vm:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DisruptorVmEndpointBuilder disruptorVm(
+                String componentName,
+                String path) {
+            return DisruptorVmEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Disruptor VM (camel-disruptor)
-     * Provides asynchronous SEDA behavior using LMAX Disruptor.
-     * 
-     * Category: endpoint
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-disruptor
-     * 
-     * Syntax: <code>disruptor-vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     */
-    static DisruptorVmEndpointBuilder disruptorVm(String path) {
+    static DisruptorVmEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DisruptorVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorVmEndpointBuilder, AdvancedDisruptorVmEndpointBuilder {
             public DisruptorVmEndpointBuilderImpl(String path) {
-                super("disruptor-vm", path);
+                super(componentName, path);
             }
         }
         return new DisruptorVmEndpointBuilderImpl(path);

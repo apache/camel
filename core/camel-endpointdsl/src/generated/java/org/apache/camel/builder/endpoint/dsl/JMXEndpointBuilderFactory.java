@@ -794,29 +794,38 @@ public interface JMXEndpointBuilderFactory {
          * Path parameter: serverURL
          * Server url comes from the remaining endpoint. Use platform to connect
          * to local JVM.
+         * 
+         * @param path serverURL
          */
         default JMXEndpointBuilder jmx(String path) {
-            return JMXEndpointBuilderFactory.jmx(path);
+            return JMXEndpointBuilderFactory.endpointBuilder("jmx", path);
+        }
+        /**
+         * JMX (camel-jmx)
+         * Receive JMX notifications.
+         * 
+         * Category: monitoring
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-jmx
+         * 
+         * Syntax: <code>jmx:serverURL</code>
+         * 
+         * Path parameter: serverURL
+         * Server url comes from the remaining endpoint. Use platform to connect
+         * to local JVM.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path serverURL
+         */
+        default JMXEndpointBuilder jmx(String componentName, String path) {
+            return JMXEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JMX (camel-jmx)
-     * Receive JMX notifications.
-     * 
-     * Category: monitoring
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jmx
-     * 
-     * Syntax: <code>jmx:serverURL</code>
-     * 
-     * Path parameter: serverURL
-     * Server url comes from the remaining endpoint. Use platform to connect to
-     * local JVM.
-     */
-    static JMXEndpointBuilder jmx(String path) {
+    static JMXEndpointBuilder endpointBuilder(String componentName, String path) {
         class JMXEndpointBuilderImpl extends AbstractEndpointBuilder implements JMXEndpointBuilder, AdvancedJMXEndpointBuilder {
             public JMXEndpointBuilderImpl(String path) {
-                super("jmx", path);
+                super(componentName, path);
             }
         }
         return new JMXEndpointBuilderImpl(path);

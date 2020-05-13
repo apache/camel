@@ -259,32 +259,45 @@ public interface SplunkHECEndpointBuilderFactory {
          * 
          * Path parameter: token (required)
          * Splunk authorization token
+         * 
+         * @param path splunkURL/token
          */
         default SplunkHECEndpointBuilder splunkHec(String path) {
-            return SplunkHECEndpointBuilderFactory.splunkHec(path);
+            return SplunkHECEndpointBuilderFactory.endpointBuilder("splunk-hec", path);
+        }
+        /**
+         * Splunk HEC (camel-splunk-hec)
+         * The splunk component allows to publish events in Splunk using the
+         * HTTP Event Collector.
+         * 
+         * Category: log,monitoring
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-splunk-hec
+         * 
+         * Syntax: <code>splunk-hec:splunkURL/token</code>
+         * 
+         * Path parameter: splunkURL (required)
+         * Splunk Host URL
+         * 
+         * Path parameter: token (required)
+         * Splunk authorization token
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path splunkURL/token
+         */
+        default SplunkHECEndpointBuilder splunkHec(
+                String componentName,
+                String path) {
+            return SplunkHECEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Splunk HEC (camel-splunk-hec)
-     * The splunk component allows to publish events in Splunk using the HTTP
-     * Event Collector.
-     * 
-     * Category: log,monitoring
-     * Since: 3.3
-     * Maven coordinates: org.apache.camel:camel-splunk-hec
-     * 
-     * Syntax: <code>splunk-hec:splunkURL/token</code>
-     * 
-     * Path parameter: splunkURL (required)
-     * Splunk Host URL
-     * 
-     * Path parameter: token (required)
-     * Splunk authorization token
-     */
-    static SplunkHECEndpointBuilder splunkHec(String path) {
+    static SplunkHECEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SplunkHECEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkHECEndpointBuilder, AdvancedSplunkHECEndpointBuilder {
             public SplunkHECEndpointBuilderImpl(String path) {
-                super("splunk-hec", path);
+                super(componentName, path);
             }
         }
         return new SplunkHECEndpointBuilderImpl(path);

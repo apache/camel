@@ -324,34 +324,45 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * Path parameter: printername
          * Name of the printer
+         * 
+         * @param path hostname:port/printername
          */
         default PrinterEndpointBuilder lpr(String path) {
-            return PrinterEndpointBuilderFactory.lpr(path);
+            return PrinterEndpointBuilderFactory.endpointBuilder("lpr", path);
+        }
+        /**
+         * Printer (camel-printer)
+         * Send print jobs to printers.
+         * 
+         * Category: printing
+         * Since: 2.1
+         * Maven coordinates: org.apache.camel:camel-printer
+         * 
+         * Syntax: <code>lpr:hostname:port/printername</code>
+         * 
+         * Path parameter: hostname (required)
+         * Hostname of the printer
+         * 
+         * Path parameter: port
+         * Port number of the printer
+         * 
+         * Path parameter: printername
+         * Name of the printer
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path hostname:port/printername
+         */
+        default PrinterEndpointBuilder lpr(String componentName, String path) {
+            return PrinterEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Printer (camel-printer)
-     * Send print jobs to printers.
-     * 
-     * Category: printing
-     * Since: 2.1
-     * Maven coordinates: org.apache.camel:camel-printer
-     * 
-     * Syntax: <code>lpr:hostname:port/printername</code>
-     * 
-     * Path parameter: hostname (required)
-     * Hostname of the printer
-     * 
-     * Path parameter: port
-     * Port number of the printer
-     * 
-     * Path parameter: printername
-     * Name of the printer
-     */
-    static PrinterEndpointBuilder lpr(String path) {
+    static PrinterEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class PrinterEndpointBuilderImpl extends AbstractEndpointBuilder implements PrinterEndpointBuilder, AdvancedPrinterEndpointBuilder {
             public PrinterEndpointBuilderImpl(String path) {
-                super("lpr", path);
+                super(componentName, path);
             }
         }
         return new PrinterEndpointBuilderImpl(path);

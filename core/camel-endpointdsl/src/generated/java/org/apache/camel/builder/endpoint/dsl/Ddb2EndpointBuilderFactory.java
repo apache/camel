@@ -430,29 +430,38 @@ public interface Ddb2EndpointBuilderFactory {
          * 
          * Path parameter: tableName (required)
          * The name of the table currently worked with.
+         * 
+         * @param path tableName
          */
         default Ddb2EndpointBuilder aws2Ddb(String path) {
-            return Ddb2EndpointBuilderFactory.aws2Ddb(path);
+            return Ddb2EndpointBuilderFactory.endpointBuilder("aws2-ddb", path);
+        }
+        /**
+         * AWS 2 DynamoDB (camel-aws2-ddb)
+         * Store and retrieve data from AWS DynamoDB service using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,database,nosql
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ddb
+         * 
+         * Syntax: <code>aws2-ddb:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * The name of the table currently worked with.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path tableName
+         */
+        default Ddb2EndpointBuilder aws2Ddb(String componentName, String path) {
+            return Ddb2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 DynamoDB (camel-aws2-ddb)
-     * Store and retrieve data from AWS DynamoDB service using AWS SDK version
-     * 2.x.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
-     * Syntax: <code>aws2-ddb:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * The name of the table currently worked with.
-     */
-    static Ddb2EndpointBuilder aws2Ddb(String path) {
+    static Ddb2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Ddb2EndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2EndpointBuilder, AdvancedDdb2EndpointBuilder {
             public Ddb2EndpointBuilderImpl(String path) {
-                super("aws2-ddb", path);
+                super(componentName, path);
             }
         }
         return new Ddb2EndpointBuilderImpl(path);

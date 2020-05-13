@@ -2022,35 +2022,45 @@ public interface MinaEndpointBuilderFactory {
          * 
          * Path parameter: port (required)
          * Port number
+         * 
+         * @param path protocol:host:port
          */
         default MinaEndpointBuilder mina(String path) {
-            return MinaEndpointBuilderFactory.mina(path);
+            return MinaEndpointBuilderFactory.endpointBuilder("mina", path);
+        }
+        /**
+         * Mina (camel-mina)
+         * Socket level networking using TCP or UDP with Apache Mina 2.x.
+         * 
+         * Category: networking,tcp,udp
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-mina
+         * 
+         * Syntax: <code>mina:protocol:host:port</code>
+         * 
+         * Path parameter: protocol (required)
+         * Protocol to use
+         * 
+         * Path parameter: host (required)
+         * Hostname to use. Use localhost or 0.0.0.0 for local server as
+         * consumer. For producer use the hostname or ip address of the remote
+         * server.
+         * 
+         * Path parameter: port (required)
+         * Port number
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path protocol:host:port
+         */
+        default MinaEndpointBuilder mina(String componentName, String path) {
+            return MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Mina (camel-mina)
-     * Socket level networking using TCP or UDP with Apache Mina 2.x.
-     * 
-     * Category: networking,tcp,udp
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-mina
-     * 
-     * Syntax: <code>mina:protocol:host:port</code>
-     * 
-     * Path parameter: protocol (required)
-     * Protocol to use
-     * 
-     * Path parameter: host (required)
-     * Hostname to use. Use localhost or 0.0.0.0 for local server as consumer.
-     * For producer use the hostname or ip address of the remote server.
-     * 
-     * Path parameter: port (required)
-     * Port number
-     */
-    static MinaEndpointBuilder mina(String path) {
+    static MinaEndpointBuilder endpointBuilder(String componentName, String path) {
         class MinaEndpointBuilderImpl extends AbstractEndpointBuilder implements MinaEndpointBuilder, AdvancedMinaEndpointBuilder {
             public MinaEndpointBuilderImpl(String path) {
-                super("mina", path);
+                super(componentName, path);
             }
         }
         return new MinaEndpointBuilderImpl(path);

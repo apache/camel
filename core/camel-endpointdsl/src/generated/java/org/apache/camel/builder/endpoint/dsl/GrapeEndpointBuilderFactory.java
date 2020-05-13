@@ -160,29 +160,41 @@ public interface GrapeEndpointBuilderFactory {
          * Path parameter: defaultCoordinates (required)
          * Maven coordinates to use as default to grab if the message body is
          * empty.
+         * 
+         * @param path defaultCoordinates
          */
         default GrapeEndpointBuilder grape(String path) {
-            return GrapeEndpointBuilderFactory.grape(path);
+            return GrapeEndpointBuilderFactory.endpointBuilder("grape", path);
+        }
+        /**
+         * Grape (camel-grape)
+         * Fetch, load and manage additional jars dynamically after Camel
+         * Context was started.
+         * 
+         * Category: management,deployment
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-grape
+         * 
+         * Syntax: <code>grape:defaultCoordinates</code>
+         * 
+         * Path parameter: defaultCoordinates (required)
+         * Maven coordinates to use as default to grab if the message body is
+         * empty.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path defaultCoordinates
+         */
+        default GrapeEndpointBuilder grape(String componentName, String path) {
+            return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management,deployment
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     */
-    static GrapeEndpointBuilder grape(String path) {
+    static GrapeEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {
             public GrapeEndpointBuilderImpl(String path) {
-                super("grape", path);
+                super(componentName, path);
             }
         }
         return new GrapeEndpointBuilderImpl(path);

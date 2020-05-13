@@ -1397,28 +1397,41 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * Path parameter: resourceName (required)
          * The distributed resource name
+         * 
+         * @param path resourceName
          */
         default AtomixMapEndpointBuilder atomixMap(String path) {
-            return AtomixMapEndpointBuilderFactory.atomixMap(path);
+            return AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map", path);
+        }
+        /**
+         * Atomix Map (camel-atomix)
+         * Access Atomix's distributed map.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-map:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceName
+         */
+        default AtomixMapEndpointBuilder atomixMap(
+                String componentName,
+                String path) {
+            return AtomixMapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Atomix Map (camel-atomix)
-     * Access Atomix's distributed map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-map:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     */
-    static AtomixMapEndpointBuilder atomixMap(String path) {
+    static AtomixMapEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class AtomixMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMapEndpointBuilder, AdvancedAtomixMapEndpointBuilder {
             public AtomixMapEndpointBuilderImpl(String path) {
-                super("atomix-map", path);
+                super(componentName, path);
             }
         }
         return new AtomixMapEndpointBuilderImpl(path);

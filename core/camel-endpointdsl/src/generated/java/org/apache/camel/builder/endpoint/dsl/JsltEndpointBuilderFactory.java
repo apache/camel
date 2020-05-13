@@ -277,32 +277,42 @@ public interface JsltEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * 
+         * @param path resourceUri
          */
         default JsltEndpointBuilder jslt(String path) {
-            return JsltEndpointBuilderFactory.jslt(path);
+            return JsltEndpointBuilderFactory.endpointBuilder("jslt", path);
+        }
+        /**
+         * JSLT (camel-jslt)
+         * Query or transform JSON payloads using an JSLT.
+         * 
+         * Category: transformation
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-jslt
+         * 
+         * Syntax: <code>jslt:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path resourceUri
+         */
+        default JsltEndpointBuilder jslt(String componentName, String path) {
+            return JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JSLT (camel-jslt)
-     * Query or transform JSON payloads using an JSLT.
-     * 
-     * Category: transformation
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-jslt
-     * 
-     * Syntax: <code>jslt:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     */
-    static JsltEndpointBuilder jslt(String path) {
+    static JsltEndpointBuilder endpointBuilder(String componentName, String path) {
         class JsltEndpointBuilderImpl extends AbstractEndpointBuilder implements JsltEndpointBuilder, AdvancedJsltEndpointBuilder {
             public JsltEndpointBuilderImpl(String path) {
-                super("jslt", path);
+                super(componentName, path);
             }
         }
         return new JsltEndpointBuilderImpl(path);

@@ -888,28 +888,37 @@ public interface GoraEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Instance name
+         * 
+         * @param path name
          */
         default GoraEndpointBuilder gora(String path) {
-            return GoraEndpointBuilderFactory.gora(path);
+            return GoraEndpointBuilderFactory.endpointBuilder("gora", path);
+        }
+        /**
+         * Gora (camel-gora)
+         * Access NoSQL databases using the Apache Gora framework.
+         * 
+         * Category: database,hadoop,nosql
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-gora
+         * 
+         * Syntax: <code>gora:name</code>
+         * 
+         * Path parameter: name (required)
+         * Instance name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default GoraEndpointBuilder gora(String componentName, String path) {
+            return GoraEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Gora (camel-gora)
-     * Access NoSQL databases using the Apache Gora framework.
-     * 
-     * Category: database,hadoop,nosql
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-gora
-     * 
-     * Syntax: <code>gora:name</code>
-     * 
-     * Path parameter: name (required)
-     * Instance name
-     */
-    static GoraEndpointBuilder gora(String path) {
+    static GoraEndpointBuilder endpointBuilder(String componentName, String path) {
         class GoraEndpointBuilderImpl extends AbstractEndpointBuilder implements GoraEndpointBuilder, AdvancedGoraEndpointBuilder {
             public GoraEndpointBuilderImpl(String path) {
-                super("gora", path);
+                super(componentName, path);
             }
         }
         return new GoraEndpointBuilderImpl(path);

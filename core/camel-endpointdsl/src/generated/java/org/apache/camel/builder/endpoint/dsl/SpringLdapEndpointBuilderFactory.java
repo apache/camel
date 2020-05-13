@@ -216,28 +216,42 @@ public interface SpringLdapEndpointBuilderFactory {
          * 
          * Path parameter: templateName (required)
          * Name of the Spring LDAP Template bean
+         * 
+         * @param path templateName
          */
         default SpringLdapEndpointBuilder springLdap(String path) {
-            return SpringLdapEndpointBuilderFactory.springLdap(path);
+            return SpringLdapEndpointBuilderFactory.endpointBuilder("spring-ldap", path);
+        }
+        /**
+         * Spring LDAP (camel-spring-ldap)
+         * Perform searches in LDAP servers using filters as the message
+         * payload.
+         * 
+         * Category: spring,ldap
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-spring-ldap
+         * 
+         * Syntax: <code>spring-ldap:templateName</code>
+         * 
+         * Path parameter: templateName (required)
+         * Name of the Spring LDAP Template bean
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path templateName
+         */
+        default SpringLdapEndpointBuilder springLdap(
+                String componentName,
+                String path) {
+            return SpringLdapEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Spring LDAP (camel-spring-ldap)
-     * Perform searches in LDAP servers using filters as the message payload.
-     * 
-     * Category: spring,ldap
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-spring-ldap
-     * 
-     * Syntax: <code>spring-ldap:templateName</code>
-     * 
-     * Path parameter: templateName (required)
-     * Name of the Spring LDAP Template bean
-     */
-    static SpringLdapEndpointBuilder springLdap(String path) {
+    static SpringLdapEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SpringLdapEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringLdapEndpointBuilder, AdvancedSpringLdapEndpointBuilder {
             public SpringLdapEndpointBuilderImpl(String path) {
-                super("spring-ldap", path);
+                super(componentName, path);
             }
         }
         return new SpringLdapEndpointBuilderImpl(path);

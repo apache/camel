@@ -1872,29 +1872,38 @@ public interface JpaEndpointBuilderFactory {
          * 
          * Path parameter: entityType (required)
          * Entity class name
+         * 
+         * @param path entityType
          */
         default JpaEndpointBuilder jpa(String path) {
-            return JpaEndpointBuilderFactory.jpa(path);
+            return JpaEndpointBuilderFactory.endpointBuilder("jpa", path);
+        }
+        /**
+         * JPA (camel-jpa)
+         * Store and retrieve Java objects from databases using Java Persistence
+         * API (JPA).
+         * 
+         * Category: database,sql
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-jpa
+         * 
+         * Syntax: <code>jpa:entityType</code>
+         * 
+         * Path parameter: entityType (required)
+         * Entity class name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path entityType
+         */
+        default JpaEndpointBuilder jpa(String componentName, String path) {
+            return JpaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * JPA (camel-jpa)
-     * Store and retrieve Java objects from databases using Java Persistence API
-     * (JPA).
-     * 
-     * Category: database,sql
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-jpa
-     * 
-     * Syntax: <code>jpa:entityType</code>
-     * 
-     * Path parameter: entityType (required)
-     * Entity class name
-     */
-    static JpaEndpointBuilder jpa(String path) {
+    static JpaEndpointBuilder endpointBuilder(String componentName, String path) {
         class JpaEndpointBuilderImpl extends AbstractEndpointBuilder implements JpaEndpointBuilder, AdvancedJpaEndpointBuilder {
             public JpaEndpointBuilderImpl(String path) {
-                super("jpa", path);
+                super(componentName, path);
             }
         }
         return new JpaEndpointBuilderImpl(path);

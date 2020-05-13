@@ -1053,29 +1053,42 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Path parameter: name (required)
          * Unique name for the connector. Attempting to register again with the
          * same name will fail.
+         * 
+         * @param path name
          */
         default DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
-            return DebeziumMongodbEndpointBuilderFactory.debeziumMongodb(path);
+            return DebeziumMongodbEndpointBuilderFactory.endpointBuilder("debezium-mongodb", path);
+        }
+        /**
+         * Debezium MongoDB Connector (camel-debezium-mongodb)
+         * Capture changes from a MongoDB database.
+         * 
+         * Category: database,nosql,mongodb
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-mongodb
+         * 
+         * Syntax: <code>debezium-mongodb:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default DebeziumMongodbEndpointBuilder debeziumMongodb(
+                String componentName,
+                String path) {
+            return DebeziumMongodbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Debezium MongoDB Connector (camel-debezium-mongodb)
-     * Capture changes from a MongoDB database.
-     * 
-     * Category: database,nosql,mongodb
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-debezium-mongodb
-     * 
-     * Syntax: <code>debezium-mongodb:name</code>
-     * 
-     * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
-     */
-    static DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
+    static DebeziumMongodbEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class DebeziumMongodbEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumMongodbEndpointBuilder, AdvancedDebeziumMongodbEndpointBuilder {
             public DebeziumMongodbEndpointBuilderImpl(String path) {
-                super("debezium-mongodb", path);
+                super(componentName, path);
             }
         }
         return new DebeziumMongodbEndpointBuilderImpl(path);

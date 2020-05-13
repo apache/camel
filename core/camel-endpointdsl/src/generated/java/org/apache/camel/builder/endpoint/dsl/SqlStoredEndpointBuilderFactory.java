@@ -302,28 +302,41 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * Path parameter: template (required)
          * Sets the StoredProcedure template to perform
+         * 
+         * @param path template
          */
         default SqlStoredEndpointBuilder sqlStored(String path) {
-            return SqlStoredEndpointBuilderFactory.sqlStored(path);
+            return SqlStoredEndpointBuilderFactory.endpointBuilder("sql-stored", path);
+        }
+        /**
+         * SQL Stored Procedure (camel-sql)
+         * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
+         * 
+         * Category: database,sql
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-sql
+         * 
+         * Syntax: <code>sql-stored:template</code>
+         * 
+         * Path parameter: template (required)
+         * Sets the StoredProcedure template to perform
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path template
+         */
+        default SqlStoredEndpointBuilder sqlStored(
+                String componentName,
+                String path) {
+            return SqlStoredEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * SQL Stored Procedure (camel-sql)
-     * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
-     * 
-     * Category: database,sql
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-sql
-     * 
-     * Syntax: <code>sql-stored:template</code>
-     * 
-     * Path parameter: template (required)
-     * Sets the StoredProcedure template to perform
-     */
-    static SqlStoredEndpointBuilder sqlStored(String path) {
+    static SqlStoredEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder, AdvancedSqlStoredEndpointBuilder {
             public SqlStoredEndpointBuilderImpl(String path) {
-                super("sql-stored", path);
+                super(componentName, path);
             }
         }
         return new SqlStoredEndpointBuilderImpl(path);

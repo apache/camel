@@ -947,28 +947,37 @@ public interface StubEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of queue
+         * 
+         * @param path name
          */
         default StubEndpointBuilder stub(String path) {
-            return StubEndpointBuilderFactory.stub(path);
+            return StubEndpointBuilderFactory.endpointBuilder("stub", path);
+        }
+        /**
+         * Stub (camel-stub)
+         * Stub out any physical endpoints while in development or testing.
+         * 
+         * Category: core,testing
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-stub
+         * 
+         * Syntax: <code>stub:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default StubEndpointBuilder stub(String componentName, String path) {
+            return StubEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Stub (camel-stub)
-     * Stub out any physical endpoints while in development or testing.
-     * 
-     * Category: core,testing
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-stub
-     * 
-     * Syntax: <code>stub:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     */
-    static StubEndpointBuilder stub(String path) {
+    static StubEndpointBuilder endpointBuilder(String componentName, String path) {
         class StubEndpointBuilderImpl extends AbstractEndpointBuilder implements StubEndpointBuilder, AdvancedStubEndpointBuilder {
             public StubEndpointBuilderImpl(String path) {
-                super("stub", path);
+                super(componentName, path);
             }
         }
         return new StubEndpointBuilderImpl(path);

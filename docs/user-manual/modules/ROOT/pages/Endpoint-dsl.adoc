@@ -24,11 +24,30 @@ from(ftp("myserver").account("foo").password("secret").recursive(true)
     .to(bean("something"));
 ----
 
-== The fluent DSL now provides type safety for parameters:
+== The fluent DSL now provides type safety for parameters
 
 The above example of endpoint-dsl uses the meta model, which is  extracted from the source using an annotation processor and
 written in various JSON files, to generate a fluent DSL for each endpoint.This fluent DSL provides type safety for parameters.
 It further allows leveraging the Java editor code completion to access the list of available parameters for the each endpoint.
+
+== Using custom component names
+
+The endpoint-dsl uses the default name of the component, so in the example above the name is `ftp`.
+There can be use-cases where you may have multiple Camel components of the same type registered with different names.
+An example is if you have two JMS broker systems (for example ActiveMQ and WebSphereMQ).
+
+Then you can setup two Camel JMS components with unique names such as: `myAMQ` and `myWMQ`
+
+The endpoint-dsl can use these names with the `jms` fluent builder as shown:
+
+[source,java]
+----
+from(jms("myWMQ", "cheese").concurrentConsumers(5))
+    .to(jms("myAMQ", "smelly"));
+----
+
+Notice how we can refer to their names as the first parameter in the `jms` fluent builder.
+The example would then consume messages from WebSphereMQ queue named cheese and route to ActiveMQ on a queue named smelly.
 
 == How to use
 

@@ -350,28 +350,37 @@ public interface MQ2EndpointBuilderFactory {
          * 
          * Path parameter: label (required)
          * Logical name
+         * 
+         * @param path label
          */
         default MQ2EndpointBuilder aws2Mq(String path) {
-            return MQ2EndpointBuilderFactory.aws2Mq(path);
+            return MQ2EndpointBuilderFactory.endpointBuilder("aws2-mq", path);
+        }
+        /**
+         * AWS 2 MQ (camel-aws2-mq)
+         * Manage AWS MQ instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-mq
+         * 
+         * Syntax: <code>aws2-mq:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path label
+         */
+        default MQ2EndpointBuilder aws2Mq(String componentName, String path) {
+            return MQ2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * AWS 2 MQ (camel-aws2-mq)
-     * Manage AWS MQ instances using AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-mq
-     * 
-     * Syntax: <code>aws2-mq:label</code>
-     * 
-     * Path parameter: label (required)
-     * Logical name
-     */
-    static MQ2EndpointBuilder aws2Mq(String path) {
+    static MQ2EndpointBuilder endpointBuilder(String componentName, String path) {
         class MQ2EndpointBuilderImpl extends AbstractEndpointBuilder implements MQ2EndpointBuilder, AdvancedMQ2EndpointBuilder {
             public MQ2EndpointBuilderImpl(String path) {
-                super("aws2-mq", path);
+                super(componentName, path);
             }
         }
         return new MQ2EndpointBuilderImpl(path);

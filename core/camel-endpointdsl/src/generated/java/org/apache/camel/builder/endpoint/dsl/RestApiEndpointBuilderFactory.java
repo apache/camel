@@ -249,33 +249,44 @@ public interface RestApiEndpointBuilderFactory {
          * Path parameter: contextIdPattern
          * Optional CamelContext id pattern to only allow Rest APIs from rest
          * services within CamelContext's which name matches the pattern.
+         * 
+         * @param path path/contextIdPattern
          */
         default RestApiEndpointBuilder restApi(String path) {
-            return RestApiEndpointBuilderFactory.restApi(path);
+            return RestApiEndpointBuilderFactory.endpointBuilder("rest-api", path);
+        }
+        /**
+         * REST API (camel-rest)
+         * Expose OpenAPI Specification of the REST services defined using Camel
+         * REST DSL.
+         * 
+         * Category: core,rest
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-rest
+         * 
+         * Syntax: <code>rest-api:path/contextIdPattern</code>
+         * 
+         * Path parameter: path (required)
+         * The base path
+         * 
+         * Path parameter: contextIdPattern
+         * Optional CamelContext id pattern to only allow Rest APIs from rest
+         * services within CamelContext's which name matches the pattern.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path/contextIdPattern
+         */
+        default RestApiEndpointBuilder restApi(String componentName, String path) {
+            return RestApiEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
-     * 
-     * Category: core,rest
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-rest
-     * 
-     * Syntax: <code>rest-api:path/contextIdPattern</code>
-     * 
-     * Path parameter: path (required)
-     * The base path
-     * 
-     * Path parameter: contextIdPattern
-     * Optional CamelContext id pattern to only allow Rest APIs from rest
-     * services within CamelContext's which name matches the pattern.
-     */
-    static RestApiEndpointBuilder restApi(String path) {
+    static RestApiEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class RestApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestApiEndpointBuilder, AdvancedRestApiEndpointBuilder {
             public RestApiEndpointBuilderImpl(String path) {
-                super("rest-api", path);
+                super(componentName, path);
             }
         }
         return new RestApiEndpointBuilderImpl(path);

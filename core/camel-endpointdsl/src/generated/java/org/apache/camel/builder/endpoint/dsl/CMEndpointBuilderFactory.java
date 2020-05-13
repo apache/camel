@@ -239,28 +239,37 @@ public interface CMEndpointBuilderFactory {
          * 
          * Path parameter: host (required)
          * SMS Provider HOST with scheme
+         * 
+         * @param path host
          */
         default CMEndpointBuilder cmSms(String path) {
-            return CMEndpointBuilderFactory.cmSms(path);
+            return CMEndpointBuilderFactory.endpointBuilder("cm-sms", path);
+        }
+        /**
+         * CM SMS Gateway (camel-cm-sms)
+         * Send SMS messages via CM SMS Gateway.
+         * 
+         * Category: mobile
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-cm-sms
+         * 
+         * Syntax: <code>cm-sms:host</code>
+         * 
+         * Path parameter: host (required)
+         * SMS Provider HOST with scheme
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path host
+         */
+        default CMEndpointBuilder cmSms(String componentName, String path) {
+            return CMEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * CM SMS Gateway (camel-cm-sms)
-     * Send SMS messages via CM SMS Gateway.
-     * 
-     * Category: mobile
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-cm-sms
-     * 
-     * Syntax: <code>cm-sms:host</code>
-     * 
-     * Path parameter: host (required)
-     * SMS Provider HOST with scheme
-     */
-    static CMEndpointBuilder cmSms(String path) {
+    static CMEndpointBuilder endpointBuilder(String componentName, String path) {
         class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder, AdvancedCMEndpointBuilder {
             public CMEndpointBuilderImpl(String path) {
-                super("cm-sms", path);
+                super(componentName, path);
             }
         }
         return new CMEndpointBuilderImpl(path);

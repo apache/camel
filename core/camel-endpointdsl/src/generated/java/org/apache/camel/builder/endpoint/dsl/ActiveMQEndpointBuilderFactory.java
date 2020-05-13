@@ -5507,34 +5507,47 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * Path parameter: destinationName (required)
          * Name of the queue or topic to use as destination
+         * 
+         * @param path destinationType:destinationName
          */
         default ActiveMQEndpointBuilder activemq(String path) {
-            return ActiveMQEndpointBuilderFactory.activemq(path);
+            return ActiveMQEndpointBuilderFactory.endpointBuilder("activemq", path);
+        }
+        /**
+         * ActiveMQ (camel-activemq)
+         * Send messages to (or consume from) Apache ActiveMQ. This component
+         * extends the Camel JMS component.
+         * 
+         * Category: messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-activemq
+         * 
+         * Syntax: <code>activemq:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic, temp-queue, temp-topic
+         * 
+         * Path parameter: destinationName (required)
+         * Name of the queue or topic to use as destination
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path destinationType:destinationName
+         */
+        default ActiveMQEndpointBuilder activemq(
+                String componentName,
+                String path) {
+            return ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
-     * extends the Camel JMS component.
-     * 
-     * Category: messaging
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-activemq
-     * 
-     * Syntax: <code>activemq:destinationType:destinationName</code>
-     * 
-     * Path parameter: destinationType
-     * The kind of destination to use
-     * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
-     * 
-     * Path parameter: destinationName (required)
-     * Name of the queue or topic to use as destination
-     */
-    static ActiveMQEndpointBuilder activemq(String path) {
+    static ActiveMQEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class ActiveMQEndpointBuilderImpl extends AbstractEndpointBuilder implements ActiveMQEndpointBuilder, AdvancedActiveMQEndpointBuilder {
             public ActiveMQEndpointBuilderImpl(String path) {
-                super("activemq", path);
+                super(componentName, path);
             }
         }
         return new ActiveMQEndpointBuilderImpl(path);

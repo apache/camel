@@ -1280,28 +1280,41 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * Path parameter: connectionSettings
          * Connection settings host:port/tube
+         * 
+         * @param path connectionSettings
          */
         default BeanstalkEndpointBuilder beanstalk(String path) {
-            return BeanstalkEndpointBuilderFactory.beanstalk(path);
+            return BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
+        }
+        /**
+         * Beanstalk (camel-beanstalk)
+         * Retrieve and post-process Beanstalk jobs.
+         * 
+         * Category: messaging
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-beanstalk
+         * 
+         * Syntax: <code>beanstalk:connectionSettings</code>
+         * 
+         * Path parameter: connectionSettings
+         * Connection settings host:port/tube
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path connectionSettings
+         */
+        default BeanstalkEndpointBuilder beanstalk(
+                String componentName,
+                String path) {
+            return BeanstalkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * Syntax: <code>beanstalk:connectionSettings</code>
-     * 
-     * Path parameter: connectionSettings
-     * Connection settings host:port/tube
-     */
-    static BeanstalkEndpointBuilder beanstalk(String path) {
+    static BeanstalkEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class BeanstalkEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanstalkEndpointBuilder, AdvancedBeanstalkEndpointBuilder {
             public BeanstalkEndpointBuilderImpl(String path) {
-                super("beanstalk", path);
+                super(componentName, path);
             }
         }
         return new BeanstalkEndpointBuilderImpl(path);

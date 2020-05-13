@@ -418,29 +418,38 @@ public interface RefEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * Name of endpoint to lookup in the registry.
+         * 
+         * @param path name
          */
         default RefEndpointBuilder ref(String path) {
-            return RefEndpointBuilderFactory.ref(path);
+            return RefEndpointBuilderFactory.endpointBuilder("ref", path);
+        }
+        /**
+         * Ref (camel-ref)
+         * Route messages to an endpoint looked up dynamically by name in the
+         * Camel Registry.
+         * 
+         * Category: core,endpoint
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-ref
+         * 
+         * Syntax: <code>ref:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of endpoint to lookup in the registry.
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default RefEndpointBuilder ref(String componentName, String path) {
+            return RefEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Ref (camel-ref)
-     * Route messages to an endpoint looked up dynamically by name in the Camel
-     * Registry.
-     * 
-     * Category: core,endpoint
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-ref
-     * 
-     * Syntax: <code>ref:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of endpoint to lookup in the registry.
-     */
-    static RefEndpointBuilder ref(String path) {
+    static RefEndpointBuilder endpointBuilder(String componentName, String path) {
         class RefEndpointBuilderImpl extends AbstractEndpointBuilder implements RefEndpointBuilder, AdvancedRefEndpointBuilder {
             public RefEndpointBuilderImpl(String path) {
-                super("ref", path);
+                super(componentName, path);
             }
         }
         return new RefEndpointBuilderImpl(path);

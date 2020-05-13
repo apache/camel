@@ -669,29 +669,42 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * Path parameter: name (required)
          * The name of the scheduler
+         * 
+         * @param path name
          */
         default SchedulerEndpointBuilder scheduler(String path) {
-            return SchedulerEndpointBuilderFactory.scheduler(path);
+            return SchedulerEndpointBuilderFactory.endpointBuilder("scheduler", path);
+        }
+        /**
+         * Scheduler (camel-scheduler)
+         * Generate messages in specified intervals using
+         * java.util.concurrent.ScheduledExecutorService.
+         * 
+         * Category: core,scheduling
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-scheduler
+         * 
+         * Syntax: <code>scheduler:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name of the scheduler
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path name
+         */
+        default SchedulerEndpointBuilder scheduler(
+                String componentName,
+                String path) {
+            return SchedulerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Scheduler (camel-scheduler)
-     * Generate messages in specified intervals using
-     * java.util.concurrent.ScheduledExecutorService.
-     * 
-     * Category: core,scheduling
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-scheduler
-     * 
-     * Syntax: <code>scheduler:name</code>
-     * 
-     * Path parameter: name (required)
-     * The name of the scheduler
-     */
-    static SchedulerEndpointBuilder scheduler(String path) {
+    static SchedulerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class SchedulerEndpointBuilderImpl extends AbstractEndpointBuilder implements SchedulerEndpointBuilder, AdvancedSchedulerEndpointBuilder {
             public SchedulerEndpointBuilderImpl(String path) {
-                super("scheduler", path);
+                super(componentName, path);
             }
         }
         return new SchedulerEndpointBuilderImpl(path);

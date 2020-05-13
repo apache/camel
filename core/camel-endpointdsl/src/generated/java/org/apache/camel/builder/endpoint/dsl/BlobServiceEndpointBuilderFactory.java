@@ -1387,28 +1387,41 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * Path parameter: containerOrBlobUri (required)
          * Container or Blob compact Uri
+         * 
+         * @param path containerOrBlobUri
          */
         default BlobServiceEndpointBuilder azureBlob(String path) {
-            return BlobServiceEndpointBuilderFactory.azureBlob(path);
+            return BlobServiceEndpointBuilderFactory.endpointBuilder("azure-blob", path);
+        }
+        /**
+         * Azure Storage Blob Service (Legacy) (camel-azure)
+         * Store and retrieve blobs from Azure Storage Blob Service.
+         * 
+         * Category: cloud,database,nosql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-azure
+         * 
+         * Syntax: <code>azure-blob:containerOrBlobUri</code>
+         * 
+         * Path parameter: containerOrBlobUri (required)
+         * Container or Blob compact Uri
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path containerOrBlobUri
+         */
+        default BlobServiceEndpointBuilder azureBlob(
+                String componentName,
+                String path) {
+            return BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Azure Storage Blob Service (Legacy) (camel-azure)
-     * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     * 
-     * Syntax: <code>azure-blob:containerOrBlobUri</code>
-     * 
-     * Path parameter: containerOrBlobUri (required)
-     * Container or Blob compact Uri
-     */
-    static BlobServiceEndpointBuilder azureBlob(String path) {
+    static BlobServiceEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class BlobServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobServiceEndpointBuilder, AdvancedBlobServiceEndpointBuilder {
             public BlobServiceEndpointBuilderImpl(String path) {
-                super("azure-blob", path);
+                super(componentName, path);
             }
         }
         return new BlobServiceEndpointBuilderImpl(path);

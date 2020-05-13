@@ -1256,29 +1256,42 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * Path parameter: masterUrl (required)
          * Kubernetes Master url
+         * 
+         * @param path masterUrl
          */
         default KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
-            return KubernetesHPAEndpointBuilderFactory.kubernetesHpa(path);
+            return KubernetesHPAEndpointBuilderFactory.endpointBuilder("kubernetes-hpa", path);
+        }
+        /**
+         * Kubernetes HPA (camel-kubernetes)
+         * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and
+         * get notified on HPA changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-hpa:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path masterUrl
+         */
+        default KubernetesHPAEndpointBuilder kubernetesHpa(
+                String componentName,
+                String path) {
+            return KubernetesHPAEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Kubernetes HPA (camel-kubernetes)
-     * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
-     * notified on HPA changes.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
-     * Syntax: <code>kubernetes-hpa:masterUrl</code>
-     * 
-     * Path parameter: masterUrl (required)
-     * Kubernetes Master url
-     */
-    static KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
+    static KubernetesHPAEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class KubernetesHPAEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesHPAEndpointBuilder, AdvancedKubernetesHPAEndpointBuilder {
             public KubernetesHPAEndpointBuilderImpl(String path) {
-                super("kubernetes-hpa", path);
+                super(componentName, path);
             }
         }
         return new KubernetesHPAEndpointBuilderImpl(path);

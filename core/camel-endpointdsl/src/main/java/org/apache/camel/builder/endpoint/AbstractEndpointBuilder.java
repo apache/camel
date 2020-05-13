@@ -94,8 +94,8 @@ public class AbstractEndpointBuilder {
         String targetScheme = scheme;
         String targetPath = path;
         if (camelContext != null) {
-            targetScheme = camelContext.resolvePropertyPlaceholders(scheme);
-            targetPath = camelContext.resolvePropertyPlaceholders(path);
+            targetScheme = camelContext.resolvePropertyPlaceholders(targetScheme);
+            targetPath = camelContext.resolvePropertyPlaceholders(targetPath);
         }
 
         if (params.isEmpty()) {

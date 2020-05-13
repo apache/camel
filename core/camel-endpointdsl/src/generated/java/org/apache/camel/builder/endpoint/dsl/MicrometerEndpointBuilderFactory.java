@@ -216,37 +216,50 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: tags
          * Tags of metrics
+         * 
+         * @param path metricsType:metricsName
          */
         default MicrometerEndpointBuilder micrometer(String path) {
-            return MicrometerEndpointBuilderFactory.micrometer(path);
+            return MicrometerEndpointBuilderFactory.endpointBuilder("micrometer", path);
+        }
+        /**
+         * Micrometer (camel-micrometer)
+         * Collect various metrics directly from Camel routes using the
+         * Micrometer library.
+         * 
+         * Category: monitoring
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-micrometer
+         * 
+         * Syntax: <code>micrometer:metricsType:metricsName</code>
+         * 
+         * Path parameter: metricsType (required)
+         * Type of metrics
+         * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
+         * DISTRIBUTION_SUMMARY, OTHER
+         * 
+         * Path parameter: metricsName (required)
+         * Name of metrics
+         * 
+         * Path parameter: tags
+         * Tags of metrics
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path metricsType:metricsName
+         */
+        default MicrometerEndpointBuilder micrometer(
+                String componentName,
+                String path) {
+            return MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Micrometer (camel-micrometer)
-     * Collect various metrics directly from Camel routes using the Micrometer
-     * library.
-     * 
-     * Category: monitoring
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-micrometer
-     * 
-     * Syntax: <code>micrometer:metricsType:metricsName</code>
-     * 
-     * Path parameter: metricsType (required)
-     * Type of metrics
-     * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-     * DISTRIBUTION_SUMMARY, OTHER
-     * 
-     * Path parameter: metricsName (required)
-     * Name of metrics
-     * 
-     * Path parameter: tags
-     * Tags of metrics
-     */
-    static MicrometerEndpointBuilder micrometer(String path) {
+    static MicrometerEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder, AdvancedMicrometerEndpointBuilder {
             public MicrometerEndpointBuilderImpl(String path) {
-                super("micrometer", path);
+                super(componentName, path);
             }
         }
         return new MicrometerEndpointBuilderImpl(path);

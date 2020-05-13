@@ -1279,28 +1279,41 @@ public interface EtcdStatsEndpointBuilderFactory {
          * 
          * Path parameter: path
          * The path the endpoint refers to
+         * 
+         * @param path path
          */
         default EtcdStatsEndpointBuilder etcdStats(String path) {
-            return EtcdStatsEndpointBuilderFactory.etcdStats(path);
+            return EtcdStatsEndpointBuilderFactory.endpointBuilder("etcd-stats", path);
+        }
+        /**
+         * Etcd Stats (camel-etcd)
+         * Access etcd cluster statistcs.
+         * 
+         * Category: clustering,database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-etcd
+         * 
+         * Syntax: <code>etcd-stats:path</code>
+         * 
+         * Path parameter: path
+         * The path the endpoint refers to
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path path
+         */
+        default EtcdStatsEndpointBuilder etcdStats(
+                String componentName,
+                String path) {
+            return EtcdStatsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Etcd Stats (camel-etcd)
-     * Access etcd cluster statistcs.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     * 
-     * Syntax: <code>etcd-stats:path</code>
-     * 
-     * Path parameter: path
-     * The path the endpoint refers to
-     */
-    static EtcdStatsEndpointBuilder etcdStats(String path) {
+    static EtcdStatsEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class EtcdStatsEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdStatsEndpointBuilder, AdvancedEtcdStatsEndpointBuilder {
             public EtcdStatsEndpointBuilderImpl(String path) {
-                super("etcd-stats", path);
+                super(componentName, path);
             }
         }
         return new EtcdStatsEndpointBuilderImpl(path);

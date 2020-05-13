@@ -195,31 +195,44 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * Path parameter: projectId (required)
          * Google Cloud Project Id
+         * 
+         * @param path projectId:query
          */
         default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
-            return GoogleBigQuerySQLEndpointBuilderFactory.googleBigquerySql(path);
+            return GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder("google-bigquery-sql", path);
+        }
+        /**
+         * Google BigQuery Standard SQL (camel-google-bigquery)
+         * Access Google Cloud BigQuery service using SQL queries.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-bigquery
+         * 
+         * Syntax: <code>google-bigquery-sql:projectId:query</code>
+         * 
+         * Path parameter: query (required)
+         * BigQuery standard SQL query
+         * 
+         * Path parameter: projectId (required)
+         * Google Cloud Project Id
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path projectId:query
+         */
+        default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
+                String componentName,
+                String path) {
+            return GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
-    /**
-     * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
-     * Syntax: <code>google-bigquery-sql:projectId:query</code>
-     * 
-     * Path parameter: query (required)
-     * BigQuery standard SQL query
-     * 
-     * Path parameter: projectId (required)
-     * Google Cloud Project Id
-     */
-    static GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
+    static GoogleBigQuerySQLEndpointBuilder endpointBuilder(
+            String componentName,
+            String path) {
         class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {
             public GoogleBigQuerySQLEndpointBuilderImpl(String path) {
-                super("google-bigquery-sql", path);
+                super(componentName, path);
             }
         }
         return new GoogleBigQuerySQLEndpointBuilderImpl(path);
