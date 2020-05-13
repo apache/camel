@@ -16,9 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.slf4j.Logger;
@@ -29,21 +26,18 @@ import org.slf4j.LoggerFactory;
  * when {@link CamelContext} is stopped from JMX or its stop method is invoked from Java code.
  */
 public class MainLifecycleStrategy extends LifecycleStrategySupport {
-
     private static final Logger LOG = LoggerFactory.getLogger(MainLifecycleStrategy.class);
-    private final AtomicBoolean completed;
-    private final CountDownLatch latch;
+    private final MainShutdownStrategy shutdownStrategy;
 
-    public MainLifecycleStrategy(AtomicBoolean completed, CountDownLatch latch) {
-        this.completed = completed;
-        this.latch = latch;
+    public MainLifecycleStrategy(MainShutdownStrategy shutdownStrategy) {
+        this.shutdownStrategy = shutdownStrategy;
     }
 
     @Override
     public void onContextStop(CamelContext context) {
         LOG.info("CamelContext: {} has been shutdown, triggering shutdown of the JVM.", context.getName());
+
         // trigger stopping the Main
-        completed.set(true);
-        latch.countDown();
+        shutdownStrategy.shutdown();
     }
 }
