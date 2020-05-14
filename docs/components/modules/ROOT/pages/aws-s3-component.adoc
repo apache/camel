@@ -26,7 +26,7 @@ https://aws.amazon.com/s3[Amazon S3].
 
 [source,java]
 ------------------------------
-aws-s3://bucketNameOrArn[?options]
+aws-s3://[bucketName|arn][?options]
 ------------------------------
 
 The bucket will be created if it don't already exists. +

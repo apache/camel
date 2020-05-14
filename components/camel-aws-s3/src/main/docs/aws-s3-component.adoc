@@ -106,7 +106,7 @@ The AWS S3 Storage Service component supports 38 options, which are listed below
 The AWS S3 Storage Service endpoint is configured using URI syntax:
 
 ----
-aws-s3://[bucketName|arn][?options]
+aws-s3://bucketNameOrArn
 ----
 
 with the following path and query parameters:
