@@ -222,4 +222,22 @@ public final class CollectionHelper {
 
         return properties;
     }
+
+    /**
+     * Build a new map that is the result of merging the given list of maps.
+     */
+    @SafeVarargs
+    public static <K, V> Map<K, V> mergeMaps(Map<K, V> map, Map<K, V>... maps) {
+        Map<K, V> answer = new HashMap<>();
+
+        if (map != null) {
+            answer.putAll(map);
+        }
+
+        for (Map<K, V> m : maps) {
+            answer.putAll(m);
+        }
+
+        return answer;
+    }
 }
