@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -61,12 +63,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -185,7 +189,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private static String loadJson(File file) {
         try {
-            return PackageHelper.loadText(file);
+            return loadText(file);
         } catch (IOException e) {
             throw new IOError(e);
         }
@@ -654,15 +658,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
     }
 
-
-
     private boolean synchronizeEndpointBuildersStaticClass(List<Method> methods) throws MojoFailureException {
         File file = new File(sourcesOutputDir.getPath() + "/" + endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
         if (file.exists()) {
             // does the file already exists
             try {
                 // parse existing source file with roaster to find existing methods which we should keep
-                JavaClassSource source = (JavaClassSource) Roaster.parse(file);
+                String sourceCode = loadText(file);
+                JavaClassSource source = (JavaClassSource) Roaster.parse(sourceCode);
                 // add existing methods
                 for (MethodSource ms : source.getMethods()) {
                     boolean exist = methods.stream().anyMatch(m ->
@@ -682,8 +685,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                                 method.addParameter(ps.getType().getQualifiedName(), ps.getName());
                             }
                         }
-                        // the javadoc is mengled by roaster (sadly it does not preserve newlines)
-                        method.getJavaDoc().setFullText(ms.getJavaDoc().getFullText());
+                        String doc = extractJavaDoc(sourceCode, ms);
+                        method.getJavaDoc().setFullText(doc);
                         if (ms.getAnnotation(Deprecated.class) != null) {
                             method.addAnnotation(Deprecated.class);
                         }
@@ -713,6 +716,36 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         String printClass = javaClass.printClass();
 
         return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + printClass + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+    }
+
+    protected static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
+        // the javadoc is mangled by roaster (sadly it does not preserve newlines and original formatting)
+        // so we need to load it from the original source file
+        Object internal = ms.getJavaDoc().getInternal();
+        if (internal instanceof ASTNode) {
+            int pos = ((ASTNode) internal).getStartPosition();
+            int len = ((ASTNode) internal).getLength();
+            if (pos > 0 && len > 0) {
+                String doc = sourceCode.substring(pos, pos + len);
+                LineNumberReader ln = new LineNumberReader(new StringReader(doc));
+                String line;
+                StringBuilder sb = new StringBuilder();
+                while ((line = ln.readLine()) != null) {
+                    line = line.trim();
+                    if (line.startsWith("/**") || line.startsWith("*/")) {
+                        continue;
+                    }
+                    if (line.startsWith("*")) {
+                        line = line.substring(1).trim();
+                    }
+                    sb.append(line);
+                    sb.append("\n");
+                }
+                doc = sb.toString();
+                return doc;
+            }
+        }
+        return null;
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
@@ -1024,7 +1057,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         try {
             String header;
             try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
-                header = PackageHelper.loadText(is);
+                header = loadText(is);
             }
             String code = header + source;
             getLog().debug("Source code generated:\n" + code);
