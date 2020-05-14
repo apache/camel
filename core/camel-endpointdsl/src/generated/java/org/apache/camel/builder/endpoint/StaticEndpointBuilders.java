@@ -1505,8 +1505,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate",path);
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
     }
     /**
      * AWS 2 Translate (camel-aws2-translate)
@@ -1526,9 +1526,9 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName,path);
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AWS CloudWatch (camel-aws-cw)
@@ -15215,51 +15215,33 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * ZooKeeper (camel-zookeeper)
-     * Manage ZooKeeper clusters.
-     * 
-     * Category: clustering
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-zookeeper
-     * 
-     * Syntax: <code>zookeeper:serverUrls/path</code>
-     * 
-     * Path parameter: serverUrls (required)
-     * The zookeeper server hosts (multiple servers can be separated by comma)
-     * 
-     * Path parameter: path (required)
-     * The node in the ZooKeeper server (aka znode)
-     * 
+     * ZooKeeper (camel-zookeeper) Manage ZooKeeper clusters. Category:
+     * clustering Since: 2.9 Maven coordinates: org.apache.camel:camel-zookeeper
+     * Syntax: <code>zookeeper:serverUrls/path</code> Path parameter: serverUrls
+     * (required) The zookeeper server hosts (multiple servers can be separated
+     * by comma) Path parameter: path (required) The node in the ZooKeeper
+     * server (aka znode)
      * @param path serverUrls/path
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper",path);
     }
     /**
-     * ZooKeeper (camel-zookeeper)
-     * Manage ZooKeeper clusters.
-     * 
-     * Category: clustering
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-zookeeper
-     * 
-     * Syntax: <code>zookeeper:serverUrls/path</code>
-     * 
-     * Path parameter: serverUrls (required)
-     * The zookeeper server hosts (multiple servers can be separated by comma)
-     * 
-     * Path parameter: path (required)
-     * The node in the ZooKeeper server (aka znode)
-     * 
+     * ZooKeeper (camel-zookeeper) Manage ZooKeeper clusters. Category:
+     * clustering Since: 2.9 Maven coordinates: org.apache.camel:camel-zookeeper
+     * Syntax: <code>zookeeper:serverUrls/path</code> Path parameter: serverUrls
+     * (required) The zookeeper server hosts (multiple servers can be separated
+     * by comma) Path parameter: path (required) The node in the ZooKeeper
+     * server (aka znode)
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path serverUrls/path
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
+            java.lang.String componentName,
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
      * ZooKeeper Master (camel-zookeeper-master)
