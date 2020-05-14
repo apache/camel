@@ -75,8 +75,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
         if (client == null) {
             DefaultAsyncHttpClientConfig.Builder builder = clientConfig != null
                     ? new DefaultAsyncHttpClientConfig.Builder(clientConfig)
