@@ -20,8 +20,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
@@ -113,6 +115,11 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     }
 
     @Override
+    public int getNumberOfExhaustedRoutes() {
+        return controller.getExhaustedRoutes().size();
+    }
+
+    @Override
     public Collection<String> getControlledRoutes() {
         if (controller != null) {
             return controller.getControlledRoutes().stream()
@@ -135,12 +142,31 @@ public class ManagedSupervisingRouteController extends ManagedService implements
     }
 
     @Override
-    public TabularData routeStatus(boolean restartingOnly, boolean includeStacktrace) {
+    public Collection<String> getExhaustedRoutes() {
+        if (controller != null) {
+            return controller.getExhaustedRoutes().stream()
+                    .map(Route::getId)
+                    .collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    @Override
+    public TabularData routeStatus(boolean exhausted, boolean restarting, boolean includeStacktrace) {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusTabularType());
 
             int index = 0;
-            Collection<Route> routes = restartingOnly ? controller.getRestartingRoutes() : controller.getControlledRoutes();
+            Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
+            routes.addAll(controller.getControlledRoutes());
+            if (exhausted) {
+                routes.addAll(controller.getExhaustedRoutes());
+            }
+            if (restarting) {
+                routes.addAll(controller.getRestartingRoutes());
+            }
+
             for (Route route : routes) {
                 CompositeType ct = CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusCompositeType();
 
@@ -151,12 +177,13 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                 long attempts = state != null ? state.getCurrentAttempts() : 0;
                 String elapsed = "";
                 String last = "";
-                long time = state != null ? state.getFirstAttemptTime() : 0;
+                // we can only track elapsed/time for active supervised routes
+                long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getFirstAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
                     elapsed = TimeUtils.printDuration(delta);
                 }
-                time = state != null ? state.getLastAttemptTime() : 0;
+                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
                     last = TimeUtils.printDuration(delta);

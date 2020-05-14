@@ -330,6 +330,13 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     }
 
     @Override
+    public Collection<Route> getExhaustedRoutes() {
+        return routeManager.exhausted.keySet().stream()
+                .map(RouteHolder::get)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public BackOffTimer.Task getRestartingRouteState(String routeId) {
         return routeManager.getBackOffContext(routeId).orElse(null);
     }
@@ -437,10 +444,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             }
         }
 
-        LOG.info("Total managed routes: {} of which {} successfully started and {} re-starting",
+        LOG.info("Total managed routes: {} of which {} successfully started (restarting: {}, exhausted: {})",
             routes.size(),
             routes.stream().filter(r -> r.getStatus() == ServiceStatus.Started).count(),
-            routeManager.routes.size()
+            routeManager.routes.size(),
+            routeManager.exhausted.size()
         );
     }
 
@@ -455,11 +463,13 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private class RouteManager {
         private final Logger logger;
         private final ConcurrentMap<RouteHolder, BackOffTimer.Task> routes;
+        private final ConcurrentMap<RouteHolder, BackOffTimer.Task> exhausted;
         private final ConcurrentMap<String, Throwable> exceptions;
 
         RouteManager() {
             this.logger = LoggerFactory.getLogger(RouteManager.class);
             this.routes = new ConcurrentHashMap<>();
+            this.exhausted = new ConcurrentHashMap<>();
             this.exceptions = new ConcurrentHashMap<>();
         }
 
@@ -506,6 +516,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                                     + " and the route is no longer supervised by this route controller and remains as stopped.",
                                             route.getId(), backOffTask.getCurrentAttempts() - 1);
                                     r.get().setRouteController(null);
+                                    // remember exhausted routes
+                                    routeManager.exhausted.put(r, task);
                                 }
                             }
                         }
@@ -530,10 +542,17 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         }
 
         public Optional<BackOffTimer.Task> getBackOffContext(String id) {
-            return routes.entrySet().stream()
+            Optional<BackOffTimer.Task> answer = routes.entrySet().stream()
                 .filter(e -> ObjectHelper.equal(e.getKey().getId(), id))
                 .findFirst()
                 .map(Map.Entry::getValue);
+            if (!answer.isPresent()) {
+                answer = exhausted.entrySet().stream()
+                    .filter(e -> ObjectHelper.equal(e.getKey().getId(), id))
+                    .findFirst()
+                    .map(Map.Entry::getValue);
+            }
+            return answer;
         }
     }
 
