@@ -125,6 +125,11 @@ public interface SupervisingRouteController extends RouteController {
     Collection<Route> getRestartingRoutes();
 
     /**
+     * Return the list of routes that have failed all attempts to startup and are now exhausted.
+     */
+    Collection<Route> getExhaustedRoutes();
+
+    /**
      * Gets the state of the backoff for the given route if its managed and under restarting.
      *
      * @param routeId  the route id

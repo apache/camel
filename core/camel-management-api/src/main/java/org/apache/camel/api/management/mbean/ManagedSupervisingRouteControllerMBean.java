@@ -61,10 +61,16 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedAttribute(description = "Number of routes which have failed to startup and are currently managed to be restarted")
     int getNumberOfRestartingRoutes();
 
-    @ManagedAttribute(description = "Controlled Routes")
+    @ManagedAttribute(description = "Number of routes which have failed all attempts to startup and are now exhausted")
+    int getNumberOfExhaustedRoutes();
+
+    @ManagedAttribute(description = "Exhausted routes")
+    Collection<String> getExhaustedRoutes();
+
+    @ManagedAttribute(description = "Routes that are restarting or scheduled to restart")
     Collection<String> getRestartingRoutes();
 
     @ManagedOperation(description = "Lists detailed status about all the routes (incl failure details for routes failed to start)")
-    TabularData routeStatus(boolean restartingOnly, boolean includeStacktrace);
+    TabularData routeStatus(boolean exhausted, boolean restarting, boolean includeStacktrace);
 
 }
