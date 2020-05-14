@@ -3133,8 +3133,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder("cm-sms",path);
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder("cm-sms", path);
     }
     /**
      * CM SMS Gateway (camel-cm-sms)
@@ -3154,9 +3154,9 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder(componentName,path);
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * CoAP (camel-coap)
@@ -15233,8 +15233,8 @@ public class StaticEndpointBuilders {
      * @param path serverUrls/path
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper",path);
     }
     /**
      * ZooKeeper (camel-zookeeper)
@@ -15257,9 +15257,9 @@ public class StaticEndpointBuilders {
      * @param path serverUrls/path
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
+            java.lang.String componentName,
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
      * ZooKeeper Master (camel-zookeeper-master)
