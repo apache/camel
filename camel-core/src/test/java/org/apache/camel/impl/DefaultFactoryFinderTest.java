@@ -34,6 +34,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DefaultFactoryFinderTest {
@@ -71,6 +73,35 @@ public class DefaultFactoryFinderTest {
             assertEquals(TestImplA.class.getName(), e.getMessage());
         }
 
+    }
+
+    @Test
+    public void shouldCacheFailedAttemptToResolveClass() throws IOException {
+        final ClassResolver classResolver = mock(ClassResolver.class);
+
+        final String properties = "class=" + TestImplA.class.getName();
+
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
+                .thenAnswer((invocation) -> new ByteArrayInputStream(properties.getBytes()));
+
+        when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
+
+        final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
+
+        try {
+            factoryFinder.findClass("TestImplA", null);
+            fail("Should have thrown ClassNotFoundException");
+        } catch (final ClassNotFoundException e) {
+            assertEquals(TestImplA.class.getName(), e.getMessage());
+        }
+        try {
+            factoryFinder.findClass("TestImplA", null);
+            fail("Should have thrown ClassNotFoundException");
+        } catch (final ClassNotFoundException e) {
+            assertEquals(TestImplA.class.getName(), e.getMessage());
+        }
+
+        verify(classResolver, times(1)).resolveClass(TestImplA.class.getName());
     }
 
     @Test

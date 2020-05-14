@@ -16,10 +16,12 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
@@ -33,6 +35,8 @@ import org.osgi.service.blueprint.reflect.ReferenceMetadata;
 public class BlueprintContainerRegistry implements Registry {
 
     private final BlueprintContainer blueprintContainer;
+
+    private final Map<Class<?>, Map<String, Class<?>>> perBlueprintContainerCache = new ConcurrentHashMap<>();
 
     public BlueprintContainerRegistry(BlueprintContainer blueprintContainer) {
         this.blueprintContainer = blueprintContainer;
@@ -71,13 +75,24 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        return lookupByType(blueprintContainer, type);
+        if (perBlueprintContainerCache.containsKey(type)) {
+            return (Map<String, T>) perBlueprintContainerCache.get(type);
+        }
+        Map<String, T> result = lookupByType(blueprintContainer, type);
+        perBlueprintContainerCache.put(type, (Map<String, Class<?>>) result);
+        return result;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Set<T> findByType(Class<T> type) {
+        if (perBlueprintContainerCache.containsKey(type)) {
+            return new HashSet<T>((Collection<? extends T>) perBlueprintContainerCache.get(type).values());
+        }
         Map<String, T> map = lookupByType(blueprintContainer, type);
+        perBlueprintContainerCache.put(type, (Map<String, Class<?>>) map);
         return new HashSet<>(map.values());
     }
 
