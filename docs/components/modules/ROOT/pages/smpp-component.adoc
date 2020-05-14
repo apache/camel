@@ -97,26 +97,15 @@ find:
 * the data coding specified in the endpoint configuration (URI
 parameter)
 
-Older versions of Camel had bugs in support for international character
-sets.  This feature only worked when a single encoding was used for all
-messages and was troublesome when users wanted to change it on a
-per-message basis.  Users who require this to work should ensure their
-version of Camel includes the fix for 
-
-JIRA Issues Macro: com.atlassian.sal.api.net.ResponseStatusException:
-Unexpected response received. Status code: 404
-
-.
-
 In addition to trying to send the data coding value to the SMSC, the
-Camel component also tries to analyze the message body, convert it to a
-Java String (Unicode) and convert that to a byte array in the
-corresponding alphabet  When deciding which alphabet to use in the byte
+Camel component also tries to analyze the message body, converts it to a
+Java String (Unicode) and converts that to a byte array in the
+corresponding alphabet. When deciding which alphabet to use in the byte
 array, the Camel SMPP component does not consider the data coding value
 (header or configuration), it only considers the specified alphabet
 (from either the header or endpoint parameter).
 
-If some characters in the String can't be represented in the chosen
+If some characters in the String can not be represented in the chosen
 alphabet, they may be replaced by the question mark ( ? ) symbol.  Users
 of the API may want to consider checking if their message body can be
 converted to ISO-8859-1 before passing it to the component and if not,
