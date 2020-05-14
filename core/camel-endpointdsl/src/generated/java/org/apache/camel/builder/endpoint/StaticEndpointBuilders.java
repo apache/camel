@@ -1490,45 +1490,31 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
-     * AWS 2 Translate (camel-aws2-translate)
-     * Translate texts using AWS Translate and AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-translate
-     * 
-     * Syntax: <code>aws2-translate:label</code>
-     * 
-     * Path parameter: label (required)
+     * AWS 2 Translate (camel-aws2-translate) Translate texts using AWS
+     * Translate and AWS SDK version 2.x. Category: cloud,management Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-translate Syntax:
+     * <code>aws2-translate:label</code> Path parameter: label (required)
      * Logical name
-     * 
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate",path);
     }
     /**
-     * AWS 2 Translate (camel-aws2-translate)
-     * Translate texts using AWS Translate and AWS SDK version 2.x.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-translate
-     * 
-     * Syntax: <code>aws2-translate:label</code>
-     * 
-     * Path parameter: label (required)
+     * AWS 2 Translate (camel-aws2-translate) Translate texts using AWS
+     * Translate and AWS SDK version 2.x. Category: cloud,management Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-translate Syntax:
+     * <code>aws2-translate:label</code> Path parameter: label (required)
      * Logical name
-     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
+            java.lang.String componentName,
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
      * AWS CloudWatch (camel-aws-cw)
@@ -3759,8 +3745,8 @@ public class StaticEndpointBuilders {
      * @param path beanId:address
      */
     static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder("cxf",path);
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder("cxf", path);
     }
     /**
      * CXF (camel-cxf)
@@ -3784,9 +3770,9 @@ public class StaticEndpointBuilders {
      * @param path beanId:address
      */
     static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder(componentName,path);
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * CXF-RS (camel-cxf)
