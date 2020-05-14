@@ -40,7 +40,8 @@ import org.apache.camel.util.IOHelper;
 public class DefaultFactoryFinder implements FactoryFinder {
 
     private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, Exception> classesNotFound = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Boolean> classesNotFound = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Exception> classesNotFoundExceptions = new ConcurrentHashMap<>();
     private final ClassResolver classResolver;
     private final String path;
 
@@ -167,8 +168,8 @@ public class DefaultFactoryFinder implements FactoryFinder {
      */
     protected Class<?> addToClassMap(String key, ClassSupplier mappingFunction) throws ClassNotFoundException, IOException {
         try {
-            if (classesNotFound.containsKey(key)) {
-                Exception e = classesNotFound.get(key);
+            if (classesNotFoundExceptions.containsKey(key) || classesNotFound.containsKey(key)) {
+                Exception e = classesNotFoundExceptions.get(key);
                 if (e == null) {
                     return null;
                 } else {
@@ -182,10 +183,10 @@ public class DefaultFactoryFinder implements FactoryFinder {
                     try {
                         return mappingFunction.get();
                     } catch (ClassNotFoundException e) {
-                        classesNotFound.put(key, e);
+                        classesNotFoundExceptions.put(key, e);
                         throw new WrappedRuntimeException(e);
                     } catch (NoFactoryAvailableException e) {
-                        classesNotFound.put(key, e);
+                        classesNotFoundExceptions.put(key, e);
                         throw new WrappedRuntimeException(e);
                     } catch (IOException e) {
                         throw new WrappedRuntimeException(e);
@@ -195,7 +196,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
 
             if (suppliedClass == null) {
                 // mark the key as non-resolvable to prevent pointless searching
-                classesNotFound.put(key, null);
+                classesNotFound.put(key, Boolean.TRUE);
             }
 
             return suppliedClass;
