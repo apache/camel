@@ -31,6 +31,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DefaultFactoryFinderTest {
@@ -61,6 +63,24 @@ public class DefaultFactoryFinderTest {
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
 
         assertFalse(factoryFinder.findClass("TestImplA").isPresent());
+    }
+
+    @Test
+    public void shouldCacheFailedAttemptToResolveClass() throws IOException {
+        final ClassResolver classResolver = mock(ClassResolver.class);
+
+        final String properties = "class=" + TestImplA.class.getName();
+
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA")).thenReturn(new ByteArrayInputStream(properties.getBytes()));
+
+        when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
+
+        final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
+
+        assertFalse(factoryFinder.findClass("TestImplA").isPresent());
+        assertFalse(factoryFinder.findClass("TestImplA").isPresent());
+
+        verify(classResolver, times(1)).resolveClass(TestImplA.class.getName());
     }
 
     @Test
