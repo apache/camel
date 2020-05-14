@@ -16,7 +16,6 @@
  */
 package org.apache.camel.maven.packaging;
 
-import javax.annotation.Generated;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
@@ -28,7 +27,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +35,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import javax.annotation.Generated;
 
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.spi.UriEndpoint;
@@ -60,7 +60,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -254,7 +253,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    @SuppressWarnings("checkstyle:methodlength")
+    @SuppressWarnings({"checkstyle:executablestatementcount", "checkstyle:methodlength"})
     private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, List<Method> staticBuilders) throws MojoFailureException {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
