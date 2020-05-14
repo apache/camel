@@ -37,6 +37,8 @@ import org.apache.camel.util.IOHelper;
 public class DefaultFactoryFinder implements FactoryFinder {
 
     private final ConcurrentMap<String, Class<?>> classMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Boolean> classesNotFound = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Exception> classesNotFoundExceptions = new ConcurrentHashMap<>();
     private final ClassResolver classResolver;
     private final String path;
 
@@ -135,16 +137,33 @@ public class DefaultFactoryFinder implements FactoryFinder {
      * later on with the only purpose to re-throw the original exception.
      */
     protected Class<?> addToClassMap(String key, ClassSupplier mappingFunction) {
-        return classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
+        if (classesNotFound.containsKey(key) || classesNotFoundExceptions.containsKey(key)) {
+            Exception e = classesNotFoundExceptions.get(key);
+            if (e == null) {
+                return null;
+            } else {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        Class<?> suppliedClass = classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
             @Override
             public Class<?> apply(String classKey) {
                 try {
                     return mappingFunction.get();
                 } catch (Exception e) {
+                    classesNotFoundExceptions.put(key, e);
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
         });
+
+        if (suppliedClass == null) {
+            // mark the key as non-resolvable to prevent pointless searching
+            classesNotFound.put(key, Boolean.TRUE);
+        }
+
+        return suppliedClass;
     }
 
     @FunctionalInterface
