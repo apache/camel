@@ -370,8 +370,14 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         name = prefix + name;
         Class<?> fieldTypeElement = fieldElement.getType();
         String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+        boolean isDuration = false;
         if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
-            fieldTypeName = metadata.javaType();
+            String jt = metadata.javaType();
+            if ("java.time.Duration".equals(jt)) {
+                isDuration = true;
+            } else {
+                fieldTypeName = jt;
+            }
         }
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
@@ -410,7 +416,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         EipOptionModel ep = createOption(name, displayName, "attribute", fieldTypeName,
                 required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums,
-                false, null, false);
+                false, null, false, isDuration);
         eipOptions.add(ep);
 
         return false;
@@ -439,7 +445,17 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         required = findRequired(fieldElement, required);
 
         String displayName = null;
+        boolean isDuration = false;
         Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+        if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
+            String jt = metadata.javaType();
+            if ("java.time.Duration".equals(jt)) {
+                isDuration = true;
+            } else {
+                fieldTypeName = jt;
+            }
+        }
+
         if (metadata != null) {
             displayName = metadata.displayName();
         }
@@ -451,7 +467,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         EipOptionModel ep = createOption(name, displayName, "value", fieldTypeName, required,
                 defaultValue, docComment, deprecated, deprecationNote, false, null,
-                false, null, false);
+                false, null, false, isDuration);
         eipOptions.add(ep);
     }
 
@@ -470,6 +486,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             name = prefix + name;
             Class<?> fieldTypeElement = fieldElement.getType();
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+            boolean isDuration = false;
+            if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
+                String jt = metadata.javaType();
+                if ("java.time.Duration".equals(jt)) {
+                    isDuration = true;
+                } else {
+                    fieldTypeName = jt;
+                }
+            }
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
             String docComment = findJavaDoc(fieldElement, fieldName, name, classElement, true);
@@ -529,7 +554,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue,
                     docComment, deprecated, deprecationNote, isEnum, enums, isOneOf,
-                    oneOfTypes, asPredicate);
+                    oneOfTypes, asPredicate, isDuration);
             eipOptions.add(ep);
         }
     }
@@ -569,7 +594,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
-                    false);
+                    false, false);
             eipOptions.add(ep);
         }
     }
@@ -579,52 +604,52 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // group
         String docComment = findJavaDoc(null, "group", null, classElement, true);
-        EipOptionModel ep = createOption("group", "Group", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        EipOptionModel ep = createOption("group", "Group", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // group
         docComment = findJavaDoc(null, "streamCache", null, classElement, true);
-        ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(null, "trace", null, classElement, true);
-        ep = createOption("trace", "Trace", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        ep = createOption("trace", "Trace", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // message history
         docComment = findJavaDoc(null, "messageHistory", null, classElement, true);
-        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "true", docComment, false, null, false, null, false, null, false);
+        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "true", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // log mask
         docComment = findJavaDoc(null, "logMask", null, classElement, true);
-        ep = createOption("logMask", "Log Mask", "attribute", "java.lang.String", false, "false", docComment, false, null, false, null, false, null, false);
+        ep = createOption("logMask", "Log Mask", "attribute", "java.lang.String", false, "false", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // delayer
         docComment = findJavaDoc(null, "delayer", null, classElement, true);
-        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, true);
         eipOptions.add(ep);
 
         // autoStartup
         docComment = findJavaDoc(null, "autoStartup", null, classElement, true);
-        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", docComment, false, null, false, null, false, null, false);
+        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // startupOrder
         docComment = findJavaDoc(null, "startupOrder", null, classElement, true);
-        ep = createOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", docComment, false, null, false, null, false, null, false);
+        ep = createOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // errorHandlerRef
         docComment = findJavaDoc(null, "errorHandlerRef", null, classElement, true);
-        ep = createOption("errorHandlerRef", "Error Handler", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        ep = createOption("errorHandlerRef", "Error Handler", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // routePolicyRef
         docComment = findJavaDoc(null, "routePolicyRef", null, classElement, true);
-        ep = createOption("routePolicyRef", "Route Policy", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        ep = createOption("routePolicyRef", "Route Policy", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // shutdownRoute
@@ -632,7 +657,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         enums.add("Default");
         enums.add("Defer");
         docComment = findJavaDoc(null, "shutdownRoute", "Default", classElement, true);
-        ep = createOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, null, true, enums, false, null, false);
+        ep = createOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, null, true, enums, false, null, false, false);
         eipOptions.add(ep);
 
         // shutdownRunningTask
@@ -641,14 +666,14 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         enums.add("CompleteAllTasks");
         docComment = findJavaDoc(null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
         ep = createOption("shutdownRunningTask", "Shutdown Running Task", "attribute", "org.apache.camel.ShutdownRunningTask", false, "", docComment, false, null, true, enums,
-                false, null, false);
+                false, null, false, false);
         eipOptions.add(ep);
 
         // input
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("from");
         docComment = findJavaDoc(null, "input", null, classElement, true);
-        ep = createOption("input", "Input", "element", "org.apache.camel.model.FromDefinition", true, "", docComment, false, null, false, null, true, oneOfTypes, false);
+        ep = createOption("input", "Input", "element", "org.apache.camel.model.FromDefinition", true, "", docComment, false, null, false, null, true, oneOfTypes, false, false);
         eipOptions.add(ep);
 
         // outputs
@@ -672,7 +697,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         docComment = findJavaDoc(null, "outputs", null, classElement, true);
         ep = createOption("outputs", "Outputs", "element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>",
                 true, "", docComment, false, null, false, null, true,
-                oneOfTypes, false);
+                oneOfTypes, false, false);
         eipOptions.add(ep);
     }
 
@@ -684,13 +709,13 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // id
         String docComment = findJavaDoc(null, "id", null, classElement, true);
-        EipOptionModel ep = createOption("id", "Id", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
+        EipOptionModel ep = createOption("id", "Id", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false, false);
         eipOptions.add(ep);
 
         // description
         docComment = findJavaDoc(null, "description", null, classElement, true);
         ep = createOption("description", "Description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, null, false, null, false, null,
-                false);
+                false, false);
         eipOptions.add(ep);
     }
 
@@ -710,7 +735,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             EipOptionModel ep = createOption("routes", "Routes", "element",
                     fieldTypeName, false, "", "Contains the Camel routes",
                     false, null, false, null, true, oneOfTypes,
-                    false);
+                    false, false);
             eipOptions.add(ep);
         }
     }
@@ -729,7 +754,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             oneOfTypes.add("rest");
 
             EipOptionModel ep = createOption("rests", "Rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false,
-                    null, true, oneOfTypes, false);
+                    null, true, oneOfTypes, false, false);
             eipOptions.add(ep);
         }
     }
@@ -765,7 +790,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", "", deprecated, deprecationNote, false, null, true, oneOfTypes, false);
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", "", deprecated, deprecationNote, false, null, true, oneOfTypes, false, false);
             eipOptions.add(ep);
         }
     }
@@ -800,7 +825,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false, false);
             eipOptions.add(ep);
         }
     }
@@ -850,7 +875,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, asPredicate);
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, asPredicate, false);
             eipOptions.add(ep);
         }
     }
@@ -909,7 +934,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, false, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
-                    asPredicate);
+                    asPredicate, false);
             eipOptions.add(ep);
         }
     }
@@ -975,7 +1000,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private EipOptionModel createOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String description, boolean deprecated,
-                                        String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfs, boolean asPredicate) {
+                                        String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfs, boolean asPredicate, boolean isDuration) {
         EipOptionModel option = new EipOptionModel();
         option.setName(name);
         option.setDisplayName(Strings.isNullOrEmpty(displayName) ? Strings.asTitle(name) : displayName);
@@ -985,7 +1010,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setDescription(JavadocHelper.sanitizeDescription(description, false));
         option.setDeprecated(deprecated);
         option.setDeprecationNote(Strings.isNullOrEmpty(deprecationNote) ? null : deprecationNote);
-        option.setType(getType(type, enumType));
+        option.setType(getType(type, enumType, isDuration));
         option.setJavaType(type);
         option.setEnums(enums != null && !enums.isEmpty() ? new ArrayList<>(enums) : null);
         option.setOneOfs(oneOfs != null && !oneOfs.isEmpty() ? new ArrayList<>(oneOfs) : null);
@@ -1117,9 +1142,11 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      * @return the json schema type, is never null, but returns <tt>object</tt>
      *         as the generic type
      */
-    public static String getType(String type, boolean enumType) {
+    public static String getType(String type, boolean enumType, boolean isDuration) {
         if (enumType) {
             return "enum";
+        } else if (isDuration) {
+            return "duration";
         } else if (type == null) {
             // return generic type for unknown type
             return "object";

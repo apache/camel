@@ -45,4 +45,22 @@ public class TimePatternTypeConversionTest extends ContextTestSupport {
         long milliseconds = TimeUtils.toMilliSeconds("30m55s");
         assertEquals(1855000, milliseconds);
     }
+
+    @Test
+    public void testSecondsPattern() throws Exception {
+        long milliseconds = TimeUtils.toMilliSeconds("300 sec");
+        assertEquals(300000, milliseconds);
+    }
+
+    @Test
+    public void testDotSecPattern() throws Exception {
+        long milliseconds = TimeUtils.toMilliSeconds("0.300second");
+        assertEquals(300, milliseconds);
+    }
+
+    @Test
+    public void testMillisPattern() throws Exception {
+        long milliseconds = TimeUtils.toMilliSeconds("300ms");
+        assertEquals(300, milliseconds);
+    }
 }

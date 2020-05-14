@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -476,6 +477,18 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Parses the given text and converts it to a Duration and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the Duration value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Duration parseDuration(CamelContext camelContext, String text) {
+        return parse(camelContext, Duration.class, text);
+    }
+
+    /**
      * Parses the given text and converts it to a Float and handling property placeholders as well
      *
      * @param camelContext the camel context
@@ -636,4 +649,5 @@ public final class CamelContextHelper {
             );
         }
     }
+
 }

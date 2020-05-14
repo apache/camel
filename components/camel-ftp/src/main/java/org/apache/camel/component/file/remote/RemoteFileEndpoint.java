@@ -42,7 +42,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
                                                 + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
     private int maximumReconnectAttempts = 3;
-    @UriParam(label = "advanced", description = "Delay in millis Camel will wait before performing a reconnect attempt.")
+    @UriParam(label = "advanced", description = "Delay in millis Camel will wait before performing a reconnect attempt.",
+              javaType = "java.time.Duration")
     private long reconnectDelay = 1000;
     @UriParam(label = "common", description = "Whether or not to disconnect from remote FTP server right after use. "
                                               + "Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which "

@@ -1045,6 +1045,7 @@ public class ModelParser extends BaseParser {
                 case "completionMode": def.setCompletionMode(val); break;
                 case "propagation": def.setPropagation(val); break;
                 case "sagaServiceRef": def.setSagaServiceRef(val); break;
+                case "timeout": def.setTimeout(val); break;
                 case "timeoutInMilliseconds": def.setTimeoutInMilliseconds(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }

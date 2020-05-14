@@ -316,7 +316,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // configure delayer
         if (definition.getDelayer() != null) {
-            Long delayer = parseLong(definition.getDelayer());
+            Long delayer = parseDuration(definition.getDelayer());
             if (delayer != null) {
                 route.setDelayer(delayer);
                 if (delayer > 0) {

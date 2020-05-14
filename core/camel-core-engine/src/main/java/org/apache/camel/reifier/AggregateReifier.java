@@ -125,11 +125,11 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             Expression expression = createExpression(definition.getCompletionTimeoutExpression());
             answer.setCompletionTimeoutExpression(expression);
         }
-        Long completionTimeout = parseLong(definition.getCompletionTimeout());
+        Long completionTimeout = parseDuration(definition.getCompletionTimeout());
         if (completionTimeout != null) {
             answer.setCompletionTimeout(completionTimeout);
         }
-        Long completionInterval = parseLong(definition.getCompletionInterval());
+        Long completionInterval = parseDuration(definition.getCompletionInterval());
         if (completionInterval != null) {
             answer.setCompletionInterval(completionInterval);
         }
@@ -187,7 +187,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (definition.getAggregateController() != null) {
             answer.setAggregateController(definition.getAggregateController());
         }
-        Long completionTimeoutCheckerInterval = parseLong(definition.getCompletionTimeoutCheckerInterval());
+        Long completionTimeoutCheckerInterval = parseDuration(definition.getCompletionTimeoutCheckerInterval());
         if (completionTimeoutCheckerInterval != null) {
             answer.setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
         }
@@ -200,10 +200,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             policy.setMaximumRetries(parseInt(definition.getMaximumRetries()));
         }
         if (definition.getRetryDelay() != null) {
-            policy.setRetryDelay(parseLong(definition.getRetryDelay()));
+            policy.setRetryDelay(parseDuration(definition.getRetryDelay()));
         }
         if (definition.getMaximumRetryDelay() != null) {
-            policy.setMaximumRetryDelay(parseLong(definition.getMaximumRetryDelay()));
+            policy.setMaximumRetryDelay(parseDuration(definition.getMaximumRetryDelay()));
         }
         if (definition.getExponentialBackOff() != null) {
             policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), false));

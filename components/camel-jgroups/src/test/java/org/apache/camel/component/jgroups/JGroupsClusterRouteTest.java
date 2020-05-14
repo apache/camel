@@ -39,7 +39,7 @@ public class JGroupsClusterRouteTest extends Assert {
 
     String clusterName = randomUUID().toString();
 
-    String masterMockUri = "mock:master?resultWaitTime=1200000";
+    String masterMockUri = "mock:master?resultWaitTime=2m";
 
     class Builder extends RouteBuilder {
 

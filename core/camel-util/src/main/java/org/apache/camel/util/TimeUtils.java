@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,11 +34,20 @@ public final class TimeUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimeUtils.class);
     private static final Pattern NUMBERS_ONLY_STRING_PATTERN = Pattern.compile("^[-]?(\\d)+$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern HOUR_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))h(our(s)?)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern MINUTES_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))m(in(ute(s)?)?)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SECONDS_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))s(ec(ond)?(s)?)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HOUR_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))\\s*h(our(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MINUTES_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))\\s*m(in(ute(s)?)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SECONDS_REGEX_PATTERN = Pattern.compile("((\\d)(\\d)*)(\\.(\\d+))?\\s*s(ec(ond)?(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MILLIS_REGEX_PATTERN = Pattern.compile("((\\d)(\\d)*)(\\.(\\d+))?\\s*m(illi)?s(ec(ond)?(s)?)?(?=\\b|\\d|$)", Pattern.CASE_INSENSITIVE);
 
     private TimeUtils() {
+    }
+
+    public static boolean isPositive(Duration dur) {
+        return dur.getSeconds() > 0 || dur.getNano() != 0;
+    }
+
+    public static String printDuration(Duration uptime) {
+        return printDuration(uptime.toMillis());
     }
 
     /**
@@ -83,6 +93,10 @@ public final class TimeUtils {
         return s;
     }
 
+    public static Duration toDuration(String source) throws IllegalArgumentException {
+        return Duration.ofMillis(toMilliSeconds(source));
+    }
+
     public static long toMilliSeconds(String source) throws IllegalArgumentException {
         // quick conversion if its only digits
         boolean digit = true;
@@ -123,9 +137,6 @@ public final class TimeUtils {
             matcher = createMatcher(MINUTES_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long minutes = Long.parseLong(matcher.group(1));
-                if ((minutes > 59) && foundFlag) {
-                    throw new IllegalArgumentException("Minutes should contain a valid value between 0 and 59: " + source);
-                }
                 foundFlag = true;
                 milliseconds = milliseconds + (60000 * minutes);
             }
@@ -133,11 +144,19 @@ public final class TimeUtils {
             matcher = createMatcher(SECONDS_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long seconds = Long.parseLong(matcher.group(1));
-                if ((seconds > 59) && foundFlag) {
-                    throw new IllegalArgumentException("Seconds should contain a valid value between 0 and 59: " + source);
+                milliseconds += 1000 * seconds;
+                if (matcher.group(5) != null && !matcher.group(5).isEmpty()) {
+                    long ms = Long.parseLong(matcher.group(5));
+                    milliseconds += ms;
                 }
                 foundFlag = true;
-                milliseconds = milliseconds + (1000 * seconds);
+            }
+
+            matcher = createMatcher(MILLIS_REGEX_PATTERN, source);
+            if (matcher.find()) {
+                long millis = Long.parseLong(matcher.group(1));
+                foundFlag = true;
+                milliseconds += millis;
             }
 
             // No pattern matched... initiating fallback check and conversion (if required).
@@ -175,6 +194,13 @@ public final class TimeUtils {
         matcher = createMatcher(SECONDS_REGEX_PATTERN, replaceSource);
         if (matcher.find() && matcher.find()) {
             throw new IllegalArgumentException("Seconds should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        //replace millis once
+        matcher = createMatcher(MILLIS_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Milliseconds should not be specified more then once: " + source);
         }
         replaceSource = matcher.replaceFirst("");
 

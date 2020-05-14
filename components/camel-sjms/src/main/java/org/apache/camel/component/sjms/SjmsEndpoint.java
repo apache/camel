@@ -108,7 +108,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
             description = "Sets the number of consumer listeners used for this endpoint.")
     private int consumerCount = 1;
     @UriParam(label = "producer", defaultValue = "-1",
-            description = "Flag used to adjust the Time To Live value of produced messages.")
+            description = "Flag used to adjust the Time To Live value of produced messages.",
+            javaType = "java.time.Duration")
     private long ttl = -1;
     @UriParam(label = "producer", defaultValue = "true",
             description = "Flag used to enable/disable message persistence.")
@@ -116,8 +117,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @UriParam(label = "consumer",
             description = "Sets the durable subscription Id required for durable topics.")
     private String durableSubscriptionId;
-    @UriParam(label = "producer,advanced", defaultValue = "5000",
-            description = "Sets the amount of time we should wait before timing out a InOut response.")
+    @UriParam(label = "producer,advanced", defaultValue = "5s",
+            description = "Sets the amount of time we should wait before timing out a InOut response.",
+            javaType = "java.time.Duration")
     private long responseTimeOut = 5000;
     @UriParam(label = "consumer,advanced",
             description = "Sets the JMS Message selector syntax.")
@@ -125,8 +127,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @UriParam(label = "consumer,transaction", defaultValue = "-1",
             description = "If transacted sets the number of messages to process before committing a transaction.")
     private int transactionBatchCount = -1;
-    @UriParam(label = "consumer,transaction", defaultValue = "5000",
-            description = "Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.")
+    @UriParam(label = "consumer,transaction", defaultValue = "5s",
+            description = "Sets timeout (in millis) for batch transactions, the value should be 1000 or higher.",
+            javaType = "java.time.Duration")
     private long transactionBatchTimeout = 5000;
     @UriParam(label = "advanced",
             description = "Whether to startup the consumer message listener asynchronously, when starting a route."

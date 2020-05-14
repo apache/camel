@@ -68,7 +68,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", defaultValue = "0")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
     @XmlAttribute
     private String onPrepareRef;
