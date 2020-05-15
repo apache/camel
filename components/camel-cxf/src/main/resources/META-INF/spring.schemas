@@ -287,4 +287,5 @@ http\://camel.apache.org/schema/cxf/camel-cxf-3.0.0-spring.xsd=schema/cxfEndpoin
 http\://camel.apache.org/schema/cxf/camel-cxf-3.0.1-spring.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.1.0-spring.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-3.2.0-spring.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-3.3.0-spring.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-${project.version}-spring.xsd=schema/cxfEndpoint.xsd
