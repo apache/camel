@@ -1,0 +1,38 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.3 to 3.4
+
+=== Template components
+
+The template components which allows access to the current `Exchange` and `CamelContext` API
+from the context map available for templating has now been restricted to only the message body and headers.
+
+This option can be enabled (`allowContextMapAll=true`) for full access to the current Exchange and CamelContext.
+Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+
+This applies to the following templating components: camel-freemarker, camel-velocity, camel-mvel, camel-mustache,
+camel-string-template, camel-chunk, camel-robotframework.
+
+=== Using custom language in RouteBuilder
+
+The Java DSL `RouteBuilder` allows referring to a custom language as shown below:
+
+[source,java]
+----
+from("direct:start")
+    .filter(language("foo", "Bla bla bla"))
+      .to("mock:camel");
+----
+
+This functionality is seldom in use, as you would use the provided languages from Camel.
+If using, then the `language` method now requires a static import as shown below:
+
+[source,java]
+----
+import static org.apache.camel.builder.Builder.language;
+----
+
