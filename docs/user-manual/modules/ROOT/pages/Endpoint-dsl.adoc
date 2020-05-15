@@ -95,6 +95,46 @@ Endpoint mqtt = paho("sensor").clientId("myClient").userName("scott").password("
 You can then set all the options via the type-safe DSL and then the endpoint can be resolved (created)
 by calling `resolve` with `CamelContext` as parameter.
 
+If you want to inject an endpoint into your POJO or `RouteBuilder` class using endpoint-dsl, then
+this can be done similar to the previous example, but with one important difference:
+
+[source,java]
+----
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.builder.EndpointProducerBuilder;
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.paho;
+
+@BindToRegistry
+public class MyPojo {
+
+    @Produce
+    private FluentProducerTemplate producer;
+
+    private final EndpointProducerBuilder mqtt = paho("sensor").clientId("myClient").userName("scott").password("tiger");
+
+    public void sendToSensor(String data) {
+        producer.withBody(data).to(mqtt).send();
+    }
+
+}
+----
+
+The `MyPojo` is a class that with standalone Camel can be discovered and registered with the `@BindToRegistry` annotation.
+If you use Spring Boot, CDI, or Quarkus etc then you should use their kind of annotations for this.
+
+That's not the point of this example, it is the Endpoint DSL to configure the MQTT endpoint (camel-paho).
+The endpoint is configured the same way as before by the type-safe endpoint-dsl by static importing the `paho`,
+and then use its fluent builder methods to configure. Notice how the returned type is `EndpointProducerBuilder`.
+That type is not an `Endpoint` instance as its not resolved (eg its only a builder for an endpoint).
+This means that the builder can be code and compiled before `CamelContext` is created and started.
+
+At runtime we want to use this endpoint to send messages to MQTT server; this is done in the `sendToSensor`
+method where we are using `FluentProducerTemplate` that is capable of using the `EndpointProducerBuilder` as
+the endpoint in shown with: `.to(mqtt)`.
+
+
 == How to use
 
 The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual 
