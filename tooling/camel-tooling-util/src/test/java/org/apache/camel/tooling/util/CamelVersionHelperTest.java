@@ -42,6 +42,6 @@ public class CamelVersionHelperTest {
         assertTrue(isGE("3.0.0", "3.1.1"));
         assertTrue(isGE("3.1.0", "3.2.0"));
         assertTrue(isGE("3.3.0", "3.3.0-SNAPSHOT"));
-        assertTrue(isGE("3.3.0", "3.4.0-SNAPSHOT"));
+        assertTrue(isGE("3.4.0", "3.4.0-SNAPSHOT"));
     }
 }

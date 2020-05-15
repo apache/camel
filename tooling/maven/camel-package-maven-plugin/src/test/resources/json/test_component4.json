@@ -16,7 +16,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.4.0-SNAPSHOT"
   },
   "componentProperties": {
     "baseUri": { "kind": "property", "displayName": "Base Uri", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration", "configurationField": "verifierConfiguration", "description": "You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base URI." },
