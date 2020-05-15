@@ -16,7 +16,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",
-    "version": "3.3.0-SNAPSHOT"
+    "version": "3.4.0-SNAPSHOT"
   },
   "componentProperties": {},
   "properties": {}
