@@ -48,7 +48,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     private boolean block = true;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
     public DirectEndpoint() {
