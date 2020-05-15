@@ -337,6 +337,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
             httpClient = createHttpClient(sslContextFactory);
+            getConfig().setHttpClient(httpClient);
         }
 
         if (httpClientProperties == null) {
