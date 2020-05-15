@@ -410,7 +410,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     private static String asModelTitle(String name, String title) {
         // special for some data formats
         if ("json-gson".equals(name)) {
-            return "JSON GSon";
+            return "JSON Gson";
         } else if ("json-jackson".equals(name)) {
             return "JSON Jackson";
         } else if ("json-johnzon".equals(name)) {
