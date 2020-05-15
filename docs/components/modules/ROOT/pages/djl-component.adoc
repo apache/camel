@@ -6,7 +6,7 @@
 :artifactId: camel-djl
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 
 *Since Camel {since}*
