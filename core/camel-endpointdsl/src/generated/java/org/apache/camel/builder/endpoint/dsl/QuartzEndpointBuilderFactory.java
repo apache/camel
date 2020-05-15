@@ -461,6 +461,8 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the jobParameters(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -472,9 +474,27 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * To configure additional options on the job.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the jobParameters(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedQuartzEndpointBuilder jobParameters(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("jobParameters", "job." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional options on the job.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the jobParameters(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -539,6 +559,8 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * triggerParameters(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -550,9 +572,27 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * To configure additional options on the trigger.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * triggerParameters(String, Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedQuartzEndpointBuilder triggerParameters(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("triggerParameters", "trigger." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional options on the trigger.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * triggerParameters(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */

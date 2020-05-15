@@ -416,6 +416,8 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * clientConfigOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -428,9 +430,28 @@ public interface AhcEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * clientConfigOptions(String, Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedAhcEndpointBuilder clientConfigOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("clientConfigOptions", "clientConfig." + key, value);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClientConfig using the key/values from the
+         * Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * clientConfigOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -471,6 +492,9 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * clientConfigRealmOptions(String, Object) method to add a value at a
+         * time.
          * 
          * Group: security
          */
@@ -483,9 +507,30 @@ public interface AhcEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * clientConfigRealmOptions(String, Object) method to add a value at a
+         * time.
+         * 
+         * Group: security
+         */
+        default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("clientConfigRealmOptions", "clientConfig.realm." + key, value);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClientConfig Realm using the key/values
+         * from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * clientConfigRealmOptions(String, Object) method to add a value at a
+         * time.
          * 
          * Group: security
          */

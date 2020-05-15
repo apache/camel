@@ -1322,6 +1322,8 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -1336,9 +1338,30 @@ public interface NettyEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNettyEndpointConsumerBuilder options(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("options", "option." + key, value);
+            return this;
+        }
+        /**
+         * Allows to configure additional netty options using option. as prefix.
+         * For example option.child.keepAlive=false to set the netty option
+         * child.keepAlive=false. See the Netty documentation for possible
+         * options that can be used.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -2760,6 +2783,8 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -2774,9 +2799,30 @@ public interface NettyEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNettyEndpointProducerBuilder options(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("options", "option." + key, value);
+            return this;
+        }
+        /**
+         * Allows to configure additional netty options using option. as prefix.
+         * For example option.child.keepAlive=false to set the netty option
+         * child.keepAlive=false. See the Netty documentation for possible
+         * options that can be used.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -3772,6 +3818,8 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -3785,9 +3833,28 @@ public interface NettyEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNettyEndpointBuilder options(String key, Object value) {
+            doSetMultiValueProperty("options", "option." + key, value);
+            return this;
+        }
+        /**
+         * Allows to configure additional netty options using option. as prefix.
+         * For example option.child.keepAlive=false to set the netty option
+         * child.keepAlive=false. See the Netty documentation for possible
+         * options that can be used.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */

@@ -733,6 +733,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * filterInitParameters(String, Object) method to add a value at a time.
          * 
          * Group: consumer (advanced)
          */
@@ -745,9 +747,28 @@ public interface JettyHttpEndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * filterInitParameters(String, Object) method to add a value at a time.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJettyHttpEndpointBuilder filterInitParameters(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("filterInitParameters", "filter." + key, value);
+            return this;
+        }
+        /**
+         * Configuration of the filter init parameters. These parameters will be
+         * applied to the filter list before starting the jetty server.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * filterInitParameters(String, Object) method to add a value at a time.
          * 
          * Group: consumer (advanced)
          */

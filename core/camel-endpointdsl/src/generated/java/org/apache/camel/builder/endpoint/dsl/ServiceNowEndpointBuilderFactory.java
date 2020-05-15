@@ -364,6 +364,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the models(String, Object)
+         * method to add a value at a time.
          * 
          * Group: producer
          */
@@ -375,9 +377,25 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines both request and response models.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the models(String, Object)
+         * method to add a value at a time.
+         * 
+         * Group: producer
+         */
+        default ServiceNowEndpointBuilder models(String key, Object value) {
+            doSetMultiValueProperty("models", "model." + key, value);
+            return this;
+        }
+        /**
+         * Defines both request and response models.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the models(String, Object)
+         * method to add a value at a time.
          * 
          * Group: producer
          */
@@ -447,6 +465,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the requestModels(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */
@@ -458,9 +478,25 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines the request model.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the requestModels(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: producer
+         */
+        default ServiceNowEndpointBuilder requestModels(String key, Object value) {
+            doSetMultiValueProperty("requestModels", "request-model." + key, value);
+            return this;
+        }
+        /**
+         * Defines the request model.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the requestModels(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */
@@ -485,6 +521,8 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the responseModels(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */
@@ -496,9 +534,27 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Defines the response model.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the responseModels(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: producer
+         */
+        default ServiceNowEndpointBuilder responseModels(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("responseModels", "response-model." + key, value);
+            return this;
+        }
+        /**
+         * Defines the response model.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * The option is multivalued, and you can use the responseModels(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */

@@ -770,6 +770,8 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */
@@ -784,9 +786,28 @@ public interface UndertowEndpointBuilderFactory {
          * prefix each option with option., such as
          * option.close-abort=true&option.send-buffer=8192.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: producer
+         */
+        default UndertowEndpointProducerBuilder options(String key, Object value) {
+            doSetMultiValueProperty("options", "option." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional channel options. The options that can be used are
+         * defined in org.xnio.Options. To configure from endpoint uri, then
+         * prefix each option with option., such as
+         * option.close-abort=true&option.send-buffer=8192.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the options(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */

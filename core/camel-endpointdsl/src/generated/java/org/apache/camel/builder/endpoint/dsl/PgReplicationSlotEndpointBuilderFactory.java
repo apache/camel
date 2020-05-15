@@ -403,6 +403,8 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
          * 
          * Group: scheduler
          */
@@ -415,9 +417,28 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: scheduler
+         */
+        default PgReplicationSlotEndpointBuilder schedulerProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
          * 
          * Group: scheduler
          */
@@ -666,6 +687,8 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the slotOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -677,9 +700,27 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Slot options to be passed to the output plugin.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the slotOptions(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("slotOptions", "slotOptions." + key, value);
+            return this;
+        }
+        /**
+         * Slot options to be passed to the output plugin.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the slotOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: advanced
          */
