@@ -64,6 +64,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
@@ -694,11 +696,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         }
                         method.setName(ms.getName());
                         method.setBody(ms.getBody());
-                        method.setReturnType(ms.getReturnType().getQualifiedName());
+                        method.setReturnType(getQualifiedType(ms.getReturnType()));
                         for (Object o : ms.getParameters()) {
                             if (o instanceof ParameterSource) {
                                 ParameterSource ps = (ParameterSource) o;
-                                method.addParameter(ps.getType().getQualifiedName(), ps.getName());
+                                method.addParameter(getQualifiedType(ps.getType()), ps.getName());
                             }
                         }
                         String doc = extractJavaDoc(sourceCode, ms);
@@ -732,6 +734,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         String printClass = javaClass.printClass();
 
         return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + printClass + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+    }
+
+    private static String getQualifiedType(Type type) {
+        String val = type.getQualifiedName();
+        if (val.startsWith("java.lang.")) {
+            val = val.substring(10);
+        }
+        return val;
     }
 
     protected static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
