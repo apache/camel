@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS ECS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS ECS", syntax = "aws-ecs:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS Elastic Container Service (ECS)", syntax = "aws-ecs:label", producerOnly = true, label = "cloud,management")
 public class ECSEndpoint extends ScheduledPollEndpoint {
 
     private AmazonECS ecsClient;

@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS MSK instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS MSK", syntax = "aws-msk:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-msk", title = "AWS Managed Streaming for Apache Kafka (MSK)", syntax = "aws-msk:label", producerOnly = true, label = "cloud,management")
 public class MSKEndpoint extends ScheduledPollEndpoint {
 
     private AWSKafka mskClient;

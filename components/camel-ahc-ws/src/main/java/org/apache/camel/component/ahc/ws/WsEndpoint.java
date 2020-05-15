@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "AHC Websocket,AHC Secure Websocket",
+@UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "Async HTTP Client (AHC) Websocket,Async HTTP Client (AHC) Secure Websocket",
         syntax = "ahc-ws:httpUri", label = "websocket")
 public class WsEndpoint extends AhcEndpoint {
 

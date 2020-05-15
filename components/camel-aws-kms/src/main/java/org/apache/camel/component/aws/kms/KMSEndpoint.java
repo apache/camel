@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage keys stored in AWS KMS instances.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-kms", title = "AWS KMS", syntax = "aws-kms:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-kms", title = "AWS Key Management Service (KMS)", syntax = "aws-kms:label", producerOnly = true, label = "cloud,management")
 public class KMSEndpoint extends ScheduledPollEndpoint {
 
     private AWSKMS kmsClient;

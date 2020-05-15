@@ -45,7 +45,7 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 /**
  * Call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "Async HTTP Client (AHC)", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
 public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
