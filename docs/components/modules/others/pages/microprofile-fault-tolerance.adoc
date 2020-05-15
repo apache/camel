@@ -1,16 +1,16 @@
 [[microprofile-fault-tolerance-component]]
-= Microprofile Fault Tolerance Component
+= MicroProfile Fault Tolerance Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-fault-tolerance/src/main/docs/microprofile-fault-tolerance.adoc
-:docTitle: Microprofile Fault Tolerance
+:docTitle: MicroProfile Fault Tolerance
 :artifactId: camel-microprofile-fault-tolerance
-:description: Circuit Breaker EIP using Microprofile Fault Tolerance
+:description: Circuit Breaker EIP using MicroProfile Fault Tolerance
 :since: 3.3
 :supportLevel: Preview
 
 *Since Camel {since}*
 
-This component supports the Circuit Breaker EIP with the Microprofile Fault Tolerance library.
+This component supports the Circuit Breaker EIP with the MicroProfile Fault Tolerance library.
 
 For more details see the Circuit Breaker EIP documentation.
 

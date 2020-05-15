@@ -1,6 +1,6 @@
 [[microprofile-health-component]]
-= Microprofile Health Component
-:docTitle: Microprofile Health
+= MicroProfile Health Component
+:docTitle: MicroProfile Health
 :artifactId: camel-microprofile-health
 :description: Bridging Eclipse MicroProfile Health with Camel health checks
 :since: 3.0

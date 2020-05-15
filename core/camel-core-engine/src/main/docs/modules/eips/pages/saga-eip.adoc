@@ -17,7 +17,7 @@ Sagas are also suitable for being used in stateless cloud services as they do no
 to be stored alongside the service.
 
 Differently from transactions, Sagas are also not required to be completed in a small amount of time, because they don't use database-level locks. They can live for a longer timespan: from few seconds to several days.
-The Saga EIP implementation based on the Microprofile sandbox spec (see camel-lra) is indeed called LRA that stands for "Long Running Action".
+The Saga EIP implementation based on the MicroProfile sandbox spec (see camel-lra) is indeed called LRA that stands for "Long Running Action".
 It also supports coordination of external *heterogeneous services*, written with any language/technology and also running outside a JVM.
 
 Sagas don't use locks on data, instead they define the concept of "Compensating Action" that is an action that should be executed when the standard flow encounters an error,
@@ -55,7 +55,7 @@ The Saga EIP requires that a service implementing the interface `org.apache.came
 Camel currently supports the following Saga Services:
 
 * *InMemorySagaService*: it is a *basic* implementation of the Saga EIP that does not support advanced features (no remote context propagation, no consistency guarantee in case of application failure).
-* *LRASagaService*: it is a *fully-fledged* implementation of the Saga EIP based on Microprofile sandbox LRA specification that supports remote context propagation and provides consistency guarantees in case of application failure.
+* *LRASagaService*: it is a *fully-fledged* implementation of the Saga EIP based on MicroProfile sandbox LRA specification that supports remote context propagation and provides consistency guarantees in case of application failure.
 
 === Using the In-Memory Saga Service
 
@@ -75,7 +75,7 @@ The service belongs to the `camel-core` module.
 
 === Using the LRA Saga Service
 
-The LRA Saga Service is an implementation based on the Microprofile sandbox LRA specification.
+The LRA Saga Service is an implementation based on the MicroProfile sandbox LRA specification.
 It leverages a *external Saga coordinator* to control the execution of the various steps of the Saga.
 The proposed reference implementation for the LRA specification is the http://jbossts.blogspot.it/2017/12/narayana-lra-implementation-of-saga.html[Narayana LRA Coordinator].
 Users can follows instructions present on the Narayana website to *startup a remote instance of the coordinator*.

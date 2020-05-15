@@ -2530,8 +2530,8 @@ public interface ComponentsBuilderFactory {
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-microprofile-metrics
      */
-    static org.apache.camel.builder.component.dsl.MicroprofileMetricsComponentBuilderFactory.MicroprofileMetricsComponentBuilder microprofileMetrics() {
-        return org.apache.camel.builder.component.dsl.MicroprofileMetricsComponentBuilderFactory.microprofileMetrics();
+    static org.apache.camel.builder.component.dsl.MicroProfileMetricsComponentBuilderFactory.MicroProfileMetricsComponentBuilder microprofileMetrics() {
+        return org.apache.camel.builder.component.dsl.MicroProfileMetricsComponentBuilderFactory.microprofileMetrics();
     }
     /**
      * OPC UA Client (camel-milo)

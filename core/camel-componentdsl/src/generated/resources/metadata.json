@@ -4687,7 +4687,7 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "MicroprofileMetricsComponentBuilderFactory": {
+  "MicroProfileMetricsComponentBuilderFactory": {
     "kind": "component",
     "name": "microprofile-metrics",
     "title": "MicroProfile Metrics",
