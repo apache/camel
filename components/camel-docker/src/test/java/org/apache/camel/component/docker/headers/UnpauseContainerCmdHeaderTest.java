@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.UnpauseContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ public class UnpauseContainerCmdHeaderTest extends BaseDockerHeaderTest<UnpauseC
     private UnpauseContainerCmd mockObject;
 
     @Test
-    public void unpauseHeaderTest() {
+    void unpauseHeaderTest() {
 
         String containerId = "9c09acd48a25";
 

@@ -24,19 +24,19 @@ import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.component.docker.util.DockerTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Consumer test for events on Docker Platform
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DockerEventsConsumerTest extends CamelTestSupport {
     private String host = "localhost";
     private Integer port = 2375;
@@ -55,13 +55,13 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testEvent() throws Exception {
+    void testEvent() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("docker://events?host=" + host + "&port=" + port).log("${body}").to("mock:result");

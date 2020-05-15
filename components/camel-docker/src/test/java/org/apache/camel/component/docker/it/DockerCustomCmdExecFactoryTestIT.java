@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit;
 import com.github.dockerjava.api.model.Version;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
 
     @Test
-    public void testNettyCmdExecFactoryConfig() throws Exception {
+    void testNettyCmdExecFactoryConfig() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(FakeDockerCmdExecFactory.FAKE_VERSION);
@@ -38,7 +38,7 @@ public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         FakeDockerCmdExecFactory.class.getDeclaredConstructors();
 
         return new RouteBuilder() {

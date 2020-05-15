@@ -23,24 +23,24 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DockerConfigurationTest {
 
     private DockerConfiguration configuration;
     private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setupTest() {
         configuration = new DockerConfiguration();
         camelContext = new DefaultCamelContext();
     }
 
     @Test
-    public void testPropertyFromHeader() {
+    void testPropertyFromHeader() {
         String host = "camelhost";
 
         Message message = new DefaultMessage(camelContext);
@@ -51,7 +51,7 @@ public class DockerConfigurationTest {
     }
 
     @Test
-    public void testPropertyfromEndpointProperties() {
+    void testPropertyfromEndpointProperties() {
         String host = "camelhost";
 
         Map<String, Object> parameters = new HashMap<>();

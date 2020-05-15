@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.PauseContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ public class PauseContainerCmdHeaderTest extends BaseDockerHeaderTest<PauseConta
     private PauseContainerCmd mockObject;
 
     @Test
-    public void pauseHeaderTest() {
+    void pauseHeaderTest() {
 
         String containerId = "9c09acd48a25";
 

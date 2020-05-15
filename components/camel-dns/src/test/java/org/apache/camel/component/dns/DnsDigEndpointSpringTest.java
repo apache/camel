@@ -25,9 +25,9 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.xbill.DNS.Message;
@@ -55,8 +55,8 @@ public class DnsDigEndpointSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @Ignore("Testing behind nat produces timeouts")
-    public void testDigForMonkey() throws Exception {
+    @Disabled("Testing behind nat produces timeouts")
+    void testDigForMonkey() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {

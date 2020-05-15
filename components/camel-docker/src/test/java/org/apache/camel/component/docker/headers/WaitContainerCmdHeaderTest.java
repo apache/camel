@@ -22,7 +22,7 @@ import com.github.dockerjava.api.command.WaitContainerCmd;
 import com.github.dockerjava.core.command.WaitContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,7 +42,7 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     private WaitContainerResultCallback callback;
     
     @Test
-    public void waitContainerHeaderTest() {
+    void waitContainerHeaderTest() {
 
         String containerId = "9c09acd48a25";
 
