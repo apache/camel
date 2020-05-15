@@ -47,7 +47,7 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder("activemq",path);
     }
     /**
@@ -74,8 +74,8 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -94,7 +94,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.AhcEndpointBuilder ahc(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.endpointBuilder("ahc",path);
     }
     /**
@@ -115,8 +115,8 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.AhcEndpointBuilder ahc(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -135,7 +135,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder("ahc-ws",path);
     }
     /**
@@ -156,8 +156,8 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -181,7 +181,7 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.AMQPEndpointBuilder amqp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.endpointBuilder("amqp",path);
     }
     /**
@@ -207,8 +207,8 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.AMQPEndpointBuilder amqp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -227,7 +227,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.endpointBuilder("apns",path);
     }
     /**
@@ -248,8 +248,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -272,7 +272,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2EndpointBuilder as2(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.endpointBuilder("as2",path);
     }
     /**
@@ -297,8 +297,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2EndpointBuilder as2(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -317,7 +317,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskEndpointBuilder asterisk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.endpointBuilder("asterisk",path);
     }
     /**
@@ -338,8 +338,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskEndpointBuilder asterisk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -362,7 +362,7 @@ public class StaticEndpointBuilders {
      * @param path name/operation
      */
     static org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory.AtmosEndpointBuilder atmos(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory.endpointBuilder("atmos",path);
     }
     /**
@@ -387,8 +387,8 @@ public class StaticEndpointBuilders {
      * @param path name/operation
      */
     static org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory.AtmosEndpointBuilder atmos(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -407,7 +407,7 @@ public class StaticEndpointBuilders {
      * @param path servicePath
      */
     static org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.endpointBuilder("atmosphere-websocket",path);
     }
     /**
@@ -428,8 +428,8 @@ public class StaticEndpointBuilders {
      * @param path servicePath
      */
     static org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -448,7 +448,7 @@ public class StaticEndpointBuilders {
      * @param path feedUri
      */
     static org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.AtomEndpointBuilder atom(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.endpointBuilder("atom",path);
     }
     /**
@@ -469,8 +469,8 @@ public class StaticEndpointBuilders {
      * @param path feedUri
      */
     static org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.AtomEndpointBuilder atom(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -489,7 +489,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map",path);
     }
     /**
@@ -510,8 +510,8 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -530,7 +530,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging",path);
     }
     /**
@@ -551,8 +551,8 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -571,7 +571,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap",path);
     }
     /**
@@ -592,8 +592,8 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -612,7 +612,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue",path);
     }
     /**
@@ -633,8 +633,8 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -653,7 +653,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.endpointBuilder("atomix-set",path);
     }
     /**
@@ -674,8 +674,8 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -694,7 +694,7 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value",path);
     }
     /**
@@ -715,8 +715,8 @@ public class StaticEndpointBuilders {
      * @param path resourceName
      */
     static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -745,7 +745,7 @@ public class StaticEndpointBuilders {
      * @param path transport:host:port/messageName
      */
     static org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.AvroEndpointBuilder avro(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.endpointBuilder("avro",path);
     }
     /**
@@ -776,8 +776,8 @@ public class StaticEndpointBuilders {
      * @param path transport:host:port/messageName
      */
     static org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.AvroEndpointBuilder avro(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -796,7 +796,7 @@ public class StaticEndpointBuilders {
      * @param path namespace
      */
     static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder("aws2-cw",path);
     }
     /**
@@ -817,8 +817,8 @@ public class StaticEndpointBuilders {
      * @param path namespace
      */
     static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -838,7 +838,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.Ddb2EndpointBuilder aws2Ddb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.endpointBuilder("aws2-ddb",path);
     }
     /**
@@ -860,8 +860,8 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.Ddb2EndpointBuilder aws2Ddb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -881,7 +881,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream",path);
     }
     /**
@@ -903,8 +903,8 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -923,7 +923,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2",path);
     }
     /**
@@ -944,8 +944,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -964,7 +964,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.ECS2EndpointBuilder aws2Ecs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.endpointBuilder("aws2-ecs",path);
     }
     /**
@@ -985,8 +985,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.ECS2EndpointBuilder aws2Ecs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1005,7 +1005,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.EKS2EndpointBuilder aws2Eks(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.endpointBuilder("aws2-eks",path);
     }
     /**
@@ -1026,8 +1026,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.EKS2EndpointBuilder aws2Eks(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1046,7 +1046,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam",path);
     }
     /**
@@ -1067,8 +1067,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1088,7 +1088,7 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis",path);
     }
     /**
@@ -1110,8 +1110,8 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1130,7 +1130,7 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.endpointBuilder("aws2-kinesis-firehose",path);
     }
     /**
@@ -1151,8 +1151,8 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1171,7 +1171,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder("aws2-kms",path);
     }
     /**
@@ -1192,8 +1192,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1212,7 +1212,7 @@ public class StaticEndpointBuilders {
      * @param path function
      */
     static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda",path);
     }
     /**
@@ -1233,8 +1233,8 @@ public class StaticEndpointBuilders {
      * @param path function
      */
     static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1253,7 +1253,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.endpointBuilder("aws2-mq",path);
     }
     /**
@@ -1274,8 +1274,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1294,7 +1294,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.MSK2EndpointBuilder aws2Msk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.endpointBuilder("aws2-msk",path);
     }
     /**
@@ -1315,8 +1315,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.MSK2EndpointBuilder aws2Msk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1336,7 +1336,7 @@ public class StaticEndpointBuilders {
      * @param path //bucketNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.endpointBuilder("aws2-s3",path);
     }
     /**
@@ -1358,8 +1358,8 @@ public class StaticEndpointBuilders {
      * @param path //bucketNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1378,7 +1378,7 @@ public class StaticEndpointBuilders {
      * @param path from
      */
     static org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.Ses2EndpointBuilder aws2Ses(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.endpointBuilder("aws2-ses",path);
     }
     /**
@@ -1399,8 +1399,8 @@ public class StaticEndpointBuilders {
      * @param path from
      */
     static org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.Ses2EndpointBuilder aws2Ses(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1420,7 +1420,7 @@ public class StaticEndpointBuilders {
      * @param path topicNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.endpointBuilder("aws2-sns",path);
     }
     /**
@@ -1442,8 +1442,8 @@ public class StaticEndpointBuilders {
      * @param path topicNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1463,7 +1463,7 @@ public class StaticEndpointBuilders {
      * @param path queueNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs",path);
     }
     /**
@@ -1485,8 +1485,8 @@ public class StaticEndpointBuilders {
      * @param path queueNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1505,7 +1505,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate",path);
     }
     /**
@@ -1526,8 +1526,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1546,7 +1546,7 @@ public class StaticEndpointBuilders {
      * @param path namespace
      */
     static org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.CwEndpointBuilder awsCw(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.endpointBuilder("aws-cw",path);
     }
     /**
@@ -1567,8 +1567,8 @@ public class StaticEndpointBuilders {
      * @param path namespace
      */
     static org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.CwEndpointBuilder awsCw(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1587,7 +1587,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.endpointBuilder("aws-ddb",path);
     }
     /**
@@ -1608,8 +1608,8 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1628,7 +1628,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.DdbStreamEndpointBuilder awsDdbstream(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.endpointBuilder("aws-ddbstream",path);
     }
     /**
@@ -1649,8 +1649,8 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.DdbStreamEndpointBuilder awsDdbstream(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1669,7 +1669,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.EC2EndpointBuilder awsEc2(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.endpointBuilder("aws-ec2",path);
     }
     /**
@@ -1690,8 +1690,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.EC2EndpointBuilder awsEc2(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1710,7 +1710,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.endpointBuilder("aws-ecs",path);
     }
     /**
@@ -1731,8 +1731,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1751,7 +1751,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.EKSEndpointBuilderFactory.EKSEndpointBuilder awsEks(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EKSEndpointBuilderFactory.endpointBuilder("aws-eks",path);
     }
     /**
@@ -1772,8 +1772,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.EKSEndpointBuilderFactory.EKSEndpointBuilder awsEks(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EKSEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1792,7 +1792,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder("aws-iam",path);
     }
     /**
@@ -1813,8 +1813,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1833,7 +1833,7 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.KinesisEndpointBuilder awsKinesis(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.endpointBuilder("aws-kinesis",path);
     }
     /**
@@ -1854,8 +1854,8 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.KinesisEndpointBuilder awsKinesis(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1874,7 +1874,7 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.endpointBuilder("aws-kinesis-firehose",path);
     }
     /**
@@ -1895,8 +1895,8 @@ public class StaticEndpointBuilders {
      * @param path streamName
      */
     static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1915,7 +1915,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder("aws-kms",path);
     }
     /**
@@ -1936,8 +1936,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1956,7 +1956,7 @@ public class StaticEndpointBuilders {
      * @param path function
      */
     static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda",path);
     }
     /**
@@ -1977,8 +1977,8 @@ public class StaticEndpointBuilders {
      * @param path function
      */
     static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -1997,7 +1997,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder("aws-mq",path);
     }
     /**
@@ -2018,8 +2018,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2038,7 +2038,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder("aws-msk",path);
     }
     /**
@@ -2059,8 +2059,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2079,7 +2079,7 @@ public class StaticEndpointBuilders {
      * @param path //bucketNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder("aws-s3",path);
     }
     /**
@@ -2100,8 +2100,8 @@ public class StaticEndpointBuilders {
      * @param path //bucketNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2120,7 +2120,7 @@ public class StaticEndpointBuilders {
      * @param path domainName
      */
     static org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbEndpointBuilder awsSdb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.endpointBuilder("aws-sdb",path);
     }
     /**
@@ -2141,8 +2141,8 @@ public class StaticEndpointBuilders {
      * @param path domainName
      */
     static org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbEndpointBuilder awsSdb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2161,7 +2161,7 @@ public class StaticEndpointBuilders {
      * @param path from
      */
     static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder("aws-ses",path);
     }
     /**
@@ -2182,8 +2182,8 @@ public class StaticEndpointBuilders {
      * @param path from
      */
     static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2202,7 +2202,7 @@ public class StaticEndpointBuilders {
      * @param path topicNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder("aws-sns",path);
     }
     /**
@@ -2223,8 +2223,8 @@ public class StaticEndpointBuilders {
      * @param path topicNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2243,7 +2243,7 @@ public class StaticEndpointBuilders {
      * @param path queueNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.endpointBuilder("aws-sqs",path);
     }
     /**
@@ -2264,8 +2264,8 @@ public class StaticEndpointBuilders {
      * @param path queueNameOrArn
      */
     static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2285,7 +2285,7 @@ public class StaticEndpointBuilders {
      * @param path type
      */
     static org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFEndpointBuilder awsSwf(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder("aws-swf",path);
     }
     /**
@@ -2307,8 +2307,8 @@ public class StaticEndpointBuilders {
      * @param path type
      */
     static org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFEndpointBuilder awsSwf(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2327,7 +2327,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder("aws-translate",path);
     }
     /**
@@ -2348,8 +2348,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2368,7 +2368,7 @@ public class StaticEndpointBuilders {
      * @param path containerOrBlobUri
      */
     static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder("azure-blob",path);
     }
     /**
@@ -2389,8 +2389,8 @@ public class StaticEndpointBuilders {
      * @param path containerOrBlobUri
      */
     static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2409,7 +2409,7 @@ public class StaticEndpointBuilders {
      * @param path containerAndQueueUri
      */
     static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.endpointBuilder("azure-queue",path);
     }
     /**
@@ -2430,8 +2430,8 @@ public class StaticEndpointBuilders {
      * @param path containerAndQueueUri
      */
     static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2453,7 +2453,7 @@ public class StaticEndpointBuilders {
      * @param path containerName
      */
     static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder("azure-storage-blob",path);
     }
     /**
@@ -2477,8 +2477,8 @@ public class StaticEndpointBuilders {
      * @param path containerName
      */
     static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2502,7 +2502,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      */
     static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.endpointBuilder("azure-storage-queue",path);
     }
     /**
@@ -2528,8 +2528,8 @@ public class StaticEndpointBuilders {
      * @param path queueName
      */
     static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2548,7 +2548,7 @@ public class StaticEndpointBuilders {
      * @param path beanName
      */
     static org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.BeanEndpointBuilder bean(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.endpointBuilder("bean",path);
     }
     /**
@@ -2569,8 +2569,8 @@ public class StaticEndpointBuilders {
      * @param path beanName
      */
     static org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.BeanEndpointBuilder bean(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2589,7 +2589,7 @@ public class StaticEndpointBuilders {
      * @param path connectionSettings
      */
     static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk",path);
     }
     /**
@@ -2610,8 +2610,8 @@ public class StaticEndpointBuilders {
      * @param path connectionSettings
      */
     static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2630,7 +2630,7 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.endpointBuilder("bean-validator",path);
     }
     /**
@@ -2651,8 +2651,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2672,7 +2672,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory.BonitaEndpointBuilder bonita(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory.endpointBuilder("bonita",path);
     }
     /**
@@ -2694,8 +2694,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory.BonitaEndpointBuilder bonita(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2720,7 +2720,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.endpointBuilder("box",path);
     }
     /**
@@ -2747,8 +2747,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2774,7 +2774,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.endpointBuilder("braintree",path);
     }
     /**
@@ -2802,8 +2802,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2822,7 +2822,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.BrowseEndpointBuilder browse(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.endpointBuilder("browse",path);
     }
     /**
@@ -2843,8 +2843,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.BrowseEndpointBuilder browse(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2863,7 +2863,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.endpointBuilder("caffeine-cache",path);
     }
     /**
@@ -2884,8 +2884,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2905,7 +2905,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder("caffeine-loadcache",path);
     }
     /**
@@ -2927,8 +2927,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -2954,7 +2954,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/botName
      */
     static org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.endpointBuilder("chatscript",path);
     }
     /**
@@ -2982,8 +2982,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/botName
      */
     static org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3006,7 +3006,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.endpointBuilder("chunk",path);
     }
     /**
@@ -3031,8 +3031,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3051,7 +3051,7 @@ public class StaticEndpointBuilders {
      * @param path beanName
      */
     static org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.ClassEndpointBuilder clas(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.endpointBuilder("class",path);
     }
     /**
@@ -3072,8 +3072,8 @@ public class StaticEndpointBuilders {
      * @param path beanName
      */
     static org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.ClassEndpointBuilder clas(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3092,7 +3092,7 @@ public class StaticEndpointBuilders {
      * @param path cmsUrl
      */
     static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.endpointBuilder("cmis",path);
     }
     /**
@@ -3113,8 +3113,8 @@ public class StaticEndpointBuilders {
      * @param path cmsUrl
      */
     static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3133,7 +3133,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder("cm-sms",path);
     }
     /**
@@ -3154,8 +3154,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3174,7 +3174,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      */
     static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder("coap",path);
     }
     /**
@@ -3195,8 +3195,8 @@ public class StaticEndpointBuilders {
      * @param path uri
      */
     static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3223,7 +3223,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/channelName
      */
     static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder("cometd",path);
     }
     /**
@@ -3252,8 +3252,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/channelName
      */
     static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3272,7 +3272,7 @@ public class StaticEndpointBuilders {
      * @param path apiEndpoint
      */
     static org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory.ConsulEndpointBuilder consul(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory.endpointBuilder("consul",path);
     }
     /**
@@ -3293,8 +3293,8 @@ public class StaticEndpointBuilders {
      * @param path apiEndpoint
      */
     static org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory.ConsulEndpointBuilder consul(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3322,7 +3322,7 @@ public class StaticEndpointBuilders {
      * @param path command:language
      */
     static org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.endpointBuilder("controlbus",path);
     }
     /**
@@ -3352,8 +3352,8 @@ public class StaticEndpointBuilders {
      * @param path command:language
      */
     static org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3373,7 +3373,7 @@ public class StaticEndpointBuilders {
      * @param path node
      */
     static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.endpointBuilder("corda",path);
     }
     /**
@@ -3395,8 +3395,8 @@ public class StaticEndpointBuilders {
      * @param path node
      */
     static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3423,7 +3423,7 @@ public class StaticEndpointBuilders {
      * @param path protocol:hostname:port
      */
     static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.endpointBuilder("couchbase",path);
     }
     /**
@@ -3452,8 +3452,8 @@ public class StaticEndpointBuilders {
      * @param path protocol:hostname:port
      */
     static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3485,7 +3485,7 @@ public class StaticEndpointBuilders {
      * @param path protocol:hostname:port/database
      */
     static org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory.CouchDbEndpointBuilder couchdb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory.endpointBuilder("couchdb",path);
     }
     /**
@@ -3519,8 +3519,8 @@ public class StaticEndpointBuilders {
      * @param path protocol:hostname:port/database
      */
     static org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory.CouchDbEndpointBuilder couchdb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3549,7 +3549,7 @@ public class StaticEndpointBuilders {
      * @param path beanRef:hosts:port/keyspace
      */
     static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.endpointBuilder("cql",path);
     }
     /**
@@ -3580,8 +3580,8 @@ public class StaticEndpointBuilders {
      * @param path beanRef:hosts:port/keyspace
      */
     static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3601,7 +3601,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory.CronEndpointBuilder cron(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory.endpointBuilder("cron",path);
     }
     /**
@@ -3623,8 +3623,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory.CronEndpointBuilder cron(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3649,7 +3649,7 @@ public class StaticEndpointBuilders {
      * @param path cryptoOperation:name
      */
     static org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.endpointBuilder("crypto",path);
     }
     /**
@@ -3676,8 +3676,8 @@ public class StaticEndpointBuilders {
      * @param path cryptoOperation:name
      */
     static org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3705,7 +3705,7 @@ public class StaticEndpointBuilders {
      */
     @Deprecated
     static org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.CryptoCmsEndpointBuilder cryptoCms(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.endpointBuilder("crypto-cms",path);
     }
     /**
@@ -3735,8 +3735,8 @@ public class StaticEndpointBuilders {
      */
     @Deprecated
     static org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.CryptoCmsEndpointBuilder cryptoCms(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3759,7 +3759,7 @@ public class StaticEndpointBuilders {
      * @param path beanId:address
      */
     static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder("cxf",path);
     }
     /**
@@ -3784,8 +3784,8 @@ public class StaticEndpointBuilders {
      * @param path beanId:address
      */
     static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3809,7 +3809,7 @@ public class StaticEndpointBuilders {
      * @param path beanId:address
      */
     static org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.CxfRsEndpointBuilder cxfrs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.endpointBuilder("cxfrs",path);
     }
     /**
@@ -3835,8 +3835,8 @@ public class StaticEndpointBuilders {
      * @param path beanId:address
      */
     static org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.CxfRsEndpointBuilder cxfrs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3859,7 +3859,7 @@ public class StaticEndpointBuilders {
      * @param path name:operation
      */
     static org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.endpointBuilder("dataformat",path);
     }
     /**
@@ -3884,8 +3884,8 @@ public class StaticEndpointBuilders {
      * @param path name:operation
      */
     static org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3904,7 +3904,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.DataSetEndpointBuilder dataset(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.endpointBuilder("dataset",path);
     }
     /**
@@ -3925,8 +3925,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.DataSetEndpointBuilder dataset(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3947,7 +3947,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.endpointBuilder("dataset-test",path);
     }
     /**
@@ -3970,8 +3970,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -3991,7 +3991,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory.endpointBuilder("debezium-mongodb",path);
     }
     /**
@@ -4013,8 +4013,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4034,7 +4034,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.endpointBuilder("debezium-mysql",path);
     }
     /**
@@ -4056,8 +4056,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4077,7 +4077,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.endpointBuilder("debezium-postgres",path);
     }
     /**
@@ -4099,8 +4099,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4120,7 +4120,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.endpointBuilder("debezium-sqlserver",path);
     }
     /**
@@ -4142,8 +4142,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4168,7 +4168,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.endpointBuilder("digitalocean",path);
     }
     /**
@@ -4195,8 +4195,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4215,7 +4215,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.DirectEndpointBuilder direct(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.endpointBuilder("direct",path);
     }
     /**
@@ -4236,8 +4236,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.DirectEndpointBuilder direct(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4257,7 +4257,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.endpointBuilder("direct-vm",path);
     }
     /**
@@ -4279,8 +4279,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4299,7 +4299,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.endpointBuilder("disruptor",path);
     }
     /**
@@ -4320,8 +4320,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4340,7 +4340,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory.endpointBuilder("disruptor-vm",path);
     }
     /**
@@ -4361,8 +4361,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4382,7 +4382,7 @@ public class StaticEndpointBuilders {
      * @param path application
      */
     static org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.DJLEndpointBuilder djl(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.endpointBuilder("djl",path);
     }
     /**
@@ -4404,8 +4404,8 @@ public class StaticEndpointBuilders {
      * @param path application
      */
     static org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.DJLEndpointBuilder djl(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4425,7 +4425,7 @@ public class StaticEndpointBuilders {
      * @param path dnsType
      */
     static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.endpointBuilder("dns",path);
     }
     /**
@@ -4447,8 +4447,8 @@ public class StaticEndpointBuilders {
      * @param path dnsType
      */
     static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4475,7 +4475,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder("docker",path);
     }
     /**
@@ -4504,8 +4504,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4524,7 +4524,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.DozerEndpointBuilder dozer(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.endpointBuilder("dozer",path);
     }
     /**
@@ -4545,8 +4545,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.DozerEndpointBuilder dozer(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4565,7 +4565,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.DrillEndpointBuilder drill(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.endpointBuilder("drill",path);
     }
     /**
@@ -4586,8 +4586,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.DrillEndpointBuilder drill(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4609,7 +4609,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.DropboxEndpointBuilder dropbox(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.endpointBuilder("dropbox",path);
     }
     /**
@@ -4633,8 +4633,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.DropboxEndpointBuilder dropbox(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4653,7 +4653,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.EhcacheEndpointBuilder ehcache(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.endpointBuilder("ehcache",path);
     }
     /**
@@ -4674,8 +4674,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.EhcacheEndpointBuilder ehcache(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4694,7 +4694,7 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      */
     static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest",path);
     }
     /**
@@ -4715,8 +4715,8 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      */
     static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4742,7 +4742,7 @@ public class StaticEndpointBuilders {
      * @param path elsqlName:resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder("elsql",path);
     }
     /**
@@ -4770,8 +4770,8 @@ public class StaticEndpointBuilders {
      * @param path elsqlName:resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4790,7 +4790,7 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysEndpointBuilder etcdKeys(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.endpointBuilder("etcd-keys",path);
     }
     /**
@@ -4811,8 +4811,8 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysEndpointBuilder etcdKeys(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4831,7 +4831,7 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsEndpointBuilder etcdStats(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.endpointBuilder("etcd-stats",path);
     }
     /**
@@ -4852,8 +4852,8 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsEndpointBuilder etcdStats(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4872,7 +4872,7 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchEndpointBuilder etcdWatch(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.endpointBuilder("etcd-watch",path);
     }
     /**
@@ -4893,8 +4893,8 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchEndpointBuilder etcdWatch(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4914,7 +4914,7 @@ public class StaticEndpointBuilders {
      * @param path executable
      */
     static org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.ExecEndpointBuilder exec(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.endpointBuilder("exec",path);
     }
     /**
@@ -4936,8 +4936,8 @@ public class StaticEndpointBuilders {
      * @param path executable
      */
     static org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.ExecEndpointBuilder exec(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -4956,7 +4956,7 @@ public class StaticEndpointBuilders {
      * @param path methodName
      */
     static org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookEndpointBuilder facebook(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.endpointBuilder("facebook",path);
     }
     /**
@@ -4977,8 +4977,8 @@ public class StaticEndpointBuilders {
      * @param path methodName
      */
     static org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookEndpointBuilder facebook(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5003,7 +5003,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.FhirEndpointBuilder fhir(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.endpointBuilder("fhir",path);
     }
     /**
@@ -5030,8 +5030,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.FhirEndpointBuilder fhir(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5050,7 +5050,7 @@ public class StaticEndpointBuilders {
      * @param path directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileEndpointBuilder file(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.endpointBuilder("file",path);
     }
     /**
@@ -5071,8 +5071,8 @@ public class StaticEndpointBuilders {
      * @param path directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileEndpointBuilder file(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5092,7 +5092,7 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.endpointBuilder("file-watch",path);
     }
     /**
@@ -5114,8 +5114,8 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5139,7 +5139,7 @@ public class StaticEndpointBuilders {
      * @param path type:resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.FlatpackEndpointBuilder flatpack(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.endpointBuilder("flatpack",path);
     }
     /**
@@ -5165,8 +5165,8 @@ public class StaticEndpointBuilders {
      * @param path type:resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.FlatpackEndpointBuilder flatpack(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5186,7 +5186,7 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      */
     static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.endpointBuilder("flink",path);
     }
     /**
@@ -5208,8 +5208,8 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      */
     static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5231,7 +5231,7 @@ public class StaticEndpointBuilders {
      * @param path outputType
      */
     static org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.FopEndpointBuilder fop(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.endpointBuilder("fop",path);
     }
     /**
@@ -5255,8 +5255,8 @@ public class StaticEndpointBuilders {
      * @param path outputType
      */
     static org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.FopEndpointBuilder fop(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5279,7 +5279,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.endpointBuilder("freemarker",path);
     }
     /**
@@ -5304,8 +5304,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5330,7 +5330,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.FtpEndpointBuilder ftp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.endpointBuilder("ftp",path);
     }
     /**
@@ -5357,8 +5357,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.FtpEndpointBuilder ftp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5384,7 +5384,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.FtpsEndpointBuilder ftps(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.endpointBuilder("ftps",path);
     }
     /**
@@ -5412,8 +5412,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.FtpsEndpointBuilder ftps(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5437,7 +5437,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder("ganglia",path);
     }
     /**
@@ -5463,8 +5463,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5487,7 +5487,7 @@ public class StaticEndpointBuilders {
      * @param path address:latlng
      */
     static org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderEndpointBuilder geocoder(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.endpointBuilder("geocoder",path);
     }
     /**
@@ -5512,8 +5512,8 @@ public class StaticEndpointBuilders {
      * @param path address:latlng
      */
     static org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderEndpointBuilder geocoder(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5532,7 +5532,7 @@ public class StaticEndpointBuilders {
      * @param path localPath
      */
     static org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitEndpointBuilder git(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.endpointBuilder("git",path);
     }
     /**
@@ -5553,8 +5553,8 @@ public class StaticEndpointBuilders {
      * @param path localPath
      */
     static org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitEndpointBuilder git(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5579,7 +5579,7 @@ public class StaticEndpointBuilders {
      * @param path type/branchName
      */
     static org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.endpointBuilder("github",path);
     }
     /**
@@ -5606,8 +5606,8 @@ public class StaticEndpointBuilders {
      * @param path type/branchName
      */
     static org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5632,7 +5632,7 @@ public class StaticEndpointBuilders {
      * @param path projectId:datasetId:tableId
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.endpointBuilder("google-bigquery",path);
     }
     /**
@@ -5659,8 +5659,8 @@ public class StaticEndpointBuilders {
      * @param path projectId:datasetId:tableId
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5682,7 +5682,7 @@ public class StaticEndpointBuilders {
      * @param path projectId:query
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder("google-bigquery-sql",path);
     }
     /**
@@ -5706,8 +5706,8 @@ public class StaticEndpointBuilders {
      * @param path projectId:query
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5733,7 +5733,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleCalendarEndpointBuilderFactory.endpointBuilder("google-calendar",path);
     }
     /**
@@ -5761,8 +5761,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleCalendarEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5781,7 +5781,7 @@ public class StaticEndpointBuilders {
      * @param path index
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory.endpointBuilder("google-calendar-stream",path);
     }
     /**
@@ -5802,8 +5802,8 @@ public class StaticEndpointBuilders {
      * @param path index
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5831,7 +5831,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.endpointBuilder("google-drive",path);
     }
     /**
@@ -5861,8 +5861,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5889,7 +5889,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.endpointBuilder("google-mail",path);
     }
     /**
@@ -5918,8 +5918,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5938,7 +5938,7 @@ public class StaticEndpointBuilders {
      * @param path index
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.endpointBuilder("google-mail-stream",path);
     }
     /**
@@ -5959,8 +5959,8 @@ public class StaticEndpointBuilders {
      * @param path index
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -5982,7 +5982,7 @@ public class StaticEndpointBuilders {
      * @param path projectId:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.endpointBuilder("google-pubsub",path);
     }
     /**
@@ -6006,8 +6006,8 @@ public class StaticEndpointBuilders {
      * @param path projectId:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6031,7 +6031,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory.endpointBuilder("google-sheets",path);
     }
     /**
@@ -6057,8 +6057,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6077,7 +6077,7 @@ public class StaticEndpointBuilders {
      * @param path apiName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder("google-sheets-stream",path);
     }
     /**
@@ -6098,8 +6098,8 @@ public class StaticEndpointBuilders {
      * @param path apiName
      */
     static org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6118,7 +6118,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.endpointBuilder("gora",path);
     }
     /**
@@ -6139,8 +6139,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6160,7 +6160,7 @@ public class StaticEndpointBuilders {
      * @param path defaultCoordinates
      */
     static org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.endpointBuilder("grape",path);
     }
     /**
@@ -6182,8 +6182,8 @@ public class StaticEndpointBuilders {
      * @param path defaultCoordinates
      */
     static org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6202,7 +6202,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory.GraphqlEndpointBuilder graphql(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory.endpointBuilder("graphql",path);
     }
     /**
@@ -6223,8 +6223,8 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory.GraphqlEndpointBuilder graphql(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6251,7 +6251,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/service
      */
     static org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.endpointBuilder("grpc",path);
     }
     /**
@@ -6280,8 +6280,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/service
      */
     static org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6300,7 +6300,7 @@ public class StaticEndpointBuilders {
      * @param path eventBusRef
      */
     static org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.endpointBuilder("guava-eventbus",path);
     }
     /**
@@ -6321,8 +6321,8 @@ public class StaticEndpointBuilders {
      * @param path eventBusRef
      */
     static org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6342,7 +6342,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder("hazelcast-atomicvalue",path);
     }
     /**
@@ -6364,8 +6364,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6384,7 +6384,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.endpointBuilder("hazelcast-instance",path);
     }
     /**
@@ -6405,8 +6405,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6425,7 +6425,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.endpointBuilder("hazelcast-list",path);
     }
     /**
@@ -6446,8 +6446,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6466,7 +6466,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.endpointBuilder("hazelcast-map",path);
     }
     /**
@@ -6487,8 +6487,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6507,7 +6507,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.endpointBuilder("hazelcast-multimap",path);
     }
     /**
@@ -6528,8 +6528,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6548,7 +6548,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.endpointBuilder("hazelcast-queue",path);
     }
     /**
@@ -6569,8 +6569,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6589,7 +6589,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.endpointBuilder("hazelcast-replicatedmap",path);
     }
     /**
@@ -6610,8 +6610,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6630,7 +6630,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.endpointBuilder("hazelcast-ringbuffer",path);
     }
     /**
@@ -6651,8 +6651,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6672,7 +6672,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.endpointBuilder("hazelcast-seda",path);
     }
     /**
@@ -6694,8 +6694,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6714,7 +6714,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.endpointBuilder("hazelcast-set",path);
     }
     /**
@@ -6735,8 +6735,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6755,7 +6755,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.endpointBuilder("hazelcast-topic",path);
     }
     /**
@@ -6776,8 +6776,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6796,7 +6796,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.endpointBuilder("hbase",path);
     }
     /**
@@ -6817,8 +6817,8 @@ public class StaticEndpointBuilders {
      * @param path tableName
      */
     static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6844,7 +6844,7 @@ public class StaticEndpointBuilders {
      * @param path hostName:port/path
      */
     static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder("hdfs",path);
     }
     /**
@@ -6872,8 +6872,8 @@ public class StaticEndpointBuilders {
      * @param path hostName:port/path
      */
     static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6899,7 +6899,7 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port
      */
     static org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.HipchatEndpointBuilder hipchat(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.endpointBuilder("hipchat",path);
     }
     /**
@@ -6927,8 +6927,8 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port
      */
     static org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.HipchatEndpointBuilder hipchat(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6947,7 +6947,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder("http",path);
     }
     /**
@@ -6968,8 +6968,8 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -6989,7 +6989,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      */
     static org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory.endpointBuilder("iec60870-client",path);
     }
     /**
@@ -7011,8 +7011,8 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      */
     static org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7032,7 +7032,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      */
     static org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.endpointBuilder("iec60870-server",path);
     }
     /**
@@ -7054,8 +7054,8 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      */
     static org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7075,7 +7075,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.endpointBuilder("ignite-cache",path);
     }
     /**
@@ -7097,8 +7097,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7117,7 +7117,7 @@ public class StaticEndpointBuilders {
      * @param path endpointId
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.endpointBuilder("ignite-compute",path);
     }
     /**
@@ -7138,8 +7138,8 @@ public class StaticEndpointBuilders {
      * @param path endpointId
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7158,7 +7158,7 @@ public class StaticEndpointBuilders {
      * @param path endpointId
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteEventsEndpointBuilderFactory.endpointBuilder("ignite-events",path);
     }
     /**
@@ -7179,8 +7179,8 @@ public class StaticEndpointBuilders {
      * @param path endpointId
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteEventsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7199,7 +7199,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteIdGenEndpointBuilderFactory.endpointBuilder("ignite-idgen",path);
     }
     /**
@@ -7220,8 +7220,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteIdGenEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7240,7 +7240,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.endpointBuilder("ignite-messaging",path);
     }
     /**
@@ -7261,8 +7261,8 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7281,7 +7281,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.endpointBuilder("ignite-queue",path);
     }
     /**
@@ -7302,8 +7302,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7322,7 +7322,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.endpointBuilder("ignite-set",path);
     }
     /**
@@ -7343,8 +7343,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7366,7 +7366,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder("imap",path);
     }
     /**
@@ -7390,8 +7390,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7413,7 +7413,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.InfinispanEndpointBuilder infinispan(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.endpointBuilder("infinispan",path);
     }
     /**
@@ -7437,8 +7437,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.InfinispanEndpointBuilder infinispan(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7457,7 +7457,7 @@ public class StaticEndpointBuilders {
      * @param path connectionBean
      */
     static org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.InfluxDbEndpointBuilder influxdb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.endpointBuilder("influxdb",path);
     }
     /**
@@ -7478,8 +7478,8 @@ public class StaticEndpointBuilders {
      * @param path connectionBean
      */
     static org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.InfluxDbEndpointBuilder influxdb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7498,7 +7498,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.IOTAEndpointBuilder iota(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.endpointBuilder("iota",path);
     }
     /**
@@ -7519,8 +7519,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.IOTAEndpointBuilder iota(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7540,7 +7540,7 @@ public class StaticEndpointBuilders {
      * @param path ipfsCmd
      */
     static org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.IPFSEndpointBuilder ipfs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.endpointBuilder("ipfs",path);
     }
     /**
@@ -7562,8 +7562,8 @@ public class StaticEndpointBuilders {
      * @param path ipfsCmd
      */
     static org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.IPFSEndpointBuilder ipfs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7586,7 +7586,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      */
     static org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory.IrcEndpointBuilder irc(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory.endpointBuilder("irc",path);
     }
     /**
@@ -7611,8 +7611,8 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      */
     static org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory.IrcEndpointBuilder irc(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7632,7 +7632,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      */
     static org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.endpointBuilder("ironmq",path);
     }
     /**
@@ -7654,8 +7654,8 @@ public class StaticEndpointBuilders {
      * @param path queueName
      */
     static org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7677,7 +7677,7 @@ public class StaticEndpointBuilders {
      * @param path connectionURL
      */
     static org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.JBPMEndpointBuilder jbpm(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.endpointBuilder("jbpm",path);
     }
     /**
@@ -7701,8 +7701,8 @@ public class StaticEndpointBuilders {
      * @param path connectionURL
      */
     static org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.JBPMEndpointBuilder jbpm(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7721,7 +7721,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.JCacheEndpointBuilder jcache(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.endpointBuilder("jcache",path);
     }
     /**
@@ -7742,8 +7742,8 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      */
     static org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.JCacheEndpointBuilder jcache(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7767,7 +7767,7 @@ public class StaticEndpointBuilders {
      * @param path command:providerId
      */
     static org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.JcloudsEndpointBuilder jclouds(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.endpointBuilder("jclouds",path);
     }
     /**
@@ -7793,8 +7793,8 @@ public class StaticEndpointBuilders {
      * @param path command:providerId
      */
     static org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.JcloudsEndpointBuilder jclouds(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7817,7 +7817,7 @@ public class StaticEndpointBuilders {
      * @param path host/base
      */
     static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.endpointBuilder("jcr",path);
     }
     /**
@@ -7842,8 +7842,8 @@ public class StaticEndpointBuilders {
      * @param path host/base
      */
     static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7865,7 +7865,7 @@ public class StaticEndpointBuilders {
      * @param path dataSourceName
      */
     static org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory.JdbcEndpointBuilder jdbc(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory.endpointBuilder("jdbc",path);
     }
     /**
@@ -7889,8 +7889,8 @@ public class StaticEndpointBuilders {
      * @param path dataSourceName
      */
     static org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory.JdbcEndpointBuilder jdbc(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7909,7 +7909,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.endpointBuilder("jetty",path);
     }
     /**
@@ -7930,8 +7930,8 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7950,7 +7950,7 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      */
     static org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory.JGroupsEndpointBuilder jgroups(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory.endpointBuilder("jgroups",path);
     }
     /**
@@ -7971,8 +7971,8 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      */
     static org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory.JGroupsEndpointBuilder jgroups(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -7991,7 +7991,7 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      */
     static org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.endpointBuilder("jgroups-raft",path);
     }
     /**
@@ -8012,8 +8012,8 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      */
     static org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8035,7 +8035,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder("jing",path);
     }
     /**
@@ -8059,8 +8059,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8084,7 +8084,7 @@ public class StaticEndpointBuilders {
      * @param path type
      */
     static org.apache.camel.builder.endpoint.dsl.JiraEndpointBuilderFactory.JiraEndpointBuilder jira(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JiraEndpointBuilderFactory.endpointBuilder("jira",path);
     }
     /**
@@ -8110,8 +8110,8 @@ public class StaticEndpointBuilders {
      * @param path type
      */
     static org.apache.camel.builder.endpoint.dsl.JiraEndpointBuilderFactory.JiraEndpointBuilder jira(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JiraEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8135,7 +8135,7 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.JmsEndpointBuilderFactory.JmsEndpointBuilder jms(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JmsEndpointBuilderFactory.endpointBuilder("jms",path);
     }
     /**
@@ -8161,8 +8161,8 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.JmsEndpointBuilderFactory.JmsEndpointBuilder jms(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JmsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8182,7 +8182,7 @@ public class StaticEndpointBuilders {
      * @param path serverURL
      */
     static org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory.JMXEndpointBuilder jmx(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory.endpointBuilder("jmx",path);
     }
     /**
@@ -8204,8 +8204,8 @@ public class StaticEndpointBuilders {
      * @param path serverURL
      */
     static org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory.JMXEndpointBuilder jmx(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8228,7 +8228,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.JoltEndpointBuilder jolt(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.endpointBuilder("jolt",path);
     }
     /**
@@ -8253,8 +8253,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.JoltEndpointBuilder jolt(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8273,7 +8273,7 @@ public class StaticEndpointBuilders {
      * @param path entityType
      */
     static org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.JooqEndpointBuilder jooq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.endpointBuilder("jooq",path);
     }
     /**
@@ -8294,8 +8294,8 @@ public class StaticEndpointBuilders {
      * @param path entityType
      */
     static org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.JooqEndpointBuilder jooq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8315,7 +8315,7 @@ public class StaticEndpointBuilders {
      * @param path entityType
      */
     static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.endpointBuilder("jpa",path);
     }
     /**
@@ -8337,8 +8337,8 @@ public class StaticEndpointBuilders {
      * @param path entityType
      */
     static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8361,7 +8361,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder("jslt",path);
     }
     /**
@@ -8386,8 +8386,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8410,7 +8410,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.endpointBuilder("json-validator",path);
     }
     /**
@@ -8435,8 +8435,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8470,7 +8470,7 @@ public class StaticEndpointBuilders {
      * @param path userID:password/systemName/objectPath.type
      */
     static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.endpointBuilder("jt400",path);
     }
     /**
@@ -8506,8 +8506,8 @@ public class StaticEndpointBuilders {
      * @param path userID:password/systemName/objectPath.type
      */
     static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8527,7 +8527,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.KafkaEndpointBuilder kafka(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.endpointBuilder("kafka",path);
     }
     /**
@@ -8549,8 +8549,8 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.KafkaEndpointBuilder kafka(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8570,7 +8570,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder("kubernetes-config-maps",path);
     }
     /**
@@ -8592,8 +8592,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8613,7 +8613,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder("kubernetes-deployments",path);
     }
     /**
@@ -8635,8 +8635,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8656,7 +8656,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.endpointBuilder("kubernetes-hpa",path);
     }
     /**
@@ -8678,8 +8678,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8698,7 +8698,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.endpointBuilder("kubernetes-job",path);
     }
     /**
@@ -8719,8 +8719,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8740,7 +8740,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.endpointBuilder("kubernetes-namespaces",path);
     }
     /**
@@ -8762,8 +8762,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8782,7 +8782,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesNodesEndpointBuilderFactory.endpointBuilder("kubernetes-nodes",path);
     }
     /**
@@ -8803,8 +8803,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesNodesEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8824,7 +8824,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.endpointBuilder("kubernetes-persistent-volumes",path);
     }
     /**
@@ -8846,8 +8846,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8867,7 +8867,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.endpointBuilder("kubernetes-persistent-volumes-claims",path);
     }
     /**
@@ -8889,8 +8889,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8909,7 +8909,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesPodsEndpointBuilderFactory.endpointBuilder("kubernetes-pods",path);
     }
     /**
@@ -8930,8 +8930,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesPodsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8951,7 +8951,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.endpointBuilder("kubernetes-replication-controllers",path);
     }
     /**
@@ -8973,8 +8973,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -8993,7 +8993,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.endpointBuilder("kubernetes-resources-quota",path);
     }
     /**
@@ -9014,8 +9014,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9034,7 +9034,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.endpointBuilder("kubernetes-secrets",path);
     }
     /**
@@ -9055,8 +9055,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9075,7 +9075,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder("kubernetes-service-accounts",path);
     }
     /**
@@ -9096,8 +9096,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9117,7 +9117,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServicesEndpointBuilderFactory.endpointBuilder("kubernetes-services",path);
     }
     /**
@@ -9139,8 +9139,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesServicesEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9166,7 +9166,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/tableName
      */
     static org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.KuduEndpointBuilder kudu(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.endpointBuilder("kudu",path);
     }
     /**
@@ -9194,8 +9194,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/tableName
      */
     static org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.KuduEndpointBuilder kudu(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9221,7 +9221,7 @@ public class StaticEndpointBuilders {
      * @param path languageName:resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.LanguageEndpointBuilder language(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.endpointBuilder("language",path);
     }
     /**
@@ -9249,8 +9249,8 @@ public class StaticEndpointBuilders {
      * @param path languageName:resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.LanguageEndpointBuilder language(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9276,7 +9276,7 @@ public class StaticEndpointBuilders {
      * @param path dirContextName
      */
     static org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.LdapEndpointBuilder ldap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.endpointBuilder("ldap",path);
     }
     /**
@@ -9304,8 +9304,8 @@ public class StaticEndpointBuilders {
      * @param path dirContextName
      */
     static org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.LdapEndpointBuilder ldap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9326,7 +9326,7 @@ public class StaticEndpointBuilders {
      * @param path ldapConnectionName
      */
     static org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.LdifEndpointBuilder ldif(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.endpointBuilder("ldif",path);
     }
     /**
@@ -9349,8 +9349,8 @@ public class StaticEndpointBuilders {
      * @param path ldapConnectionName
      */
     static org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.LdifEndpointBuilder ldif(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9369,7 +9369,7 @@ public class StaticEndpointBuilders {
      * @param path loggerName
      */
     static org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.LogEndpointBuilder log(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.endpointBuilder("log",path);
     }
     /**
@@ -9390,8 +9390,8 @@ public class StaticEndpointBuilders {
      * @param path loggerName
      */
     static org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.LogEndpointBuilder log(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9416,7 +9416,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port/printername
      */
     static org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.PrinterEndpointBuilder lpr(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.endpointBuilder("lpr",path);
     }
     /**
@@ -9443,8 +9443,8 @@ public class StaticEndpointBuilders {
      * @param path hostname:port/printername
      */
     static org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.PrinterEndpointBuilder lpr(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9467,7 +9467,7 @@ public class StaticEndpointBuilders {
      * @param path host:operation
      */
     static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.endpointBuilder("lucene",path);
     }
     /**
@@ -9492,8 +9492,8 @@ public class StaticEndpointBuilders {
      * @param path host:operation
      */
     static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9516,7 +9516,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.endpointBuilder("lumberjack",path);
     }
     /**
@@ -9541,8 +9541,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9565,7 +9565,7 @@ public class StaticEndpointBuilders {
      * @param path namespace:delegateUri
      */
     static org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory.MasterEndpointBuilder master(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory.endpointBuilder("master",path);
     }
     /**
@@ -9590,8 +9590,8 @@ public class StaticEndpointBuilders {
      * @param path namespace:delegateUri
      */
     static org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory.MasterEndpointBuilder master(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9615,7 +9615,7 @@ public class StaticEndpointBuilders {
      * @param path metricsType:metricsName
      */
     static org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.MetricsEndpointBuilder metrics(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.endpointBuilder("metrics",path);
     }
     /**
@@ -9641,8 +9641,8 @@ public class StaticEndpointBuilders {
      * @param path metricsType:metricsName
      */
     static org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.MetricsEndpointBuilder metrics(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9670,7 +9670,7 @@ public class StaticEndpointBuilders {
      * @param path metricsType:metricsName
      */
     static org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.endpointBuilder("micrometer",path);
     }
     /**
@@ -9700,8 +9700,8 @@ public class StaticEndpointBuilders {
      * @param path metricsType:metricsName
      */
     static org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9725,7 +9725,7 @@ public class StaticEndpointBuilders {
      * @param path metricType:metricName
      */
     static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.endpointBuilder("microprofile-metrics",path);
     }
     /**
@@ -9751,8 +9751,8 @@ public class StaticEndpointBuilders {
      * @param path metricType:metricName
      */
     static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9772,7 +9772,7 @@ public class StaticEndpointBuilders {
      * @param path endpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.endpointBuilder("milo-client",path);
     }
     /**
@@ -9794,8 +9794,8 @@ public class StaticEndpointBuilders {
      * @param path endpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9814,7 +9814,7 @@ public class StaticEndpointBuilders {
      * @param path itemId
      */
     static org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.endpointBuilder("milo-server",path);
     }
     /**
@@ -9835,8 +9835,8 @@ public class StaticEndpointBuilders {
      * @param path itemId
      */
     static org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9862,7 +9862,7 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port
      */
     static org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.MinaEndpointBuilder mina(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder("mina",path);
     }
     /**
@@ -9890,8 +9890,8 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port
      */
     static org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.MinaEndpointBuilder mina(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9914,7 +9914,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      */
     static org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.MllpEndpointBuilder mllp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.endpointBuilder("mllp",path);
     }
     /**
@@ -9939,8 +9939,8 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      */
     static org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.MllpEndpointBuilder mllp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -9959,7 +9959,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.MockEndpointBuilder mock(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.endpointBuilder("mock",path);
     }
     /**
@@ -9980,8 +9980,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.MockEndpointBuilder mock(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10001,7 +10001,7 @@ public class StaticEndpointBuilders {
      * @param path connectionBean
      */
     static org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.MongoDbEndpointBuilder mongodb(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.endpointBuilder("mongodb",path);
     }
     /**
@@ -10023,8 +10023,8 @@ public class StaticEndpointBuilders {
      * @param path connectionBean
      */
     static org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.MongoDbEndpointBuilder mongodb(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10043,7 +10043,7 @@ public class StaticEndpointBuilders {
      * @param path connectionBean
      */
     static org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.endpointBuilder("mongodb-gridfs",path);
     }
     /**
@@ -10064,8 +10064,8 @@ public class StaticEndpointBuilders {
      * @param path connectionBean
      */
     static org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10086,7 +10086,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder("msv",path);
     }
     /**
@@ -10109,8 +10109,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10133,7 +10133,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.MustacheEndpointBuilder mustache(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.endpointBuilder("mustache",path);
     }
     /**
@@ -10158,8 +10158,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.MustacheEndpointBuilder mustache(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10182,7 +10182,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.MvelEndpointBuilder mvel(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.endpointBuilder("mvel",path);
     }
     /**
@@ -10207,8 +10207,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.MvelEndpointBuilder mvel(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10229,7 +10229,7 @@ public class StaticEndpointBuilders {
      * @param path statement
      */
     static org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.MyBatisEndpointBuilder mybatis(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.endpointBuilder("mybatis",path);
     }
     /**
@@ -10252,8 +10252,8 @@ public class StaticEndpointBuilders {
      * @param path statement
      */
     static org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.MyBatisEndpointBuilder mybatis(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10277,7 +10277,7 @@ public class StaticEndpointBuilders {
      * @param path beanName:methodName
      */
     static org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.endpointBuilder("mybatis-bean",path);
     }
     /**
@@ -10303,8 +10303,8 @@ public class StaticEndpointBuilders {
      * @param path beanName:methodName
      */
     static org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10326,7 +10326,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder("nagios",path);
     }
     /**
@@ -10350,8 +10350,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10370,7 +10370,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.NatsEndpointBuilder nats(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.endpointBuilder("nats",path);
     }
     /**
@@ -10391,8 +10391,8 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.NatsEndpointBuilder nats(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10419,7 +10419,7 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port
      */
     static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.endpointBuilder("netty",path);
     }
     /**
@@ -10448,8 +10448,8 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port
      */
     static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10480,7 +10480,7 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port/path
      */
     static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.endpointBuilder("netty-http",path);
     }
     /**
@@ -10513,8 +10513,8 @@ public class StaticEndpointBuilders {
      * @param path protocol:host:port/path
      */
     static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10533,7 +10533,7 @@ public class StaticEndpointBuilders {
      * @param path database
      */
     static org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.endpointBuilder("nitrite",path);
     }
     /**
@@ -10554,8 +10554,8 @@ public class StaticEndpointBuilders {
      * @param path database
      */
     static org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10575,7 +10575,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder("nsq",path);
     }
     /**
@@ -10597,8 +10597,8 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10621,7 +10621,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.endpointBuilder("olingo2",path);
     }
     /**
@@ -10646,8 +10646,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10670,7 +10670,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.endpointBuilder("olingo4",path);
     }
     /**
@@ -10695,8 +10695,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10715,7 +10715,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.endpointBuilder("openshift-build-configs",path);
     }
     /**
@@ -10736,8 +10736,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10756,7 +10756,7 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.endpointBuilder("openshift-builds",path);
     }
     /**
@@ -10777,8 +10777,8 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      */
     static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10797,7 +10797,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.endpointBuilder("openstack-cinder",path);
     }
     /**
@@ -10818,8 +10818,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10838,7 +10838,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.endpointBuilder("openstack-glance",path);
     }
     /**
@@ -10859,8 +10859,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10880,7 +10880,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory.endpointBuilder("openstack-keystone",path);
     }
     /**
@@ -10902,8 +10902,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10922,7 +10922,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.endpointBuilder("openstack-neutron",path);
     }
     /**
@@ -10943,8 +10943,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -10963,7 +10963,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.endpointBuilder("openstack-nova",path);
     }
     /**
@@ -10984,8 +10984,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11004,7 +11004,7 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.endpointBuilder("openstack-swift",path);
     }
     /**
@@ -11025,8 +11025,8 @@ public class StaticEndpointBuilders {
      * @param path host
      */
     static org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11045,7 +11045,7 @@ public class StaticEndpointBuilders {
      * @param path configFile
      */
     static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.endpointBuilder("optaplanner",path);
     }
     /**
@@ -11066,8 +11066,8 @@ public class StaticEndpointBuilders {
      * @param path configFile
      */
     static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11086,7 +11086,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.PahoEndpointBuilder paho(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.endpointBuilder("paho",path);
     }
     /**
@@ -11107,8 +11107,8 @@ public class StaticEndpointBuilders {
      * @param path topic
      */
     static org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.PahoEndpointBuilder paho(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11128,7 +11128,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.PdfEndpointBuilder pdf(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.endpointBuilder("pdf",path);
     }
     /**
@@ -11150,8 +11150,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.PdfEndpointBuilder pdf(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11181,7 +11181,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/database/channel
      */
     static org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.endpointBuilder("pgevent",path);
     }
     /**
@@ -11213,8 +11213,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/database/channel
      */
     static org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11249,7 +11249,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/database/slot:outputPlugin
      */
     static org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.endpointBuilder("pg-replication-slot",path);
     }
     /**
@@ -11286,8 +11286,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/database/slot:outputPlugin
      */
     static org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11307,7 +11307,7 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.endpointBuilder("platform-http",path);
     }
     /**
@@ -11329,8 +11329,8 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11350,7 +11350,7 @@ public class StaticEndpointBuilders {
      * @param path channel
      */
     static org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.PubNubEndpointBuilder pubnub(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.endpointBuilder("pubnub",path);
     }
     /**
@@ -11372,8 +11372,8 @@ public class StaticEndpointBuilders {
      * @param path channel
      */
     static org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.PubNubEndpointBuilder pubnub(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11402,7 +11402,7 @@ public class StaticEndpointBuilders {
      * @param path persistence://tenant/namespace/topic
      */
     static org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.PulsarEndpointBuilder pulsar(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.endpointBuilder("pulsar",path);
     }
     /**
@@ -11433,8 +11433,8 @@ public class StaticEndpointBuilders {
      * @param path persistence://tenant/namespace/topic
      */
     static org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.PulsarEndpointBuilder pulsar(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11459,7 +11459,7 @@ public class StaticEndpointBuilders {
      * @param path groupName/triggerName
      */
     static org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.QuartzEndpointBuilder quartz(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.endpointBuilder("quartz",path);
     }
     /**
@@ -11486,8 +11486,8 @@ public class StaticEndpointBuilders {
      * @param path groupName/triggerName
      */
     static org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.QuartzEndpointBuilder quartz(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11508,7 +11508,7 @@ public class StaticEndpointBuilders {
      * @param path configurationName
      */
     static org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.QuickfixjEndpointBuilder quickfix(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.endpointBuilder("quickfix",path);
     }
     /**
@@ -11531,8 +11531,8 @@ public class StaticEndpointBuilders {
      * @param path configurationName
      */
     static org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.QuickfixjEndpointBuilder quickfix(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11553,7 +11553,7 @@ public class StaticEndpointBuilders {
      * @param path exchangeName
      */
     static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq",path);
     }
     /**
@@ -11576,8 +11576,8 @@ public class StaticEndpointBuilders {
      * @param path exchangeName
      */
     static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11597,7 +11597,7 @@ public class StaticEndpointBuilders {
      * @param path stream
      */
     static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.endpointBuilder("reactive-streams",path);
     }
     /**
@@ -11619,8 +11619,8 @@ public class StaticEndpointBuilders {
      * @param path stream
      */
     static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11640,7 +11640,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory.RefEndpointBuilder ref(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory.endpointBuilder("ref",path);
     }
     /**
@@ -11662,8 +11662,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory.RefEndpointBuilder ref(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11687,7 +11687,7 @@ public class StaticEndpointBuilders {
      * @param path path/contextIdPattern
      */
     static org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.endpointBuilder("rest-api",path);
     }
     /**
@@ -11713,8 +11713,8 @@ public class StaticEndpointBuilders {
      * @param path path/contextIdPattern
      */
     static org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11741,7 +11741,7 @@ public class StaticEndpointBuilders {
      * @param path method:path:uriTemplate
      */
     static org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.RestEndpointBuilder restEndpoint(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.endpointBuilder("rest",path);
     }
     /**
@@ -11770,8 +11770,8 @@ public class StaticEndpointBuilders {
      * @param path method:path:uriTemplate
      */
     static org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.RestEndpointBuilder restEndpoint(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11808,7 +11808,7 @@ public class StaticEndpointBuilders {
      * @param path specificationUri#operationId
      */
     static org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.endpointBuilder("rest-openapi",path);
     }
     /**
@@ -11847,8 +11847,8 @@ public class StaticEndpointBuilders {
      * @param path specificationUri#operationId
      */
     static org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11886,7 +11886,7 @@ public class StaticEndpointBuilders {
      * @param path specificationUri#operationId
      */
     static org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.RestSwaggerEndpointBuilder restSwagger(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.endpointBuilder("rest-swagger",path);
     }
     /**
@@ -11926,8 +11926,8 @@ public class StaticEndpointBuilders {
      * @param path specificationUri#operationId
      */
     static org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.RestSwaggerEndpointBuilder restSwagger(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11950,7 +11950,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.endpointBuilder("robotframework",path);
     }
     /**
@@ -11975,8 +11975,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -11995,7 +11995,7 @@ public class StaticEndpointBuilders {
      * @param path feedUri
      */
     static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.endpointBuilder("rss",path);
     }
     /**
@@ -12016,8 +12016,8 @@ public class StaticEndpointBuilders {
      * @param path feedUri
      */
     static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12037,7 +12037,7 @@ public class StaticEndpointBuilders {
      * @param path action
      */
     static org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.SagaEndpointBuilder saga(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.endpointBuilder("saga",path);
     }
     /**
@@ -12059,8 +12059,8 @@ public class StaticEndpointBuilders {
      * @param path action
      */
     static org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.SagaEndpointBuilder saga(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12092,7 +12092,7 @@ public class StaticEndpointBuilders {
      * @param path operationName:topicName
      */
     static org.apache.camel.builder.endpoint.dsl.SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SalesforceEndpointBuilderFactory.endpointBuilder("salesforce",path);
     }
     /**
@@ -12126,8 +12126,8 @@ public class StaticEndpointBuilders {
      * @param path operationName:topicName
      */
     static org.apache.camel.builder.endpoint.dsl.SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SalesforceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12146,7 +12146,7 @@ public class StaticEndpointBuilders {
      * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.endpointBuilder("sap-netweaver",path);
     }
     /**
@@ -12167,8 +12167,8 @@ public class StaticEndpointBuilders {
      * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12188,7 +12188,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.endpointBuilder("scheduler",path);
     }
     /**
@@ -12210,8 +12210,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12231,7 +12231,7 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.endpointBuilder("schematron",path);
     }
     /**
@@ -12253,8 +12253,8 @@ public class StaticEndpointBuilders {
      * @param path path
      */
     static org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12279,7 +12279,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.ScpEndpointBuilder scp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.endpointBuilder("scp",path);
     }
     /**
@@ -12306,8 +12306,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.ScpEndpointBuilder scp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12327,7 +12327,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.SedaEndpointBuilder seda(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.endpointBuilder("seda",path);
     }
     /**
@@ -12349,8 +12349,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.SedaEndpointBuilder seda(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12370,7 +12370,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      */
     static org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.endpointBuilder("service",path);
     }
     /**
@@ -12392,8 +12392,8 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      */
     static org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12412,7 +12412,7 @@ public class StaticEndpointBuilders {
      * @param path instanceName
      */
     static org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.endpointBuilder("servicenow",path);
     }
     /**
@@ -12433,8 +12433,8 @@ public class StaticEndpointBuilders {
      * @param path instanceName
      */
     static org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12453,7 +12453,7 @@ public class StaticEndpointBuilders {
      * @param path contextPath
      */
     static org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.ServletEndpointBuilder servlet(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.endpointBuilder("servlet",path);
     }
     /**
@@ -12474,8 +12474,8 @@ public class StaticEndpointBuilders {
      * @param path contextPath
      */
     static org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.ServletEndpointBuilder servlet(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12500,7 +12500,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.endpointBuilder("sftp",path);
     }
     /**
@@ -12527,8 +12527,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/directoryName
      */
     static org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12549,7 +12549,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      */
     static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder("sip",path);
     }
     /**
@@ -12572,8 +12572,8 @@ public class StaticEndpointBuilders {
      * @param path uri
      */
     static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12599,7 +12599,7 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.SjmsEndpointBuilder sjms(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.endpointBuilder("sjms",path);
     }
     /**
@@ -12627,8 +12627,8 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.SjmsEndpointBuilder sjms(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12654,7 +12654,7 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder("sjms2",path);
     }
     /**
@@ -12682,8 +12682,8 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12704,7 +12704,7 @@ public class StaticEndpointBuilders {
      * @param path destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder("sjms-batch",path);
     }
     /**
@@ -12727,8 +12727,8 @@ public class StaticEndpointBuilders {
      * @param path destinationName
      */
     static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12748,7 +12748,7 @@ public class StaticEndpointBuilders {
      * @param path channel
      */
     static org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.SlackEndpointBuilder slack(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.endpointBuilder("slack",path);
     }
     /**
@@ -12770,8 +12770,8 @@ public class StaticEndpointBuilders {
      * @param path channel
      */
     static org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.SlackEndpointBuilder slack(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12796,7 +12796,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.SmppEndpointBuilder smpp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.endpointBuilder("smpp",path);
     }
     /**
@@ -12823,8 +12823,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.SmppEndpointBuilder smpp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12847,7 +12847,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.endpointBuilder("snmp",path);
     }
     /**
@@ -12872,8 +12872,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12892,7 +12892,7 @@ public class StaticEndpointBuilders {
      * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder("solr",path);
     }
     /**
@@ -12913,8 +12913,8 @@ public class StaticEndpointBuilders {
      * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12935,7 +12935,7 @@ public class StaticEndpointBuilders {
      * @param path action
      */
     static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder("soroush",path);
     }
     /**
@@ -12958,8 +12958,8 @@ public class StaticEndpointBuilders {
      * @param path action
      */
     static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -12979,7 +12979,7 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      */
     static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.endpointBuilder("spark",path);
     }
     /**
@@ -13001,8 +13001,8 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      */
     static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13021,7 +13021,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SplunkEndpointBuilderFactory.endpointBuilder("splunk",path);
     }
     /**
@@ -13042,8 +13042,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SplunkEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13066,7 +13066,7 @@ public class StaticEndpointBuilders {
      * @param path splunkURL/token
      */
     static org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.endpointBuilder("splunk-hec",path);
     }
     /**
@@ -13091,8 +13091,8 @@ public class StaticEndpointBuilders {
      * @param path splunkURL/token
      */
     static org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13111,7 +13111,7 @@ public class StaticEndpointBuilders {
      * @param path jobName
      */
     static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.endpointBuilder("spring-batch",path);
     }
     /**
@@ -13132,8 +13132,8 @@ public class StaticEndpointBuilders {
      * @param path jobName
      */
     static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13152,7 +13152,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.EventEndpointBuilder springEvent(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.endpointBuilder("spring-event",path);
     }
     /**
@@ -13173,8 +13173,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.EventEndpointBuilder springEvent(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13196,7 +13196,7 @@ public class StaticEndpointBuilders {
      * @param path defaultChannel
      */
     static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.endpointBuilder("spring-integration",path);
     }
     /**
@@ -13220,8 +13220,8 @@ public class StaticEndpointBuilders {
      * @param path defaultChannel
      */
     static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13240,7 +13240,7 @@ public class StaticEndpointBuilders {
      * @param path templateName
      */
     static org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.endpointBuilder("spring-ldap",path);
     }
     /**
@@ -13261,8 +13261,8 @@ public class StaticEndpointBuilders {
      * @param path templateName
      */
     static org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13284,7 +13284,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory.RedisEndpointBuilder springRedis(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory.endpointBuilder("spring-redis",path);
     }
     /**
@@ -13308,8 +13308,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory.RedisEndpointBuilder springRedis(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13351,7 +13351,7 @@ public class StaticEndpointBuilders {
      * @param path type:lookupKey:webServiceEndpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.endpointBuilder("spring-ws",path);
     }
     /**
@@ -13395,8 +13395,8 @@ public class StaticEndpointBuilders {
      * @param path type:lookupKey:webServiceEndpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13416,7 +13416,7 @@ public class StaticEndpointBuilders {
      * @param path query
      */
     static org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.SqlEndpointBuilder sql(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.endpointBuilder("sql",path);
     }
     /**
@@ -13438,8 +13438,8 @@ public class StaticEndpointBuilders {
      * @param path query
      */
     static org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.SqlEndpointBuilder sql(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13458,7 +13458,7 @@ public class StaticEndpointBuilders {
      * @param path template
      */
     static org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.endpointBuilder("sql-stored",path);
     }
     /**
@@ -13479,8 +13479,8 @@ public class StaticEndpointBuilders {
      * @param path template
      */
     static org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13503,7 +13503,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.SshEndpointBuilder ssh(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.endpointBuilder("ssh",path);
     }
     /**
@@ -13528,8 +13528,8 @@ public class StaticEndpointBuilders {
      * @param path host:port
      */
     static org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.SshEndpointBuilder ssh(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13548,7 +13548,7 @@ public class StaticEndpointBuilders {
      * @param path contentHandlerClass
      */
     static org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.StAXEndpointBuilder stax(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.endpointBuilder("stax",path);
     }
     /**
@@ -13569,8 +13569,8 @@ public class StaticEndpointBuilders {
      * @param path contentHandlerClass
      */
     static org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.StAXEndpointBuilder stax(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13590,7 +13590,7 @@ public class StaticEndpointBuilders {
      * @param path destination
      */
     static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.endpointBuilder("stomp",path);
     }
     /**
@@ -13612,8 +13612,8 @@ public class StaticEndpointBuilders {
      * @param path destination
      */
     static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13633,7 +13633,7 @@ public class StaticEndpointBuilders {
      * @param path kind
      */
     static org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.StreamEndpointBuilder stream(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.endpointBuilder("stream",path);
     }
     /**
@@ -13655,8 +13655,8 @@ public class StaticEndpointBuilders {
      * @param path kind
      */
     static org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.StreamEndpointBuilder stream(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13679,7 +13679,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.endpointBuilder("string-template",path);
     }
     /**
@@ -13704,8 +13704,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13724,7 +13724,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.StubEndpointBuilder stub(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.endpointBuilder("stub",path);
     }
     /**
@@ -13745,8 +13745,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.StubEndpointBuilder stub(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13766,7 +13766,7 @@ public class StaticEndpointBuilders {
      * @param path type
      */
     static org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.TelegramEndpointBuilder telegram(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.endpointBuilder("telegram",path);
     }
     /**
@@ -13788,8 +13788,8 @@ public class StaticEndpointBuilders {
      * @param path type
      */
     static org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.TelegramEndpointBuilder telegram(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13818,7 +13818,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/service
      */
     static org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.ThriftEndpointBuilder thrift(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.endpointBuilder("thrift",path);
     }
     /**
@@ -13849,8 +13849,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/service
      */
     static org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.ThriftEndpointBuilder thrift(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13870,7 +13870,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.TikaEndpointBuilder tika(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.endpointBuilder("tika",path);
     }
     /**
@@ -13892,8 +13892,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.TikaEndpointBuilder tika(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13912,7 +13912,7 @@ public class StaticEndpointBuilders {
      * @param path timerName
      */
     static org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.TimerEndpointBuilder timer(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.endpointBuilder("timer",path);
     }
     /**
@@ -13933,8 +13933,8 @@ public class StaticEndpointBuilders {
      * @param path timerName
      */
     static org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.TimerEndpointBuilder timer(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -13977,7 +13977,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.TwilioEndpointBuilder twilio(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.endpointBuilder("twilio",path);
     }
     /**
@@ -14022,8 +14022,8 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      */
     static org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.TwilioEndpointBuilder twilio(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14043,7 +14043,7 @@ public class StaticEndpointBuilders {
      * @param path user
      */
     static org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.endpointBuilder("twitter-directmessage",path);
     }
     /**
@@ -14065,8 +14065,8 @@ public class StaticEndpointBuilders {
      * @param path user
      */
     static org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14086,7 +14086,7 @@ public class StaticEndpointBuilders {
      * @param path keywords
      */
     static org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.endpointBuilder("twitter-search",path);
     }
     /**
@@ -14108,8 +14108,8 @@ public class StaticEndpointBuilders {
      * @param path keywords
      */
     static org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14130,7 +14130,7 @@ public class StaticEndpointBuilders {
      * @param path timelineType
      */
     static org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.endpointBuilder("twitter-timeline",path);
     }
     /**
@@ -14153,8 +14153,8 @@ public class StaticEndpointBuilders {
      * @param path timelineType
      */
     static org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14174,7 +14174,7 @@ public class StaticEndpointBuilders {
      * @param path httpURI
      */
     static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.endpointBuilder("undertow",path);
     }
     /**
@@ -14196,8 +14196,8 @@ public class StaticEndpointBuilders {
      * @param path httpURI
      */
     static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14218,7 +14218,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.endpointBuilder("validator",path);
     }
     /**
@@ -14241,8 +14241,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14265,7 +14265,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.VelocityEndpointBuilder velocity(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.endpointBuilder("velocity",path);
     }
     /**
@@ -14290,8 +14290,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.VelocityEndpointBuilder velocity(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14310,7 +14310,7 @@ public class StaticEndpointBuilders {
      * @param path address
      */
     static org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.VertxEndpointBuilder vertx(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.endpointBuilder("vertx",path);
     }
     /**
@@ -14331,8 +14331,8 @@ public class StaticEndpointBuilders {
      * @param path address
      */
     static org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.VertxEndpointBuilder vertx(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14351,7 +14351,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.endpointBuilder("vm",path);
     }
     /**
@@ -14372,8 +14372,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14392,7 +14392,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.endpointBuilder("weather",path);
     }
     /**
@@ -14413,8 +14413,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14433,7 +14433,7 @@ public class StaticEndpointBuilders {
      * @param path nodeAddress
      */
     static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.endpointBuilder("web3j",path);
     }
     /**
@@ -14454,8 +14454,8 @@ public class StaticEndpointBuilders {
      * @param path nodeAddress
      */
     static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14475,7 +14475,7 @@ public class StaticEndpointBuilders {
      * @param path endpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.WebhookEndpointBuilder webhook(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.endpointBuilder("webhook",path);
     }
     /**
@@ -14497,8 +14497,8 @@ public class StaticEndpointBuilders {
      * @param path endpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.WebhookEndpointBuilder webhook(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14527,7 +14527,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketEndpointBuilder websocket(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.endpointBuilder("websocket",path);
     }
     /**
@@ -14558,8 +14558,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketEndpointBuilder websocket(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14580,7 +14580,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      */
     static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.endpointBuilder("websocket-jsr356",path);
     }
     /**
@@ -14603,8 +14603,8 @@ public class StaticEndpointBuilders {
      * @param path uri
      */
     static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14624,7 +14624,7 @@ public class StaticEndpointBuilders {
      * @param path command
      */
     static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder("weka",path);
     }
     /**
@@ -14646,8 +14646,8 @@ public class StaticEndpointBuilders {
      * @param path command
      */
     static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14672,7 +14672,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.endpointBuilder("wordpress",path);
     }
     /**
@@ -14699,8 +14699,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      */
     static org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14723,7 +14723,7 @@ public class StaticEndpointBuilders {
      * @param path entity:path
      */
     static org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.WorkdayEndpointBuilder workday(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.endpointBuilder("workday",path);
     }
     /**
@@ -14748,8 +14748,8 @@ public class StaticEndpointBuilders {
      * @param path entity:path
      */
     static org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.WorkdayEndpointBuilder workday(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14768,7 +14768,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.XChangeEndpointBuilder xchange(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.endpointBuilder("xchange",path);
     }
     /**
@@ -14789,8 +14789,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.XChangeEndpointBuilder xchange(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14814,7 +14814,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.XJEndpointBuilder xj(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.endpointBuilder("xj",path);
     }
     /**
@@ -14840,8 +14840,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.XJEndpointBuilder xj(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14861,7 +14861,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XmlSignerEndpointBuilderFactory.endpointBuilder("xmlsecurity-sign",path);
     }
     /**
@@ -14883,8 +14883,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XmlSignerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14904,7 +14904,7 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XmlVerifierEndpointBuilderFactory.endpointBuilder("xmlsecurity-verify",path);
     }
     /**
@@ -14926,8 +14926,8 @@ public class StaticEndpointBuilders {
      * @param path name
      */
     static org.apache.camel.builder.endpoint.dsl.XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XmlVerifierEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -14953,7 +14953,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/participant
      */
     static org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.XmppEndpointBuilder xmpp(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.endpointBuilder("xmpp",path);
     }
     /**
@@ -14981,8 +14981,8 @@ public class StaticEndpointBuilders {
      * @param path host:port/participant
      */
     static org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.XmppEndpointBuilder xmpp(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -15001,7 +15001,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XQueryEndpointBuilderFactory.XQueryEndpointBuilder xquery(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XQueryEndpointBuilderFactory.endpointBuilder("xquery",path);
     }
     /**
@@ -15022,8 +15022,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XQueryEndpointBuilderFactory.XQueryEndpointBuilder xquery(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XQueryEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -15047,7 +15047,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.XsltEndpointBuilder xslt(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.endpointBuilder("xslt",path);
     }
     /**
@@ -15073,8 +15073,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.XsltEndpointBuilder xslt(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -15098,7 +15098,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.endpointBuilder("xslt-saxon",path);
     }
     /**
@@ -15124,8 +15124,8 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      */
     static org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -15146,7 +15146,7 @@ public class StaticEndpointBuilders {
      * @param path function
      */
     static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder("yammer",path);
     }
     /**
@@ -15169,8 +15169,8 @@ public class StaticEndpointBuilders {
      * @param path function
      */
     static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -15189,7 +15189,7 @@ public class StaticEndpointBuilders {
      * @param path methodName
      */
     static org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.ZendeskEndpointBuilder zendesk(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.endpointBuilder("zendesk",path);
     }
     /**
@@ -15210,8 +15210,8 @@ public class StaticEndpointBuilders {
      * @param path methodName
      */
     static org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.ZendeskEndpointBuilder zendesk(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
@@ -15281,7 +15281,7 @@ public class StaticEndpointBuilders {
      * @param path groupName:consumerEndpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(
-            java.lang.String path) {
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.endpointBuilder("zookeeper-master",path);
     }
     /**
@@ -15306,8 +15306,8 @@ public class StaticEndpointBuilders {
      * @param path groupName:consumerEndpointUri
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(
-            java.lang.String componentName,
-            java.lang.String path) {
+            String componentName,
+            String path) {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.endpointBuilder(componentName,path);
     }
 }
