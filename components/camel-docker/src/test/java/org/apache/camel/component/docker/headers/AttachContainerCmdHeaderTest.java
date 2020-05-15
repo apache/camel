@@ -22,7 +22,7 @@ import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.core.command.AttachContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,7 +42,7 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
     private AttachContainerResultCallback callback;
 
     @Test
-    public void attachContainerHeaderTest() {
+    void attachContainerHeaderTest() {
 
         String containerId = "9c09acd48a25";
         boolean stdOut = true;

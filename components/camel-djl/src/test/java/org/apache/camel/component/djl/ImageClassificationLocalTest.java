@@ -32,10 +32,12 @@ import ai.djl.translate.Pipeline;
 import ai.djl.translate.TranslateException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageClassificationLocalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ImageClassificationLocalTest.class);
@@ -44,7 +46,7 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
     private static final String MODEL_NAME = "mlp";
 
     @Test
-    public void testDJL() throws Exception {
+    void testDJL() throws Exception {
         LOG.info("Read and load local model");
         loadLocalModel();
 
@@ -58,7 +60,7 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/data/mnist?recursive=true&noop=true")

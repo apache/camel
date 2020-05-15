@@ -16,32 +16,34 @@
  */
 package org.apache.camel.component.dns.cloud;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.dns.DnsConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DnsServiceDiscoveryTest {
     @Test
-    public void testServiceDiscovery() throws Exception {
+    void testServiceDiscovery() throws IOException {
         DnsConfiguration configuration = new DnsConfiguration();
-        DnsServiceDiscovery discovery = new DnsServiceDiscovery(configuration);
+        try (DnsServiceDiscovery discovery = new DnsServiceDiscovery(configuration)) {
 
-        configuration.setDomain("gmail.com");
-        configuration.setProto("_tcp");
+            configuration.setDomain("gmail.com");
+            configuration.setProto("_tcp");
 
-        List<ServiceDefinition> services = discovery.getServices("_xmpp-server");
-        assertNotNull(services);
-        assertFalse(services.isEmpty());
+            List<ServiceDefinition> services = discovery.getServices("_xmpp-server");
+            assertNotNull(services);
+            assertFalse(services.isEmpty());
 
-        for (ServiceDefinition service : services) {
-            assertFalse(service.getMetadata().isEmpty());
-            assertNotNull(service.getMetadata().get("priority"));
-            assertNotNull(service.getMetadata().get("weight"));
+            for (ServiceDefinition service : services) {
+                assertFalse(service.getMetadata().isEmpty());
+                assertNotNull(service.getMetadata().get("priority"));
+                assertNotNull(service.getMetadata().get("weight"));
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.VolumesFrom;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -46,7 +46,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
     private HostConfig hostConfig;
 
     @Test
-    public void createContainerHeaderTest() {
+    void createContainerHeaderTest() {
 
         String image = "busybox";
         ExposedPort exposedPort = ExposedPort.tcp(22);

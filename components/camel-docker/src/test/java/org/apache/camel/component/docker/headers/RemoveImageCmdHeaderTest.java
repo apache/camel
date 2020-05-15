@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.RemoveImageCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ public class RemoveImageCmdHeaderTest extends BaseDockerHeaderTest<RemoveImageCm
     private RemoveImageCmd mockObject;
 
     @Test
-    public void removeImageHeaderTest() {
+    void removeImageHeaderTest() {
 
         String imageId = "be29975e0098";
         Boolean noPrune = false;

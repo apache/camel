@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.CopyArchiveFromContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -37,7 +37,7 @@ public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyArc
     private CopyArchiveFromContainerCmd mockObject;
 
     @Test
-    public void copyFileFromContainerHeaderTest() {
+    void copyFileFromContainerHeaderTest() {
 
         String containerId = "9c09acd48a25";
         String resource = "/test";

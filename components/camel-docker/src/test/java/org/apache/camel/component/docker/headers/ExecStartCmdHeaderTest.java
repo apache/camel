@@ -22,7 +22,7 @@ import com.github.dockerjava.api.command.ExecStartCmd;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -42,7 +42,7 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     private ExecStartResultCallback callback;
     
     @Test
-    public void execCreateHeaderTest() {
+    void execCreateHeaderTest() {
 
         String id = "1";
         boolean tty = true;

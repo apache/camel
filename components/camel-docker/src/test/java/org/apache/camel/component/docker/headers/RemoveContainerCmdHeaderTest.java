@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.RemoveContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -37,7 +37,7 @@ public class RemoveContainerCmdHeaderTest extends BaseDockerHeaderTest<RemoveCon
     private RemoveContainerCmd mockObject;
 
     @Test
-    public void removeContainerHeaderTest() {
+    void removeContainerHeaderTest() {
 
         String containerId = "9c09acd48a25";
         boolean force = false;

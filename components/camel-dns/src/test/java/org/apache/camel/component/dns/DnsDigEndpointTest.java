@@ -26,16 +26,16 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Section;
 
 /**
  * Tests for the dig endpoint.
  */
-@Ignore("Wikipedia service is broken now")
+@Disabled("Wikipedia service is broken now")
 public class DnsDigEndpointTest extends CamelTestSupport {
 
     private static final String RESPONSE_MONKEY = "\"A Macaque, an old world species of "
@@ -52,17 +52,17 @@ public class DnsDigEndpointTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("dns:dig").to("mock:result");
             }
         };
     }
 
     @Test
-    public void testDigForMonkey() throws Exception {
+    void testDigForMonkey() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             public boolean matches(Exchange exchange) {
