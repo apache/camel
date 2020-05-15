@@ -37,6 +37,7 @@ public class AbstractEndpointBuilder {
     protected final String scheme;
     protected final String path;
     protected final Map<String, Object> properties = new LinkedHashMap<>();
+    private volatile Endpoint resolvedEndpoint;
 
     public AbstractEndpointBuilder(String scheme, String path) {
         this.scheme = scheme;
@@ -44,6 +45,10 @@ public class AbstractEndpointBuilder {
     }
 
     public Endpoint resolve(CamelContext context) throws NoSuchEndpointException {
+        if (resolvedEndpoint != null) {
+            return resolvedEndpoint;
+        }
+
         Map<String, Object> remaining = new LinkedHashMap<>();
         // we should not bind complex objects to registry as we create the endpoint via the properties as-is
         NormalizedEndpointUri uri = computeUri(remaining, context, false);
@@ -52,7 +57,14 @@ public class AbstractEndpointBuilder {
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri.getUri());
         }
+
+        resolvedEndpoint = endpoint;
         return endpoint;
+    }
+
+    public <T extends Endpoint> T resolve(CamelContext context, Class<T> endpointType) throws NoSuchEndpointException {
+        Endpoint answer = resolve(context);
+        return endpointType.cast(answer);
     }
 
     public String getUri() {
