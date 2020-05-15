@@ -57,12 +57,16 @@ public class MBeanInfoAssembler implements Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(MBeanInfoAssembler.class);
 
+    private final BeanIntrospection beanIntrospection;
+
     // use a cache to speedup gathering JMX MBeanInfo for known classes
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
-    public MBeanInfoAssembler() {
+    public MBeanInfoAssembler(CamelContext camelContext) {
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        this.beanIntrospection = ecc.getBeanIntrospection();
     }
 
     @Override
@@ -193,7 +197,7 @@ public class MBeanInfoAssembler implements Service {
         LOG.trace("Extracting attributes and operations from class: {}", managedClass);
 
         // introspect the class, and leverage the cache to have better performance
-        BeanIntrospection.ClassInfo cache = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().cacheClass(managedClass);
+        BeanIntrospection.ClassInfo cache = beanIntrospection.cacheClass(managedClass);
 
         for (BeanIntrospection.MethodInfo cacheInfo : cache.methods) {
             // must be from declaring class
