@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Attachments</name>
-    <description>Java Attachments support for Camel Message</description>
+    <description>Support for attachments on Camel messages</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
