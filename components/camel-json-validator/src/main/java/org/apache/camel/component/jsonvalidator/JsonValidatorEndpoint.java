@@ -115,10 +115,10 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                 Set<ValidationMessage> errors = localSchema.validate(node);
 
                 if (errors.size() > 0) {
-                    this.log.debug("Validated JSon has {} errors", errors.size());
+                    this.log.debug("Validated JSON has {} errors", errors.size());
                     this.errorHandler.handleErrors(exchange, schema, errors);
                 } else {
-                    this.log.debug("Validated JSon success");
+                    this.log.debug("Validated JSON success");
                 }
             }
         } catch (Exception e) {

@@ -26,7 +26,7 @@ public interface DataFormatContentTypeHeader {
      * the type from the data format if the data format is capable of doing so.
      * <p/>
      * For example <tt>application/xml</tt> for data formats marshalling to XML,
-     * or <tt>application/json</tt> for data formats marshalling to JSon etc.
+     * or <tt>application/json</tt> for data formats marshalling to JSON etc.
      */
     void setContentTypeHeader(boolean contentTypeHeader);
 }

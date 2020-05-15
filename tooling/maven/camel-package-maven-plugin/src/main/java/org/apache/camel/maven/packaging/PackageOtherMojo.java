@@ -144,7 +144,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             updateResource(schemaOutDir.toPath(), fileName, schema);
 
             if (log.isDebugEnabled()) {
-                log.debug("Generated " + fileName + " containing JSon schema for " + name + " other");
+                log.debug("Generated " + fileName + " containing JSON schema for " + name + " other");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error loading other model. Reason: " + e, e);

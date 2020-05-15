@@ -102,7 +102,7 @@ public interface CamelCatalog {
      *
      * @param name       the component name
      * @param className  the fully qualified class name for the component class
-     * @param jsonSchema the component JSon schema
+     * @param jsonSchema the component JSON schema
      */
     void addComponent(String name, String className, String jsonSchema);
 
@@ -119,7 +119,7 @@ public interface CamelCatalog {
      *
      * @param name      the data format name
      * @param className the fully qualified class name for the data format class
-     * @param jsonSchema the data format JSon schema
+     * @param jsonSchema the data format JSON schema
      */
     void addDataFormat(String name, String className, String jsonSchema);
 
@@ -244,7 +244,7 @@ public interface CamelCatalog {
     List<String> findOtherNames(String filter);
 
     /**
-     * Returns the component information as JSon format.
+     * Returns the component information as JSON format.
      *
      * @param name the component name
      * @return component details in JSon
@@ -252,7 +252,7 @@ public interface CamelCatalog {
     String componentJSonSchema(String name);
 
     /**
-     * Returns the data format information as JSon format.
+     * Returns the data format information as JSON format.
      *
      * @param name the data format name
      * @return data format details in JSon
@@ -260,7 +260,7 @@ public interface CamelCatalog {
     String dataFormatJSonSchema(String name);
 
     /**
-     * Returns the language information as JSon format.
+     * Returns the language information as JSON format.
      *
      * @param name the language name
      * @return language details in JSon
@@ -268,7 +268,7 @@ public interface CamelCatalog {
     String languageJSonSchema(String name);
 
     /**
-     * Returns the other (miscellaneous) information as JSon format.
+     * Returns the other (miscellaneous) information as JSON format.
      *
      * @param name the other (miscellaneous) name
      * @return other (miscellaneous) details in JSon
@@ -276,7 +276,7 @@ public interface CamelCatalog {
     String otherJSonSchema(String name);
 
     /**
-     * Returns the model information as JSon format.
+     * Returns the model information as JSON format.
      *
      * @param name the model name
      * @return model details in JSon
