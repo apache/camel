@@ -1,6 +1,6 @@
 [[aws-ec2-component]]
-= AWS EC2 Component
-:docTitle: AWS EC2
+= AWS Elastic Compute Cloud (EC2) Component
+:docTitle: AWS Elastic Compute Cloud (EC2)
 :artifactId: camel-aws-ec2
 :description: Manage AWS EC2 instances.
 :since: 2.16
@@ -34,7 +34,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS EC2 component supports 11 options, which are listed below.
+The AWS Elastic Compute Cloud (EC2) component supports 11 options, which are listed below.
 
 
 
@@ -59,7 +59,7 @@ The AWS EC2 component supports 11 options, which are listed below.
 
 
 // endpoint options: START
-The AWS EC2 endpoint is configured using URI syntax:
+The AWS Elastic Compute Cloud (EC2) endpoint is configured using URI syntax:
 
 ----
 aws-ec2:label

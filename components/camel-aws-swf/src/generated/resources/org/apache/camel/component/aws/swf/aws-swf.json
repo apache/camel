@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-swf",
-    "title": "AWS Simple Workflow",
+    "title": "AWS Simple Workflow (SWF)",
     "description": "Manage workflows in the AWS Simple Workflow service.",
     "deprecated": false,
     "firstVersion": "2.13.0",

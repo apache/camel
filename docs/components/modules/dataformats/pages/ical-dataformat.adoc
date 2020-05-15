@@ -45,7 +45,7 @@ The iCal dataformat supports 2 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | validating | false | Boolean | Whether to validate.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 ND

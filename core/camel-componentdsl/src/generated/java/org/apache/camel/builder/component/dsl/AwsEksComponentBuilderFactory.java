@@ -31,7 +31,7 @@ import org.apache.camel.component.aws.eks.EKSComponent;
 public interface AwsEksComponentBuilderFactory {
 
     /**
-     * AWS EKS (camel-aws-eks)
+     * AWS Elastic Kubernetes Service (EKS) (camel-aws-eks)
      * Manage AWS EKS cluster instances.
      * 
      * Category: cloud,management
@@ -43,7 +43,7 @@ public interface AwsEksComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS EKS component.
+     * Builder for the AWS Elastic Kubernetes Service (EKS) component.
      */
     interface AwsEksComponentBuilder extends ComponentBuilder<EKSComponent> {
         /**

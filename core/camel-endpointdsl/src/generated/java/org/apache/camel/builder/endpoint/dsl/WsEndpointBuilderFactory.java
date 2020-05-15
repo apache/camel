@@ -35,7 +35,8 @@ public interface WsEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AHC Websocket component.
+     * Builder for endpoint consumers for the Async HTTP Client (AHC) Websocket
+     * component.
      */
     public interface WsEndpointConsumerBuilder
             extends
@@ -304,7 +305,8 @@ public interface WsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AHC Websocket component.
+     * Advanced builder for endpoint consumers for the Async HTTP Client (AHC)
+     * Websocket component.
      */
     public interface AdvancedWsEndpointConsumerBuilder
             extends
@@ -539,7 +541,8 @@ public interface WsEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AHC Websocket component.
+     * Builder for endpoint producers for the Async HTTP Client (AHC) Websocket
+     * component.
      */
     public interface WsEndpointProducerBuilder
             extends
@@ -859,7 +862,8 @@ public interface WsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AHC Websocket component.
+     * Advanced builder for endpoint producers for the Async HTTP Client (AHC)
+     * Websocket component.
      */
     public interface AdvancedWsEndpointProducerBuilder
             extends
@@ -1037,7 +1041,7 @@ public interface WsEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AHC Websocket component.
+     * Builder for endpoint for the Async HTTP Client (AHC) Websocket component.
      */
     public interface WsEndpointBuilder
             extends
@@ -1239,7 +1243,8 @@ public interface WsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AHC Websocket component.
+     * Advanced builder for endpoint for the Async HTTP Client (AHC) Websocket
+     * component.
      */
     public interface AdvancedWsEndpointBuilder
             extends
@@ -1416,7 +1421,7 @@ public interface WsEndpointBuilderFactory {
 
     public interface WsBuilders {
         /**
-         * AHC Websocket (camel-ahc-ws)
+         * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
          * Exchange data with external Websocket servers using Async Http
          * Client.
          * 
@@ -1435,7 +1440,7 @@ public interface WsEndpointBuilderFactory {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-ws", path);
         }
         /**
-         * AHC Websocket (camel-ahc-ws)
+         * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
          * Exchange data with external Websocket servers using Async Http
          * Client.
          * 
@@ -1456,7 +1461,7 @@ public interface WsEndpointBuilderFactory {
             return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
         /**
-         * AHC Secure Websocket (Secure) (camel-ahc-ws)
+         * Async HTTP Client (AHC) Secure Websocket (Secure) (camel-ahc-ws)
          * Exchange data with external Websocket servers using Async Http
          * Client.
          * 

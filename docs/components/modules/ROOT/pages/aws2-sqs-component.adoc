@@ -1,8 +1,8 @@
 [[aws2-sqs-component]]
-= AWS 2 Simple Queue Service Component
+= AWS 2 Simple Queue Service (SQS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-sqs/src/main/docs/aws2-sqs-component.adoc
-:docTitle: AWS 2 Simple Queue Service
+:docTitle: AWS 2 Simple Queue Service (SQS)
 :artifactId: camel-aws2-sqs
 :description: Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
 :since: 3.1
@@ -42,7 +42,7 @@ The queue will be created if they don't already exists. +
 
 
 // component options: START
-The AWS 2 Simple Queue Service component supports 38 options, which are listed below.
+The AWS 2 Simple Queue Service (SQS) component supports 38 options, which are listed below.
 
 
 
@@ -98,7 +98,7 @@ The AWS 2 Simple Queue Service component supports 38 options, which are listed b
 
 
 // endpoint options: START
-The AWS 2 Simple Queue Service endpoint is configured using URI syntax:
+The AWS 2 Simple Queue Service (SQS) endpoint is configured using URI syntax:
 
 ----
 aws2-sqs:queueNameOrArn

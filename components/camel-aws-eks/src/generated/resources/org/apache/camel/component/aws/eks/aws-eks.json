@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-eks",
-    "title": "AWS EKS",
+    "title": "AWS Elastic Kubernetes Service (EKS)",
     "description": "Manage AWS EKS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",

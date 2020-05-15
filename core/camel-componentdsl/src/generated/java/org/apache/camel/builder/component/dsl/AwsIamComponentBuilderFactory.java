@@ -31,7 +31,7 @@ import org.apache.camel.component.aws.iam.IAMComponent;
 public interface AwsIamComponentBuilderFactory {
 
     /**
-     * AWS IAM (camel-aws-iam)
+     * AWS Identity and Access Management (IAM) (camel-aws-iam)
      * Manage AWS IAM instances.
      * 
      * Category: cloud,management
@@ -43,7 +43,7 @@ public interface AwsIamComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS IAM component.
+     * Builder for the AWS Identity and Access Management (IAM) component.
      */
     interface AwsIamComponentBuilder extends ComponentBuilder<IAMComponent> {
         /**

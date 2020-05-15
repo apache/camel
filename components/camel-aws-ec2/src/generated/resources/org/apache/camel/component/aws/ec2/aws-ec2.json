@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-ec2",
-    "title": "AWS EC2",
+    "title": "AWS Elastic Compute Cloud (EC2)",
     "description": "Manage AWS EC2 instances.",
     "deprecated": false,
     "firstVersion": "2.16.0",

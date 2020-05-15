@@ -31,7 +31,7 @@ import org.apache.camel.component.ahc.AhcComponent;
 public interface AhcComponentBuilderFactory {
 
     /**
-     * AHC (camel-ahc)
+     * Async HTTP Client (AHC) (camel-ahc)
      * Call external HTTP services using Async Http Client.
      * 
      * Category: http
@@ -43,7 +43,7 @@ public interface AhcComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AHC component.
+     * Builder for the Async HTTP Client (AHC) component.
      */
     interface AhcComponentBuilder extends ComponentBuilder<AhcComponent> {
         /**

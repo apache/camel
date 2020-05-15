@@ -33,7 +33,7 @@ public interface AhcEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AHC component.
+     * Builder for endpoint for the Async HTTP Client (AHC) component.
      */
     public interface AhcEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedAhcEndpointBuilder advanced() {
@@ -322,7 +322,7 @@ public interface AhcEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AHC component.
+     * Advanced builder for endpoint for the Async HTTP Client (AHC) component.
      */
     public interface AdvancedAhcEndpointBuilder
             extends
@@ -498,7 +498,7 @@ public interface AhcEndpointBuilderFactory {
 
     public interface AhcBuilders {
         /**
-         * AHC (camel-ahc)
+         * Async HTTP Client (AHC) (camel-ahc)
          * Call external HTTP services using Async Http Client.
          * 
          * Category: http
@@ -516,7 +516,7 @@ public interface AhcEndpointBuilderFactory {
             return AhcEndpointBuilderFactory.endpointBuilder("ahc", path);
         }
         /**
-         * AHC (camel-ahc)
+         * Async HTTP Client (AHC) (camel-ahc)
          * Call external HTTP services using Async Http Client.
          * 
          * Category: http

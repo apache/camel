@@ -1,6 +1,6 @@
 [[json-johnzon-dataformat]]
-= JSon Johnzon DataFormat
-:docTitle: JSon Johnzon
+= JSON Johnzon DataFormat
+:docTitle: JSON Johnzon
 :artifactId: camel-johnzon
 :description: Marshal POJOs to JSON and back.
 :since: 2.18
@@ -23,7 +23,7 @@ from("activemq:My.Queue").
 
 
 // dataformat options: START
-The JSon Johnzon dataformat supports 3 options, which are listed below.
+The JSON Johnzon dataformat supports 3 options, which are listed below.
 
 
 

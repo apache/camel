@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "microprofile-config",
-    "title": "MicroProfile Config",
+    "title": "Microprofile Config",
     "description": "Bridging Eclipse MicroProfile Config with Camel properties",
     "deprecated": false,
     "firstVersion": "3.0.0",

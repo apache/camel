@@ -31,7 +31,7 @@ import org.apache.camel.component.aws.ses.SesComponent;
 public interface AwsSesComponentBuilderFactory {
 
     /**
-     * AWS Simple Email Service (camel-aws-ses)
+     * AWS Simple Email Service (SES) (camel-aws-ses)
      * Send e-mails through AWS SES service.
      * 
      * Category: cloud,mail
@@ -43,7 +43,7 @@ public interface AwsSesComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS Simple Email Service component.
+     * Builder for the AWS Simple Email Service (SES) component.
      */
     interface AwsSesComponentBuilder extends ComponentBuilder<SesComponent> {
         /**

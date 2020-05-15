@@ -1,8 +1,8 @@
 [[json-gson-dataformat]]
-= JSon GSon DataFormat
+= JSON Gson DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
-:docTitle: JSon GSon
+:docTitle: JSON Gson
 :artifactId: camel-gson
 :description: Marshal POJOs to JSON and back.
 :since: 2.10
@@ -24,7 +24,7 @@ from("activemq:My.Queue").
 
 
 // dataformat options: START
-The JSon GSon dataformat supports 3 options, which are listed below.
+The JSON Gson dataformat supports 3 options, which are listed below.
 
 
 
@@ -33,7 +33,7 @@ The JSon GSon dataformat supports 3 options, which are listed below.
 | Name | Default | Java Type | Description
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 

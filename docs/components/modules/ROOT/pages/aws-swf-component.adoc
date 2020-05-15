@@ -1,8 +1,8 @@
 [[aws-swf-component]]
-= AWS Simple Workflow Component
+= AWS Simple Workflow (SWF) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-swf/src/main/docs/aws-swf-component.adoc
-:docTitle: AWS Simple Workflow
+:docTitle: AWS Simple Workflow (SWF)
 :artifactId: camel-aws-swf
 :description: Manage workflows in the AWS Simple Workflow service.
 :since: 2.13
@@ -36,7 +36,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Workflow component supports 30 options, which are listed below.
+The AWS Simple Workflow (SWF) component supports 30 options, which are listed below.
 
 
 
@@ -80,7 +80,7 @@ The AWS Simple Workflow component supports 30 options, which are listed below.
 
 
 // endpoint options: START
-The AWS Simple Workflow endpoint is configured using URI syntax:
+The AWS Simple Workflow (SWF) endpoint is configured using URI syntax:
 
 ----
 aws-swf:type

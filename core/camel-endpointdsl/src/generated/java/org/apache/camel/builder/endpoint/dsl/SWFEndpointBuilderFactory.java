@@ -34,7 +34,8 @@ public interface SWFEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS Simple Workflow component.
+     * Builder for endpoint consumers for the AWS Simple Workflow (SWF)
+     * component.
      */
     public interface SWFEndpointConsumerBuilder
             extends
@@ -331,7 +332,7 @@ public interface SWFEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the AWS Simple Workflow
+     * Advanced builder for endpoint consumers for the AWS Simple Workflow (SWF)
      * component.
      */
     public interface AdvancedSWFEndpointConsumerBuilder
@@ -543,7 +544,8 @@ public interface SWFEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS Simple Workflow component.
+     * Builder for endpoint producers for the AWS Simple Workflow (SWF)
+     * component.
      */
     public interface SWFEndpointProducerBuilder
             extends
@@ -840,7 +842,7 @@ public interface SWFEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the AWS Simple Workflow
+     * Advanced builder for endpoint producers for the AWS Simple Workflow (SWF)
      * component.
      */
     public interface AdvancedSWFEndpointProducerBuilder
@@ -995,7 +997,7 @@ public interface SWFEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS Simple Workflow component.
+     * Builder for endpoint for the AWS Simple Workflow (SWF) component.
      */
     public interface SWFEndpointBuilder
             extends
@@ -1129,7 +1131,8 @@ public interface SWFEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Simple Workflow component.
+     * Advanced builder for endpoint for the AWS Simple Workflow (SWF)
+     * component.
      */
     public interface AdvancedSWFEndpointBuilder
             extends
@@ -1283,7 +1286,7 @@ public interface SWFEndpointBuilderFactory {
 
     public interface SWFBuilders {
         /**
-         * AWS Simple Workflow (camel-aws-swf)
+         * AWS Simple Workflow (SWF) (camel-aws-swf)
          * Manage workflows in the AWS Simple Workflow service.
          * 
          * Category: cloud,workflow
@@ -1302,7 +1305,7 @@ public interface SWFEndpointBuilderFactory {
             return SWFEndpointBuilderFactory.endpointBuilder("aws-swf", path);
         }
         /**
-         * AWS Simple Workflow (camel-aws-swf)
+         * AWS Simple Workflow (SWF) (camel-aws-swf)
          * Manage workflows in the AWS Simple Workflow service.
          * 
          * Category: cloud,workflow

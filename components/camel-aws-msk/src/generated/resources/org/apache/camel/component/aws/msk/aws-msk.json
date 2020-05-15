@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-msk",
-    "title": "AWS MSK",
+    "title": "AWS Managed Streaming for Apache Kafka (MSK)",
     "description": "Manage AWS MSK instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",

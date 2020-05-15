@@ -1,8 +1,8 @@
 [[json-jackson-dataformat]]
-= JSon Jackson DataFormat
+= JSON Jackson DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc
-:docTitle: JSon Jackson
+:docTitle: JSON Jackson
 :artifactId: camel-jackson
 :description: Marshal POJOs to JSON and back.
 :since: 2.0
@@ -25,7 +25,7 @@ from("activemq:My.Queue").
 
 
 // dataformat options: START
-The JSon Jackson dataformat supports 17 options, which are listed below.
+The JSON Jackson dataformat supports 17 options, which are listed below.
 
 
 
@@ -48,7 +48,7 @@ The JSon Jackson dataformat supports 17 options, which are listed below.
 | allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
 | timezone |  | String | If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson, fastjson and xstream.
 | autoDiscoverObjectMapper | false | Boolean | If set to true then Jackson will lookup for an objectMapper into the registry
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 

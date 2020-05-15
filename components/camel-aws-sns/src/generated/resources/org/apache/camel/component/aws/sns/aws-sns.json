@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-sns",
-    "title": "AWS Simple Notification System",
+    "title": "AWS Simple Notification System (SNS)",
     "description": "Send messages to an AWS Simple Notification Topic.",
     "deprecated": false,
     "firstVersion": "2.8.0",

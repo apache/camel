@@ -23,7 +23,7 @@
   "AhcComponentBuilderFactory": {
     "kind": "component",
     "name": "ahc",
-    "title": "AHC",
+    "title": "Async HTTP Client (AHC)",
     "description": "Call external HTTP services using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.8.0",
@@ -44,7 +44,7 @@
   "AhcWsComponentBuilderFactory": {
     "kind": "component",
     "name": "ahc-ws",
-    "title": "AHC Websocket",
+    "title": "Async HTTP Client (AHC) Websocket",
     "description": "Exchange data with external Websocket servers using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.14.0",
@@ -66,7 +66,7 @@
   "AhcWssComponentBuilderFactory": {
     "kind": "component",
     "name": "ahc-wss",
-    "title": "AHC Secure Websocket (Secure)",
+    "title": "Async HTTP Client (AHC) Secure Websocket (Secure)",
     "description": "Exchange data with external Websocket servers using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.14.0",
@@ -362,7 +362,7 @@
   "AvroComponentBuilderFactory": {
     "kind": "component",
     "name": "avro",
-    "title": "Avro",
+    "title": "Avro RPC",
     "description": "Produce or consume Apache Avro RPC services.",
     "deprecated": false,
     "firstVersion": "2.10.0",
@@ -446,7 +446,7 @@
   "Aws2Ec2ComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ec2",
-    "title": "AWS 2 EC2",
+    "title": "AWS 2 Elastic Compute Cloud (EC2)",
     "description": "Manage AWS EC2 instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -467,7 +467,7 @@
   "Aws2EcsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ecs",
-    "title": "AWS 2 ECS",
+    "title": "AWS 2 Elastic Container Service (ECS)",
     "description": "Manage AWS ECS cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -488,7 +488,7 @@
   "Aws2EksComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-eks",
-    "title": "AWS 2 EKS",
+    "title": "AWS 2 Elastic Kubernetes Service (EKS)",
     "description": "Manage AWS EKS cluster instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -509,7 +509,7 @@
   "Aws2IamComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-iam",
-    "title": "AWS 2 IAM",
+    "title": "AWS 2 Identity and Access Management (IAM)",
     "description": "Manage AWS IAM instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -572,7 +572,7 @@
   "Aws2KmsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-kms",
-    "title": "AWS 2 KMS",
+    "title": "AWS 2 Key Management Service (KMS)",
     "description": "Manage keys stored in AWS KMS instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -593,7 +593,7 @@
   "Aws2LambdaComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-lambda",
-    "title": "AWS Lambda",
+    "title": "AWS 2 Lambda",
     "description": "Manage and invoke AWS Lambda functions using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.2.0",
@@ -635,7 +635,7 @@
   "Aws2MskComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-msk",
-    "title": "AWS 2 MSK",
+    "title": "AWS 2 Managed Streaming for Apache Kafka (MSK)",
     "description": "Manage AWS MSK instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -677,7 +677,7 @@
   "Aws2SesComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-ses",
-    "title": "AWS 2 Simple Email Service",
+    "title": "AWS 2 Simple Email Service (SES)",
     "description": "Send e-mails through AWS SES service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -698,7 +698,7 @@
   "Aws2SnsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-sns",
-    "title": "AWS 2 Simple Notification System",
+    "title": "AWS 2 Simple Notification System (SNS)",
     "description": "Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -719,7 +719,7 @@
   "Aws2SqsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-sqs",
-    "title": "AWS 2 Simple Queue Service",
+    "title": "AWS 2 Simple Queue Service (SQS)",
     "description": "Sending and receive messages to\/from AWS SQS service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
@@ -824,7 +824,7 @@
   "AwsEc2ComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-ec2",
-    "title": "AWS EC2",
+    "title": "AWS Elastic Compute Cloud (EC2)",
     "description": "Manage AWS EC2 instances.",
     "deprecated": false,
     "firstVersion": "2.16.0",
@@ -845,7 +845,7 @@
   "AwsEcsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-ecs",
-    "title": "AWS ECS",
+    "title": "AWS Elastic Container Service (ECS)",
     "description": "Manage AWS ECS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
@@ -866,7 +866,7 @@
   "AwsEksComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-eks",
-    "title": "AWS EKS",
+    "title": "AWS Elastic Kubernetes Service (EKS)",
     "description": "Manage AWS EKS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
@@ -887,7 +887,7 @@
   "AwsIamComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-iam",
-    "title": "AWS IAM",
+    "title": "AWS Identity and Access Management (IAM)",
     "description": "Manage AWS IAM instances.",
     "deprecated": false,
     "firstVersion": "2.23.0",
@@ -950,7 +950,7 @@
   "AwsKmsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-kms",
-    "title": "AWS KMS",
+    "title": "AWS Key Management Service (KMS)",
     "description": "Manage keys stored in AWS KMS instances.",
     "deprecated": false,
     "firstVersion": "2.21.0",
@@ -1013,7 +1013,7 @@
   "AwsMskComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-msk",
-    "title": "AWS MSK",
+    "title": "AWS Managed Streaming for Apache Kafka (MSK)",
     "description": "Manage AWS MSK instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
@@ -1076,7 +1076,7 @@
   "AwsSesComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-ses",
-    "title": "AWS Simple Email Service",
+    "title": "AWS Simple Email Service (SES)",
     "description": "Send e-mails through AWS SES service.",
     "deprecated": false,
     "firstVersion": "2.9.0",
@@ -1097,7 +1097,7 @@
   "AwsSnsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-sns",
-    "title": "AWS Simple Notification System",
+    "title": "AWS Simple Notification System (SNS)",
     "description": "Send messages to an AWS Simple Notification Topic.",
     "deprecated": false,
     "firstVersion": "2.8.0",
@@ -1118,7 +1118,7 @@
   "AwsSqsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-sqs",
-    "title": "AWS Simple Queue Service",
+    "title": "AWS Simple Queue Service (SQS)",
     "description": "Sending and receive messages to\/from AWS SQS service.",
     "deprecated": false,
     "firstVersion": "2.6.0",
@@ -1139,7 +1139,7 @@
   "AwsSwfComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-swf",
-    "title": "AWS Simple Workflow",
+    "title": "AWS Simple Workflow (SWF)",
     "description": "Manage workflows in the AWS Simple Workflow service.",
     "deprecated": false,
     "firstVersion": "2.13.0",
@@ -4687,7 +4687,7 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "MicroProfileMetricsComponentBuilderFactory": {
+  "MicroprofileMetricsComponentBuilderFactory": {
     "kind": "component",
     "name": "microprofile-metrics",
     "title": "MicroProfile Metrics",

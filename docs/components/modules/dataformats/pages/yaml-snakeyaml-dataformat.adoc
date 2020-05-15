@@ -44,7 +44,7 @@ The YAML SnakeYAML dataformat supports 13 options, which are listed below.
 | typeFilter |  | List | Set the types SnakeYAML is allowed to un-marshall
 | maxAliasesForCollections | 50 | Integer | Set the maximum amount of aliases allowed for collections.
 | allowRecursiveKeys | false | Boolean | Set whether recursive keys are allowed.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 

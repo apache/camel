@@ -17,7 +17,7 @@
   },
   "properties": {
     "usingParallelCompression": { "kind": "attribute", "displayName": "Using Parallel Compression", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Enable encoding (compress) using multiple processing cores." },
-    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSON etc." },
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
   }
 }
