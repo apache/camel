@@ -3545,7 +3545,7 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             getBeanProxyFactory();
             getBeanProcessorFactory();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             // ignore in case camel-bean is not on the classpath
         }
         getBeanPostProcessor();

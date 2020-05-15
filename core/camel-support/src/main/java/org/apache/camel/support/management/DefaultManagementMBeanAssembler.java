@@ -49,7 +49,7 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
 
     public DefaultManagementMBeanAssembler(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.assembler = new MBeanInfoAssembler();
+        this.assembler = new MBeanInfoAssembler(camelContext);
     }
 
     @Override
@@ -115,6 +115,11 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         }
 
         return mbean;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ServiceHelper.initService(assembler);
     }
 
     @Override
