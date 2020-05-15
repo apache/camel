@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.Category;
 import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.spi.Metadata;
@@ -149,7 +150,15 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String scheme = uriEndpoint.scheme();
             String extendsScheme = uriEndpoint.extendsScheme();
             String title = uriEndpoint.title();
-            final String label = uriEndpoint.label();
+            Category[] categories = uriEndpoint.category();
+            String label;
+            if (categories.length > 0) {
+                label = Arrays.stream(categories)
+                        .map(Category::getValue)
+                        .collect(Collectors.joining(","));
+            } else {
+                label = uriEndpoint.label();
+            }
             validateSchemaName(scheme, classElement);
             // support multiple schemes separated by comma, which maps to
             // the exact same component

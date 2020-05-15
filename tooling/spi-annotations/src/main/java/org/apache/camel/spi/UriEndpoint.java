@@ -131,7 +131,7 @@ public @interface UriEndpoint {
      * </p>
      * For example: @UriEndpoint(category = {Category.CORE, Category.DATABASE})
      */
-    Category[] category();
+    Category[] category() default {};
 
     /**
      * Whether this endpoint can only be used as a producer.
