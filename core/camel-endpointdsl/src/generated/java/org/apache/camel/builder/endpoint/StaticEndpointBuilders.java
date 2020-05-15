@@ -1505,8 +1505,8 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate", path);
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder("aws2-translate",path);
     }
     /**
      * AWS 2 Translate (camel-aws2-translate)
@@ -1526,9 +1526,9 @@ public class StaticEndpointBuilders {
      * @param path label
      */
     static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
+            java.lang.String componentName,
+            java.lang.String path) {
+        return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName,path);
     }
     /**
      * AWS CloudWatch (camel-aws-cw)
@@ -15233,8 +15233,8 @@ public class StaticEndpointBuilders {
      * @param path serverUrls/path
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper",path);
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
     }
     /**
      * ZooKeeper (camel-zookeeper)
@@ -15257,9 +15257,9 @@ public class StaticEndpointBuilders {
      * @param path serverUrls/path
      */
     static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
-            java.lang.String componentName,
-            java.lang.String path) {
-        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName,path);
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * ZooKeeper Master (camel-zookeeper-master)
