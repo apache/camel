@@ -55,6 +55,8 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -71,9 +73,32 @@ public interface KafkaEndpointBuilderFactory {
          * additionalProperties.. E.g:
          * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointConsumerBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -1506,6 +1531,8 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -1522,9 +1549,32 @@ public interface KafkaEndpointBuilderFactory {
          * additionalProperties.. E.g:
          * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointProducerBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -3126,6 +3176,8 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -3142,9 +3194,32 @@ public interface KafkaEndpointBuilderFactory {
          * additionalProperties.. E.g:
          * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */

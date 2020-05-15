@@ -493,6 +493,8 @@ public interface MailEndpointBuilderFactory {
          * certain date etc.
          * 
          * The option is a: <code>javax.mail.search.SearchTerm</code> type.
+         * The option is multivalued, and you can use the searchTerm(String,
+         * Object) method to add a value at a time.
          * 
          * Group: filter
          */
@@ -505,8 +507,25 @@ public interface MailEndpointBuilderFactory {
          * based on search criteria such as subject, body, from, sent after a
          * certain date etc.
          * 
+         * The option is a: <code>javax.mail.search.SearchTerm</code> type.
+         * The option is multivalued, and you can use the searchTerm(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: filter
+         */
+        default MailEndpointConsumerBuilder searchTerm(String key, Object value) {
+            doSetMultiValueProperty("searchTerm", "searchTerm." + key, value);
+            return this;
+        }
+        /**
+         * Refers to a javax.mail.search.SearchTerm which allows to filter mails
+         * based on search criteria such as subject, body, from, sent after a
+         * certain date etc.
+         * 
          * The option will be converted to a
          * <code>javax.mail.search.SearchTerm</code> type.
+         * The option is multivalued, and you can use the searchTerm(String,
+         * Object) method to add a value at a time.
          * 
          * Group: filter
          */
@@ -780,6 +799,8 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
          * 
          * Group: scheduler
          */
@@ -792,9 +813,28 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: scheduler
+         */
+        default MailEndpointConsumerBuilder schedulerProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
          * 
          * Group: scheduler
          */
@@ -1205,6 +1245,9 @@ public interface MailEndpointBuilderFactory {
          * the others as is.
          * 
          * The option is a: <code>java.util.Properties</code> type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
          * 
          * Group: advanced
          */
@@ -1219,8 +1262,30 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalJavaMailProperties", "mail." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional java mail properties, that will append/override any
+         * default properties that is set based on all the other options. This
+         * is useful if you need to add some special options but want to keep
+         * the others as is.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
          * 
          * Group: advanced
          */
@@ -1874,6 +1939,9 @@ public interface MailEndpointBuilderFactory {
          * the others as is.
          * 
          * The option is a: <code>java.util.Properties</code> type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
          * 
          * Group: advanced
          */
@@ -1888,8 +1956,30 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalJavaMailProperties", "mail." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional java mail properties, that will append/override any
+         * default properties that is set based on all the other options. This
+         * is useful if you need to add some special options but want to keep
+         * the others as is.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
          * 
          * Group: advanced
          */
@@ -2403,6 +2493,9 @@ public interface MailEndpointBuilderFactory {
          * the others as is.
          * 
          * The option is a: <code>java.util.Properties</code> type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
          * 
          * Group: advanced
          */
@@ -2417,8 +2510,30 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointBuilder additionalJavaMailProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalJavaMailProperties", "mail." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional java mail properties, that will append/override any
+         * default properties that is set based on all the other options. This
+         * is useful if you need to add some special options but want to keep
+         * the others as is.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalJavaMailProperties(String, Object) method to add a value at
+         * a time.
          * 
          * Group: advanced
          */

@@ -36,4 +36,10 @@ public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
      */
     void doSetProperty(String name, Object value);
 
+    /**
+     * Adds a multi-value option to this endpoint. This API is only intended for Camel
+     * internally.
+     */
+    void doSetMultiValueProperty(String name, String key, Object value);
+
 }

@@ -434,6 +434,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     }
                     desc += "\n";
                     desc += "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.";
+                    if (option.isMultiValue()) {
+                        desc += "\nThe option is multivalued, and you can use the " + option.getName() + "(String, Object) method to add a value at a time.";
+                    }
                     desc += "\n";
                     // the Endpoint DSL currently requires to provide the entire
                     // context-path and not as individual options
@@ -447,6 +450,16 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         desc += "\nDefault: " + option.getDefaultValue();
                     }
                     desc += "\nGroup: " + option.getGroup();
+                    fluent.getJavaDoc().setFullText(desc);
+                }
+
+                // is it multi valued then add method to see value at a time
+                if (option.isMultiValue()) {
+                    String desc = fluent.getJavaDoc().getFullText();
+                    fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                            .addParameter(new GenericType(String.class), "key")
+                            .addParameter(new GenericType(Object.class), "value")
+                            .setBody("doSetMultiValueProperty(\"" + option.getName() + "\", \"" + option.getPrefix() + "\" + key, value);", "return this;\n");
                     fluent.getJavaDoc().setFullText(desc);
                 }
 
@@ -465,6 +478,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         }
                         desc += "\n";
                         desc += "\nThe option will be converted to a <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.";
+                        if (option.isMultiValue()) {
+                            desc += "\nThe option is multivalued, and you can use the " + option.getName() + "(String, Object) method to add a value at a time.";
+                        }
                         desc += "\n";
                         // the Endpoint DSL currently requires to provide the
                         // entire context-path and not as individual options

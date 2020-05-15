@@ -39,6 +39,12 @@ public interface EndpointProducerBuilder extends EndpointProducerResolver {
     void doSetProperty(String name, Object value);
 
     /**
+     * Adds a multi-value option to this endpoint. This API is only intended for Camel
+     * internally.
+     */
+    void doSetMultiValueProperty(String name, String key, Object value);
+
+    /**
      * Builds an expression of this endpoint url. This API is only intended for
      * Camel internally.
      */

@@ -148,6 +148,8 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the parameters(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */
@@ -159,9 +161,26 @@ public interface JdbcEndpointBuilderFactory {
          * Optional parameters to the java.sql.Statement. For example to set
          * maxRows, fetchSize etc.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the parameters(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: producer
+         */
+        default JdbcEndpointBuilder parameters(String key, Object value) {
+            doSetMultiValueProperty("parameters", "statement." + key, value);
+            return this;
+        }
+        /**
+         * Optional parameters to the java.sql.Statement. For example to set
+         * maxRows, fetchSize etc.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the parameters(String,
+         * Object) method to add a value at a time.
          * 
          * Group: producer
          */

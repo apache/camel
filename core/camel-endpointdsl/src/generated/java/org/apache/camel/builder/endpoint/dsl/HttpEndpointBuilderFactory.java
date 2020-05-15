@@ -1090,6 +1090,8 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * httpClientOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -1101,9 +1103,27 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * httpClientOptions(String, Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedHttpEndpointBuilder httpClientOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("httpClientOptions", "httpClient." + key, value);
+            return this;
+        }
+        /**
+         * To configure the HttpClient using the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * httpClientOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */

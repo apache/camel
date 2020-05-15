@@ -745,6 +745,8 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
          * 
          * Group: scheduler
          */
@@ -757,9 +759,28 @@ public interface SqlEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: scheduler
+         */
+        default SqlEndpointConsumerBuilder schedulerProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value at a time.
          * 
          * Group: scheduler
          */
@@ -1147,6 +1168,8 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -1158,9 +1181,27 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedSqlEndpointConsumerBuilder templateOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("templateOptions", "template." + key, value);
+            return this;
+        }
+        /**
+         * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -1684,6 +1725,8 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -1695,9 +1738,27 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedSqlEndpointProducerBuilder templateOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("templateOptions", "template." + key, value);
+            return this;
+        }
+        /**
+         * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -2095,6 +2156,8 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */
@@ -2106,9 +2169,27 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
+         * 
+         * Group: advanced
+         */
+        default AdvancedSqlEndpointBuilder templateOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("templateOptions", "template." + key, value);
+            return this;
+        }
+        /**
+         * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * templateOptions(String, Object) method to add a value at a time.
          * 
          * Group: advanced
          */

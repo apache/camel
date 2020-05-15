@@ -248,7 +248,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
@@ -262,7 +262,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(

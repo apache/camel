@@ -244,6 +244,8 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
+         * The option is multivalued, and you can use the recipient(String,
+         * Object) method to add a value at a time.
          * 
          * Group: encrypt
          */
@@ -255,8 +257,25 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Recipient Info: reference to a bean which implements the interface
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
          * 
+         * The option is a:
+         * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
+         * The option is multivalued, and you can use the recipient(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: encrypt
+         */
+        default CryptoCmsEndpointBuilder recipient(String key, Object value) {
+            doSetMultiValueProperty("recipient", "null" + key, value);
+            return this;
+        }
+        /**
+         * Recipient Info: reference to a bean which implements the interface
+         * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
+         * The option is multivalued, and you can use the recipient(String,
+         * Object) method to add a value at a time.
          * 
          * Group: encrypt
          */

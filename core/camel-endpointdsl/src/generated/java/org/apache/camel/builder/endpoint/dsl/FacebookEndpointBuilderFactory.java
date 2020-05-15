@@ -1213,6 +1213,8 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -1224,9 +1226,27 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default FacebookEndpointConsumerBuilder readingOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("readingOptions", "reading." + key, value);
+            return this;
+        }
+        /**
+         * To configure Reading using key/value pairs from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -3056,6 +3076,8 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -3067,9 +3089,27 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default FacebookEndpointProducerBuilder readingOptions(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("readingOptions", "reading." + key, value);
+            return this;
+        }
+        /**
+         * To configure Reading using key/value pairs from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -4827,6 +4867,8 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -4838,9 +4880,25 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default FacebookEndpointBuilder readingOptions(String key, Object value) {
+            doSetMultiValueProperty("readingOptions", "reading." + key, value);
+            return this;
+        }
+        /**
+         * To configure Reading using key/value pairs from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the readingOptions(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */

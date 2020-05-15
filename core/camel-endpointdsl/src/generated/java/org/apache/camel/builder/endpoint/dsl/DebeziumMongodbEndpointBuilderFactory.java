@@ -52,6 +52,8 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -68,9 +70,32 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * additionalProperties.. E.g:
          * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default DebeziumMongodbEndpointBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Additional properties for debezium components in case they can't be
+         * set directly on the camel configurations (e.g: setting Kafka Connect
+         * properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value at a time.
          * 
          * Group: common
          */

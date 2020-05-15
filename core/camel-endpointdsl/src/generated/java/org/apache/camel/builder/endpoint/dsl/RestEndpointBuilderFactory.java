@@ -476,12 +476,29 @@ public interface RestEndpointBuilderFactory {
          * Query parameters for the HTTP service to call.
          * 
          * The option is a: <code>java.lang.String</code> type.
+         * The option is multivalued, and you can use the
+         * queryParameters(String, Object) method to add a value at a time.
          * 
          * Group: producer
          */
         default RestEndpointProducerBuilder queryParameters(
                 String queryParameters) {
             doSetProperty("queryParameters", queryParameters);
+            return this;
+        }
+        /**
+         * Query parameters for the HTTP service to call.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * The option is multivalued, and you can use the
+         * queryParameters(String, Object) method to add a value at a time.
+         * 
+         * Group: producer
+         */
+        default RestEndpointProducerBuilder queryParameters(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("queryParameters", "null" + key, value);
             return this;
         }
     }

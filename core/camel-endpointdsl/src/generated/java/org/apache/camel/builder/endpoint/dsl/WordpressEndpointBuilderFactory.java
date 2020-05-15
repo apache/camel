@@ -59,6 +59,8 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -70,9 +72,27 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default WordpressEndpointConsumerBuilder criteria(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("criteria", "criteria." + key, value);
+            return this;
+        }
+        /**
+         * The criteria to use with complex searches.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -380,6 +400,8 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -391,9 +413,27 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default WordpressEndpointProducerBuilder criteria(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("criteria", "criteria." + key, value);
+            return this;
+        }
+        /**
+         * The criteria to use with complex searches.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -649,6 +689,8 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
@@ -659,9 +701,25 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
+         * 
+         * Group: common
+         */
+        default WordpressEndpointBuilder criteria(String key, Object value) {
+            doSetMultiValueProperty("criteria", "criteria." + key, value);
+            return this;
+        }
+        /**
+         * The criteria to use with complex searches.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
+         * The option is multivalued, and you can use the criteria(String,
+         * Object) method to add a value at a time.
          * 
          * Group: common
          */
