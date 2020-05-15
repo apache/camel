@@ -248,7 +248,6 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
         endpoint.setAllowNullHeaders(isAllowNullHeaders());
         endpoint.setConnectionFactoryExceptionHandler(getConnectionFactoryExceptionHandler());
-        setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
@@ -268,9 +267,13 @@ public class RabbitMQComponent extends DefaultComponent {
             endpoint.setArgs(localArgs);
         }
 
+        // must extract args (above) before setting generic properties
+        setProperties(endpoint, params);
+
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
         endpoint.getMessageConverter().setAllowCustomHeaders(endpoint.isAllowCustomHeaders());
+
         return endpoint;
     }
 
