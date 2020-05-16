@@ -46,7 +46,11 @@ public class TransformViaDSLTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                /*tag::example[]*/from("direct:start").setBody(body().append(" World!")).to("mock:result"); /*end::example[]*/
+                /*tag::example[]*/
+                from("direct:start")
+                    .setBody(body().append(" World!"))
+                    .to("mock:result");
+                /*end::example[]*/
             }
         };
     }

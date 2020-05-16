@@ -49,12 +49,16 @@ public class TransformTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                /*tag::example[]*/from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        Message in = exchange.getIn();
-                        in.setBody(in.getBody(String.class) + " World!");
-                    }
-                }).to("mock:result"); /*end::example[]*/
+                /*tag::example[]*/
+                from("direct:start")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) {
+                            Message in = exchange.getIn();
+                            in.setBody(in.getBody(String.class) + " World!");
+                        }
+                    })
+                    .to("mock:result");
+                /*end::example[]*/
             }
         };
     }
