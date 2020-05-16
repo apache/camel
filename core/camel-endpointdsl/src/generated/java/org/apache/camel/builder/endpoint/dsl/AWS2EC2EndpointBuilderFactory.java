@@ -31,7 +31,7 @@ public interface AWS2EC2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS 2 EC2 component.
+     * Builder for endpoint for the AWS 2 Elastic Compute Cloud (EC2) component.
      */
     public interface AWS2EC2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedAWS2EC2EndpointBuilder advanced() {
@@ -260,7 +260,8 @@ public interface AWS2EC2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS 2 EC2 component.
+     * Advanced builder for endpoint for the AWS 2 Elastic Compute Cloud (EC2)
+     * component.
      */
     public interface AdvancedAWS2EC2EndpointBuilder
             extends
@@ -352,7 +353,7 @@ public interface AWS2EC2EndpointBuilderFactory {
 
     public interface AWS2EC2Builders {
         /**
-         * AWS 2 EC2 (camel-aws2-ec2)
+         * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
          * Manage AWS EC2 instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management
@@ -370,7 +371,7 @@ public interface AWS2EC2EndpointBuilderFactory {
             return AWS2EC2EndpointBuilderFactory.endpointBuilder("aws2-ec2", path);
         }
         /**
-         * AWS 2 EC2 (camel-aws2-ec2)
+         * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
          * Manage AWS EC2 instances using AWS SDK version 2.x.
          * 
          * Category: cloud,management

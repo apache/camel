@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS IAM instances.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "aws-iam", title = "AWS IAM", syntax = "aws-iam:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "aws-iam", title = "AWS Identity and Access Management (IAM)", syntax = "aws-iam:label", producerOnly = true, label = "cloud,management")
 public class IAMEndpoint extends ScheduledPollEndpoint {
 
     private AmazonIdentityManagement iamClient;

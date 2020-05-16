@@ -31,7 +31,8 @@ public interface MSKEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS MSK component.
+     * Builder for endpoint for the AWS Managed Streaming for Apache Kafka (MSK)
+     * component.
      */
     public interface MSKEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMSKEndpointBuilder advanced() {
@@ -225,7 +226,8 @@ public interface MSKEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS MSK component.
+     * Advanced builder for endpoint for the AWS Managed Streaming for Apache
+     * Kafka (MSK) component.
      */
     public interface AdvancedMSKEndpointBuilder
             extends
@@ -310,7 +312,7 @@ public interface MSKEndpointBuilderFactory {
 
     public interface MSKBuilders {
         /**
-         * AWS MSK (camel-aws-msk)
+         * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
          * Manage AWS MSK instances.
          * 
          * Category: cloud,management
@@ -328,7 +330,7 @@ public interface MSKEndpointBuilderFactory {
             return MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
         }
         /**
-         * AWS MSK (camel-aws-msk)
+         * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
          * Manage AWS MSK instances.
          * 
          * Category: cloud,management

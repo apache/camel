@@ -203,9 +203,9 @@ public class JsonPathEngine {
 
         // okay it was not then lets throw a failure
         if (headerName != null) {
-            throw new CamelExchangeException("Cannot read message header " + headerName + " as supported JSon value", exchange);
+            throw new CamelExchangeException("Cannot read message header " + headerName + " as supported JSON value", exchange);
         } else {
-            throw new CamelExchangeException("Cannot read message body as supported JSon value", exchange);
+            throw new CamelExchangeException("Cannot read message body as supported JSON value", exchange);
         }
     }
 

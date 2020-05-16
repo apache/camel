@@ -31,7 +31,7 @@ import org.apache.camel.component.ahc.ws.WsComponent;
 public interface AhcWssComponentBuilderFactory {
 
     /**
-     * AHC Secure Websocket (Secure) (camel-ahc-ws)
+     * Async HTTP Client (AHC) Secure Websocket (Secure) (camel-ahc-ws)
      * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
@@ -43,7 +43,8 @@ public interface AhcWssComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AHC Secure Websocket (Secure) component.
+     * Builder for the Async HTTP Client (AHC) Secure Websocket (Secure)
+     * component.
      */
     interface AhcWssComponentBuilder extends ComponentBuilder<WsComponent> {
         /**

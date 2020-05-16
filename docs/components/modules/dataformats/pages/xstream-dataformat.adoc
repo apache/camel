@@ -47,7 +47,7 @@ The XStream dataformat supports 8 options, which are listed below.
 | aliases |  | List | Alias a Class to a shorter name to be used in XML elements.
 | omitFields |  | List | Prevents a field from being serialized. To omit a field you must always provide the declaring type and not necessarily the type that is converted. Multiple values can be separated by comma.
 | implicitCollections |  | List | Adds a default implicit collection which is used for any unmapped XML tag. Multiple values can be separated by comma.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 ND

@@ -44,7 +44,7 @@ public interface JsonPathAdapter {
      *
      * @param value  the value
      * @param exchange the Camel exchange
-     * @return written as {@link String} JSon or <tt>null</tt> if not possible
+     * @return written as {@link String} JSON or <tt>null</tt> if not possible
      */
     String writeAsString(Object value, Exchange exchange);
 }

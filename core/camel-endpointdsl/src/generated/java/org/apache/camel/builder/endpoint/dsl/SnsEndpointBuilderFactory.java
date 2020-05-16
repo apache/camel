@@ -32,7 +32,8 @@ public interface SnsEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS Simple Notification System component.
+     * Builder for endpoint for the AWS Simple Notification System (SNS)
+     * component.
      */
     public interface SnsEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSnsEndpointBuilder advanced() {
@@ -384,7 +385,7 @@ public interface SnsEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint for the AWS Simple Notification System
-     * component.
+     * (SNS) component.
      */
     public interface AdvancedSnsEndpointBuilder
             extends
@@ -458,7 +459,7 @@ public interface SnsEndpointBuilderFactory {
 
     public interface SnsBuilders {
         /**
-         * AWS Simple Notification System (camel-aws-sns)
+         * AWS Simple Notification System (SNS) (camel-aws-sns)
          * Send messages to an AWS Simple Notification Topic.
          * 
          * Category: cloud,mobile,messaging
@@ -476,7 +477,7 @@ public interface SnsEndpointBuilderFactory {
             return SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
         }
         /**
-         * AWS Simple Notification System (camel-aws-sns)
+         * AWS Simple Notification System (SNS) (camel-aws-sns)
          * Send messages to an AWS Simple Notification Topic.
          * 
          * Category: cloud,mobile,messaging

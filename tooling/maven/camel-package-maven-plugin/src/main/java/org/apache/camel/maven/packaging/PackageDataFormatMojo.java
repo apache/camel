@@ -190,7 +190,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         }
                         String schema = JsonMapper.createParameterJsonSchema(dataFormatModel);
                         if (log.isDebugEnabled()) {
-                            log.debug("JSon schema:\n" + schema);
+                            log.debug("JSON schema:\n" + schema);
                         }
 
                         // write this to the directory
@@ -200,7 +200,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                                 schema);
 
                         if (log.isDebugEnabled()) {
-                            log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
+                            log.debug("Generated " + out + " containing JSON schema for " + name + " data format");
                         }
 
                         String cn = javaType.substring(javaType.lastIndexOf('.') + 1);
@@ -410,15 +410,15 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     private static String asModelTitle(String name, String title) {
         // special for some data formats
         if ("json-gson".equals(name)) {
-            return "JSon GSon";
+            return "JSON Gson";
         } else if ("json-jackson".equals(name)) {
-            return "JSon Jackson";
+            return "JSON Jackson";
         } else if ("json-johnzon".equals(name)) {
-            return "JSon Johnzon";
+            return "JSON Johnzon";
         } else if ("json-xstream".equals(name)) {
-            return "JSon XStream";
+            return "JSON XStream";
         } else if ("json-fastjson".equals(name)) {
-            return "JSon Fastjson";
+            return "JSON Fastjson";
         } else if ("bindy-csv".equals(name)) {
             return "Bindy CSV";
         } else if ("bindy-fixed".equals(name)) {

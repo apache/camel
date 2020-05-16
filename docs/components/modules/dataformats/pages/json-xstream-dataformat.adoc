@@ -1,8 +1,8 @@
 [[json-xstream-dataformat]]
-= JSon XStream DataFormat
+= JSON XStream DataFormat
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
-:docTitle: JSon XStream
+:docTitle: JSON XStream
 :artifactId: camel-xstream
 :description: Marshal POJOs to JSON and back.
 :since: 2.0
@@ -35,7 +35,7 @@ Maven users will need to add the following dependency to their
 == Options
 
 // dataformat options: START
-The JSon XStream dataformat supports 3 options, which are listed below.
+The JSON XStream dataformat supports 3 options, which are listed below.
 
 
 
@@ -43,8 +43,8 @@ The JSon XStream dataformat supports 3 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| dropRootNode | false | Boolean | Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs; as then the written object will include the class name as root node, which is often not intended to be written in the JSon output.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| dropRootNode | false | Boolean | Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs; as then the written object will include the class name as root node, which is often not intended to be written in the JSON output.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 

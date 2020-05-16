@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "ahc",
-    "title": "AHC",
+    "title": "Async HTTP Client (AHC)",
     "description": "Call external HTTP services using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.8.0",

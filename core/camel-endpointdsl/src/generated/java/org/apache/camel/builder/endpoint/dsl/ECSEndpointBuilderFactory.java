@@ -31,7 +31,8 @@ public interface ECSEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS ECS component.
+     * Builder for endpoint for the AWS Elastic Container Service (ECS)
+     * component.
      */
     public interface ECSEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedECSEndpointBuilder advanced() {
@@ -225,7 +226,8 @@ public interface ECSEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS ECS component.
+     * Advanced builder for endpoint for the AWS Elastic Container Service (ECS)
+     * component.
      */
     public interface AdvancedECSEndpointBuilder
             extends
@@ -310,7 +312,7 @@ public interface ECSEndpointBuilderFactory {
 
     public interface ECSBuilders {
         /**
-         * AWS ECS (camel-aws-ecs)
+         * AWS Elastic Container Service (ECS) (camel-aws-ecs)
          * Manage AWS ECS cluster instances.
          * 
          * Category: cloud,management
@@ -328,7 +330,7 @@ public interface ECSEndpointBuilderFactory {
             return ECSEndpointBuilderFactory.endpointBuilder("aws-ecs", path);
         }
         /**
-         * AWS ECS (camel-aws-ecs)
+         * AWS Elastic Container Service (ECS) (camel-aws-ecs)
          * Manage AWS ECS cluster instances.
          * 
          * Category: cloud,management

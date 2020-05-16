@@ -1,6 +1,6 @@
 [[aws-eks-component]]
-= AWS EKS Component
-:docTitle: AWS EKS
+= AWS Elastic Kubernetes Service (EKS) Component
+:docTitle: AWS Elastic Kubernetes Service (EKS)
 :artifactId: camel-aws-eks
 :description: Manage AWS EKS cluster instances.
 :since: 3.0
@@ -34,7 +34,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS EKS component supports 11 options, which are listed below.
+The AWS Elastic Kubernetes Service (EKS) component supports 11 options, which are listed below.
 
 
 
@@ -59,7 +59,7 @@ The AWS EKS component supports 11 options, which are listed below.
 
 
 // endpoint options: START
-The AWS EKS endpoint is configured using URI syntax:
+The AWS Elastic Kubernetes Service (EKS) endpoint is configured using URI syntax:
 
 ----
 aws-eks:label

@@ -31,7 +31,7 @@ public interface Lambda2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS Lambda component.
+     * Builder for endpoint for the AWS 2 Lambda component.
      */
     public interface Lambda2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLambda2EndpointBuilder advanced() {
@@ -232,7 +232,7 @@ public interface Lambda2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Lambda component.
+     * Advanced builder for endpoint for the AWS 2 Lambda component.
      */
     public interface AdvancedLambda2EndpointBuilder
             extends
@@ -360,7 +360,7 @@ public interface Lambda2EndpointBuilderFactory {
 
     public interface Lambda2Builders {
         /**
-         * AWS Lambda (camel-aws2-lambda)
+         * AWS 2 Lambda (camel-aws2-lambda)
          * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
          * 
          * Category: cloud,computing,serverless
@@ -378,7 +378,7 @@ public interface Lambda2EndpointBuilderFactory {
             return Lambda2EndpointBuilderFactory.endpointBuilder("aws2-lambda", path);
         }
         /**
-         * AWS Lambda (camel-aws2-lambda)
+         * AWS 2 Lambda (camel-aws2-lambda)
          * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
          * 
          * Category: cloud,computing,serverless

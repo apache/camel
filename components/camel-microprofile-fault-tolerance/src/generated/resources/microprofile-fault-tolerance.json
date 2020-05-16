@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "microprofile-fault-tolerance",
     "title": "Microprofile Fault Tolerance",
-    "description": "Circuit Breaker EIP using Microprofile Fault Tolerance",
+    "description": "Circuit Breaker EIP using MicroProfile Fault Tolerance",
     "deprecated": false,
     "firstVersion": "3.3.0",
     "label": "eip,microservice",

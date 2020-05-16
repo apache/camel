@@ -31,7 +31,8 @@ public interface IAMEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS IAM component.
+     * Builder for endpoint for the AWS Identity and Access Management (IAM)
+     * component.
      */
     public interface IAMEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedIAMEndpointBuilder advanced() {
@@ -225,7 +226,8 @@ public interface IAMEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS IAM component.
+     * Advanced builder for endpoint for the AWS Identity and Access Management
+     * (IAM) component.
      */
     public interface AdvancedIAMEndpointBuilder
             extends
@@ -319,7 +321,7 @@ public interface IAMEndpointBuilderFactory {
 
     public interface IAMBuilders {
         /**
-         * AWS IAM (camel-aws-iam)
+         * AWS Identity and Access Management (IAM) (camel-aws-iam)
          * Manage AWS IAM instances.
          * 
          * Category: cloud,management
@@ -337,7 +339,7 @@ public interface IAMEndpointBuilderFactory {
             return IAMEndpointBuilderFactory.endpointBuilder("aws-iam", path);
         }
         /**
-         * AWS IAM (camel-aws-iam)
+         * AWS Identity and Access Management (IAM) (camel-aws-iam)
          * Manage AWS IAM instances.
          * 
          * Category: cloud,management

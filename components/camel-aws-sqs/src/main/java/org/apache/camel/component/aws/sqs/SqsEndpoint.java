@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Sending and receive messages to/from AWS SQS service.
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service (SQS)", syntax = "aws-sqs:queueNameOrArn", label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);

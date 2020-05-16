@@ -2,7 +2,7 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "json-johnzon",
-    "title": "JSon Johnzon",
+    "title": "JSON Johnzon",
     "description": "Marshal POJOs to JSON and back.",
     "deprecated": false,
     "firstVersion": "2.18.0",

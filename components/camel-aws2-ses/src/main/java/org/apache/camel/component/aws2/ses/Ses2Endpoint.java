@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.ses.SesClientBuilder;
 /**
  * Send e-mails through AWS SES service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS 2 Simple Email Service", syntax = "aws2-ses:from", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS 2 Simple Email Service (SES)", syntax = "aws2-ses:from", producerOnly = true, label = "cloud,mail")
 public class Ses2Endpoint extends DefaultEndpoint {
 
     private SesClient sesClient;

@@ -20,7 +20,7 @@ The JSonApi dataformat supports 3 options, which are listed below.
 | Name | Default | Java Type | Description
 | dataFormatTypes |  | Class[] | The classes to take into account for the marshalling
 | mainFormatType |  | Class | The classes to take into account while unmarshalling
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 

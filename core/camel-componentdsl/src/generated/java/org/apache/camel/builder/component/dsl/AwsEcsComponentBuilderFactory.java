@@ -31,7 +31,7 @@ import org.apache.camel.component.aws.ecs.ECSComponent;
 public interface AwsEcsComponentBuilderFactory {
 
     /**
-     * AWS ECS (camel-aws-ecs)
+     * AWS Elastic Container Service (ECS) (camel-aws-ecs)
      * Manage AWS ECS cluster instances.
      * 
      * Category: cloud,management
@@ -43,7 +43,7 @@ public interface AwsEcsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS ECS component.
+     * Builder for the AWS Elastic Container Service (ECS) component.
      */
     interface AwsEcsComponentBuilder extends ComponentBuilder<ECSComponent> {
         /**

@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-kms",
-    "title": "AWS KMS",
+    "title": "AWS Key Management Service (KMS)",
     "description": "Manage keys stored in AWS KMS instances.",
     "deprecated": false,
     "firstVersion": "2.21.0",

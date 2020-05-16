@@ -39,7 +39,7 @@ import software.amazon.awssdk.services.lambda.LambdaClientBuilder;
 /**
  * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda", syntax = "aws2-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS 2 Lambda", syntax = "aws2-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
 public class Lambda2Endpoint extends DefaultEndpoint {
 
     private LambdaClient awsLambdaClient;

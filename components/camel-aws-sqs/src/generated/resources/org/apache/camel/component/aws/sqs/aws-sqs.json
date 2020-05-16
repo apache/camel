@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-sqs",
-    "title": "AWS Simple Queue Service",
+    "title": "AWS Simple Queue Service (SQS)",
     "description": "Sending and receive messages to\/from AWS SQS service.",
     "deprecated": false,
     "firstVersion": "2.6.0",

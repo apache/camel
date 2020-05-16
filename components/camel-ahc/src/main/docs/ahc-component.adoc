@@ -1,6 +1,6 @@
 [[ahc-component]]
-= AHC Component
-:docTitle: AHC
+= Async HTTP Client (AHC) Component
+:docTitle: Async HTTP Client (AHC)
 :artifactId: camel-ahc
 :description: Call external HTTP services using Async Http Client.
 :since: 2.8
@@ -53,7 +53,7 @@ You can append query options to the URI in the following format,
 
 
 // endpoint options: START
-The AHC endpoint is configured using URI syntax:
+The Async HTTP Client (AHC) endpoint is configured using URI syntax:
 
 ----
 ahc:httpUri
@@ -114,7 +114,7 @@ with the following path and query parameters:
 
 
 // component options: START
-The AHC component supports 9 options, which are listed below.
+The Async HTTP Client (AHC) component supports 9 options, which are listed below.
 
 
 

@@ -32,7 +32,7 @@ import org.apache.camel.component.aws2.sqs.Sqs2Component;
 public interface Aws2SqsComponentBuilderFactory {
 
     /**
-     * AWS 2 Simple Queue Service (camel-aws2-sqs)
+     * AWS 2 Simple Queue Service (SQS) (camel-aws2-sqs)
      * Sending and receive messages to/from AWS SQS service using AWS SDK
      * version 2.x.
      * 
@@ -45,7 +45,7 @@ public interface Aws2SqsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 Simple Queue Service component.
+     * Builder for the AWS 2 Simple Queue Service (SQS) component.
      */
     interface Aws2SqsComponentBuilder extends ComponentBuilder<Sqs2Component> {
         /**

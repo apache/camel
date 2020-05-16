@@ -30,7 +30,7 @@ The LZF Deflate Compression dataformat supports 2 options, which are listed belo
 |===
 | Name | Default | Java Type | Description
 | usingParallelCompression | false | Boolean | Enable encoding (compress) using multiple processing cores.
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 ND

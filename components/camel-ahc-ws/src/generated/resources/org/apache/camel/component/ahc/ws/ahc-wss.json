@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "ahc-wss",
-    "title": "AHC Secure Websocket (Secure)",
+    "title": "Async HTTP Client (AHC) Secure Websocket (Secure)",
     "description": "Exchange data with external Websocket servers using Async Http Client.",
     "deprecated": false,
     "firstVersion": "2.14.0",

@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS EC2 instances.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS Elastic Compute Cloud (EC2)", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
 public class EC2Endpoint extends ScheduledPollEndpoint {
 
     private AmazonEC2 ec2Client;

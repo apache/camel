@@ -160,7 +160,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         // build json schema for the data format
                         String schema = JsonMapper.createParameterJsonSchema(languageModel);
                         if (log.isDebugEnabled()) {
-                            log.debug("JSon schema\n" + schema);
+                            log.debug("JSON schema\n" + schema);
                         }
 
                         // write this to the directory
@@ -170,7 +170,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                                 schema);
 
                         if (log.isDebugEnabled()) {
-                            log.debug("Generated " + out + " containing JSon schema for " + name + " language");
+                            log.debug("Generated " + out + " containing JSON schema for " + name + " language");
                         }
                     }
                 } else {

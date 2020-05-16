@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Send messages to an AWS Simple Notification Topic.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn",
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System (SNS)", syntax = "aws-sns:topicNameOrArn",
     producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 

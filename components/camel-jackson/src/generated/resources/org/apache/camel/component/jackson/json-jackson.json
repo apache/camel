@@ -2,7 +2,7 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "json-jackson",
-    "title": "JSon Jackson",
+    "title": "JSON Jackson",
     "description": "Marshal POJOs to JSON and back.",
     "deprecated": false,
     "firstVersion": "2.0.0",
@@ -32,7 +32,7 @@
     "allowUnmarshallType": { "kind": "attribute", "displayName": "Allow Unmarshall Type", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used." },
     "timezone": { "kind": "attribute", "displayName": "Timezone", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If set then Jackson will use the Timezone when marshalling\/unmarshalling. This option will have no effect on the others Json DataFormat, like gson, fastjson and xstream." },
     "autoDiscoverObjectMapper": { "kind": "attribute", "displayName": "Auto Discover Object Mapper", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If set to true then Jackson will lookup for an objectMapper into the registry" },
-    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSON etc." },
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
   }
 }

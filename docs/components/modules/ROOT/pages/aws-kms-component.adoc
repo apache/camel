@@ -1,8 +1,8 @@
 [[aws-kms-component]]
-= AWS KMS Component
+= AWS Key Management Service (KMS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-kms/src/main/docs/aws-kms-component.adoc
-:docTitle: AWS KMS
+:docTitle: AWS Key Management Service (KMS)
 :artifactId: camel-aws-kms
 :description: Manage keys stored in AWS KMS instances.
 :since: 2.21
@@ -36,7 +36,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS KMS component supports 11 options, which are listed below.
+The AWS Key Management Service (KMS) component supports 11 options, which are listed below.
 
 
 
@@ -61,7 +61,7 @@ The AWS KMS component supports 11 options, which are listed below.
 
 
 // endpoint options: START
-The AWS KMS endpoint is configured using URI syntax:
+The AWS Key Management Service (KMS) endpoint is configured using URI syntax:
 
 ----
 aws-kms:label
