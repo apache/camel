@@ -6,7 +6,7 @@
 :artifactId: camel-splunk-hec
 :description: The splunk component allows to publish events in Splunk using the HTTP Event Collector.
 :since: 3.3
-:supportLevel: Stable
+:supportLevel: Preview
 :component-header: Only producer is supported
 
 *Since Camel {since}*

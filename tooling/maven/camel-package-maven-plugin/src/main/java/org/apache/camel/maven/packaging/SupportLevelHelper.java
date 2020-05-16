@@ -30,8 +30,9 @@ public final class SupportLevelHelper {
         }
 
         boolean justNew = CamelVersionHelper.isGE(currentVersion, firstVersion);
-        if (justNew) {
-            // its a new component that is added to this version so lets mark it as preview by default
+        boolean prevNew = CamelVersionHelper.isGE(CamelVersionHelper.prevMinor(currentVersion), firstVersion);
+        if (justNew || prevNew) {
+            // its a new component (2 releases back) that is added to this version so lets mark it as preview by default
             return SupportLevel.Preview;
         } else {
             return SupportLevel.Stable;
