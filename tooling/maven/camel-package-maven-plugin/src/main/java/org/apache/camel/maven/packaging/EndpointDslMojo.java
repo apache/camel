@@ -695,7 +695,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                             method.setStatic();
                         }
                         method.setName(ms.getName());
-                        method.setBody(ms.getBody());
+                        // roaster dont preserve the message body with nicely formatted space after comma
+                        String body = ms.getBody();
+                        body = body.replaceAll(",(\\S)", ", $1");
+                        method.setBody(body);
                         method.setReturnType(getQualifiedType(ms.getReturnType()));
                         for (Object o : ms.getParameters()) {
                             if (o instanceof ParameterSource) {
