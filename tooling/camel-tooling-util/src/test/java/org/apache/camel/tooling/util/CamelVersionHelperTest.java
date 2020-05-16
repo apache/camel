@@ -19,8 +19,8 @@ package org.apache.camel.tooling.util;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tooling.util.CamelVersionHelper.isGE;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.tooling.util.CamelVersionHelper.prevMinor;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelVersionHelperTest {
 
@@ -43,5 +43,22 @@ public class CamelVersionHelperTest {
         assertTrue(isGE("3.1.0", "3.2.0"));
         assertTrue(isGE("3.3.0", "3.3.0-SNAPSHOT"));
         assertTrue(isGE("3.4.0", "3.4.0-SNAPSHOT"));
+    }
+
+    @Test
+    public void testPrevMinor() throws Exception {
+        assertEquals("3.2.0", prevMinor("3.3.0"));
+        assertEquals("3.2.1", prevMinor("3.3.1"));
+        assertEquals("3.0.0", prevMinor("3.0.0"));
+        assertEquals("3.0.1", prevMinor("3.0.1"));
+        assertEquals("3.3.1", prevMinor("3.4.1"));
+        assertEquals("3.4.0", prevMinor("3.5.0-SNAPSHOT"));
+        assertEquals("3.5.0", prevMinor("3.6-SNAPSHOT"));
+
+        assertEquals("3.4.0", prevMinor(prevMinor("3.6-SNAPSHOT")));
+        assertEquals("3.4.0", prevMinor(prevMinor("3.6.0-SNAPSHOT")));
+        assertEquals("3.4.1", prevMinor(prevMinor("3.6.1")));
+        assertEquals("3.0.0", prevMinor(prevMinor("3.2.0")));
+        assertEquals("3.0.1", prevMinor(prevMinor("3.1.1")));
     }
 }
