@@ -9,9 +9,18 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === camel-test and JMX
 
 The `camel-test` module no longer has dependency on `camel-management` out of the box.
-In Camel JMX is optional and to use JMX then `camel-management` must be added as depencency.
+In Camel JMX is optional and to use JMX then `camel-management` must be added as dependency.
 
-So for users that do not use JMX then `camel-test` will not include JMX out of the box anymore.
+For example to use JMX during testing you the following dependency as test scope:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-management</artifactId>
+    <scope>test</scope>
+</dependency>
+----
 
 === Template components
 
