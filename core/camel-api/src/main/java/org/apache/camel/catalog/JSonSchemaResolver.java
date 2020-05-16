@@ -17,7 +17,7 @@
 package org.apache.camel.catalog;
 
 /**
- * Pluggable resolver to load JSon schema files for components, data formats, languages etc.
+ * Pluggable resolver to load JSON schema files for components, data formats, languages etc.
  */
 public interface JSonSchemaResolver {
 
@@ -27,7 +27,7 @@ public interface JSonSchemaResolver {
     void setClassLoader(ClassLoader classLoader);
 
     /**
-     * Returns the component information as JSon format.
+     * Returns the component information as JSON format.
      *
      * @param name the component name
      * @return component details in JSon
@@ -35,7 +35,7 @@ public interface JSonSchemaResolver {
     String getComponentJSonSchema(String name);
 
     /**
-     * Returns the data format information as JSon format.
+     * Returns the data format information as JSON format.
      *
      * @param name the data format name
      * @return data format details in JSon
@@ -43,7 +43,7 @@ public interface JSonSchemaResolver {
     String getDataFormatJSonSchema(String name);
 
     /**
-     * Returns the language information as JSon format.
+     * Returns the language information as JSON format.
      *
      * @param name the language name
      * @return language details in JSon
@@ -51,7 +51,7 @@ public interface JSonSchemaResolver {
     String getLanguageJSonSchema(String name);
 
     /**
-     * Returns the other (miscellaneous) information as JSon format.
+     * Returns the other (miscellaneous) information as JSON format.
      *
      * @param name the other (miscellaneous) name
      * @return other (miscellaneous) details in JSon
@@ -59,7 +59,7 @@ public interface JSonSchemaResolver {
     String getOtherJSonSchema(String name);
 
     /**
-     * Returns the model information as JSon format.
+     * Returns the model information as JSON format.
      *
      * @param name the model name
      * @return model details in JSon

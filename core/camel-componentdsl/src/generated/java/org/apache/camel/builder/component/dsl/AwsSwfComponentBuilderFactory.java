@@ -31,7 +31,7 @@ import org.apache.camel.component.aws.swf.SWFComponent;
 public interface AwsSwfComponentBuilderFactory {
 
     /**
-     * AWS Simple Workflow (camel-aws-swf)
+     * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 
      * Category: cloud,workflow
@@ -43,7 +43,7 @@ public interface AwsSwfComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS Simple Workflow component.
+     * Builder for the AWS Simple Workflow (SWF) component.
      */
     interface AwsSwfComponentBuilder extends ComponentBuilder<SWFComponent> {
         /**

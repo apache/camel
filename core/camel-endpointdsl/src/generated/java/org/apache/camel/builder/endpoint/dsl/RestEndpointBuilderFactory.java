@@ -358,7 +358,7 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The openapi api doc resource to use. The resource is loaded from
-         * classpath by default and must be in JSon format.
+         * classpath by default and must be in JSON format.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

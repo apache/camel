@@ -72,7 +72,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
     }
 
     /**
-     * Return a stream of the JSon metrics.
+     * Return a stream of the JSON metrics.
      */
     public Stream<String> streamMetrics() {
         if (queue != null) {
@@ -82,7 +82,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
         }
     }
 
-    @ManagedOperation(description = "Returns the oldest metrics as JSon format")
+    @ManagedOperation(description = "Returns the oldest metrics as JSON format")
     public String oldestMetricsAsJSon() {
         if (queue != null) {
             return queue.peek();

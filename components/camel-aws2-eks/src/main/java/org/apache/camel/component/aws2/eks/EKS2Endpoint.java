@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.eks.EksClientBuilder;
 /**
  * Manage AWS EKS cluster instances using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS 2 EKS", syntax = "aws2-eks:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS 2 Elastic Kubernetes Service (EKS)", syntax = "aws2-eks:label", producerOnly = true, label = "cloud,management")
 public class EKS2Endpoint extends ScheduledPollEndpoint {
 
     private EksClient eksClient;

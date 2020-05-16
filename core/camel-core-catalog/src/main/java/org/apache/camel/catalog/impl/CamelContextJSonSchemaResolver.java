@@ -26,7 +26,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 
 /**
- * Uses runtime {@link CamelContext} to resolve the JSon schema files.
+ * Uses runtime {@link CamelContext} to resolve the JSON schema files.
  */
 public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
 

@@ -31,7 +31,7 @@ import org.apache.camel.component.avro.AvroComponent;
 public interface AvroComponentBuilderFactory {
 
     /**
-     * Avro (camel-avro-rpc)
+     * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
      * 
      * Category: messaging,transformation
@@ -43,7 +43,7 @@ public interface AvroComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Avro component.
+     * Builder for the Avro RPC component.
      */
     interface AvroComponentBuilder extends ComponentBuilder<AvroComponent> {
         /**

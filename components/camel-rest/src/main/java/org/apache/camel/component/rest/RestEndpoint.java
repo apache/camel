@@ -255,7 +255,7 @@ public class RestEndpoint extends DefaultEndpoint {
 
     /**
      * The openapi api doc resource to use.
-     * The resource is loaded from classpath by default and must be in JSon format.
+     * The resource is loaded from classpath by default and must be in JSON format.
      */
     public void setApiDoc(String apiDoc) {
         this.apiDoc = apiDoc;

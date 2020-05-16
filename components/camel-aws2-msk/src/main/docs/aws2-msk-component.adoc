@@ -1,6 +1,6 @@
 [[aws2-msk-component]]
-= AWS 2 MSK Component
-:docTitle: AWS 2 MSK
+= AWS 2 Managed Streaming for Apache Kafka (MSK) Component
+:docTitle: AWS 2 Managed Streaming for Apache Kafka (MSK)
 :artifactId: camel-aws2-msk
 :description: Manage AWS MSK instances using AWS SDK version 2.x.
 :since: 3.1
@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS 2 MSK component supports 12 options, which are listed below.
+The AWS 2 Managed Streaming for Apache Kafka (MSK) component supports 12 options, which are listed below.
 
 
 
@@ -68,7 +68,7 @@ The AWS 2 MSK component supports 12 options, which are listed below.
 
 
 // endpoint options: START
-The AWS 2 MSK endpoint is configured using URI syntax:
+The AWS 2 Managed Streaming for Apache Kafka (MSK) endpoint is configured using URI syntax:
 
 ----
 aws2-msk:label

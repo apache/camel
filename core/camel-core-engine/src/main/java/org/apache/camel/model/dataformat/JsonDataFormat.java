@@ -380,7 +380,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     /**
      * Whether XStream will drop the root node in the generated JSon.
      * You may want to enable this when using POJOs; as then the written object will include the class name
-     * as root node, which is often not intended to be written in the JSon output.
+     * as root node, which is often not intended to be written in the JSON output.
      */
     public void setDropRootNode(String dropRootNode) {
         this.dropRootNode = dropRootNode;

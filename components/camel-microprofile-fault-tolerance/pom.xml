@@ -29,8 +29,8 @@
     <artifactId>camel-microprofile-fault-tolerance</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Microprofile :: Fault Tolerance</name>
-    <description>Circuit Breaker EIP using Microprofile Fault Tolerance</description>
+    <name>Camel :: MicroProfile :: Fault Tolerance</name>
+    <description>Circuit Breaker EIP using MicroProfile Fault Tolerance</description>
 
     <properties>
         <firstVersion>3.3.0</firstVersion>

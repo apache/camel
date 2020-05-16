@@ -29,7 +29,7 @@ public interface CatalogCamelContext extends CamelContext {
     /**
      * Returns the JSON schema representation of the component and endpoint parameters for the given component name.
      *
-     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSon schema support
+     * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSON schema support
      */
     String getComponentParameterJsonSchema(String componentName) throws IOException;
 

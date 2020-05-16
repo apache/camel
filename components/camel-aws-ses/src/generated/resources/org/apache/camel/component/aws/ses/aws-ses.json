@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-ses",
-    "title": "AWS Simple Email Service",
+    "title": "AWS Simple Email Service (SES)",
     "description": "Send e-mails through AWS SES service.",
     "deprecated": false,
     "firstVersion": "2.9.0",

@@ -39,7 +39,7 @@ public interface SqsEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS Simple Queue Service
+     * Builder for endpoint consumers for the AWS Simple Queue Service (SQS)
      * component.
      */
     public interface SqsEndpointConsumerBuilder
@@ -1147,7 +1147,7 @@ public interface SqsEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint consumers for the AWS Simple Queue Service
-     * component.
+     * (SQS) component.
      */
     public interface AdvancedSqsEndpointConsumerBuilder
             extends
@@ -1343,7 +1343,7 @@ public interface SqsEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the AWS Simple Queue Service
+     * Builder for endpoint producers for the AWS Simple Queue Service (SQS)
      * component.
      */
     public interface SqsEndpointProducerBuilder
@@ -1830,7 +1830,7 @@ public interface SqsEndpointBuilderFactory {
 
     /**
      * Advanced builder for endpoint producers for the AWS Simple Queue Service
-     * component.
+     * (SQS) component.
      */
     public interface AdvancedSqsEndpointProducerBuilder
             extends
@@ -1937,7 +1937,7 @@ public interface SqsEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the AWS Simple Queue Service component.
+     * Builder for endpoint for the AWS Simple Queue Service (SQS) component.
      */
     public interface SqsEndpointBuilder
             extends
@@ -2260,7 +2260,8 @@ public interface SqsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Simple Queue Service component.
+     * Advanced builder for endpoint for the AWS Simple Queue Service (SQS)
+     * component.
      */
     public interface AdvancedSqsEndpointBuilder
             extends
@@ -2385,7 +2386,7 @@ public interface SqsEndpointBuilderFactory {
 
     public interface SqsBuilders {
         /**
-         * AWS Simple Queue Service (camel-aws-sqs)
+         * AWS Simple Queue Service (SQS) (camel-aws-sqs)
          * Sending and receive messages to/from AWS SQS service.
          * 
          * Category: cloud,messaging
@@ -2403,7 +2404,7 @@ public interface SqsEndpointBuilderFactory {
             return SqsEndpointBuilderFactory.endpointBuilder("aws-sqs", path);
         }
         /**
-         * AWS Simple Queue Service (camel-aws-sqs)
+         * AWS Simple Queue Service (SQS) (camel-aws-sqs)
          * Sending and receive messages to/from AWS SQS service.
          * 
          * Category: cloud,messaging

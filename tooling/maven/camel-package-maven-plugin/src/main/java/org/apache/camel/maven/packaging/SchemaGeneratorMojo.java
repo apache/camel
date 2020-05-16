@@ -1111,7 +1111,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Gets the JSon schema type.
+     * Gets the JSON schema type.
      *
      * @param type the java type
      * @return the json schema type, is never null, but returns <tt>object</tt>
@@ -1144,7 +1144,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Gets the JSon schema primitive type.
+     * Gets the JSON schema primitive type.
      *
      * @param name the java type
      * @return the json schema primitive type, or <tt>null</tt> if not a

@@ -33,7 +33,7 @@ public interface AvroEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Avro component.
+     * Builder for endpoint consumers for the Avro RPC component.
      */
     public interface AvroEndpointConsumerBuilder
             extends
@@ -198,7 +198,7 @@ public interface AvroEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Avro component.
+     * Advanced builder for endpoint consumers for the Avro RPC component.
      */
     public interface AdvancedAvroEndpointConsumerBuilder
             extends
@@ -322,7 +322,7 @@ public interface AvroEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Avro component.
+     * Builder for endpoint producers for the Avro RPC component.
      */
     public interface AvroEndpointProducerBuilder
             extends
@@ -491,7 +491,7 @@ public interface AvroEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Avro component.
+     * Advanced builder for endpoint producers for the Avro RPC component.
      */
     public interface AdvancedAvroEndpointProducerBuilder
             extends
@@ -558,7 +558,7 @@ public interface AvroEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Avro component.
+     * Builder for endpoint for the Avro RPC component.
      */
     public interface AvroEndpointBuilder
             extends
@@ -681,7 +681,7 @@ public interface AvroEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Avro component.
+     * Advanced builder for endpoint for the Avro RPC component.
      */
     public interface AdvancedAvroEndpointBuilder
             extends
@@ -748,7 +748,7 @@ public interface AvroEndpointBuilderFactory {
 
     public interface AvroBuilders {
         /**
-         * Avro (camel-avro-rpc)
+         * Avro RPC (camel-avro-rpc)
          * Produce or consume Apache Avro RPC services.
          * 
          * Category: messaging,transformation
@@ -776,7 +776,7 @@ public interface AvroEndpointBuilderFactory {
             return AvroEndpointBuilderFactory.endpointBuilder("avro", path);
         }
         /**
-         * Avro (camel-avro-rpc)
+         * Avro RPC (camel-avro-rpc)
          * Produce or consume Apache Avro RPC services.
          * 
          * Category: messaging,transformation

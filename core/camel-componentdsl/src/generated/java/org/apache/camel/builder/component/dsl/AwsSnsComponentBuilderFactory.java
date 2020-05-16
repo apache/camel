@@ -31,7 +31,7 @@ import org.apache.camel.component.aws.sns.SnsComponent;
 public interface AwsSnsComponentBuilderFactory {
 
     /**
-     * AWS Simple Notification System (camel-aws-sns)
+     * AWS Simple Notification System (SNS) (camel-aws-sns)
      * Send messages to an AWS Simple Notification Topic.
      * 
      * Category: cloud,mobile,messaging
@@ -43,7 +43,7 @@ public interface AwsSnsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS Simple Notification System component.
+     * Builder for the AWS Simple Notification System (SNS) component.
      */
     interface AwsSnsComponentBuilder extends ComponentBuilder<SnsComponent> {
         /**

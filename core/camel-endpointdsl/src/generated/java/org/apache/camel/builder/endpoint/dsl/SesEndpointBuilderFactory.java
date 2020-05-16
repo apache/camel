@@ -32,7 +32,7 @@ public interface SesEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS Simple Email Service component.
+     * Builder for endpoint for the AWS Simple Email Service (SES) component.
      */
     public interface SesEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSesEndpointBuilder advanced() {
@@ -277,7 +277,8 @@ public interface SesEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Simple Email Service component.
+     * Advanced builder for endpoint for the AWS Simple Email Service (SES)
+     * component.
      */
     public interface AdvancedSesEndpointBuilder
             extends
@@ -351,7 +352,7 @@ public interface SesEndpointBuilderFactory {
 
     public interface SesBuilders {
         /**
-         * AWS Simple Email Service (camel-aws-ses)
+         * AWS Simple Email Service (SES) (camel-aws-ses)
          * Send e-mails through AWS SES service.
          * 
          * Category: cloud,mail
@@ -369,7 +370,7 @@ public interface SesEndpointBuilderFactory {
             return SesEndpointBuilderFactory.endpointBuilder("aws-ses", path);
         }
         /**
-         * AWS Simple Email Service (camel-aws-ses)
+         * AWS Simple Email Service (SES) (camel-aws-ses)
          * Send e-mails through AWS SES service.
          * 
          * Category: cloud,mail

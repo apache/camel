@@ -148,7 +148,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     /**
-     * Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.
+     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
      */
     public void setWriteAsString(boolean writeAsString) {
         this.writeAsString = writeAsString;

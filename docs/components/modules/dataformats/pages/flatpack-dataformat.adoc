@@ -44,7 +44,7 @@ The Flatpack dataformat supports 9 options, which are listed below.
 | allowShortLines | false | Boolean | Allows for lines to be shorter than expected and ignores the extra characters
 | ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
 | parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 ND

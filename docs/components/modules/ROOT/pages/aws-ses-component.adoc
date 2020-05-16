@@ -1,8 +1,8 @@
 [[aws-ses-component]]
-= AWS Simple Email Service Component
+= AWS Simple Email Service (SES) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ses/src/main/docs/aws-ses-component.adoc
-:docTitle: AWS Simple Email Service
+:docTitle: AWS Simple Email Service (SES)
 :artifactId: camel-aws-ses
 :description: Send e-mails through AWS SES service.
 :since: 2.9
@@ -36,7 +36,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Email Service component supports 14 options, which are listed below.
+The AWS Simple Email Service (SES) component supports 14 options, which are listed below.
 
 
 
@@ -64,7 +64,7 @@ The AWS Simple Email Service component supports 14 options, which are listed bel
 
 
 // endpoint options: START
-The AWS Simple Email Service endpoint is configured using URI syntax:
+The AWS Simple Email Service (SES) endpoint is configured using URI syntax:
 
 ----
 aws-ses:from

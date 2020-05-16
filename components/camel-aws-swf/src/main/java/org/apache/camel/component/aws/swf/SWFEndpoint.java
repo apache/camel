@@ -40,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage workflows in the AWS Simple Workflow service.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "aws-swf", title = "AWS Simple Workflow", syntax = "aws-swf:type",
+@UriEndpoint(firstVersion = "2.13.0", scheme = "aws-swf", title = "AWS Simple Workflow (SWF)", syntax = "aws-swf:type",
     label = "cloud,workflow")
 public class SWFEndpoint extends DefaultEndpoint {
 

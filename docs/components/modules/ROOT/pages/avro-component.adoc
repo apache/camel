@@ -1,8 +1,8 @@
 [[avro-component]]
-= Avro Component
+= Avro RPC Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-avro-rpc/src/main/docs/avro-component.adoc
-:docTitle: Avro
+:docTitle: Avro RPC
 :artifactId: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.
 :since: 2.10
@@ -139,7 +139,7 @@ wrapping.
 == Avro RPC URI Options
 
 // component options: START
-The Avro component supports 10 options, which are listed below.
+The Avro RPC component supports 10 options, which are listed below.
 
 
 
@@ -160,7 +160,7 @@ The Avro component supports 10 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The Avro endpoint is configured using URI syntax:
+The Avro RPC endpoint is configured using URI syntax:
 
 ----
 avro:transport:host:port/messageName

@@ -1,8 +1,8 @@
 [[aws-ecs-component]]
-= AWS ECS Component
+= AWS Elastic Container Service (ECS) Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws-ecs/src/main/docs/aws-ecs-component.adoc
-:docTitle: AWS ECS
+:docTitle: AWS Elastic Container Service (ECS)
 :artifactId: camel-aws-ecs
 :description: Manage AWS ECS cluster instances.
 :since: 3.0
@@ -36,7 +36,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS ECS component supports 11 options, which are listed below.
+The AWS Elastic Container Service (ECS) component supports 11 options, which are listed below.
 
 
 
@@ -61,7 +61,7 @@ The AWS ECS component supports 11 options, which are listed below.
 
 
 // endpoint options: START
-The AWS ECS endpoint is configured using URI syntax:
+The AWS Elastic Container Service (ECS) endpoint is configured using URI syntax:
 
 ----
 aws-ecs:label

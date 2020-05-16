@@ -36,7 +36,7 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
     String FACTORY = "runtime-camelcatalog";
 
     /**
-     * Returns the component information as JSon format.
+     * Returns the component information as JSON format.
      * <p/>
      * This API is needed by {@link ComponentVerifierExtension}.
      *

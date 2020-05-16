@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "avro",
-    "title": "Avro",
+    "title": "Avro RPC",
     "description": "Produce or consume Apache Avro RPC services.",
     "deprecated": false,
     "firstVersion": "2.10.0",

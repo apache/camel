@@ -31,7 +31,7 @@ import org.apache.camel.component.ahc.ws.WsComponent;
 public interface AhcWsComponentBuilderFactory {
 
     /**
-     * AHC Websocket (camel-ahc-ws)
+     * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
      * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
@@ -43,7 +43,7 @@ public interface AhcWsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AHC Websocket component.
+     * Builder for the Async HTTP Client (AHC) Websocket component.
      */
     interface AhcWsComponentBuilder extends ComponentBuilder<WsComponent> {
         /**

@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-iam",
-    "title": "AWS IAM",
+    "title": "AWS Identity and Access Management (IAM)",
     "description": "Manage AWS IAM instances.",
     "deprecated": false,
     "firstVersion": "2.23.0",

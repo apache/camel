@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "aws-ecs",
-    "title": "AWS ECS",
+    "title": "AWS Elastic Container Service (ECS)",
     "description": "Manage AWS ECS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",

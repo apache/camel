@@ -299,7 +299,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
-            throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
+            throw new IllegalArgumentException("JSON DataFormat " + name + " not found.");
         }
 
         if (json != null) {

@@ -1,6 +1,6 @@
 [[ahc-ws-component]]
-= AHC Websocket Component
-:docTitle: AHC Websocket
+= Async HTTP Client (AHC) Websocket Component
+:docTitle: Async HTTP Client (AHC) Websocket
 :artifactId: camel-ahc-ws
 :description: Exchange data with external Websocket servers using Async Http Client.
 :since: 2.14
@@ -51,7 +51,7 @@ various configuration options of the AHC component.
 
 
 // component options: START
-The AHC Websocket component supports 10 options, which are listed below.
+The Async HTTP Client (AHC) Websocket component supports 10 options, which are listed below.
 
 
 
@@ -75,7 +75,7 @@ The AHC Websocket component supports 10 options, which are listed below.
 
 
 // endpoint options: START
-The AHC Websocket endpoint is configured using URI syntax:
+The Async HTTP Client (AHC) Websocket endpoint is configured using URI syntax:
 
 ----
 ahc-ws:httpUri

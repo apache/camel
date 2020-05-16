@@ -4,7 +4,7 @@
 :page-source: components/camel-attachments/src/main/docs/attachments.adoc
 :docTitle: Attachments
 :artifactId: camel-attachments
-:description: Java Attachments support for Camel Message
+:description: Support for attachments on Camel messages
 :since: 3.0
 :supportLevel: Stable
 

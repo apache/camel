@@ -31,7 +31,7 @@ import org.apache.camel.component.aws2.msk.MSK2Component;
 public interface Aws2MskComponentBuilderFactory {
 
     /**
-     * AWS 2 MSK (camel-aws2-msk)
+     * AWS 2 Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -43,7 +43,7 @@ public interface Aws2MskComponentBuilderFactory {
     }
 
     /**
-     * Builder for the AWS 2 MSK component.
+     * Builder for the AWS 2 Managed Streaming for Apache Kafka (MSK) component.
      */
     interface Aws2MskComponentBuilder extends ComponentBuilder<MSK2Component> {
         /**

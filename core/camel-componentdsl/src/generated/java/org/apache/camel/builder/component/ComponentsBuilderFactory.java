@@ -40,7 +40,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ActivemqComponentBuilderFactory.activemq();
     }
     /**
-     * AHC (camel-ahc)
+     * Async HTTP Client (AHC) (camel-ahc)
      * Call external HTTP services using Async Http Client.
      * 
      * Category: http
@@ -51,7 +51,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AhcComponentBuilderFactory.ahc();
     }
     /**
-     * AHC Websocket (camel-ahc-ws)
+     * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
      * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
@@ -62,7 +62,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AhcWsComponentBuilderFactory.ahcWs();
     }
     /**
-     * AHC Secure Websocket (Secure) (camel-ahc-ws)
+     * Async HTTP Client (AHC) Secure Websocket (Secure) (camel-ahc-ws)
      * Exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
@@ -216,7 +216,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.atomixValue();
     }
     /**
-     * Avro (camel-avro-rpc)
+     * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
      * 
      * Category: messaging,transformation
@@ -260,7 +260,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsDdbstreamComponentBuilderFactory.awsDdbstream();
     }
     /**
-     * AWS EC2 (camel-aws-ec2)
+     * AWS Elastic Compute Cloud (EC2) (camel-aws-ec2)
      * Manage AWS EC2 instances.
      * 
      * Category: cloud,management
@@ -271,7 +271,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsEc2ComponentBuilderFactory.awsEc2();
     }
     /**
-     * AWS ECS (camel-aws-ecs)
+     * AWS Elastic Container Service (ECS) (camel-aws-ecs)
      * Manage AWS ECS cluster instances.
      * 
      * Category: cloud,management
@@ -282,7 +282,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsEcsComponentBuilderFactory.awsEcs();
     }
     /**
-     * AWS EKS (camel-aws-eks)
+     * AWS Elastic Kubernetes Service (EKS) (camel-aws-eks)
      * Manage AWS EKS cluster instances.
      * 
      * Category: cloud,management
@@ -293,7 +293,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsEksComponentBuilderFactory.awsEks();
     }
     /**
-     * AWS IAM (camel-aws-iam)
+     * AWS Identity and Access Management (IAM) (camel-aws-iam)
      * Manage AWS IAM instances.
      * 
      * Category: cloud,management
@@ -326,7 +326,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsKinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
     }
     /**
-     * AWS KMS (camel-aws-kms)
+     * AWS Key Management Service (KMS) (camel-aws-kms)
      * Manage keys stored in AWS KMS instances.
      * 
      * Category: cloud,management
@@ -359,7 +359,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsMqComponentBuilderFactory.awsMq();
     }
     /**
-     * AWS MSK (camel-aws-msk)
+     * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
      * Manage AWS MSK instances.
      * 
      * Category: cloud,management
@@ -392,7 +392,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSdbComponentBuilderFactory.awsSdb();
     }
     /**
-     * AWS Simple Email Service (camel-aws-ses)
+     * AWS Simple Email Service (SES) (camel-aws-ses)
      * Send e-mails through AWS SES service.
      * 
      * Category: cloud,mail
@@ -403,7 +403,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSesComponentBuilderFactory.awsSes();
     }
     /**
-     * AWS Simple Notification System (camel-aws-sns)
+     * AWS Simple Notification System (SNS) (camel-aws-sns)
      * Send messages to an AWS Simple Notification Topic.
      * 
      * Category: cloud,mobile,messaging
@@ -414,7 +414,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSnsComponentBuilderFactory.awsSns();
     }
     /**
-     * AWS Simple Queue Service (camel-aws-sqs)
+     * AWS Simple Queue Service (SQS) (camel-aws-sqs)
      * Sending and receive messages to/from AWS SQS service.
      * 
      * Category: cloud,messaging
@@ -425,7 +425,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsSqsComponentBuilderFactory.awsSqs();
     }
     /**
-     * AWS Simple Workflow (camel-aws-swf)
+     * AWS Simple Workflow (SWF) (camel-aws-swf)
      * Manage workflows in the AWS Simple Workflow service.
      * 
      * Category: cloud,workflow
@@ -482,7 +482,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2DdbstreamComponentBuilderFactory.aws2Ddbstream();
     }
     /**
-     * AWS 2 EC2 (camel-aws2-ec2)
+     * AWS 2 Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -493,7 +493,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2Ec2ComponentBuilderFactory.aws2Ec2();
     }
     /**
-     * AWS 2 ECS (camel-aws2-ecs)
+     * AWS 2 Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -504,7 +504,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2EcsComponentBuilderFactory.aws2Ecs();
     }
     /**
-     * AWS 2 EKS (camel-aws2-eks)
+     * AWS 2 Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -515,7 +515,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2EksComponentBuilderFactory.aws2Eks();
     }
     /**
-     * AWS 2 IAM (camel-aws2-iam)
+     * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -549,7 +549,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2KinesisFirehoseComponentBuilderFactory.aws2KinesisFirehose();
     }
     /**
-     * AWS 2 KMS (camel-aws2-kms)
+     * AWS 2 Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -560,7 +560,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2KmsComponentBuilderFactory.aws2Kms();
     }
     /**
-     * AWS Lambda (camel-aws2-lambda)
+     * AWS 2 Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
      * 
      * Category: cloud,computing,serverless
@@ -582,7 +582,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2MqComponentBuilderFactory.aws2Mq();
     }
     /**
-     * AWS 2 MSK (camel-aws2-msk)
+     * AWS 2 Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances using AWS SDK version 2.x.
      * 
      * Category: cloud,management
@@ -605,7 +605,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2S3ComponentBuilderFactory.aws2S3();
     }
     /**
-     * AWS 2 Simple Email Service (camel-aws2-ses)
+     * AWS 2 Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service using AWS SDK version 2.x.
      * 
      * Category: cloud,mail
@@ -616,7 +616,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2SesComponentBuilderFactory.aws2Ses();
     }
     /**
-     * AWS 2 Simple Notification System (camel-aws2-sns)
+     * AWS 2 Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to an AWS Simple Notification Topic using AWS SDK version
      * 2.x.
      * 
@@ -628,7 +628,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2SnsComponentBuilderFactory.aws2Sns();
     }
     /**
-     * AWS 2 Simple Queue Service (camel-aws2-sqs)
+     * AWS 2 Simple Queue Service (SQS) (camel-aws2-sqs)
      * Sending and receive messages to/from AWS SQS service using AWS SDK
      * version 2.x.
      * 
