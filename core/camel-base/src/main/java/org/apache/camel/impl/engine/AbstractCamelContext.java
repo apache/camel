@@ -275,6 +275,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile UuidGenerator uuidGenerator;
     private volatile UnitOfWorkFactory unitOfWorkFactory;
     private volatile RouteController routeController;
+    private final RouteController internalRouteController = new InternalRouteController(this);
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private volatile BeanIntrospection beanIntrospection;
     private volatile Tracer tracer;
@@ -4569,91 +4570,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public RouteController getInternalRouteController() {
-        return new RouteController() {
-            @Override
-            public SupervisingRouteController supervising() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public <T extends RouteController> T adapt(Class<T> type) {
-                return type.cast(this);
-            }
-
-            @Override
-            public Collection<Route> getControlledRoutes() {
-                return AbstractCamelContext.this.getRoutes();
-            }
-
-            @Override
-            public void startAllRoutes() throws Exception {
-                AbstractCamelContext.this.startAllRoutes();
-            }
-
-            @Override
-            public boolean isStartingRoutes() {
-                return AbstractCamelContext.this.isStartingRoutes();
-            }
-
-            @Override
-            public ServiceStatus getRouteStatus(String routeId) {
-                return AbstractCamelContext.this.getRouteStatus(routeId);
-            }
-
-            @Override
-            public void startRoute(String routeId) throws Exception {
-                AbstractCamelContext.this.startRoute(routeId);
-            }
-
-            @Override
-            public void stopRoute(String routeId) throws Exception {
-                AbstractCamelContext.this.stopRoute(routeId);
-            }
-
-            @Override
-            public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-                AbstractCamelContext.this.stopRoute(routeId, timeout, timeUnit);
-            }
-
-            @Override
-            public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-                return AbstractCamelContext.this.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
-            }
-
-            @Override
-            public void suspendRoute(String routeId) throws Exception {
-                AbstractCamelContext.this.suspendRoute(routeId);
-            }
-
-            @Override
-            public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-                AbstractCamelContext.this.suspendRoute(routeId, timeout, timeUnit);
-            }
-
-            @Override
-            public void resumeRoute(String routeId) throws Exception {
-                AbstractCamelContext.this.resumeRoute(routeId);
-            }
-
-            @Override
-            public void setCamelContext(CamelContext camelContext) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public CamelContext getCamelContext() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void start() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void stop() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return internalRouteController;
     }
 }
+
