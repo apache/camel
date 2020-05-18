@@ -279,10 +279,6 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         if (bean != null) {
             holder = new ConstantBeanHolder(bean, context);
         } else if (beanName != null) {
-            // it may refer to a type such as when used with bean language
-            if (context.getRegistry().lookupByName(beanName) == null) {
-                // TODO: ?????
-            }
             holder = new RegistryBean(context, beanName);
         } else if (type != null) {
             holder = new ConstantTypeBeanHolder(type, context);
