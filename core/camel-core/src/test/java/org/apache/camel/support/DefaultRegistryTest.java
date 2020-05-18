@@ -20,6 +20,9 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FooBar;
 import org.junit.Test;
 
@@ -85,5 +88,46 @@ public class DefaultRegistryTest extends TestCase {
         assertEquals("myCompany", it.next());
         assertEquals("myFooBar", it.next());
     }
+
+    @Test
+    public void testBindCamelContextAwareInject() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        registry.setCamelContext(context);
+
+        MyBean my = new MyBean("Tiger");
+        registry.bind("tiger", my);
+
+        MyBean lookup = (MyBean) registry.lookupByName("tiger");
+        assertSame(my, lookup);
+
+        assertNotNull(lookup.getCamelContext());
+        assertSame(context, lookup.getCamelContext());
+    }
+
+    private class MyBean implements CamelContextAware {
+
+        private CamelContext camelContext;
+
+        private String name;
+
+        public MyBean(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
 
 }
