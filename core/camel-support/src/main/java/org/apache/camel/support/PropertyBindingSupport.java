@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,6 +57,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType.
  *                               The class is created using a default no-arg constructor, however if you need to create the instance via a factory method
  *                               then you specify the method as shown: #class:com.foo.MyClassType#myFactoryMethod.
+ *                               And if the factory method requires parameters they can be specified as follows:
+ *                               #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true).
  *                               Or if you need to create the instance via constructor parameters then you can specify the parameters as shown:
  *                               #class:com.foo.MyClass('Hello World', 5, true)</li>.
  *     <li>ignore case - Whether to ignore case for property keys<li>
@@ -929,6 +932,92 @@ public final class PropertyBindingSupport {
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
     }
 
+    private static Object newInstanceFactoryParameters(CamelContext camelContext, Class<?> type, String factoryMethod, String parameters) throws Exception {
+        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
+        Method found = findMatchingFactoryMethod(type.getMethods(), factoryMethod, params);
+        if (found != null) {
+            Object[] arr = new Object[found.getParameterCount()];
+            for (int i = 0; i < found.getParameterCount(); i++) {
+                Class<?> paramType = found.getParameterTypes()[i];
+                Object param = params[i];
+                Object val = camelContext.getTypeConverter().convertTo(paramType, param);
+                // unquote text
+                if (val instanceof String) {
+                    val = StringHelper.removeLeadingAndEndingQuotes((String) val);
+                }
+                arr[i] = val;
+            }
+
+            return found.invoke(null, arr);
+        }
+        return null;
+    }
+
+    /**
+     * Finds the best matching factory methods for the given parameters.
+     * <p/>
+     * This implementation is similar to the logic in camel-bean.
+     *
+     * @param methods       the methods
+     * @param factoryMethod the name of the factory method
+     * @param params        the parameters
+     * @return the constructor, or null if no matching constructor can be found
+     */
+    private static Method findMatchingFactoryMethod(Method[] methods, String factoryMethod, String[] params) {
+        List<Method> candidates = new ArrayList<>();
+        Method fallbackCandidate = null;
+
+        for (Method method : methods) {
+            // must match factory method name
+            if (!factoryMethod.equals(method.getName())) {
+                continue;
+            }
+            // must be a public static method that returns something
+            if (!Modifier.isStatic(method.getModifiers()) ||
+                !Modifier.isPublic(method.getModifiers()) ||
+                method.getReturnType() == Void.TYPE) {
+                continue;
+            }
+            // must match number of parameters
+            if (method.getParameterCount() != params.length) {
+                continue;
+            }
+
+            boolean matches = true;
+            for (int i = 0; i < method.getParameterCount(); i++) {
+                String parameter = params[i];
+                if (parameter != null) {
+                    // must trim
+                    parameter = parameter.trim();
+                }
+
+                Class<?> parameterType = getValidParameterType(parameter);
+                Class<?> expectedType = method.getParameterTypes()[i];
+
+                if (parameterType != null && expectedType != null) {
+                    // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
+                    if (Object.class.equals(expectedType)) {
+                        fallbackCandidate = method;
+                        matches = false;
+                        break;
+                    }
+
+                    boolean matchingTypes = isParameterMatchingType(parameterType, expectedType);
+                    if (!matchingTypes) {
+                        matches = false;
+                        break;
+                    }
+                }
+            }
+
+            if (matches) {
+                candidates.add(method);
+            }
+        }
+
+        return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
     /**
      * Determines and maps the given value is valid according to the supported
      * values by the bean component.
@@ -1030,7 +1119,15 @@ public final class PropertyBindingSupport {
             }
             Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(className);
             if (factoryMethod != null) {
-                value = camelContext.getInjector().newInstance(type, factoryMethod);
+                if (parameters != null) {
+                    // special to support factory method parameters
+                    value = newInstanceFactoryParameters(camelContext, type, factoryMethod, parameters);
+                } else {
+                    value = camelContext.getInjector().newInstance(type, factoryMethod);
+                }
+                if (value == null) {
+                    throw new IllegalStateException("Cannot create bean instance using factory method: " + className + "#" + factoryMethod);
+                }
             } else if (parameters != null) {
                 // special to support constructor parameters
                 value = newInstanceConstructorParameters(camelContext, type, parameters);
