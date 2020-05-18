@@ -81,6 +81,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRoutes = "classpath:camel/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
+    private LoggingLevel routeControllerRouteStartupLoggingLevel;
     private boolean routeControllerSuperviseEnabled;
     private String routeControllerIncludeRoutes;
     private String routeControllerExcludeRoutes;
@@ -900,6 +901,19 @@ public abstract class DefaultConfigurationProperties<T> {
         this.lightweight = lightweight;
     }
 
+    public LoggingLevel getRouteControllerRouteStartupLoggingLevel() {
+        return routeControllerRouteStartupLoggingLevel;
+    }
+
+    /**
+     * Sets the logging level used for logging route startup activity.
+     * By default INFO level is used. You can use this to change the level for example to OFF if
+     * this kind of logging is not wanted.
+     */
+    public void setRouteControllerRouteStartupLoggingLevel(LoggingLevel routeControllerRouteStartupLoggingLevel) {
+        this.routeControllerRouteStartupLoggingLevel = routeControllerRouteStartupLoggingLevel;
+    }
+
     public boolean isRouteControllerSuperviseEnabled() {
         return routeControllerSuperviseEnabled;
     }
@@ -1686,6 +1700,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLightweight(boolean lightweight) {
         this.lightweight = lightweight;
+        return (T) this;
+    }
+
+    /**
+     * Sets the logging level used for logging route startup activity.
+     * By default INFO level is used. You can use this to change the level for example to OFF if
+     * this kind of logging is not wanted.
+     */
+    public T withRouteStartupLoggingLevel(LoggingLevel routeStartupLoggingLevel) {
+        this.routeControllerRouteStartupLoggingLevel = routeStartupLoggingLevel;
         return (T) this;
     }
 

@@ -119,6 +119,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": target.setRouteControllerIncludeRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": target.setRouteControllerInitialDelay(property(camelContext, long.class, value)); return true;
+        case "routecontrollerroutestartuplogginglevel":
+        case "RouteControllerRouteStartupLoggingLevel": target.setRouteControllerRouteStartupLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": target.setRouteControllerSuperviseEnabled(property(camelContext, boolean.class, value)); return true;
         case "routecontrollerthreadpoolsize":
@@ -236,6 +238,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("RouteControllerExcludeRoutes", java.lang.String.class);
         answer.put("RouteControllerIncludeRoutes", java.lang.String.class);
         answer.put("RouteControllerInitialDelay", long.class);
+        answer.put("RouteControllerRouteStartupLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("RouteControllerSuperviseEnabled", boolean.class);
         answer.put("RouteControllerThreadPoolSize", int.class);
         answer.put("RouteFilterExcludePattern", java.lang.String.class);
@@ -373,6 +376,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": return target.getRouteControllerIncludeRoutes();
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return target.getRouteControllerInitialDelay();
+        case "routecontrollerroutestartuplogginglevel":
+        case "RouteControllerRouteStartupLoggingLevel": return target.getRouteControllerRouteStartupLoggingLevel();
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": return target.isRouteControllerSuperviseEnabled();
         case "routecontrollerthreadpoolsize":
