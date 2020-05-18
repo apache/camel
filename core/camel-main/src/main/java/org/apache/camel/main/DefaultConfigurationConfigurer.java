@@ -209,6 +209,9 @@ public final class DefaultConfigurationConfigurer {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
         }
+        if (config.getRouteControllerRouteStartupLoggingLevel() != null) {
+            camelContext.getRouteController().setRouteStartupLoggingLevel(config.getRouteControllerRouteStartupLoggingLevel());
+        }
     }
 
     /**
