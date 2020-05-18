@@ -52,3 +52,8 @@ If using, then the `language` method now requires a static import as shown below
 import static org.apache.camel.builder.Builder.language;
 ----
 
+=== camel-spring-boot
+
+The `/actuator/camelroutes` HTTP endpoint has been removed from provided Spring Boot actuators in `camel-spring-boot`.
+This actuator was becoming problematic to maintain during Spring Boot upgrades due to changes in Spring Boot.
+
