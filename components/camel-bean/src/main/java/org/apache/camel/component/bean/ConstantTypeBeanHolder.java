@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -27,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ConstantTypeBeanHolder implements BeanTypeHolder {
     private final Class<?> type;
     private final BeanInfo beanInfo;
+    private Map<String, Object> options;
 
     public ConstantTypeBeanHolder(Class<?> type, CamelContext context) {
         this(type, new BeanInfo(context, type));
@@ -38,6 +42,16 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
 
         this.type = type;
         this.beanInfo = beanInfo;
+    }
+
+    @Override
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    @Override
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
     }
 
     /**
@@ -59,7 +73,16 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     public Object getBean(Exchange exchange)  {
         // only create a bean if we have a default no-arg constructor
         if (beanInfo.hasPublicNoArgConstructors()) {
-            return getBeanInfo().getCamelContext().getInjector().newInstance(type, false);
+            Object bean = getBeanInfo().getCamelContext().getInjector().newInstance(type, false);
+            if (options != null && !options.isEmpty()) {
+                PropertyBindingSupport.build()
+                        .withRemoveParameters(false)
+                        .withCamelContext(getBeanInfo().getCamelContext())
+                        .withProperties(options)
+                        .withTarget(bean)
+                        .bind();
+            }
+            return bean;
         } else {
             return null;
         }
