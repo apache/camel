@@ -384,6 +384,42 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
+    public void testNestedClassFactoryParameterOneParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Tiger')");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Tiger", foo.getAnimal().getName());
+        assertEquals(true, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassFactoryParameterTwoParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Donald Duck', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Donald Duck", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassFactoryParameterPlaceholder() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('{{companyName}}', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
     public void testPropertiesOptionalKey() throws Exception {
         Foo foo = new Foo();
 
