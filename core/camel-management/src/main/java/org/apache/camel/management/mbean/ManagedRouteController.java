@@ -55,4 +55,13 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
 
         return Collections.emptyList();
     }
+
+    @Override
+    public String getRouteStartupLoggingLevel() {
+        if (controller != null) {
+            return controller.getRouteStartupLoggingLevel().name();
+        } else {
+            return null;
+        }
+    }
 }

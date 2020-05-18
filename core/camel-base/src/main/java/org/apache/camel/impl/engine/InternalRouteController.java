@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.RouteController;
@@ -34,6 +35,16 @@ class InternalRouteController implements RouteController {
 
     public InternalRouteController(AbstractCamelContext abstractCamelContext) {
         this.abstractCamelContext = abstractCamelContext;
+    }
+
+    @Override
+    public LoggingLevel getRouteStartupLoggingLevel() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRouteStartupLoggingLevel(LoggingLevel loggingLevel) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

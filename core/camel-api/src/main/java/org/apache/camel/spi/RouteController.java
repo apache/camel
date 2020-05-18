@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StaticService;
@@ -28,6 +29,18 @@ import org.apache.camel.StaticService;
  * Controller for managing the lifecycle of all the {@link Route}'s.
  */
 public interface RouteController extends CamelContextAware, StaticService {
+
+    /**
+     * Gets the logging level used for logging route startup activity.
+     */
+    LoggingLevel getRouteStartupLoggingLevel();
+
+    /**
+     * Sets the logging level used for logging route startup activity.
+     * By default INFO level is used. You can use this to change the level for example to OFF if
+     * this kind of logging is not wanted.
+     */
+    void setRouteStartupLoggingLevel(LoggingLevel loggingLevel);
 
     /**
      * Enables supervising {@link RouteController}.
