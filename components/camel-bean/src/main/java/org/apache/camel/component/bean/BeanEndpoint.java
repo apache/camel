@@ -111,7 +111,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             }
             processor.setScope(scope);
             if (parameters != null) {
-                setProperties(processor, parameters);
+                holder.setOptions(parameters);
             }
         }
     }
