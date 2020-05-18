@@ -27,12 +27,14 @@ import java.util.TreeMap;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.support.OrderedComparator;
@@ -53,6 +55,7 @@ class InternalRouteStartupManager {
 
     private final ThreadLocal<Route> setupRoute = new ThreadLocal<>();
     private final AbstractCamelContext abstractCamelContext;
+    private final CamelLogger routeLogger = new CamelLogger(LOG);
 
     public InternalRouteStartupManager(AbstractCamelContext abstractCamelContext) {
         this.abstractCamelContext = abstractCamelContext;
@@ -272,6 +275,10 @@ class InternalRouteStartupManager {
         doStartOrResumeRouteConsumers(inputs, false, addingRoutes);
     }
 
+    private LoggingLevel getRouteLoggerLogLevel() {
+        return abstractCamelContext.getRouteController().getRouteStartupLoggingLevel();
+    }
+
     private void doStartOrResumeRouteConsumers(Map<Integer, DefaultRouteStartupOrder> inputs, boolean resumeOnly, boolean addingRoute) throws Exception {
         List<Endpoint> routeInputs = new ArrayList<>();
 
@@ -284,7 +291,7 @@ class InternalRouteStartupManager {
             // to not be auto started
             boolean autoStartup = routeService.isAutoStartup();
             if (addingRoute && !autoStartup) {
-                LOG.info("Skipping starting of route {} as it's configured with autoStartup=false", routeService.getId());
+                routeLogger.log("Skipping starting of route " + routeService.getId() + " as it's configured with autoStartup=false", getRouteLoggerLogLevel());
                 continue;
             }
 
@@ -331,7 +338,7 @@ class InternalRouteStartupManager {
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = endpoint.getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    LOG.info("Route: {} resumed and consuming from: {}", route.getId(), uri);
+                    routeLogger.log("Route: " +  route.getId() + " resumed and consuming from: " + uri, getRouteLoggerLogLevel());
                 } else {
                     // when starting we should invoke the lifecycle strategies
                     for (LifecycleStrategy strategy : abstractCamelContext.getLifecycleStrategies()) {
@@ -348,7 +355,7 @@ class InternalRouteStartupManager {
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = endpoint.getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    LOG.info("Route: {} started and consuming from: {}", route.getId(), uri);
+                    routeLogger.log("Route: " +  route.getId() + " started and consuming from: " + uri, getRouteLoggerLogLevel());
                 }
 
                 routeInputs.add(endpoint);

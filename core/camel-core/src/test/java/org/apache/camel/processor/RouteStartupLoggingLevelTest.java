@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.processor;
 
-import java.util.Collection;
+import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 
-import org.apache.camel.api.management.ManagedAttribute;
+public class RouteStartupLoggingLevelTest extends SimpleMockTest {
 
-public interface ManagedRouteControllerMBean extends ManagedServiceMBean {
-
-    @ManagedAttribute(description = "Controlled Routes")
-    Collection<String> getControlledRoutes();
-
-    @ManagedAttribute(description = "Logging level used for logging route startup activity")
-    String getRouteStartupLoggingLevel();
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getRouteController().setRouteStartupLoggingLevel(LoggingLevel.WARN);
+        return context;
+    }
 }

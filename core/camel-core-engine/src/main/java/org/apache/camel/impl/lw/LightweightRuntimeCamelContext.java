@@ -43,6 +43,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
@@ -1749,6 +1750,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public RouteController getInternalRouteController() {
         return new RouteController() {
+            @Override
+            public LoggingLevel getRouteStartupLoggingLevel() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void setRouteStartupLoggingLevel(LoggingLevel loggingLevel) {
+                throw new UnsupportedOperationException();
+            }
+
             @Override
             public SupervisingRouteController supervising() {
                 throw new UnsupportedOperationException();

@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -40,6 +41,8 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     // mark this as non managed service as its registered specially as a route controller
 
     private CamelContext camelContext;
+
+    private LoggingLevel routeStartupLoggingLevel = LoggingLevel.INFO;
 
     public DefaultRouteController() {
         this(null);
@@ -61,6 +64,16 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    public LoggingLevel getRouteStartupLoggingLevel() {
+        return routeStartupLoggingLevel;
+    }
+
+    @Override
+    public void setRouteStartupLoggingLevel(LoggingLevel routeStartupLoggingLevel) {
+        this.routeStartupLoggingLevel = routeStartupLoggingLevel;
     }
 
     // ***************************************************
