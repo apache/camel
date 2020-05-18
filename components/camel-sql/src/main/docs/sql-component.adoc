@@ -646,6 +646,25 @@ CREATE TABLE aggregation_completed (
 );
 -----
 
+**Note:** There is a new version called `JdbcAggregationRepositoryNew` which supports the optimistic locking
+also on a dstributed environment (multiple JVMs or independent threads). This new implementation is built on
+top of the old and needs an additional `version` column:
+
+[source,sql]
+-----
+CREATE TABLE aggregation (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_pk PRIMARY KEY (id)
+);
+CREATE TABLE aggregation_completed (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_completed_pk PRIMARY KEY (id)
+);
+-----
 
 == Storing body and headers as text
 

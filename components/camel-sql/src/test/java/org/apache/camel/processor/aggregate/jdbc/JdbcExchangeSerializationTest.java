@@ -26,6 +26,7 @@ public class JdbcExchangeSerializationTest extends AbstractJdbcAggregationTestSu
 
     @Test
     public void testExchangeSerialization() {
+        final String key = "foo";
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader("name", "Olivier");
@@ -35,9 +36,9 @@ public class JdbcExchangeSerializationTest extends AbstractJdbcAggregationTestSu
         Date now = new Date();
         exchange.getIn().setHeader("date", now);
 
-        repo.add(context, "foo", exchange);
+        exchange = repoAddAndGet(key, exchange);
 
-        Exchange actual = repo.get(context, "foo");
+        Exchange actual = repo.get(context, key);
         assertEquals("Hello World", actual.getIn().getBody());
         assertEquals("Olivier", actual.getIn().getHeader("name"));
         assertEquals(123, actual.getIn().getHeader("number"));
@@ -53,9 +54,9 @@ public class JdbcExchangeSerializationTest extends AbstractJdbcAggregationTestSu
         exchange.getIn().setHeader("name", "Thomas");
         exchange.getIn().removeHeader("date");
 
-        repo.add(context, "foo", exchange);
+        exchange = repoAddAndGet(key, exchange);
 
-        actual = repo.get(context, "foo");
+        actual = repo.get(context, key);
         assertEquals("Bye World", actual.getIn().getBody());
         assertEquals("Thomas", actual.getIn().getHeader("name"));
         assertEquals(123, actual.getIn().getHeader("number"));
