@@ -119,6 +119,10 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     @Override
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
+        // automatic inject camel context in bean if its aware
+        if (camelContext != null && bean instanceof CamelContextAware) {
+            ((CamelContextAware) bean).setCamelContext(camelContext);
+        }
         fallbackRegistry.bind(id, type, bean);
     }
 
