@@ -11734,7 +11734,7 @@ public class StaticEndpointBuilders {
      */
     static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder("resteasy",path);
+        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder("resteasy", path);
     }
     /**
      * Resteasy (camel-resteasy)
@@ -11756,7 +11756,7 @@ public class StaticEndpointBuilders {
     static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder(componentName,path);
+        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * REST (camel-rest)
