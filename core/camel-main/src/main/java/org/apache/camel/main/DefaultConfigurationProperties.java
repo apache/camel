@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.Experimental;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.support.PatternHelper;
@@ -888,15 +889,18 @@ public abstract class DefaultConfigurationProperties<T> {
         this.xmlRests = xmlRests;
     }
 
+    @Experimental
     public boolean isLightweight() {
         return lightweight;
     }
 
     /**
-     * Configure the context to be lightweight.  This will trigger some optimizations
-     * and memory reduction options.  Lightweight context have some limitations.  At
-     * this moment, dynamic endpoint destinations are not supported.
+     * Experimental: Configure the context to be lightweight.
+     * This will trigger some optimizations and memory reduction options.
+     * Lightweight context have some limitations.
+     * At this moment, dynamic endpoint destinations are not supported.
      */
+    @Experimental
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
     }
