@@ -22,6 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.Category;
+
 /**
  * Represents an annotated Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a>
  * which can have its properties (and the properties on its consumer) injected from the
@@ -115,8 +117,21 @@ public @interface UriEndpoint {
      * Multiple labels can be defined as a comma separated value.
      * <p/>
      * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>, <tt>database</tt>, etc.
+     * <p/>
+     * Deprecated: Use the category field instead
      */
+    @Deprecated
     String label() default "";
+
+    /**
+     * To associate this endpoint with category(ies).
+     * <p/>
+     * This category is intended for grouping the endpoints, such as <tt>Category.CORE</tt>, <tt>Category.FILE</tt>, <tt>Category.DATABASE</tt>, etc, but supplied with
+     * as array of {@link Category} enums.
+     * </p>
+     * For example: @UriEndpoint(category = {Category.CORE, Category.DATABASE})
+     */
+    Category[] category() default {};
 
     /**
      * Whether this endpoint can only be used as a producer.
