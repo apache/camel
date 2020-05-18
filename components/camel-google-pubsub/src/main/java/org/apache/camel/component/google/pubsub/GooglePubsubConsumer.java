@@ -96,15 +96,18 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
     private class SubscriberWrapper implements Runnable {
 
+        private final String subscriptionName;
+
+        SubscriberWrapper() {
+            subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
+        }
+
         @Override
         public void run() {
             try {
-                String subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
-
                 if (localLog.isDebugEnabled()) {
                     localLog.debug("Subscribing to {}", subscriptionName);
                 }
-
 
                 if (endpoint.isSynchronousPull()) {
                     synchronousPull(subscriptionName);
