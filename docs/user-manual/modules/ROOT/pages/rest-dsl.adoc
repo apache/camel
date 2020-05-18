@@ -407,6 +407,17 @@ rest("/users/")
         .to("direct:newUser");
 ----
 
+== And in XML DSL
+
+[source,xml]
+----
+<rest uri="/users/">
+  <post type="UserPojo" outType="CountryPojo">
+    <to uri="direct:newUser"/>
+  </post>
+<rest>
+----
+
 To specify input and/or output using an array, append `[]` to the end
 of the canonical class name as shown in the following Java DSL:
 
