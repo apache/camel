@@ -384,7 +384,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesOptionallKey() throws Exception {
+    public void testPropertiesOptionalKey() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
@@ -415,7 +415,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesOptionallKeyMandatory() throws Exception {
+    public void testPropertiesOptionalKeyMandatory() throws Exception {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new HashMap<>();
