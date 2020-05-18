@@ -171,10 +171,9 @@ import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 public abstract class AbstractCamelContext extends BaseService
         implements ExtendedCamelContext, CatalogCamelContext, Suspendable {
 
-    // start auto assigning route ids using numbering 1000 and upwards
-
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
 
+    // start auto assigning route ids using numbering 1000 and upwards
     int defaultRouteStartupOrder = 1000;
 
     public enum Initialization {
