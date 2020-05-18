@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.storage.queue;
 
 import com.azure.storage.queue.QueueServiceClient;
 import com.azure.storage.queue.models.QueueMessageItem;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -33,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using Azure SDK v12.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service", syntax = "azure-storage-queue:queueName", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service", syntax = "azure-storage-queue:queueName", category = {Category.CLOUD, Category.MESSAGING})
 public class QueueEndpoint extends DefaultEndpoint {
 
     private QueueServiceClient queueServiceClient;
