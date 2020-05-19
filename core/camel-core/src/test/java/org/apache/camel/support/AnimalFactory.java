@@ -16,7 +16,10 @@
  */
 package org.apache.camel.support;
 
-public class AnimalFactory {
+public final class AnimalFactory {
+
+    private AnimalFactory() {
+    }
 
     public static Animal createAnimal(String name, boolean dangerous) {
         return new Animal(name, dangerous);
