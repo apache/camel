@@ -916,26 +916,8 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointConsumerBuilder args(
-                Map<String, Object> args) {
-            doSetProperty("args", args);
-            return this;
-        }
-        /**
-         * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
-         * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
+         * method to add a value (call the method multiple times to set more
+         * values).
          * 
          * Group: advanced
          */
@@ -952,16 +934,16 @@ public interface RabbitMQEndpointBuilderFactory {
          * message ttl argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
+         * method to add a value (call the method multiple times to set more
+         * values).
          * 
          * Group: advanced
          */
-        default AdvancedRabbitMQEndpointConsumerBuilder args(String args) {
-            doSetProperty("args", args);
+        default AdvancedRabbitMQEndpointConsumerBuilder args(Map values) {
+            doSetMultiValueProperties("args", "arg.", values);
             return this;
         }
         /**
@@ -2200,26 +2182,8 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointProducerBuilder args(
-                Map<String, Object> args) {
-            doSetProperty("args", args);
-            return this;
-        }
-        /**
-         * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
-         * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
+         * method to add a value (call the method multiple times to set more
+         * values).
          * 
          * Group: advanced
          */
@@ -2236,16 +2200,16 @@ public interface RabbitMQEndpointBuilderFactory {
          * message ttl argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
+         * method to add a value (call the method multiple times to set more
+         * values).
          * 
          * Group: advanced
          */
-        default AdvancedRabbitMQEndpointProducerBuilder args(String args) {
-            doSetProperty("args", args);
+        default AdvancedRabbitMQEndpointProducerBuilder args(Map values) {
+            doSetMultiValueProperties("args", "arg.", values);
             return this;
         }
         /**
@@ -3154,25 +3118,8 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedRabbitMQEndpointBuilder args(Map<String, Object> args) {
-            doSetProperty("args", args);
-            return this;
-        }
-        /**
-         * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each: Exchange: arg.exchange. Queue:
-         * arg.queue. Binding: arg.binding. For example to declare a queue with
-         * message ttl argument:
-         * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
+         * method to add a value (call the method multiple times to set more
+         * values).
          * 
          * Group: advanced
          */
@@ -3187,16 +3134,16 @@ public interface RabbitMQEndpointBuilderFactory {
          * message ttl argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the args(String, Object)
-         * method to add a value at a time.
+         * method to add a value (call the method multiple times to set more
+         * values).
          * 
          * Group: advanced
          */
-        default AdvancedRabbitMQEndpointBuilder args(String args) {
-            doSetProperty("args", args);
+        default AdvancedRabbitMQEndpointBuilder args(Map values) {
+            doSetMultiValueProperties("args", "arg.", values);
             return this;
         }
         /**

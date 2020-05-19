@@ -1091,22 +1091,8 @@ public interface HttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedHttpEndpointBuilder httpClientOptions(
-                Map<String, Object> httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -1119,17 +1105,16 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedHttpEndpointBuilder httpClientOptions(
-                String httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
+        default AdvancedHttpEndpointBuilder httpClientOptions(Map values) {
+            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**

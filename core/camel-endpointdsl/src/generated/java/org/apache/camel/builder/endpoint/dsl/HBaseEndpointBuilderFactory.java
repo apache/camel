@@ -135,31 +135,8 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
-         * 
-         * Group: common
-         */
-        default HBaseEndpointConsumerBuilder rowMapping(
-                Map<String, Object> rowMapping) {
-            doSetProperty("rowMapping", rowMapping);
-            return this;
-        }
-        /**
-         * To map the key/values from the Map to a HBaseRow. The following keys
-         * is supported: rowId - The id of the row. This has limited use as the
-         * row usually changes per Exchange. rowType - The type to covert row id
-         * to. Supported operations: CamelHBaseScan. family - The column family.
-         * Supports a number suffix for referring to more than one columns.
-         * qualifier - The column qualifier. Supports a number suffix for
-         * referring to more than one columns. value - The value. Supports a
-         * number suffix for referring to more than one columns valueType - The
-         * value type. Supports a number suffix for referring to more than one
-         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: common
          */
@@ -179,16 +156,16 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: common
          */
-        default HBaseEndpointConsumerBuilder rowMapping(String rowMapping) {
-            doSetProperty("rowMapping", rowMapping);
+        default HBaseEndpointConsumerBuilder rowMapping(Map values) {
+            doSetMultiValueProperties("rowMapping", "row.", values);
             return this;
         }
         /**
@@ -601,31 +578,8 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
-         * 
-         * Group: common
-         */
-        default HBaseEndpointProducerBuilder rowMapping(
-                Map<String, Object> rowMapping) {
-            doSetProperty("rowMapping", rowMapping);
-            return this;
-        }
-        /**
-         * To map the key/values from the Map to a HBaseRow. The following keys
-         * is supported: rowId - The id of the row. This has limited use as the
-         * row usually changes per Exchange. rowType - The type to covert row id
-         * to. Supported operations: CamelHBaseScan. family - The column family.
-         * Supports a number suffix for referring to more than one columns.
-         * qualifier - The column qualifier. Supports a number suffix for
-         * referring to more than one columns. value - The value. Supports a
-         * number suffix for referring to more than one columns valueType - The
-         * value type. Supports a number suffix for referring to more than one
-         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: common
          */
@@ -645,16 +599,16 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: common
          */
-        default HBaseEndpointProducerBuilder rowMapping(String rowMapping) {
-            doSetProperty("rowMapping", rowMapping);
+        default HBaseEndpointProducerBuilder rowMapping(Map values) {
+            doSetMultiValueProperties("rowMapping", "row.", values);
             return this;
         }
         /**
@@ -946,30 +900,8 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
-         * 
-         * Group: common
-         */
-        default HBaseEndpointBuilder rowMapping(Map<String, Object> rowMapping) {
-            doSetProperty("rowMapping", rowMapping);
-            return this;
-        }
-        /**
-         * To map the key/values from the Map to a HBaseRow. The following keys
-         * is supported: rowId - The id of the row. This has limited use as the
-         * row usually changes per Exchange. rowType - The type to covert row id
-         * to. Supported operations: CamelHBaseScan. family - The column family.
-         * Supports a number suffix for referring to more than one columns.
-         * qualifier - The column qualifier. Supports a number suffix for
-         * referring to more than one columns. value - The value. Supports a
-         * number suffix for referring to more than one columns valueType - The
-         * value type. Supports a number suffix for referring to more than one
-         * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: common
          */
@@ -989,16 +921,16 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the rowMapping(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: common
          */
-        default HBaseEndpointBuilder rowMapping(String rowMapping) {
-            doSetProperty("rowMapping", rowMapping);
+        default HBaseEndpointBuilder rowMapping(Map values) {
+            doSetMultiValueProperties("rowMapping", "row.", values);
             return this;
         }
         /**

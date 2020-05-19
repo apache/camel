@@ -890,22 +890,8 @@ public interface ResteasyEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClientOptions(
-                Map<String, Object> httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -918,17 +904,17 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
         default AdvancedResteasyEndpointConsumerBuilder httpClientOptions(
-                String httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
+                Map values) {
+            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**
@@ -2402,22 +2388,8 @@ public interface ResteasyEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClientOptions(
-                Map<String, Object> httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -2430,17 +2402,17 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
         default AdvancedResteasyEndpointProducerBuilder httpClientOptions(
-                String httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
+                Map values) {
+            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**
@@ -3249,22 +3221,8 @@ public interface ResteasyEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClientOptions(
-                Map<String, Object> httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
-            return this;
-        }
-        /**
-         * To configure the HttpClient using the key/values from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -3277,17 +3235,16 @@ public interface ResteasyEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * httpClientOptions(String, Object) method to add a value at a time.
+         * httpClientOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedResteasyEndpointBuilder httpClientOptions(
-                String httpClientOptions) {
-            doSetProperty("httpClientOptions", httpClientOptions);
+        default AdvancedResteasyEndpointBuilder httpClientOptions(Map values) {
+            doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
             return this;
         }
         /**

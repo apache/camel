@@ -211,22 +211,8 @@ public interface ClassEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
-         * Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedClassEndpointBuilder parameters(
-                Map<String, Object> parameters) {
-            doSetProperty("parameters", parameters);
-            return this;
-        }
-        /**
-         * Used for configuring additional properties on the bean.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the parameters(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: advanced
          */
@@ -237,16 +223,16 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Used for configuring additional properties on the bean.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the parameters(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: advanced
          */
-        default AdvancedClassEndpointBuilder parameters(String parameters) {
-            doSetProperty("parameters", parameters);
+        default AdvancedClassEndpointBuilder parameters(Map values) {
+            doSetMultiValueProperties("parameters", "bean.", values);
             return this;
         }
         /**
