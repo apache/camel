@@ -3067,7 +3067,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Resteasy (camel-resteasy)
-     * Defines the Resteasy Endpoint.
+     * Expose REST endpoints and access external REST servers.
      * 
      * Category: rest
      * Since: 3.4

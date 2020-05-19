@@ -34,6 +34,10 @@
     <name>Camel :: Resteasy</name>
     <description>Camel Resteasy support</description>
 
+    <properties>
+        <supportLevel>preview</supportLevel>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
