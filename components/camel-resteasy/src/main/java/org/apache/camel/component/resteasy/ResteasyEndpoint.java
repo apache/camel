@@ -38,7 +38,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
  *
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "resteasy",  extendsScheme = "http",
-        title = "Resteasy", syntax = "resteasy:", label = "rest")
+        title = "Resteasy", syntax = "resteasy:httpUri", label = "rest")
 public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrategyAware {
     @UriParam
     private  String resteasyMethod = "GET";

@@ -78,7 +78,7 @@ The Resteasy component supports 22 options, which are listed below.
 The Resteasy endpoint is configured using URI syntax:
 
 ----
-resteasy:
+resteasy:httpUri
 ----
 
 with the following path and query parameters:
