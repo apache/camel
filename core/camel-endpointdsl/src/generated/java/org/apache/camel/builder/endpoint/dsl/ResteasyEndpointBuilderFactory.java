@@ -3609,12 +3609,12 @@ public interface ResteasyEndpointBuilderFactory {
          * Since: 3.4
          * Maven coordinates: org.apache.camel:camel-resteasy
          * 
-         * Syntax: <code>resteasy:contextPath</code>
+         * Syntax: <code>resteasy:</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
-         * @param path contextPath
+         * @param path 
          */
         default ResteasyEndpointBuilder resteasy(String path) {
             return ResteasyEndpointBuilderFactory.endpointBuilder("resteasy", path);
@@ -3627,14 +3627,14 @@ public interface ResteasyEndpointBuilderFactory {
          * Since: 3.4
          * Maven coordinates: org.apache.camel:camel-resteasy
          * 
-         * Syntax: <code>resteasy:contextPath</code>
+         * Syntax: <code>resteasy:</code>
          * 
          * Path parameter: httpUri (required)
          * The url of the HTTP endpoint to call.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path contextPath
+         * @param path 
          */
         default ResteasyEndpointBuilder resteasy(
                 String componentName,
