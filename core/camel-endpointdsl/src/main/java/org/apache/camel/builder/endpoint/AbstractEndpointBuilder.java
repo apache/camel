@@ -146,6 +146,12 @@ public class AbstractEndpointBuilder {
         map.put(key, value);
     }
 
+    public void doSetMultiValueProperties(String name, String prefix, Map<String, Object> values) {
+        values.forEach((k, v) -> {
+            doSetMultiValueProperty(name, prefix + k, v);
+        });
+    }
+
     public Expression expr() {
         return SimpleBuilder.simple(getUri());
     }
