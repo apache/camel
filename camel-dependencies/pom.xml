@@ -67,7 +67,7 @@
     <avro-ipc-jetty-version>1.9.1</avro-ipc-jetty-version>
     <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
     <avro-version>1.9.1</avro-version>
-    <awaitility-version>4.0.2</awaitility-version>
+    <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
     <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
     <aws-java-sdk2-version>2.13.19</aws-java-sdk2-version>
