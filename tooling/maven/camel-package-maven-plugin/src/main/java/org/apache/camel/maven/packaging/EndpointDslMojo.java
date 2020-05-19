@@ -64,7 +64,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
-import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
