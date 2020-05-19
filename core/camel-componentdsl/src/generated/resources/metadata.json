@@ -5704,7 +5704,7 @@
     "kind": "component",
     "name": "resteasy",
     "title": "Resteasy",
-    "description": "Defines the Resteasy Endpoint.",
+    "description": "Expose REST endpoints and access external REST servers.",
     "deprecated": false,
     "firstVersion": "3.4.0",
     "label": "rest",

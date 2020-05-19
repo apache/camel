@@ -32,56 +32,39 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
- * Defines the Resteasy Endpoint.
- * It contains a list of properties for Resteasy endpoint including {@link org.apache.camel.component.resteasy.ResteasyHttpBinding},
- * and {@link HeaderFilterStrategy}.
- *
+ * Expose REST endpoints and access external REST servers.
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "resteasy",  extendsScheme = "http",
         title = "Resteasy", syntax = "resteasy:httpUri", label = "rest")
 public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrategyAware {
-    @UriParam
-    private  String resteasyMethod = "GET";
-
-    @UriParam
-    private ResteasyHttpBinding restEasyHttpBindingRef;
-
-    @UriParam
-    private String servletName;
-
-    @UriParam
-    private String proxyClientClass;
-
-    @UriParam
-    private String proxyMethod;
-
-    @UriParam
-    private Boolean setHttpResponseDuringProcessing = false;
-
-    @UriParam
-    private Boolean skipServletProcessing = false;
-
-    @UriParam
-    private Boolean basicAuth = false;
-
-    @UriParam
-    private String username;
-
-    @UriParam
-    private String password;
 
     private String protocol;
     private String host;
     private int port;
     private String uriPattern;
 
-//    Using default camel headerFilterStrategy -> possibility to create your own strategy and set it on endpoint
+    @UriParam(defaultValue = "GET")
+    private String resteasyMethod = "GET";
     @UriParam
+    private ResteasyHttpBinding restEasyHttpBindingRef;
+    @UriParam
+    private String servletName;
+    @UriParam(label = "proxy")
+    private String proxyClientClass;
+    @UriParam(label = "proxy")
+    private String proxyMethod;
+    @UriParam(label = "advanced")
+    private Boolean setHttpResponseDuringProcessing = false;
+    @UriParam(label = "advanced")
+    private Boolean skipServletProcessing = false;
+    @UriParam(label = "security")
+    private Boolean basicAuth = false;
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security", secret = true)
+    private String password;
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new ResteasyHeaderFilterStrategy();
-
-    @UriParam
-    private boolean throwExceptionOnFailure = true;
-
 
     public ResteasyEndpoint(String endPointURI, ResteasyComponent component, URI httpUri, HttpClientConnectionManager httpConnectionManager,
                             HttpClientConfigurer clientConfigurer) throws URISyntaxException {
@@ -103,11 +86,6 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -117,7 +95,6 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-
     public String getProxyMethod() {
         return proxyMethod;
     }
@@ -125,7 +102,6 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
     /**
      * Sets the proxy method defined in an interface
     */
-
     public void setProxyMethod(String proxyMethod) {
         this.proxyMethod = proxyMethod;
     }
@@ -228,17 +204,6 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
     */
     public void setUriPattern(String uriPattern) {
         this.uriPattern = uriPattern;
-    }
-
-    public boolean isThrowExceptionOnFailure() {
-        return throwExceptionOnFailure;
-    }
-
-    /**
-     * ets the flag to propogate the exception
-    */
-    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
-        this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 
     public Boolean getBasicAuth() {
