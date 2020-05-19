@@ -6,7 +6,7 @@
     "description": "Integrate with Consul service discovery and configuration store.",
     "deprecated": false,
     "firstVersion": "2.18.0",
-    "label": "api,cloud",
+    "label": "cloud,api",
     "javaType": "org.apache.camel.component.consul.ConsulComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

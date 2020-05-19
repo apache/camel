@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,7 +29,7 @@ import org.elasticsearch.client.RestClient;
  * Send requests to with an ElasticSearch via REST API.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elasticsearch Rest",
-    syntax = "elasticsearch-rest:clusterName", producerOnly = true, label = "monitoring,search")
+    syntax = "elasticsearch-rest:clusterName", producerOnly = true, category = {Category.SEARCH, Category.MONITORING})
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     @UriParam

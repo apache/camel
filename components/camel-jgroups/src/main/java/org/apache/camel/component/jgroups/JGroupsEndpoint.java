@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Exchange messages with JGroups clusters.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", label = "clustering,messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", category = {Category.CLUSTERING, Category.MESSAGING})
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";

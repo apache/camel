@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cron;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
@@ -32,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * A generic interface for triggering events at times specified through the Unix cron syntax.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "cron", title = "Cron", syntax = "cron:name", consumerOnly = true, label = "scheduling")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "cron", title = "Cron", syntax = "cron:name", consumerOnly = true, category = {Category.SCHEDULING})
 public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private Endpoint delegate;

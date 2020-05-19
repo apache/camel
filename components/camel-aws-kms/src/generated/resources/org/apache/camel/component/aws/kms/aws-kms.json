@@ -6,7 +6,7 @@
     "description": "Manage keys stored in AWS KMS instances.",
     "deprecated": false,
     "firstVersion": "2.21.0",
-    "label": "cloud,management",
+    "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.aws.kms.KMSComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

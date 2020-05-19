@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.eks;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import software.amazon.awssdk.services.eks.EksClientBuilder;
 /**
  * Manage AWS EKS cluster instances using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS 2 Elastic Kubernetes Service (EKS)", syntax = "aws2-eks:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS 2 Elastic Kubernetes Service (EKS)", syntax = "aws2-eks:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
 public class EKS2Endpoint extends ScheduledPollEndpoint {
 
     private EksClient eksClient;

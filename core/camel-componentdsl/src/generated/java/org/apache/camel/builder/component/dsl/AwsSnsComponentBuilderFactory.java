@@ -34,7 +34,7 @@ public interface AwsSnsComponentBuilderFactory {
      * AWS Simple Notification System (SNS) (camel-aws-sns)
      * Send messages to an AWS Simple Notification Topic.
      * 
-     * Category: cloud,mobile,messaging
+     * Category: cloud,messaging,mobile
      * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-sns
      */

@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.cache.Cache.Entry;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -38,7 +39,7 @@ import org.apache.ignite.cache.query.Query;
 /**
  * Perform cache operations on an Ignite cache or consume changes from a continuous query.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName", label = "nosql,cache,compute")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName", category = {Category.CACHE, Category.DATAGRID})
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath @Metadata(required = true)

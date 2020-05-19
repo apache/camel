@@ -36,7 +36,7 @@ public interface DropboxComponentBuilderFactory {
      * Upload, download and manage files, folders, groups, collaborations, etc
      * on Dropbox.
      * 
-     * Category: api,file
+     * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
      */

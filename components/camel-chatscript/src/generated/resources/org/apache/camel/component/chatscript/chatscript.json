@@ -6,7 +6,7 @@
     "description": "Chat with a ChatScript Server.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "ai,chatscript",
+    "label": "ai,chat",
     "javaType": "org.apache.camel.component.chatscript.ChatScriptComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

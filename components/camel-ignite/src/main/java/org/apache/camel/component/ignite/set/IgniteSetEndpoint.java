@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.set;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.ignite.configuration.CollectionConfiguration;
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", label = "nosql,cache", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", category = {Category.CACHE, Category.COMPUTE}, producerOnly = true)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath @Metadata(required = true)

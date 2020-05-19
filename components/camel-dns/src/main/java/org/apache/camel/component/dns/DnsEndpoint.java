@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dns;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform DNS queries using DNSJava.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, label = "networking")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, category = {Category.NETWORKING})
 public class DnsEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true)

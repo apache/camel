@@ -19,6 +19,7 @@ package org.apache.camel.component.ahc.ws;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Exchange data with external Websocket servers using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "Async HTTP Client (AHC) Websocket,Async HTTP Client (AHC) Secure Websocket",
-        syntax = "ahc-ws:httpUri", label = "websocket")
+        syntax = "ahc-ws:httpUri", category = {Category.WEBSOCKET})
 public class WsEndpoint extends AhcEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);

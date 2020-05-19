@@ -187,7 +187,7 @@ public interface FopEndpointBuilderFactory {
          * Render messages into PDF and other output formats supported by Apache
          * FOP.
          * 
-         * Category: transformation
+         * Category: file,transformation
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-fop
          * 
@@ -209,7 +209,7 @@ public interface FopEndpointBuilderFactory {
          * Render messages into PDF and other output formats supported by Apache
          * FOP.
          * 
-         * Category: transformation
+         * Category: file,transformation
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-fop
          * 

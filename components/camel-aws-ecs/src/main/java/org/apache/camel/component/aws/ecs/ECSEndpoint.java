@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS ECS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS Elastic Container Service (ECS)", syntax = "aws-ecs:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS Elastic Container Service (ECS)", syntax = "aws-ecs:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
 public class ECSEndpoint extends ScheduledPollEndpoint {
 
     private AmazonECS ecsClient;

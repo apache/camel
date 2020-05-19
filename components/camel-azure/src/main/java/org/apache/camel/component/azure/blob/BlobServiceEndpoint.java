@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.blob;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
              scheme = "azure-blob",
              title = "Azure Storage Blob Service (Legacy)",
              syntax = "azure-blob:containerOrBlobUri",
-             label = "cloud,database,nosql")
+             category = {Category.CLOUD, Category.FILE})
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container or Blob compact Uri")

@@ -18,6 +18,7 @@ package org.apache.camel.component.cm;
 
 import java.util.UUID;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -31,7 +32,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Send SMS messages via <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host", label = "mobile", producerOnly = true)
+@UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host", category = {Category.MOBILE}, producerOnly = true)
 public class CMEndpoint extends DefaultEndpoint {
 
     @UriPath

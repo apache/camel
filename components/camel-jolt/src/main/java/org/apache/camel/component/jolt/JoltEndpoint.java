@@ -28,6 +28,7 @@ import com.bazaarvoice.jolt.Removr;
 import com.bazaarvoice.jolt.Shiftr;
 import com.bazaarvoice.jolt.Sortr;
 import com.bazaarvoice.jolt.Transform;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -39,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JSON to JSON transformation using JOLT.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class JoltEndpoint extends ResourceEndpoint {
 
     private JoltTransform transform;

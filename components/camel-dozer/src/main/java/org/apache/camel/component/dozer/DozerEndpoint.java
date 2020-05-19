@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.github.dozermapper.core.CustomConverter;
 import com.github.dozermapper.core.Mapper;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Map between Java beans using the Dozer mapping library.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, category = {Category.TRANSFORMATION})
 public class DozerEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);

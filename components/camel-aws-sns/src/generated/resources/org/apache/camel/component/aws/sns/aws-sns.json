@@ -6,7 +6,7 @@
     "description": "Send messages to an AWS Simple Notification Topic.",
     "deprecated": false,
     "firstVersion": "2.8.0",
-    "label": "cloud,mobile,messaging",
+    "label": "cloud,messaging,mobile",
     "javaType": "org.apache.camel.component.aws.sns.SnsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

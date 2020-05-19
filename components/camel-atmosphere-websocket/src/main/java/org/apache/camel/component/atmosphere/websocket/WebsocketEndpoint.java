@@ -19,6 +19,7 @@ package org.apache.camel.component.atmosphere.websocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,7 +33,7 @@ import org.apache.camel.spi.UriPath;
  * Expose WebSocket endpoints using the Atmosphere framework.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
-        syntax = "atmosphere-websocket:servicePath", label = "websocket")
+        syntax = "atmosphere-websocket:servicePath", category = {Category.WEBSOCKET})
 @Metadata(excludeProperties = "httpUri,contextPath,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
                 + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
 public class WebsocketEndpoint extends ServletEndpoint {

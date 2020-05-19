@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.AmazonTranslateClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Translate texts using AWS Translate.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-translate", title = "AWS Translate", syntax = "aws-translate:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-translate", title = "AWS Translate", syntax = "aws-translate:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
 public class TranslateEndpoint extends ScheduledPollEndpoint {
 
     private AmazonTranslate translateClient;

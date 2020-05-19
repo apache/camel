@@ -34,7 +34,7 @@ public interface IgniteSetComponentBuilderFactory {
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
      * 
-     * Category: nosql,cache
+     * Category: cache,compute
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */

@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 
 import io.iron.ironmq.Client;
 import io.iron.ironmq.Cloud;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive messages to/from <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message queue as a service.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", category = {Category.CLOUD, Category.MESSAGING})
 public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);

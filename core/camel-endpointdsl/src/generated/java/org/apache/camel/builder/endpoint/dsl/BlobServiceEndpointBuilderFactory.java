@@ -1379,7 +1379,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Azure Storage Blob Service (Legacy) (camel-azure)
          * Store and retrieve blobs from Azure Storage Blob Service.
          * 
-         * Category: cloud,database,nosql
+         * Category: cloud,file
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-azure
          * 
@@ -1397,7 +1397,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Azure Storage Blob Service (Legacy) (camel-azure)
          * Store and retrieve blobs from Azure Storage Blob Service.
          * 
-         * Category: cloud,database,nosql
+         * Category: cloud,file
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-azure
          * 

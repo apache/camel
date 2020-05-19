@@ -18,6 +18,7 @@ package org.apache.camel.component.iota;
 
 import java.net.URL;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.iota.jota.IotaAPI;
 /**
  * Manage financial transactions using IOTA distributed ledger.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "iota", title = "IOTA", syntax = "iota:name", label = "ledger", producerOnly = true)
+@UriEndpoint(firstVersion = "2.23.0", scheme = "iota", title = "IOTA", syntax = "iota:name", category = {Category.LEDGER, Category.API}, producerOnly = true)
 public class IOTAEndpoint extends DefaultEndpoint {
 
     private volatile IotaAPI apiClient;

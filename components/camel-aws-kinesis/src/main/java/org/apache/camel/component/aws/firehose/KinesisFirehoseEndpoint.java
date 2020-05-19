@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehoseClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * Consume data from AWS Kinesis Firehose streams.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "aws-kinesis-firehose", title = "AWS Kinesis Firehose", syntax = "aws-kinesis-firehose:streamName",
-    producerOnly = true, label = "cloud,messaging")
+    producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
 public class KinesisFirehoseEndpoint extends DefaultEndpoint {
 
     @UriParam

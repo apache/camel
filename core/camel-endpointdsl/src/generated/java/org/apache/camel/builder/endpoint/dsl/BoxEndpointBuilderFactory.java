@@ -1643,7 +1643,7 @@ public interface BoxEndpointBuilderFactory {
          * Upload, download and manage files, folders, groups, collaborations,
          * etc. on box.com.
          * 
-         * Category: api,file,cloud
+         * Category: cloud,file,api
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-box
          * 
@@ -1667,7 +1667,7 @@ public interface BoxEndpointBuilderFactory {
          * Upload, download and manage files, folders, groups, collaborations,
          * etc. on box.com.
          * 
-         * Category: api,file,cloud
+         * Category: cloud,file,api
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-box
          * 

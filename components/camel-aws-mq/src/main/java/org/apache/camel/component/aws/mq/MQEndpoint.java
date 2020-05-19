@@ -25,6 +25,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.AmazonMQClient;
 import com.amazonaws.services.mq.AmazonMQClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS MQ instances.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-mq", title = "AWS MQ", syntax = "aws-mq:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-mq", title = "AWS MQ", syntax = "aws-mq:label", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
 public class MQEndpoint extends ScheduledPollEndpoint {
 
     private AmazonMQ mqClient;

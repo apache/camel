@@ -19,6 +19,7 @@ package org.apache.camel.component.consul;
 import java.util.Optional;
 
 import com.orbitz.consul.Consul;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Integrate with <a href="https://www.consul.io/">Consul</a> service discovery and configuration store.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", category = {Category.CLOUD, Category.API})
 public class ConsulEndpoint extends DefaultEndpoint {
 
     @UriParam

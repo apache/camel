@@ -190,7 +190,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * ChatScript (camel-chatscript)
          * Chat with a ChatScript Server.
          * 
-         * Category: ai,chatscript
+         * Category: ai,chat
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-chatscript
          * 
@@ -215,7 +215,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * ChatScript (camel-chatscript)
          * Chat with a ChatScript Server.
          * 
-         * Category: ai,chatscript
+         * Category: ai,chat
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-chatscript
          * 

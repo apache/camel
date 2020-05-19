@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.git;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations on git repositories.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", label = "file")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = {Category.FILE})
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath

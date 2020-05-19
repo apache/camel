@@ -34,7 +34,7 @@ public interface ElasticsearchRestComponentBuilderFactory {
      * Elasticsearch Rest (camel-elasticsearch-rest)
      * Send requests to with an ElasticSearch via REST API.
      * 
-     * Category: monitoring,search
+     * Category: search,monitoring
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
      */

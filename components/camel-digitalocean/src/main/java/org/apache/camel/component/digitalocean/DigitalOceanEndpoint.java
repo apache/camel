@@ -17,6 +17,7 @@
 package org.apache.camel.component.digitalocean;
 
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -46,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Manage Droplets and resources within the DigitalOcean cloud.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
 public class DigitalOceanEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);

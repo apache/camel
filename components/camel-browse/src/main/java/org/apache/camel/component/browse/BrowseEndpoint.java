@@ -19,6 +19,7 @@ package org.apache.camel.component.browse;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -37,7 +38,7 @@ import org.apache.camel.support.DefaultProducer;
  *
  * This can be useful for testing, visualisation tools or debugging. The exchanges sent to the endpoint are all available to be browsed.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name", label = "core,monitoring")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name", category = {Category.CORE, Category.MONITORING})
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint") @Metadata(required = true)

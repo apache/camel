@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.mq;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import software.amazon.awssdk.services.mq.MqClientBuilder;
 /**
  * Manage AWS MQ instances using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS 2 MQ", syntax = "aws2-mq:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS 2 MQ", syntax = "aws2-mq:label", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
 public class MQ2Endpoint extends ScheduledPollEndpoint {
 
     private MqClient mqClient;

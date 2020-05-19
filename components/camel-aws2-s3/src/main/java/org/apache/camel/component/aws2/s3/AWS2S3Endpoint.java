@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -53,7 +54,7 @@ import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 /**
  * Store and retrie objects from AWS S3 Storage Service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS 2 S3 Storage Service", syntax = "aws2-s3://bucketNameOrArn", label = "cloud,file")
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS 2 S3 Storage Service", syntax = "aws2-s3://bucketNameOrArn", category = {Category.CLOUD, Category.FILE})
 public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Endpoint.class);

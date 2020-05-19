@@ -34,7 +34,7 @@ public interface IgniteMessagingComponentBuilderFactory {
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
      * 
-     * Category: nosql,cache,messaging
+     * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */

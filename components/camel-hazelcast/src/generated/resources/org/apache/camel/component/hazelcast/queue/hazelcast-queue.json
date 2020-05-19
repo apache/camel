@@ -6,7 +6,7 @@
     "description": "Perform operations on Hazelcast distributed queue.",
     "deprecated": false,
     "firstVersion": "2.7.0",
-    "label": "cache,datagrid",
+    "label": "cache,datagrid,messaging",
     "javaType": "org.apache.camel.component.hazelcast.queue.HazelcastQueueComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

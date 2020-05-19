@@ -35,7 +35,7 @@ public interface Aws2SnsComponentBuilderFactory {
      * Send messages to an AWS Simple Notification Topic using AWS SDK version
      * 2.x.
      * 
-     * Category: cloud,mobile,messaging
+     * Category: cloud,messaging,mobile
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sns
      */

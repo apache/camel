@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.exec;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -32,7 +33,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Execute commands on the underlying operating system.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, label = "system")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, category = {Category.SYSTEM})
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**

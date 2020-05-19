@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.compute;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -38,7 +39,7 @@ import org.apache.ignite.IgniteCompute;
  * or collections of them, along with their parameters if necessary.
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId", label = "nosql,cache,compute", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId", category = {Category.COMPUTE}, producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath @Metadata(required = true)

@@ -6,7 +6,7 @@
     "description": "Access NoSQL databases using the Apache Gora framework.",
     "deprecated": false,
     "firstVersion": "2.14.0",
-    "label": "database,hadoop,nosql",
+    "label": "database,nosql,bigdata",
     "javaType": "org.apache.camel.component.gora.GoraComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

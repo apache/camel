@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ddb;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -47,7 +48,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 /**
  * Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName", producerOnly = true, category = {Category.CLOUD, Category.DATABASE, Category.NOSQL})
 public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Endpoint.class);

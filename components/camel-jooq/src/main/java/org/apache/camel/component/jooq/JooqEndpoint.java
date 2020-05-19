@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jooq;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -32,7 +33,7 @@ import org.jooq.ResultQuery;
 /**
  * Store and retrieve Java objects from an SQL database using JOOQ.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ", label = "database")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ", category = {Category.DATABASE, Category.SQL})
 public class JooqEndpoint extends ScheduledPollEndpoint {
 
     private Expression producerExpression;
