@@ -421,80 +421,73 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 if (target == null) {
                     continue;
                 }
-                Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                    .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
-                    .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
 
-                if (option.isDeprecated()) {
-                    fluent.addAnnotation(Deprecated.class);
-                }
-                if (!Strings.isEmpty(option.getDescription())) {
-                    String desc = option.getDescription();
-                    if (!desc.endsWith(".")) {
-                        desc += ".";
+                // basic description
+                String baseDesc = option.getDescription();
+                if (!Strings.isEmpty(baseDesc)) {
+                    if (!baseDesc.endsWith(".")) {
+                        baseDesc += ".";
                     }
-                    desc += "\n";
-                    desc += "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.";
+                    baseDesc += "\n";
+                    baseDesc += "@@REPLACE_ME@@";
                     if (option.isMultiValue()) {
-                        desc += "\nThe option is multivalued, and you can use the " + option.getName() + "(String, Object) method to add a value at a time.";
+                        baseDesc += "\nThe option is multivalued, and you can use the " + option.getName()
+                                + "(String, Object) method to add a value (call the method multiple times to set more values).";
                     }
-                    desc += "\n";
+                    baseDesc += "\n";
                     // the Endpoint DSL currently requires to provide the entire
                     // context-path and not as individual options
                     // so lets only mark query parameters that are required as
                     // required
                     if ("parameter".equals(option.getKind()) && option.isRequired()) {
-                        desc += "\nRequired: true";
+                        baseDesc += "\nRequired: true";
                     }
                     // include default value (if any)
                     if (option.getDefaultValue() != null) {
-                        desc += "\nDefault: " + option.getDefaultValue();
+                        baseDesc += "\nDefault: " + option.getDefaultValue();
                     }
-                    desc += "\nGroup: " + option.getGroup();
-                    fluent.getJavaDoc().setFullText(desc);
+                    baseDesc += "\nGroup: " + option.getGroup();
                 }
 
-                // is it multi valued then add method to see value at a time
-                if (option.isMultiValue()) {
-                    String desc = fluent.getJavaDoc().getFullText();
-                    fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                boolean multiValued = option.isMultiValue();
+                if (multiValued) {
+                    // multi value option that takes one value
+                    String desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
+                    Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(new GenericType(String.class), "key")
                             .addParameter(new GenericType(Object.class), "value")
                             .setBody("doSetMultiValueProperty(\"" + option.getName() + "\", \"" + option.getPrefix() + "\" + key, value);", "return this;\n");
-                    fluent.getJavaDoc().setFullText(desc);
-                }
-
-                if (ogtype.getRawClass() != String.class) {
-                    fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
-                        .addParameter(new GenericType(String.class), option.getName())
-                        .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
-
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    if (!Strings.isEmpty(option.getDescription())) {
-                        String desc = option.getDescription();
-                        if (!desc.endsWith(".")) {
-                            desc += ".";
+                    fluent.getJavaDoc().setFullText(desc);
+                    // add multi value method that takes a Map
+                    fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                            .addParameter(new GenericType(Map.class), "values")
+                            .setBody("doSetMultiValueProperties(\"" + option.getName() + "\", \"" + option.getPrefix() + "\", values);", "return this;\n");
+                    if (option.isDeprecated()) {
+                        fluent.addAnnotation(Deprecated.class);
+                    }
+                    fluent.getJavaDoc().setFullText(desc);
+                } else {
+                    // regular option
+                    String desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
+                    Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                            .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
+                            .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
+                    if (option.isDeprecated()) {
+                        fluent.addAnnotation(Deprecated.class);
+                    }
+                    fluent.getJavaDoc().setFullText(desc);
+                    if (ogtype.getRawClass() != String.class) {
+                        // regular option by String parameter variant
+                        desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option will be converted to a <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
+                        fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                                .addParameter(new GenericType(String.class), option.getName())
+                                .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
+                        if (option.isDeprecated()) {
+                            fluent.addAnnotation(Deprecated.class);
                         }
-                        desc += "\n";
-                        desc += "\nThe option will be converted to a <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.";
-                        if (option.isMultiValue()) {
-                            desc += "\nThe option is multivalued, and you can use the " + option.getName() + "(String, Object) method to add a value at a time.";
-                        }
-                        desc += "\n";
-                        // the Endpoint DSL currently requires to provide the
-                        // entire context-path and not as individual options
-                        // so lets only mark query parameters that are required
-                        // as required
-                        if ("parameter".equals(option.getKind()) && option.isRequired()) {
-                            desc += "\nRequired: true";
-                        }
-                        // include default value (if any)
-                        if (option.getDefaultValue() != null) {
-                            desc += "\nDefault: " + option.getDefaultValue();
-                        }
-                        desc += "\nGroup: " + option.getGroup();
                         fluent.getJavaDoc().setFullText(desc);
                     }
                 }

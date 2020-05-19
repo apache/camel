@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,6 +44,39 @@ public class RabbitMQMultiValueTest extends ContextTestSupport {
                                 .args("foo", "123")
                                 .args("bar", "456")
                                 .args("beer", "yes").basic();
+
+                Endpoint endpoint = builder.resolve(context);
+                assertNotNull(endpoint);
+                assertEquals("rabbitmq://mytopic?arg.bar=456&arg.beer=yes&arg.foo=123", endpoint.getEndpointUri());
+                RabbitMQEndpoint re = assertIsInstanceOf(RabbitMQEndpoint.class, endpoint);
+                assertEquals("mytopic", re.getExchangeName());
+                Map<String, Object> args = re.getArgs();
+                assertNotNull(args);
+                assertEquals(3, args.size());
+                assertEquals("123", args.get("foo"));
+                assertEquals("456", args.get("bar"));
+                assertEquals("yes", args.get("beer"));
+            }
+        });
+
+        context.stop();
+    }
+
+    @Test
+    public void testMultiValueMap() throws Exception {
+        context.start();
+
+        context.addRoutes(new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                Map map = new HashMap();
+                map.put("foo", "123");
+                map.put("bar", "456");
+                map.put("beer", "yes");
+
+                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder =
+                        rabbitmq("mytopic").advanced()
+                                .args(map).basic();
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
