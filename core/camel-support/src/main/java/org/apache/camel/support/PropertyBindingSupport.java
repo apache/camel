@@ -973,9 +973,9 @@ public final class PropertyBindingSupport {
                 continue;
             }
             // must be a public static method that returns something
-            if (!Modifier.isStatic(method.getModifiers()) ||
-                !Modifier.isPublic(method.getModifiers()) ||
-                method.getReturnType() == Void.TYPE) {
+            if (!Modifier.isStatic(method.getModifiers()) 
+                || !Modifier.isPublic(method.getModifiers())
+                || method.getReturnType() == Void.TYPE) {
                 continue;
             }
             // must match number of parameters
