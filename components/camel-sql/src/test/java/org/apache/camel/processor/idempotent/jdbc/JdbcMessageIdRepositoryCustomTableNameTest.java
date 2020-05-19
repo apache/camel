@@ -36,23 +36,23 @@ public class JdbcMessageIdRepositoryCustomTableNameTest extends CamelSpringTestS
 
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+
         dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }
-    
+
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
@@ -75,7 +75,7 @@ public class JdbcMessageIdRepositoryCustomTableNameTest extends CamelSpringTestS
         assertTrue(receivedMessageIds.contains("2"));
         assertTrue(receivedMessageIds.contains("3"));
     }
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/customized-tablename-spring.xml");

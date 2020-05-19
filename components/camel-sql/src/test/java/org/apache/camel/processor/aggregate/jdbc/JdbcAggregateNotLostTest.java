@@ -35,7 +35,7 @@ public class JdbcAggregateNotLostTest extends AbstractJdbcAggregationTestSupport
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 
         String exchangeId = getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
 
@@ -63,7 +63,7 @@ public class JdbcAggregateNotLostTest extends AbstractJdbcAggregationTestSupport
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
-                                // throw an exception to fail, which we then will loose this message
+                        // throw an exception to fail, which we then will loose this message
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
                         .end();
