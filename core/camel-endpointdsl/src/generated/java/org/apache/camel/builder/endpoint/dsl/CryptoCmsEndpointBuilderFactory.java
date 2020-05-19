@@ -18,6 +18,7 @@ package org.apache.camel.builder.endpoint.dsl;
 
 import java.security.KeyStore;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -245,22 +246,8 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
          * The option is multivalued, and you can use the recipient(String,
-         * Object) method to add a value at a time.
-         * 
-         * Group: encrypt
-         */
-        default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
-            doSetProperty("recipient", recipient);
-            return this;
-        }
-        /**
-         * Recipient Info: reference to a bean which implements the interface
-         * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
-         * 
-         * The option is a:
-         * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
-         * The option is multivalued, and you can use the recipient(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: encrypt
          */
@@ -272,15 +259,16 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Recipient Info: reference to a bean which implements the interface
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
          * 
-         * The option will be converted to a
+         * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
          * The option is multivalued, and you can use the recipient(String,
-         * Object) method to add a value at a time.
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
          * 
          * Group: encrypt
          */
-        default CryptoCmsEndpointBuilder recipient(String recipient) {
-            doSetProperty("recipient", recipient);
+        default CryptoCmsEndpointBuilder recipient(Map values) {
+            doSetMultiValueProperties("recipient", "null", values);
             return this;
         }
         /**

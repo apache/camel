@@ -460,23 +460,8 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
-                Map<String, Object> clientConfigOptions) {
-            doSetProperty("clientConfigOptions", clientConfigOptions);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClientConfig using the key/values from the
-         * Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
+         * clientConfigOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -490,17 +475,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
+         * clientConfigOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
-                String clientConfigOptions) {
-            doSetProperty("clientConfigOptions", clientConfigOptions);
+        default AdvancedWsEndpointConsumerBuilder clientConfigOptions(Map values) {
+            doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
             return this;
         }
         /**
@@ -537,25 +521,8 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
-         * 
-         * Group: security
-         */
-        default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
-                Map<String, Object> clientConfigRealmOptions) {
-            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClientConfig Realm using the key/values
-         * from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
+         * clientConfigRealmOptions(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -569,18 +536,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
+         * clientConfigRealmOptions(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: security
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
-                String clientConfigRealmOptions) {
-            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+                Map values) {
+            doSetMultiValueProperties("clientConfigRealmOptions", "clientConfig.realm.", values);
             return this;
         }
     }
@@ -1005,23 +971,8 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWsEndpointProducerBuilder clientConfigOptions(
-                Map<String, Object> clientConfigOptions) {
-            doSetProperty("clientConfigOptions", clientConfigOptions);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClientConfig using the key/values from the
-         * Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
+         * clientConfigOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -1035,17 +986,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
+         * clientConfigOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedWsEndpointProducerBuilder clientConfigOptions(
-                String clientConfigOptions) {
-            doSetProperty("clientConfigOptions", clientConfigOptions);
+        default AdvancedWsEndpointProducerBuilder clientConfigOptions(Map values) {
+            doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
             return this;
         }
         /**
@@ -1082,25 +1032,8 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
-         * 
-         * Group: security
-         */
-        default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
-                Map<String, Object> clientConfigRealmOptions) {
-            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClientConfig Realm using the key/values
-         * from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
+         * clientConfigRealmOptions(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -1114,18 +1047,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
+         * clientConfigRealmOptions(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: security
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
-                String clientConfigRealmOptions) {
-            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+                Map values) {
+            doSetMultiValueProperties("clientConfigRealmOptions", "clientConfig.realm.", values);
             return this;
         }
     }
@@ -1430,23 +1362,8 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedWsEndpointBuilder clientConfigOptions(
-                Map<String, Object> clientConfigOptions) {
-            doSetProperty("clientConfigOptions", clientConfigOptions);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClientConfig using the key/values from the
-         * Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
+         * clientConfigOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -1460,17 +1377,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigOptions(String, Object) method to add a value at a time.
+         * clientConfigOptions(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedWsEndpointBuilder clientConfigOptions(
-                String clientConfigOptions) {
-            doSetProperty("clientConfigOptions", clientConfigOptions);
+        default AdvancedWsEndpointBuilder clientConfigOptions(Map values) {
+            doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
             return this;
         }
         /**
@@ -1506,25 +1422,8 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
-         * 
-         * Group: security
-         */
-        default AdvancedWsEndpointBuilder clientConfigRealmOptions(
-                Map<String, Object> clientConfigRealmOptions) {
-            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClientConfig Realm using the key/values
-         * from the Map.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
+         * clientConfigRealmOptions(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -1538,18 +1437,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * clientConfigRealmOptions(String, Object) method to add a value at a
-         * time.
+         * clientConfigRealmOptions(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: security
          */
-        default AdvancedWsEndpointBuilder clientConfigRealmOptions(
-                String clientConfigRealmOptions) {
-            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+        default AdvancedWsEndpointBuilder clientConfigRealmOptions(Map values) {
+            doSetMultiValueProperties("clientConfigRealmOptions", "clientConfig.realm.", values);
             return this;
         }
     }

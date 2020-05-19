@@ -1744,23 +1744,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value at a time.
-         * 
-         * Group: scheduler
-         */
-        default FtpsEndpointConsumerBuilder schedulerProperties(
-                Map<String, Object> schedulerProperties) {
-            doSetProperty("schedulerProperties", schedulerProperties);
-            return this;
-        }
-        /**
-         * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value at a time.
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: scheduler
          */
@@ -1774,17 +1759,16 @@ public interface FtpsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value at a time.
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: scheduler
          */
-        default FtpsEndpointConsumerBuilder schedulerProperties(
-                String schedulerProperties) {
-            doSetProperty("schedulerProperties", schedulerProperties);
+        default FtpsEndpointConsumerBuilder schedulerProperties(Map values) {
+            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
             return this;
         }
         /**
@@ -1946,24 +1930,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
-         * 
-         * Group: security
-         */
-        default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
-                Map<String, Object> ftpClientKeyStoreParameters) {
-            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
-            return this;
-        }
-        /**
-         * Set the key store parameters.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
+         * ftpClientKeyStoreParameters(String, Object) method to add a value
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -1976,18 +1944,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
+         * ftpClientKeyStoreParameters(String, Object) method to add a value
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
-                String ftpClientKeyStoreParameters) {
-            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientKeyStoreParameters", "ftpClient.keyStore.", values);
             return this;
         }
         /**
@@ -1997,23 +1964,7 @@ public interface FtpsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
-         * 
-         * Group: security
-         */
-        default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
-                Map<String, Object> ftpClientTrustStoreParameters) {
-            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
-            return this;
-        }
-        /**
-         * Set the trust store parameters.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -2026,18 +1977,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
-                String ftpClientTrustStoreParameters) {
-            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientTrustStoreParameters", "ftpClient.trustStore.", values);
             return this;
         }
         /**
@@ -2788,25 +2738,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpsEndpointConsumerBuilder ftpClientConfigParameters(
-                Map<String, Object> ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
+         * ftpClientConfigParameters(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -2820,18 +2753,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
+         * ftpClientConfigParameters(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfigParameters(
-                String ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientConfigParameters", "ftpClientConfig.", values);
             return this;
         }
         /**
@@ -2841,23 +2773,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpsEndpointConsumerBuilder ftpClientParameters(
-                Map<String, Object> ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
+         * ftpClientParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -2871,17 +2788,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
+         * ftpClientParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientParameters(
-                String ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientParameters", "ftpClient.", values);
             return this;
         }
         /**
@@ -3738,24 +3655,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
-         * 
-         * Group: security
-         */
-        default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
-                Map<String, Object> ftpClientKeyStoreParameters) {
-            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
-            return this;
-        }
-        /**
-         * Set the key store parameters.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
+         * ftpClientKeyStoreParameters(String, Object) method to add a value
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -3768,18 +3669,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
+         * ftpClientKeyStoreParameters(String, Object) method to add a value
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
-                String ftpClientKeyStoreParameters) {
-            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientKeyStoreParameters", "ftpClient.keyStore.", values);
             return this;
         }
         /**
@@ -3789,23 +3689,7 @@ public interface FtpsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
-         * 
-         * Group: security
-         */
-        default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
-                Map<String, Object> ftpClientTrustStoreParameters) {
-            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
-            return this;
-        }
-        /**
-         * Set the trust store parameters.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -3818,18 +3702,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
-                String ftpClientTrustStoreParameters) {
-            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientTrustStoreParameters", "ftpClient.trustStore.", values);
             return this;
         }
         /**
@@ -4391,25 +4274,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpsEndpointProducerBuilder ftpClientConfigParameters(
-                Map<String, Object> ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
+         * ftpClientConfigParameters(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -4423,18 +4289,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
+         * ftpClientConfigParameters(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfigParameters(
-                String ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientConfigParameters", "ftpClientConfig.", values);
             return this;
         }
         /**
@@ -4444,23 +4309,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpsEndpointProducerBuilder ftpClientParameters(
-                Map<String, Object> ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
+         * ftpClientParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -4474,17 +4324,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
+         * ftpClientParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientParameters(
-                String ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
+                Map values) {
+            doSetMultiValueProperties("ftpClientParameters", "ftpClient.", values);
             return this;
         }
         /**
@@ -5089,24 +4939,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
-         * 
-         * Group: security
-         */
-        default FtpsEndpointBuilder ftpClientKeyStoreParameters(
-                Map<String, Object> ftpClientKeyStoreParameters) {
-            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
-            return this;
-        }
-        /**
-         * Set the key store parameters.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
+         * ftpClientKeyStoreParameters(String, Object) method to add a value
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -5119,18 +4953,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientKeyStoreParameters(String, Object) method to add a value at
-         * a time.
+         * ftpClientKeyStoreParameters(String, Object) method to add a value
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
-        default FtpsEndpointBuilder ftpClientKeyStoreParameters(
-                String ftpClientKeyStoreParameters) {
-            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+        default FtpsEndpointBuilder ftpClientKeyStoreParameters(Map values) {
+            doSetMultiValueProperties("ftpClientKeyStoreParameters", "ftpClient.keyStore.", values);
             return this;
         }
         /**
@@ -5140,23 +4972,7 @@ public interface FtpsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
-         * 
-         * Group: security
-         */
-        default FtpsEndpointBuilder ftpClientTrustStoreParameters(
-                Map<String, Object> ftpClientTrustStoreParameters) {
-            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
-            return this;
-        }
-        /**
-         * Set the trust store parameters.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
@@ -5169,18 +4985,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
-         * at a time.
+         * (call the method multiple times to set more values).
          * 
          * Group: security
          */
-        default FtpsEndpointBuilder ftpClientTrustStoreParameters(
-                String ftpClientTrustStoreParameters) {
-            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+        default FtpsEndpointBuilder ftpClientTrustStoreParameters(Map values) {
+            doSetMultiValueProperties("ftpClientTrustStoreParameters", "ftpClient.trustStore.", values);
             return this;
         }
         /**
@@ -5510,25 +5324,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(
-                Map<String, Object> ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
+         * ftpClientConfigParameters(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -5542,18 +5339,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientConfigParameters(String, Object) method to add a value at a
-         * time.
+         * ftpClientConfigParameters(String, Object) method to add a value (call
+         * the method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(
-                String ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+        default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(Map values) {
+            doSetMultiValueProperties("ftpClientConfigParameters", "ftpClientConfig.", values);
             return this;
         }
         /**
@@ -5563,23 +5358,8 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpsEndpointBuilder ftpClientParameters(
-                Map<String, Object> ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
+         * ftpClientParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -5593,17 +5373,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * The option is multivalued, and you can use the
-         * ftpClientParameters(String, Object) method to add a value at a time.
+         * ftpClientParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedFtpsEndpointBuilder ftpClientParameters(
-                String ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
+        default AdvancedFtpsEndpointBuilder ftpClientParameters(Map values) {
+            doSetMultiValueProperties("ftpClientParameters", "ftpClient.", values);
             return this;
         }
         /**

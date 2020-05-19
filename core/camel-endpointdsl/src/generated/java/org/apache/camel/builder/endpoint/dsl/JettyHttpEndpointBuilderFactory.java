@@ -734,23 +734,8 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
-         * filterInitParameters(String, Object) method to add a value at a time.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedJettyHttpEndpointBuilder filterInitParameters(
-                Map<String, String> filterInitParameters) {
-            doSetProperty("filterInitParameters", filterInitParameters);
-            return this;
-        }
-        /**
-         * Configuration of the filter init parameters. These parameters will be
-         * applied to the filter list before starting the jetty server.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * filterInitParameters(String, Object) method to add a value at a time.
+         * filterInitParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: consumer (advanced)
          */
@@ -764,17 +749,16 @@ public interface JettyHttpEndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
-         * filterInitParameters(String, Object) method to add a value at a time.
+         * filterInitParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: consumer (advanced)
          */
-        default AdvancedJettyHttpEndpointBuilder filterInitParameters(
-                String filterInitParameters) {
-            doSetProperty("filterInitParameters", filterInitParameters);
+        default AdvancedJettyHttpEndpointBuilder filterInitParameters(Map values) {
+            doSetMultiValueProperties("filterInitParameters", "filter.", values);
             return this;
         }
         /**

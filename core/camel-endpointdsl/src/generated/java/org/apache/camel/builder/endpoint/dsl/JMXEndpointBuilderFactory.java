@@ -638,23 +638,8 @@ public interface JMXEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
-         * objectProperties(String, Object) method to add a value at a time.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJMXEndpointBuilder objectProperties(
-                Map<String, String> objectProperties) {
-            doSetProperty("objectProperties", objectProperties);
-            return this;
-        }
-        /**
-         * Properties for the object name. These values will be used if the
-         * objectName param is not set.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * objectProperties(String, Object) method to add a value at a time.
+         * objectProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
@@ -668,17 +653,16 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the
-         * objectProperties(String, Object) method to add a value at a time.
+         * objectProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
          * Group: advanced
          */
-        default AdvancedJMXEndpointBuilder objectProperties(
-                String objectProperties) {
-            doSetProperty("objectProperties", objectProperties);
+        default AdvancedJMXEndpointBuilder objectProperties(Map values) {
+            doSetMultiValueProperties("objectProperties", "key.", values);
             return this;
         }
         /**
