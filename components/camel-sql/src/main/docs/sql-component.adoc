@@ -541,6 +541,8 @@ your needs:
 |createTableIfNotExists |true |Defines whether or not Camel should try to create the table if it
 doesn't exist.
 
+|tableName | CAMEL_MESSAGEPROCESSED | To use a custom table name instead of the default name: CAMEL_MESSAGEPROCESSED.
+
 |tableExistsString |SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0 |This query is used to figure out whether the table already exists or
 not. It must throw an exception to indicate the table doesn't exist.
 
@@ -565,6 +567,10 @@ It takes two parameter. This first one is the processor name (`String`) and
 the second one is the message id (`String`).
 |===
 
+The option `tableName` can be used to use the default SQL queries but with a different table name.
+However if you want to customize the SQL queries then you can configure each of them individually.
+
+
 == Using the JDBC based aggregation repository
 
 *Since Camel 2.6*
@@ -587,9 +593,7 @@ You must also set the `deadLetterUri` option so Camel knows where to
 send the Exchange when the `maximumRedeliveries` was
 hit.
 
-You can see some examples in the unit tests of camel-sql, for example
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sql/src/test/java/org/apache/camel/processor/aggregate/jdbc/JdbcAggregateRecoverDeadLetterChannelTest.java[this
-test].
+You can see some examples in the unit tests of camel-sql, for example `JdbcAggregateRecoverDeadLetterChannelTest.java`
 
 === Database
 
