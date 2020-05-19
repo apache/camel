@@ -4,7 +4,7 @@
 :page-source: components/camel-resteasy/src/main/docs/resteasy-component.adoc
 :docTitle: Resteasy
 :artifactId: camel-resteasy
-:description: Defines the Resteasy Endpoint.
+:description: Expose REST endpoints and access external REST servers.
 :since: 3.4
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
@@ -80,7 +80,7 @@ The Resteasy component supports 22 options, which are listed below.
 The Resteasy endpoint is configured using URI syntax:
 
 ----
-resteasy:contextPath
+resteasy:httpUri
 ----
 
 with the following path and query parameters:
@@ -101,21 +101,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *basicAuth* (common) | Sets the flag to basicAuth on endpoint |  | Boolean
 | *chunked* (common) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
 | *disableStreamCache* (common) | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance, in case you do not need to read the message payload multiple times. The http producer will by default cache the response body stream. If setting this option to true, then the producers will not cache the response body stream but use the response stream as-is as the message body. | false | boolean
-| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *password* (common) | Sets the password |  | String
-| *proxyClientClass* (common) | Sets the resteasy proxyClientClass |  | String
-| *proxyMethod* (common) | Sets the proxy method defined in an interface |  | String
 | *restEasyHttpBindingRef* (common) | Sets the restEasyHttpBinding if you have a customised one registered in the context |  | ResteasyHttpBinding
-| *resteasyMethod* (common) | Sets the resteasy method to process the request |  | String
+| *resteasyMethod* (common) | Sets the resteasy method to process the request | GET | String
 | *servletName* (common) | Sets the servlet name |  | String
-| *setHttpResponseDuring Processing* (common) | Sets the flag to use the endpoint where you can either populate camel exchange from servlet response or use request itself which may be thought as if it is a proxy. |  | Boolean
-| *skipServletProcessing* (common) | Sets the flag to use skip servlet processing and let camel take over processing |  | Boolean
-| *throwExceptionOnFailure* (common) | ets the flag to propogate the exception | false | boolean
 | *transferException* (common) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *username* (common) | Sets the username |  | String
 | *httpBinding* (common) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *async* (consumer) | Configure the consumer to work in async mode | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -137,6 +128,7 @@ with the following path and query parameters:
 | *ignoreResponseBody* (producer) | If this option is true, The http producer won't read response body and cache the input stream | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *preserveHostHeader* (producer) | If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service | false | boolean
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *cookieStore* (producer) | To use a custom CookieStore. By default the BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler. |  | CookieStore
 | *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
@@ -146,6 +138,7 @@ with the following path and query parameters:
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
+| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *httpClient* (advanced) | Sets a custom HttpClient to be used by the producer |  | HttpClient
 | *httpClientConfigurer* (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc. |  | HttpClientConfigurer
 | *httpClientOptions* (advanced) | To configure the HttpClient using the key/values from the Map. |  | Map
@@ -154,6 +147,8 @@ with the following path and query parameters:
 | *mapHttpMessageFormUrlEncoded Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
+| *setHttpResponseDuring Processing* (advanced) | Sets the flag to use the endpoint where you can either populate camel exchange from servlet response or use request itself which may be thought as if it is a proxy. |  | Boolean
+| *skipServletProcessing* (advanced) | Sets the flag to use skip servlet processing and let camel take over processing |  | Boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
@@ -163,7 +158,9 @@ with the following path and query parameters:
 | *proxyAuthPort* (proxy) | Proxy authentication port |  | int
 | *proxyAuthScheme* (proxy) | Proxy authentication scheme to use. The value can be one of: http, https |  | String
 | *proxyAuthUsername* (proxy) | Proxy authentication username |  | String
+| *proxyClientClass* (proxy) | Sets the resteasy proxyClientClass |  | String
 | *proxyHost* (proxy) | Proxy hostname to use |  | String
+| *proxyMethod* (proxy) | Sets the proxy method defined in an interface |  | String
 | *proxyPort* (proxy) | Proxy port to use |  | int
 | *authDomain* (security) | Authentication domain to use with NTML |  | String
 | *authenticationPreemptive* (security) | If this option is true, camel-http sends preemptive basic authentication to the server. | false | boolean
@@ -172,7 +169,10 @@ with the following path and query parameters:
 | *authMethodPriority* (security) | Which authentication method to prioritize to use, either as Basic, Digest or NTLM. The value can be one of: Basic, Digest, NTLM |  | String
 | *authPassword* (security) | Authentication password |  | String
 | *authUsername* (security) | Authentication username |  | String
+| *basicAuth* (security) | Sets the flag to basicAuth on endpoint |  | Boolean
+| *password* (security) | Sets the password |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
+| *username* (security) | Sets the username |  | String
 | *x509HostnameVerifier* (security) | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier |  | HostnameVerifier
 |===
 // endpoint options: END
