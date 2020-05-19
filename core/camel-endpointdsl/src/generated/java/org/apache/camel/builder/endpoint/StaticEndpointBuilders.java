@@ -11725,12 +11725,12 @@ public class StaticEndpointBuilders {
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-resteasy
      * 
-     * Syntax: <code>resteasy:</code>
+     * Syntax: <code>resteasy:httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
-     * @param path 
+     * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String path) {
@@ -11744,14 +11744,14 @@ public class StaticEndpointBuilders {
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-resteasy
      * 
-     * Syntax: <code>resteasy:</code>
+     * Syntax: <code>resteasy:httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path 
+     * @param path httpUri
      */
     static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String componentName,

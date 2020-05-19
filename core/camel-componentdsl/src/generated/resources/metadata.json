@@ -5715,7 +5715,7 @@
     "version": "3.4.0-SNAPSHOT",
     "scheme": "resteasy",
     "extendsScheme": "http",
-    "syntax": "resteasy:",
+    "syntax": "resteasy:httpUri",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,
