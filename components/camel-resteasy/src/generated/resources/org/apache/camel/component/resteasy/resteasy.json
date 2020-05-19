@@ -14,7 +14,7 @@
     "version": "3.4.0-SNAPSHOT",
     "scheme": "resteasy",
     "extendsScheme": "http",
-    "syntax": "resteasy:contextPath",
+    "syntax": "resteasy:",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,
