@@ -25,6 +25,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage AWS EC2 instances.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS Elastic Compute Cloud (EC2)", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS Elastic Compute Cloud (EC2)", syntax = "aws-ec2:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
 public class EC2Endpoint extends ScheduledPollEndpoint {
 
     private AmazonEC2 ec2Client;

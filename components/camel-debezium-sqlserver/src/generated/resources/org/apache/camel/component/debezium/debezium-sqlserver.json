@@ -6,7 +6,7 @@
     "description": "Capture changes from an SQL Server database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database,sql,sqlserver",
+    "label": "database,sql",
     "javaType": "org.apache.camel.component.debezium.DebeziumSqlserverComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

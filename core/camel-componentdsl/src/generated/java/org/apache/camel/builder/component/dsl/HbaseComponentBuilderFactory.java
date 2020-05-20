@@ -34,7 +34,7 @@ public interface HbaseComponentBuilderFactory {
      * HBase (camel-hbase)
      * Reading and write from/to an HBase store (Hadoop database).
      * 
-     * Category: hadoop
+     * Category: bigdata,database,hadoop
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-hbase
      */

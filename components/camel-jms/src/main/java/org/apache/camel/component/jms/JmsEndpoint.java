@@ -32,6 +32,7 @@ import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -70,7 +71,7 @@ import org.springframework.util.ErrorHandler;
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", category = {Category.MESSAGING})
 @Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
 

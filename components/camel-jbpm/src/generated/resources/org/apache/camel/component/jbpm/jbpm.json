@@ -6,7 +6,7 @@
     "description": "Interact with jBPM workflow engine over REST.",
     "deprecated": false,
     "firstVersion": "2.6.0",
-    "label": "process",
+    "label": "api,workflow",
     "javaType": "org.apache.camel.component.jbpm.JBPMComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

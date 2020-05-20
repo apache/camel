@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.atmos;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER
 /**
  * Integract with EMC's ViPR object data services using the Atmos Client.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", label = "file,cloud")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", category = {Category.CLOUD, Category.FILE})
 public class AtmosEndpoint extends DefaultEndpoint {
 
     @UriParam

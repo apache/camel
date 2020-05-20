@@ -1446,7 +1446,7 @@ public interface ConsulEndpointBuilderFactory {
          * Consul (camel-consul)
          * Integrate with Consul service discovery and configuration store.
          * 
-         * Category: api,cloud
+         * Category: cloud,api
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-consul
          * 
@@ -1464,7 +1464,7 @@ public interface ConsulEndpointBuilderFactory {
          * Consul (camel-consul)
          * Integrate with Consul service discovery and configuration store.
          * 
-         * Category: api,cloud
+         * Category: cloud,api
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-consul
          * 

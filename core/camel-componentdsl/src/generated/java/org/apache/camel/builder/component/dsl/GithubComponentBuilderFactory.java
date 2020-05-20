@@ -34,7 +34,7 @@ public interface GithubComponentBuilderFactory {
      * GitHub (camel-github)
      * Interact with the GitHub API.
      * 
-     * Category: api,file
+     * Category: file,cloud,api
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-github
      */

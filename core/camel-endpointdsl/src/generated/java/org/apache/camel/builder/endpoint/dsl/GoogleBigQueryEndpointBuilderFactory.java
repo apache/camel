@@ -194,7 +194,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * Google BigQuery (camel-google-bigquery)
          * Google BigQuery data warehouse for analytics.
          * 
-         * Category: cloud,messaging
+         * Category: cloud,bigdata
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-google-bigquery
          * 
@@ -218,7 +218,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * Google BigQuery (camel-google-bigquery)
          * Google BigQuery data warehouse for analytics.
          * 
-         * Category: cloud,messaging
+         * Category: cloud,bigdata
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-google-bigquery
          * 

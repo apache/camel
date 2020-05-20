@@ -6,7 +6,7 @@
     "description": "Capture changes from a MongoDB database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database,nosql,mongodb",
+    "label": "database,nosql",
     "javaType": "org.apache.camel.component.debezium.DebeziumMongodbComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

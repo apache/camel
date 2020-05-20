@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -58,7 +59,7 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 /**
  * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service (SQS)", syntax = "aws2-sqs:queueNameOrArn", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service (SQS)", syntax = "aws2-sqs:queueNameOrArn", category = {Category.CLOUD, Category.MESSAGING})
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);

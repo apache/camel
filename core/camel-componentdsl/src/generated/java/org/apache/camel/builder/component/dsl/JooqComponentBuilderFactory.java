@@ -34,7 +34,7 @@ public interface JooqComponentBuilderFactory {
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
      * 
-     * Category: database
+     * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
      */

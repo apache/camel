@@ -6,7 +6,7 @@
     "description": "Manage AWS MQ instances using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
-    "label": "cloud,management",
+    "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.aws2.mq.MQ2Component",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

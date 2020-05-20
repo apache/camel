@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.multimap;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,7 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-multimap", title = "Hazelcast Multimap", syntax = "hazelcast-multimap:cacheName", label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-multimap", title = "Hazelcast Multimap", syntax = "hazelcast-multimap:cacheName", category = {Category.CACHE, Category.DATAGRID})
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastMultimapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {

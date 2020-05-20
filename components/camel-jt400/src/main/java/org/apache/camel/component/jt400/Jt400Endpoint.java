@@ -23,6 +23,7 @@ import javax.naming.OperationNotSupportedException;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
+import org.apache.camel.Category;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
@@ -37,7 +38,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Exchanges messages with an AS/400 system using data queues or program call.
  */
-@UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", label = "messaging")
+@UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", category = {Category.MESSAGING})
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
 
     public static final String KEY = "KEY";

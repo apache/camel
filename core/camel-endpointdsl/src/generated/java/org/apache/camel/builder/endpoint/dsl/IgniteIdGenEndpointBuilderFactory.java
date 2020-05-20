@@ -302,7 +302,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Ignite ID Generator (camel-ignite)
          * Interact with Ignite Atomic Sequences and ID Generators .
          * 
-         * Category: nosql,cache,compute
+         * Category: compute
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
@@ -320,7 +320,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Ignite ID Generator (camel-ignite)
          * Interact with Ignite Atomic Sequences and ID Generators .
          * 
-         * Category: nosql,cache,compute
+         * Category: compute
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 

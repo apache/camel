@@ -996,7 +996,7 @@ public interface JcrEndpointBuilderFactory {
          * JCR (camel-jcr)
          * Read and write nodes to/from a JCR compliant content repository.
          * 
-         * Category: cms,database
+         * Category: database,cms
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-jcr
          * 
@@ -1018,7 +1018,7 @@ public interface JcrEndpointBuilderFactory {
          * JCR (camel-jcr)
          * Read and write nodes to/from a JCR compliant content repository.
          * 
-         * Category: cms,database
+         * Category: database,cms
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-jcr
          * 

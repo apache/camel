@@ -6,7 +6,7 @@
     "description": "Manage AWS MSK instances.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "cloud,management",
+    "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.aws.msk.MSKComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

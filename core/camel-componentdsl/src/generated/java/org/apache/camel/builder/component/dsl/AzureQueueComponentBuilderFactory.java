@@ -34,7 +34,7 @@ public interface AzureQueueComponentBuilderFactory {
      * Azure Storage Queue Service (Legacy) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
-     * Category: cloud,queue,azure
+     * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */

@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Category;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * Upload and download files to/from FTP servers.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
-        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", label = "file")
+        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", category = {Category.FILE})
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                 + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                 + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"

@@ -37,6 +37,7 @@ import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Sending and receive messages to/from AWS SQS service.
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service (SQS)", syntax = "aws-sqs:queueNameOrArn", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service (SQS)", syntax = "aws-sqs:queueNameOrArn", category = {Category.CLOUD, Category.MESSAGING})
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);

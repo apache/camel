@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.queue;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
              scheme = "azure-queue",
              title = "Azure Storage Queue Service (Legacy)",
              syntax = "azure-blob:containerAndQueueUri",
-             label = "cloud,queue,azure")
+             category = {Category.CLOUD, Category.MESSAGING})
 public class QueueServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container Queue compact Uri")

@@ -3418,7 +3418,7 @@ public interface FileEndpointBuilderFactory {
          * File (camel-file)
          * Read and write files.
          * 
-         * Category: core,file
+         * Category: file,core
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-file
          * 
@@ -3436,7 +3436,7 @@ public interface FileEndpointBuilderFactory {
          * File (camel-file)
          * Read and write files.
          * 
-         * Category: core,file
+         * Category: file,core
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-file
          * 

@@ -1061,7 +1061,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Google Mail (camel-google-mail)
          * Manage messages in Google Mail.
          * 
-         * Category: api,cloud,mail
+         * Category: cloud,api,mail
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-google-mail
          * 
@@ -1087,7 +1087,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Google Mail (camel-google-mail)
          * Manage messages in Google Mail.
          * 
-         * Category: api,cloud,mail
+         * Category: cloud,api,mail
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-google-mail
          * 

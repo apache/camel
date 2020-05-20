@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.x5.template.Chunk;
 import com.x5.template.Theme;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,7 +44,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 /**
  * Transform messages using Chunk templating engine.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;

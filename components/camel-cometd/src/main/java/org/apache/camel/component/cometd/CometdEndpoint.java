@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly
  * into the browser using an AJAX based mechanism.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", label = "websocket")
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", category = {Category.WEBSOCKET})
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;

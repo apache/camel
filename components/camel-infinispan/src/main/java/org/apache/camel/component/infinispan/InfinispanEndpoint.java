@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", category = {Category.CACHE, Category.DATAGRID, Category.CLUSTERING})
 public class InfinispanEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")

@@ -6,7 +6,7 @@
     "description": "Interact with the GitHub API.",
     "deprecated": false,
     "firstVersion": "2.15.0",
-    "label": "api,file",
+    "label": "file,cloud,api",
     "javaType": "org.apache.camel.component.github.GitHubComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

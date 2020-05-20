@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,7 +40,7 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 /**
  * Consume and produce records from AWS Kinesis Streams using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS 2 Kinesis", syntax = "aws2-kinesis:streamName", label = "cloud,messaging")
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS 2 Kinesis", syntax = "aws2-kinesis:streamName", category = {Category.CLOUD, Category.MESSAGING})
 public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @UriParam

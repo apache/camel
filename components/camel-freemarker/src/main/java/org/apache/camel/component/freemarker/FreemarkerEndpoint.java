@@ -22,6 +22,7 @@ import java.io.StringWriter;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -35,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Transform messages using FreeMarker templates.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")

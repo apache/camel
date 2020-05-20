@@ -6,7 +6,7 @@
     "description": "Integract with EMC's ViPR object data services using the Atmos Client.",
     "deprecated": false,
     "firstVersion": "2.15.0",
-    "label": "file,cloud",
+    "label": "cloud,file",
     "javaType": "org.apache.camel.component.atmos.AtmosComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

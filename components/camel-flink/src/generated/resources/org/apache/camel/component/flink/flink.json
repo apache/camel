@@ -6,7 +6,7 @@
     "description": "Send DataSet jobs to an Apache Flink cluster.",
     "deprecated": false,
     "firstVersion": "2.18.0",
-    "label": "hadoop",
+    "label": "transformation,bigdata,streams",
     "javaType": "org.apache.camel.component.flink.FlinkComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

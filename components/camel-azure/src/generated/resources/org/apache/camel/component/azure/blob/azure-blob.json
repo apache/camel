@@ -6,7 +6,7 @@
     "description": "Store and retrieve blobs from Azure Storage Blob Service.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "cloud,database,nosql",
+    "label": "cloud,file",
     "javaType": "org.apache.camel.component.azure.blob.BlobServiceComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

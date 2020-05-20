@@ -18,6 +18,7 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Built on top of the Google Cloud Pub/Sub libraries.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub", syntax = "google-pubsub:projectId:destinationName", label = "messaging")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub", syntax = "google-pubsub:projectId:destinationName", category = {Category.CLOUD, Category.MESSAGING})
 public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     private Logger log;

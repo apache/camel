@@ -556,7 +556,7 @@ public interface JcloudsEndpointBuilderFactory {
          * JClouds (camel-jclouds)
          * Interact with jclouds compute & blobstore service.
          * 
-         * Category: api,cloud
+         * Category: api,cloud,compute
          * Since: 2.9
          * Maven coordinates: org.apache.camel:camel-jclouds
          * 
@@ -579,7 +579,7 @@ public interface JcloudsEndpointBuilderFactory {
          * JClouds (camel-jclouds)
          * Interact with jclouds compute & blobstore service.
          * 
-         * Category: api,cloud
+         * Category: api,cloud,compute
          * Since: 2.9
          * Maven coordinates: org.apache.camel:camel-jclouds
          * 

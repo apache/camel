@@ -34,7 +34,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
      * 
-     * Category: database,nosql,mongodb
+     * Category: database,nosql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
      */

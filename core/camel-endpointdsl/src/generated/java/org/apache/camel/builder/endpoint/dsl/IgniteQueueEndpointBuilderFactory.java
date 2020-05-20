@@ -339,7 +339,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Ignite Queues (camel-ignite)
          * Interact with Ignite Queue data structures.
          * 
-         * Category: nosql,cache
+         * Category: messaging,queue
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
@@ -357,7 +357,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Ignite Queues (camel-ignite)
          * Interact with Ignite Queue data structures.
          * 
-         * Category: nosql,cache
+         * Category: messaging,queue
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 

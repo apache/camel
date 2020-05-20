@@ -6,7 +6,7 @@
     "description": "Google BigQuery data warehouse for analytics.",
     "deprecated": false,
     "firstVersion": "2.20.0",
-    "label": "cloud,messaging",
+    "label": "cloud,bigdata",
     "javaType": "org.apache.camel.component.google.bigquery.GoogleBigQueryComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

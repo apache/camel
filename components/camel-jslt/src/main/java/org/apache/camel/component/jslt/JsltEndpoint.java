@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Parser;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Query or transform JSON payloads using an JSLT.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class JsltEndpoint extends ResourceEndpoint {
 
     private Expression transform;

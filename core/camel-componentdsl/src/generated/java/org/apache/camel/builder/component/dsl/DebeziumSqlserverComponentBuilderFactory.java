@@ -34,7 +34,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
      * 
-     * Category: database,sql,sqlserver
+     * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
      */

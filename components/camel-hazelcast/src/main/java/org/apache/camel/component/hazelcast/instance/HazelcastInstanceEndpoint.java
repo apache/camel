@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.instance;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -29,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
  * Consume join/leave events of a cache instance in a Hazelcast cluster.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-instance", title = "Hazelcast Instance", syntax = "hazelcast-instance:cacheName",
-    consumerOnly = true, label = "cache,datagrid")
+    consumerOnly = true, category = {Category.CACHE, Category.DATAGRID})
 public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {

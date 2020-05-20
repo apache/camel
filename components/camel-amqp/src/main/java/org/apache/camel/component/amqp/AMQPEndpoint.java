@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.amqp;
 
+import org.apache.camel.Category;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
@@ -26,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
  * performing the AMQP connectivity.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "amqp", extendsScheme = "jms", title = "AMQP",
-        syntax = "amqp:destinationType:destinationName", label = "messaging")
+        syntax = "amqp:destinationType:destinationName", category = {Category.MESSAGING})
 public class AMQPEndpoint extends JmsEndpoint {
 
 }

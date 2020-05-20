@@ -1238,7 +1238,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Google Drive (camel-google-drive)
          * Manage files in Google Drive.
          * 
-         * Category: api,cloud,file
+         * Category: file,cloud,api
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-google-drive
          * 
@@ -1265,7 +1265,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Google Drive (camel-google-drive)
          * Manage files in Google Drive.
          * 
-         * Category: api,cloud,file
+         * Category: file,cloud,api
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-google-drive
          * 

@@ -24,6 +24,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -49,7 +50,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, category = {Category.MONITORING})
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests

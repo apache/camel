@@ -34,7 +34,7 @@ public interface DockerComponentBuilderFactory {
      * Docker (camel-docker)
      * Manage Docker containers.
      * 
-     * Category: container,cloud,paas
+     * Category: cloud,container,paas
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
      */

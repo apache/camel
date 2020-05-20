@@ -6,7 +6,7 @@
     "description": "Capture changes from a MySQL database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database,sql,mysql",
+    "label": "database,sql",
     "javaType": "org.apache.camel.component.debezium.DebeziumMySqlComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

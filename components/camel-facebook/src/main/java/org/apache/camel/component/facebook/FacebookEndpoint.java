@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -53,7 +54,7 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
  * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", label = "social")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", category = {Category.SOCIAL})
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);

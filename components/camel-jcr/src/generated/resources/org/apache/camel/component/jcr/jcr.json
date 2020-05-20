@@ -6,7 +6,7 @@
     "description": "Read and write nodes to\/from a JCR compliant content repository.",
     "deprecated": false,
     "firstVersion": "1.3.0",
-    "label": "cms,database",
+    "label": "database,cms",
     "javaType": "org.apache.camel.component.jcr.JcrComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

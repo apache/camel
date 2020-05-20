@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send e-mails through AWS SES service.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service (SES)", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service (SES)", syntax = "aws-ses:from", producerOnly = true, category = {Category.CLOUD, Category.MAIL})
 public class SesEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleEmailService sesClient;

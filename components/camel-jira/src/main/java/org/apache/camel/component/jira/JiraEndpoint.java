@@ -20,6 +20,7 @@ import java.net.URI;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -64,7 +65,7 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include: - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the
  * types of payloads we're polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type", label = "api,reporting")
+@UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type", category = {Category.API, Category.REPORTING})
 public class JiraEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);

@@ -34,7 +34,7 @@ public interface IotaComponentBuilderFactory {
      * IOTA (camel-iota)
      * Manage financial transactions using IOTA distributed ledger.
      * 
-     * Category: ledger
+     * Category: ledger,api
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-iota
      */

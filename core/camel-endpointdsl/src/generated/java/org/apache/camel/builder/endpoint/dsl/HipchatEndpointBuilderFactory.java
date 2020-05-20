@@ -999,7 +999,7 @@ public interface HipchatEndpointBuilderFactory {
          * Hipchat (camel-hipchat)
          * Send and receive messages to/from Hipchat service.
          * 
-         * Category: api,cloud
+         * Category: api,chat,cloud
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-hipchat
          * 
@@ -1024,7 +1024,7 @@ public interface HipchatEndpointBuilderFactory {
          * Hipchat (camel-hipchat)
          * Send and receive messages to/from Hipchat service.
          * 
-         * Category: api,cloud
+         * Category: api,chat,cloud
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-hipchat
          * 

@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -33,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Invoke methods of Java beans stored in Camel registry.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, category = {Category.CORE, Category.JAVA})
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;

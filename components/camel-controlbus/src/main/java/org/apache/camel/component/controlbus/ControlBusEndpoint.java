@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.controlbus;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.LoggingLevel;
@@ -35,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
  *
  * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance statistics.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, category = {Category.CORE, Category.MONITORING})
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = true)

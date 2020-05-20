@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.bigquery;
 
 import com.google.api.services.bigquery.Bigquery;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -41,7 +42,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * by Camel.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery", syntax = "google-bigquery:projectId:datasetId:tableId",
-    label = "cloud,messaging", producerOnly = true)
+    category = {Category.CLOUD, Category.BIGDATA}, producerOnly = true)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @UriParam

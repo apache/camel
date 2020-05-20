@@ -18,6 +18,7 @@ package org.apache.camel.component.dataset;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Camel will use the throughput logger when sending dataset's.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
-        label = "core,testing", lenientProperties = true)
+        category = {Category.CORE, Category.TESTING}, lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();

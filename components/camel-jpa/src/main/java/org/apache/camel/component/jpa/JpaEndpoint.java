@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -49,7 +50,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Store and retrieve Java objects from databases using Java Persistence API (JPA).
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", label = "database,sql")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", category = {Category.DATABASE, Category.SQL})
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;

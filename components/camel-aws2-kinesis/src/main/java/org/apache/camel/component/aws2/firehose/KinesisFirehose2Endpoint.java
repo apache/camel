@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.firehose;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
 /**
  * Consume data from AWS Kinesis Firehose streams using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose", syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose", syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
 public class KinesisFirehose2Endpoint extends DefaultEndpoint {
 
     @UriParam
