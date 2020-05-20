@@ -821,15 +821,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     public Map<String, Object> getExchangeArgs() {
-        return PropertiesHelper.extractProperties(args, EXCHANGE_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, EXCHANGE_ARG_PREFIX, false);
     }
 
     public Map<String, Object> getQueueArgs() {
-        return PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX, false);
     }
 
     public Map<String, Object> getBindingArgs() {
-        return PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX, false);
     }
 
     /**
