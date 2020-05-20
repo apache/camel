@@ -30,7 +30,7 @@
     <description>Camel WebSocket using JSR356 (javax)</description>
 
     <properties>
-        <tomcat.version>9.0.34</tomcat.version>
+        <tomcat.version>9.0.35</tomcat.version>
 
         <camel.osgi.import.pkg>
             !org.apache.camel.component.websocket.jsr356.*,
