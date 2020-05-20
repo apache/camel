@@ -480,7 +480,7 @@
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
         <roaster-version>2.21.2.Final</roaster-version>
-        <robotframework-version>3.2</robotframework-version>
+        <robotframework-version>3.2.1</robotframework-version>
         <rome-version>1.12.2</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.19</rxjava2-version>
