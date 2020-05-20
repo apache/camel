@@ -42,23 +42,23 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @EndpointInject("mock:error")
     protected MockEndpoint errorEndpoint;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+
         dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }
-    
+
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
@@ -113,7 +113,7 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
         assertMockEndpointsSatisfied();
-        
+
         jdbcTemplate.update(CLEAR_STRING, PROCESSOR_NAME);
 
         // only message 1 and 3 should be in jdbc repo
@@ -123,7 +123,7 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         assertFalse("Should not contain message 1", receivedMessageIds.contains("1"));
         assertFalse("Should not contain message 3", receivedMessageIds.contains("3"));
     }
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");

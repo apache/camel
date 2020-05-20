@@ -286,7 +286,7 @@ from("direct:withSplitModel")
             .to("mock:result")
         .end();
 ----
- 
+
 [[sql-component-header-values]]
 == Header values
 
@@ -487,7 +487,7 @@ from("direct:query")
     .to("log:query")
     .to("mock:query");
 ----
- 
+
 
 == Using the JDBC based idempotent repository
 
@@ -513,7 +513,7 @@ idempotent repository. We use the following schema:
 CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
 messageId VARCHAR(100) )
 ----
- 
+
 
 We added the createdAt column:
 
@@ -622,11 +622,13 @@ Here is the SQL query used to create the tables, just replace
 CREATE TABLE aggregation (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
+ version BIGINT NOT NULL,
  constraint aggregation_pk PRIMARY KEY (id)
 );
 CREATE TABLE aggregation_completed (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
+ version BIGINT NOT NULL,
  constraint aggregation_completed_pk PRIMARY KEY (id)
 );
 -----
@@ -646,6 +648,7 @@ store the body, and the following two headers `companyName` and
 CREATE TABLE aggregationRepo3 (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
+ version BIGINT NOT NULL,
  body varchar(1000),
  companyName varchar(1000),
  accountName varchar(1000),
@@ -654,13 +657,14 @@ CREATE TABLE aggregationRepo3 (
 CREATE TABLE aggregationRepo3_completed (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
+ version BIGINT NOT NULL,
  body varchar(1000),
  companyName varchar(1000),
  accountName varchar(1000),
  constraint aggregationRepo3_completed_pk PRIMARY KEY (id)
 );
 ----
- 
+
 And then configure the repository to enable this behavior as shown
 below:
 

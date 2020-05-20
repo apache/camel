@@ -53,8 +53,9 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSu
         assertEquals("counter:1", actual.getIn().getBody());
         assertEquals(null, repo2.get(context, "foo"));
 
-        // Change it..
+        // Change it after reading the current exchange with version
         Exchange exchange2 = new DefaultExchange(context);
+        exchange2 = repo1.get(context, "foo");
         exchange2.getIn().setBody("counter:2");
         actual = repo1.add(context, "foo", exchange2);
         // the old one
