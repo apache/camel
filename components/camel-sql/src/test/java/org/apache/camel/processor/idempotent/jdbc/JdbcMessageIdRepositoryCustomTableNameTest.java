@@ -16,8 +16,9 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
-import javax.sql.DataSource;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
