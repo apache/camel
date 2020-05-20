@@ -60,6 +60,16 @@ public class AvailablePortFinderTest {
     }
 
     @Test
+    public void testPortRange() throws Exception {
+        int p1 = AvailablePortFinder.getNextAvailable(49152, 65535);
+        ServerSocket socket1 = new ServerSocket(p1);
+        int p2 = AvailablePortFinder.getNextAvailable(49152, 65535);
+        ServerSocket socket2 = new ServerSocket(p2);
+        socket1.close();
+        socket2.close();
+    }
+
+    @Test
     public void testAvailablePortFinderPropertiesFunction() throws Exception {
         AvailablePortFinderPropertiesFunction function = new AvailablePortFinderPropertiesFunction();
 
