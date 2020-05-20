@@ -31,8 +31,8 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
         for (int i = 0; i < SIZE; i++) {
             sb.append("X");
         }
-        Exchange item = new DefaultExchange(context);
-        item.getIn().setBody(sb.toString(), String.class);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(sb.toString(), String.class);
 
         // the key
         final String key = "foo";
@@ -40,7 +40,7 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
         // we update using the same key, which means we should be able to do this within the file size limit
         for (int i = 0; i < SIZE; i++) {
             log.debug("Updating " + i);
-            repo.add(context, key, item);
+            exchange = repoAddAndGet(key, exchange);
         }
 
         // get the last

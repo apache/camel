@@ -349,6 +349,27 @@ This means that you should use `xslt` and `xslt-saxon` as component name in your
 If you are using XSLT aggregation strategy, then use `org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy` for Saxon support.
 And use `org.apache.camel.component.xslt.saxon.XsltSaxonBuilder` for Saxon support if using xslt builder. Also notice that `allowStax` is also only supported in `camel-xslt-saxon` as this is not supported by the JDK XSLT.
 
+=== camel-sql
+
+The `JdbcAggregationRepository` optimistic locking feature has been fixed to work on a distributed environment and every database.
+There is a new `version` column that is required and must be added to the repository:
+
+[source,sql]
+----
+CREATE TABLE aggregation (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_pk PRIMARY KEY (id)
+);
+CREATE TABLE aggregation_completed (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_completed_pk PRIMARY KEY (id)
+);
+----
+
 === Configuring global options on CamelContext
 
 In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `getGlobalOptions`, so you should migrate to:

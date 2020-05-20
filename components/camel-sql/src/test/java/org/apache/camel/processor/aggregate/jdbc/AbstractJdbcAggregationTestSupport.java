@@ -30,14 +30,14 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
     @Override
     public void postProcessTest() throws Exception {
         super.postProcessTest();
-        
+
         repo = applicationContext.getBean("repo1", JdbcAggregationRepository.class);
         configureJdbcAggregationRepository();
     }
-    
+
     void configureJdbcAggregationRepository() {
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -54,14 +54,21 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
             // END SNIPPET: e1
         };
     }
-    
+
     long getCompletionInterval() {
         return 5000;
     }
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
+    }
+
+    protected Exchange repoAddAndGet(String key, Exchange exchange) {
+        repo.add(context, key, exchange);
+        // recover the exchange with the new version to be able to add again
+        exchange = repo.get(context, key);
+        return exchange;
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {
