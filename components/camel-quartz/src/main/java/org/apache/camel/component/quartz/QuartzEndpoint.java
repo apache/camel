@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -56,7 +57,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 /**
  * Schedule sending of messages using the Quartz 2.x scheduler.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName", consumerOnly = true, label = "scheduling")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName", consumerOnly = true, category = {Category.SCHEDULING})
 public class QuartzEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);

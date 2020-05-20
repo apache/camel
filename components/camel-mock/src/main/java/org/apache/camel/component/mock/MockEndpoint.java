@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -93,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * {@link #expectedHeaderReceived(String, Object)} then the latter overrides the number of expected message based on the
  * number of values provided in the bodies/headers.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, category = {Category.CORE, Category.TESTING}, lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, NotifyBuilderMatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);

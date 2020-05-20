@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.servicenow;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with <a href="http://www.servicenow.com/">ServiceNow</a> via its REST API.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", producerOnly = true, label = "api,cloud,management")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName", producerOnly = true, category = {Category.API, Category.CLOUD, Category.MANAGEMENT})
 public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 

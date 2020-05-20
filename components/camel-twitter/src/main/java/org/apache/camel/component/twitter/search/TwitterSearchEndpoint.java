@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twitter.search;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,7 +31,7 @@ import org.apache.camel.spi.UriPath;
  * Access Twitter Search.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-search", title = "Twitter Search", syntax = "twitter-search:keywords",
-    label = "api,social")
+    category = {Category.CLOUD, Category.API, Category.SEARCH, Category.SOCIAL})
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The search query, use the keywords AND, OR, - and () to narrow the search results.")

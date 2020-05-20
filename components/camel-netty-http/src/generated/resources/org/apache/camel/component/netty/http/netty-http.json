@@ -7,7 +7,7 @@
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "2.14.0",
-    "label": "http",
+    "label": "networking,http",
     "javaType": "org.apache.camel.component.netty.http.NettyHttpComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

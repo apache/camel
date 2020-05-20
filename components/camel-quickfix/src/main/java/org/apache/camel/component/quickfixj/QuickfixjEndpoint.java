@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -40,7 +41,7 @@ import quickfix.SessionID;
 /**
  * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", label = "messaging")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", category = {Category.MESSAGING})
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
     public static final String SESSION_ID_KEY = "SessionID";

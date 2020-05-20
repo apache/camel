@@ -21,6 +21,7 @@ import java.util.Map;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Netty HTTP server and client using the Netty 4.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-        syntax = "netty-http:protocol:host:port/path",  label = "http", lenientProperties = true)
+        syntax = "netty-http:protocol:host:port/path",  category = {Category.NETWORKING, Category.HTTP}, lenientProperties = true)
 @Metadata(excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                 + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {

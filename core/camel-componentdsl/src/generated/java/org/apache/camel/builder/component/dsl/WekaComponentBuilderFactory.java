@@ -34,7 +34,7 @@ public interface WekaComponentBuilderFactory {
      * Weka (camel-weka)
      * Perform machine learning tasks using Weka.
      * 
-     * Category: Datamining
+     * Category: datamining
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-weka
      */

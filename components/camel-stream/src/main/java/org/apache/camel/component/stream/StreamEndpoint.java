@@ -18,6 +18,7 @@ package org.apache.camel.component.stream;
 
 import java.nio.charset.Charset;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Read from system-in and write to system-out and system-err streams.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", label = "file,system")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", category = {Category.FILE, Category.SYSTEM})
 public class StreamEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);

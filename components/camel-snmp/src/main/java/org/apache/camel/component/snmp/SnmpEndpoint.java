@@ -18,6 +18,7 @@ package org.apache.camel.component.snmp;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import org.snmp4j.security.SecurityLevel;
 /**
  * Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", label = "monitoring")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", category = {Category.MONITORING})
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";

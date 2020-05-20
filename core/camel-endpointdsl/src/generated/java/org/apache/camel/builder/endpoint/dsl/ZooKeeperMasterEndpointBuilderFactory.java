@@ -212,7 +212,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * Have only a single consumer in a cluster consuming from a given
          * endpoint; with automatic failover if the JVM dies.
          * 
-         * Category: clustering
+         * Category: clustering,management,bigdata
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-zookeeper-master
          * 
@@ -234,7 +234,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * Have only a single consumer in a cluster consuming from a given
          * endpoint; with automatic failover if the JVM dies.
          * 
-         * Category: clustering
+         * Category: clustering,management,bigdata
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-zookeeper-master
          * 

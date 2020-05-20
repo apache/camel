@@ -36,6 +36,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * Transform XML payloads using an XSLT template using Saxon.
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, label = "core,transformation")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, category = {Category.CORE, Category.TRANSFORMATION})
 public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);

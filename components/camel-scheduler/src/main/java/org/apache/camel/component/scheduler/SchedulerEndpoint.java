@@ -18,6 +18,7 @@ package org.apache.camel.component.scheduler;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,7 +35,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  * Also this component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "scheduler", title = "Scheduler", syntax = "scheduler:name",
-    consumerOnly = true, label = "core,scheduling")
+    consumerOnly = true, category = {Category.CORE, Category.SCHEDULING})
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = true)

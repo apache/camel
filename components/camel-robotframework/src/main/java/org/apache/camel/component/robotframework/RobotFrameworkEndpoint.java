@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
@@ -31,7 +32,7 @@ import org.robotframework.RobotFramework;
 /**
  * Pass camel exchanges to acceptence test written in Robot DSL.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework", syntax = "robotframework:resourceUri", label = "testing")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework", syntax = "robotframework:resourceUri", category = {Category.TESTING})
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     @UriParam

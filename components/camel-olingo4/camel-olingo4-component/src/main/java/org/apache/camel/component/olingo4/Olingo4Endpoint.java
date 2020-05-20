@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -38,7 +39,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Communicate with OData 4.0 services using Apache Olingo OData API.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName", label = "cloud")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName", category = {Category.CLOUD})
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.keystone;
 
+import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.keystone.producer.DomainProducer;
@@ -32,7 +33,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-keystone", title = "OpenStack Keystone", syntax = "openstack-keystone:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-keystone", title = "OpenStack Keystone", syntax = "openstack-keystone:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions,domains,projects,users,groups")

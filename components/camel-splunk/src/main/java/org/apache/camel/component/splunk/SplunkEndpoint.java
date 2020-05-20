@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLException;
 
 import com.splunk.Service;
+
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Publish or search for events in Splunk.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", label = "log,monitoring")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", category = {Category.IOT, Category.MONITORING})
 public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.weather;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,7 +27,7 @@ import org.apache.camel.support.DefaultPollingEndpoint;
 /**
  * Poll the weather information from Open Weather Map.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", label = "api")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", category = {Category.API})
 public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @UriParam

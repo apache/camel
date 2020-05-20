@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -33,7 +34,7 @@ import org.jsmpp.bean.DeliverSm;
  * Send and receive SMS messages using a SMSC (Short Message Service Center).
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
-        label = "mobile", lenientProperties = true)
+        category = {Category.MOBILE}, lenientProperties = true)
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;

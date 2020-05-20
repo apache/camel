@@ -232,7 +232,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * delegating to a component implementing the RestProducerFactory
          * interface.
          * 
-         * Category: rest,openapi,http
+         * Category: openapi,rest,api
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-rest-openapi
          * 
@@ -269,7 +269,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * delegating to a component implementing the RestProducerFactory
          * interface.
          * 
-         * Category: rest,openapi,http
+         * Category: openapi,rest,api
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-rest-openapi
          * 

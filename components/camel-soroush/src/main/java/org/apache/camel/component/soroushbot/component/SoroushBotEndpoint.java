@@ -28,6 +28,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive messages as a Soroush chat bot.
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:action", label = "chat")
+@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:action", category = {Category.CHAT})
 public class SoroushBotEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SoroushBotEndpoint.class);

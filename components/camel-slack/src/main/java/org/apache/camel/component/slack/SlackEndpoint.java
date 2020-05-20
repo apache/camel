@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.slack;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -35,7 +36,7 @@ import org.apache.camel.util.json.JsonObject;
 /**
  * Send and receive messages to/from Slack.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", label = "social")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", category = {Category.SOCIAL})
 public class SlackEndpoint extends ScheduledPollEndpoint {
 
     @UriPath

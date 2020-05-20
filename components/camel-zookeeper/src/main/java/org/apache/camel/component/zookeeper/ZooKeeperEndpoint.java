@@ -18,6 +18,7 @@ package org.apache.camel.component.zookeeper;
 
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Manage ZooKeeper clusters.
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
-@UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", label = "clustering")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", category = {Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA})
 public class ZooKeeperEndpoint extends DefaultEndpoint {
     @UriParam
     private ZooKeeperConfiguration configuration;

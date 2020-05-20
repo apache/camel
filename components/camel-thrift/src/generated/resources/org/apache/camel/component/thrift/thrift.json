@@ -6,7 +6,7 @@
     "description": "Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.",
     "deprecated": false,
     "firstVersion": "2.20.0",
-    "label": "rpc",
+    "label": "rpc,transformation",
     "javaType": "org.apache.camel.component.thrift.ThriftComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

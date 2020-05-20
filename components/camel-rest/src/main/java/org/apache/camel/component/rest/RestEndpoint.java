@@ -19,6 +19,7 @@ package org.apache.camel.component.rest;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -48,7 +49,7 @@ import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 /**
  * Expose REST services or call external REST services.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.14.0", scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", category = {Category.CORE, Category.REST}, lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
     public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "jetty", "servlet", "spark-java", "undertow"};

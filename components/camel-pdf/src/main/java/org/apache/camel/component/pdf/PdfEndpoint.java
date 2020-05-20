@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pdf;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Create, modify or extract content from PDF documents.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "document,transformation,printing")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, category = {Category.DOCUMENT, Category.TRANSFORMATION, Category.PRINTING})
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

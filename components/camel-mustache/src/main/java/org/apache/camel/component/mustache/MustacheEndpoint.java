@@ -26,6 +26,8 @@ import java.util.Map;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -42,7 +44,7 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
 /**
  * Transform messages using a Mustache template.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;

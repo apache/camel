@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.tika;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Parse documents and extract metadata and text using Apache Tika.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true, label = "document,transformation")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true, category = {Category.DOCUMENT, Category.TRANSFORMATION})
 public class TikaEndpoint extends DefaultEndpoint {
 
     @UriParam

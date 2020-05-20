@@ -19,6 +19,7 @@ package org.apache.camel.component.splunkhec;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import org.apache.commons.validator.routines.DomainValidator;
  * The splunk component allows to publish events in Splunk using the HTTP Event Collector.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
-        syntax = "splunk-hec:splunkURL/token", label = "log,monitoring")
+        syntax = "splunk-hec:splunkURL/token", category = {Category.LOG, Category.MONITORING})
 public class SplunkHECEndpoint extends DefaultEndpoint {
 
     private static final Pattern URI_PARSER = Pattern.compile("splunk-hec\\:\\/?\\/?(.*?):(\\d+)/(\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12})\\??.*");

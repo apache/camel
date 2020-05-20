@@ -24,6 +24,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.model.GridFSFile;
+
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with MongoDB GridFS.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS", syntax = "mongodb-gridfs:connectionBean", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS", syntax = "mongodb-gridfs:connectionBean", category = {Category.DATABASE, Category.NOSQL})
 public class GridFsEndpoint extends DefaultEndpoint {
 
     public static final String GRIDFS_OPERATION = "gridfs.operation";

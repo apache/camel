@@ -46,6 +46,7 @@ import io.swagger.models.parameters.QueryParameter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Json;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
@@ -80,7 +81,7 @@ import static org.apache.camel.util.StringHelper.*;
  * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "rest-swagger", title = "REST Swagger",
-    syntax = "rest-swagger:specificationUri#operationId", label = "rest,swagger,http", producerOnly = true)
+    syntax = "rest-swagger:specificationUri#operationId", category = {Category.REST, Category.SWAGGER, Category.HTTP}, producerOnly = true)
 public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
     /**

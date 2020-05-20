@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.lucene;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform inserts or queries against Apache Lucene databases.
  */
-@UriEndpoint(firstVersion = "2.2.0", scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true, label = "database,search")
+@UriEndpoint(firstVersion = "2.2.0", scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true, category = {Category.DATABASE, Category.SEARCH})
 public class LuceneEndpoint extends DefaultEndpoint {
     @UriParam
     LuceneConfiguration config;

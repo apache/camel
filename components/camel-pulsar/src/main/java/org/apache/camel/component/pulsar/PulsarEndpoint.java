@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pulsar;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,7 +31,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 /**
  * Send and receive messages from/to Apache Pulsar messaging system.
  */
-@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
+@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", category = {Category.MESSAGING})
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;

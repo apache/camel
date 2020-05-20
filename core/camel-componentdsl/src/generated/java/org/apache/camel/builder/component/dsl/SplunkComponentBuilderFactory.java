@@ -34,7 +34,7 @@ public interface SplunkComponentBuilderFactory {
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 
-     * Category: log,monitoring
+     * Category: iot,monitoring
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
      */

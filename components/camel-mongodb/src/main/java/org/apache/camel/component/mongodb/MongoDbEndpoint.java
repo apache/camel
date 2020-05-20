@@ -29,6 +29,8 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -58,7 +60,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
  * Perform operations on MongoDB documents and collections.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
-        label = "database,nosql")
+        category = {Category.DATABASE, Category.NOSQL})
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
