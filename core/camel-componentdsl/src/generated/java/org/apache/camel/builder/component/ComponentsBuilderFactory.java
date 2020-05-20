@@ -120,7 +120,7 @@ public interface ComponentsBuilderFactory {
      * Atmos (camel-atmos)
      * Integract with EMC's ViPR object data services using the Atmos Client.
      * 
-     * Category: file,cloud
+     * Category: cloud,file
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-atmos
      */
@@ -219,7 +219,7 @@ public interface ComponentsBuilderFactory {
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
      * 
-     * Category: messaging,transformation
+     * Category: rpc
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro-rpc
      */
@@ -329,7 +329,7 @@ public interface ComponentsBuilderFactory {
      * AWS Key Management Service (KMS) (camel-aws-kms)
      * Manage keys stored in AWS KMS instances.
      * 
-     * Category: cloud,management
+     * Category: cloud,messaging
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-aws-kms
      */
@@ -351,7 +351,7 @@ public interface ComponentsBuilderFactory {
      * AWS MQ (camel-aws-mq)
      * Manage AWS MQ instances.
      * 
-     * Category: cloud,management
+     * Category: cloud,messaging
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-aws-mq
      */
@@ -362,7 +362,7 @@ public interface ComponentsBuilderFactory {
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
      * Manage AWS MSK instances.
      * 
-     * Category: cloud,management
+     * Category: cloud,messaging
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-msk
      */
@@ -406,7 +406,7 @@ public interface ComponentsBuilderFactory {
      * AWS Simple Notification System (SNS) (camel-aws-sns)
      * Send messages to an AWS Simple Notification Topic.
      * 
-     * Category: cloud,mobile,messaging
+     * Category: cloud,messaging,mobile
      * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-sns
      */
@@ -574,7 +574,7 @@ public interface ComponentsBuilderFactory {
      * AWS 2 MQ (camel-aws2-mq)
      * Manage AWS MQ instances using AWS SDK version 2.x.
      * 
-     * Category: cloud,management
+     * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
      */
@@ -620,7 +620,7 @@ public interface ComponentsBuilderFactory {
      * Send messages to an AWS Simple Notification Topic using AWS SDK version
      * 2.x.
      * 
-     * Category: cloud,mobile,messaging
+     * Category: cloud,messaging,mobile
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sns
      */
@@ -654,7 +654,7 @@ public interface ComponentsBuilderFactory {
      * Azure Storage Blob Service (Legacy) (camel-azure)
      * Store and retrieve blobs from Azure Storage Blob Service.
      * 
-     * Category: cloud,database,nosql
+     * Category: cloud,file
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
@@ -665,7 +665,7 @@ public interface ComponentsBuilderFactory {
      * Azure Storage Queue Service (Legacy) (camel-azure)
      * Store and retrieve messages from Azure Storage Queue Service.
      * 
-     * Category: cloud,queue,azure
+     * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
@@ -744,7 +744,7 @@ public interface ComponentsBuilderFactory {
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
      * 
-     * Category: api,file,cloud
+     * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-box
      */
@@ -755,7 +755,7 @@ public interface ComponentsBuilderFactory {
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
      * 
-     * Category: api,cloud,payment
+     * Category: cloud,payment
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      */
@@ -800,7 +800,7 @@ public interface ComponentsBuilderFactory {
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
-     * Category: ai,chatscript
+     * Category: ai,chat
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
      */
@@ -923,7 +923,7 @@ public interface ComponentsBuilderFactory {
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
      * 
-     * Category: api,cloud
+     * Category: cloud,api
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
      */
@@ -946,7 +946,7 @@ public interface ComponentsBuilderFactory {
      * Perform operations against Corda blockchain platform using corda-rpc
      * library.
      * 
-     * Category: corda,blockchain
+     * Category: blockchain,rpc
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-corda
      */
@@ -1087,7 +1087,7 @@ public interface ComponentsBuilderFactory {
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
      * 
-     * Category: database,nosql,mongodb
+     * Category: database,nosql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
      */
@@ -1098,7 +1098,7 @@ public interface ComponentsBuilderFactory {
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
      * 
-     * Category: database,sql,mysql
+     * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mysql
      */
@@ -1109,7 +1109,7 @@ public interface ComponentsBuilderFactory {
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgresSQL database.
      * 
-     * Category: database,sql,postgres
+     * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-postgres
      */
@@ -1120,7 +1120,7 @@ public interface ComponentsBuilderFactory {
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
      * 
-     * Category: database,sql,sqlserver
+     * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
      */
@@ -1210,7 +1210,7 @@ public interface ComponentsBuilderFactory {
      * Docker (camel-docker)
      * Manage Docker containers.
      * 
-     * Category: container,cloud,paas
+     * Category: cloud,container,paas
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
      */
@@ -1244,7 +1244,7 @@ public interface ComponentsBuilderFactory {
      * Upload, download and manage files, folders, groups, collaborations, etc
      * on Dropbox.
      * 
-     * Category: api,file
+     * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
      */
@@ -1266,7 +1266,7 @@ public interface ComponentsBuilderFactory {
      * Elasticsearch Rest (camel-elasticsearch-rest)
      * Send requests to with an ElasticSearch via REST API.
      * 
-     * Category: monitoring,search
+     * Category: search,monitoring
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
      */
@@ -1344,7 +1344,7 @@ public interface ComponentsBuilderFactory {
      * Exchange information in the healthcare domain using the FHIR (Fast
      * Healthcare Interoperability Resources) standard.
      * 
-     * Category: hl7,api
+     * Category: api
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-fhir
      */
@@ -1355,7 +1355,7 @@ public interface ComponentsBuilderFactory {
      * File (camel-file)
      * Read and write files.
      * 
-     * Category: core,file
+     * Category: file,core
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-file
      */
@@ -1389,7 +1389,7 @@ public interface ComponentsBuilderFactory {
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
      * 
-     * Category: hadoop
+     * Category: transformation,bigdata,streams
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
      */
@@ -1401,7 +1401,7 @@ public interface ComponentsBuilderFactory {
      * Render messages into PDF and other output formats supported by Apache
      * FOP.
      * 
-     * Category: transformation
+     * Category: file,transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-fop
      */
@@ -1480,7 +1480,7 @@ public interface ComponentsBuilderFactory {
      * GitHub (camel-github)
      * Interact with the GitHub API.
      * 
-     * Category: api,file
+     * Category: file,cloud,api
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-github
      */
@@ -1491,7 +1491,7 @@ public interface ComponentsBuilderFactory {
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
      * 
-     * Category: cloud,messaging
+     * Category: cloud,bigdata
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      */
@@ -1535,7 +1535,7 @@ public interface ComponentsBuilderFactory {
      * Google Drive (camel-google-drive)
      * Manage files in Google Drive.
      * 
-     * Category: api,cloud,file
+     * Category: file,cloud,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
      */
@@ -1546,7 +1546,7 @@ public interface ComponentsBuilderFactory {
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
      * 
-     * Category: api,cloud,mail
+     * Category: cloud,api,mail
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-mail
      */
@@ -1568,7 +1568,7 @@ public interface ComponentsBuilderFactory {
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
      * 
-     * Category: messaging
+     * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
      */
@@ -1601,7 +1601,7 @@ public interface ComponentsBuilderFactory {
      * Gora (camel-gora)
      * Access NoSQL databases using the Apache Gora framework.
      * 
-     * Category: database,hadoop,nosql
+     * Category: database,nosql,bigdata
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-gora
      */
@@ -1713,7 +1713,7 @@ public interface ComponentsBuilderFactory {
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
      * 
-     * Category: cache,datagrid
+     * Category: cache,datagrid,messaging
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      */
@@ -1780,7 +1780,7 @@ public interface ComponentsBuilderFactory {
      * HBase (camel-hbase)
      * Reading and write from/to an HBase store (Hadoop database).
      * 
-     * Category: hadoop
+     * Category: bigdata,database,hadoop
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-hbase
      */
@@ -1791,7 +1791,7 @@ public interface ComponentsBuilderFactory {
      * HDFS (camel-hdfs)
      * Read and write from/to an HDFS filesystem using Hadoop 2.x.
      * 
-     * Category: hadoop,file
+     * Category: bigdata,hadoop,file
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-hdfs
      */
@@ -1802,7 +1802,7 @@ public interface ComponentsBuilderFactory {
      * Hipchat (camel-hipchat)
      * Send and receive messages to/from Hipchat service.
      * 
-     * Category: api,cloud
+     * Category: api,chat,cloud
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-hipchat
      */
@@ -1860,7 +1860,7 @@ public interface ComponentsBuilderFactory {
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
      * 
-     * Category: nosql,cache,compute
+     * Category: cache,datagrid
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1871,7 +1871,7 @@ public interface ComponentsBuilderFactory {
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
      * 
-     * Category: nosql,cache,compute
+     * Category: compute
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1882,7 +1882,7 @@ public interface ComponentsBuilderFactory {
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
      * 
-     * Category: nosql,cache,compute,messaging,data
+     * Category: messaging,eventbus
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1893,7 +1893,7 @@ public interface ComponentsBuilderFactory {
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
      * 
-     * Category: nosql,cache,compute
+     * Category: compute
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1904,7 +1904,7 @@ public interface ComponentsBuilderFactory {
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
      * 
-     * Category: nosql,cache,messaging
+     * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1915,7 +1915,7 @@ public interface ComponentsBuilderFactory {
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
      * 
-     * Category: nosql,cache
+     * Category: messaging,queue
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1926,7 +1926,7 @@ public interface ComponentsBuilderFactory {
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
      * 
-     * Category: nosql,cache
+     * Category: cache,compute
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
@@ -1982,7 +1982,7 @@ public interface ComponentsBuilderFactory {
      * IOTA (camel-iota)
      * Manage financial transactions using IOTA distributed ledger.
      * 
-     * Category: ledger
+     * Category: ledger,api
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-iota
      */
@@ -2027,7 +2027,7 @@ public interface ComponentsBuilderFactory {
      * JBPM (camel-jbpm)
      * Interact with jBPM workflow engine over REST.
      * 
-     * Category: process
+     * Category: api,workflow
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jbpm
      */
@@ -2049,7 +2049,7 @@ public interface ComponentsBuilderFactory {
      * JClouds (camel-jclouds)
      * Interact with jclouds compute & blobstore service.
      * 
-     * Category: api,cloud
+     * Category: api,cloud,compute
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-jclouds
      */
@@ -2060,7 +2060,7 @@ public interface ComponentsBuilderFactory {
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
      * 
-     * Category: cms,database
+     * Category: database,cms
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
      */
@@ -2171,7 +2171,7 @@ public interface ComponentsBuilderFactory {
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
      * 
-     * Category: database
+     * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
      */

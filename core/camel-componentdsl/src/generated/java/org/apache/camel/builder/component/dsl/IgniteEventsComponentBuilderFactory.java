@@ -34,7 +34,7 @@ public interface IgniteEventsComponentBuilderFactory {
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
      * 
-     * Category: nosql,cache,compute,messaging,data
+     * Category: messaging,eventbus
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */

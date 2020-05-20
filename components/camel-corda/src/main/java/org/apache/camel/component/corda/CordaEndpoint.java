@@ -20,6 +20,7 @@ import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCConnection;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.utilities.NetworkHostAndPort;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations against Corda blockchain platform using corda-rpc library.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "Corda", syntax = "corda:node", label = "corda,blockchain")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "Corda", syntax = "corda:node", category = {Category.BLOCKCHAIN, Category.RPC})
 public class CordaEndpoint extends DefaultEndpoint {
 
     @UriParam

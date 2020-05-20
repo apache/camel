@@ -18,6 +18,7 @@ package org.apache.camel.component.beanstalk;
 
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Retrieve and post-process Beanstalk jobs.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", label = "messaging")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", category = {Category.MESSAGING})
 public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEndpoint {
     final ConnectionSettings conn;
 

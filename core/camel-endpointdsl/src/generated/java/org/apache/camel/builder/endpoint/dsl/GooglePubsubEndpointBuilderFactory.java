@@ -783,7 +783,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Send and receive messages to/from Google Cloud Platform PubSub
          * Service.
          * 
-         * Category: messaging
+         * Category: cloud,messaging
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-google-pubsub
          * 
@@ -805,7 +805,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Send and receive messages to/from Google Cloud Platform PubSub
          * Service.
          * 
-         * Category: messaging
+         * Category: cloud,messaging
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-google-pubsub
          * 

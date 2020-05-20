@@ -6,7 +6,7 @@
     "description": "Send requests to with an ElasticSearch via REST API.",
     "deprecated": false,
     "firstVersion": "2.21.0",
-    "label": "monitoring,search",
+    "label": "search,monitoring",
     "javaType": "org.apache.camel.component.elasticsearch.ElasticsearchComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

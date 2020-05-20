@@ -17,6 +17,7 @@
 package org.apache.camel.component.debezium;
 
 import io.debezium.data.Envelope;
+import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -25,7 +26,7 @@ import org.apache.kafka.connect.data.Schema;
 /**
  * Capture changes from a MongoDB database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector", syntax = "debezium-mongodb:name", label = "database,nosql,mongodb", consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector", syntax = "debezium-mongodb:name", category = {Category.DATABASE, Category.NOSQL}, consumerOnly = true)
 public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Read and write files.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName", label = "core,file")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName", category = {Category.FILE, Category.CORE})
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileEndpoint.class);

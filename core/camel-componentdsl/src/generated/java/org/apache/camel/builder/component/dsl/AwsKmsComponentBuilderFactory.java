@@ -34,7 +34,7 @@ public interface AwsKmsComponentBuilderFactory {
      * AWS Key Management Service (KMS) (camel-aws-kms)
      * Manage keys stored in AWS KMS instances.
      * 
-     * Category: cloud,management
+     * Category: cloud,messaging
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-aws-kms
      */

@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.atomicnumber;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,7 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-atomicvalue", title = "Hazelcast Atomic Number", syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true, label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-atomicvalue", title = "Hazelcast Atomic Number", syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true, category = {Category.CACHE, Category.DATAGRID})
 public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastAtomicnumberEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component, final String cacheName) {

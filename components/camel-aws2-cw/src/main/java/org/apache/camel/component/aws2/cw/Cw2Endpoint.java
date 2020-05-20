@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.cw;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -37,7 +38,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 /**
  * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS 2 CloudWatch", syntax = "aws2-cw:namespace", producerOnly = true, label = "cloud,monitoring")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS 2 CloudWatch", syntax = "aws2-cw:namespace", producerOnly = true, category = {Category.CLOUD, Category.MONITORING})
 public class Cw2Endpoint extends DefaultEndpoint {
 
     @UriParam

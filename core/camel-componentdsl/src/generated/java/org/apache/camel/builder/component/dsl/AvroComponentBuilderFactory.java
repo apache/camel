@@ -34,7 +34,7 @@ public interface AvroComponentBuilderFactory {
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
      * 
-     * Category: messaging,transformation
+     * Category: rpc
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro-rpc
      */

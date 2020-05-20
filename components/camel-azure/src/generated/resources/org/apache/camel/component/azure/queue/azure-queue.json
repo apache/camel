@@ -6,7 +6,7 @@
     "description": "Store and retrieve messages from Azure Storage Queue Service.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "cloud,queue,azure",
+    "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.azure.queue.QueueServiceComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

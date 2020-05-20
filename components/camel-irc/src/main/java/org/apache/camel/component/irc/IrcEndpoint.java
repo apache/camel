@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
     title = "IRC",
     syntax = "irc:hostname:port",
     alternativeSyntax = "irc:username:password@hostname:port",
-    label = "chat")
+    category = {Category.CHAT})
 public class IrcEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);

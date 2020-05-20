@@ -17,13 +17,14 @@
 package org.apache.camel.component.debezium;
 
 import org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.Category;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
  * Capture changes from an SQL Server database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector", syntax = "debezium-sqlserver:name", label = "database,sql,sqlserver", consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector", syntax = "debezium-sqlserver:name", category = {Category.DATABASE, Category.SQL}, consumerOnly = true)
 public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam

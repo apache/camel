@@ -17,6 +17,7 @@
 package org.apache.camel.component.ipfs;
 
 import io.nessus.ipfs.client.IPFSClient;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
  *  Access the Interplanetary File System (IPFS).
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS",
-        syntax = "ipfs:ipfsCmd", producerOnly = true, label = "file,ipfs")
+        syntax = "ipfs:ipfsCmd", producerOnly = true, category = {Category.FILE, Category.IPFS})
 public class IPFSEndpoint extends DefaultEndpoint {
 
     @UriParam

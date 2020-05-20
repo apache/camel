@@ -2332,7 +2332,7 @@ public interface FhirEndpointBuilderFactory {
          * Exchange information in the healthcare domain using the FHIR (Fast
          * Healthcare Interoperability Resources) standard.
          * 
-         * Category: hl7,api
+         * Category: api
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-fhir
          * 
@@ -2356,7 +2356,7 @@ public interface FhirEndpointBuilderFactory {
          * Exchange information in the healthcare domain using the FHIR (Fast
          * Healthcare Interoperability Resources) standard.
          * 
-         * Category: hl7,api
+         * Category: api
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-fhir
          * 

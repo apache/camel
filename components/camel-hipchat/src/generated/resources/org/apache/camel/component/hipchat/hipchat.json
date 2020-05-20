@@ -6,7 +6,7 @@
     "description": "Send and receive messages to\/from Hipchat service.",
     "deprecated": false,
     "firstVersion": "2.15.0",
-    "label": "api,cloud",
+    "label": "api,chat,cloud",
     "javaType": "org.apache.camel.component.hipchat.HipchatComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

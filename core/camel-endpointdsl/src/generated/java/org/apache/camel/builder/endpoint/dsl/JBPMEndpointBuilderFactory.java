@@ -1884,7 +1884,7 @@ public interface JBPMEndpointBuilderFactory {
          * JBPM (camel-jbpm)
          * Interact with jBPM workflow engine over REST.
          * 
-         * Category: process
+         * Category: api,workflow
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-jbpm
          * 
@@ -1905,7 +1905,7 @@ public interface JBPMEndpointBuilderFactory {
          * JBPM (camel-jbpm)
          * Interact with jBPM workflow engine over REST.
          * 
-         * Category: process
+         * Category: api,workflow
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-jbpm
          * 

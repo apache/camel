@@ -24,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -45,7 +46,7 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 /**
  * Call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "Async HTTP Client (AHC)", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "Async HTTP Client (AHC)", syntax = "ahc:httpUri", producerOnly = true, category = {Category.HTTP}, lenientProperties = true)
 public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;

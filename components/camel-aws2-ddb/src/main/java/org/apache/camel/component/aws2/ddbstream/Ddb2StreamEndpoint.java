@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ddbstream;
 
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,7 +39,7 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBui
 /**
  * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true, syntax = "aws2-ddbstream:tableName", label = "cloud,messaging,streams")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true, syntax = "aws2-ddbstream:tableName", category = {Category.CLOUD, Category.MESSAGING, Category.STREAMS})
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

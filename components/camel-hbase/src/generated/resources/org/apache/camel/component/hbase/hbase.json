@@ -6,7 +6,7 @@
     "description": "Reading and write from\/to an HBase store (Hadoop database).",
     "deprecated": false,
     "firstVersion": "2.10.0",
-    "label": "hadoop",
+    "label": "bigdata,database,hadoop",
     "javaType": "org.apache.camel.component.hbase.HBaseComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

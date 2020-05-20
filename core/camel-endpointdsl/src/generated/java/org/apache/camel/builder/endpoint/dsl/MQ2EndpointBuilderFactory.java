@@ -342,7 +342,7 @@ public interface MQ2EndpointBuilderFactory {
          * AWS 2 MQ (camel-aws2-mq)
          * Manage AWS MQ instances using AWS SDK version 2.x.
          * 
-         * Category: cloud,management
+         * Category: cloud,messaging
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-mq
          * 
@@ -360,7 +360,7 @@ public interface MQ2EndpointBuilderFactory {
          * AWS 2 MQ (camel-aws2-mq)
          * Manage AWS MQ instances using AWS SDK version 2.x.
          * 
-         * Category: cloud,management
+         * Category: cloud,messaging
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-mq
          * 

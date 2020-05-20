@@ -274,7 +274,7 @@ public interface FlinkEndpointBuilderFactory {
          * Flink (camel-flink)
          * Send DataSet jobs to an Apache Flink cluster.
          * 
-         * Category: hadoop
+         * Category: transformation,bigdata,streams
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-flink
          * 
@@ -293,7 +293,7 @@ public interface FlinkEndpointBuilderFactory {
          * Flink (camel-flink)
          * Send DataSet jobs to an Apache Flink cluster.
          * 
-         * Category: hadoop
+         * Category: transformation,bigdata,streams
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-flink
          * 

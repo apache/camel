@@ -21,6 +21,7 @@ import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,7 +41,7 @@ import org.apache.hadoop.security.UserGroupInformation;
 /**
  * Reading and write from/to an HBase store (Hadoop database).
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "hbase", title = "HBase", syntax = "hbase:tableName", label = "hadoop")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "hbase", title = "HBase", syntax = "hbase:tableName", category = {Category.BIGDATA, Category.DATABASE, Category.HADOOP})
 public class HBaseEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the table") @Metadata(required = true)

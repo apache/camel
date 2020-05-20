@@ -19,6 +19,7 @@ package org.apache.camel.component.google.drive;
 import java.util.Map;
 
 import com.google.api.services.drive.Drive;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Manage files in Google Drive.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive", syntax = "google-drive:apiName/methodName",
-        consumerPrefix = "consumer", label = "api,cloud,file")
+        consumerPrefix = "consumer", category = {Category.FILE, Category.CLOUD, Category.API})
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
 

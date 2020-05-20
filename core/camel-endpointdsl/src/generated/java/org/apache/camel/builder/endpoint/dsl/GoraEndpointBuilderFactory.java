@@ -880,7 +880,7 @@ public interface GoraEndpointBuilderFactory {
          * Gora (camel-gora)
          * Access NoSQL databases using the Apache Gora framework.
          * 
-         * Category: database,hadoop,nosql
+         * Category: database,nosql,bigdata
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-gora
          * 
@@ -898,7 +898,7 @@ public interface GoraEndpointBuilderFactory {
          * Gora (camel-gora)
          * Access NoSQL databases using the Apache Gora framework.
          * 
-         * Category: database,hadoop,nosql
+         * Category: database,nosql,bigdata
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-gora
          * 

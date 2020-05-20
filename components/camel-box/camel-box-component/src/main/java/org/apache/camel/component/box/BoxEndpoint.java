@@ -19,6 +19,7 @@ package org.apache.camel.component.box;
 import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -47,7 +48,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "box", title = "Box", syntax = "box:apiName/methodName",
-    consumerPrefix = "consumer", label = "api,file,cloud", lenientProperties = true)
+    consumerPrefix = "consumer", category = {Category.CLOUD, Category.FILE, Category.API}, lenientProperties = true)
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     @UriParam

@@ -23,6 +23,7 @@ import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,7 +40,7 @@ import org.apache.camel.util.StringHelper;
  * Read and write nodes to/from a JCR compliant content repository.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base", alternativeSyntax = "jcr:username:password@host/base",
-        label = "cms,database")
+        category = {Category.DATABASE, Category.CMS})
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;

@@ -35,7 +35,7 @@ public interface CordaComponentBuilderFactory {
      * Perform operations against Corda blockchain platform using corda-rpc
      * library.
      * 
-     * Category: corda,blockchain
+     * Category: blockchain,rpc
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-corda
      */

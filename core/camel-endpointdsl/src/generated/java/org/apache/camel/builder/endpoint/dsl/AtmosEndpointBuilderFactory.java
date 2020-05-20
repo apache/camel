@@ -715,7 +715,7 @@ public interface AtmosEndpointBuilderFactory {
          * Integract with EMC's ViPR object data services using the Atmos
          * Client.
          * 
-         * Category: file,cloud
+         * Category: cloud,file
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-atmos
          * 
@@ -738,7 +738,7 @@ public interface AtmosEndpointBuilderFactory {
          * Integract with EMC's ViPR object data services using the Atmos
          * Client.
          * 
-         * Category: file,cloud
+         * Category: cloud,file
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-atmos
          * 

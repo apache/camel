@@ -18,6 +18,7 @@ package org.apache.camel.component.ignite.messaging;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,7 +36,7 @@ import org.apache.ignite.IgniteMessaging;
  *
  * This endpoint supports producers (to send messages) and consumers (to receive messages).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:topic", label = "nosql,cache,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:topic", category = {Category.MESSAGING})
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

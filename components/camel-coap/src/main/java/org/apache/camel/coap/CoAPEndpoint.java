@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -49,7 +50,7 @@ import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 /**
  * Send and receive messages to/from COAP capable devices.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri", label = "iot")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri", category = {Category.IOT})
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;

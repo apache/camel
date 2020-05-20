@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", label = "endpoint")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", category = {Category.ENDPOINT})
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);

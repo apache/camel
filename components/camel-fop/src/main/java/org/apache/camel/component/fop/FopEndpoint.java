@@ -19,6 +19,7 @@ package org.apache.camel.component.fop;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import org.apache.fop.apps.FopFactory;
 /**
  * Render messages into PDF and other output formats supported by Apache FOP.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, category = {Category.FILE, Category.TRANSFORMATION})
 public class FopEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true)

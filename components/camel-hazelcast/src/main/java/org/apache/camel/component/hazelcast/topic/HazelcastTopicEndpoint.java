@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.topic;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
@@ -31,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Send and receive messages to/from <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic", syntax = "hazelcast-topic:cacheName", label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "hazelcast-topic", title = "Hazelcast Topic", syntax = "hazelcast-topic:cacheName", category = {Category.CACHE, Category.DATAGRID})
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam

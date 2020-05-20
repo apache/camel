@@ -19,6 +19,7 @@ package org.apache.camel.component.google.calendar;
 import java.util.Map;
 
 import com.google.api.services.calendar.Calendar;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Perform various operations on a Google Calendar.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar", syntax = "google-calendar:apiName/methodName",
-        consumerPrefix = "consumer", label = "api,cloud")
+        consumerPrefix = "consumer", category = {Category.API, Category.CLOUD})
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
     @UriParam

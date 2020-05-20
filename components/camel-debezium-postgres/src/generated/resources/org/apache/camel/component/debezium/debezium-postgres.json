@@ -6,7 +6,7 @@
     "description": "Capture changes from a PostgresSQL database.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database,sql,postgres",
+    "label": "database,sql",
     "javaType": "org.apache.camel.component.debezium.DebeziumPostgresComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

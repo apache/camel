@@ -315,7 +315,7 @@ public interface MSKEndpointBuilderFactory {
          * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
          * Manage AWS MSK instances.
          * 
-         * Category: cloud,management
+         * Category: cloud,messaging
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-aws-msk
          * 
@@ -333,7 +333,7 @@ public interface MSKEndpointBuilderFactory {
          * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws-msk)
          * Manage AWS MSK instances.
          * 
-         * Category: cloud,management
+         * Category: cloud,messaging
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-aws-msk
          * 

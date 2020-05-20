@@ -27,6 +27,7 @@ import java.util.Set;
 
 import com.couchbase.client.CouchbaseClient;
 import com.couchbase.client.CouchbaseConnectionFactoryBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -55,7 +56,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
 /**
  * Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port", category = {Category.DATABASE, Category.NOSQL})
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath

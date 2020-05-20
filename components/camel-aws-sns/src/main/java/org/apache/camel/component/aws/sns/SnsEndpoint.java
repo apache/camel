@@ -34,6 +34,7 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.util.Topics;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * Send messages to an AWS Simple Notification Topic.
  */
 @UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System (SNS)", syntax = "aws-sns:topicNameOrArn",
-    producerOnly = true, label = "cloud,mobile,messaging")
+    producerOnly = true, category = {Category.CLOUD, Category.MESSAGING, Category.MOBILE})
 public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);

@@ -2356,7 +2356,7 @@ public interface HdfsEndpointBuilderFactory {
          * HDFS (camel-hdfs)
          * Read and write from/to an HDFS filesystem using Hadoop 2.x.
          * 
-         * Category: hadoop,file
+         * Category: bigdata,hadoop,file
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-hdfs
          * 
@@ -2381,7 +2381,7 @@ public interface HdfsEndpointBuilderFactory {
          * HDFS (camel-hdfs)
          * Read and write from/to an HDFS filesystem using Hadoop 2.x.
          * 
-         * Category: hadoop,file
+         * Category: bigdata,hadoop,file
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-hdfs
          * 

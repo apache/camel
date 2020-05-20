@@ -6,7 +6,7 @@
     "description": "Manage Docker containers.",
     "deprecated": false,
     "firstVersion": "2.15.0",
-    "label": "container,cloud,paas",
+    "label": "cloud,container,paas",
     "javaType": "org.apache.camel.component.docker.DockerComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

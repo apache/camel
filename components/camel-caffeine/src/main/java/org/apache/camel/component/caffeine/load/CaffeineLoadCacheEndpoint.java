@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * Perform caching operations using Caffeine Cache with an attached CacheLoader.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-loadcache", title = "Caffeine LoadCache",
-        syntax = "caffeine-loadcache:cacheName", label = "cache,datagrid,clustering", producerOnly = true)
+        syntax = "caffeine-loadcache:cacheName", category = {Category.CACHE, Category.DATAGRID, Category.CLUSTERING}, producerOnly = true)
 public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)

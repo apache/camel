@@ -6,7 +6,7 @@
     "description": "Store and retrieve Java objects from an SQL database using JOOQ.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database",
+    "label": "database,sql",
     "javaType": "org.apache.camel.component.jooq.JooqComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

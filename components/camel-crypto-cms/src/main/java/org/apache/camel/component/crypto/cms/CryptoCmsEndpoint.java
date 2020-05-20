@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.crypto.cms;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "crypto-cms", title = "Crypto CMS", syntax = "crypto-cms:cryptoOperation:name", producerOnly = true, label = "security,transformation")
+@UriEndpoint(firstVersion = "2.20.0", scheme = "crypto-cms", title = "Crypto CMS", syntax = "crypto-cms:cryptoOperation:name", producerOnly = true, category = {Category.SECURITY, Category.TRANSFORMATION})
 public class CryptoCmsEndpoint extends DefaultEndpoint {
     private final Processor processor;
 

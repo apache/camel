@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.ElSqlConfig;
 import com.opengamma.elsql.SpringSqlParams;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -49,7 +50,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
  * Use ElSql to define SQL queries. Extends the SQL Component.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri",
-        label = "database,sql")
+        category = {Category.DATABASE, Category.SQL})
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);

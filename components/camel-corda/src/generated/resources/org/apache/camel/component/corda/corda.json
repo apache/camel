@@ -6,7 +6,7 @@
     "description": "Perform operations against Corda blockchain platform using corda-rpc library.",
     "deprecated": false,
     "firstVersion": "2.23.0",
-    "label": "corda,blockchain",
+    "label": "blockchain,rpc",
     "javaType": "org.apache.camel.component.corda.CordaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

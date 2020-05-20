@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -51,7 +52,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
-        label = "hl7,api")
+        category = {Category.API})
 public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";

@@ -34,7 +34,7 @@ public interface HazelcastQueueComponentBuilderFactory {
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
      * 
-     * Category: cache,datagrid
+     * Category: cache,datagrid,messaging
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      */

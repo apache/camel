@@ -6,7 +6,7 @@
     "description": "Manage files in Google Drive.",
     "deprecated": false,
     "firstVersion": "2.14.0",
-    "label": "api,cloud,file",
+    "label": "file,cloud,api",
     "javaType": "org.apache.camel.component.google.drive.GoogleDriveComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
