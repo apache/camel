@@ -95,7 +95,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
         this.oAuthToken = null;
 
         // create HtmlUnit client
-        webClient = new WebClient(BrowserVersion.FIREFOX_38);
+        webClient = new WebClient(BrowserVersion.FIREFOX);
         final WebClientOptions options = webClient.getOptions();
         options.setRedirectEnabled(true);
         options.setJavaScriptEnabled(false);
