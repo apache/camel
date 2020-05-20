@@ -452,7 +452,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 boolean multiValued = option.isMultiValue();
                 if (multiValued) {
                     // multi value option that takes one value
-                    String desc = baseDesc.replaceFirst("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
+                    String desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
                     Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(new GenericType(String.class), "key")
                             .addParameter(new GenericType(Object.class), "value")
@@ -471,7 +471,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     fluent.getJavaDoc().setFullText(desc);
                 } else {
                     // regular option
-                    String desc = baseDesc.replaceFirst("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
+                    String desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
                     Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
                             .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
