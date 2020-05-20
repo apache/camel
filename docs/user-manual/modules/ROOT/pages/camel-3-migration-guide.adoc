@@ -603,7 +603,7 @@ The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.Threa
 
 The simple language `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
 
-The terser language has been renamed from terser to hl7terser.
+The terser language has been renamed from `terser` to `hl7terser`.
 
 === JSSE
 
