@@ -34,7 +34,7 @@ public interface YammerComponentBuilderFactory {
      * Yammer (camel-yammer)
      * Interact with the Yammer enterprise social network.
      * 
-     * Category: social
+     * Category: social,cloud,api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-yammer
      */

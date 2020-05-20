@@ -6,7 +6,7 @@
     "description": "Manage posts and users using Wordpress API.",
     "deprecated": false,
     "firstVersion": "2.21.0",
-    "label": "cms",
+    "label": "cloud,api,cms",
     "javaType": "org.apache.camel.component.wordpress.WordpressComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -2402,7 +2402,7 @@ public interface ComponentsBuilderFactory {
      * Interact with Apache Kudu, a free and open source column-oriented data
      * store of the Apache Hadoop ecosystem.
      * 
-     * Category: cloud,database,iot
+     * Category: database,iot,cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
      */
@@ -2424,7 +2424,7 @@ public interface ComponentsBuilderFactory {
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
      * 
-     * Category: ldap
+     * Category: search,ldap
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
      */
@@ -2571,7 +2571,7 @@ public interface ComponentsBuilderFactory {
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
      * 
-     * Category: mllp
+     * Category: networking,rpc,mllp
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
      */
@@ -2705,7 +2705,7 @@ public interface ComponentsBuilderFactory {
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
      * 
-     * Category: http
+     * Category: networking,http
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
      */
@@ -3045,7 +3045,7 @@ public interface ComponentsBuilderFactory {
      * Configure REST producers based on an OpenAPI specification document
      * delegating to a component implementing the RestProducerFactory interface.
      * 
-     * Category: rest,openapi,http
+     * Category: openapi,rest,api
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-rest-openapi
      */
@@ -3113,7 +3113,7 @@ public interface ComponentsBuilderFactory {
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
      * 
-     * Category: api,cloud,crm
+     * Category: cloud,api,crm
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
      */
@@ -3124,7 +3124,7 @@ public interface ComponentsBuilderFactory {
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
      * 
-     * Category: sap
+     * Category: sap,cloud,api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
      */
@@ -3410,7 +3410,7 @@ public interface ComponentsBuilderFactory {
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 
-     * Category: log,monitoring
+     * Category: iot,monitoring
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
      */
@@ -3566,7 +3566,7 @@ public interface ComponentsBuilderFactory {
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
      * 
-     * Category: transformation
+     * Category: transformation,script
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
      */
@@ -3588,7 +3588,7 @@ public interface ComponentsBuilderFactory {
      * Telegram (camel-telegram)
      * Send and receive messages acting as a Telegram Bot Telegram Bot API.
      * 
-     * Category: chat
+     * Category: cloud,api,chat
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-telegram
      */
@@ -3600,7 +3600,7 @@ public interface ComponentsBuilderFactory {
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
      * 
-     * Category: rpc
+     * Category: rpc,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
      */
@@ -3644,7 +3644,7 @@ public interface ComponentsBuilderFactory {
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
      * 
-     * Category: api,social
+     * Category: cloud,api,social,chat
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      */
@@ -3655,7 +3655,7 @@ public interface ComponentsBuilderFactory {
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
      * 
-     * Category: api,social
+     * Category: cloud,api,search,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      */
@@ -3666,7 +3666,7 @@ public interface ComponentsBuilderFactory {
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
      * 
-     * Category: api,social
+     * Category: api,cloud,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      */
@@ -3744,7 +3744,7 @@ public interface ComponentsBuilderFactory {
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
      * 
-     * Category: bitcoin,blockchain
+     * Category: bitcoin,blockchain,api
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
      */
@@ -3789,7 +3789,7 @@ public interface ComponentsBuilderFactory {
      * Weka (camel-weka)
      * Perform machine learning tasks using Weka.
      * 
-     * Category: Datamining
+     * Category: datamining
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-weka
      */
@@ -3800,7 +3800,7 @@ public interface ComponentsBuilderFactory {
      * Wordpress (camel-wordpress)
      * Manage posts and users using Wordpress API.
      * 
-     * Category: cms
+     * Category: cloud,api,cms
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
      */
@@ -3811,7 +3811,7 @@ public interface ComponentsBuilderFactory {
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
      * 
-     * Category: hcm
+     * Category: cloud,api,hcm
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      */
@@ -3910,7 +3910,7 @@ public interface ComponentsBuilderFactory {
      * Yammer (camel-yammer)
      * Interact with the Yammer enterprise social network.
      * 
-     * Category: social
+     * Category: social,cloud,api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-yammer
      */
@@ -3921,7 +3921,7 @@ public interface ComponentsBuilderFactory {
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
      * 
-     * Category: api,support,cloud
+     * Category: cloud,api,support
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
      */
@@ -3932,7 +3932,7 @@ public interface ComponentsBuilderFactory {
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
      * 
-     * Category: clustering
+     * Category: clustering,management,bigdata
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
      */
@@ -3944,7 +3944,7 @@ public interface ComponentsBuilderFactory {
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.
      * 
-     * Category: clustering
+     * Category: clustering,management,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zookeeper-master
      */

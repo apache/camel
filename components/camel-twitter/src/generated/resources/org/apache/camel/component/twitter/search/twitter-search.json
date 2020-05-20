@@ -6,7 +6,7 @@
     "description": "Access Twitter Search.",
     "deprecated": false,
     "firstVersion": "2.10.0",
-    "label": "api,social",
+    "label": "cloud,api,search,social",
     "javaType": "org.apache.camel.component.twitter.search.TwitterSearchComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

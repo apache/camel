@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Optional;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +37,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 /**
  * Perform operations against Apache Lucene Solr.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, category = {Category.MONITORING, Category.SEARCH})
 public class SolrEndpoint extends DefaultEndpoint {
 
     private String scheme = "http://";

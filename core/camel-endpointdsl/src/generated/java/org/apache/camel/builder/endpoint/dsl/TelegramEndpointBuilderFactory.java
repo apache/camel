@@ -1259,7 +1259,7 @@ public interface TelegramEndpointBuilderFactory {
          * Telegram (camel-telegram)
          * Send and receive messages acting as a Telegram Bot Telegram Bot API.
          * 
-         * Category: chat
+         * Category: cloud,api,chat
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-telegram
          * 
@@ -1278,7 +1278,7 @@ public interface TelegramEndpointBuilderFactory {
          * Telegram (camel-telegram)
          * Send and receive messages acting as a Telegram Bot Telegram Bot API.
          * 
-         * Category: chat
+         * Category: cloud,api,chat
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-telegram
          * 

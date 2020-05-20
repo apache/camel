@@ -6,7 +6,7 @@
     "description": "Interact with Ethereum nodes using web3j client API.",
     "deprecated": false,
     "firstVersion": "2.22.0",
-    "label": "bitcoin,blockchain",
+    "label": "bitcoin,blockchain,api",
     "javaType": "org.apache.camel.component.web3j.Web3jComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

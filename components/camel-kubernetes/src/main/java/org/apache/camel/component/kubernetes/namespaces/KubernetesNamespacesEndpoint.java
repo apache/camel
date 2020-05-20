@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.namespaces;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces", syntax = "kubernetes-namespaces:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces", syntax = "kubernetes-namespaces:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {

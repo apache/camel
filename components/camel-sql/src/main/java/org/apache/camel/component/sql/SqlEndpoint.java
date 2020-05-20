@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sql;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,7 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * Perform SQL queries using Spring JDBC.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query", label = "database,sql")
+@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query", category = {Category.DATABASE, Category.SQL})
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")

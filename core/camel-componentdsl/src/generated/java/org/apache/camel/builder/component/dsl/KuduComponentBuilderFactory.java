@@ -36,7 +36,7 @@ public interface KuduComponentBuilderFactory {
      * Interact with Apache Kudu, a free and open source column-oriented data
      * store of the Apache Hadoop ecosystem.
      * 
-     * Category: cloud,database,iot
+     * Category: database,iot,cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
      */

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sap.netweaver;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send requests to SAP NetWeaver Gateway using HTTP.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, category = {Category.SAP, Category.CLOUD, Category.API})
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = true)

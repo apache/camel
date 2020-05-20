@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * Asynchronously call another endpoint from any Camel Context in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", category = {Category.CORE, Category.ENDPOINT})
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);

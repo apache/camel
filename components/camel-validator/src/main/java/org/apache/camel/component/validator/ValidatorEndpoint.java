@@ -20,7 +20,7 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.ls.LSResourceResolver;
-
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -41,7 +41,7 @@ import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
  * Validate the payload using XML Schema and JAXP Validation.
  */
 @ManagedResource(description = "Managed ValidatorEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, category = {Category.CORE, Category.VALIDATION})
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"

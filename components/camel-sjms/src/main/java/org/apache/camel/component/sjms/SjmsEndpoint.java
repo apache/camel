@@ -22,6 +22,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -62,7 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * This component uses plain JMS API where as the jms component uses Spring JMS.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName", label = "messaging")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName", category = {Category.MESSAGING})
 public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

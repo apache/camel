@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -44,7 +45,7 @@ import org.apache.camel.util.PropertiesHelper;
 /**
  * Manage posts and users using Wordpress API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", label = "cms")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", category = {Category.CLOUD, Category.API, Category.CMS})
 public class WordpressEndpoint extends DefaultEndpoint {
 
     public static final String ENDPOINT_SERVICE_POST = "post, user";

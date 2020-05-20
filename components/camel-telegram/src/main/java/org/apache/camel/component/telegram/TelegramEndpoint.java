@@ -19,6 +19,7 @@ package org.apache.camel.component.telegram;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -46,7 +47,7 @@ import static org.apache.camel.component.telegram.util.TelegramMessageHelper.pop
 /**
  * Send and receive messages acting as a Telegram Bot <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type", label = "chat")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type", category = {Category.CLOUD, Category.API, Category.CHAT})
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 

@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * Send and receive messages to/from an XMPP chat server.
  */
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", alternativeSyntax = "xmpp:user:password@host:port/participant",
-        label = "chat,messaging")
+        category = {Category.CHAT, Category.MESSAGING})
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);

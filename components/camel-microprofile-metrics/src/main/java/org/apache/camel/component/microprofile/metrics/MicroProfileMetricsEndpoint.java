@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.microprofile.metrics;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,7 +32,7 @@ import org.eclipse.microprofile.metrics.MetricType;
 /**
  * Expose metrics from Camel routes.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricName", producerOnly = true, category = {Category.MONITORING})
 public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry metricRegistry;

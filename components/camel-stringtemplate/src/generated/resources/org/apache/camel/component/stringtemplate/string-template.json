@@ -6,7 +6,7 @@
     "description": "Transform messages using StringTemplate engine.",
     "deprecated": false,
     "firstVersion": "1.2.0",
-    "label": "transformation",
+    "label": "transformation,script",
     "javaType": "org.apache.camel.component.stringtemplate.StringTemplateComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

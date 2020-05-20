@@ -34,7 +34,7 @@ public interface WordpressComponentBuilderFactory {
      * Wordpress (camel-wordpress)
      * Manage posts and users using Wordpress API.
      * 
-     * Category: cms
+     * Category: cloud,api,cms
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
      */

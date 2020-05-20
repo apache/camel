@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.nova;
 
+import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.nova.producer.FlavorsProducer;
@@ -30,7 +31,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * Access OpenStack to manage compute resources.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")

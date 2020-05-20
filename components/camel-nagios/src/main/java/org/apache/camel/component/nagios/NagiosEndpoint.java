@@ -19,6 +19,8 @@ package org.apache.camel.component.nagios;
 import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.PassiveCheckSender;
+
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send passive checks to Nagios using JSendNSCA.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "nagios", title = "Nagios", syntax = "nagios:host:port", producerOnly = true, category = {Category.MONITORING})
 public class NagiosEndpoint extends DefaultEndpoint {
 
     private PassiveCheckSender sender;

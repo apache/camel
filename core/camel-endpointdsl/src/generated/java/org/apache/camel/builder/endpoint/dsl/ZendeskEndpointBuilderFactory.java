@@ -1044,7 +1044,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Zendesk (camel-zendesk)
          * Manage Zendesk tickets, users, organizations, etc.
          * 
-         * Category: api,support,cloud
+         * Category: cloud,api,support
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-zendesk
          * 
@@ -1062,7 +1062,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Zendesk (camel-zendesk)
          * Manage Zendesk tickets, users, organizations, etc.
          * 
-         * Category: api,support,cloud
+         * Category: cloud,api,support
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-zendesk
          * 

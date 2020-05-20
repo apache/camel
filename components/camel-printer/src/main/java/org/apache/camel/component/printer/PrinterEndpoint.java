@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.printer;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * The functionality allows for the payload to be printed on a default printer, named local, remote or wirelessly
  * linked printer using the javax printing API under the covers.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, label = "printing")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, category = {Category.PRINTING})
 public class PrinterEndpoint extends DefaultEndpoint {
 
     public static final String JOB_NAME = "PrinterJobName";

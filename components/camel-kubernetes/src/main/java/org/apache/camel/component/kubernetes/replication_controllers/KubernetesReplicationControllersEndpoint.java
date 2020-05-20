@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.replication_controllers;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers", title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers", title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component, KubernetesConfiguration config) {

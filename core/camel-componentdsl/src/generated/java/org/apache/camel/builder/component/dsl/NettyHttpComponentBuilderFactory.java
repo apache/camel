@@ -34,7 +34,7 @@ public interface NettyHttpComponentBuilderFactory {
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
      * 
-     * Category: http
+     * Category: networking,http
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
      */

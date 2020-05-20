@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -37,7 +38,7 @@ import org.mvel2.templates.TemplateRuntime;
 /**
  * Transform messages using an MVEL template.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true, label = "transformation,script")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION, Category.SCRIPT})
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")

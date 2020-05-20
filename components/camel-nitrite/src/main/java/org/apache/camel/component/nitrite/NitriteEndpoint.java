@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.nitrite;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.dizitart.no2.PersistentCollection;
  * Access Nitrite databases.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "nitrite", title = "Nitrite", syntax = "nitrite:database",
-             label = "database,nosql")
+             category = {Category.DATABASE, Category.NOSQL})
 public class NitriteEndpoint extends DefaultEndpoint {
     @UriPath(label = "common", description = "Path to database file. Will be created if not exists.")
     @Metadata(required = true)

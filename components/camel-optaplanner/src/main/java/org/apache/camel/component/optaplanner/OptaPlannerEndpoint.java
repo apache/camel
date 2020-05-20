@@ -19,6 +19,7 @@ package org.apache.camel.component.optaplanner;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -32,7 +33,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * Solve planning problems with OptaPlanner.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", category = {Category.ENGINE, Category.PLANNING})
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
 

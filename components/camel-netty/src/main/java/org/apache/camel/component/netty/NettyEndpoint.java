@@ -26,6 +26,7 @@ import javax.security.cert.X509Certificate;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Socket level networking using TCP or UDP with the Netty 4.x.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", label = "networking,tcp,udp")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", category = {Category.NETWORKING, Category.TCP, Category.UDP})
 public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
     private NettyConfiguration configuration;

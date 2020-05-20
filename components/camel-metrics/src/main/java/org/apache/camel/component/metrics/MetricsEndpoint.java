@@ -17,6 +17,8 @@
 package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
+
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, category = {Category.MONITORING})
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;

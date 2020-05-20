@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import com.github.brainlag.nsq.NSQConfig;
 import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive messages from NSQ realtime distributed messaging platform.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", label = "messaging")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", category = {Category.MESSAGING})
 public class NsqEndpoint extends DefaultEndpoint {
 
     @UriParam

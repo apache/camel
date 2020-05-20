@@ -34,7 +34,7 @@ public interface SalesforceComponentBuilderFactory {
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
      * 
-     * Category: api,cloud,crm
+     * Category: cloud,api,crm
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
      */

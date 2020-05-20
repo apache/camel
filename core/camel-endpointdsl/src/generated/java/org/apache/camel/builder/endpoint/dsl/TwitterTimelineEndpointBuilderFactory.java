@@ -1574,7 +1574,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * Twitter Timeline (camel-twitter)
          * Send tweets and receive tweets from user's timeline.
          * 
-         * Category: api,social
+         * Category: api,cloud,social
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 
@@ -1594,7 +1594,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * Twitter Timeline (camel-twitter)
          * Send tweets and receive tweets from user's timeline.
          * 
-         * Category: api,social
+         * Category: api,cloud,social
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 

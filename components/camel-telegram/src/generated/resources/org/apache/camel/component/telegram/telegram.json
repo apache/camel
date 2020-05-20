@@ -6,7 +6,7 @@
     "description": "Send and receive messages acting as a Telegram Bot Telegram Bot API.",
     "deprecated": false,
     "firstVersion": "2.18.0",
-    "label": "chat",
+    "label": "cloud,api,chat",
     "javaType": "org.apache.camel.component.telegram.TelegramComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

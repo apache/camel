@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.master;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -41,7 +42,7 @@ import org.apache.camel.support.DefaultEndpoint;
     consumerOnly = true,
     title = "Master",
     lenientProperties = true,
-    label = "clustering")
+    category = {Category.CLUSTERING})
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final CamelClusterService clusterService;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twitter.timeline;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import org.apache.camel.spi.UriPath;
  * Send tweets and receive tweets from user's timeline.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline", syntax = "twitter-timeline:timelineType",
-        label = "api,social")
+        category = {Category.API, Category.CLOUD, Category.SOCIAL})
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")

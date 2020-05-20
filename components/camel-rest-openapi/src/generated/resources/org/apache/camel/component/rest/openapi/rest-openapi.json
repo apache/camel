@@ -6,7 +6,7 @@
     "description": "Configure REST producers based on an OpenAPI specification document delegating to a component implementing the RestProducerFactory interface.",
     "deprecated": false,
     "firstVersion": "3.1.0",
-    "label": "rest,openapi,http",
+    "label": "openapi,rest,api",
     "javaType": "org.apache.camel.component.rest.openapi.RestOpenApiComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

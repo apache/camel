@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -56,7 +57,7 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 /**
  * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", label = "messaging")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", category = {Category.MESSAGING})
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private CallbackConnection connection;

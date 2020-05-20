@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xmlsecurity;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Sign XML payloads using the XML signature specification.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-sign", title = "XML Security Sign",
-        syntax = "xmlsecurity-sign:name", producerOnly = true, label = "security,transformation")
+        syntax = "xmlsecurity-sign:name", producerOnly = true, category = {Category.SECURITY, Category.TRANSFORMATION})
 public class XmlSignerEndpoint extends DefaultEndpoint {
 
     @UriPath

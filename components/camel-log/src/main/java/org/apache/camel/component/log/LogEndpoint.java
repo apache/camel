@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.log;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
  * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log",
-        syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
+        syntax = "log:loggerName", producerOnly = true, category = {Category.CORE, Category.MONITORING})
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;

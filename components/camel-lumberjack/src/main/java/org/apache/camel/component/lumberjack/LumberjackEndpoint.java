@@ -21,6 +21,7 @@ import java.security.GeneralSecurityException;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.Category;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -33,7 +34,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 /**
  * Receive logs messages using the Lumberjack protocol.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "lumberjack", title = "Lumberjack", syntax = "lumberjack:host:port", consumerOnly = true, label = "log")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "lumberjack", title = "Lumberjack", syntax = "lumberjack:host:port", consumerOnly = true, category = {Category.LOG})
 public class LumberjackEndpoint extends DefaultEndpoint {
     @UriPath(description = "Network interface on which to listen for Lumberjack")
     @Metadata(required = true)

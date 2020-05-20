@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.integration;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.springframework.messaging.MessageChannel;
  * Bridge Camel with Spring Integration.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
-        label = "spring,eventbus")
+        category = {Category.SPRING, Category.EVENTBUS})
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private MessageChannel messageChannel;
     @UriPath @Metadata(required = true)

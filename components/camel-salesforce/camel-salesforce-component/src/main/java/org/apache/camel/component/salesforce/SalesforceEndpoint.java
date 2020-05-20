@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Communicate with Salesforce using Java DTOs.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", category = {Category.CLOUD, Category.API, Category.CRM})
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);

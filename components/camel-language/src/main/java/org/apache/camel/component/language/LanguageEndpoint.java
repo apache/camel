@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Expression;
@@ -46,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
  * For example by using the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints
  * where the script is dynamic defined as well.
  */
-@UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri", producerOnly = true, label = "core,script")
+@UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri", producerOnly = true, category = {Category.CORE, Category.SCRIPT})
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
