@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.twilio.http.TwilioRestClient;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExtendedCamelContext;

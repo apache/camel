@@ -18,7 +18,6 @@ package org.apache.camel.component.pubnub;
 
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

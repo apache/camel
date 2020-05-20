@@ -20,7 +20,6 @@ import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;

@@ -17,9 +17,8 @@
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 import com.hazelcast.config.Config;
@@ -34,9 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
-import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -76,7 +73,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
     * @param  persistentRepositoryName {@link IMap} recoverable repository name;
     */
     public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName) {
-        super(repositoryName,persistentRepositoryName);
+        super(repositoryName, persistentRepositoryName);
     }
 
     /**
@@ -86,7 +83,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param  optimistic whether to use optimistic locking manner.
      */
     public ReplicatedHazelcastAggregationRepository(final String repositoryName, boolean optimistic) {
-        super(repositoryName,optimistic);
+        super(repositoryName, optimistic);
     }
 
     /**
@@ -96,7 +93,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param optimistic whether to use optimistic locking manner.
      */
     public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, boolean optimistic) {
-        super(repositoryName,persistentRepositoryName,optimistic);
+        super(repositoryName, persistentRepositoryName, optimistic);
     }
 
     /**
@@ -107,7 +104,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param hzInstanse externally configured {@link HazelcastInstance}.
      */
     public ReplicatedHazelcastAggregationRepository(final String repositoryName, HazelcastInstance hzInstanse) {
-        super(repositoryName,hzInstanse);
+        super(repositoryName, hzInstanse);
     }
 
     /**
@@ -129,7 +126,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param hzInstance  externally configured {@link HazelcastInstance}.
      */
     public ReplicatedHazelcastAggregationRepository(final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
-        super(repositoryName,optimistic,hzInstance);
+        super(repositoryName, optimistic, hzInstance);
     }
 
     /**
@@ -140,7 +137,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
      * @param hzInstance  externally configured {@link HazelcastInstance}.
      */
     public ReplicatedHazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, boolean optimistic, HazelcastInstance hzInstance) {
-        super(repositoryName,persistentRepositoryName,optimistic,hzInstance);
+        super(repositoryName, persistentRepositoryName, optimistic, hzInstance);
     }
 
     @Override

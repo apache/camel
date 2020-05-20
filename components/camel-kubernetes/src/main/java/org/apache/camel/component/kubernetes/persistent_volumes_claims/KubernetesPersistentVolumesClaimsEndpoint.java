@@ -27,10 +27,12 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Persistent Volumes Claims and get notified on Persistent Volumes Claim changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes-claims", title = "Kubernetes Persistent Volume Claim", syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true, category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes-claims", title = "Kubernetes Persistent Volume Claim",
+             syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true, category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
 public class KubernetesPersistentVolumesClaimsEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesPersistentVolumesClaimsEndpoint(String uri, KubernetesPersistentVolumesClaimsComponent component, KubernetesConfiguration config) {
+    public KubernetesPersistentVolumesClaimsEndpoint(
+            String uri, KubernetesPersistentVolumesClaimsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 

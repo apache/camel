@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.jclouds;
 
+import org.apache.camel.Category;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.Category;
 
 /**
  * Interact with jclouds compute & blobstore service.
