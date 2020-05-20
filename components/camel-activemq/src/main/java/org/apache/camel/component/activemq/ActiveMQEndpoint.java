@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.activemq;
 
+import org.apache.camel.Category;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.Category;
 
 /**
  * Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.

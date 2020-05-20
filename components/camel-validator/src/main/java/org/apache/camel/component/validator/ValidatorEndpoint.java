@@ -20,6 +20,7 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.ls.LSResourceResolver;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;

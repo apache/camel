@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.event;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,8 +33,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
-
-import org.apache.camel.Category;
 
 /**
  * Listen for Spring Application Events.

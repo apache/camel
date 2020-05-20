@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.debezium;
 
-import org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.Category;
+import org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 

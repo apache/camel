@@ -19,10 +19,10 @@ package org.apache.camel.component.file.remote;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Category;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;

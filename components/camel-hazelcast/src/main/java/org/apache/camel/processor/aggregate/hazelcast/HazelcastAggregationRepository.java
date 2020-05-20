@@ -56,14 +56,16 @@ import org.slf4j.LoggerFactory;
 public class HazelcastAggregationRepository extends ServiceSupport
                                                   implements RecoverableAggregationRepository,
                                                              OptimisticLockingAggregationRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName());
+
     protected static final String COMPLETED_SUFFIX = "-completed";
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName());
+
     protected boolean optimistic;
     protected boolean useLocalHzInstance;
     protected boolean useRecovery = true;
-    private IMap<String, DefaultExchangeHolder> cache;
-    private IMap<String, DefaultExchangeHolder> persistedCache;
+    protected IMap<String, DefaultExchangeHolder> cache;
+    protected IMap<String, DefaultExchangeHolder> persistedCache;
     protected HazelcastInstance hzInstance;
     protected String mapName;
     protected String persistenceMapName;

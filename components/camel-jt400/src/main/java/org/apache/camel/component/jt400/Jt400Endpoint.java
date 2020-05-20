@@ -23,8 +23,8 @@ import javax.naming.OperationNotSupportedException;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
-import org.apache.camel.Category;
 import org.apache.camel.CamelException;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;

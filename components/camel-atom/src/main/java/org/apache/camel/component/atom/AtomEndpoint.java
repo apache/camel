@@ -19,9 +19,9 @@ package org.apache.camel.component.atom;
 import java.util.Date;
 
 import org.apache.abdera.model.Feed;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Category;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;

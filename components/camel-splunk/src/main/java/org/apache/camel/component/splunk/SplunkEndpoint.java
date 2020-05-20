@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLException;
 
 import com.splunk.Service;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

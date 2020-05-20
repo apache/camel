@@ -24,7 +24,6 @@ import java.util.Properties;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.spi.Metadata;

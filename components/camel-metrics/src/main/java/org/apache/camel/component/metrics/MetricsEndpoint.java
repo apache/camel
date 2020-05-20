@@ -17,7 +17,6 @@
 package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;

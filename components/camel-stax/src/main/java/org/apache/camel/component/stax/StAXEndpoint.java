@@ -17,6 +17,7 @@
 package org.apache.camel.component.stax;
 
 import org.xml.sax.ContentHandler;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
