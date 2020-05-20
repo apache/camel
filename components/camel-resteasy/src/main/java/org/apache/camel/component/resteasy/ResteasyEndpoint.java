@@ -19,6 +19,7 @@ package org.apache.camel.component.resteasy;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,7 +36,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
  * Expose REST endpoints and access external REST servers.
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "resteasy",  extendsScheme = "http",
-        title = "Resteasy", syntax = "resteasy:httpUri", label = "rest")
+        title = "Resteasy", syntax = "resteasy:httpUri", category = {Category.REST})
 public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrategyAware {
 
     private String protocol;

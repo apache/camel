@@ -18,6 +18,7 @@ package org.apache.camel.component.milo.client;
 
 import java.util.Objects;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 /**
  * Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client", label = "iot")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client", category = {Category.IOT})
 public class MiloClientEndpoint extends DefaultEndpoint {
 
     /**

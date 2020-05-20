@@ -18,6 +18,7 @@ package org.apache.camel.component.stub;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -36,7 +37,7 @@ import org.apache.camel.spi.UriEndpoint;
  * query arguments will usually fail. Stub won't though, as it basically ignores all query parameters
  * to let you quickly stub out one or more endpoints in your route temporarily.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name", label = "core,testing")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name", category = {Category.CORE, Category.TESTING})
 public class StubEndpoint extends VmEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

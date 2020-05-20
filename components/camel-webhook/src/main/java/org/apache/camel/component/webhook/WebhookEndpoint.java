@@ -18,6 +18,7 @@ package org.apache.camel.component.webhook;
 
 import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Expose webhook endpoints to receive push notifications for other Camel components.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true, label = "cloud", lenientProperties = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true, category = {Category.CLOUD}, lenientProperties = true)
 public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint, AfterPropertiesConfigured {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEndpoint.class);

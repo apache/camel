@@ -18,6 +18,7 @@ package org.apache.camel.component.web3j;
 
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -43,7 +44,7 @@ import org.web3j.quorum.Quorum;
  * Interact with Ethereum nodes using web3j client API.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
-    label = "bitcoin,blockchain")
+    category = {Category.BITCOIN, Category.BLOCKCHAIN, Category.API})
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 

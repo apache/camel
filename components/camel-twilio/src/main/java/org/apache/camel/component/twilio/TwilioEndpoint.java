@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.twilio.http.TwilioRestClient;
+
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
@@ -42,7 +44,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Interact with Twilio REST APIs using Twilio Java SDK.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
-    label = "api,messaging,cloud")
+    category = {Category.API, Category.MESSAGING, Category.CLOUD})
 public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> {
 
     protected static final Map<String, String> EXECUTOR_METHOD_MAP;

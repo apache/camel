@@ -6,7 +6,7 @@
     "description": "Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.",
     "deprecated": false,
     "firstVersion": "3.0",
-    "label": "cloud,database,iot",
+    "label": "database,iot,cloud",
     "javaType": "org.apache.camel.component.kudu.KuduComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

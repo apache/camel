@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.batch;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,7 +36,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 /**
  * Send messages to Spring Batch for further processing.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, category = {Category.SPRING, Category.BATCH, Category.SCHEDULING})
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath

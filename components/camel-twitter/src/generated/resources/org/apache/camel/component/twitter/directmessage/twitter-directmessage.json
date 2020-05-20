@@ -6,7 +6,7 @@
     "description": "Send and receive Twitter direct messages.",
     "deprecated": false,
     "firstVersion": "2.10.0",
-    "label": "api,social",
+    "label": "cloud,api,social,chat",
     "javaType": "org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

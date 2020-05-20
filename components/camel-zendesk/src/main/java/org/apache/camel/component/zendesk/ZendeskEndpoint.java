@@ -18,6 +18,7 @@ package org.apache.camel.component.zendesk;
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -38,7 +39,7 @@ import org.zendesk.client.v2.Zendesk;
  * Manage Zendesk tickets, users, organizations, etc.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
-    consumerPrefix = "consumer", label = "api,support,cloud", lenientProperties = true)
+    consumerPrefix = "consumer", category = {Category.CLOUD, Category.API, Category.SUPPORT}, lenientProperties = true)
 public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration> {
 
     @UriParam

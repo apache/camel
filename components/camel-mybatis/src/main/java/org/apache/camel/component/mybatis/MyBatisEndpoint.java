@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mybatis;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", label = "database,sql")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", category = {Category.DATABASE, Category.SQL})
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
     @UriPath @Metadata(required = true)

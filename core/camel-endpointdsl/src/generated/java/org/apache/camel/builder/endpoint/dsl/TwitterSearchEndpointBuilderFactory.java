@@ -1531,7 +1531,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Twitter Search (camel-twitter)
          * Access Twitter Search.
          * 
-         * Category: api,social
+         * Category: cloud,api,search,social
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 
@@ -1550,7 +1550,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Twitter Search (camel-twitter)
          * Access Twitter Search.
          * 
-         * Category: api,social
+         * Category: cloud,api,search,social
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 

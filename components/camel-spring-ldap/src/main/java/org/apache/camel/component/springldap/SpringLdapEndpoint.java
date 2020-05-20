@@ -18,6 +18,7 @@ package org.apache.camel.component.springldap;
 
 import javax.naming.directory.SearchControls;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.springframework.ldap.core.LdapTemplate;
 /**
  * Perform searches in LDAP servers using filters as the message payload.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, label = "spring,ldap")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, category = {Category.SPRING, Category.LDAP})
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";

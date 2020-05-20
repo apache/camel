@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.config_maps;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-config-maps", title = "Kubernetes ConfigMap", syntax = "kubernetes-config-maps:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-config-maps", title = "Kubernetes ConfigMap", syntax = "kubernetes-config-maps:masterUrl", producerOnly = true, category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {

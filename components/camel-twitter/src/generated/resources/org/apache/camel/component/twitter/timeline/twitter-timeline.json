@@ -6,7 +6,7 @@
     "description": "Send tweets and receive tweets from user's timeline.",
     "deprecated": false,
     "firstVersion": "2.10.0",
-    "label": "api,social",
+    "label": "api,cloud,social",
     "javaType": "org.apache.camel.component.twitter.timeline.TwitterTimelineComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

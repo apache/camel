@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Transform messages using a Velocity template.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;

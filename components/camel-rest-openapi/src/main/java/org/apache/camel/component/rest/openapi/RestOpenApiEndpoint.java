@@ -59,6 +59,7 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
@@ -90,7 +91,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
-    syntax = "rest-openapi:specificationUri#operationId", label = "rest,openapi,http", producerOnly = true)
+    syntax = "rest-openapi:specificationUri#operationId", category = {Category.OPENAPI, Category.REST, Category.API}, producerOnly = true)
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     /**

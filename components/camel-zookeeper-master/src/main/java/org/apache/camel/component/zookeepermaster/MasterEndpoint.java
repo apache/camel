@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -33,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @ManagedResource(description = "Managed ZooKeeper Master Endpoint")
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerOnly = true,
-    title = "ZooKeeper Master", lenientProperties = true, label = "clustering")
+    title = "ZooKeeper Master", lenientProperties = true, category = {Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA})
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final MasterComponent component;

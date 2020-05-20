@@ -34,7 +34,7 @@ public interface ZookeeperComponentBuilderFactory {
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
      * 
-     * Category: clustering
+     * Category: clustering,management,bigdata
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
      */

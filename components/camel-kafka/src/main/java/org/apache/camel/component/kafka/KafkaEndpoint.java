@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", label = "messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", category = {Category.MESSAGING})
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);

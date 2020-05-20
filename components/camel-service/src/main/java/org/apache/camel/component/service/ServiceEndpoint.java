@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -47,7 +48,7 @@ import org.apache.camel.support.DefaultEndpoint;
     consumerOnly = true,
     title = "Service",
     lenientProperties = true,
-    label = "cloud")
+    category = {Category.CLOUD})
 public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final ServiceRegistry serviceRegistry;

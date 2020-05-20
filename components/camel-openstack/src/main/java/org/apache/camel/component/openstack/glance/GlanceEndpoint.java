@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.glance;
 
+import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.spi.Metadata;
@@ -27,7 +28,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * Manage VM images and metadata definitions in OpenStack Glance.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

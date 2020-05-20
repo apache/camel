@@ -863,7 +863,7 @@ public interface ThriftEndpointBuilderFactory {
          * Call and expose remote procedures (RPC) with Apache Thrift data
          * format and serialization mechanism.
          * 
-         * Category: rpc
+         * Category: rpc,transformation
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-thrift
          * 
@@ -891,7 +891,7 @@ public interface ThriftEndpointBuilderFactory {
          * Call and expose remote procedures (RPC) with Apache Thrift data
          * format and serialization mechanism.
          * 
-         * Category: rpc
+         * Category: rpc,transformation
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-thrift
          * 

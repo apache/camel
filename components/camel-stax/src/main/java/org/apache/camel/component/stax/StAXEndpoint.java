@@ -17,7 +17,7 @@
 package org.apache.camel.component.stax;
 
 import org.xml.sax.ContentHandler;
-
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
@@ -29,7 +29,7 @@ import org.apache.camel.support.ProcessorEndpoint;
 /**
  * Process XML payloads by a SAX ContentHandler.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, category = {Category.TRANSFORMATION})
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath @Metadata(required = true)

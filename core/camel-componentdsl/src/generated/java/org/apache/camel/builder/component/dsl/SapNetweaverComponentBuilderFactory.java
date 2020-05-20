@@ -34,7 +34,7 @@ public interface SapNetweaverComponentBuilderFactory {
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
      * 
-     * Category: sap
+     * Category: sap,cloud,api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
      */

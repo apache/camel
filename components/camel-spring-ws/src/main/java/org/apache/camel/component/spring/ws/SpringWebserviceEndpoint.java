@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
         syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
-        label = "spring,soap,webservice")
+        category = {Category.SPRING, Category.SOAP, Category.WEBSERVICE})
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam

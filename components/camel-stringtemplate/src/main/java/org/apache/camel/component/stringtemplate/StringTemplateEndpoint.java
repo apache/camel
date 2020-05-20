@@ -19,6 +19,7 @@ package org.apache.camel.component.stringtemplate;
 import java.io.StringWriter;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -34,7 +35,7 @@ import org.stringtemplate.v4.STGroup;
 /**
  * Transform messages using StringTemplate engine.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION, Category.SCRIPT})
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")

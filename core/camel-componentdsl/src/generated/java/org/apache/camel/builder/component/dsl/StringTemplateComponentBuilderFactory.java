@@ -34,7 +34,7 @@ public interface StringTemplateComponentBuilderFactory {
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
      * 
-     * Category: transformation
+     * Category: transformation,script
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
      */

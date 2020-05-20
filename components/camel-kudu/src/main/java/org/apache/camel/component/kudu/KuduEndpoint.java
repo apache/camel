@@ -19,6 +19,7 @@ package org.apache.camel.component.kudu;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "3.0",
     scheme = "kudu",
     title = "Kudu", syntax = "kudu:host:port/tableName",
-    label = "cloud,database,iot", producerOnly = true)
+    category = {Category.DATABASE, Category.IOT, Category.CLOUD}, producerOnly = true)
 public class KuduEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);

@@ -6,7 +6,7 @@
     "description": "Publish or search for events in Splunk.",
     "deprecated": false,
     "firstVersion": "2.13.0",
-    "label": "log,monitoring",
+    "label": "iot,monitoring",
     "javaType": "org.apache.camel.component.splunk.SplunkComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

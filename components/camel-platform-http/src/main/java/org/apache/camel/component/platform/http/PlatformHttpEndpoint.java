@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,7 +36,7 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path", label = "http", consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path", category = {Category.HTTP}, consumerOnly = true)
 public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     @UriPath(description = "The path under which this endpoint serves the HTTP requests")

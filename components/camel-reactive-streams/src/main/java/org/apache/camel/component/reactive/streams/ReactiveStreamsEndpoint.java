@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
-        label = "reactive,streams")
+        category = {Category.REACTIVE, Category.STREAMS})
 @ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 

@@ -26,6 +26,8 @@ import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
+
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages from <a href="http://nats.io/">NATS</a> messaging system.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", label = "messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = {Category.MESSAGING})
 public class NatsEndpoint extends DefaultEndpoint {
 
     @UriParam

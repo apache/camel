@@ -22,6 +22,8 @@ import javax.sql.DataSource;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDriver;
+
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * This requires using PostgreSQL 8.3 or newer.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel",
-    label = "database,sql")
+    category = {Category.DATABASE, Category.SQL})
 public class PgEventEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);

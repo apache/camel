@@ -34,7 +34,7 @@ public interface LdapComponentBuilderFactory {
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
      * 
-     * Category: ldap
+     * Category: search,ldap
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
      */

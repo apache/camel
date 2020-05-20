@@ -24,6 +24,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -47,7 +48,7 @@ import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRA
 /**
  *  Validate XML payload using the Schematron Library.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path", producerOnly = true, category = {Category.VALIDATION})
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchematronEndpoint.class);
