@@ -62,7 +62,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name)
                 .poolSize(definition.getPoolSize() != null ? parseInt(definition.getPoolSize()) : null)
                 .maxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null)
-                .keepAliveTime(definition.getKeepAliveTime() != null ? parseLong(definition.getKeepAliveTime()) : null,
+                .keepAliveTime(definition.getKeepAliveTime() != null ? parseDuration(definition.getKeepAliveTime()) : null,
                                definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null)
                 .maxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null)
                 .rejectedPolicy(policy)

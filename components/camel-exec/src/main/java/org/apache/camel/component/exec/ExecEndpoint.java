@@ -47,7 +47,7 @@ public class ExecEndpoint extends DefaultEndpoint {
     private String args;
     @UriParam
     private String workingDir;
-    @UriParam
+    @UriParam(javaType = "java.time.Duration")
     private long timeout;
     @UriParam
     private String outFile;

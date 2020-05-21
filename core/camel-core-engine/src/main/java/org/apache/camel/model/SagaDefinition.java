@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Enables sagas on the route
@@ -50,8 +52,13 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     private String completionMode;
 
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.lang.Long", deprecationNote = "Use timeout instead")
+    @Deprecated
     private String timeoutInMilliseconds;
+
+    @XmlAttribute
+    @Metadata(javaType = "java.time.Duration")
+    private String timeout;
 
     @XmlElement
     private SagaActionUriDefinition compensation;
@@ -204,6 +211,19 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.options = options;
     }
 
+    public String getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Set the maximum amount of time for the Saga. After the timeout is
+     * expired, the saga will be compensated automatically (unless a different
+     * decision has been taken in the meantime).
+     */
+    public void setTimeout(String timeout) {
+        this.timeout = timeout;
+    }
+
     public String getTimeoutInMilliseconds() {
         return timeoutInMilliseconds;
     }
@@ -275,8 +295,16 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
+    public SagaDefinition timeout(Duration duration) {
+        return timeout(TimeUtils.printDuration(duration));
+    }
+
     public SagaDefinition timeout(long timeout, TimeUnit unit) {
-        setTimeoutInMilliseconds(Long.toString(unit.toMillis(timeout)));
+        return timeout(Duration.ofMillis(unit.toMillis(timeout)));
+    }
+
+    public SagaDefinition timeout(String duration) {
+        setTimeout(duration);
         return this;
     }
 

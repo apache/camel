@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Extract a sample of the messages passing through a route
@@ -38,22 +40,27 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     // second
 
     @XmlAttribute
-    @Metadata(defaultValue = "1", javaType = "java.lang.Long")
+    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
     private String samplePeriod;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String messageFrequency;
     @XmlAttribute
     @Metadata(defaultValue = "SECONDS", enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
-              javaType = "java.util.concurrent.TimeUnit")
+              javaType = "java.util.concurrent.TimeUnit", deprecationNote = "Use samplePeriod extended syntax instead")
+    @Deprecated
     private String units;
 
     public SamplingDefinition() {
     }
 
+    public SamplingDefinition(Duration period) {
+        this.samplePeriod = TimeUtils.printDuration(period);
+        this.units = TimeUnit.MILLISECONDS.name();
+    }
+
     public SamplingDefinition(long samplePeriod, TimeUnit units) {
-        this.samplePeriod = Long.toString(samplePeriod);
-        this.units = units.name();
+        this(Duration.ofMillis(units.toMillis(samplePeriod)));
     }
 
     public SamplingDefinition(long messageFrequency) {
@@ -74,8 +81,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         if (messageFrequency != null) {
             return "1 Exchange per " + getMessageFrequency() + " messages received";
         } else {
-            String tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS.name();
-            return "1 Exchange per " + getSamplePeriod() + " " + tu.toLowerCase(Locale.ENGLISH);
+            return "1 Exchange per " + TimeUtils.printDuration(TimeUtils.toDuration(samplePeriod));
         }
     }
 
@@ -107,6 +113,18 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * @param samplePeriod the period
      * @return the builder
      */
+    public SamplingDefinition samplePeriod(Duration samplePeriod) {
+        setSamplePeriod(samplePeriod);
+        return this;
+    }
+
+    /**
+     * Sets the sample period during which only a single
+     * {@link org.apache.camel.Exchange} will pass through.
+     *
+     * @param samplePeriod the period
+     * @return the builder
+     */
     public SamplingDefinition samplePeriod(long samplePeriod) {
         setSamplePeriod(samplePeriod);
         return this;
@@ -118,6 +136,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * @param units the time unit of the sample period.
      * @return the builder
      */
+    @Deprecated
     public SamplingDefinition timeUnits(TimeUnit units) {
         setUnits(units);
         return this;
@@ -139,7 +158,11 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     public void setSamplePeriod(long samplePeriod) {
-        this.samplePeriod = Long.toString(samplePeriod);
+        setSamplePeriod(Duration.ofMillis(samplePeriod));
+    }
+
+    public void setSamplePeriod(Duration samplePeriod) {
+        this.samplePeriod = TimeUtils.printDuration(samplePeriod);
     }
 
     public String getMessageFrequency() {
@@ -161,6 +184,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     /**
      * Sets the time units for the sample period, defaulting to seconds.
      */
+    @Deprecated
     public void setUnits(String units) {
         this.units = units;
     }
@@ -168,10 +192,12 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     /**
      * Sets the time units for the sample period, defaulting to seconds.
      */
+    @Deprecated
     public void setUnits(TimeUnit units) {
         this.units = units.name();
     }
 
+    @Deprecated
     public String getUnits() {
         return units;
     }

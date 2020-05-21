@@ -61,7 +61,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @Metadata(javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(defaultValue = "0", javaType = "java.lang.Long")
+    @Metadata(defaultValue = "0", javaType = "java.time.Duration")
     private String timeout;
     @XmlAttribute
     private String onPrepareRef;

@@ -47,12 +47,17 @@ public final class AtomixMapProducer extends AbstractAtomixClientProducer<Atomix
     // Handlers
     // *********************************
 
+    private long getResourceTtl(Message message) {
+        Duration ttl = message.getHeader(RESOURCE_TTL, configuration::getTtl, Duration.class);
+        return ttl != null ? ttl.toMillis() : 0;
+    }
+
     @InvokeOnHeader("PUT")
     boolean onPut(Message message, AsyncCallback callback) throws Exception {
         final DistributedMap<Object, Object> map = getResource(message);
         final Object key = message.getHeader(RESOURCE_KEY, configuration::getKey, Object.class);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
-        final long ttl = message.getHeader(RESOURCE_TTL, configuration::getTtl, long.class);
+        final long ttl = getResourceTtl(message);
 
         ObjectHelper.notNull(key, RESOURCE_KEY);
         ObjectHelper.notNull(val, RESOURCE_VALUE);
@@ -75,7 +80,7 @@ public final class AtomixMapProducer extends AbstractAtomixClientProducer<Atomix
         final DistributedMap<Object, Object> map = getResource(message);
         final Object key = message.getHeader(RESOURCE_KEY, configuration::getKey, Object.class);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
-        final long ttl = message.getHeader(RESOURCE_TTL, configuration::getTtl, long.class);
+        final long ttl = getResourceTtl(message);
 
         ObjectHelper.notNull(key, RESOURCE_KEY);
         ObjectHelper.notNull(val, RESOURCE_VALUE);
@@ -276,7 +281,7 @@ public final class AtomixMapProducer extends AbstractAtomixClientProducer<Atomix
     @InvokeOnHeader("REPLACE")
     boolean onReplace(Message message, AsyncCallback callback) throws Exception {
         final DistributedMap<Object, Object> map = getResource(message);
-        final long ttl = message.getHeader(RESOURCE_TTL, configuration::getTtl, long.class);
+        final long ttl = getResourceTtl(message);
         final Object key = message.getHeader(RESOURCE_KEY, configuration::getKey, Object.class);
         final Object newValue = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
         final Object oldValue = message.getHeader(RESOURCE_OLD_VALUE, Object.class);

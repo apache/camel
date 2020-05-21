@@ -96,14 +96,14 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition> i
     @Metadata(javaType = "java.lang.Integer")
     private String completionSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.time.Duration")
     private String completionInterval;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.time.Duration")
     private String completionTimeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
-    private String completionTimeoutCheckerInterval = Long.toString(1000L);
+    @Metadata(defaultValue = "1s", javaType = "java.time.Duration")
+    private String completionTimeoutCheckerInterval = "1s";
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String completionFromBatchConsumer;

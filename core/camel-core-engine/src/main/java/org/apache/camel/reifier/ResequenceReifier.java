@@ -85,7 +85,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
         Resequencer resequencer = new Resequencer(camelContext, internal, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(parseInt(config.getBatchSize()));
-        resequencer.setBatchTimeout(parseLong(config.getBatchTimeout()));
+        resequencer.setBatchTimeout(parseDuration(config.getBatchTimeout()));
         resequencer.setReverse(isReverse);
         resequencer.setAllowDuplicates(isAllowDuplicates);
         if (config.getIgnoreInvalidExchanges() != null) {
@@ -124,9 +124,9 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         comparator.setExpression(expression);
 
         StreamResequencer resequencer = new StreamResequencer(camelContext, internal, comparator, expression);
-        resequencer.setTimeout(parseLong(config.getTimeout()));
+        resequencer.setTimeout(parseDuration(config.getTimeout()));
         if (config.getDeliveryAttemptInterval() != null) {
-            resequencer.setDeliveryAttemptInterval(parseLong(config.getDeliveryAttemptInterval()));
+            resequencer.setDeliveryAttemptInterval(parseDuration(config.getDeliveryAttemptInterval()));
         }
         resequencer.setCapacity(parseInt(config.getCapacity()));
         resequencer.setRejectOld(parseBoolean(config.getRejectOld(), false));

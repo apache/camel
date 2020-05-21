@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,6 +68,16 @@ public abstract class AbstractReifier implements BeanRepository {
     protected long parseLong(String text, long def) {
         Long l = parseLong(text);
         return l != null ? l : def;
+    }
+
+    protected Long parseDuration(String text) {
+        Duration d = CamelContextHelper.parseDuration(camelContext, text);
+        return d != null ? d.toMillis() : null;
+    }
+
+    protected long parseDuration(String text, long def) {
+        Duration d = CamelContextHelper.parseDuration(camelContext, text);
+        return d != null ? d.toMillis() : def;
     }
 
     protected Integer parseInt(String text) {

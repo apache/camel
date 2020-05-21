@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier.errorhandler;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -332,7 +333,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setMaximumRedeliveries(CamelContextHelper.parseInteger(context, definition.getMaximumRedeliveries()));
             }
             if (definition.getRedeliveryDelay() != null) {
-                answer.setRedeliveryDelay(CamelContextHelper.parseLong(context, definition.getRedeliveryDelay()));
+                Duration duration = CamelContextHelper.parseDuration(context, definition.getRedeliveryDelay());
+                answer.setRedeliveryDelay(duration.toMillis());
             }
             if (definition.getAsyncDelayedRedelivery() != null) {
                 answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
@@ -359,7 +361,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setUseCollisionAvoidance(CamelContextHelper.parseBoolean(context, definition.getUseCollisionAvoidance()));
             }
             if (definition.getMaximumRedeliveryDelay() != null) {
-                answer.setMaximumRedeliveryDelay(CamelContextHelper.parseLong(context, definition.getMaximumRedeliveryDelay()));
+                Duration duration = CamelContextHelper.parseDuration(context, definition.getMaximumRedeliveryDelay());
+                answer.setMaximumRedeliveryDelay(duration.toMillis());
             }
             if (definition.getLogStackTrace() != null) {
                 answer.setLogStackTrace(CamelContextHelper.parseBoolean(context, definition.getLogStackTrace()));

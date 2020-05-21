@@ -75,14 +75,14 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             answer.setOnPrepare(definition.getOnPrepare());
         }
         if (definition.getTimeout() != null) {
-            answer.setTimeout(parseLong(definition.getTimeout()));
+            answer.setTimeout(parseDuration(definition.getTimeout()));
         }
 
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("RecipientList", definition, isParallelProcessing);
         answer.setExecutorService(threadPool);
         answer.setShutdownExecutorService(shutdownThreadPool);
-        long timeout = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : 0;
+        long timeout = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : 0;
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }

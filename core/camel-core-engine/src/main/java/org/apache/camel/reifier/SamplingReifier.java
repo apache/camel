@@ -36,7 +36,7 @@ public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
             return new SamplingThrottler(parseLong(definition.getMessageFrequency()));
         } else {
             // should default be 1 sample period
-            long time = definition.getSamplePeriod() != null ? parseLong(definition.getSamplePeriod()) : 1L;
+            long time = definition.getSamplePeriod() != null ? parseDuration(definition.getSamplePeriod()) : 1L;
             // should default be in seconds
             TimeUnit tu = definition.getUnits() != null ? parse(TimeUnit.class, definition.getUnits()) : TimeUnit.SECONDS;
             return new SamplingThrottler(time, tu);
