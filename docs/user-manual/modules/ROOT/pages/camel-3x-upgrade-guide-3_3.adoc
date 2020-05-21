@@ -64,3 +64,40 @@ The dump model classes in package `org.apache.camel.support.dump` has been remov
 as they were not in use by Camel.
 
 In relation to the dump model classes removal, in camel-karaf the following commands were removed: `context-info`, `route-info`, `route-profile` and `route-step`.
+
+=== camel-main
+
+The following methods have been https://issues.apache.org/jira/browse/CAMEL-15005[relocated] from `org.apache.camel.main.BaseMainSupport` to `org.apache.camel.main.MainConfigurationProperties`:
+
+- getConfigurationClasses
+- setConfigurationClasses
+- addConfigurationClass
+- addConfiguration
+- getConfigurations
+- setConfigurations
+- getRouteBuilderClasses
+- setRouteBuilderClasses
+- getRouteBuilders
+- getRoutesBuilders
+- setRoutesBuilders
+- addRoutesBuilder
+
+This means that as example, the following snippet:
+
+[source,java]
+----
+Main main = new Main();
+main.addRoutesBuilder(....)
+----
+
+Should become
+
+[source,java]
+----
+Main main = new Main();
+main.configure().addRoutesBuilder(....)
+----
+
+See https://issues.apache.org/jira/browse/CAMEL-15005
+
+
