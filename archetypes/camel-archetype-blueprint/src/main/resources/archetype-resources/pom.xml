@@ -37,10 +37,17 @@
       <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel-bom</artifactId>
         <version>${camel-version}</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel.karaf</groupId>
+         <artifactId>camel-karaf-bom</artifactId>
+         <version>${camel-version}</version>
+         <type>pom</type>
+         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -99,7 +106,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bundle-plugin</artifactId>
-        <version>${camelVersion}</version>
+        <version>${camel-version}</version>
         <extensions>false</extensions>
         <executions>
           <execution>
