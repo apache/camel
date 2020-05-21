@@ -84,7 +84,7 @@
     <brave-zipkin-version>5.12.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>3.1.0</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.5</c3p0-version>
-    <caffeine-version>2.8.3</caffeine-version>
+    <caffeine-version>2.8.4</caffeine-version>
     <californium-version>2.0.0</californium-version>
     <camel.osgi.activator></camel.osgi.activator>
     <camel.osgi.dynamic></camel.osgi.dynamic>
