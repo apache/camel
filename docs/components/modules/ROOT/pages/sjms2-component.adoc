@@ -176,7 +176,7 @@ with the following path and query parameters:
 | *ttl* (producer) | Flag used to adjust the Time To Live value of produced messages. | -1 | long
 | *allowNullBody* (producer) | Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown. | true | boolean
 | *prefillPool* (producer) | Whether to prefill the producer connection pool on startup, or create connections lazy when needed. | true | boolean
-| *responseTimeOut* (producer) | Sets the amount of time we should wait before timing out a InOut response. | 5000 | long
+| *responseTimeOut* (producer) | Sets the amount of time we should wait before timing out a InOut response. | 5s | long
 | *asyncStartListener* (advanced) | Whether to startup the consumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | boolean
 | *asyncStopListener* (advanced) | Whether to stop the consumer message listener asynchronously, when stopping a route. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -194,7 +194,7 @@ with the following path and query parameters:
 | *errorHandlerLogStackTrace* (logging) | Allows to control whether stacktraces should be logged or not, by the default errorHandler. | true | boolean
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
 | *transactionBatchCount* (transaction) | If transacted sets the number of messages to process before committing a transaction. | -1 | int
-| *transactionBatchTimeout* (transaction) | Sets timeout (in millis) for batch transactions, the value should be 1000 or higher. | 5000 | long
+| *transactionBatchTimeout* (transaction) | Sets timeout (in millis) for batch transactions, the value should be 1000 or higher. | 5s | long
 | *transactionCommitStrategy* (transaction) | Sets the commit strategy. |  | TransactionCommitStrategy
 | *sharedJMSSession* (transaction) | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers, use jms component to leverage XA transaction. | true | boolean
 |===

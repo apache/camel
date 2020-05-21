@@ -2668,7 +2668,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder soTimeout(int soTimeout) {
@@ -2684,7 +2684,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder soTimeout(String soTimeout) {
@@ -2792,7 +2792,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder timeout(int timeout) {
@@ -2804,7 +2804,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder timeout(String timeout) {
@@ -4000,7 +4000,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder soTimeout(int soTimeout) {
@@ -4016,7 +4016,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder soTimeout(String soTimeout) {
@@ -4124,7 +4124,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder timeout(int timeout) {
@@ -4136,7 +4136,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder timeout(String timeout) {
@@ -4845,7 +4845,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder soTimeout(int soTimeout) {
@@ -4861,7 +4861,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder soTimeout(String soTimeout) {
@@ -4967,7 +4967,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder timeout(int timeout) {
@@ -4979,7 +4979,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder timeout(String timeout) {
