@@ -35,7 +35,7 @@ public class RedeliveryPolicyDefinition {
     @Metadata(javaType = "java.lang.Integer")
     private String maximumRedeliveries;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.time.Duration")
     private String redeliveryDelay;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -53,7 +53,7 @@ public class RedeliveryPolicyDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String useCollisionAvoidance;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(javaType = "java.time.Duration")
     private String maximumRedeliveryDelay;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.LoggingLevel")

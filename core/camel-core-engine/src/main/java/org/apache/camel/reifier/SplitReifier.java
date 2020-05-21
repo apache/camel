@@ -49,7 +49,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Split", definition, isParallelProcessing);
 
-        long timeout = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : 0;
+        long timeout = definition.getTimeout() != null ? parseDuration(definition.getTimeout()) : 0;
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }

@@ -45,12 +45,17 @@ public final class AtomixMultiMapProducer extends AbstractAtomixClientProducer<A
     // Handlers
     // *********************************
 
+    private long getResourceTtl(Message message) {
+        Duration ttl = message.getHeader(RESOURCE_TTL, configuration::getTtl, Duration.class);
+        return ttl != null ? ttl.toMillis() : 0;
+    }
+
     @InvokeOnHeader("PUT")
     boolean onPut(Message message, AsyncCallback callback) throws Exception {
         final DistributedMultiMap<Object, Object> map = getResource(message);
         final Object key = message.getHeader(RESOURCE_KEY, configuration::getKey, Object.class);
         final Object val = message.getHeader(RESOURCE_VALUE, message::getBody, Object.class);
-        final long ttl = message.getHeader(RESOURCE_TTL, configuration::getTtl, long.class);
+        final long ttl = getResourceTtl(message);
 
         ObjectHelper.notNull(key, RESOURCE_KEY);
         ObjectHelper.notNull(val, RESOURCE_VALUE);

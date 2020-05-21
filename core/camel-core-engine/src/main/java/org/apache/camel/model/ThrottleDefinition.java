@@ -47,7 +47,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timePeriodMillis;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")

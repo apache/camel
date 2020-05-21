@@ -73,7 +73,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     }
 
     private void configureCircuitBreaker(FaultToleranceConfigurationCommon config, FaultToleranceConfiguration target) {
-        target.setDelay(parseLong(config.getDelay(), 5));
+        target.setDelay(parseDuration(config.getDelay(), 5000));
         target.setSuccessThreshold(parseInt(config.getSuccessThreshold(), 1));
         target.setRequestVolumeThreshold(parseInt(config.getRequestVolumeThreshold(), 20));
         if (config.getFailureRatio() != null) {
@@ -95,7 +95,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             target.setTimeoutEnabled(true);
         }
 
-        target.setTimeoutDuration(parseLong(config.getTimeoutDuration(), 1000));
+        target.setTimeoutDuration(parseDuration(config.getTimeoutDuration(), 1000));
         target.setTimeoutPoolSize(parseInt(config.getTimeoutPoolSize(), 10));
     }
 

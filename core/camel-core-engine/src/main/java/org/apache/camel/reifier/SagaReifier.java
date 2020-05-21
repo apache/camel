@@ -60,8 +60,9 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
             }
         }
 
+        String timeout = definition.getTimeout() != null ? definition.getTimeout() : definition.getTimeoutInMilliseconds();
         CamelSagaStep step = new CamelSagaStep(compensationEndpoint, completionEndpoint, optionsMap,
-                Optional.ofNullable(parseLong(definition.getTimeoutInMilliseconds())));
+                Optional.ofNullable(parseDuration(timeout)));
 
         SagaPropagation propagation = parse(SagaPropagation.class, definition.getPropagation());
         if (propagation == null) {

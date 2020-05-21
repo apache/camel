@@ -44,7 +44,7 @@ public class QueueProducerQoSTest extends JmsTestSupport {
         Assume.assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
-        String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500", TEST_INOUT_DESTINATION_NAME);
+        String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500ms", TEST_INOUT_DESTINATION_NAME);
 
         try {
             template.requestBody(endpoint, "test message");

@@ -130,7 +130,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport implements Ca
         return "faultTolerance";
     }
 
-    @ManagedAttribute(description = "Returns the current delay in seconds.")
+    @ManagedAttribute(description = "Returns the current delay in milliseconds.")
     public long getDelay() {
         return config.getDelay();
     }

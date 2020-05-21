@@ -61,7 +61,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @Metadata(javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", defaultValue = "0")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;

@@ -38,7 +38,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends ExpressionNode {
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", defaultValue = "-1")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "-1")
     private String timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;

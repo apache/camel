@@ -88,19 +88,22 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @Metadata(label = "timeout", defaultValue = "-1", description = "The timeout in milliseconds used when requesting a connection"
         + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
         + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
-    private int connectionRequestTimeout = -1;
+        + " A negative value is interpreted as undefined (system default).",
+             javaType = "java.time.Duration")
+    private long connectionRequestTimeout = -1;
     @Metadata(label = "timeout", defaultValue = "-1", description = "Determines the timeout in milliseconds until a connection is established."
         + " A timeout value of zero is interpreted as an infinite timeout."
         + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
-    private int connectTimeout = -1;
+        + " A negative value is interpreted as undefined (system default).",
+            javaType = "java.time.Duration")
+    private long connectTimeout = -1;
     @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
         + " which is the timeout for waiting for data  or, put differently,"
         + " a maximum period inactivity between two consecutive data packets)."
         + " A timeout value of zero is interpreted as an infinite timeout."
-        + " A negative value is interpreted as undefined (system default).")
-    private int socketTimeout = -1;
+        + " A negative value is interpreted as undefined (system default).",
+            javaType = "java.time.Duration")
+    private long socketTimeout = -1;
     @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
         + " By default the BasicCookieStore is used which is an in-memory only cookie store."
         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
@@ -444,7 +447,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public int getConnectionRequestTimeout() {
+    public long getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
@@ -460,11 +463,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * Default: {@code -1}
      * </p>
      */
-    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+    public void setConnectionRequestTimeout(long connectionRequestTimeout) {
         this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
-    public int getConnectTimeout() {
+    public long getConnectTimeout() {
         return connectTimeout;
     }
 
@@ -479,11 +482,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * Default: {@code -1}
      * </p>
      */
-    public void setConnectTimeout(int connectTimeout) {
+    public void setConnectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public int getSocketTimeout() {
+    public long getSocketTimeout() {
         return socketTimeout;
     }
 
@@ -499,7 +502,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * Default: {@code -1}
      * </p>
      */
-    public void setSocketTimeout(int socketTimeout) {
+    public void setSocketTimeout(long socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 
