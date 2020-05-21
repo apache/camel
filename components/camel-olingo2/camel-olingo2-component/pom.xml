@@ -356,5 +356,17 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>fastinstall</id>
+            <activation>
+            <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <invoker.skip>true</invoker.skip>
+            </properties>
+        </profile>
     </profiles>
 </project>
