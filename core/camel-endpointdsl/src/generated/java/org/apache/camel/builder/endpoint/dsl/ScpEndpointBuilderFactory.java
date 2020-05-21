@@ -558,7 +558,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
@@ -574,7 +574,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 300000
+         * Default: 5m
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
@@ -612,7 +612,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(int timeout) {
@@ -624,7 +624,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(String timeout) {

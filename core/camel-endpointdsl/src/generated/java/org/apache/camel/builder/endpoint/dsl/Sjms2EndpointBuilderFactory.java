@@ -401,7 +401,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: transaction
          */
         default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
@@ -415,7 +415,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: transaction
          */
         default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
@@ -1227,7 +1227,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: producer (advanced)
          */
         default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
@@ -1241,7 +1241,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: producer (advanced)
          */
         default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
