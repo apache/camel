@@ -485,6 +485,8 @@ out of `camel-core-engine` into separate JAR named `camel-cluster`.
 
 === Configuring milli seconds
 
+NOTE: If upgrading to Camel 3.4 or newer then do NOT do this because Camel 3.4 adds back support for this.
+
 Camel was using a type converter from `String` -> `long` that accepted
 a time pattern which allowed to configure long values such as `2s` for 2 seconds, e.g. `2000`.
 And more complex such as `8h15m` for 8 hours and 15 minutes.
