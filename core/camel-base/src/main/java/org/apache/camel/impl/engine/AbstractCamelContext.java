@@ -117,6 +117,9 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OnCamelContextInitialized;
+import org.apache.camel.spi.OnCamelContextStart;
+import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -147,6 +150,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
@@ -331,6 +335,46 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
+
+        // add a default LifecycleStrategy that discover strategies on the registry
+        // and invoke them
+        this.lifecycleStrategies.add(new LifecycleStrategySupport() {
+            @Override
+            public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
+                for (OnCamelContextInitialized handler: context.getRegistry().findByType(OnCamelContextInitialized.class)) {
+                    // RoutesBuilder should register them-self to the camel context
+                    // to avoid invoking them multiple times if routes are discovered
+                    // from the registry (i.e. camel-main)
+                    if (!(handler instanceof RoutesBuilder)) {
+                        handler.onContextInitialized(context);
+                    }
+                }
+            }
+
+            @Override
+            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+                for (OnCamelContextStart handler: context.getRegistry().findByType(OnCamelContextStart.class)) {
+                    // RoutesBuilder should register them-self to the camel context
+                    // to avoid invoking them multiple times if routes are discovered
+                    // from the registry (i.e. camel-main)
+                    if (!(handler instanceof RoutesBuilder)) {
+                        handler.onContextStart(context);
+                    }
+                }
+            }
+
+            @Override
+            public void onContextStop(CamelContext context) {
+                for (OnCamelContextStop handler: context.getRegistry().findByType(OnCamelContextStop.class)) {
+                    // RoutesBuilder should register them-self to the camel context
+                    // to avoid invoking them multiple times if routes are discovered
+                    // from the registry (i.e. camel-main)
+                    if (!(handler instanceof RoutesBuilder)) {
+                        handler.onContextStop(context);
+                    }
+                }
+            }
+        });
 
         setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
         setDefaultExtension(RouteController.class, this::createRouteController);
