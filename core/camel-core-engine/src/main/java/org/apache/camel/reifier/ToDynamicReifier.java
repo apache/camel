@@ -29,6 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.Pair;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -72,6 +73,9 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
     protected Expression createExpression(String uri) {
         List<Expression> list = new ArrayList<>();
 
+        // make sure to parse property placeholders
+        uri = camelContext.resolvePropertyPlaceholders(uri);
+
         String[] parts = safeSplitRaw(uri);
         for (String part : parts) {
             // the part may have optional language to use, so you can mix
@@ -94,6 +98,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
                     }
                 }
             }
+
             // fallback and use simple language
             Language lan = camelContext.resolveLanguage("simple");
             Expression exp = lan.createExpression(part);

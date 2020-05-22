@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.net.URISyntaxException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -259,6 +261,11 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             } else {
                 // convert to a string type we can work with
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // make sure the uri has a scheme and a path
+            int colon = uri.indexOf(':');
+            if (colon == -1 || colon == uri.length() - 1) {
+                throw new ResolveEndpointFailedException(uri, "Endpoint should include scheme:path");
             }
             // optimize and normalize endpoint
             return ecc.normalizeUri(uri);
