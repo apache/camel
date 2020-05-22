@@ -697,6 +697,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      */
     @XmlElementRef(required = false)
     public void setInput(FromDefinition input) {
+        if (this.input != null && input != null && this.input != input) {
+            throw new IllegalArgumentException("Only one input is allowed per route. Cannot accept input: " + input);
+        }
         // required = false: in rest-dsl you can embed an in-lined route which
         // does not have a <from> as its implied to be the rest endpoint
         this.input = input;
