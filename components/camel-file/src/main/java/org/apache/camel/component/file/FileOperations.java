@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
@@ -449,17 +450,23 @@ public class FileOperations implements GenericFileOperations<File> {
             int bytesRead;
             while ((bytesRead = in.read(buffer)) != -1) {
                 if (bytesRead < size) {
-                    byteBuffer.limit(bytesRead);
+                    // to be compatible with java 8
+                    Buffer buf = byteBuffer;
+                    buf.limit(bytesRead);
                 }
                 out.write(byteBuffer);
-                byteBuffer.clear();
+                // to be compatible with java 8
+                Buffer buf = byteBuffer;
+                buf.clear();
             }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;
             if (append && exists && endpoint.getAppendChars() != null) {
                 byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
                 out.write(byteBuffer);
-                byteBuffer.clear();
+                // to be compatible with java 8
+                Buffer buf = byteBuffer;
+                buf.clear();
             }
 
         } finally {
