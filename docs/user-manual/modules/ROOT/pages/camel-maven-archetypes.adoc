@@ -9,12 +9,14 @@ Camel is distributed with the following archetypes for Maven end users.
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Archetype |Description
-|camel-archetype-activemq |This archetype is used to create a new Maven
-project for Camel routes with Apache ActiveMQ embedded.
 
 |camel-archetype-blueprint |*Camel 2.8:* This archetype is used to
 create a new Maven project for Camel routes to be running in OSGi using
 Blueprint.
+
+|camel-archetype-api-component |This archetype is used for creating a new
+Maven project for Camel xref:components::index.adoc[Components]. Use this if
+there is a component missing in Camel that you want to create yourself and it needs the API Maven plugin.
 
 |camel-archetype-component |This archetype is used for creating a new
 Maven project for Camel xref:components::index.adoc[Components]. Use this if
@@ -24,24 +26,15 @@ there is a component missing in Camel that you want to create yourself.
 new Maven project for Camel routes in the Java Container using CDI to
 configure components, endpoints and beans
 
-|[line-through]*camel-archetype-cxf-code-first-blueprint*
-|[line-through]*Deprecated. Camel 2.12.2:* This archetype is used
-creating a new Maven project for Camel with xref:components::cxf-component.adoc[CXF] exposing
-a web service using code-first style. This project is for OSGi Blueprint
-containers. Removed from Camel 2.18 onwards.
-
-|[line-through]*camel-archetype-cxf-contract-first-blueprint*
-|[line-through]*Deprecated. Camel 2.12.1:* This archetype is used
-creating a new Maven project for Camel with xref:components::cxf-component.adoc[CXF] exposing
-a web service using contract-first style. This project is for OSGi
-Blueprint containers. Removed from Camel 2.18 onwards.
-
 |camel-archetype-dataformat |*Camel 2.9:* This archetype is used for
 creating a new Maven project for Camel xref:data-format.adoc[Data
 Format]s. Use this if there is a data format missing in Camel that you
 want to create yourself.
 
 |camel-archetype-java |This archetype is used to create a new Maven
+project for Camel routes using Java DSL.
+
+|camel-archetype-java8 |This archetype is used to create a new Maven
 project for Camel routes using Java DSL.
 
 |camel-archetype-scr |This archetype is used to create a new Maven
@@ -52,10 +45,6 @@ project for Camel routes using Spring XML.
 
 |camel-archetype-spring-boot |*Camel 2.16:* This archetype is used to
 create a new Maven project for Camel routes using Spring Boot.
-
-|camel-archetype-spring-dm |*Camel 2.8:* This archetype is used to
-create a new Maven project for Camel routes to be running in OSGi using
-Spring DM.
 
 |=======================================================================
 
