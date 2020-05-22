@@ -228,6 +228,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         configuration.setProtocol("tcp");
         configuration.setTextline(false);
 
+        if ("https".equals(uri.getScheme())) {
+            configuration.setSsl(true);
+        }
+
         if (configuration instanceof NettyHttpConfiguration) {
             final NettyHttpConfiguration httpConfiguration = (NettyHttpConfiguration) configuration;
 
