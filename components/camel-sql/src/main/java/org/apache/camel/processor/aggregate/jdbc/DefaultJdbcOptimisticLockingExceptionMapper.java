@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -47,6 +48,9 @@ public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimist
         Iterator<Throwable> it = ObjectHelper.createExceptionIterator(cause);
         while (it.hasNext()) {
             Throwable throwable = it.next();
+            if (throwable instanceof OptimisticLockingException) {
+                return true;
+            }
             // if its a SQL exception
             if (throwable instanceof SQLException) {
                 SQLException se = (SQLException) throwable;
