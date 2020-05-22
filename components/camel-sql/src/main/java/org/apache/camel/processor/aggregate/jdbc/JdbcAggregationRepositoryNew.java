@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -310,7 +311,8 @@ public class JdbcAggregationRepositoryNew extends ServiceSupport implements Reco
         if (updateCount == 1) {
             return updateCount;
         } else {
-            throw new RuntimeException(String.format("Stale version: error updating record with key %s and version %s", key, version));
+            // Found stale version while updating record
+            throw new OptimisticLockingException();
         }
     }
 
