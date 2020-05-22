@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Deque;
@@ -459,7 +460,9 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             } else {
                 cast(buffer).flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
-                buffer.clear();
+                // to be compatible with java 8
+                Buffer buf = buffer;
+                buf.clear();
             }
         }
     }
