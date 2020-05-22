@@ -150,9 +150,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // we want the full path for the url, as the client may provide the url in the HTTP headers as absolute or relative, eg
         //   /foo
         //   http://servername/foo
-        String http = configuration.isSsl() ? "https://" : "http://";
-        if (!s.startsWith(http)) {
-            if (configuration.getPort() != 80) {
+        if (!s.startsWith("http://") && !s.startsWith("https://")) {
+            String http = configuration.isSsl() ? "https://" : "http://";
+            if (configuration.getPort() != 80 && configuration.getPort() != 443) {
                 s = http + configuration.getHost() + ":" + configuration.getPort() + s;
             } else {
                 s = http + configuration.getHost() + s;
@@ -169,7 +169,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_SCHEME, uri.getScheme());
         headers.put(Exchange.HTTP_HOST, uri.getHost());
         final int port = uri.getPort();
-        headers.put(Exchange.HTTP_PORT, port > 0 ? port : 80);
+        headers.put(Exchange.HTTP_PORT, port > 0 ? port : configuration.isSsl() || "https".equals(uri.getScheme()) ? 443 : 80);
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getRawPath();
