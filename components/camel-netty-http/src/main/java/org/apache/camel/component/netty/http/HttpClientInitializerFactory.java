@@ -163,7 +163,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                         "file:" + configuration.getKeyStoreFile().getPath(),
                         "file:" + configuration.getTrustStoreFile().getPath(),
                         pw);
-            } else {
+            } else if (configuration.getKeyStoreResource() != null || configuration.getTrustStoreResource() != null) {
                 sslEngineFactory = new SSLEngineFactory();
                 answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
@@ -171,6 +171,8 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                         configuration.getKeyStoreResource(),
                         configuration.getTrustStoreResource(),
                         pw);
+            } else {
+                answer = SSLContext.getDefault();
             }
         }
 
