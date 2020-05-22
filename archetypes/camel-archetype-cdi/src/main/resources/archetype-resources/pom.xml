@@ -33,6 +33,7 @@
     <deltaspike-version>1.9.0</deltaspike-version>
     <weld3-version>3.0.5.Final</weld3-version>
     <log4j2-version>2.13.3</log4j2-version>
+    <cdi-api-version>2.0</cdi-api-version>
   </properties>
 
   <dependencyManagement>
