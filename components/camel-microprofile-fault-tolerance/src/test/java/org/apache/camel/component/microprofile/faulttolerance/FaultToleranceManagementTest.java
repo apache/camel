@@ -57,7 +57,7 @@ public class FaultToleranceManagementTest extends CamelTestSupport {
         assertEquals("start", routeId);
 
         Long num = (Long)mbeanServer.getAttribute(on, "Delay");
-        assertEquals("5", num.toString());
+        assertEquals("5000", num.toString());
     }
 
     @Override
