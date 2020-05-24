@@ -31,6 +31,12 @@ import org.apache.camel.util.ObjectHelper;
  * registry, @see <a href="https://issues.apache.org/jira/browse/CAMEL-10792"/>.
  */
 public interface HealthCheckRegistry extends HealthCheckRepository, CamelContextAware {
+
+    /**
+     * Service factory key.
+     */
+    String FACTORY = "health-check-registry";
+
     /**
      * Registers a service {@link HealthCheck}.
      */

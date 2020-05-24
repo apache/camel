@@ -40,6 +40,7 @@
         <include>org.apache.camel:camel-core-catalog</include>
         <include>org.apache.camel:camel-cloud</include>
         <include>org.apache.camel:camel-cluster</include>
+        <include>org.apache.camel:camel-health</include>
         <include>org.apache.camel:camel-xml-jaxp</include>
         <include>org.apache.camel:camel-main</include>
         <include>org.apache.camel:camel-tooling-model</include>

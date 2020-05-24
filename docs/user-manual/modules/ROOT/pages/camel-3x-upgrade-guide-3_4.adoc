@@ -5,7 +5,7 @@ from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then y
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.3 to 3.4
-=======
+
 === camel-test and JMX
 
 The `camel-test` module no longer has dependency on `camel-management` out of the box.
@@ -21,6 +21,10 @@ For example to use JMX during testing you the following dependency as test scope
     <scope>test</scope>
 </dependency>
 ----
+
+=== Health Check
+
+The default health check implementation has been moved out of `camel-base` into `camel-health` as a separate module.
 
 === Template components
 

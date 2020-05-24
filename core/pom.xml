@@ -51,6 +51,7 @@
         <module>camel-core</module>
         <module>camel-core-xml</module>
         <module>camel-cloud</module>
+        <module>camel-health</module>
         <module>camel-main</module>
         <module>camel-allcomponents</module>
         <module>camel-endpointdsl</module>
