@@ -28,9 +28,11 @@ import org.apache.camel.spi.UriPath;
 import java.util.concurrent.ExecutorService;
 
 /**
- * Represents a ${name} endpoint.
+ * ${name} component which does bla bla.
+ *
+ * TODO: Update one line description above what the component does.
  */
-@UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
+@UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name",
              consumerClass = ${name}Consumer.class, label = "custom")
 public class ${name}Endpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = true)
@@ -50,11 +52,9 @@ public class ${name}Endpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ${name}Consumer(this, processor);
-    }
-
-    public boolean isSingleton() {
-        return true;
+        Consumer consumer = new ${name}Consumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     /**
