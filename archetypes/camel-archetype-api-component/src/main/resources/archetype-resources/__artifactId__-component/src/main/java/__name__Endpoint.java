@@ -36,7 +36,9 @@ import ${package}.internal.${name}Constants;
 import ${package}.internal.${name}PropertiesHelper;
 
 /**
- * Represents a ${name} endpoint.
+ * ${name} component which does bla bla.
+ *
+ * TODO: Update one line description above what the component does.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
              consumerClass = ${name}Consumer.class, label = "custom")
@@ -51,7 +53,6 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     public ${name}Endpoint(String uri, ${name}Component component,
                          ${name}ApiName apiName, String methodName, ${name}Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, ${name}ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
     }
 
     public Producer createProducer() throws Exception {
@@ -108,6 +109,5 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     public String getName() {
         return name;
     }
-
 
 }

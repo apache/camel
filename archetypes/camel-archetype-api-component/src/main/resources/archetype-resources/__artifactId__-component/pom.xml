@@ -58,11 +58,12 @@
       <classifier>javadoc</classifier>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j2-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -181,7 +182,7 @@
         </executions>
       </plugin>
 
-      <!-- generate components meta-data -->
+      <!-- generate camel meta-data -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
@@ -192,7 +193,7 @@
             <goals>
               <goal>generate-component</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>
@@ -226,32 +227,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <!-- OSGi support (remove if not using OSGi) -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-bundle-plugin</artifactId>
-        <version>${camelVersion}</version>
-        <configuration>
-          <instructions>
-            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
-            <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
-            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
-            <Import-Package>
-              ${componentPackage}.api;version=${project.version},
-              ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=${camelVersion}
-            </Import-Package>
-            <Private-Package>${outPackage}</Private-Package>
-            <Implementation-Title>Apache Camel</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
-            <_failok>false</_failok>
-          </instructions>
-        </configuration>
       </plugin>
 
     </plugins>
