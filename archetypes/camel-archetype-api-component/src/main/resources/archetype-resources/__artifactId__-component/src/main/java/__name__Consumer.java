@@ -21,9 +21,6 @@ import org.apache.camel.support.component.AbstractApiConsumer;
 
 import ${package}.internal.${name}ApiName;
 
-/**
- * The ${name} consumer.
- */
 public class ${name}Consumer extends AbstractApiConsumer<${name}ApiName, ${name}Configuration> {
 
     public ${name}Consumer(${name}Endpoint endpoint, Processor processor) {
