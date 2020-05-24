@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -560,7 +560,7 @@
     <web3j-quorum-version>0.8.0</web3j-quorum-version>
     <web3j-version>3.6.0</web3j-version>
     <weld3-version>3.0.5.Final</weld3-version>
-    <wildfly-elytron>1.11.2.Final</wildfly-elytron>
+    <wildfly-elytron>1.11.4.Final</wildfly-elytron>
     <wiremock-version>2.24.1</wiremock-version>
     <woodstox-core-version>6.1.1</woodstox-core-version>
     <woodstox-version>4.4.1</woodstox-version>
