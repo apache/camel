@@ -35,9 +35,6 @@
     <requiredProperty key="maven-resources-plugin-version">
       <defaultValue>${maven-resources-plugin-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="camel-bundle-plugin-version">
-      <defaultValue>${camel-bundle-plugin-version}</defaultValue>
-    </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>

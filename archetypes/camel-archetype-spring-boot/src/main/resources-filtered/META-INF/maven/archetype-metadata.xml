@@ -27,20 +27,8 @@
     <requiredProperty key="spring-boot-version">
       <defaultValue>${spring-boot-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="maven-war-plugin-version">
-      <defaultValue>${maven-war-plugin-version}</defaultValue>
-    </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="maven-resources-plugin-version">
-      <defaultValue>${maven-resources-plugin-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="slf4j-version">
-      <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>
   </requiredProperties>
   <fileSets>

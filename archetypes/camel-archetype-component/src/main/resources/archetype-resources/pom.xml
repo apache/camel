@@ -92,7 +92,7 @@
         </configuration>
       </plugin>
 
-      <!-- generate components meta-data -->
+      <!-- generate camel meta-data -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
@@ -131,27 +131,6 @@
         </executions>
       </plugin>
 
-      <!-- OSGi support (remove if not using OSGi) -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-bundle-plugin</artifactId>
-        <version>${camelVersion}</version>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${scheme}</Export-Service>
-          </instructions>
-        </configuration>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
