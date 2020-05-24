@@ -341,7 +341,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.lifecycleStrategies.add(new LifecycleStrategySupport() {
             @Override
             public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
-                for (OnCamelContextInitialized handler: context.getRegistry().findByType(OnCamelContextInitialized.class)) {
+                for (OnCamelContextInitialized handler : context.getRegistry().findByType(OnCamelContextInitialized.class)) {
                     // RoutesBuilder should register them-self to the camel context
                     // to avoid invoking them multiple times if routes are discovered
                     // from the registry (i.e. camel-main)
@@ -353,7 +353,7 @@ public abstract class AbstractCamelContext extends BaseService
 
             @Override
             public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                for (OnCamelContextStart handler: context.getRegistry().findByType(OnCamelContextStart.class)) {
+                for (OnCamelContextStart handler : context.getRegistry().findByType(OnCamelContextStart.class)) {
                     // RoutesBuilder should register them-self to the camel context
                     // to avoid invoking them multiple times if routes are discovered
                     // from the registry (i.e. camel-main)
@@ -365,7 +365,7 @@ public abstract class AbstractCamelContext extends BaseService
 
             @Override
             public void onContextStop(CamelContext context) {
-                for (OnCamelContextStop handler: context.getRegistry().findByType(OnCamelContextStop.class)) {
+                for (OnCamelContextStop handler : context.getRegistry().findByType(OnCamelContextStop.class)) {
                     // RoutesBuilder should register them-self to the camel context
                     // to avoid invoking them multiple times if routes are discovered
                     // from the registry (i.e. camel-main)
@@ -377,6 +377,7 @@ public abstract class AbstractCamelContext extends BaseService
         });
 
         setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
+        // TODO: is route controller needed as extension?
         setDefaultExtension(RouteController.class, this::createRouteController);
 
         if (build) {

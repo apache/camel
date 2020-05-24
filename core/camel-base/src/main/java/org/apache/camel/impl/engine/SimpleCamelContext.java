@@ -29,7 +29,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.processor.MulticastProcessor;
@@ -112,7 +111,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected HealthCheckRegistry createHealthCheckRegistry() {
-        return new DefaultHealthCheckRegistry(this);
+        return new BaseServiceResolver<>(HealthCheckRegistry.FACTORY, HealthCheckRegistry.class)
+                .resolve(getCamelContextReference()).orElse(null);
     }
 
     @Override

@@ -24,14 +24,21 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
+/**
+ * Default {@link HealthCheckRegistry}.
+ */
+@JdkService(HealthCheckRegistry.FACTORY)
+public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry, StaticService {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
 
     private final Set<HealthCheck> checks;
     private final Set<HealthCheckRepository> repositories;
@@ -57,6 +64,7 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
     public final void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
 
+        // TODO: Move this to doInit
         for (HealthCheck check: checks) {
             if (check instanceof CamelContextAware) {
                 ((CamelContextAware) check).setCamelContext(camelContext);
@@ -83,7 +91,7 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
                 ((CamelContextAware) check).setCamelContext(camelContext);
             }
 
-            LOGGER.debug("HealthCheck with id {} successfully registered", check.getId());
+            LOG.debug("HealthCheck with id {} successfully registered", check.getId());
         }
 
         return result;
@@ -93,7 +101,7 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
     public boolean unregister(HealthCheck check) {
         boolean result = checks.remove(check);
         if (result) {
-            LOGGER.debug("HealthCheck with id {} successfully un-registered", check.getId());
+            LOG.debug("HealthCheck with id {} successfully un-registered", check.getId());
         }
 
         return result;
@@ -117,7 +125,7 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
             if (repository instanceof CamelContextAware) {
                 ((CamelContextAware) repository).setCamelContext(getCamelContext());
 
-                LOGGER.debug("HealthCheckRepository {} successfully registered", repository);
+                LOG.debug("HealthCheckRepository {} successfully registered", repository);
             }
         }
 
@@ -128,7 +136,7 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
     public boolean removeRepository(HealthCheckRepository repository) {
         boolean result = repositories.remove(repository);
         if (result) {
-            LOGGER.debug("HealthCheckRepository with {} successfully un-registered", repository);
+            LOG.debug("HealthCheckRepository with {} successfully un-registered", repository);
         }
 
         return result;

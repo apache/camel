@@ -23,6 +23,7 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 
 @FunctionalInterface
 public interface PerformanceCounterEvaluator<T extends ManagedPerformanceCounterMBean> {
+
     /**
      * Check the given performance counter.
      */
