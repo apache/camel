@@ -431,15 +431,19 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public <T> void setExtension(Class<T> type, T module) {
-        try {
-            extensions.put(type, doAddService(module));
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        if (module != null) {
+            try {
+                extensions.put(type, doAddService(module));
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
         }
     }
 
     public <T> void setDefaultExtension(Class<T> type, Supplier<T> module) {
-        extensions.putIfAbsent(type, module);
+        if (module != null) {
+            extensions.putIfAbsent(type, module);
+        }
     }
 
     @Override
