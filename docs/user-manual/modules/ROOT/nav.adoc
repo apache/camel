@@ -23,6 +23,7 @@
 ** xref:writing-components.adoc[Writing Components]
 ** xref:xml-configuration.adoc[XML Configuration]
 ** xref:xml-reference.adoc[XML Reference]
+** xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * Community
 ** xref:contributing.adoc[Contributing]
 ** xref:release-guide.adoc[Release guide]
@@ -97,6 +98,5 @@
 ** xref:languages.adoc[Languages]
 ** xref:java-dsl.adoc[Java DSL]
 ** xref:spring.adoc[Spring support]
-* xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
 * xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
