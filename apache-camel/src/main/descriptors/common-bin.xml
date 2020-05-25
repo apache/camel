@@ -237,6 +237,7 @@
         <include>org.apache.camel:camel-jsonapi</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
+        <include>org.apache.camel:camel-jta</include>
         <include>org.apache.camel:camel-kafka</include>
         <include>org.apache.camel:camel-kubernetes</include>
         <include>org.apache.camel:camel-kudu</include>
