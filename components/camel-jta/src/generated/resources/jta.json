@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "jta",
-    "title": "Jta",
+    "title": "JTA",
     "description": "Using Camel With JTA Transaction Manager",
     "deprecated": false,
     "firstVersion": "3.4.0",
