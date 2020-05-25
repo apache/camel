@@ -10,23 +10,23 @@ Camel is distributed with the following archetypes for Maven end users.
 |=======================================================================
 |Archetype |Description
 
-|camel-archetype-blueprint |*Camel 2.8:* This archetype is used to
+|camel-archetype-blueprint |This archetype is used to
 create a new Maven project for Camel routes to be running in OSGi using
 Blueprint.
 
 |camel-archetype-api-component |This archetype is used for creating a new
 Maven project for Camel xref:components::index.adoc[Components]. Use this if
-there is a component missing in Camel that you want to create yourself and it needs the API Maven plugin.
+there is an API component missing in Camel that you want to create yourself.
 
 |camel-archetype-component |This archetype is used for creating a new
 Maven project for Camel xref:components::index.adoc[Components]. Use this if
 there is a component missing in Camel that you want to create yourself.
 
-|camel-archetype-cdi |*Camel 2.16:* This archetype is used to create a
+|camel-archetype-cdi |This archetype is used to create a
 new Maven project for Camel routes in the Java Container using CDI to
-configure components, endpoints and beans
+configure components, endpoints and beans.
 
-|camel-archetype-dataformat |*Camel 2.9:* This archetype is used for
+|camel-archetype-dataformat |This archetype is used for
 creating a new Maven project for Camel xref:data-format.adoc[Data
 Format]s. Use this if there is a data format missing in Camel that you
 want to create yourself.
@@ -34,16 +34,13 @@ want to create yourself.
 |camel-archetype-java |This archetype is used to create a new Maven
 project for Camel routes using Java DSL.
 
-|camel-archetype-java8 |This archetype is used to create a new Maven
-project for Camel routes using Java DSL.
+|camel-archetype-main |This archetype is used to create a new Maven
+project for Camel routes running Camel standalone (camel-main).
 
-|camel-archetype-scr |This archetype is used to create a new Maven
-project for building Camel routes using OSGI SCR Declarative Services
+|camel-archetype-spring |This archetype is used to
+create a new Maven project for XML DSL routes using Spring.
 
-|camel-archetype-spring |This archetype is used to create a new Maven
-project for Camel routes using Spring XML.
-
-|camel-archetype-spring-boot |*Camel 2.16:* This archetype is used to
+|camel-archetype-spring-boot |This archetype is used to
 create a new Maven project for Camel routes using Spring Boot.
 
 |=======================================================================
@@ -57,28 +54,20 @@ The maven coordinates for these archetypes is the following:
   <version>${camel-version}</version>
 ----
 
-[NOTE]
-====
-When using these archetypes, make sure your package name is not
-org.apache.camel (or a sub package of this) as this will instruct Camel
-to search in its own packages for your routes. This can also cause Camel
-not to start, as shown in CAMEL-1197.
-====
-
 [[CamelMavenArchetypes-Snapshotarchetypes]]
 == Snapshot archetypes
 
 If you would like to use an archetype from an unreleased version of
 Camel, you just need to let the maven-archetype-plugin know where to
-look for it. For example, say someone wanted to create a WAR based
-project based on Camel 2.9.0. He'd need to use the following command
+look for it. For example, say someone wanted to create a Java based
+project based on Camel 3.4.0-SNAPSHOT. He'd need to use the following command
 
 [source,shell]
 ----
 mvn archetype:generate \
   -DarchetypeGroupId=org.apache.camel.archetypes \
-  -DarchetypeArtifactId=camel-archetype-web \
-  -DarchetypeVersion=2.9.0 \
+  -DarchetypeArtifactId=camel-archetype-java \
+  -DarchetypeVersion=3.4.0-SNAPSHOT \
   -DarchetypeRepository=https://repository.apache.org/content/groups/snapshots-group
 ----
 
@@ -109,4 +98,4 @@ camel-maven-plugin
 
 See xref:creating-a-new-spring-based-camel-route.adoc[Creating a new
 Spring based Camel Route] for a sample how to use the
-camel-archetype-java and camel-archetype-spring archetypes.
+camel-archetype-java and camel-archetype-spring.

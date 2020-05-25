@@ -89,3 +89,8 @@ CREATE TABLE aggregation_completed (
  constraint aggregation_completed_pk PRIMARY KEY (id)
 );
 ----
+
+=== Maven Archetypes
+
+The `camel-archetype-java8` has been removed, as you can just use `camel-archetype-java` instead.
+
