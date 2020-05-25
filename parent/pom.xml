@@ -448,7 +448,7 @@
         <optaplanner-version>7.36.1.Final</optaplanner-version>
         <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
         <osgi-version>6.0.0</osgi-version>
-        <paho-version>1.2.2</paho-version>
+        <paho-version>1.2.4</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.19</pdfbox-version>
         <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
