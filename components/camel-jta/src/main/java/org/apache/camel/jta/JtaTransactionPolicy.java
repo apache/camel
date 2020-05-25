@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.transaction;
-
-import javax.annotation.Resource;
-import javax.transaction.TransactionManager;
+package org.apache.camel.jta;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -46,9 +43,6 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
     public interface Runnable {
         void run() throws Throwable;
     }
-
-    @Resource(lookup = "java:/TransactionManager")
-    protected TransactionManager transactionManager;
 
     @Override
     public void beforeWrap(Route route, NamedNode definition) {
