@@ -250,6 +250,7 @@
         <module>camel-jsonapi</module>
         <module>camel-jsonpath</module>
         <module>camel-jt400</module>
+        <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
