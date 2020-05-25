@@ -16,6 +16,7 @@
 ** xref:examples.adoc[Examples]
 ** xref:graceful-shutdown.adoc[Graceful Shutdown]
 ** xref:error-handling-in-camel.adoc[Error handling in Camel]
+** xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 ** xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 ** xref:templating.adoc[Templating]
 ** xref:testing.adoc[Testing]
@@ -23,7 +24,6 @@
 ** xref:writing-components.adoc[Writing Components]
 ** xref:xml-configuration.adoc[XML Configuration]
 ** xref:xml-reference.adoc[XML Reference]
-** xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * Community
 ** xref:contributing.adoc[Contributing]
 ** xref:release-guide.adoc[Release guide]
