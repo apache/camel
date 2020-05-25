@@ -12,4 +12,4 @@
 
 The `camel-jta` component is used for integrating Camel's transaction support with JTA.
 
-See more details in the xref: [Transaction Client EIP] documentation.
+See more details in the xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client] documentation.

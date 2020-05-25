@@ -14,7 +14,7 @@
 *{component-header}*
 
 The JSON Schema Validator component performs bean validation of the message body
-against JSON Schemas v4 draft using the NetworkNT JSON Schema library
+against JSON Schemas v4, v6, v7 and v2019-09 draft using the NetworkNT JSON Schema library
 (https://github.com/networknt/json-schema-validator).
 
 Maven users will need to add the following dependency to their `pom.xml`
