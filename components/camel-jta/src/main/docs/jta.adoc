@@ -1,6 +1,6 @@
 [[jta-component]]
-= Jta Component
-:docTitle: Jta
+= JTA Component
+:docTitle: JTA
 :artifactId: camel-jta
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4
