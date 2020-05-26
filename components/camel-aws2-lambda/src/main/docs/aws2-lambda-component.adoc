@@ -11,7 +11,7 @@
 
 *{component-header}*
 
-The Lambda component supports create, get, list, delete and invoke
+The AWS2 Lambda component supports create, get, list, delete and invoke
 https://aws.amazon.com/lambda/[AWS Lambda] functions.
 
 *Prerequisites*
