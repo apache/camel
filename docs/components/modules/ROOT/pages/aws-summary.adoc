@@ -1,0 +1,37 @@
+= AWS Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-aws/src/main/docs/aws-summary.adoc
+//attributes written by hand, not generated
+:docTitle: AWS
+:since: 2.8
+
+*Since Camel {since}*
+
+The *aws-* component allows you to work with the
+https://aws.amazon.com/[AWS].
+AWS offers a great palette of different components like elastic, email and queue services. It also 
+provides streaming for Apache Kafka and more. The main reason to use AWS is its cloud computing platform.
+
+== AWS Components
+
+See the following for each component usage:
+
+* xref:aws-cw-component.adoc[AWS CloudWatch]
+* xref:aws-ddb-component.adoc[AWS DynamoDB]
+* xref:aws-ddbstream-component.adoc[AWS DynamoDB Streams]
+* xref:aws-ec2-component.adoc[AWS Elastic Compute Cloud (EC2)]
+* xref:aws-ecs-component.adoc[AWS Elastic Container Service (ECS)]
+* xref:aws-eks-component.adoc[AWS Elastic Kubernetes Service (EKS)]
+* xref:aws-iam-component.adoc[AWS Identity and Access Management (IAM)]
+* xref:aws-kms-component.adoc[AWS Key Management Service (KMS)]
+* xref:aws-kinesis-component.adoc[AWS Kinesis]
+* xref:aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose]
+* xref:aws-lambda-component.adoc[AWS Lambda]
+* xref:aws-msk-component.adoc[AWS Managed Streaming for Apache Kafka (MSK)]
+* xref:aws-mq-component.adoc[AWS MQ]
+* xref:aws-s3-component.adoc[AWS S3 Storage Service]
+* xref:aws-ses-component.adoc[AWS Simple Email Service (SES)]
+* xref:aws-sns-component.adoc[AWS Simple Notification System (SNS)]
+* xref:aws-sqs-component.adoc[AWS Simple Queue Service (SQS)]
+* xref:aws-swf-component.adoc[AWS Simple Workflow (SWF)]
+* xref:aws-sdb-component.adoc[AWS SimpleDB]
