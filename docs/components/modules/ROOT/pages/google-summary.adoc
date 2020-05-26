@@ -1,0 +1,28 @@
+= Google Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-google/src/main/docs/google-summary.adoc
+//attributes written by hand, not generated
+:docTitle: Google
+:since: 2.15
+
+*Since Camel {since}*
+
+The *google-* component allows you to work with the
+https://gsuite.google.co.in/[G Suite].
+Google offers a great palette of different components like use of calender, mail, sheets and 
+drive . The main reason to use Google is the G Suite features.
+
+== Google Components
+
+See the following for each component usage:
+
+*  xref:google-bigquery-component.adoc[Google BigQuery]
+*  xref:google-bigquery-sql-component.adoc[Google BigQuery Standard SQL]
+*  xref:google-calendar-component.adoc[Google Calendar]
+*  xref:google-calendar-stream-component.adoc[Google Calendar Stream]
+*  xref:google-drive-component.adoc[Google Drive]
+*  xref:google-mail-component.adoc[Google Mail]
+*  xref:google-mail-stream-component.adoc[Google Mail Stream]
+*  xref:google-pubsub-component.adoc[Google Pubsub]
+*  xref:google-sheets-component.adoc[Google Sheets]
+*  xref:google-sheets-stream-component.adoc[Google Sheets Stream]
