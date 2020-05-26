@@ -9,9 +9,6 @@
 
 *Since Camel {since}*
 
-*Since Camel 3.2*
-
-
 *{component-header}*
 
 The S3 component supports storing and retrieving objects from/to
