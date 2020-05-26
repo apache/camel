@@ -11,7 +11,7 @@
 
 *{component-header}*
 
-The KMS component supports create, run, start, stop and terminate
+The AWS2 KMS component supports create, run, start, stop and terminate
 https://aws.amazon.com/iam/[AWS IAM] instances.
 
 Prerequisites
