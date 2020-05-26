@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The MQ component supports create, run, start, stop and terminate
+The AWS2 MQ component supports create, run, start, stop and terminate
 https://aws.amazon.com/amazon-mq/[AWS MQ] instances.
 
 Prerequisites
