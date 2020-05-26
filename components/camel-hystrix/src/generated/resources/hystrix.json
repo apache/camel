@@ -4,7 +4,7 @@
     "name": "hystrix",
     "title": "Hystrix",
     "description": "Circuit Breaker EIP using Netflix Hystrix",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.18.0",
     "label": "eip,microservice",
     "supportLevel": "Stable",
