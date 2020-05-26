@@ -327,8 +327,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // the processor is the xslt builder
         setXslt(createXsltBuilder());

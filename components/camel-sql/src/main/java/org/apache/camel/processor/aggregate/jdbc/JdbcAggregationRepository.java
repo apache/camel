@@ -590,7 +590,9 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         ObjectHelper.notNull(repositoryName, "RepositoryName");
         ObjectHelper.notNull(transactionManager, "TransactionManager");
         ObjectHelper.notNull(dataSource, "DataSource");
@@ -601,6 +603,11 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
         transactionTemplateReadOnly.setPropagationBehavior(propagationBehavior);
         transactionTemplateReadOnly.setReadOnly(true);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         // log number of existing exchanges
         int current = getKeys().size();

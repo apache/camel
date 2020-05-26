@@ -215,7 +215,8 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // set the default property name if not set

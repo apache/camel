@@ -123,8 +123,8 @@ public class SqlStoredProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         resolvedTemplate = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), getEndpoint().getTemplate(), null);
     }

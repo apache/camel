@@ -101,8 +101,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
         resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
