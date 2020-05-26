@@ -9,16 +9,6 @@
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
 
-// HEADER START
-*Both producer and consumer is supported*
-// HEADER END
-
-:artifactId: camel-amqp
-:description: Messaging with AMQP protocol using Apache QPid Client.
-:since: 1.2
-:supportLevel: Stable
-:component-header: Both producer and consumer are supported
-
 *Since Camel {since}*
 
 *{component-header}*
