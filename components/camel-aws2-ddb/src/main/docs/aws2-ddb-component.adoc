@@ -11,7 +11,7 @@
 
 *{component-header}*
 
-The DynamoDB component supports storing and retrieving data from/to
+The AWS2 DynamoDB component supports storing and retrieving data from/to
 https://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
 
 Prerequisites
