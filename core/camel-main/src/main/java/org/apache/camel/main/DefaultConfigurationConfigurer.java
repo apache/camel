@@ -370,8 +370,11 @@ public final class DefaultConfigurationConfigurer {
             LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
             camelContext.setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
+            // okay attempt to inject this camel context into existing health check (if any)
             healthCheckRegistry = HealthCheckRegistry.get(camelContext);
-            healthCheckRegistry.setCamelContext(camelContext);
+            if (healthCheckRegistry != null) {
+                healthCheckRegistry.setCamelContext(camelContext);
+            }
         }
         Set<HealthCheckRepository> hcrs = registry.findByType(HealthCheckRepository.class);
         if (!hcrs.isEmpty()) {
