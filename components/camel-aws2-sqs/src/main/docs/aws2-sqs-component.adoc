@@ -11,7 +11,7 @@
 
 *{component-header}*
 
-The sqs component supports sending and receiving messages to
+The AWS2 SQS component supports sending and receiving messages to
 https://aws.amazon.com/sqs[Amazon's SQS] service.
 
 Prerequisites
