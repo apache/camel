@@ -9,10 +9,9 @@
 
 *Since Camel {since}*
 
-
 *{component-header}*
 
-The Translate component supports translate a text in multiple languages.
+The AWS2 Translate component supports translate a text in multiple languages.
 https://aws.amazon.com/translate/[AWS Translate] clusters instances.
 
 Prerequisites
