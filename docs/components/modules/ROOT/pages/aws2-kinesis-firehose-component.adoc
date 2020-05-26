@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.
+The AWS2 Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.
 
 Prerequisites
 
