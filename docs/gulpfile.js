@@ -26,6 +26,7 @@ const sort = require('gulp-sort');
 const through2 = require('through2');
 const File = require('vinyl')
 const fs = require('fs');
+const summaryTitle = '';
 
 function deleteComponentSymlinks() {
     return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
@@ -185,6 +186,11 @@ function createComponentNav() {
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
+                if (filepath.indexOf('summary') > -1) {
+                    summaryTitle = title.toLowerCase();
+                } else if (summaryTitle !== '' && filepath.indexOf(summaryTitle) === 0) {
+                    return `*** xref:${filepath}[${title}]`;
+                }
                 return `** xref:${filepath}[${title}]`;
             }
         }))
