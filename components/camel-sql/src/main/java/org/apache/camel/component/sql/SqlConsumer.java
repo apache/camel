@@ -30,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -104,8 +105,20 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     protected void doInit() throws Exception {
         super.doInit();
 
-        String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
-        resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        if (ResourceHelper.isClasspathUri(query)) {
+            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (!ResourceHelper.isClasspathUri(query)) {
+            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        }
     }
 
     @Override

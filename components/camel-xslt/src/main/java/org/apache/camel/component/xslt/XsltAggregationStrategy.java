@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
+import org.apache.camel.support.ResourceHelper;
 import org.w3c.dom.Document;
 
 import org.apache.camel.AggregationStrategy;
@@ -243,7 +244,18 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         xslt.transformerCacheSize(0);
 
         configureOutput(xslt, output.name());
-        loadResource(xslFile);
+
+        if (ResourceHelper.isClasspathUri(xslFile)) {
+            loadResource(xslFile);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if(!ResourceHelper.isClasspathUri(xslFile)) {
+            loadResource(xslFile);
+        }
     }
 
     @Override

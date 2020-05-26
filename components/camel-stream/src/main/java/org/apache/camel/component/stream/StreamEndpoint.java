@@ -303,8 +303,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     //-------------------------------------------------------------------------
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
         charset = loadCharset();
     }
 

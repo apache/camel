@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlHelper;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ResourceHelper;
 import org.springframework.dao.DataAccessException;
 
 public class SqlStoredProducer extends DefaultProducer {
@@ -126,6 +127,19 @@ public class SqlStoredProducer extends DefaultProducer {
     protected void doInit() throws Exception {
         super.doInit();
 
-        resolvedTemplate = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), getEndpoint().getTemplate(), null);
+        String template = getEndpoint().getTemplate();
+        if (ResourceHelper.isClasspathUri(template)) {
+            resolvedTemplate = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), template, null);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        String template = getEndpoint().getTemplate();
+        if (!ResourceHelper.isClasspathUri(template)) {
+            resolvedTemplate = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), template, null);
+        }
     }
 }

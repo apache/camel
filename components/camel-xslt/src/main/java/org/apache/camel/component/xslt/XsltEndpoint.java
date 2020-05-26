@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
+import org.apache.camel.support.ResourceHelper;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.CamelContext;
@@ -332,7 +333,21 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         // the processor is the xslt builder
         setXslt(createXsltBuilder());
+
+        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
+        // load resource from classpath otherwise load in doStart()
+        if (ResourceHelper.isClasspathUri(resourceUri)) {
+            loadResource(resourceUri, xslt);
+        }
         setProcessor(getXslt());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+            loadResource(resourceUri, xslt);
+        }
     }
 
     protected XsltBuilder createXsltBuilder() throws Exception {
@@ -387,9 +402,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
             Map<String, Object> copy = new HashMap<>(parameters);
             xslt.setParameters(copy);
         }
-
-        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        loadResource(resourceUri, xslt);
 
         return xslt;
     }
