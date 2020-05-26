@@ -422,23 +422,28 @@ public final class SimpleExpressionBuilder {
                 Date date;
                 if ("now".equals(command)) {
                     date = new Date();
-                } else if (command.startsWith("header.") || command.startsWith("in.header.")) {
+                } else if ("exchangeCreated".equals(command)) {
+                    long num = exchange.getCreated();
+                    date = new Date(num);
+                } else if (command.startsWith("header.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
-                    date = exchange.getIn().getHeader(key, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
-                    }
-                } else if (command.startsWith("out.header.")) {
-                    String key = command.substring(command.lastIndexOf('.') + 1);
-                    date = exchange.getMessage().getHeader(key, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
+                    Object obj = exchange.getMessage().getHeader(key);
+                    if (obj instanceof Date) {
+                        date = (Date) obj;
+                    } else if (obj instanceof Long) {
+                        date = new Date((Long) obj);
+                    } else {
+                        throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
                     }
                 } else if (command.startsWith("exchangeProperty.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
-                    date = exchange.getProperty(key, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
+                    Object obj = exchange.getProperty(key);
+                    if (obj instanceof Date) {
+                        date = (Date) obj;
+                    } else if (obj instanceof Long) {
+                        date = new Date((Long) obj);
+                    } else {
+                        throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
                     }
                 } else if ("file".equals(command)) {
                     Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);

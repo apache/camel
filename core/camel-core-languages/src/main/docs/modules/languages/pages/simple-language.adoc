@@ -171,11 +171,12 @@ exception set on exchange. Will fallback and grab caught exceptions
 exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 
 |date:_command_ |Date |evaluates to a Date object.
-Supported commands are: *now* for current timestamp, *in.header.xxx* or
-*header.xxx* to use the Date object header with the key xxx.
-*exchangeProperty.xxx* to use the Date object in the exchange property with the key xxx.
+Supported commands are: *now* for current timestamp,
+*exchangeCreated* for the timestamp when the current exchange was created,
+*header.xxx* to use the Long/Date object header with the key xxx.
+*exchangeProperty.xxx* to use the Long/Date object in the exchange property with the key xxx.
 *file* for the last modified timestamp of the file (available with a File consumer).
-Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h30m-100*.
+Command accepts offsets such as: *now-24h* or *header.xxx+1h* or even *now+1h30m-100*.
 
 |date:_command:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` patterns.
 
