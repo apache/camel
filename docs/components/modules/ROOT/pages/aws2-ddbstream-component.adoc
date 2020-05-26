@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The DynamoDB Stream component supports receiving messages from
+The AWS2 DynamoDB Stream component supports receiving messages from
 Amazon DynamoDB Stream service.
 
 Prerequisites
