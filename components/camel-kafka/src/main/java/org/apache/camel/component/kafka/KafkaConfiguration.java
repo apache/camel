@@ -1151,6 +1151,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * SSL configuration using a Camel {@link SSLContextParameters} object. If
      * configured it's applied before the other SSL endpoint parameters.
+     *
+     * NOTE: Kafka only supports loading keystore from file locations, so prefix the location with file:
+     * in the KeyStoreParameters.resource option.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
