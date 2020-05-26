@@ -42,6 +42,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -249,13 +250,26 @@ public final class ResourceHelper {
     }
 
     /**
+     * Is the given uri a classpath uri?
+     *
+     * @param uri the uri
+     * @return <tt>true</tt> if the uri starts with <tt>classpath:</tt> or has no scheme and therefore would otherwise be loaded from classpath by default.
+     */
+    public static boolean isClasspathUri(String uri) {
+        if (ObjectHelper.isEmpty(uri)) {
+            return false;
+        }
+        return uri.startsWith("classpath:") || uri.indexOf(':') == -1;
+    }
+
+    /**
      * Is the given uri a http uri?
      *
      * @param uri the uri
      * @return <tt>true</tt> if the uri starts with <tt>http:</tt> or <tt>https:</tt>
      */
     public static boolean isHttpUri(String uri) {
-        if (uri == null) {
+        if (ObjectHelper.isEmpty(uri)) {
             return false;
         }
         return uri.startsWith("http:") || uri.startsWith("https:");
