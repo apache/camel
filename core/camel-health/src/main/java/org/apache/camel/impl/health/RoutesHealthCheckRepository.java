@@ -136,9 +136,7 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     // *****************************
 
     private boolean isNotBlacklisted(Route route) {
-        return this.blacklist != null
-            ? !this.blacklist.contains(route.getId())
-            : true;
+        return this.blacklist == null || !this.blacklist.contains(route.getId());
     }
 
     private HealthCheck toRouteHealthCheck(Route route) {

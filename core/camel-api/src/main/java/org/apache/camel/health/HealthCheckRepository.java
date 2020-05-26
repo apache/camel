@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * A repository for health checks.
  */
 public interface HealthCheckRepository {
+
     /**
      * Returns a sequential {@code Stream} with the known {@link HealthCheck}
      * as its source.

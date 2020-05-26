@@ -25,7 +25,7 @@ import org.apache.camel.Builder;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A builder helper to create a result.
+ * A builder helper to create a {@link HealthCheck} result.
  */
 public final class HealthCheckResultBuilder implements Builder<HealthCheck.Result> {
     private HealthCheck check;

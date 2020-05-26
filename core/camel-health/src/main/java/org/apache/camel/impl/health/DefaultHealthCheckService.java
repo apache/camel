@@ -55,7 +55,6 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
     private long checkInterval;
-    private TimeUnit checkIntervalUnit;
     private volatile HealthCheckRegistry registry;
     private volatile ScheduledFuture<?> future;
 
@@ -70,8 +69,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
         this.lock = new StampedLock();
 
         this.camelContext = camelContext;
-        this.checkInterval = 30;
-        this.checkIntervalUnit = TimeUnit.SECONDS;
+        this.checkInterval = 30000;
     }
 
     // ************************************
@@ -102,19 +100,6 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
 
     public void setCheckInterval(long checkInterval) {
         this.checkInterval = checkInterval;
-    }
-
-    public void setCheckInterval(long interval, TimeUnit intervalUnit) {
-        setCheckInterval(interval);
-        setCheckIntervalUnit(intervalUnit);
-    }
-
-    public TimeUnit getCheckIntervalUnit() {
-        return checkIntervalUnit;
-    }
-
-    public void setCheckIntervalUnit(TimeUnit checkIntervalUnit) {
-        this.checkIntervalUnit = checkIntervalUnit;
     }
 
     @Override
@@ -182,7 +167,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
         if (ObjectHelper.isNotEmpty(registry) && ObjectHelper.isEmpty(future)) {
             // Start the health check task only if the health check registry
             // has been registered.
-            LOGGER.debug("Schedule health-checks to be executed every {} ({})", checkInterval, checkIntervalUnit.name());
+            LOGGER.debug("Schedule health-checks to be executed every {} millis", checkInterval);
             future = executorService.scheduleAtFixedRate(
                 () -> {
                     if (!isRunAllowed()) {
@@ -203,7 +188,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
                 },
                 checkInterval,
                 checkInterval,
-                checkIntervalUnit);
+                TimeUnit.MILLISECONDS);
         }
     }
 

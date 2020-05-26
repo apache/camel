@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
@@ -50,7 +49,7 @@ public class DefaultHealthCheckServiceTest {
             options.put("test", "test");
 
             service.setHealthCheckOptions("test", options);
-            service.setCheckInterval(500, TimeUnit.MILLISECONDS);
+            service.setCheckInterval(500);
             service.addStateChangeListener((s, c) -> {
                 results.add(s);
                 check.flip();
