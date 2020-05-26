@@ -24,13 +24,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
-import org.apache.camel.support.ResourceHelper;
 import org.w3c.dom.Document;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -253,7 +253,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if(!ResourceHelper.isClasspathUri(xslFile)) {
+        if (!ResourceHelper.isClasspathUri(xslFile)) {
             loadResource(xslFile);
         }
     }

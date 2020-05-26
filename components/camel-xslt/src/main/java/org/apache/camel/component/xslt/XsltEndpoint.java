@@ -26,7 +26,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
-import org.apache.camel.support.ResourceHelper;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +41,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
