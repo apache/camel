@@ -21,6 +21,7 @@ package org.apache.camel.health;
  */
 @FunctionalInterface
 public interface HealthCheckFilter {
+
     /**
      * Determine if the given {@link HealthCheck} has to be filtered out.
      *

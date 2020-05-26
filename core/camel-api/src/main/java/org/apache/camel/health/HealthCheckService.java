@@ -30,6 +30,7 @@ import org.apache.camel.Service;
  * according to a schedule.
  */
 public interface HealthCheckService extends Service, CamelContextAware {
+
     /**
      * Add a listener to invoke when the state of a check change.
      *
@@ -54,7 +55,7 @@ public interface HealthCheckService extends Service, CamelContextAware {
     void setHealthCheckOptions(String id, Map<String, Object> options);
 
     /**
-     * @see {@link #call(String, Map)}
+     * Invokes the check identified by the given <code>id</code>.
      *
      * @param id the health check id.
      * @return the result of the check or {@link Optional#empty()} if the id is unknown.
