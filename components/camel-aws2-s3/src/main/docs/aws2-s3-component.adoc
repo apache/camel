@@ -11,7 +11,7 @@
 
 *{component-header}*
 
-The S3 component supports storing and retrieving objects from/to
+The AWS2 S3 component supports storing and retrieving objects from/to
 https://aws.amazon.com/s3[Amazon's S3] service.
 
 Prerequisites
