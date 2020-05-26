@@ -11,7 +11,7 @@
 
 *{component-header}*
 
-The AWS MSK component supports create, run, start, stop and terminate
+The AWS2 MSK component supports create, run, start, stop and terminate
 https://aws.amazon.com/msk/[AWS MSK] instances.
 
 Prerequisites
