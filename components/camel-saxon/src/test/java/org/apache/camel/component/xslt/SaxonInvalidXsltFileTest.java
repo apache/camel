@@ -37,7 +37,7 @@ public class SaxonInvalidXsltFileTest extends TestSupport {
             fail("Should have thrown an exception due XSL compilation error");
         } catch (Exception e) {
             // expected
-            assertIsInstanceOf(TransformerException.class, e.getCause().getCause());
+            assertIsInstanceOf(TransformerException.class, e.getCause().getCause().getCause());
         }
     }
 
