@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The Consul**** component is a component for integrating your application with Consul.
+The Consul component is a component for integrating your application with Consul.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
