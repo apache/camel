@@ -88,8 +88,8 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (processor == null) {
             BeanHolder holder = getBeanHolder();

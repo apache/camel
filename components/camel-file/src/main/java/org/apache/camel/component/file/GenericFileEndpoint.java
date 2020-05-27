@@ -1796,7 +1796,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         // validate that the read lock options is valid for the process strategy
         if (!"none".equals(readLock) && !"off".equals(readLock)) {
             if (readLockTimeout > 0 && readLockTimeout <= readLockCheckInterval) {
@@ -1828,7 +1830,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (antFilter != null) {
             antFilter.setCaseSensitive(antFilterCaseSensitive);
         }
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         // idempotent repository may be used by others, so add it as a service
         // so its stopped when CamelContext stops
         if (idempotentRepository != null) {

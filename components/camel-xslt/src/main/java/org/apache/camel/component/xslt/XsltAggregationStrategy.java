@@ -30,6 +30,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -215,7 +216,8 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // set the default property name if not set
@@ -242,7 +244,18 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         xslt.transformerCacheSize(0);
 
         configureOutput(xslt, output.name());
-        loadResource(xslFile);
+
+        if (ResourceHelper.isClasspathUri(xslFile)) {
+            loadResource(xslFile);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (!ResourceHelper.isClasspathUri(xslFile)) {
+            loadResource(xslFile);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -69,11 +70,23 @@ public class SqlProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (ResourceHelper.isClasspathUri(query)) {
+            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
-        resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        if (!ResourceHelper.isClasspathUri(query)) {
+            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
+        }
     }
 
     @Override
