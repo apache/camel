@@ -493,7 +493,7 @@ public class KafkaConsumer extends DefaultConsumer {
     }
 
     private boolean shouldBeFiltered(Header header, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
-        return !headerFilterStrategy.applyFilterToCamelHeaders(header.key(), header.value(), exchange);
+        return !headerFilterStrategy.applyFilterToExternalHeaders(header.key(), header.value(), exchange);
     }
 
     private boolean isAutoCommitEnabled() {
