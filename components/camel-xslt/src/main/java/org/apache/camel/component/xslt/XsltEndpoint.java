@@ -41,6 +41,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -327,12 +328,26 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // the processor is the xslt builder
         setXslt(createXsltBuilder());
+
+        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
+        // load resource from classpath otherwise load in doStart()
+        if (ResourceHelper.isClasspathUri(resourceUri)) {
+            loadResource(resourceUri, xslt);
+        }
         setProcessor(getXslt());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+            loadResource(resourceUri, xslt);
+        }
     }
 
     protected XsltBuilder createXsltBuilder() throws Exception {
@@ -387,9 +402,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
             Map<String, Object> copy = new HashMap<>(parameters);
             xslt.setParameters(copy);
         }
-
-        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        loadResource(resourceUri, xslt);
 
         return xslt;
     }
