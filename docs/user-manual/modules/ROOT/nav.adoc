@@ -12,6 +12,7 @@
 ** xref:configuring-camel.adoc[Configuring Camel]
 ** xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring route startup ordering and autostartup]
 ** xref:creating-a-new-spring-based-camel-route.adoc[Creating a new Spring based Camel Route]
+** xref:component-dsl.adoc[Component-dsl]
 ** xref:Endpoint-dsl.adoc[Endpoint-dsl]
 ** xref:examples.adoc[Examples]
 ** xref:graceful-shutdown.adoc[Graceful Shutdown]
