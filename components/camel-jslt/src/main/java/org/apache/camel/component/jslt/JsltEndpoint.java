@@ -22,9 +22,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -38,6 +41,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -47,6 +51,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
 public class JsltEndpoint extends ResourceEndpoint {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private Expression transform;
 
     @UriParam(defaultValue = "false")
@@ -146,10 +151,49 @@ public class JsltEndpoint extends ResourceEndpoint {
             throw new ValidationException(exchange, "Allowed body types are String or InputStream.");
         }
 
-        JsonNode output = getTransform(exchange.getMessage()).apply(input);
+        Map<String, JsonNode> variables = extractVariables(exchange);
+
+        JsonNode output = getTransform(exchange.getMessage()).apply(variables, input);
+
         Message out = exchange.getMessage();
         out.setBody(isPrettyPrint() ? output.toPrettyString() : output.toString());
         out.setHeaders(exchange.getIn().getHeaders());
+    }
+
+    /**
+     * Extract the variables from the headers in the message.
+     */
+    private Map<String, JsonNode> extractVariables(Exchange exchange) {
+        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
+        Map<String, JsonNode> serializedVariableMap = new HashMap<>();
+        if (variableMap.containsKey("headers")) {
+            serializedVariableMap.put("headers", serializeMapToJsonNode((Map<String, Object>) variableMap.get("headers")));
+        }
+        if (variableMap.containsKey("exchange")) {
+            Exchange ex = (Exchange) variableMap.get("exchange");
+            ObjectNode exchangeNode = OBJECT_MAPPER.createObjectNode();
+            if (ex.getProperties() != null) {
+                exchangeNode.set("properties", serializeMapToJsonNode(ex.getProperties()));
+            }
+            serializedVariableMap.put("exchange", exchangeNode);
+        }
+        return serializedVariableMap;
+    }
+
+    private ObjectNode serializeMapToJsonNode(Map<String, Object> map) {
+        ObjectNode mapNode = OBJECT_MAPPER.createObjectNode();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() != null) {
+                try {
+                    // Use Jackson to convert value to JsonNode
+                    mapNode.set(entry.getKey(), OBJECT_MAPPER.valueToTree(entry.getValue()));
+                } catch (IllegalArgumentException e) {
+                    //If Jackson cannot convert the value to json (e.g. infinite recursion in the value to serialize)
+                    log.debug("Value could not be converted to JsonNode", e);
+                }
+            }
+        }
+        return mapNode;
     }
 
     /**
