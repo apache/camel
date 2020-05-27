@@ -94,3 +94,7 @@ CREATE TABLE aggregation_completed (
 
 The `camel-archetype-java8` has been removed, as you can just use `camel-archetype-java` instead.
 
+=== Camel-Kafka
+
+From a lot of time, the headerFilterStrategy application in consumer and producer was done in an interchanged way. You need to have a look at the following issue for more information: https://issues.apache.org/jira/browse/CAMEL-15121
+
