@@ -91,7 +91,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${in.header.foo}.txt", "Hello World", "foo", "abc");
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${header.foo}.txt", "Hello World", "foo", "abc");
 
         assertFileExists(FTP_ROOT_DIR + "/filelanguage/myfile-abc.txt");
     }
@@ -102,7 +102,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
 
         assertFileExists(FTP_ROOT_DIR + "/filelanguage/mybirthday-19740420.txt");
     }
