@@ -40,7 +40,7 @@ public class InvalidXsltFileTest extends TestSupport {
             fail("Should have thrown an exception due XSL compilation error");
         } catch (Exception e) {
             // expected
-            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause());
+            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause().getCause());
         }
     }
 
