@@ -22,8 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
-// TODO: https://issues.apache.org/jira/browse/CAMEL-14878
-@Ignore
 public class TimerDelaySecondsTest extends ContextTestSupport {
 
     @Test
