@@ -332,6 +332,7 @@ public class SubscriptionHelper extends ServiceSupport {
         }
 
         client = null;
+        LOG.debug("Stopped the helper and destroyed the client");
     }
 
     static BayeuxClient createClient(final SalesforceComponent component) throws SalesforceException {
@@ -442,7 +443,7 @@ public class SubscriptionHelper extends ServiceSupport {
                             }
                         }
 
-                        if (abort) {
+                        if (abort && client != null) {
                             consumer.handleException(msg, new SalesforceException(msg, failure));
                         }
                     } else {
@@ -455,7 +456,12 @@ public class SubscriptionHelper extends ServiceSupport {
                     }
 
                     // remove this subscription listener
-                    client.getChannel(META_SUBSCRIBE).removeListener(this);
+                    if (client != null) {
+                        client.getChannel(META_SUBSCRIBE).removeListener(this);
+                    } else {
+                        LOG.warn("Trying to handle a subscription message but the client is already destroyed");
+                    }
+
                 }
             }
         };
