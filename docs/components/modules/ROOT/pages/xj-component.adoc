@@ -33,7 +33,7 @@ for this component:
 == URI format
 
 ----
-xj:[templateName]?transformDirection=XML2JSON|JSON2XML[&options]
+xj:templateName?transformDirection=XML2JSON|JSON2XML[&options]
 ----
 
 [TIP]
@@ -46,8 +46,7 @@ component as well. At least look at the XSLT component documentation how to conf
 
 The *transformDirection* option is mandatory and must be either XML2JSON or JSON2XML.
 
-In contrary to the xslt component, the *templateName* parameter is optional. If not specified a so called
-"identity transform" will be performed. 
+The *templateName* parameter allows to use _identify transforma_ by specifying the name `identity`.
 
 == Component options
 
@@ -131,7 +130,7 @@ In case of XJ it means it transforms the json document to an equivalent xml repr
 [source,java]
 ----
 from("direct:start").
-  to("xj:?transformDirection=JSON2XML");
+  to("xj:identity?transformDirection=JSON2XML");
 ----
 
 Sample:
@@ -249,7 +248,7 @@ Based on the explanations above an "identity" transform will be performed when n
 [source,java]
 ----
 from("direct:start").
-  to("xj:?transformDirection=XML2JSON");
+  to("xj:identity?transformDirection=XML2JSON");
 ----
 
 Given the sample input
