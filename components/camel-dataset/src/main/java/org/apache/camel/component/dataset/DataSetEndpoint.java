@@ -291,8 +291,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     @Override
-    protected void doInit() {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         if (reporter == null) {
             reporter = createReporter();
