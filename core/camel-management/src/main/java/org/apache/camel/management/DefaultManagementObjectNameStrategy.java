@@ -230,7 +230,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_HEALTH + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
+        buffer.append(KEY_NAME + "=").append("DefaultHealthCheck");
 
         return createObjectName(buffer);
     }

@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.annotations.JdkService;
@@ -42,6 +43,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheck> checks;
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
+    private boolean includeContextCheck = true;
 
     public DefaultHealthCheckRegistry() {
         this(null);
@@ -59,6 +61,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     protected void doInit() throws Exception {
         super.doInit();
 
+        // include the basic context check if not already present
+        if (checks.stream().noneMatch(ContextHealthCheck.class::isInstance)) {
+            ContextHealthCheck check = new ContextHealthCheck();
+            // and make it enabled
+            check.setConfiguration(HealthCheckConfiguration.builder().enabled(true).build());
+            checks.add(check);
+        }
+
         for (HealthCheck check : checks) {
             if (check instanceof CamelContextAware) {
                 ((CamelContextAware) check).setCamelContext(camelContext);
@@ -75,6 +85,17 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     // ************************************
     // Properties
     // ************************************
+
+    public boolean isIncludeContextCheck() {
+        return includeContextCheck;
+    }
+
+    /**
+     * Whether to automatic include the basic {@link ContextHealthCheck}.
+     */
+    public void setIncludeContextCheck(boolean includeContextCheck) {
+        this.includeContextCheck = includeContextCheck;
+    }
 
     @Override
     public final void setCamelContext(CamelContext camelContext) {

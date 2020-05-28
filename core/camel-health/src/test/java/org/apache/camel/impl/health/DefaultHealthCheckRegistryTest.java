@@ -43,7 +43,8 @@ public class DefaultHealthCheckRegistryTest {
 
     @Test
     public void testDefaultHealthCheckRegistry() throws Exception {
-        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setIncludeContextCheck(false);
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
@@ -63,7 +64,9 @@ public class DefaultHealthCheckRegistryTest {
 
     @Test
     public void testDefaultHealthCheckRegistryWithRepositories() throws Exception {
-        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setIncludeContextCheck(false);
+
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
@@ -93,7 +96,6 @@ public class DefaultHealthCheckRegistryTest {
         registry.setCamelContext(context);
 
         registry.register(new MyHealthCheck("G1", "1"));
-        registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
         registry.register(new MyHealthCheck("G2", "3"));
 
@@ -101,7 +103,8 @@ public class DefaultHealthCheckRegistryTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(3, checks.size());
+        // should also include default
+        Assert.assertEquals(4, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
