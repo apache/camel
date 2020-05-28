@@ -376,9 +376,8 @@ public abstract class AbstractCamelContext extends BaseService
             }
         });
 
+        // TODO:
         setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
-        // TODO: is route controller needed as extension?
-        setDefaultExtension(RouteController.class, this::createRouteController);
 
         if (build) {
             try {
@@ -3232,6 +3231,11 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartEagerServices() {
+        // initialize health-check registry
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr == null) {
+            setExtension(HealthCheckRegistry.class, createHealthCheckRegistry());
+        }
         getFactoryFinderResolver();
         getDefaultFactoryFinder();
         getComponentResolver();

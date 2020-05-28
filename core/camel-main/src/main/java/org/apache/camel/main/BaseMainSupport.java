@@ -403,7 +403,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         if (mainConfigurationProperties.getPackageScanRouteBuilders() != null) {
             String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
-            Set<Class<?>> set = camelContext.getExtension(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(RoutesBuilder.class, pkgs);
+            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
                 if (builder instanceof RoutesBuilder) {
