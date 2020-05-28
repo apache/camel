@@ -27,8 +27,6 @@ const through2 = require('through2');
 const File = require('vinyl')
 const fs = require('fs');
 
-var parentAttribute = '';
-
 function deleteComponentSymlinks() {
     return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
 }
@@ -160,17 +158,10 @@ function titleFrom(file) {
 function checkAttributeExistence(file) {
     var summaryGroup = /(?::summary-group: )(.*)/.exec(file.contents.toString())
     var group = /(?::group: )(.*)/.exec(file.contents.toString())
-    if (summaryGroup != null || group != null) return true;
+    if (summaryGroup != null || group != null) return {summaryGroup: summaryGroup, group: group};
     return false;
 }
 
-function isParentAttribute(file) {
-    var attributeName = /(?::summary-group: )(.*)/.exec(file.contents.toString())
-    if (attributeName != null) {
-        return attributeName[1];
-    }
-    return null;
-}
 
 function compare (file1, file2) {
     if (file1 === file2) return 0
@@ -202,19 +193,15 @@ function createComponentNav() {
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
-                if (checkAttributeExistence) {
-                    if (isParentAttribute(file) != null) {
-                        parentAttribute = isParentAttribute(file);
-                    } else {
-                        return `*** xref:${filepath}[${title}]`;
-                    }
-                }
+                let attribute = checkAttributeExistence(file);
+                if (attribute.group != null) return `*** xref:${filepath}[${title}]`;
                 return `** xref:${filepath}[${title}]`;
             }
         }))
         .pipe(rename('nav.adoc'))
         .pipe(dest('components/modules/ROOT/'))
 }
+createComponentNav();
 
 function createComponentOthersNav() {
     return src('component-others-nav.adoc.template')
