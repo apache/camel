@@ -26,6 +26,8 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "functions": target.setFunctions(property(camelContext, java.util.Collection.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "objectfilter":
+        case "objectFilter": target.setObjectFilter(property(camelContext, com.schibsted.spt.data.jslt.filters.JsonFilter.class, value)); return true;
         default: return false;
         }
     }
@@ -37,6 +39,7 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("functions", java.util.Collection.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("objectFilter", com.schibsted.spt.data.jslt.filters.JsonFilter.class);
         return answer;
     }
 
@@ -51,6 +54,8 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "functions": return target.getFunctions();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "objectfilter":
+        case "objectFilter": return target.getObjectFilter();
         default: return null;
         }
     }
