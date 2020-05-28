@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.ContextTestSupport;

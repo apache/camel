@@ -18,11 +18,7 @@ package org.apache.camel.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
