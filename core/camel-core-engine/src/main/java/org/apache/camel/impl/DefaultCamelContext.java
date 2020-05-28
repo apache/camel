@@ -298,12 +298,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected void doStartEagerServices() {
-        getExtension(HealthCheckRegistry.class);
-        super.doStartEagerServices();
-    }
-
-    @Override
     protected void bindDataFormats() throws Exception {
         // eager lookup data formats and bind to registry so the dataformats can
         // be looked up and used
