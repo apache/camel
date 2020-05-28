@@ -54,8 +54,8 @@ public class FlinkEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (dataSet == null) {
             dataSet = getComponent().getDataSet();

@@ -250,10 +250,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         // notify reference we are shutting down this endpoint
         disruptorReference.addEndpoint(this);
-        super.doStart();
     }
 
     @Override

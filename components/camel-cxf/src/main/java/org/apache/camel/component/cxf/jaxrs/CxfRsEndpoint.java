@@ -720,7 +720,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfRsHeaderFilterStrategy();
         }

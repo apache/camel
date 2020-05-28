@@ -76,8 +76,8 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         validateConfiguration(configuration);
     }
