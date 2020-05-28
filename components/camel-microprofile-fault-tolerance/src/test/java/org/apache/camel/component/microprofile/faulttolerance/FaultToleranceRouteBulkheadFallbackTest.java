@@ -19,7 +19,6 @@ package org.apache.camel.component.microprofile.faulttolerance;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class FaultToleranceRouteBulkheadFallbackTest extends CamelTestSupport {

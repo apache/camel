@@ -17,7 +17,6 @@
 package org.apache.camel.component.undertow;
 
 import java.net.UnknownHostException;
-import java.nio.channels.UnresolvedAddressException;
 import java.util.HashMap;
 import java.util.Map;
 

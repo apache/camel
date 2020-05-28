@@ -20,11 +20,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

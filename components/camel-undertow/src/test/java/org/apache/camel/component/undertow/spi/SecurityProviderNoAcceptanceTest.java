@@ -21,7 +21,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
