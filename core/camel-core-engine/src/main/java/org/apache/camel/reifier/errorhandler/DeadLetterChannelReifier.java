@@ -35,11 +35,16 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
     public Processor createErrorHandler(Processor processor) throws Exception {
         validateDeadLetterUri();
 
-        DeadLetterChannel answer = new DeadLetterChannel(camelContext, processor, definition.getLogger(), definition.getOnRedelivery(),
-                                                         definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(), definition.getFailureProcessor(),
+        DeadLetterChannel answer = new DeadLetterChannel(camelContext, processor, definition.getLogger(),
+                                                         getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
+                                                         definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(),
+                                                         getBean(Processor.class, definition.getFailureProcessor(), definition.getFailureProcessorRef()),
                                                          definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
-                                                         definition.isUseOriginalBody(), definition.getRetryWhilePolicy(camelContext),
-                                                         getExecutorService(camelContext), definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
+                                                         definition.isUseOriginalBody(),
+                                                         definition.getRetryWhilePolicy(camelContext),
+                                                         getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
+                                                         getBean(Processor.class, definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
+                                                         getBean(Processor.class, definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
         // configure error handler before we can use it
         configure(answer);
         return answer;
