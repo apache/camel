@@ -94,7 +94,7 @@ public class SipConfiguration {
     private int msgExpiration = 3600;
     @UriParam(label = "proxy")
     private boolean useRouterForAllUris;
-    @UriParam(label = "common", defaultValue = "10000")
+    @UriParam(label = "common", defaultValue = "10000", javaType = "java.time.Duration")
     private long receiveTimeoutMillis = 10000;
     @UriParam(label = "advanced", defaultValue = "1048576")
     private int maxMessageSize = 1048576;

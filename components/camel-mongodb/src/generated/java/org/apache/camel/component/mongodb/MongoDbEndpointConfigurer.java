@@ -31,7 +31,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "createcollection":
         case "createCollection": target.setCreateCollection(property(camelContext, boolean.class, value)); return true;
         case "cursorregenerationdelay":
-        case "cursorRegenerationDelay": target.setCursorRegenerationDelay(property(camelContext, long.class, value)); return true;
+        case "cursorRegenerationDelay": target.setCursorRegenerationDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
         case "dynamicity": target.setDynamicity(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":

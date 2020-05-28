@@ -67,7 +67,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     private boolean multipleConsumers;
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000;
     @UriParam(defaultValue = "" + DisruptorComponent.DEFAULT_BUFFER_SIZE)
     private int size;

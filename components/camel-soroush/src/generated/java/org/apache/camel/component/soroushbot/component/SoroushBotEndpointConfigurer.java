@@ -50,15 +50,15 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxconnectionretry":
         case "maxConnectionRetry": target.setMaxConnectionRetry(property(camelContext, int.class, value)); return true;
         case "maxretrywaitingtime":
-        case "maxRetryWaitingTime": target.setMaxRetryWaitingTime(property(camelContext, long.class, value)); return true;
+        case "maxRetryWaitingTime": target.setMaxRetryWaitingTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "queuecapacityperthread":
         case "queueCapacityPerThread": target.setQueueCapacityPerThread(property(camelContext, int.class, value)); return true;
         case "reconnectidleconnectiontimeout":
-        case "reconnectIdleConnectionTimeout": target.setReconnectIdleConnectionTimeout(property(camelContext, long.class, value)); return true;
+        case "reconnectIdleConnectionTimeout": target.setReconnectIdleConnectionTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retryexponentialcoefficient":
-        case "retryExponentialCoefficient": target.setRetryExponentialCoefficient(property(camelContext, long.class, value)); return true;
+        case "retryExponentialCoefficient": target.setRetryExponentialCoefficient(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retrylinearincrement":
-        case "retryLinearIncrement": target.setRetryLinearIncrement(property(camelContext, long.class, value)); return true;
+        case "retryLinearIncrement": target.setRetryLinearIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retrywaitingtime":
         case "retryWaitingTime": target.setRetryWaitingTime(property(camelContext, long.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;

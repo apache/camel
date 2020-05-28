@@ -186,7 +186,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private boolean errorHandlerLogStackTrace = true;
     @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
     private boolean reconnectOnError = true;
-    @UriParam(label = "consumer", description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
+    @UriParam(label = "consumer", javaType = "java.time.Duration", description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
     private long reconnectBackOff = 5000;
 
     private volatile boolean closeConnectionResource;

@@ -124,13 +124,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private String name;
     @UriParam(label = "producer", defaultValue = "-1")
     private int expectedCount;
-    @UriParam(label = "producer", defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0", javaType = "java.time.Duration")
     private long sleepForEmptyTest;
-    @UriParam(label = "producer", defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0", javaType = "java.time.Duration")
     private long resultWaitTime;
-    @UriParam(label = "producer", defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0", javaType = "java.time.Duration")
     private long resultMinimumWaitTime;
-    @UriParam(label = "producer", defaultValue = "0")
+    @UriParam(label = "producer", defaultValue = "0", javaType = "java.time.Duration")
     private long assertPeriod;
     @UriParam(label = "producer", defaultValue = "-1")
     private int retainFirst;

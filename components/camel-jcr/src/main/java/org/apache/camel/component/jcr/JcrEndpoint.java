@@ -64,9 +64,9 @@ public class JcrEndpoint extends DefaultEndpoint {
     private String nodeTypeNames;
     @UriParam
     private boolean noLocal;
-    @UriParam(defaultValue = "3000")
+    @UriParam(defaultValue = "3000", javaType = "java.time.Duration")
     private long sessionLiveCheckIntervalOnStart = 3000L;
-    @UriParam(defaultValue = "60000")
+    @UriParam(defaultValue = "60000", javaType = "java.time.Duration")
     private long sessionLiveCheckInterval = 60000L;
     @UriParam
     private String workspaceName;

@@ -55,7 +55,7 @@ public class DataSetTestEndpoint extends MockEndpoint {
     private String name;
     @UriParam
     private boolean anyOrder;
-    @UriParam(defaultValue = "2000")
+    @UriParam(defaultValue = "2000", javaType = "java.time.Duration")
     private long timeout = 2000L;
     @UriParam
     private boolean split;

@@ -38,7 +38,7 @@ public class TwitterSearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "consumersecret":
         case "consumerSecret": target.getProperties().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "count": target.getProperties().setCount(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "distancemetric":
         case "distanceMetric": target.getProperties().setDistanceMetric(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":

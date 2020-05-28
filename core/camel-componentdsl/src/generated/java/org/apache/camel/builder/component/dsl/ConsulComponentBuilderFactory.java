@@ -51,10 +51,24 @@ public interface ConsulComponentBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder connectTimeout(
+                java.time.Duration connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulComponentBuilder connectTimeoutMillis(
                 java.lang.Long connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
@@ -99,10 +113,24 @@ public interface ConsulComponentBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder readTimeout(
+                java.time.Duration readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulComponentBuilder readTimeoutMillis(
                 java.lang.Long readTimeoutMillis) {
             doSetProperty("readTimeoutMillis", readTimeoutMillis);
@@ -133,10 +161,24 @@ public interface ConsulComponentBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder writeTimeout(
+                java.time.Duration writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulComponentBuilder writeTimeoutMillis(
                 java.lang.Long writeTimeoutMillis) {
             doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
@@ -405,13 +447,16 @@ public interface ConsulComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "connectTimeout": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeout((java.time.Duration) value); return true;
             case "connectTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeoutMillis((java.lang.Long) value); return true;
             case "consulClient": getOrCreateConfiguration((ConsulComponent) component).setConsulClient((com.orbitz.consul.Consul) value); return true;
             case "key": getOrCreateConfiguration((ConsulComponent) component).setKey((java.lang.String) value); return true;
             case "pingInstance": getOrCreateConfiguration((ConsulComponent) component).setPingInstance((boolean) value); return true;
+            case "readTimeout": getOrCreateConfiguration((ConsulComponent) component).setReadTimeout((java.time.Duration) value); return true;
             case "readTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setReadTimeoutMillis((java.lang.Long) value); return true;
             case "tags": getOrCreateConfiguration((ConsulComponent) component).setTags((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((ConsulComponent) component).setUrl((java.lang.String) value); return true;
+            case "writeTimeout": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeout((java.time.Duration) value); return true;
             case "writeTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeoutMillis((java.lang.Long) value); return true;
             case "bridgeErrorHandler": ((ConsulComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "action": getOrCreateConfiguration((ConsulComponent) component).setAction((java.lang.String) value); return true;

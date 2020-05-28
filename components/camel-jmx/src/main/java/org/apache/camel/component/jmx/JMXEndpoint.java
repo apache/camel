@@ -89,7 +89,7 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * The frequency to poll the bean to check the monitor (monitor types only).
      */
-    @UriParam(defaultValue = "10000")
+    @UriParam(defaultValue = "10000", javaType = "java.time.Duration")
     private long granularityPeriod = 10000;
 
     /**

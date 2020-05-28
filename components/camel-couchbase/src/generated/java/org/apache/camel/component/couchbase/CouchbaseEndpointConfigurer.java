@@ -52,15 +52,15 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": target.setLimit(property(camelContext, int.class, value)); return true;
         case "maxreconnectdelay":
-        case "maxReconnectDelay": target.setMaxReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "maxReconnectDelay": target.setMaxReconnectDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "obspollinterval":
-        case "obsPollInterval": target.setObsPollInterval(property(camelContext, long.class, value)); return true;
+        case "obsPollInterval": target.setObsPollInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "obstimeout":
-        case "obsTimeout": target.setObsTimeout(property(camelContext, long.class, value)); return true;
+        case "obsTimeout": target.setObsTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "opqueuemaxblocktime":
-        case "opQueueMaxBlockTime": target.setOpQueueMaxBlockTime(property(camelContext, long.class, value)); return true;
+        case "opQueueMaxBlockTime": target.setOpQueueMaxBlockTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "optimeout":
-        case "opTimeOut": target.setOpTimeOut(property(camelContext, long.class, value)); return true;
+        case "opTimeOut": target.setOpTimeOut(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "persistto":

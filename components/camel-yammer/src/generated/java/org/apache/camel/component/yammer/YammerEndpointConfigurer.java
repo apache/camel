@@ -35,7 +35,7 @@ public class YammerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerKey": target.getConfig().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
         case "consumersecret":
         case "consumerSecret": target.getConfig().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "delay": target.getConfig().setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": target.getConfig().setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":

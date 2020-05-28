@@ -154,20 +154,20 @@ public class JmsConfiguration implements Cloneable {
                     + " Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER, CACHE_NONE, and CACHE_SESSION."
                     + " The default setting is CACHE_AUTO. See the Spring documentation and Transactions Cache Levels for more information.")
     private String cacheLevelName;
-    @UriParam(defaultValue = "5000", label = "advanced",
+    @UriParam(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
             description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                     + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
-    @UriParam(defaultValue = "1000", label = "advanced",
+    @UriParam(defaultValue = "1000", label = "advanced", javaType = "java.time.Duration",
             description = "The timeout for receiving messages (in milliseconds).")
     private long receiveTimeout = 1000;
-    @UriParam(defaultValue = "20000", label = "producer",
+    @UriParam(defaultValue = "20000", label = "producer", javaType = "java.time.Duration",
             description = "The timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds)."
                     + " The default is 20 seconds. You can include the header \"CamelJmsRequestTimeout\" to override this endpoint configured"
                     + " timeout value, and thus have per message individual timeout values."
                     + " See also the requestTimeoutCheckerInterval option.")
     private long requestTimeout = 20000L;
-    @UriParam(defaultValue = "1000", label = "advanced",
+    @UriParam(defaultValue = "1000", label = "advanced", javaType = "java.time.Duration",
             description = "Configures how often Camel should check for timed out Exchanges when doing request/reply over JMS."
                     + " By default Camel checks once per second. But if you must react faster when a timeout occurs,"
                     + " then you can lower this interval, to check more frequently. The timeout is determined by the option requestTimeout.")
@@ -181,7 +181,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "1", label = "advanced",
             description = "Specify the limit for the number of consumers that are allowed to be idle at any given time.")
     private int idleConsumerLimit = 1;
-    @UriParam(defaultValue = "100", label = "advanced",
+    @UriParam(defaultValue = "100", label = "advanced", javaType = "java.time.Duration",
             description = "Interval in millis to sleep each time while waiting for provisional correlation id to be updated.")
     private long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
     @UriParam(defaultValue = "50", label = "advanced",
