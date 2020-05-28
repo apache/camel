@@ -77,7 +77,7 @@
         <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.13.24</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.13.25</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.5.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
