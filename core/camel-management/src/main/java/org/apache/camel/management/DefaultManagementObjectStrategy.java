@@ -33,6 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.log.LogEndpoint;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.management.mbean.ManagedAggregateProcessor;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -196,8 +197,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForCamelHealth(CamelContext context) {
-        ManagedCamelHealth mch = new ManagedCamelHealth(context);
+    public Object getManagedObjectForCamelHealth(CamelContext context, HealthCheckRegistry healthCheckRegistry) {
+        ManagedCamelHealth mch = new ManagedCamelHealth(context, healthCheckRegistry);
         mch.init(context.getManagementStrategy());
         return mch;
     }
