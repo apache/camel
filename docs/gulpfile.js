@@ -201,7 +201,6 @@ function createComponentNav() {
         .pipe(rename('nav.adoc'))
         .pipe(dest('components/modules/ROOT/'))
 }
-createComponentNav();
 
 function createComponentOthersNav() {
     return src('component-others-nav.adoc.template')
