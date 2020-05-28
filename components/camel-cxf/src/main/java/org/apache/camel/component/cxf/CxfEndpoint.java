@@ -1050,7 +1050,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfHeaderFilterStrategy();
         }

@@ -468,8 +468,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
 
