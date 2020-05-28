@@ -6,7 +6,7 @@
 :since: 3.3
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
-
+:group: Azure
 *Since Camel {since}*
 
 *{component-header}*

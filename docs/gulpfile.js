@@ -26,7 +26,8 @@ const sort = require('gulp-sort');
 const through2 = require('through2');
 const File = require('vinyl')
 const fs = require('fs');
-const summaryTitle = '';
+
+var parentAttribute = '';
 
 function deleteComponentSymlinks() {
     return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
@@ -156,6 +157,22 @@ function titleFrom(file) {
     return maybeName[1];
 }
 
+function isParentAttribute(file) {
+    var attributeName = /(?::summary-group: )(.*)/.exec(file.contents.toString())
+    if (attributeName != null) {
+        return attributeName[1];
+    }
+    return null;
+}
+
+function isChildAttribute(file) {
+    var attributeName = /(?::group: )(.*)/.exec(file.contents.toString())
+    if (attributeName != null && attributeName[1] == parentAttribute) {
+        return true;
+    }
+    return false;
+}
+
 function compare (file1, file2) {
     if (file1 === file2) return 0
     return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
@@ -186,9 +203,9 @@ function createComponentNav() {
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
-                if (filepath.indexOf('summary') > -1) {
-                    summaryTitle = title.toLowerCase();
-                } else if (summaryTitle !== '' && filepath.indexOf(summaryTitle) === 0) {
+                if (isParentAttribute(file) != null) {
+                    parentAttribute = isParentAttribute(file);
+                } else if (isChildAttribute(file)) {
                     return `*** xref:${filepath}[${title}]`;
                 }
                 return `** xref:${filepath}[${title}]`;
