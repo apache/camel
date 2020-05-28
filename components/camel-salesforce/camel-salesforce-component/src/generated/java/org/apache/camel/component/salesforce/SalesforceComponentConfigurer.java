@@ -37,7 +37,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "authenticationtype":
         case "authenticationType": target.setAuthenticationType(property(camelContext, org.apache.camel.component.salesforce.AuthenticationType.class, value)); return true;
         case "backoffincrement":
-        case "backoffIncrement": getOrCreateConfiguration(target).setBackoffIncrement(property(camelContext, long.class, value)); return true;
+        case "backoffIncrement": getOrCreateConfiguration(target).setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchid":
@@ -109,7 +109,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longpollingtransportproperties":
         case "longPollingTransportProperties": target.setLongPollingTransportProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "maxbackoff":
-        case "maxBackoff": getOrCreateConfiguration(target).setMaxBackoff(property(camelContext, long.class, value)); return true;
+        case "maxBackoff": getOrCreateConfiguration(target).setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "notfoundbehaviour":
         case "notFoundBehaviour": getOrCreateConfiguration(target).setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
         case "notifyforfields":

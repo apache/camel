@@ -17,6 +17,7 @@
 package org.apache.camel.component.consul;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.orbitz.consul.Consul;
 import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -55,12 +57,21 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
 
+    @Deprecated @Metadata(deprecationNote = "Use connectTimeout instead")
     @UriParam
     private Long connectTimeoutMillis;
     @UriParam
+    private Duration connectTimeout;
+    @Deprecated @Metadata(deprecationNote = "Use readTimeout instead")
+    @UriParam
     private Long readTimeoutMillis;
     @UriParam
+    private Duration readTimeout;
+    @Deprecated @Metadata(deprecationNote = "Use writeTimeout instead")
+    @UriParam(javaType = "java.time.Duration")
     private Long writeTimeoutMillis;
+    @UriParam
+    private Duration writeTimeout;
     @UriParam(defaultValue = "true")
     private boolean pingInstance = true;
 
@@ -221,9 +232,22 @@ public abstract class ConsulClientConfiguration implements Cloneable {
 
     /**
      * Connect timeout for OkHttpClient
+     *
+     * @deprecated use connectTimeout instead
      */
     public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
         this.connectTimeoutMillis = connectTimeoutMillis;
+    }
+
+    public Duration getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Connect timeout for OkHttpClient
+     */
+    public void setConnectTimeout(Duration connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public Long getReadTimeoutMillis() {
@@ -232,9 +256,22 @@ public abstract class ConsulClientConfiguration implements Cloneable {
 
     /**
      * Read timeout for OkHttpClient
+     *
+     * @deprecated Use readTimeout instead.
      */
     public void setReadTimeoutMillis(Long readTimeoutMillis) {
         this.readTimeoutMillis = readTimeoutMillis;
+    }
+
+    public Duration getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Read timeout for OkHttpClient
+     */
+    public void setReadTimeout(Duration readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     public Long getWriteTimeoutMillis() {
@@ -243,9 +280,22 @@ public abstract class ConsulClientConfiguration implements Cloneable {
 
     /**
      * Write timeout for OkHttpClient
+     *
+     * @deprecated Use writeTimeout instead.
      */
     public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
         this.writeTimeoutMillis = writeTimeoutMillis;
+    }
+
+    public Duration getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * Write timeout for OkHttpClient
+     */
+    public void setWriteTimeout(Duration writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
     public boolean isPingInstance() {
@@ -317,13 +367,19 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         if (requiresBasicAuthentication()) {
             builder.withBasicAuth(userName, password);
         }
-        if (ObjectHelper.isNotEmpty(connectTimeoutMillis)) {
+        if (ObjectHelper.isNotEmpty(connectTimeout)) {
+            builder.withConnectTimeoutMillis(connectTimeout.toMillis());
+        } else if (ObjectHelper.isNotEmpty(connectTimeoutMillis)) {
             builder.withConnectTimeoutMillis(connectTimeoutMillis);
         }
-        if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {
+        if (ObjectHelper.isNotEmpty(readTimeout)) {
+            builder.withConnectTimeoutMillis(readTimeout.toMillis());
+        } else if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {
             builder.withReadTimeoutMillis(readTimeoutMillis);
         }
-        if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {
+        if (ObjectHelper.isNotEmpty(writeTimeout)) {
+            builder.withConnectTimeoutMillis(writeTimeout.toMillis());
+        } else if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {
             builder.withWriteTimeoutMillis(writeTimeoutMillis);
         }
 

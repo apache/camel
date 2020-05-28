@@ -45,13 +45,13 @@ public class NsqConfiguration {
     private int lookupServerPort = NSQ_DEFAULT_LOOKUP_PORT;
     @UriParam(label = "producer", defaultValue = "4150")
     private int port = NSQ_DEFAULT_PORT;
-    @UriParam(label = "consumer", defaultValue = "5000", description = "The lookup interval")
+    @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration", description = "The lookup interval")
     private long lookupInterval = 5000;
-    @UriParam(label = "consumer", defaultValue = "-1", description = "The requeue interval in milliseconds. A value of -1 is the server default")
+    @UriParam(label = "consumer", defaultValue = "-1", javaType = "java.time.Duration", description = "The requeue interval in milliseconds. A value of -1 is the server default")
     private long requeueInterval = -1;
     @UriParam(label = "consumer", defaultValue = "true", description = "Automatically finish the NSQ Message when it is retrieved from the queue and before the Exchange is processed")
     private Boolean autoFinish = true;
-    @UriParam(label = "consumer", defaultValue = "-1", description = "The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default")
+    @UriParam(label = "consumer", defaultValue = "-1", javaType = "java.time.Duration", description = "The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default")
     private long messageTimeout = -1;
     @UriParam(description = "A String to identify the kind of client")
     private String userAgent;

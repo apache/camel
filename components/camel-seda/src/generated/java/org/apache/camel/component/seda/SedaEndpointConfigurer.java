@@ -44,7 +44,7 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "multipleconsumers":
         case "multipleConsumers": target.setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
         case "offertimeout":
-        case "offerTimeout": target.setOfferTimeout(property(camelContext, long.class, value)); return true;
+        case "offerTimeout": target.setOfferTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "polltimeout":
         case "pollTimeout": target.setPollTimeout(property(camelContext, int.class, value)); return true;
         case "purgewhenstopping":
@@ -52,7 +52,7 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queue": target.setQueue(property(camelContext, java.util.concurrent.BlockingQueue.class, value)); return true;
         case "size": target.setSize(property(camelContext, int.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": target.setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
         default: return false;

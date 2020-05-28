@@ -33,16 +33,16 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "lookupinterval":
-        case "lookupInterval": target.getConfiguration().setLookupInterval(property(camelContext, long.class, value)); return true;
+        case "lookupInterval": target.getConfiguration().setLookupInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lookupserverport":
         case "lookupServerPort": target.getConfiguration().setLookupServerPort(property(camelContext, int.class, value)); return true;
         case "messagetimeout":
-        case "messageTimeout": target.getConfiguration().setMessageTimeout(property(camelContext, long.class, value)); return true;
+        case "messageTimeout": target.getConfiguration().setMessageTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "poolsize":
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
         case "requeueinterval":
-        case "requeueInterval": target.getConfiguration().setRequeueInterval(property(camelContext, long.class, value)); return true;
+        case "requeueInterval": target.getConfiguration().setRequeueInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
         case "servers": target.getConfiguration().setServers(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":

@@ -111,16 +111,18 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
             + " 3. `Fixed`: Always use `retryWaitingTime` as the time between retries.",
             defaultValue = "Exponential")
     private String backOffStrategy = "Exponential";
-    @UriParam(label = "scheduling", description = "Coefficient to compute back off time when using `Exponential` Back Off strategy", defaultValue = "2")
+    @UriParam(label = "scheduling", description = "Coefficient to compute back off time when using `Exponential` Back Off strategy",
+              defaultValue = "2", javaType = "java.time.Duration")
     private long retryExponentialCoefficient = 2L;
-    @UriParam(label = "scheduling", description = "The amount of time (in millisecond) which adds to waiting time when using `Linear` back off strategy", defaultValue = "10000")
+    @UriParam(label = "scheduling", description = "The amount of time (in millisecond) which adds to waiting time when using `Linear` back off strategy",
+              defaultValue = "10000", javaType = "java.time.Duration")
     private long retryLinearIncrement = 10000L;
     @UriParam(label = "scheduling", description = "Maximum amount of time (in millisecond) a thread wait before retrying failed request.",
-            defaultValue = "3600000")
+            defaultValue = "3600000", javaType = "java.time.Duration")
     private long maxRetryWaitingTime = 3600000L;
     @UriParam(label = "scheduling", description = "The timeout in millisecond to reconnect the existing getMessage connection"
             + " to ensure that the connection is always live and does not dead without notifying the bot. this value should not be changed.",
-            defaultValue = "300000")
+            defaultValue = "300000", javaType = "java.time.Duration")
     private long reconnectIdleConnectionTimeout = 5 * 60 * 1000;
     /**
      * lazy instance of {@link WebTarget} to used for uploading file to soroush Server, since the url is always the same, we reuse this WebTarget for all requests

@@ -53,7 +53,7 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "triggerparameters":
         case "triggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "triggerstartdelay":
-        case "triggerStartDelay": target.setTriggerStartDelay(property(camelContext, long.class, value)); return true;
+        case "triggerStartDelay": target.setTriggerStartDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "usingfixedcamelcontextname":
         case "usingFixedCamelContextName": target.setUsingFixedCamelContextName(property(camelContext, boolean.class, value)); return true;
         default: return false;

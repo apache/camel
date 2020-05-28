@@ -30,7 +30,7 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "heartbeat": target.setHeartbeat(property(camelContext, long.class, value)); return true;
+        case "heartbeat": target.setHeartbeat(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;

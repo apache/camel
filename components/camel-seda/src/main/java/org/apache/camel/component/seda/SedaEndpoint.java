@@ -85,9 +85,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.time.Duration")
     private long offerTimeout;
     @UriParam(label = "producer")
     private boolean blockWhenFull;

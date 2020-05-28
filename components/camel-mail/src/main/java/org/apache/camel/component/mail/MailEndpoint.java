@@ -40,7 +40,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
         category = {Category.MAIL})
 public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
-    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration", label = "consumer,scheduler",
             description = "Milliseconds before the next poll.")
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
 

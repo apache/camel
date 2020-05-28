@@ -125,7 +125,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     private String consumerProcessedStrategy = DEFAULT_CONSUME_PROCESSED_STRATEGY;
 
     // Connection fine tuning parameters
-    @UriParam(label = "advanced", defaultValue = "2500")
+    @UriParam(label = "advanced", defaultValue = "2500", javaType = "java.time.Duration")
     private long opTimeOut = DEFAULT_OP_TIMEOUT;
     @UriParam(label = "advanced", defaultValue = "998")
     private int timeoutExceptionThreshold = DEFAULT_TIMEOUT_EXCEPTION_THRESHOLD;
@@ -133,13 +133,13 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     private int readBufferSize = DEFAULT_READ_BUFFER_SIZE;
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean shouldOptimize;
-    @UriParam(label = "advanced", defaultValue = "30000")
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long maxReconnectDelay = DEFAULT_MAX_RECONNECT_DELAY;
-    @UriParam(label = "advanced", defaultValue = "10000")
+    @UriParam(label = "advanced", defaultValue = "10000", javaType = "java.time.Duration")
     private long opQueueMaxBlockTime = DEFAULT_OP_QUEUE_MAX_BLOCK_TIME;
-    @UriParam(label = "advanced", defaultValue = "400")
+    @UriParam(label = "advanced", defaultValue = "400", javaType = "java.time.Duration")
     private long obsPollInterval = DEFAULT_OBS_POLL_INTERVAL;
-    @UriParam(label = "advanced", defaultValue = "-1")
+    @UriParam(label = "advanced", defaultValue = "-1", javaType = "java.time.Duration")
     private long obsTimeout = DEFAULT_OBS_TIMEOUT;
 
     public CouchbaseEndpoint() {

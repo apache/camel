@@ -24,7 +24,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "daemon": target.setDaemon(property(camelContext, boolean.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -34,7 +34,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "includemetadata":
         case "includeMetadata": target.setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
         case "pattern": target.setPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "period": target.setPeriod(property(camelContext, long.class, value)); return true;
+        case "period": target.setPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;

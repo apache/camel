@@ -35,7 +35,7 @@ public class YammerConfiguration implements Cloneable {
     private String accessToken;
     @UriParam
     private boolean useJson;
-    @UriParam(label = "consumer", defaultValue = "5000")
+    @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety
     @UriParam(label = "consumer", defaultValue = "-1")
     private int limit = -1; // default is unlimited

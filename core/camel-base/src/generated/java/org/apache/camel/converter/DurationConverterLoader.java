@@ -25,12 +25,14 @@ public final class DurationConverterLoader implements TypeConverterLoader {
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
+        addTypeConverter(registry, java.lang.Long.class, java.time.Duration.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.DurationConverter.toMilliSeconds((java.time.Duration) value));
         addTypeConverter(registry, java.lang.String.class, java.time.Duration.class, false,
             (type, exchange, value) -> org.apache.camel.converter.DurationConverter.toString((java.time.Duration) value));
+        addTypeConverter(registry, java.time.Duration.class, java.lang.Long.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.DurationConverter.toDuration((java.lang.Long) value));
         addTypeConverter(registry, java.time.Duration.class, java.lang.String.class, false,
             (type, exchange, value) -> org.apache.camel.converter.DurationConverter.toDuration((java.lang.String) value));
-        addTypeConverter(registry, long.class, java.time.Duration.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.DurationConverter.toMilliSeconds((java.time.Duration) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

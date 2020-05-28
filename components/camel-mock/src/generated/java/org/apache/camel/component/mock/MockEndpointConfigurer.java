@@ -20,7 +20,7 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         MockEndpoint target = (MockEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
-        case "assertPeriod": target.setAssertPeriod(property(camelContext, long.class, value)); return true;
+        case "assertPeriod": target.setAssertPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "copyonexchange":
@@ -34,15 +34,15 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reportgroup":
         case "reportGroup": target.setReportGroup(property(camelContext, int.class, value)); return true;
         case "resultminimumwaittime":
-        case "resultMinimumWaitTime": target.setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
+        case "resultMinimumWaitTime": target.setResultMinimumWaitTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "resultwaittime":
-        case "resultWaitTime": target.setResultWaitTime(property(camelContext, long.class, value)); return true;
+        case "resultWaitTime": target.setResultWaitTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "retainfirst":
         case "retainFirst": target.setRetainFirst(property(camelContext, int.class, value)); return true;
         case "retainlast":
         case "retainLast": target.setRetainLast(property(camelContext, int.class, value)); return true;
         case "sleepforemptytest":
-        case "sleepForEmptyTest": target.setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
+        case "sleepForEmptyTest": target.setSleepForEmptyTest(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

@@ -42,7 +42,7 @@ public class EtcdConfiguration implements CamelContextAware, Cloneable {
     private boolean recursive;
     @UriParam(label = "producer", description = "To set the lifespan of a key in milliseconds.")
     private Integer timeToLive;
-    @UriParam
+    @UriParam(javaType = "java.time.Duration")
     private Long timeout;
     @UriParam(label = "consumer,advanced", defaultValue = "0", description = "The index to watch from")
     private long fromIndex;

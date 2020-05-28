@@ -44,9 +44,9 @@ import org.apache.camel.support.DefaultEndpoint;
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = true)
     private String timerName;
-    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period milliseconds.")
+    @UriParam(defaultValue = "1s", description = "If greater than 0, generate periodic events every period.", javaType = "java.time.Duration")
     private long period = 1000;
-    @UriParam(defaultValue = "1000", description = "Milliseconds before first event is triggered.")
+    @UriParam(defaultValue = "1s", description = "Delay before first event is triggered.", javaType = "java.time.Duration")
     private long delay = 1000;
     @UriParam(defaultValue = "0")
     private long repeatCount;

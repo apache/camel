@@ -150,9 +150,9 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "queuebrowsestrategy":
         case "queueBrowseStrategy": target.setQueueBrowseStrategy(property(camelContext, org.apache.camel.component.jms.QueueBrowseStrategy.class, value)); return true;
         case "receivetimeout":
-        case "receiveTimeout": getOrCreateConfiguration(target).setReceiveTimeout(property(camelContext, long.class, value)); return true;
+        case "receiveTimeout": getOrCreateConfiguration(target).setReceiveTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "recoveryinterval":
-        case "recoveryInterval": getOrCreateConfiguration(target).setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "recoveryInterval": getOrCreateConfiguration(target).setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "replyto":
         case "replyTo": getOrCreateConfiguration(target).setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "replytocachelevelname":
@@ -174,9 +174,9 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "replytotype":
         case "replyToType": getOrCreateConfiguration(target).setReplyToType(property(camelContext, org.apache.camel.component.jms.ReplyToType.class, value)); return true;
         case "requesttimeout":
-        case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "requesttimeoutcheckerinterval":
-        case "requestTimeoutCheckerInterval": getOrCreateConfiguration(target).setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
+        case "requestTimeoutCheckerInterval": getOrCreateConfiguration(target).setRequestTimeoutCheckerInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "selector": getOrCreateConfiguration(target).setSelector(property(camelContext, java.lang.String.class, value)); return true;
         case "streammessagetypeenabled":
         case "streamMessageTypeEnabled": getOrCreateConfiguration(target).setStreamMessageTypeEnabled(property(camelContext, boolean.class, value)); return true;
@@ -209,7 +209,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "waitforprovisioncorrelationtobeupdatedcounter":
         case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration(target).setWaitForProvisionCorrelationToBeUpdatedCounter(property(camelContext, int.class, value)); return true;
         case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
-        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration(target).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(property(camelContext, long.class, value)); return true;
+        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration(target).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }

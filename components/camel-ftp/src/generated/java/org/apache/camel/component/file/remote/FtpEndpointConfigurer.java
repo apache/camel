@@ -161,7 +161,7 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
         case "reconnectdelay":
-        case "reconnectDelay": target.setReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "reconnectDelay": target.setReconnectDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;

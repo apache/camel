@@ -28,7 +28,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bus": target.setBus(property(camelContext, org.apache.cxf.Bus.class, value)); return true;
         case "continuationtimeout":
-        case "continuationTimeout": target.setContinuationTimeout(property(camelContext, long.class, value)); return true;
+        case "continuationTimeout": target.setContinuationTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "cookiehandler":
         case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
         case "cxfrsconfigurer":

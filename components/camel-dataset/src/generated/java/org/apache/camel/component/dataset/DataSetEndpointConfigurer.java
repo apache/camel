@@ -22,7 +22,7 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumedelay":
-        case "consumeDelay": target.setConsumeDelay(property(camelContext, long.class, value)); return true;
+        case "consumeDelay": target.setConsumeDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "datasetindex":
         case "dataSetIndex": target.setDataSetIndex(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -30,13 +30,13 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "initialdelay":
-        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "initialDelay": target.setInitialDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "minrate":
         case "minRate": target.setMinRate(property(camelContext, int.class, value)); return true;
         case "preloadsize":
         case "preloadSize": target.setPreloadSize(property(camelContext, long.class, value)); return true;
         case "producedelay":
-        case "produceDelay": target.setProduceDelay(property(camelContext, long.class, value)); return true;
+        case "produceDelay": target.setProduceDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }
