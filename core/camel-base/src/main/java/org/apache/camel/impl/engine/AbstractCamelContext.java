@@ -338,6 +338,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add a default LifecycleStrategy that discover strategies on the registry
         // and invoke them
+        // TODO: Move this into its own class to reduce number of code lines here
         this.lifecycleStrategies.add(new LifecycleStrategySupport() {
             @Override
             public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
@@ -375,9 +376,6 @@ public abstract class AbstractCamelContext extends BaseService
                 }
             }
         });
-
-        // TODO:
-        setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
 
         if (build) {
             try {
@@ -2534,6 +2532,13 @@ public abstract class AbstractCamelContext extends BaseService
         // notifiers using the management strategy before the CamelContext has been started
         setupManagement(null);
 
+        // setup health-check registry as its needed this early phase for 3rd party to register custom repositories
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr == null) {
+            // install health-check registry if discovered from classpath
+            setExtension(HealthCheckRegistry.class, createHealthCheckRegistry());
+        }
+
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextCreated(this);
@@ -2542,7 +2547,6 @@ public abstract class AbstractCamelContext extends BaseService
         if (eagerCreateTypeConverter()) {
             getOrCreateTypeConverter();
         }
-
     }
 
     @Override
@@ -3231,11 +3235,6 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartEagerServices() {
-        // initialize health-check registry
-        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
-        if (hcr == null) {
-            setExtension(HealthCheckRegistry.class, createHealthCheckRegistry());
-        }
         getFactoryFinderResolver();
         getDefaultFactoryFinder();
         getComponentResolver();
