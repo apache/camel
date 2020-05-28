@@ -51,7 +51,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     }
 
     @Override
-    public boolean getIsHealthy() {
+    public boolean isHealthy() {
         for (HealthCheck.Result result: HealthCheckHelper.invoke(context)) {
             if (result.getState() == HealthCheck.State.DOWN) {
                 return false;

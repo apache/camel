@@ -26,7 +26,7 @@ import org.apache.camel.api.management.ManagedOperation;
 public interface ManagedCamelHealthMBean {
     
     @ManagedAttribute(description = "Application Health")
-    boolean getIsHealthy();
+    boolean isHealthy();
 
     @ManagedAttribute(description = "Registered Health Checks IDs")
     Collection<String> getHealthChecksIDs();
