@@ -23,6 +23,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
 
+/**
+ * {@link HealthCheckRepository} that uses the Camel {@link org.apache.camel.spi.Registry}.
+ */
 public class RegistryRepository implements CamelContextAware, HealthCheckRepository {
     private volatile CamelContext context;
 

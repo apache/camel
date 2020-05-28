@@ -32,6 +32,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * {@link org.apache.camel.health.HealthCheck} for a given route.
+ */
 public class RouteHealthCheck extends AbstractHealthCheck {
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteHealthCheck.class);
 

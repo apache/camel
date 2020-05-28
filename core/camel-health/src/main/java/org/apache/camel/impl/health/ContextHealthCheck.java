@@ -22,6 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
 
+/**
+ * {@link org.apache.camel.health.HealthCheck} that checks the status of the {@link CamelContext} whether
+ * its started or not.
+ */
 public final class ContextHealthCheck extends AbstractHealthCheck implements CamelContextAware {
     private CamelContext camelContext;
 

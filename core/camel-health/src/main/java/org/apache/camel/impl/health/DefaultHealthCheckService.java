@@ -45,7 +45,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link HealthCheckService}
+ * Default {@link HealthCheckService}.
+ *
+ * This implementation uses a scheduled background thread that periodically calls the {@link HealthCheck}s
+ * and gather their statues. The default period is to run every 30 second.
  */
 public final class DefaultHealthCheckService extends ServiceSupport implements HealthCheckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHealthCheckService.class);
