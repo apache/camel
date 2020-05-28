@@ -370,11 +370,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         } else {
             healthCheckRegistry = HealthCheckRegistry.get(getContext());
         }
-        // Health check repository
-        Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
-            for (HealthCheckRepository repository: repositories) {
-                healthCheckRegistry.addRepository(repository);
+        if (healthCheckRegistry != null) {
+            // Health check repository
+            Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
+                for (HealthCheckRepository repository : repositories) {
+                    healthCheckRegistry.addRepository(repository);
+                }
             }
         }
         // Health check service
