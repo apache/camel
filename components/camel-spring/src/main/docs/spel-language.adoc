@@ -5,6 +5,7 @@
 :description: Evaluate a Spring Expression Language (SpEL) expression against the Camel Exchange.
 :since: 2.7
 :supportLevel: Stable
+:group: Spring
 
 *Since Camel {since}*
 

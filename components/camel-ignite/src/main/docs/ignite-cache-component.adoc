@@ -6,6 +6,7 @@
 :since: 2.17
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+:group: Ignite
 
 *Since Camel {since}*
 

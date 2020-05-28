@@ -6,6 +6,7 @@
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
+:group: Openstack
 
 *Since Camel {since}*
 
