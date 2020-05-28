@@ -2809,6 +2809,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Adds a processor which sets the exchange property
      *
      * @param name the property name
+     * @param supplier the supplier used to set the property
+     * @return the builder
+     */
+    public Type setProperty(String name, final Supplier<Object> supplier) {
+        SetPropertyDefinition answer = new SetPropertyDefinition(name, new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return supplier.get();
+            }
+        });
+
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Adds a processor which sets the exchange property
+     *
+     * @param name the property name
      * @return a expression builder clause to set the property
      */
     public ExpressionClause<ProcessorDefinition<Type>> setProperty(String name) {
