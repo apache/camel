@@ -79,12 +79,10 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:two").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                    }
-                }))
+                bindToRegistry("redeliveryProcessor", (Processor) (exchange -> {
+                    redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+                }));
+                from("direct:two").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).onRedeliveryRef("redeliveryProcessor"))
                     // route start here
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -93,12 +91,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                         }
                     });
 
-                from("direct:no").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                    }
-                }))
+                from("direct:no").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).onRedeliveryRef("redeliveryProcessor"))
                     // route start here
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -107,12 +100,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                         }
                     });
 
-                from("direct:one").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                    }
-                }))
+                from("direct:one").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0).onRedeliveryRef("redeliveryProcessor"))
                     // route start here
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

@@ -48,6 +48,7 @@ import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -98,14 +99,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         if (retryWhile == null && def.getRetryWhile() != null) {
             retryWhile = createPredicate(def.getRetryWhile());
         }
-        Processor onRedelivery = def.getOnRedelivery();
-        if (onRedelivery == null && def.getOnRedeliveryRef() != null) {
-            onRedelivery = mandatoryLookup(parseString(def.getOnRedeliveryRef()), Processor.class);
-        }
-        Processor onExceptionOccurred = def.getOnExceptionOccurred();
-        if (onExceptionOccurred == null && def.getOnExceptionOccurredRef() != null) {
-            onExceptionOccurred = mandatoryLookup(parseString(def.getOnExceptionOccurredRef()), Processor.class);
-        }
+        Processor onRedelivery = getBean(Processor.class, def.getOnRedelivery(), def.getOnRedeliveryRef());
+        Processor onExceptionOccurred = getBean(Processor.class, def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
         return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def),
                                    parseBoolean(def.getUseOriginalMessage(), false),
                                    parseBoolean(def.getUseOriginalBody(), false),
@@ -410,6 +405,22 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         }
 
         return answer;
+    }
+
+    protected Predicate getPredicate(Predicate pred, String ref) {
+        if (pred == null && ref != null) {
+            // its a bean expression
+            Language bean = camelContext.resolveLanguage("bean");
+            pred = bean.createPredicate(ref);
+        }
+        return pred;
+    }
+
+    protected <T> T getBean(Class<T> clazz, T bean, String ref) {
+        if (bean == null && ref != null) {
+            bean = lookup(ref, clazz);
+        }
+        return bean;
     }
 
 }
