@@ -35,6 +35,9 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
 
+/**
+ * Repository for routes {@link HealthCheck}s.
+ */
 @DeferredContextBinding
 public class RoutesHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
     private final ConcurrentMap<Route, HealthCheck> checks;
