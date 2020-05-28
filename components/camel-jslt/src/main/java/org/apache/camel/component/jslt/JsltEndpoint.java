@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jslt;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -39,6 +38,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -103,9 +103,7 @@ public class JsltEndpoint extends ResourceEndpoint {
                 }
                 this.transform = parser.compile();
             } finally {
-                if(stream != null){
-                    stream.close();
-                }
+                IOHelper.close(stream);
             }
         }
         return transform;
