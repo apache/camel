@@ -336,46 +336,8 @@ public abstract class AbstractCamelContext extends BaseService
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
 
-        // add a default LifecycleStrategy that discover strategies on the registry
-        // and invoke them
-        // TODO: Move this into its own class to reduce number of code lines here
-        this.lifecycleStrategies.add(new LifecycleStrategySupport() {
-            @Override
-            public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
-                for (OnCamelContextInitialized handler : context.getRegistry().findByType(OnCamelContextInitialized.class)) {
-                    // RoutesBuilder should register them-self to the camel context
-                    // to avoid invoking them multiple times if routes are discovered
-                    // from the registry (i.e. camel-main)
-                    if (!(handler instanceof RoutesBuilder)) {
-                        handler.onContextInitialized(context);
-                    }
-                }
-            }
-
-            @Override
-            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                for (OnCamelContextStart handler : context.getRegistry().findByType(OnCamelContextStart.class)) {
-                    // RoutesBuilder should register them-self to the camel context
-                    // to avoid invoking them multiple times if routes are discovered
-                    // from the registry (i.e. camel-main)
-                    if (!(handler instanceof RoutesBuilder)) {
-                        handler.onContextStart(context);
-                    }
-                }
-            }
-
-            @Override
-            public void onContextStop(CamelContext context) {
-                for (OnCamelContextStop handler : context.getRegistry().findByType(OnCamelContextStop.class)) {
-                    // RoutesBuilder should register them-self to the camel context
-                    // to avoid invoking them multiple times if routes are discovered
-                    // from the registry (i.e. camel-main)
-                    if (!(handler instanceof RoutesBuilder)) {
-                        handler.onContextStop(context);
-                    }
-                }
-            }
-        });
+        // add a default LifecycleStrategy that discover strategies on the registry and invoke them
+        this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
 
         if (build) {
             try {
