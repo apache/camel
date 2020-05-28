@@ -157,20 +157,19 @@ function titleFrom(file) {
     return maybeName[1];
 }
 
+function checkAttributeExistence(file) {
+    var summaryGroup = /(?::summary-group: )(.*)/.exec(file.contents.toString())
+    var group = /(?::group: )(.*)/.exec(file.contents.toString())
+    if (summaryGroup != null || group != null) return true;
+    return false;
+}
+
 function isParentAttribute(file) {
     var attributeName = /(?::summary-group: )(.*)/.exec(file.contents.toString())
     if (attributeName != null) {
         return attributeName[1];
     }
     return null;
-}
-
-function isChildAttribute(file) {
-    var attributeName = /(?::group: )(.*)/.exec(file.contents.toString())
-    if (attributeName != null && attributeName[1] == parentAttribute) {
-        return true;
-    }
-    return false;
 }
 
 function compare (file1, file2) {
@@ -203,10 +202,12 @@ function createComponentNav() {
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
-                if (isParentAttribute(file) != null) {
-                    parentAttribute = isParentAttribute(file);
-                } else if (isChildAttribute(file)) {
-                    return `*** xref:${filepath}[${title}]`;
+                if (checkAttributeExistence) {
+                    if (isParentAttribute(file) != null) {
+                        parentAttribute = isParentAttribute(file);
+                    } else {
+                        return `*** xref:${filepath}[${title}]`;
+                    }
                 }
                 return `** xref:${filepath}[${title}]`;
             }
