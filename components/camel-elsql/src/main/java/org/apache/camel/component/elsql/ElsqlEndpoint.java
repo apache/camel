@@ -141,7 +141,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         final List<URL> list = new ArrayList<>();
         final Iterable<String> it = ObjectHelper.createIterable(resourceUri);
 
-        for(final String path : it) {
+        for (final String path : it) {
             if (predicate.test(path)) {
                 final URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), path);
                 list.add(url);
