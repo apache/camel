@@ -44,6 +44,9 @@ import org.apache.camel.util.concurrent.LockHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default {@link HealthCheckService}
+ */
 public final class DefaultHealthCheckService extends ServiceSupport implements HealthCheckService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHealthCheckService.class);
 
@@ -102,7 +105,11 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
         this.checkInterval = checkInterval;
     }
 
-    @Override
+    /**
+     * Add a listener to invoke when the state of a check change.
+     *
+     * @param consumer the event listener.
+     */
     public void addStateChangeListener(BiConsumer<HealthCheck.State, HealthCheck> consumer) {
         LockHelper.doWithWriteLock(
             lock,
@@ -110,7 +117,11 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
         );
     }
 
-    @Override
+    /**
+     * Remove the state change listener.
+     *
+     * @param consumer the event listener to remove.
+     */
     public void removeStateChangeListener(BiConsumer<HealthCheck.State, HealthCheck> consumer) {
         LockHelper.doWithWriteLock(
             lock,

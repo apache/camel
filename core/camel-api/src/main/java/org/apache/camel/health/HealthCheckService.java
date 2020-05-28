@@ -20,31 +20,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 
 /**
- * An health check service that invokes the checks registered on the {@link HealthCheckRegistry}
+ * An health check service that invokes the {@link HealthCheck} registered on the {@link HealthCheckRegistry}
  * according to a schedule.
  */
 public interface HealthCheckService extends StaticService, CamelContextAware {
-
-    /**
-     * Add a listener to invoke when the state of a check change.
-     *
-     * @param consumer the event listener.
-     */
-    void addStateChangeListener(BiConsumer<HealthCheck.State, HealthCheck> consumer);
-
-    /**
-     * Remove the state change listener.
-     *
-     * @param consumer the event listener to remove.
-     */
-    void removeStateChangeListener(BiConsumer<HealthCheck.State, HealthCheck> consumer);
 
     /**
      * Sets the options to be used when invoking the check identified by the
