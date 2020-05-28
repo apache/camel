@@ -254,8 +254,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         ObjectHelper.notNull(nettyHttpBinding, "nettyHttpBinding", this);
         ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy", this);

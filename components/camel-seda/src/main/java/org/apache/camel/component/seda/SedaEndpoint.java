@@ -505,8 +505,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (discardWhenFull && blockWhenFull) {
             throw new IllegalArgumentException("Cannot enable both discardWhenFull=true and blockWhenFull=true."
