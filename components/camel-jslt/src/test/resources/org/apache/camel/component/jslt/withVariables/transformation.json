@@ -1,0 +1,5 @@
+{
+  "published": $headers.published,
+  "type": $headers.type,
+  * : .
+}
