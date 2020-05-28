@@ -16,14 +16,21 @@
  */
 package org.apache.camel.component.jslt;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Parser;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -72,19 +79,32 @@ public class JsltEndpoint extends ResourceEndpoint {
             }
 
             String jsltStringFromHeader = allowTemplateFromHeader ? msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class) : null;
-            Collection<Function> functions = ((JsltComponent)getComponent()).getFunctions();
+            Collection<Function> functions = ((JsltComponent) getComponent()).getFunctions();
+            JsonFilter objectFilter = ((JsltComponent) getComponent()).getObjectFilter();
 
-            if (jsltStringFromHeader != null) {
-                if (functions == null) {
-                    this.transform = Parser.compileString(jsltStringFromHeader);
+            Parser parser;
+            InputStream stream = null;
+            try {
+                if (jsltStringFromHeader != null) {
+                    parser = new Parser(new StringReader(jsltStringFromHeader)).withSource("<inline>");
                 } else {
-                    this.transform = Parser.compileString(jsltStringFromHeader, functions);
+                    stream = JsltEndpoint.class.getClassLoader().getResourceAsStream(getResourceUri());
+                    if (stream == null) {
+                        throw new JsltException("Cannot load resource '" + getResourceUri() + "': not found");
+                    }
+                    Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+                    parser = new Parser(reader).withSource(getResourceUri());
                 }
-            } else {
-                if (functions == null) {
-                    this.transform = Parser.compileResource(getResourceUri());
-                } else {
-                    this.transform = Parser.compileResource(getResourceUri(), functions);
+                if (functions != null) {
+                    parser = parser.withFunctions(functions);
+                }
+                if (objectFilter != null) {
+                    parser = parser.withObjectFilter(objectFilter);
+                }
+                this.transform = parser.compile();
+            } finally {
+                if(stream != null){
+                    stream.close();
                 }
             }
         }
