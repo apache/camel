@@ -24,12 +24,13 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * An health check service that invokes the checks registered on the {@link HealthCheckRegistry}
  * according to a schedule.
  */
-public interface HealthCheckService extends Service, CamelContextAware {
+public interface HealthCheckService extends StaticService, CamelContextAware {
 
     /**
      * Add a listener to invoke when the state of a check change.
