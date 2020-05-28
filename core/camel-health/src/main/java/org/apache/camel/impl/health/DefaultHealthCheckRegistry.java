@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.StaticService;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * Default {@link HealthCheckRegistry}.
  */
 @JdkService(HealthCheckRegistry.FACTORY)
-public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry, StaticService {
+public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
 
     private final Set<HealthCheck> checks;
@@ -56,6 +55,23 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         setCamelContext(camelContext);
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        for (HealthCheck check : checks) {
+            if (check instanceof CamelContextAware) {
+                ((CamelContextAware) check).setCamelContext(camelContext);
+            }
+        }
+
+        for (HealthCheckRepository repository : repositories) {
+            if (repository instanceof CamelContextAware) {
+                ((CamelContextAware) repository).setCamelContext(camelContext);
+            }
+        }
+    }
+
     // ************************************
     // Properties
     // ************************************
@@ -63,19 +79,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     public final void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-
-        // TODO: Move this to doInit
-        for (HealthCheck check: checks) {
-            if (check instanceof CamelContextAware) {
-                ((CamelContextAware) check).setCamelContext(camelContext);
-            }
-        }
-
-        for (HealthCheckRepository repository: repositories) {
-            if (repository instanceof CamelContextAware) {
-                ((CamelContextAware) repository).setCamelContext(camelContext);
-            }
-        }
     }
 
     @Override

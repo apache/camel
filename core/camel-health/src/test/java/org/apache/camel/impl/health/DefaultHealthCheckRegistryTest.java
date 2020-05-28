@@ -21,9 +21,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -82,7 +85,38 @@ public class DefaultHealthCheckRegistryTest {
         }
     }
 
-    private class MyHealthCheck extends AbstractHealthCheck {
+    @Test
+    public void testInjectCamelContext() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
+        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setCamelContext(context);
+
+        registry.register(new MyHealthCheck("G1", "1"));
+        registry.register(new MyHealthCheck("G1", "1"));
+        registry.register(new MyHealthCheck("G1", "2"));
+        registry.register(new MyHealthCheck("G2", "3"));
+
+        context.start();
+        registry.start();
+
+        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        Assert.assertEquals(3, checks.size());
+
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+
+            Assert.assertEquals(HealthCheck.State.UP, response.getState());
+            Assert.assertFalse(response.getMessage().isPresent());
+            Assert.assertFalse(response.getError().isPresent());
+            Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+        }
+    }
+
+    private class MyHealthCheck extends AbstractHealthCheck implements CamelContextAware {
+
+        private CamelContext context;
+
         protected MyHealthCheck(String group, String id) {
             super(group, id);
             getConfiguration().setEnabled(true);
@@ -91,6 +125,16 @@ public class DefaultHealthCheckRegistryTest {
         @Override
         public void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
             builder.up();
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.context = camelContext;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return context;
         }
     }
 }

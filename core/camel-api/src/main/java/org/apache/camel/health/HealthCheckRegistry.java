@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  * Note that this registry can be superseded by the future camel context internal
  * registry, @see <a href="https://issues.apache.org/jira/browse/CAMEL-10792"/>.
  */
-public interface HealthCheckRegistry extends HealthCheckRepository, CamelContextAware {
+public interface HealthCheckRegistry extends HealthCheckRepository, CamelContextAware, StaticService {
 
     /**
      * Service factory key.
