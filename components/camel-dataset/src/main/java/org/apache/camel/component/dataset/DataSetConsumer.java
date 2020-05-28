@@ -44,15 +44,15 @@ public class DataSetConsumer extends DefaultConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-
-        if (reporter == null) {
-            reporter = createReporter();
-        }
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (reporter == null) {
+            reporter = createReporter();
+        }
 
         final DataSet dataSet = endpoint.getDataSet();
         final long preloadSize = endpoint.getPreloadSize();
