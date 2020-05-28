@@ -108,9 +108,9 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         exchanges = createExchangeList();
-        super.doStart();
     }
 
     @Override

@@ -94,8 +94,8 @@ public class FopEndpoint extends DefaultEndpoint {
 
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (fopFactory == null && userConfigURL == null) {
             fopFactory = FopFactory.newInstance(new URI("./"));
@@ -103,8 +103,22 @@ public class FopEndpoint extends DefaultEndpoint {
             throw new FopConfigException("More than one configuration. "
                     + "You can configure fop either by config file or by supplying FopFactory but not both.");
         } else if (fopFactory == null && userConfigURL != null) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
-            fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
+            if (ResourceHelper.isClasspathUri(userConfigURL)) {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
+                fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
+            }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (fopFactory == null && userConfigURL != null) {
+            if (!ResourceHelper.isClasspathUri(userConfigURL)) {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
+                fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
+            }
         }
     }
 }
