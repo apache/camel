@@ -50,6 +50,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
@@ -234,15 +235,19 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // register any pre registered now that we are initialized
         enlistPreRegisteredServices();
 
-        try {
-            Object me = getManagementObjectStrategy().getManagedObjectForCamelHealth(camelContext);
-            if (me == null) {
-                // endpoint should not be managed
-                return;
+        // register health check if detected
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            try {
+                Object me = getManagementObjectStrategy().getManagedObjectForCamelHealth(camelContext, hcr);
+                if (me == null) {
+                    // endpoint should not be managed
+                    return;
+                }
+                manageObject(me);
+            } catch (Exception e) {
+                LOG.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
             }
-            manageObject(me);
-        } catch (Exception e) {
-            LOG.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
         }
 
         try {
@@ -319,16 +324,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         try {
-            Object mc = getManagementObjectStrategy().getManagedObjectForCamelHealth(context);
-            // the context could have been removed already
-            if (getManagementStrategy().isManaged(mc)) {
-                unmanageObject(mc);
-            }
-        } catch (Exception e) {
-            LOG.warn("Could not unregister CamelHealth MBean", e);
-        }
-
-        try {
             Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
             // the context could have been removed already
             if (getManagementStrategy().isManaged(mc)) {
@@ -336,6 +331,19 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
         } catch (Exception e) {
             LOG.warn("Could not unregister CamelContext MBean", e);
+        }
+
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            try {
+                Object mc = getManagementObjectStrategy().getManagedObjectForCamelHealth(context, hcr);
+                // the context could have been removed already
+                if (getManagementStrategy().isManaged(mc)) {
+                    unmanageObject(mc);
+                }
+            } catch (Exception e) {
+                LOG.warn("Could not unregister CamelHealth MBean", e);
+            }
         }
 
         camelContextMBean = null;

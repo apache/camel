@@ -37,9 +37,11 @@ import org.apache.camel.spi.ManagementStrategy;
 
 public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     private final CamelContext context;
+    private final HealthCheckRegistry healthCheckRegistry;
 
-    public ManagedCamelHealth(CamelContext context) {
+    public ManagedCamelHealth(CamelContext context, HealthCheckRegistry healthCheckRegistry) {
         this.context = context;
+        this.healthCheckRegistry = healthCheckRegistry;
     }
 
     public void init(ManagementStrategy strategy) {
@@ -52,7 +54,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
     @Override
     public boolean isHealthy() {
-        for (HealthCheck.Result result: HealthCheckHelper.invoke(context)) {
+        for (HealthCheck.Result result : HealthCheckHelper.invoke(context)) {
             if (result.getState() == HealthCheck.State.DOWN) {
                 return false;
             }
@@ -63,12 +65,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
     @Override
     public Collection<String> getHealthChecksIDs() {
-        HealthCheckRegistry registry = HealthCheckRegistry.get(context);
-        if (registry != null) {
-            return registry.getCheckIDs();
-        }
-
-        return Collections.emptyList();
+        return healthCheckRegistry.getCheckIDs();
     }
 
     @Override
