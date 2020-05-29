@@ -42,7 +42,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheck> checks;
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
-    private boolean enabled;
+    private boolean enabled = true;
 
     public DefaultHealthCheckRegistry() {
         this(null);

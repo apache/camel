@@ -56,7 +56,7 @@ public class HealthCheckTest {
         MyHealthCheck check = new MyHealthCheck();
         check.setState(HealthCheck.State.UP);
         check.getConfiguration().setEnabled(true);
-        check.getConfiguration().setInterval(Duration.ofMillis(1000));
+        check.getConfiguration().setInterval(1000);
 
         HealthCheck.Result result1 = check.call();
         Assert.assertEquals(HealthCheck.State.UP, result1.getState());
@@ -103,7 +103,7 @@ public class HealthCheckTest {
         MyHealthCheck check = new MyHealthCheck();
         check.setState(HealthCheck.State.DOWN);
         check.getConfiguration().setEnabled(true);
-        check.getConfiguration().setInterval(Duration.ofMillis(500));
+        check.getConfiguration().setInterval(500);
         check.getConfiguration().setFailureThreshold(3);
 
         HealthCheck.Result result;
