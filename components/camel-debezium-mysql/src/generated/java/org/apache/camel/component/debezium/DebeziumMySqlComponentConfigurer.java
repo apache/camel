@@ -42,7 +42,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectkeepalive":
         case "connectKeepAlive": getOrCreateConfiguration(target).setConnectKeepAlive(property(camelContext, boolean.class, value)); return true;
         case "connectkeepaliveintervalms":
-        case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).setConnectKeepAliveIntervalMs(property(camelContext, long.class, value)); return true;
+        case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).setConnectKeepAliveIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connecttimeoutms":
         case "connectTimeoutMs": getOrCreateConfiguration(target).setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseblacklist":
@@ -146,9 +146,9 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetstoragetopic":
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
-        case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotdelayms":
-        case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotlockingmode":

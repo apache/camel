@@ -38,9 +38,9 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionWhitelist": getOrCreateConfiguration(target).setCollectionWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
         case "connectbackoffinitialdelayms":
-        case "connectBackoffInitialDelayMs": getOrCreateConfiguration(target).setConnectBackoffInitialDelayMs(property(camelContext, long.class, value)); return true;
+        case "connectBackoffInitialDelayMs": getOrCreateConfiguration(target).setConnectBackoffInitialDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connectbackoffmaxdelayms":
-        case "connectBackoffMaxDelayMs": getOrCreateConfiguration(target).setConnectBackoffMaxDelayMs(property(camelContext, long.class, value)); return true;
+        case "connectBackoffMaxDelayMs": getOrCreateConfiguration(target).setConnectBackoffMaxDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connectmaxattempts":
         case "connectMaxAttempts": getOrCreateConfiguration(target).setConnectMaxAttempts(property(camelContext, int.class, value)); return true;
         case "databaseblacklist":
@@ -98,11 +98,11 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetstoragetopic":
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
-        case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
-        case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotmode":

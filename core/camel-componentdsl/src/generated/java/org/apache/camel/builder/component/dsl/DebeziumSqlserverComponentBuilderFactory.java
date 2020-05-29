@@ -345,7 +345,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 100
+         * Default: 0.1s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -489,7 +489,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder heartbeatIntervalMs(
@@ -563,7 +563,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 0.5s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder pollIntervalMs(
@@ -589,7 +589,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder snapshotDelayMs(
@@ -617,7 +617,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 10000
+         * Default: 10s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder snapshotLockTimeoutMs(

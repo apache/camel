@@ -26,9 +26,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String gtidSourceIncludes;
     @UriParam(label = LABEL_NAME, defaultValue = "class com.mysql.cj.jdbc.Driver")
     private String databaseJdbcDriver = "com.mysql.cj.jdbc.Driver";
-    @UriParam(label = LABEL_NAME, defaultValue = "100")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.1s", javaType = "java.time.Duration")
     private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
-    @UriParam(label = LABEL_NAME, defaultValue = "500")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.5s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
     private String databaseInitialStatements;
@@ -48,7 +48,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String databaseHistoryKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME)
     private String databaseSslKeystore;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";
@@ -77,13 +77,13 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String databaseHistory = "io.debezium.relational.history.FileDatabaseHistory";
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
-    @UriParam(label = LABEL_NAME, defaultValue = "30000")
+    @UriParam(label = LABEL_NAME, defaultValue = "30s", javaType = "java.time.Duration")
     private int connectTimeoutMs = 30000;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryKafkaTopic;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "100")
     private int databaseHistoryKafkaRecoveryAttempts = 100;
@@ -128,7 +128,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
     private long databaseServerIdOffset = 10000;
-    @UriParam(label = LABEL_NAME, defaultValue = "60000")
+    @UriParam(label = LABEL_NAME, defaultValue = "60s", javaType = "java.time.Duration")
     private long connectKeepAliveIntervalMs = 60000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeQuery = false;
