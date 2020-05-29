@@ -114,9 +114,9 @@ public abstract class AbstractHealthCheck implements HealthCheck {
             final HealthCheckConfiguration conf = getConfiguration();
             final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
             final ZonedDateTime now = ZonedDateTime.now();
-            final boolean enabled = ObjectHelper.supplyIfEmpty(conf.isEnabled(), HealthCheckConfiguration::defaultValueEnabled);
-            final Duration interval = ObjectHelper.supplyIfEmpty(conf.getInterval(), HealthCheckConfiguration::defaultValueInterval);
-            final Integer threshold = ObjectHelper.supplyIfEmpty(conf.getFailureThreshold(), HealthCheckConfiguration::defaultValueFailureThreshold);
+            final boolean enabled = conf.isEnabled();
+            final long interval = conf.getInterval();
+            final int threshold = conf.getFailureThreshold();
 
             // Extract relevant information from meta data.
             int invocationCount = (Integer)meta.getOrDefault(INVOCATION_COUNT, 0);
@@ -139,10 +139,10 @@ public abstract class AbstractHealthCheck implements HealthCheck {
 
             // check if the last invocation is far enough to have this check invoked
             // again without violating the interval configuration.
-            if (lastResult != null && lastInvocation != null && !interval.isZero()) {
+            if (lastResult != null && lastInvocation != null && interval > 0) {
                 Duration elapsed = Duration.between(lastInvocation, now);
 
-                if (elapsed.compareTo(interval) < 0) {
+                if (elapsed.compareTo(Duration.ofMillis(interval)) < 0) {
                     LOGGER.debug("health-check {}/{} won't be invoked as interval ({}) is not yet expired (last-invocation={})",
                         getGroup(),
                         getId(),
