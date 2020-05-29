@@ -222,4 +222,9 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
             return new ConsulHealthCheckRepository(configuration);
         }
     }
+
+	@Override
+	public String getId() {
+        return "ConsulHealtcheckRepository";
+	}
 }
