@@ -24,10 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test to verify exclusive read option using *none*
@@ -38,7 +40,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
     private String fileUrl = "file://target/data/exclusiveread/slowfile?noop=true&initialDelay=0&delay=10&readLock=none";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/exclusiveread");
         createDirectory("target/data/exclusiveread/slowfile");
@@ -69,7 +71,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         LOG.debug("Body is: " + body);
-        assertFalse("Should not wait and read the entire file", body.endsWith("Bye World"));
+        assertFalse(body.endsWith("Bye World"), "Should not wait and read the entire file");
     }
 
     private static class MySlowFileProcessor implements Processor {

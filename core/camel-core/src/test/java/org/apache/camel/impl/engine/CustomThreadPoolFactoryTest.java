@@ -25,7 +25,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultExecutorServiceManager;
 import org.apache.camel.support.DefaultThreadPoolFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -46,7 +48,7 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
     @Test
     public void testCustomThreadPoolFactory() {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
-        assertTrue("Should use custom thread pool factory", factory.isInvoked());
+        assertTrue(factory.isInvoked(), "Should use custom thread pool factory");
     }
 
     public static final class MyCustomThreadPoolFactory extends DefaultThreadPoolFactory {

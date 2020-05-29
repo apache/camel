@@ -45,9 +45,10 @@ import org.apache.camel.language.xpath.InvalidXPathException;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.StringHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.xpath.XPathBuilder.xpath;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XPathTest extends ContextTestSupport {
 

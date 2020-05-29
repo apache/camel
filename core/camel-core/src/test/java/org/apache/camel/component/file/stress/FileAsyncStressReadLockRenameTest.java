@@ -21,9 +21,9 @@ import java.util.Random;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileAsyncStressReadLockRenameTest extends FileAsyncStressTest {
 
     @Override

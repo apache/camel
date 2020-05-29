@@ -29,7 +29,9 @@ import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProducerCacheNonSingletonTest extends ContextTestSupport {
 
@@ -48,17 +50,17 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("dummy:foo");
         DefaultAsyncProducer producer = (DefaultAsyncProducer)cache.acquireProducer(endpoint);
         assertNotNull(producer);
-        assertTrue("Should be started", producer.getStatus().isStarted());
+        assertTrue(producer.getStatus().isStarted(), "Should be started");
 
         Object found = context.hasService(MyDummyProducer.class);
-        assertNull("Should not store producer on CamelContext", found);
+        assertNull(found, "Should not store producer on CamelContext");
 
         cache.releaseProducer(endpoint, producer);
-        assertTrue("Should still be started", producer.getStatus().isStarted());
+        assertTrue(producer.getStatus().isStarted(), "Should still be started");
 
         cache.stop();
 
-        assertTrue("Should be stopped", producer.getStatus().isStopped());
+        assertTrue(producer.getStatus().isStopped(), "Should be stopped");
     }
 
     public class MyDummyComponent extends DefaultComponent {

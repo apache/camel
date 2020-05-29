@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

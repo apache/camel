@@ -22,9 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.simple.Simple;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
@@ -35,14 +38,14 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
     public void testSendMessage() throws Exception {
         template.sendBodyAndHeader("direct:in", "<hello>world!</hello>", "foo", "bar");
 
-        assertEquals("bean body: " + myBean, "bar", myBean.bar);
+        assertEquals("bar", myBean.bar, "bean body: " + myBean);
     }
 
     @Test
     public void testSendMessageHandler() throws Exception {
         template.sendBodyAndHeader("direct:other", "<hello>world!</hello>", "foo", "bar");
 
-        assertEquals("bean body: " + myOtherBean, "bar", myOtherBean.bar);
+        assertEquals("bar", myOtherBean.bar, "bean body: " + myOtherBean);
     }
 
     @Override

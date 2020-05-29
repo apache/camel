@@ -24,7 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
 
@@ -54,7 +57,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
                     }
                 }).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertFalse("Should not have out", failed.get());
+                        assertFalse(failed.get(), "Should not have out");
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getIn().setBody("Hi " + s);
                         context.createProducerTemplate().send("mock:foo", exchange);
@@ -93,7 +96,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
                     }
                 }).pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertFalse("Should not have out", failed.get());
+                        assertFalse(failed.get(), "Should not have out");
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getIn().setBody("Hi " + s);
                         context.createProducerTemplate().send("mock:foo", exchange);

@@ -24,7 +24,9 @@ import org.apache.camel.Message;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanTest extends LanguageTestSupport {
 

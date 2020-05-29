@@ -24,7 +24,10 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DomConverterTest extends ContextTestSupport {
 
@@ -41,7 +44,7 @@ public class DomConverterTest extends ContextTestSupport {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
         byte[] bytes = new DomConverter().toByteArray(document.getChildNodes(), null);
-        assertTrue("Should be equal", ObjectHelper.equalByteArray("<hello>world!</hello>".getBytes("UTF-8"), bytes));
+        assertTrue(ObjectHelper.equalByteArray("<hello>world!</hello>".getBytes("UTF-8"), bytes), "Should be equal");
     }
 
     @Test
@@ -49,7 +52,7 @@ public class DomConverterTest extends ContextTestSupport {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
 
         byte[] bytes = new DomConverter().toByteArray(document.getChildNodes(), null);
-        assertTrue("Should be equal", ObjectHelper.equalByteArray("<foo>\u99f1\u99ddb\u00e4r</foo>".getBytes("UTF-8"), bytes));
+        assertTrue(ObjectHelper.equalByteArray("<foo>\u99f1\u99ddb\u00e4r</foo>".getBytes("UTF-8"), bytes), "Should be equal");
     }
 
     @Test

@@ -21,17 +21,17 @@ import java.util.Map;
 
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RuntimeCamelCatalogTest {
 
     static RuntimeCamelCatalog catalog;
 
-    @BeforeClass
+    @BeforeAll
     public static void createCamelCatalog() {
         catalog = new DefaultRuntimeCamelCatalog();
         catalog.setCamelContext(new DefaultCamelContext());

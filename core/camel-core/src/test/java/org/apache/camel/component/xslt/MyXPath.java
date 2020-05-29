@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 // START SNIPPET: example
 // START SNIPPET: example
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

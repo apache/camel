@@ -20,7 +20,9 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.ProducerCache;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EmptyProducerCacheTest extends ContextTestSupport {
 
@@ -29,17 +31,17 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
         ProducerCache cache = new EmptyProducerCache(this, context);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         // we never cache any producers
         Endpoint e = context.getEndpoint("direct:queue:1");
         AsyncProducer p = cache.acquireProducer(e);
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         cache.releaseProducer(e, p);
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         cache.stop();
     }
@@ -49,7 +51,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
         ProducerCache cache = new EmptyProducerCache(this, context);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         // we never cache any producers
         for (int i = 0; i < 1003; i++) {
@@ -58,7 +60,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
-        assertEquals("Size should be 1000", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 1000");
         cache.stop();
     }
 

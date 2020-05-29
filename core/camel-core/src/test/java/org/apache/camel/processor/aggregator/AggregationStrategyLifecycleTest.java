@@ -25,7 +25,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
@@ -33,7 +36,7 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
     @Test
     public void testAggregateLifecycle() throws Exception {
-        assertTrue("Should be started", strategy.isStarted());
+        assertTrue(strategy.isStarted(), "Should be started");
         assertSame(context, strategy.getCamelContext());
 
         MockEndpoint result = getMockEndpoint("mock:aggregated");
@@ -47,7 +50,7 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
         context.stop();
 
-        assertTrue("Should be stopped", strategy.isStopped());
+        assertTrue(strategy.isStopped(), "Should be stopped");
     }
 
     @Override

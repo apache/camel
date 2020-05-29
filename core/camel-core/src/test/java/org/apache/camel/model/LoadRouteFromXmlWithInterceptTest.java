@@ -20,7 +20,10 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
 
@@ -37,7 +40,7 @@ public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
-        assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
         assertEquals(1, context.getRoutes().size());
 
         // test that loaded route works

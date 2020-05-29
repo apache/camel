@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaCompletionMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SagaTimeoutTest extends ContextTestSupport {
 

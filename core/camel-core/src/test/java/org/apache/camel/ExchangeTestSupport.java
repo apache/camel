@@ -17,6 +17,9 @@
 package org.apache.camel;
 
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A base class for a test which requires a {@link CamelContext} and a populated
@@ -46,10 +49,11 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
     }
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         exchange = createExchange();
-        assertNotNull("No exchange created!", exchange);
+        assertNotNull(exchange, "No exchange created!");
         populateExchange(exchange);
     }
 }

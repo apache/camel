@@ -19,7 +19,9 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSupport {
 
@@ -28,8 +30,8 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
     @Test
     public void testSendMessage() throws Exception {
         template.sendBody("bean:myBean", "<a><b>12</b></a>");
-        assertEquals("bean ab: " + myBean, "12", myBean.ab);
-        assertEquals("bean abText: " + myBean, "a12", myBean.abText);
+        assertEquals("12", myBean.ab, "bean ab: " + myBean);
+        assertEquals("a12", myBean.abText, "bean abText: " + myBean);
     }
 
     @Override

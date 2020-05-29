@@ -33,7 +33,9 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.support.DefaultDataFormat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransformerContractTest extends ContextTestSupport {
 

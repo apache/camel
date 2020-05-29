@@ -27,7 +27,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
@@ -44,11 +47,11 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should count down", latch.await(10, TimeUnit.SECONDS));
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "Should count down");
 
         long delta = time.get();
         log.info("ExchangeEventSent took ms: " + delta);
-        assertTrue("Should take about 250 millis sec, was: " + delta, delta > 200);
+        assertTrue(delta > 200, "Should take about 250 millis sec, was: " + delta);
     }
 
     @Override

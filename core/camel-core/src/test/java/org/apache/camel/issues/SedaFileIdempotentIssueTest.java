@@ -27,8 +27,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -39,7 +42,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     private FileIdempotentRepository repository = new FileIdempotentRepository();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/inbox");
         createDirectory("target/data/inbox");
@@ -80,9 +83,9 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     @Test
     public void testRepo() throws Exception {
         boolean done = latch.await(10, TimeUnit.SECONDS);
-        assertTrue("Should stop Camel", done);
+        assertTrue(done, "Should stop Camel");
 
-        assertEquals("No file should be reported consumed", 0, repository.getCache().keySet().size());
+        assertEquals(0, repository.getCache().keySet().size(), "No file should be reported consumed");
     }
 
     protected class ShutDown implements Processor {

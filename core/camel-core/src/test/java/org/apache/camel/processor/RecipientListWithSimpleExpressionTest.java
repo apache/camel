@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
 

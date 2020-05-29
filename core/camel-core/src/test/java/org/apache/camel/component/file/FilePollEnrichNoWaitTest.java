@@ -22,13 +22,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FilePollEnrichNoWaitTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/pollenrich");
         super.setUp();
@@ -47,7 +49,7 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
 
         // file should be moved
         File file = new File("target/data/pollenrich/hello.txt");
-        assertFalse("File should have been moved", file.exists());
+        assertFalse(file.exists(), "File should have been moved");
     }
 
     @Override

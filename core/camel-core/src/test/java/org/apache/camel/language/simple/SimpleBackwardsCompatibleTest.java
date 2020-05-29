@@ -18,7 +18,9 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -56,7 +58,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true && ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -68,7 +70,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false || ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
 }

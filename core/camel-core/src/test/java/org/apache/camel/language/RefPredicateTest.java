@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RefPredicateTest extends LanguageTestSupport {
 

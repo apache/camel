@@ -22,9 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTestSupport {
 
@@ -87,7 +89,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         SedaEndpoint seda2 = getMandatoryEndpoint("seda:error2", SedaEndpoint.class);
         int size = seda.getQueue().size();
         int size2 = seda2.getQueue().size();
-        assertTrue("There should be 1 exchange on the seda or seda2 queue", size == 1 || size2 == 1);
+        assertTrue(size == 1 || size2 == 1, "There should be 1 exchange on the seda or seda2 queue");
     }
 
     @Override

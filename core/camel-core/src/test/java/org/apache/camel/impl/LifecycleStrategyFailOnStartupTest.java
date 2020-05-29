@@ -19,7 +19,10 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.VetoCamelContextStartException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 

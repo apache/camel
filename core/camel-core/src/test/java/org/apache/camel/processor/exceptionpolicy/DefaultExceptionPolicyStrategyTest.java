@@ -37,13 +37,15 @@ import org.apache.camel.processor.errorhandler.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for DefaultExceptionPolicy
  */
-public class DefaultExceptionPolicyStrategyTest extends Assert {
+public class DefaultExceptionPolicyStrategyTest {
 
     private DefaultExceptionPolicyStrategy strategy;
     private HashMap<ExceptionPolicyKey, ExceptionPolicy> policies;
@@ -163,7 +165,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     public void testNoMatch1ThenNull() {
         setupPoliciesNoTopLevelException();
         ExceptionPolicy result = findPolicy(new AlreadyStoppedException());
-        assertNull("Should not find an exception policy to use", result);
+        assertNull(result, "Should not find an exception policy to use");
     }
 
     @Test

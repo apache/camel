@@ -26,13 +26,14 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.util.CaseInsensitiveMap;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link CollectionConverter}
  */
-public class CollectionConverterTest extends Assert {
+public class CollectionConverterTest {
 
     private static final List<String> SMURFS = Arrays.asList("Papa smurf", "Smurfette", "Hefty smurf", "Jokey smurf");
 

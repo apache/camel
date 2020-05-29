@@ -20,7 +20,9 @@ import java.util.Date;
 
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelExceptionsTest extends ContextTestSupport {
 
@@ -321,7 +323,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         NoTypeConversionAvailableException e2 = new NoTypeConversionAvailableException(null, Date.class);
         assertNull(e2.getValue());
         assertEquals(Date.class, e2.getToType());
-        assertNull(null, e2.getFromType());
+        assertNull(e2.getFromType());
     }
 
     @Test

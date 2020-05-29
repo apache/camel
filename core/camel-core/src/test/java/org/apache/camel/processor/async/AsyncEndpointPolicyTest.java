@@ -32,7 +32,10 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
@@ -63,9 +66,9 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
 
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override

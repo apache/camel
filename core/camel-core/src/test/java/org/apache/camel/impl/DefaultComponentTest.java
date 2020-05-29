@@ -29,7 +29,9 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for helper methods on the DefaultComponent.
@@ -121,7 +123,7 @@ public class DefaultComponentTest extends ContextTestSupport {
             my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
         } catch (TypeConversionException ex) {
             assertEquals("Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
-                         + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
+                             + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
         }
     }
 

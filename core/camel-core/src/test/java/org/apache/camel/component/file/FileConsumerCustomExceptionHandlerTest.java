@@ -27,7 +27,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -49,7 +51,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should pickup bye.txt file 2 times", 2, myReadLockStrategy.getCounter());
+        assertEquals(2, myReadLockStrategy.getCounter(), "Should pickup bye.txt file 2 times");
     }
 
     @Override

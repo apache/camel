@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify that redelivery counters is working as expected.
@@ -41,7 +44,8 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
             // expected
         }
 
-        assertEquals(3, counter); // One call + 2 re-deliveries
+        // One call + 2 re-deliveries
+        assertEquals(3, counter);
     }
 
     @Test
@@ -55,7 +59,8 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
             // expected
         }
 
-        assertEquals(1, counter); // One call
+        // One call
+        assertEquals(1, counter);
     }
 
     @Test
@@ -68,7 +73,8 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
             // expected
         }
 
-        assertEquals(2, counter); // One call + 1 re-delivery
+        // One call + 1 re-delivery
+        assertEquals(2, counter);
     }
 
     @Override

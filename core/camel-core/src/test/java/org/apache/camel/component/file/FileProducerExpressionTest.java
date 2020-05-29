@@ -23,8 +23,8 @@ import java.util.Date;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
@@ -34,7 +34,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filelanguage");
         super.setUp();

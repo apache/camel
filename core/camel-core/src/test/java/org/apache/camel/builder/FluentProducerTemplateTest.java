@@ -26,7 +26,9 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for FluentProducerTemplate
@@ -147,7 +149,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         try {
             DefaultFluentProducerTemplate.on(context).withBodyAs("10", Double.class).to("direct:sum").request();
         } catch (CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertEquals("Expected body of type Integer", e.getCause().getMessage());
         }
 
@@ -162,7 +165,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         Exchange out = DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:exception").send();
 
         assertTrue(out.isFailed());
-        assertTrue(out.getException() instanceof IllegalArgumentException);
+        boolean b = out.getException() instanceof IllegalArgumentException;
+        assertTrue(b);
         assertEquals("Forced exception by unit test", out.getException().getMessage());
 
         assertMockEndpointsSatisfied();
@@ -208,7 +212,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
             fail("Should have thrown RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            boolean b = e.getCause() instanceof IllegalArgumentException;
+            assertTrue(b);
             assertEquals("Forced exception by unit test", e.getCause().getMessage());
         }
 

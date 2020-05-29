@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.issues.PrivateClasses.HelloCamel;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.bean.issues.PrivateClasses.EXPECTED_OUTPUT;
 import static org.apache.camel.component.bean.issues.PrivateClasses.METHOD_NAME;

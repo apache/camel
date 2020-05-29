@@ -25,13 +25,9 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.GZIPHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GZIPHelperTest {
 
@@ -59,10 +55,10 @@ public class GZIPHelperTest {
     @Test
     public void testCompressAndUnCompressData() throws IOException {
         InputStream inputStream = GZIPHelper.compressGzip("gzip", new ByteArrayInputStream(sampleString.getBytes()));
-        assertNotNull("The inputStream should not be null.", inputStream);
+        assertNotNull(inputStream, "The inputStream should not be null.");
         inputStream = GZIPHelper.uncompressGzip("gzip", inputStream);
         String result = IOConverter.toString(inputStream, null);
-        assertEquals("The result is wrong.", sampleString, result);
+        assertEquals(sampleString, result, "The result is wrong.");
 
     }
 

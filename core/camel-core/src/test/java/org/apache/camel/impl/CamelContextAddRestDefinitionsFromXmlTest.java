@@ -31,8 +31,10 @@ import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 
@@ -47,7 +49,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         jaxbContext = (JAXBContext) context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
@@ -56,7 +58,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     protected Object parseUri(String uri) throws JAXBException {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
-        assertNotNull("Cannot find resource on the classpath: " + uri, resource);
+        assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
         Object value = unmarshaller.unmarshal(resource);
         return value;
     }
@@ -85,7 +87,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
 
         assertEquals(2, context.getRoutes().size());
 
-        assertTrue("Route should be started", context.getRouteController().getRouteStatus("route1").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("route1").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         template.sendBody("seda:get-say-hello-bar", "Hello World");

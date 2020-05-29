@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 
@@ -47,7 +50,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
-        assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
         assertEquals(1, context.getRoutes().size());
 
         // test that loaded route works

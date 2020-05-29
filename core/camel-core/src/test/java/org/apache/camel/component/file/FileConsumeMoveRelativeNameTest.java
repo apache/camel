@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for consuming multiple directories.
@@ -31,7 +31,7 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
     private String fileUrl = "file://target/data/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/multidir");
         super.setUp();

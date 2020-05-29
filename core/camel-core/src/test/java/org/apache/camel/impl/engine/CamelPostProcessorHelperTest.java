@@ -47,9 +47,14 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
@@ -364,7 +369,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("2000"), Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf("2000"), (Object) Integer.valueOf("" + value));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
@@ -385,7 +390,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "5000", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("5000"), Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf("5000"), (Object) Integer.valueOf("" + value));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
@@ -407,7 +412,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         Class<?> type = method.getParameterTypes()[0];
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("2000"), Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf("2000"), (Object) Integer.valueOf("" + value));
 
         method = bean.getClass().getMethod("setGreeting", String.class);
         propertyInject = method.getAnnotation(PropertyInject.class);

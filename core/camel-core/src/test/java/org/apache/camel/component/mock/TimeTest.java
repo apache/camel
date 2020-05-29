@@ -18,10 +18,11 @@ package org.apache.camel.component.mock;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TimeTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class TimeTest {
 
     @Test
     public void testTimeSeconds() {

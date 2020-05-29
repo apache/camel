@@ -21,8 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultStreamCachingStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
 
@@ -31,7 +31,7 @@ public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
     private MockEndpoint wiretapEnd;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         startEnd = getMockEndpoint("mock:startEnd");

@@ -25,7 +25,9 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.SimpleUuidGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageSupportTest extends ContextTestSupport {
 

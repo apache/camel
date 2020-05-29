@@ -16,11 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class UnitOfWorkWithAsyncFlowTest extends UnitOfWorkTest {
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         uri = "seda:async";
         super.setUp();

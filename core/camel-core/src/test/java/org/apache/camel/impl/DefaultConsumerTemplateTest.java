@@ -26,18 +26,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.engine.DefaultConsumerTemplate;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
     private DefaultConsumerTemplate consumer;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         consumer = new DefaultConsumerTemplate(context);
@@ -45,7 +46,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         consumer.stop();
         super.tearDown();
@@ -99,7 +100,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         Exchange out = consumer.receive("seda:foo", 1000);
         assertNull(out);
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take about 1 sec: " + delta, delta < 1500);
+        assertTrue(delta < 1500, "Should take about 1 sec: " + delta);
 
         template.sendBody("seda:foo", "Hello");
 
@@ -334,7 +335,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         template.setMaximumCacheSize(500);
         template.start();
 
-        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+        assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");
 
         // test that we cache at most 500 consumers to avoid it eating to much
         // memory
@@ -348,18 +349,18 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
             template.cleanUp();
             return template.getCurrentCacheSize() == 500;
         });
-        assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
+        assertEquals(500, template.getCurrentCacheSize(), "Size should be 500");
         template.stop();
 
         // should be 0
-        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+        assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");
     }
 
     @Test
     public void testCacheConsumersFromContext() throws Exception {
         ConsumerTemplate template = context.createConsumerTemplate(500);
 
-        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+        assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");
 
         // test that we cache at most 500 consumers to avoid it eating to much
         // memory
@@ -373,11 +374,11 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
             template.cleanUp();
             return template.getCurrentCacheSize() == 500;
         });
-        assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
+        assertEquals(500, template.getCurrentCacheSize(), "Size should be 500");
         template.stop();
 
         // should be 0
-        assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
+        assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");
     }
 
     @Test
@@ -391,11 +392,11 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         // file should still exists
         File file = new File("target/data/foo/hello.txt");
-        assertTrue("File should exist " + file, file.exists());
+        assertTrue(file.exists(), "File should exist " + file);
 
         // done the exchange
         consumer.doneUoW(exchange);
 
-        assertFalse("File should have been deleted " + file, file.exists());
+        assertFalse(file.exists(), "File should have been deleted " + file);
     }
 }

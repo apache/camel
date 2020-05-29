@@ -18,7 +18,9 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandlerTest extends OnExceptionComplexWithNestedErrorHandlerRouteTest {
 

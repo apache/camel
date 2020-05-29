@@ -26,10 +26,10 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Verificat
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode;
 import org.apache.camel.component.extension.verifier.OptionsGroup;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResultErrorHelperTest {
 

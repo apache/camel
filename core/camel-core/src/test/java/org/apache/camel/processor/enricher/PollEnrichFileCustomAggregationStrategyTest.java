@@ -23,13 +23,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/enrich");
         deleteDirectory("target/data/enrichdata");
@@ -71,7 +73,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
     private static void assertFileDoesNotExists(String filename) {
         File file = new File(filename);
-        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
+        assertFalse(file.exists(), "File " + filename + " should not exist, it should have been deleted after being processed");
     }
 
     class ReplaceAggregationStrategy implements AggregationStrategy {

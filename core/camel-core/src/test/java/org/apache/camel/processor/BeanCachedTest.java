@@ -25,7 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Deprecated
 public class BeanCachedTest extends ContextTestSupport {
@@ -79,7 +81,8 @@ public class BeanCachedTest extends ContextTestSupport {
             template.sendBody("direct:cached", null);
             fail("The IllegalStateException is expected");
         } catch (CamelExecutionException ex) {
-            assertTrue("IllegalStateException is expected!", ex.getCause() instanceof IllegalStateException);
+            boolean b = ex.getCause() instanceof IllegalStateException;
+            assertTrue(b, "IllegalStateException is expected!");
             assertEquals("This bean is not supported to be invoked again!", ex.getCause().getMessage());
         }
     }

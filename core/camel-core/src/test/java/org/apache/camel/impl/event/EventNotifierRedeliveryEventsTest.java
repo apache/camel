@@ -25,15 +25,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
 
     private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
         super.setUp();

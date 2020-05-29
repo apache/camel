@@ -29,9 +29,10 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateModelFromXmlTest extends ContextTestSupport {
 

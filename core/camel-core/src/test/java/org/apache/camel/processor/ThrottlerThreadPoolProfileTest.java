@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
 

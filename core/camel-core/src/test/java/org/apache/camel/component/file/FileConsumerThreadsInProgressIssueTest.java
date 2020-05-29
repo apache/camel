@@ -25,7 +25,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
@@ -74,7 +76,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             }
         }
 
-        assertEquals("Should not contain duplicates", 0, found);
+        assertEquals(0, found, "Should not contain duplicates");
     }
 
     private static void createManyFiles(int number) throws Exception {

@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for bean invocation that throws an exception
@@ -42,8 +45,9 @@ public class BeanInvocationThrowsExceptionTest extends ContextTestSupport {
         exchange.getIn().setBody("Hello Paris");
 
         Exchange out = template.send("direct:input", exchange);
-        assertTrue("Should be failed", out.isFailed());
-        assertTrue("Should be IllegalArgumentException", out.getException() instanceof IllegalArgumentException);
+        assertTrue(out.isFailed(), "Should be failed");
+        boolean b = out.getException() instanceof IllegalArgumentException;
+        assertTrue(b, "Should be IllegalArgumentException");
         assertEquals("Forced exception", out.getException().getMessage());
     }
 

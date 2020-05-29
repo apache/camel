@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Advice with match multiple ids test
@@ -149,7 +152,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("There are no outputs which matches: gold* in the route"));
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: gold* in the route"), e.getMessage());
         }
     }
 

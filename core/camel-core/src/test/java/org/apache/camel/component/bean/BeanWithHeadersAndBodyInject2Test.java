@@ -30,9 +30,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);
@@ -56,7 +58,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
             }
         });
 
-        assertTrue("Should fail", out.isFailed());
+        assertTrue(out.isFailed(), "Should fail");
         assertIsInstanceOf(RuntimeCamelException.class, out.getException());
         assertIsInstanceOf(NoTypeConversionAvailableException.class, out.getException().getCause());
     }
@@ -74,7 +76,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
             }
         });
 
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertSame(list, myBean.users);
         assertEquals("TheBody", myBean.body);
     }
@@ -88,7 +90,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
             }
         });
 
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertEquals("TheBody", myBean.body);
     }
 

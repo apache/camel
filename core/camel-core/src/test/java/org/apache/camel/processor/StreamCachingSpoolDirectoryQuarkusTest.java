@@ -29,8 +29,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
 
@@ -50,7 +52,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/cachedir");
         super.setUp();
@@ -108,7 +110,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                             // check if spool file exists
                             if (spoolRule.isSpool()) {
                                 String[] names = new File("target/cachedir").list();
-                                assertEquals("There should be a cached spool file", 1, names.length);
+                                assertEquals(1, names.length, "There should be a cached spool file");
                             }
                         }
                     });

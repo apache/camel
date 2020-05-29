@@ -17,9 +17,11 @@
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class LogRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LogRouteTest.class);

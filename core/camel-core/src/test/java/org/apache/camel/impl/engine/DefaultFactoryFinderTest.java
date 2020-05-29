@@ -22,18 +22,10 @@ import java.net.URL;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class DefaultFactoryFinderTest {
 
@@ -117,7 +109,7 @@ public class DefaultFactoryFinderTest {
     public void shouldCreateNewInstances() throws ClassNotFoundException, IOException {
         final Object instance = factoryFinder.newInstance("TestImplA").get();
 
-        assertThat(instance, instanceOf(TestImplA.class));
+        assertTrue(TestImplA.class.isInstance(instance));
     }
 
     @Test

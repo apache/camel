@@ -30,8 +30,10 @@ import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExchangeHelperTest extends ContextTestSupport {
 
@@ -40,7 +42,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
     @Test
     public void testValidProperty() throws Exception {
         String value = ExchangeHelper.getMandatoryProperty(exchange, "foo", String.class);
-        assertEquals("foo property", "123", value);
+        assertEquals("123", value, "foo property");
     }
 
     @Test
@@ -222,7 +224,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         exchange = new DefaultExchange(new DefaultCamelContext());

@@ -19,13 +19,15 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/leak");
         super.setUp();
@@ -53,7 +55,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         int active = Thread.activeCount() - before;
         log.info("Active threads after restarts: {}", active);
 
-        assertTrue("There should not be so many active threads, was " + active, active < 10);
+        assertTrue(active < 10, "There should not be so many active threads, was " + active);
     }
 
     @Override

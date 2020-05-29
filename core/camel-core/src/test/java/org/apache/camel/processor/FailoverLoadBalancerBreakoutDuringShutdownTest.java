@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that the failover load balancer will break out if CamelContext is
@@ -47,7 +49,7 @@ public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestS
         context.stop();
 
         // should take less than 5 seconds
-        assertTrue("Should take less than 5 seconds, was " + watch.taken(), watch.taken() < 5000);
+        assertTrue(watch.taken() < 5000, "Should take less than 5 seconds, was " + watch.taken());
     }
 
     @Override

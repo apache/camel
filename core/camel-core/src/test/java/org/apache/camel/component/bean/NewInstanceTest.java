@@ -27,7 +27,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,8 +23,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultCamelBeanPostProcessorFieldFirstTest extends ContextTestSupport {
 
@@ -51,7 +54,7 @@ public class DefaultCamelBeanPostProcessorFieldFirstTest extends ContextTestSupp
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();

@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.util.URISupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultEndpointTest extends ContextTestSupport {
 

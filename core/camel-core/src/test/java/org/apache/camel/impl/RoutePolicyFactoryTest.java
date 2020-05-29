@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RoutePolicyFactoryTest extends ContextTestSupport {
 

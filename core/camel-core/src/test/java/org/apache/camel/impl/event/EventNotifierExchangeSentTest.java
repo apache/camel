@@ -26,17 +26,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
     protected static List<CamelEvent> events = new ArrayList<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -91,14 +93,14 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("direct://bar", e3.getEndpoint().getEndpointUri());
         assertEquals("direct://bar", e4.getEndpoint().getEndpointUri());
         long time = e4.getTimeTaken();
-        assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
+        assertTrue(time > 400, "Should take about 0.5 sec, was: " + time);
 
         assertEquals("mock://result", e5.getEndpoint().getEndpointUri());
         assertEquals("mock://result", e6.getEndpoint().getEndpointUri());
 
         assertEquals("direct://start", e7.getEndpoint().getEndpointUri());
         time = e7.getTimeTaken();
-        assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
+        assertTrue(time > 400, "Should take about 0.5 sec, was: " + time);
     }
 
     @Test
@@ -170,8 +172,8 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
             }
         }
 
-        assertTrue("We should find log:foo being wire tapped", found);
-        assertTrue("We should find log:foo being wire tapped", found2);
+        assertTrue(found, "We should find log:foo being wire tapped");
+        assertTrue(found2, "We should find log:foo being wire tapped");
     }
 
     @Override

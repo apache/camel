@@ -24,7 +24,9 @@ import java.util.Iterator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends ContextTestSupport {
 

@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSupport {
 

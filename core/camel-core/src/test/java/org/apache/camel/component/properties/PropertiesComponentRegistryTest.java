@@ -23,7 +23,9 @@ import org.apache.camel.component.bean.MyDummyBean;
 import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
 

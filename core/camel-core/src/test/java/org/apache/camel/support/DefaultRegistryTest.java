@@ -18,24 +18,24 @@ package org.apache.camel.support;
 
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FooBar;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class DefaultRegistryTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class DefaultRegistryTest {
 
     private final SimpleRegistry br = new SimpleRegistry();
     private final DefaultRegistry registry = new DefaultRegistry(br);
     private final Company myCompany = new Company();
     private final FooBar myFooBar = new FooBar();
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         br.bind("myCompany", myCompany);
         registry.bind("myFooBar", myFooBar);
     }

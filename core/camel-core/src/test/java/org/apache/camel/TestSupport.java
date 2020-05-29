@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -30,25 +31,25 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A bunch of useful testing methods
  */
-public abstract class TestSupport extends Assert {
+public abstract class TestSupport {
 
     protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
-    @Rule
-    public TestName name = new TestName();
+    protected TestInfo info;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -58,18 +59,23 @@ public abstract class TestSupport extends Assert {
     }
 
     public String getName() {
-        return name.getMethodName();
+        return info.getTestMethod().map(Method::getName).orElse("");
     }
 
-    @Before
+    @BeforeEach
+    public void setTestInfo(TestInfo info) {
+        this.info = info;
+    }
+
+    @BeforeEach
     public void setUp() throws Exception {
         // start with a clean slate
         AbstractCamelContext.setContextCounter(0);
         TestSupportNodeIdFactory.resetCounters();
-        Assume.assumeTrue(canRunOnThisPlatform());
+        Assumptions.assumeTrue(canRunOnThisPlatform());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // make sure we cleanup the platform mbean server
         TestSupportJmxCleanup.removeMBeans(null);
@@ -129,14 +135,14 @@ public abstract class TestSupport extends Assert {
     // -----------------------------------------------------------------------
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
-        assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
-        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName(), expectedType.isInstance(value));
+        assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
+        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName());
         return expectedType.cast(value);
     }
 
     public static void assertEndpointUri(Endpoint endpoint, String uri) {
-        assertNotNull("Endpoint is null when expecting endpoint for: " + uri, endpoint);
-        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
+        assertNotNull(endpoint, "Endpoint is null when expecting endpoint for: " + uri);
+        assertEquals(uri, endpoint.getEndpointUri(), "Endoint uri for: " + endpoint);
     }
 
     /**
@@ -164,16 +170,16 @@ public abstract class TestSupport extends Assert {
      *             expected class type
      */
     public static void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
-        assertNotNull("Should have a response exchange!", exchange);
+        assertNotNull(exchange, "Should have a response exchange!");
 
         Object actual;
         if (expected == null) {
             actual = exchange.getIn().getMandatoryBody();
-            assertEquals("in body of: " + exchange, expected, actual);
+            assertEquals(expected, actual, "in body of: " + exchange);
         } else {
             actual = exchange.getIn().getMandatoryBody(expected.getClass());
         }
-        assertEquals("in body of: " + exchange, expected, actual);
+        assertEquals(expected, actual, "in body of: " + exchange);
 
         LOG.debug("Received response: {} with in: {}", exchange, exchange.getIn());
     }
@@ -189,29 +195,29 @@ public abstract class TestSupport extends Assert {
      */
     @Deprecated
     public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
-        assertNotNull("Should have a response exchange!", exchange);
+        assertNotNull(exchange, "Should have a response exchange!");
 
         Object actual;
         if (expected == null) {
             actual = exchange.getOut().getMandatoryBody();
-            assertEquals("output body of: " + exchange, expected, actual);
+            assertEquals(expected, actual, "output body of: " + exchange);
         } else {
             actual = exchange.getOut().getMandatoryBody(expected.getClass());
         }
-        assertEquals("output body of: " + exchange, expected, actual);
+        assertEquals(expected, actual, "output body of: " + exchange);
 
         LOG.debug("Received response: {} with out: {}", exchange, exchange.getOut());
     }
 
     public static Object assertMessageHeader(Message message, String name, Object expected) {
         Object value = message.getHeader(name);
-        assertEquals("Header: " + name + " on Message: " + message, expected, value);
+        assertEquals(expected, value, "Header: " + name + " on Message: " + message);
         return value;
     }
 
     public static Object assertProperty(Exchange exchange, String name, Object expected) {
         Object value = exchange.getProperty(name);
-        assertEquals("Property: " + name + " on Exchange: " + exchange, expected, value);
+        assertEquals(expected, value, "Property: " + name + " on Exchange: " + exchange);
         return value;
     }
 
@@ -228,7 +234,7 @@ public abstract class TestSupport extends Assert {
 
         LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
-        assertEquals("Expression: " + expression + " on Exchange: " + exchange, expected, value);
+        assertEquals(expected, value, "Expression: " + expression + " on Exchange: " + exchange);
         return value;
     }
 
@@ -262,7 +268,7 @@ public abstract class TestSupport extends Assert {
 
         LOG.debug("Evaluated predicate: {} on exchange: {} result: {}", predicate, exchange, value);
 
-        assertEquals("Predicate: " + predicate + " on Exchange: " + exchange, expected, value);
+        assertEquals(expected, value, "Predicate: " + predicate + " on Exchange: " + exchange);
         return value;
     }
 
@@ -272,7 +278,7 @@ public abstract class TestSupport extends Assert {
     public static Endpoint resolveMandatoryEndpoint(CamelContext context, String uri) {
         Endpoint endpoint = context.getEndpoint(uri);
 
-        assertNotNull("No endpoint found for URI: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for URI: " + uri);
 
         return endpoint;
     }
@@ -283,7 +289,7 @@ public abstract class TestSupport extends Assert {
     public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(uri, endpointType);
 
-        assertNotNull("No endpoint found for URI: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for URI: " + uri);
 
         return endpoint;
     }
@@ -301,7 +307,7 @@ public abstract class TestSupport extends Assert {
     }
 
     public static <T> T assertOneElement(List<T> list) {
-        assertEquals("Size of list should be 1: " + list, 1, list.size());
+        assertEquals(1, list.size(), "Size of list should be 1: " + list);
         return list.get(0);
     }
 
@@ -316,7 +322,7 @@ public abstract class TestSupport extends Assert {
      * Asserts that a list is of the given size
      */
     public static <T> List<T> assertListSize(String message, List<T> list, int size) {
-        assertEquals(message + " should be of size: " + size + " but is: " + list, size, list.size());
+        assertEquals(size, list.size(), message + " should be of size: " + size + " but is: " + list);
         return list;
     }
 
@@ -331,7 +337,7 @@ public abstract class TestSupport extends Assert {
      * Asserts that a list is of the given size
      */
     public static <T> Collection<T> assertCollectionSize(String message, Collection<T> list, int size) {
-        assertEquals(message + " should be of size: " + size + " but is: " + list, size, list.size());
+        assertEquals(size, list.size(), message + " should be of size: " + size + " but is: " + list);
         return list;
     }
 
@@ -356,8 +362,8 @@ public abstract class TestSupport extends Assert {
      *            text parameter
      */
     public static void assertStringContains(String text, String containedText) {
-        assertNotNull("Text should not be null!", text);
-        assertTrue("Text: " + text + " does not contain: " + containedText, text.contains(containedText));
+        assertNotNull(text, "Text should not be null!");
+        assertTrue(text.contains(containedText), "Text: " + text + " does not contain: " + containedText);
     }
 
     /**
@@ -452,7 +458,7 @@ public abstract class TestSupport extends Assert {
         String actualPath = actual.replace('\\', '/');
 
         if (message != null) {
-            assertEquals(message, expectedPath, actualPath);
+            assertEquals(expectedPath, actualPath, message);
         } else {
             assertEquals(expectedPath, actualPath);
         }
@@ -463,8 +469,8 @@ public abstract class TestSupport extends Assert {
      */
     public static void assertDirectoryExists(String filename) {
         File file = new File(filename);
-        assertTrue("Directory " + filename + " should exist", file.exists());
-        assertTrue("Directory " + filename + " should be a directory", file.isDirectory());
+        assertTrue(file.exists(), "Directory " + filename + " should exist");
+        assertTrue(file.isDirectory(), "Directory " + filename + " should be a directory");
     }
 
     /**
@@ -472,8 +478,8 @@ public abstract class TestSupport extends Assert {
      */
     public static void assertFileExists(String filename) {
         File file = new File(filename);
-        assertTrue("File " + filename + " should exist", file.exists());
-        assertTrue("File " + filename + " should be a file", file.isFile());
+        assertTrue(file.exists(), "File " + filename + " should exist");
+        assertTrue(file.isFile(), "File " + filename + " should be a file");
     }
 
     /**
@@ -481,7 +487,7 @@ public abstract class TestSupport extends Assert {
      */
     public static void assertFileNotExists(String filename) {
         File file = new File(filename);
-        assertFalse("File " + filename + " should not exist", file.exists());
+        assertFalse(file.exists(), "File " + filename + " should not exist");
     }
 
     /**
@@ -578,4 +584,9 @@ public abstract class TestSupport extends Assert {
         }
         return builder;
     }
+
+    public static <T> void assumeThat(String s, T t, Matcher<T> m) {
+        Assumptions.assumeTrue(m.matches(t), s);
+    }
+
 }

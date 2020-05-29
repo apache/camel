@@ -24,7 +24,9 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for navigating a route (runtime processors, not the model).
@@ -45,7 +47,7 @@ public class NavigateRouteTest extends ContextTestSupport {
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
         navigateRoute(nav);
 
-        assertEquals("There should be 6 processors to navigate", 6, processors.size());
+        assertEquals(6, processors.size(), "There should be 6 processors to navigate");
     }
 
     @SuppressWarnings("unchecked")

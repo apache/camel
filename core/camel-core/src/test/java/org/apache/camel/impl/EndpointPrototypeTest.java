@@ -24,7 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointPrototypeTest extends ContextTestSupport {
 

@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -61,7 +63,8 @@ public class SplitSubUnitOfWorkStopOnExceptionAndParallelTest extends ContextTes
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(4, counter); // 1 first + 3 redeliveries
+        // 1 first + 3 redeliveries
+        assertEquals(4, counter);
     }
 
     @Override

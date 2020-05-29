@@ -28,7 +28,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
 
@@ -82,7 +84,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         RuntimeCamelException rce = exchange.getException(RuntimeCamelException.class);
         assertNotNull(rce);
-        assertNotSame("Cannot connect to remote server", rce.getMessage());
+        assertNotSame(rce.getMessage(), "Cannot connect to remote server");
         assertEquals("Cannot connect to remote server", rce.getCause().getMessage());
     }
 
@@ -244,7 +246,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         Exchange destExchange = sourceExchange.copy();
         Message destIn = destExchange.getIn();
 
-        assertEquals("Dest message should be of the same type as source message", sourceIn.getClass(), destIn.getClass());
+        assertEquals(sourceIn.getClass(), destIn.getClass(), "Dest message should be of the same type as source message");
     }
 
     public static class MyMessage extends DefaultMessage {

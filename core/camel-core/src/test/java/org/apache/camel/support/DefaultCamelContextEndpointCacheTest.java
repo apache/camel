@@ -23,7 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
 
@@ -56,7 +58,7 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
         context.getEndpointRegistry().cleanUp();
 
         Collection<Endpoint> col = context.getEndpoints();
-        assertEquals("Size should be 1000", 1000, col.size());
+        assertEquals(1000, col.size(), "Size should be 1000");
     }
 
 }

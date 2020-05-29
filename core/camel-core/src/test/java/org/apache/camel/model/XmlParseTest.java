@@ -26,7 +26,9 @@ import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlParseTest extends XmlTestSupport {
 
@@ -42,7 +44,7 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("processor.xml");
         assertFrom(route, "seda:a");
         ProcessDefinition to = assertOneProcessorInstanceOf(ProcessDefinition.class, route);
-        assertEquals("Processor ref", "myProcessor", to.getRef());
+        assertEquals("myProcessor", to.getRef(), "Processor ref");
     }
 
     @Test
@@ -194,7 +196,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo("when(1)", whens.get(1), "seda:c");
 
         OtherwiseDefinition otherwise = choice.getOtherwise();
-        assertNotNull("Otherwise is null", otherwise);
+        assertNotNull(otherwise, "Otherwise is null");
         assertChildTo("otherwise", otherwise, "seda:d");
     }
 
@@ -213,8 +215,9 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("routeWithLoadBalance.xml");
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
-        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer should be RoundRobinLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalancerDefinition);
+        assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
+        boolean b = loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalancerDefinition;
+        assertTrue(b, "The loadBalancer should be RoundRobinLoadBalancerDefinition");
     }
 
     @Test
@@ -222,10 +225,11 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("routeWithStickyLoadBalance.xml");
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
-        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer should be StickyLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof StickyLoadBalancerDefinition);
+        assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
+        boolean b = loadBalance.getLoadBalancerType() instanceof StickyLoadBalancerDefinition;
+        assertTrue(b, "The loadBalancer should be StickyLoadBalancerDefinition");
         StickyLoadBalancerDefinition strategy = (StickyLoadBalancerDefinition)loadBalance.getLoadBalancerType();
-        assertNotNull("the expression should not be null ", strategy.getCorrelationExpression());
+        assertNotNull(strategy.getCorrelationExpression(), "the expression should not be null ");
     }
 
     @Test
@@ -233,10 +237,11 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("routeWithFailoverLoadBalance.xml");
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
-        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer should be FailoverLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition);
+        assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
+        boolean b = loadBalance.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition;
+        assertTrue(b, "The loadBalancer should be FailoverLoadBalancerDefinition");
         FailoverLoadBalancerDefinition strategy = (FailoverLoadBalancerDefinition)loadBalance.getLoadBalancerType();
-        assertEquals("there should be 2 exceptions", 2, strategy.getExceptions().size());
+        assertEquals(2, strategy.getExceptions().size(), "there should be 2 exceptions");
     }
 
     @Test
@@ -244,8 +249,9 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("routeWithRandomLoadBalance.xml");
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
-        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer should be RandomLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RandomLoadBalancerDefinition);
+        assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
+        boolean b = loadBalance.getLoadBalancerType() instanceof RandomLoadBalancerDefinition;
+        assertTrue(b, "The loadBalancer should be RandomLoadBalancerDefinition");
     }
 
     @Test
@@ -253,8 +259,9 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("routeWithTopicLoadBalance.xml");
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
-        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer should be TopicLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof TopicLoadBalancerDefinition);
+        assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
+        boolean b = loadBalance.getLoadBalancerType() instanceof TopicLoadBalancerDefinition;
+        assertTrue(b, "The loadBalancer should be TopicLoadBalancerDefinition");
     }
 
     @Test
@@ -362,7 +369,7 @@ public class XmlParseTest extends XmlTestSupport {
 
     protected void assertFrom(RouteDefinition route, String uri) {
         FromDefinition from = route.getInput();
-        assertEquals("From URI", uri, from.getUri());
+        assertEquals(uri, from.getUri(), "From URI");
     }
 
     protected void assertChildTo(String message, ProcessorDefinition<?> route, String uri) {
@@ -370,14 +377,14 @@ public class XmlParseTest extends XmlTestSupport {
         ToDefinition value = assertIsInstanceOf(ToDefinition.class, processor);
         String text = message + "To URI";
         log.info("Testing: {} is equal to: {} for processor: {}", text, uri, processor);
-        assertEquals(text, uri, value.getUri());
+        assertEquals(uri, value.getUri(), text);
     }
 
     protected void assertTo(String message, ProcessorDefinition<?> processor, String uri) {
         ToDefinition value = assertIsInstanceOf(ToDefinition.class, processor);
         String text = message + "To URI";
         log.info("Testing: {} is equal to: {} for processor: {}", text, uri, processor);
-        assertEquals(text, uri, value.getUri());
+        assertEquals(uri, value.getUri(), text);
     }
 
     protected void assertChildTo(ProcessorDefinition<?> route, String... uris) {
@@ -404,8 +411,8 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertExpression(ExpressionDefinition expression, String language, String languageExpression) {
-        assertNotNull("Expression should not be null!", expression);
-        assertEquals("Expression language", language, expression.getLanguage());
-        assertEquals("Expression", languageExpression, expression.getExpression());
+        assertNotNull(expression, "Expression should not be null!");
+        assertEquals(language, expression.getLanguage(), "Expression language");
+        assertEquals(languageExpression, expression.getExpression(), "Expression");
     }
 }

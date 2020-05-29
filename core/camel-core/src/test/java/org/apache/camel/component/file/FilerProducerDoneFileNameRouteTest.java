@@ -24,8 +24,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
@@ -35,7 +38,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         super.setUp();
@@ -59,10 +62,10 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
         assertTrue(oneExchangeDone.matches(5, TimeUnit.SECONDS));
 
         File file = new File("target/data/done/hello.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
 
         File done = new File("target/data/done/done-hello.txt");
-        assertEquals("Done file should exists", true, done.exists());
+        assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Override

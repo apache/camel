@@ -28,7 +28,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Using a custom interceptor which is not a
@@ -56,7 +59,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 
         assertEquals(8, interceptor.getCounter());
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override

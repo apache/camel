@@ -26,8 +26,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -98,7 +101,7 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyComponent());
@@ -108,7 +111,7 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
     public void testUseRaw() {
         String uri = "my:host:11303/tube1+tube?foo=%2B+tube%3F&bar=++%%w?rd";
         MyEndpoint endpoint = context.getEndpoint(uri, MyEndpoint.class);
-        assertNotNull("endpoint", endpoint);
+        assertNotNull(endpoint, "endpoint");
 
         assertEquals("%2B+tube%3F", endpoint.getFoo());
         assertEquals("++%%w?rd", endpoint.getBar());

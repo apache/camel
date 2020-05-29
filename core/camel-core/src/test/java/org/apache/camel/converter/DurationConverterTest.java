@@ -20,9 +20,12 @@ import java.time.Duration;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConversionException;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DurationConverterTest extends ContextTestSupport {
 
@@ -32,7 +35,7 @@ public class DurationConverterTest extends ContextTestSupport {
 
         Long millis = context.getTypeConverter().convertTo(long.class, duration);
         assertNotNull(millis);
-        assertThat(millis, is(7580310L));
+        MatcherAssert.assertThat(millis, is(7580310L));
     }
 
     @Test
@@ -52,7 +55,7 @@ public class DurationConverterTest extends ContextTestSupport {
 
         Duration duration = context.getTypeConverter().convertTo(Duration.class, durationAsString);
         assertNotNull(duration);
-        assertThat(duration.toString(), is("PT2H6M20.31S"));
+        MatcherAssert.assertThat(duration.toString(), is("PT2H6M20.31S"));
     }
 
     @Test
@@ -61,7 +64,7 @@ public class DurationConverterTest extends ContextTestSupport {
 
         String durationAsString = context.getTypeConverter().convertTo(String.class, duration);
         assertNotNull(durationAsString);
-        assertThat(durationAsString, is("PT2H6M20.31S"));
+        MatcherAssert.assertThat(durationAsString, is("PT2H6M20.31S"));
     }
 
 }

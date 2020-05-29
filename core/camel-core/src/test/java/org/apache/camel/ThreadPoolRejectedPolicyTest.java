@@ -28,7 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
@@ -199,7 +201,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     private void shutdownAndAwait(final ExecutorService executorService) {
         executorService.shutdown();
         try {
-            assertTrue("Test ExecutorService shutdown is not expected to take longer than 10 seconds.", executorService.awaitTermination(10, TimeUnit.SECONDS));
+            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS), "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
         } catch (InterruptedException e) {
             fail("Test ExecutorService shutdown is not expected to be interrupted.");
         }

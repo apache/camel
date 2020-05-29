@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PredicateAssertHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomDataSetTest extends ContextTestSupport {
 

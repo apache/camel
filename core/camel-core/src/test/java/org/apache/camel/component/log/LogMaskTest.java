@@ -22,8 +22,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogMaskTest {
 
@@ -66,7 +67,7 @@ public class LogMaskTest {
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBody("log:mock?logMask=true", "password=passw0rd@");
         context.stop();
-        Assert.assertTrue(customFormatter.received, customFormatter.received.contains("password=passw0rd@"));
+        assertTrue(customFormatter.received.contains("password=passw0rd@"), customFormatter.received);
     }
 
     public static class MockMaskingFormatter implements MaskingFormatter {

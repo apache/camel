@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
 

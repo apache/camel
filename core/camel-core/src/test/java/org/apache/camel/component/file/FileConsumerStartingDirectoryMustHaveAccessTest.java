@@ -23,11 +23,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTestSupport {
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         File file1 = new File("./target/noAccess");
         if (file1.exists()) {
@@ -40,6 +46,7 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
     }
 
     @Override
+    @AfterEach
     public void tearDown() throws Exception {
         File file1 = new File("./target/noAccess");
         if (file1.exists()) {

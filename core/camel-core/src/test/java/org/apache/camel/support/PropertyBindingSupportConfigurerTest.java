@@ -25,7 +25,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -72,7 +74,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         assertEquals(123, bar.getWork().getId());
         assertEquals("Acme", bar.getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     @Test
@@ -99,7 +101,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         assertEquals(123, bar.getWork().getId());
         assertEquals("Acme", bar.getWork().getName());
 
-        assertFalse("Should NOT bind all properties", prop.isEmpty());
+        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
         assertEquals(3, prop.size());
         assertTrue(prop.containsKey("?silver-Customer"));
         assertTrue(prop.containsKey("?work.addresss"));
@@ -130,7 +132,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         assertEquals(123, bar.getWork().getId());
         assertEquals("Acme", bar.getWork().getName());
 
-        assertFalse("Should NOT bind all properties", prop.isEmpty());
+        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
         assertEquals(3, prop.size());
         assertTrue(prop.containsKey("?silver-Customer"));
         assertTrue(prop.containsKey("?work.addresss"));

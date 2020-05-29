@@ -27,7 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test with a user plugged in exception policy to use instead of default.

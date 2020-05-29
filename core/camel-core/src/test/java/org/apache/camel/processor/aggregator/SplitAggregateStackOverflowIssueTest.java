@@ -17,17 +17,18 @@
 package org.apache.camel.processor.aggregator;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.Exchange.SPLIT_COMPLETE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
@@ -52,7 +53,7 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
 
         // the stackframe is 48 at this time of coding but can grow a little bit over time so lets just assume 70
         // is fine, as if we get the endless bug again then this test fails before and this counter goes to 1024
-        assertTrue("Stackframe must not be too high, was " + count.get(), count.get() < 70);
+        assertTrue(count.get() < 70, "Stackframe must not be too high, was " + count.get());
     }
 
     @Override
@@ -66,7 +67,9 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
                         .to("log:input?groupSize=100")
                         .process(e -> {
                             if (e.getProperty(Exchange.SPLIT_INDEX, 0, int.class) % 1000 == 0) {
-                                int frames = Thread.currentThread().getStackTrace().length;
+                                int frames = (int) Stream.of(Thread.currentThread().getStackTrace())
+                                        .filter(st -> !st.getClassName().startsWith("org.junit."))
+                                        .count();
                                 count.set(frames);
                                 log.info("Stackframe: {}", frames);
                             }

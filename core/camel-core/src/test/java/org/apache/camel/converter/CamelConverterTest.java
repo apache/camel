@@ -24,10 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.constant;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelConverterTest extends ContextTestSupport {
 

@@ -20,8 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataSetPreloadTest extends ContextTestSupport {
 
@@ -46,11 +47,11 @@ public class DataSetPreloadTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         DataSetEndpoint ds = context.getEndpoint(uri, DataSetEndpoint.class);
-        Assert.assertEquals(5, ds.getPreloadSize());
+        assertEquals(5, ds.getPreloadSize());
 
         // test getter/setter
         ds.setPreloadSize(7);
-        Assert.assertEquals(7, ds.getPreloadSize());
+        assertEquals(7, ds.getPreloadSize());
     }
 
     @Override

@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSupport {
 
@@ -39,7 +42,7 @@ public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSuppo
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override

@@ -27,9 +27,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
@@ -50,14 +53,14 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
 
         Map<?, ?> foo = myBean.foo;
         Map<?, ?> bar = myBean.bar;
-        assertNotNull("myBean.foo", foo);
-        assertNotNull("myBean.bar", bar);
+        assertNotNull(foo, "myBean.foo");
+        assertNotNull(bar, "myBean.bar");
 
-        assertEquals("foo.p1", "abc", foo.get("p1"));
-        assertEquals("foo.p2", 123, foo.get("p2"));
+        assertEquals("abc", foo.get("p1"), "foo.p1");
+        assertEquals(123, foo.get("p2"), "foo.p2");
 
-        assertEquals("bar.h1", "xyz", bar.get("h1"));
-        assertEquals("bar.h2", 456, bar.get("h2"));
+        assertEquals("xyz", bar.get("h1"), "bar.h1");
+        assertEquals(456, bar.get("h2"), "bar.h2");
     }
 
     @Override

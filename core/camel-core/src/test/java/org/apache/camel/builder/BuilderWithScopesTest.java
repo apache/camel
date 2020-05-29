@@ -27,7 +27,9 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.processor.DelegateProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BuilderWithScopesTest extends TestSupport {
 

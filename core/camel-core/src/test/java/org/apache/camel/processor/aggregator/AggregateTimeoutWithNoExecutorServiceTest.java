@@ -20,14 +20,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSupport {
 
     @Test
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
-        assertTrue("There should be a thread for every aggregator when using defaults",
-                   AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS);
+        assertTrue(AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS, "There should be a thread for every aggregator when using defaults");
 
         // sanity check to make sure were testing routes that work
         for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {

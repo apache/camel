@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
@@ -36,8 +38,8 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
         Object out = template.requestBodyAndHeader("direct:in", expectedBody, "foo", "bar");
         assertEquals("bar", out);
 
-        assertEquals("bean body: " + myBean, expectedBody, myBean.body);
-        assertEquals("bean foo: " + myBean, "bar", myBean.foo);
+        assertEquals(expectedBody, myBean.body, "bean body: " + myBean);
+        assertEquals("bar", myBean.foo, "bean foo: " + myBean);
     }
 
     @Test
@@ -48,8 +50,8 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
         Object out = template.requestBodyAndHeader("direct:in", expectedBody, "foo", "bar");
         assertEquals("bar", out);
 
-        assertEquals("bean body: " + myBean, expectedBody, myBean.body);
-        assertEquals("bean foo: " + myBean, "bar", myBean.foo);
+        assertEquals(expectedBody, myBean.body, "bean body: " + myBean);
+        assertEquals("bar", myBean.foo, "bean foo: " + myBean);
 
         // 2nd message
         String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>baz</foo></env:Body></env:Envelope>";
@@ -57,8 +59,8 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
         Object out2 = template.requestBodyAndHeader("direct:in", expectedBody2, "foo", "bar");
         assertEquals("baz", out2);
 
-        assertEquals("bean body: " + myBean, expectedBody2, myBean.body);
-        assertEquals("bean foo: " + myBean, "baz", myBean.foo);
+        assertEquals(expectedBody2, myBean.body, "bean body: " + myBean);
+        assertEquals("baz", myBean.foo, "bean foo: " + myBean);
     }
 
     @Override

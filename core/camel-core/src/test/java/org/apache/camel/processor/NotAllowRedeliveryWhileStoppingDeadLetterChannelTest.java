@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends ContextTestSupport {
 
@@ -43,7 +45,7 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
         context.getRouteController().stopRoute("foo");
 
         // we should reject the task and stop quickly
-        assertTrue("Should stop quickly: " + watch.taken(), watch.taken() < 5000);
+        assertTrue(watch.taken() < 5000, "Should stop quickly: " + watch.taken());
 
         // should go to DLC
         Exchange dead = getMockEndpoint("mock:dead").getExchanges().get(0);

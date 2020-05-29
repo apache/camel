@@ -22,9 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.engine.DefaultConsumerCache;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
@@ -33,19 +35,19 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
         DefaultConsumerCache cache = new DefaultConsumerCache(this, context, 0);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         // test that we cache at most 1000 consumers to avoid it eating to much memory
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             PollingConsumer p = cache.acquirePollingConsumer(e);
-            assertNotNull("the polling consumer should not be null", p);
+            assertNotNull(p, "the polling consumer should not be null");
         }
 
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // the eviction is async so force cleanup
             cache.cleanUp();
-            assertEquals("Size should be 1000", 1000, cache.size());
+            assertEquals(1000, cache.size(), "Size should be 1000");
         });
 
         cache.stop();

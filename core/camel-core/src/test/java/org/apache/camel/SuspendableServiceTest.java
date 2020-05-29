@@ -16,10 +16,11 @@
  */
 package org.apache.camel;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SuspendableServiceTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SuspendableServiceTest {
 
     private static class MyService implements SuspendableService {
 

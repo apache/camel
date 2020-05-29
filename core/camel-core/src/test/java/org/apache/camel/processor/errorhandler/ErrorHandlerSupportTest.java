@@ -26,7 +26,9 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErrorHandlerSupportTest extends ContextTestSupport {
 

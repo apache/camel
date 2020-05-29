@@ -24,7 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomConsumerExceptionHandlerTest extends ContextTestSupport {
 
@@ -47,7 +49,7 @@ public class CustomConsumerExceptionHandlerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should have been called", LATCH.await(5, TimeUnit.SECONDS));
+        assertTrue(LATCH.await(5, TimeUnit.SECONDS), "Should have been called");
     }
 
     @Override

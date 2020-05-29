@@ -31,7 +31,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamResequencerTest extends ContextTestSupport {
 
@@ -114,7 +116,7 @@ public class StreamResequencerTest extends ContextTestSupport {
 
     protected void doTestStreamResequencerType() throws Exception {
         List<Route> list = getRouteList(createRouteBuilder());
-        assertEquals("Number of routes created: " + list, 1, list.size());
+        assertEquals(1, list.size(), "Number of routes created: " + list);
 
         Route route = list.get(0);
         DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);

@@ -32,8 +32,9 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupport {
     private AsyncCallback innerCallback;
@@ -56,7 +57,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         ExecutorService executorService = context.getExecutorServiceManager().newSingleThreadExecutor(this, "test");
         try {
             Future<Boolean> asyncFuture = executorService.submit(new ExchangeSubmitter(startEndpoint, asyncSender));
-            Assert.assertFalse(asyncFuture.get(5, TimeUnit.SECONDS));
+            assertFalse(asyncFuture.get(5, TimeUnit.SECONDS));
             innerExchange.getMessage().setBody("Bye Camel");
             innerCallback.done(false);
 
@@ -104,7 +105,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
             return asyncSender.process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    Assert.assertFalse(doneSync);
+                    assertFalse(doneSync);
                 }
             });
         }

@@ -21,8 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaCompletionMode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -86,7 +87,7 @@ public class SagaComponentTest extends ContextTestSupport {
 
         try {
             template.sendBody("direct:auto-workflow", "auto-compensate");
-            Assert.fail("Should throw an exception");
+            fail("Should throw an exception");
         } catch (Exception ex) {
             // OK
         }

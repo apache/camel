@@ -21,8 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -32,7 +32,7 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
     protected ProducerTemplate template2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -55,7 +55,7 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         template2.stop();
         context2.stop();

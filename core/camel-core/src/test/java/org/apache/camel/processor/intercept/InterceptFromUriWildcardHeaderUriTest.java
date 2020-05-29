@@ -19,7 +19,7 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html

@@ -24,7 +24,9 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PolicyPerProcessorTest extends ContextTestSupport {
 
@@ -46,8 +48,8 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
         MyPolicy bar = context.getRegistry().lookupByNameAndType("bar", MyPolicy.class);
 
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
-        assertEquals("Should only be invoked 1 time", 1, bar.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
+        assertEquals(1, bar.getInvoked(), "Should only be invoked 1 time");
     }
 
     @Override

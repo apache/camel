@@ -29,7 +29,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterPojoTest extends ContextTestSupport {
 
@@ -60,8 +62,8 @@ public class SplitterPojoTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:message", "Test Body Message", "user", "James,Jonathan,Hadrian,Claus,Willem");
         int i = 0;
         for (Exchange exchange : mock.getExchanges()) {
-            assertEquals("We got a wrong body ", "Test Body Message", exchange.getIn().getBody());
-            assertEquals("We got a wrong header ", users[i], exchange.getIn().getHeader("user"));
+            assertEquals("Test Body Message", exchange.getIn().getBody(), "We got a wrong body ");
+            assertEquals(users[i], exchange.getIn().getHeader("user"), "We got a wrong header ");
             i++;
         }
     }

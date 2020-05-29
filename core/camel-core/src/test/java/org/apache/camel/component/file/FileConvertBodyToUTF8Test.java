@@ -21,15 +21,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConvertBodyToUTF8Test extends ContextTestSupport {
 
     private byte[] body;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/utf8");
         super.setUp();
@@ -56,7 +58,7 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
 
         byte[] data = mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         boolean same = ObjectHelper.equal(body, data);
-        assertTrue("Should be same byte data", same);
+        assertTrue(same, "Should be same byte data");
     }
 
 }

@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSupport {
     protected static final RuntimeException RUNTIME_EXCEPTION = new RuntimeException("Expected exception.");

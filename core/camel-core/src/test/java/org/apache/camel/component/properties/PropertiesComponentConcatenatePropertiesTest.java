@@ -19,9 +19,9 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSupport {
     @Override
@@ -32,14 +32,14 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         System.setProperty("environment", "junit");
         super.setUp();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         System.clearProperty("environment");
         super.tearDown();

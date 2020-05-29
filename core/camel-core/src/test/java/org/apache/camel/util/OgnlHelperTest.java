@@ -18,13 +18,14 @@ package org.apache.camel.util;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
-public class OgnlHelperTest extends Assert {
+public class OgnlHelperTest {
 
     @Test
     public void testSplitOgnlSimple() throws Exception {

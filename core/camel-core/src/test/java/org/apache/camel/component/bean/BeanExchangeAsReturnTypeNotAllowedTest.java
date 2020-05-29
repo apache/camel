@@ -22,7 +22,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate that bean invocation must no return Exchange.
@@ -38,7 +41,8 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
             template.sendBody("direct:in", "Hello World");
             fail("Should have thrown IllegalStateException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalStateException);
+            boolean b = e.getCause() instanceof IllegalStateException;
+            assertTrue(b);
             // expected
         }
 

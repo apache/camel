@@ -20,13 +20,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.reifier.dataformat.CustomDataFormatReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class DataFormatReifierTest {
 
     @Test

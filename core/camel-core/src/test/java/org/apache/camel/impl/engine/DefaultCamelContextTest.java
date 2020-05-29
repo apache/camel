@@ -37,7 +37,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultCamelContextTest extends TestSupport {
 
@@ -201,15 +203,15 @@ public class DefaultCamelContextTest extends TestSupport {
             }
         });
         ctx.start();
-        assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
+        assertEquals(1, ctx.getRouteServices().size(), "Should have one RouteService");
         String routesString = ctx.getRoutes().toString();
         ctx.stop();
-        assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
+        assertEquals(1, ctx.getRouteServices().size(), "The RouteService should NOT be removed even when we stop");
         ctx.start();
-        assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
-        assertEquals("The Routes should be same", routesString, ctx.getRoutes().toString());
+        assertEquals(1, ctx.getRouteServices().size(), "Should have one RouteService");
+        assertEquals(routesString, ctx.getRoutes().toString(), "The Routes should be same");
         ctx.stop();
-        assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
+        assertEquals(1, ctx.getRouteServices().size(), "The RouteService should NOT be removed even when we stop");
     }
 
     @Test
@@ -217,7 +219,7 @@ public class DefaultCamelContextTest extends TestSupport {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
         ctx.init();
-        assertNotNull("Should have a default name", ctx.getName());
+        assertNotNull(ctx.getName(), "Should have a default name");
         ctx.setName("foo");
         assertEquals("foo", ctx.getName());
 
@@ -229,7 +231,7 @@ public class DefaultCamelContextTest extends TestSupport {
     public void testVersion() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
-        assertNotNull("Should have a version", ctx.getVersion());
+        assertNotNull(ctx.getVersion(), "Should have a version");
     }
 
     @Test

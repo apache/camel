@@ -22,8 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the how FileProducer writing absolute files
@@ -32,7 +32,7 @@ public class FilerProducerAbsoluteTest extends ContextTestSupport {
     private String path;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File dir = new File("target/data/reports/absolute");
         path = dir.getAbsolutePath();

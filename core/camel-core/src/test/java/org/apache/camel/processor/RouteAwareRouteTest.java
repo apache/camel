@@ -23,7 +23,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RouteAwareRouteTest extends ContextTestSupport {
 

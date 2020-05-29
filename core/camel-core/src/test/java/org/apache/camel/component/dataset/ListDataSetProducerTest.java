@@ -23,8 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ListDataSetProducerTest extends ContextTestSupport {
 
@@ -62,7 +62,7 @@ public class ListDataSetProducerTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         List<Object> bodies = new LinkedList<>();
         bodies.add("<hello>world!</hello>");

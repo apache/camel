@@ -23,7 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSupport {
 
@@ -55,8 +58,8 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
 
         // it should wait as there were 2 inflight exchanges and 8 pending
         // messages left
-        assertEquals("Should graceful shutdown", "ABCDE", foo);
-        assertEquals("Should graceful shutdown", "ABCDE", bar);
+        assertEquals("ABCDE", foo, "Should graceful shutdown");
+        assertEquals("ABCDE", bar, "Should graceful shutdown");
     }
 
     @Override

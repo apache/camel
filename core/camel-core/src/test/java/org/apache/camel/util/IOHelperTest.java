@@ -30,10 +30,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IOHelperTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class IOHelperTest {
 
     @Test
     public void testIOException() {

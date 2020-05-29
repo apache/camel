@@ -30,8 +30,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SagaPropagationTest extends ContextTestSupport {
 
@@ -73,7 +74,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     public void testPropagationMandatory() throws Exception {
         try {
             context.createFluentProducerTemplate().to("direct:mandatory").request();
-            Assert.fail("Exception not thrown");
+            fail("Exception not thrown");
         } catch (CamelExecutionException ex) {
             // fine
         }
@@ -83,7 +84,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     public void testPropagationNever() throws Exception {
         try {
             context.createFluentProducerTemplate().to("direct:never").request();
-            Assert.fail("Exception not thrown");
+            fail("Exception not thrown");
         } catch (CamelExecutionException ex) {
             // fine
         }
@@ -156,14 +157,14 @@ public class SagaPropagationTest extends ContextTestSupport {
     private void assertUniqueNonNullSagaIds(int num) {
         Set<String> uniqueNonNull = this.sagaIds.stream().filter(Objects::nonNull).collect(Collectors.toSet());
         if (uniqueNonNull.size() != num) {
-            Assert.fail("Expeced size " + num + ", actual " + uniqueNonNull.size());
+            fail("Expeced size " + num + ", actual " + uniqueNonNull.size());
         }
     }
 
     private void assertNonNullSagaIds(int num) {
         List<String> nonNull = this.sagaIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
         if (nonNull.size() != num) {
-            Assert.fail("Expeced size " + num + ", actual " + nonNull.size());
+            fail("Expeced size " + num + ", actual " + nonNull.size());
         }
     }
 

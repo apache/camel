@@ -23,7 +23,9 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify unit of work with seda. That the UnitOfWork is able to
@@ -50,7 +52,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);
-        assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
+        assertEquals("bar", foo, "Should have propagated the header inside the Synchronization.onComplete() callback");
     }
 
     @Test
@@ -63,7 +65,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         assertEquals("onFailureA", sync);
         assertEquals("onFailureA", lastOne);
-        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "yes", kaboom);
+        assertEquals("yes", kaboom, "Should have propagated the header inside the Synchronization.onFailure() callback");
     }
 
     @Override

@@ -22,19 +22,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  */
-@Ignore
+@Disabled
 public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/classes/com.mycompany");
         createDirectory("target/classes/com.mycompany");
@@ -49,7 +49,7 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         deleteDirectory("target/data/classes/com.mycompany");
         super.tearDown();

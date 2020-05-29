@@ -22,10 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XPathFunctionTest extends ContextTestSupport {
 
@@ -69,7 +70,7 @@ public class XPathFunctionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         Exchange exchange = end.getExchanges().get(0);
         NodeList nodeList = exchange.getProperty("Addresses", NodeList.class);
-        assertNotNull("The node list should not be null", nodeList);
+        assertNotNull(nodeList, "The node list should not be null");
 
     }
 
@@ -78,7 +79,7 @@ public class XPathFunctionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

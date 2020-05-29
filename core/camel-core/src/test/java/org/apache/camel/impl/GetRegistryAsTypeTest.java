@@ -22,10 +22,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class GetRegistryAsTypeTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class GetRegistryAsTypeTest {
 
     @Test
     public void testDefault() throws Exception {

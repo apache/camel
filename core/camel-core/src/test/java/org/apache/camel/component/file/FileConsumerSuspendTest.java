@@ -24,13 +24,16 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileConsumerSuspendTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/suspended");
         super.setUp();
@@ -50,7 +53,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/data/suspended/").list();
         assertNotNull(files);
-        assertEquals("The file should exists", 1, files.length);
+        assertEquals(1, files.length, "The file should exists");
     }
 
     @Override

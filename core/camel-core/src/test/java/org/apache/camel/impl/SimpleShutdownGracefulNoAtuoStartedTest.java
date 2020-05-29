@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleShutdownGracefulNoAtuoStartedTest extends ContextTestSupport {
 
@@ -39,7 +41,7 @@ public class SimpleShutdownGracefulNoAtuoStartedTest extends ContextTestSupport 
         context.stop();
 
         // it should wait as there was 1 inflight exchange when asked to stop
-        assertEquals("Should graceful shutdown", "stopHello World", foo);
+        assertEquals("stopHello World", foo, "Should graceful shutdown");
     }
 
     @Override

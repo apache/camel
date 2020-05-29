@@ -21,9 +21,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
@@ -35,7 +38,7 @@ public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport 
 
         template.sendBodyAndHeader("direct:in", expectedBody, "foo", "bar");
 
-        assertEquals("bean body: " + myBean, expectedBody, myBean.body);
+        assertEquals(expectedBody, myBean.body, "bean body: " + myBean);
     }
 
     @Override
