@@ -22,6 +22,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 
+// TODO: Remove
+
 public class HealthCheckConfiguration implements Cloneable {
     public static final Boolean DEFAULT_VALUE_ENABLED = Boolean.TRUE;
     public static final Duration DEFAULT_VALUE_INTERVAL = Duration.ZERO;

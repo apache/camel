@@ -24,7 +24,10 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedCamelHealthMBean {
-    
+
+    @ManagedAttribute(description = "Whether Health Check is enabled globally")
+    boolean isEnabled();
+
     @ManagedAttribute(description = "Application Health")
     boolean isHealthy();
 
