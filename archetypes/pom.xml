@@ -33,6 +33,10 @@
     <description>Camel Archetypes</description>
     <packaging>pom</packaging>
 
+    <properties>
+         <spring-boot-version>2.3.0.RELEASE</spring-boot-version>
+    </properties>
+
     <modules>
         <module>camel-archetype-api-component</module>
         <module>camel-archetype-blueprint</module>
