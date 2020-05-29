@@ -27,77 +27,81 @@ import org.apache.camel.converter.dozer.model.Customer;
 import org.apache.camel.converter.dozer.model.CustomerA;
 import org.apache.camel.converter.dozer.model.CustomerB;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DozerBeanMappingTest {
 
     @Test
-    public void testMarshalViaDozer() throws Exception {
+    void testMarshalViaDozer() throws Exception {
 
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").convertBodyTo(HashMap.class);
             }
         });
 
         DozerBeanMapperConfiguration mconfig = new DozerBeanMapperConfiguration();
         mconfig.setMappingFiles(Arrays.asList("bean-to-map-dozer-mappings.xml"));
-        new DozerTypeConverterLoader(context, mconfig);
+        try (DozerTypeConverterLoader dtcl = new DozerTypeConverterLoader(context, mconfig)) {
+        }
 
         context.start();
         try {
             ProducerTemplate producer = context.createProducerTemplate();
             Map<?, ?> result = producer.requestBody("direct:start", new Customer("John", "Doe", null), Map.class);
-            Assert.assertEquals("John", result.get("firstName"));
-            Assert.assertEquals("Doe", result.get("lastName"));
+            assertEquals("John", result.get("firstName"));
+            assertEquals("Doe", result.get("lastName"));
         } finally {
             context.stop();
         }
     }
 
     @Test
-    public void testMarshalToInterfaceViaDozer() throws Exception {
+    void testMarshalToInterfaceViaDozer() throws Exception {
 
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").convertBodyTo(Map.class);
             }
         });
 
         DozerBeanMapperConfiguration mconfig = new DozerBeanMapperConfiguration();
         mconfig.setMappingFiles(Arrays.asList("bean-to-map-dozer-mappings.xml"));
-        new DozerTypeConverterLoader(context, mconfig);
+        try (DozerTypeConverterLoader dtcl = new DozerTypeConverterLoader(context, mconfig)) {
+        }
 
         context.start();
         try {
             ProducerTemplate producer = context.createProducerTemplate();
             Map<?, ?> result = producer.requestBody("direct:start", new Customer("John", "Doe", null), Map.class);
-            Assert.assertEquals("John", result.get("firstName"));
-            Assert.assertEquals("Doe", result.get("lastName"));
+            assertEquals("John", result.get("firstName"));
+            assertEquals("Doe", result.get("lastName"));
         } finally {
             context.stop();
         }
     }
 
     @Test
-    public void testBeanMapping() throws Exception {
+    void testBeanMapping() throws Exception {
 
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").convertBodyTo(CustomerB.class);
             }
         });
 
         DozerBeanMapperConfiguration mconfig = new DozerBeanMapperConfiguration();
         mconfig.setMappingFiles(Arrays.asList("bean-to-bean-dozer-mappings.xml"));
-        new DozerTypeConverterLoader(context, mconfig);
+        try (DozerTypeConverterLoader dtcl = new DozerTypeConverterLoader(context, mconfig)) {
+        }
 
         CustomerA customerA = new CustomerA("Peter", "Post", "SomeStreet", "12345");
 
@@ -105,10 +109,10 @@ public class DozerBeanMappingTest {
         try {
             ProducerTemplate producer = context.createProducerTemplate();
             CustomerB result = producer.requestBody("direct:start", customerA, CustomerB.class);
-            Assert.assertEquals(customerA.getFirstName(), result.getFirstName());
-            Assert.assertEquals(customerA.getLastName(), result.getLastName());
-            Assert.assertEquals(customerA.getStreet(), result.getAddress().getStreet());
-            Assert.assertEquals(customerA.getZip(), result.getAddress().getZip());
+            assertEquals(customerA.getFirstName(), result.getFirstName());
+            assertEquals(customerA.getLastName(), result.getLastName());
+            assertEquals(customerA.getStreet(), result.getAddress().getStreet());
+            assertEquals(customerA.getZip(), result.getAddress().getZip());
         } finally {
             context.stop();
         }
