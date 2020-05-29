@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * A testcase for exception handler when management is enabled (by default).

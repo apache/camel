@@ -29,7 +29,11 @@ import org.apache.camel.api.management.mbean.ManagedThrottlingExceptionRoutePoli
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSupport {
 
@@ -47,7 +51,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         assertEquals(1, set.size());
         ObjectName on = set.iterator().next();
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         // check the starting endpoint uri
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");

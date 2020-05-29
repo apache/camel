@@ -29,9 +29,14 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
@@ -61,7 +66,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found TransformerRegistry", on);
+        assertNotNull(on, "Should have found TransformerRegistry");
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());

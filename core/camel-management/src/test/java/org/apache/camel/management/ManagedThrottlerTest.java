@@ -30,7 +30,11 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
@@ -79,7 +83,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take at most 1.0 sec: was " + total, total < 1000);
+        assertTrue(total < 1000, "Should take at most 1.0 sec: was " + total);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));
@@ -100,7 +104,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should be around 1 sec now: was " + total, total > 1000);
+        assertTrue(total > 1000, "Should be around 1 sec now: was " + total);
     }
 
     @Test

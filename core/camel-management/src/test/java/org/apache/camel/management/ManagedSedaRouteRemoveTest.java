@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedSedaRouteRemoveTest extends ManagementTestSupport {
 
@@ -47,7 +51,7 @@ public class ManagedSedaRouteRemoveTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // and there should be 2 thread pools (1 default + 1 seda)
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
@@ -59,20 +63,20 @@ public class ManagedSedaRouteRemoveTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertTrue("There should be a seda thread pool", seda);
+        assertTrue(seda, "There should be a seda thread pool");
 
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // remove
         mbeanServer.invoke(on, "remove", null, null);
 
         // should not be registered anymore
         boolean registered = mbeanServer.isRegistered(on);
-        assertFalse("Route mbean should have been unregistered", registered);
+        assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no more routes
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -88,7 +92,7 @@ public class ManagedSedaRouteRemoveTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertFalse("There should not be a seda thread pool", seda);
+        assertFalse(seda, "There should not be a seda thread pool");
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {

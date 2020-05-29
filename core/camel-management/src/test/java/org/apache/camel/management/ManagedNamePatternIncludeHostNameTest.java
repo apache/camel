@@ -21,7 +21,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport {
 
@@ -48,7 +50,7 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
         assertTrue(context.getManagementName().startsWith("cool"));
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\"camel-1\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
     }
 
     @Override

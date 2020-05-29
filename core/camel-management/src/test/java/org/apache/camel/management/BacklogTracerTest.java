@@ -28,7 +28,11 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BacklogTracerTest extends ManagementTestSupport {
 
@@ -46,10 +50,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
         assertEquals(Boolean.TRUE, removeOnDump);
@@ -94,10 +98,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -133,7 +137,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -205,7 +209,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -245,7 +249,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -298,7 +302,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -359,14 +363,14 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
         // change size to 2 x 10 (as we need for first as well)
         mbeanServer.setAttribute(on, new Attribute("BacklogSize", 20));
         // set the pattern to match only foo
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo"));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));

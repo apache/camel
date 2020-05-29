@@ -32,7 +32,11 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
@@ -62,11 +66,11 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));
-        assertTrue(invoke(mbeanServer, on, "isVerifySupported"));
+        assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"direct\"");
         assertTrue(mbeanServer.isRegistered(on));
-        assertFalse(invoke(mbeanServer, on, "isVerifySupported"));
+        assertFalse((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
     }
 
     @Test
@@ -80,7 +84,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));
-        assertTrue(invoke(mbeanServer, on, "isVerifySupported"));
+        assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 
         ComponentVerifierExtension.Result res;
 

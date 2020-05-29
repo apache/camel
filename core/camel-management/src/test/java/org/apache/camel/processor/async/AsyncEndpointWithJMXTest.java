@@ -18,7 +18,10 @@ package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointWithJMXTest extends ContextTestSupport {
 
@@ -41,7 +44,7 @@ public class AsyncEndpointWithJMXTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override

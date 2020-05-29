@@ -25,8 +25,11 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
@@ -48,7 +51,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     @Test
     public void testRouteAddRemoteRouteWithTo() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        Assume.assumeFalse(isPlatform("aix"));
+        Assumptions.assumeFalse(isPlatform("aix"));
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

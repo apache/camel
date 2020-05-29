@@ -24,9 +24,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BacklogDebuggerTest extends ManagementTestSupport {
 
@@ -44,13 +49,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
@@ -76,8 +81,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("Hello World"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+        assertTrue(xml.contains("Hello World"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -107,13 +112,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -153,9 +158,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("Changed body"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
-        assertTrue("Should contain our added header", xml.contains("<header key=\"beer\" type=\"java.lang.String\">Carlsberg</header>"));
+        assertTrue(xml.contains("Changed body"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.String\">Carlsberg</header>"), "Should contain our added header");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -185,13 +190,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -233,9 +238,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("444"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
-        assertTrue("Should contain our added header", xml.contains("<header key=\"beer\" type=\"java.lang.Integer\">123</header>"));
+        assertTrue(xml.contains("444"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.Integer\">123</header>"), "Should contain our added header");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -265,13 +270,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -311,9 +316,9 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should not contain our body", xml.contains("<body>[Body is null]</body>"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
-        assertFalse("Should not contain any headers", xml.contains("<header"));
+        assertTrue(xml.contains("<body>[Body is null]</body>"), "Should not contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertFalse(xml.contains("<header"), "Should not contain any headers");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -343,13 +348,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
@@ -375,7 +380,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -405,13 +410,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // validate conditional breakpoint (mistake on purpose)
         Object out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"unknown", "${body contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
@@ -460,8 +465,8 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("Hello Camel"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+        assertTrue(xml.contains("Hello Camel"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
 
         resetMocks();
         mock.expectedMessageCount(1);
@@ -491,13 +496,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -517,7 +522,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         Boolean stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
 
         // step breakpoint
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -575,7 +580,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         // should no longer be in step mode
         stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
     }
 
     @SuppressWarnings("unchecked")
@@ -592,13 +597,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
         mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -618,7 +623,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         Boolean stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
 
         // step breakpoint
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
@@ -676,7 +681,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         // should no longer be in step mode
         stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
     }
 
     @Override

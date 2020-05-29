@@ -31,7 +31,10 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.WhenDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
@@ -49,10 +52,10 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
