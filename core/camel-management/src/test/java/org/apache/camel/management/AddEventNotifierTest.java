@@ -24,8 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AddEventNotifierTest extends ContextTestSupport {
 
@@ -33,7 +35,7 @@ public class AddEventNotifierTest extends ContextTestSupport {
     private EventNotifier notifier;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
         super.setUp();

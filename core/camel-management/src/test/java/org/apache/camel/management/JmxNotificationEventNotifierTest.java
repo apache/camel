@@ -25,7 +25,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JmxNotificationEventNotifierTest extends ContextTestSupport {
 
@@ -76,7 +79,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        assertEquals("Get a wrong number of events", 8, listener.getEventCounter());
+        assertEquals(8, listener.getEventCounter(), "Get a wrong number of events");
 
         context.stop();
     }
@@ -103,7 +106,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         }
         
-        assertEquals("Get a wrong number of events", 4, listener.getEventCounter());
+        assertEquals(4, listener.getEventCounter(), "Get a wrong number of events");
 
         context.stop();
     }

@@ -25,7 +25,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
@@ -44,7 +47,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
         
         boolean registered = mbeanServer.isRegistered(on);
-        assertTrue("Should be registered", registered);
+        assertTrue(registered, "Should be registered");
         
         context.getRouteController().stopRoute("route1");
         context.removeRoute("route1");
@@ -69,7 +72,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
@@ -98,7 +101,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
         
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
         
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<>();

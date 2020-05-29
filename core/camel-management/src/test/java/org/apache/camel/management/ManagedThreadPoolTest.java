@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedThreadPoolTest extends ManagementTestSupport {
 
@@ -76,7 +78,7 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         assertEquals(true, empty.booleanValue());
 
         int remainingCapacity = (Integer) mbeanServer.invoke(on, "getTaskQueueRemainingCapacity", null, null);
-        assertEquals("remainingCapacity", 200, remainingCapacity);
+        assertEquals(200, remainingCapacity, "remainingCapacity");
     }
 
     @Override

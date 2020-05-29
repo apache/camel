@@ -23,7 +23,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
 
@@ -46,7 +49,7 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 

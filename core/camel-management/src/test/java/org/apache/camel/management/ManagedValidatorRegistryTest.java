@@ -29,7 +29,11 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedValidatorRegistryTest extends ManagementTestSupport {
 
@@ -58,7 +62,7 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found ValidatorRegistry", on);
+        assertNotNull(on, "Should have found ValidatorRegistry");
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());

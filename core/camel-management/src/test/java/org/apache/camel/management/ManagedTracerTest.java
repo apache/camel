@@ -21,7 +21,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedTracerTest extends ManagementTestSupport {
 
@@ -38,7 +42,7 @@ public class ManagedTracerTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -65,7 +69,7 @@ public class ManagedTracerTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo*"));
         mbeanServer.invoke(on, "resetTraceCounter", null, null);

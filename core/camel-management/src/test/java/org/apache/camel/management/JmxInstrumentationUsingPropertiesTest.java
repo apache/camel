@@ -19,8 +19,10 @@ package org.apache.camel.management;
 import javax.management.ObjectName;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This module contains test cases that verifies jmx system property uses.
@@ -33,7 +35,7 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         domainName = "org.apache.camel-properties";
         System.setProperty(JmxSystemPropertyKeys.DOMAIN, domainName);

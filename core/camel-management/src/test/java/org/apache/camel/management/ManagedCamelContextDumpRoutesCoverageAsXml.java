@@ -23,6 +23,9 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSupport {
 
     public void testRouteCoverageStats() throws Exception {

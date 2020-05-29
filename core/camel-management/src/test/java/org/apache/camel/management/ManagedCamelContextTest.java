@@ -27,7 +27,13 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextTest extends ManagementTestSupport {
 
@@ -64,7 +70,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
@@ -160,14 +166,14 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
-        assertTrue("Should be registered " + seda, registered);
+        assertTrue(registered, "Should be registered " + seda);
 
         // create it again
         reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
         assertEquals(Boolean.FALSE, reply);
 
         registered = mbeanServer.isRegistered(seda);
-        assertTrue("Should be registered " + seda, registered);
+        assertTrue(registered, "Should be registered " + seda);
     }
 
     @Test
@@ -191,7 +197,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
-        assertTrue("Should be registered " + seda, registered);
+        assertTrue(registered, "Should be registered " + seda);
 
         // remove it
         Object num = mbeanServer.invoke(on, "removeEndpoints", new Object[]{"seda:*"}, new String[]{"java.lang.String"});
@@ -199,7 +205,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
-        assertFalse("Should not be registered " + seda, registered);
+        assertFalse(registered, "Should not be registered " + seda);
 
         // remove it again
         num = mbeanServer.invoke(on, "removeEndpoints", new Object[]{"seda:*"}, new String[]{"java.lang.String"});
@@ -207,7 +213,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
-        assertFalse("Should not be registered " + seda, registered);
+        assertFalse(registered, "Should not be registered " + seda);
     }
 
     @Override

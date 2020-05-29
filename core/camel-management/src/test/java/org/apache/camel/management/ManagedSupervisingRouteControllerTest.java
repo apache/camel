@@ -33,9 +33,12 @@ import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.engine.DefaultSupervisingRouteController;
 import org.apache.camel.spi.SupervisingRouteController;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport {
 

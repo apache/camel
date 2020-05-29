@@ -23,7 +23,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedErrorHandlerTest extends ManagementTestSupport {
 
@@ -47,8 +50,8 @@ public class ManagedErrorHandlerTest extends ManagementTestSupport {
         String name1 = on1.getCanonicalName();
         String name2 = on2.getCanonicalName();
 
-        assertTrue("Should be a default error handler", name1.contains("CamelDefaultErrorHandlerBuilder") || name2.contains("CamelDefaultErrorHandlerBuilder"));
-        assertTrue("Should be a dead letter error handler", name1.contains("DeadLetterChannelBuilder") || name2.contains("DeadLetterChannelBuilder"));
+        assertTrue(name1.contains("CamelDefaultErrorHandlerBuilder") || name2.contains("CamelDefaultErrorHandlerBuilder"), "Should be a default error handler");
+        assertTrue(name1.contains("DeadLetterChannelBuilder") || name2.contains("DeadLetterChannelBuilder"), "Should be a dead letter error handler");
     }
 
     @Override

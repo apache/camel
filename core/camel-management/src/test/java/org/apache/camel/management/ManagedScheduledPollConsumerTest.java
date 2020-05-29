@@ -24,7 +24,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
@@ -42,7 +46,7 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
         ObjectName on = set.iterator().next();
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("file://target/data/foo?backoffErrorThreshold=3&backoffIdleThreshold=2&backoffMultiplier=4&delay=4000", uri);
 
@@ -105,7 +109,7 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
         assertEquals(2000, initialDelay.longValue());
 
         context.stop();
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+        assertFalse(mbeanServer.isRegistered(on), "Should no longer be registered");
     }
 
     @Override

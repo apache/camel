@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperties;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("CAMEL-8086: used for manual testing a memory issue")
+@Disabled("CAMEL-8086: used for manual testing a memory issue")
 public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport implements Processor {
 
     private static final int MAX_ITERATIONS = 1000;

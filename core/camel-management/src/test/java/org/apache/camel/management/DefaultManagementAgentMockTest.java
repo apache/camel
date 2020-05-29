@@ -25,10 +25,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;

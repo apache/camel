@@ -25,7 +25,9 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.loadbalancer.LoadBalancerSupport;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 

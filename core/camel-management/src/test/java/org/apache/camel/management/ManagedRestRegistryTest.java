@@ -26,7 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRestRegistryTest extends ManagementTestSupport {
 
@@ -57,7 +62,7 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertNotNull("Cannot find DefaultRestRegistry", name);
+        assertNotNull(name, "Cannot find DefaultRestRegistry");
         assertTrue(mbeanServer.isRegistered(name));
 
         assertEquals(3, mbeanServer.getAttribute(name, "NumberOfRestServices"));
