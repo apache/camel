@@ -23,7 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RabbitMQMultiValueTest extends ContextTestSupport {
 

@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class TimerAdvancedTest extends ContextTestSupport {
 

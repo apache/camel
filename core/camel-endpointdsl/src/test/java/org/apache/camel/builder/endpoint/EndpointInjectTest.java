@@ -21,7 +21,7 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;

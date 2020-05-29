@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory;
 import org.apache.camel.component.paho.PahoEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class PahoTest extends ContextTestSupport {
 
