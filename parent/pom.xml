@@ -510,7 +510,6 @@
         <spark-version>2.4.5</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.2.2.RELEASE</spring-batch-version>
-        <spring-boot-version>2.2.7.RELEASE</spring-boot-version>
         <spring-data-redis-version>2.3.0.RELEASE</spring-data-redis-version>
         <spring-integration-version>5.3.0.RELEASE</spring-integration-version>
         <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
@@ -3192,17 +3191,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
                 <version>${spring-security-version}</version>
-            </dependency>
-            <!-- spring-boot support -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter</artifactId>
-                <version>${spring-boot-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot-version}</version>
             </dependency>
 
             <dependency>
