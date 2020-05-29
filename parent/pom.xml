@@ -151,7 +151,7 @@
         <djl-mxnet-native-version>1.6.0</djl-mxnet-native-version>
         <docker-java-version>3.1.5</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
-        <drools-version>7.36.1.Final</drools-version>
+        <drools-version>7.38.0.Final</drools-version>
         <dropbox-version>3.1.3</dropbox-version>
         <debezium-version>1.1.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.16</debezium-mysql-connector-version>
