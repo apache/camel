@@ -152,7 +152,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: consumer
          */
         default DebeziumMongodbComponentBuilder offsetCommitTimeoutMs(
@@ -165,7 +165,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: consumer
          */
         default DebeziumMongodbComponentBuilder offsetFlushIntervalMs(

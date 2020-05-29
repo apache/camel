@@ -176,7 +176,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetCommitTimeoutMs(
@@ -192,7 +192,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetCommitTimeoutMs(
@@ -205,7 +205,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetFlushIntervalMs(
@@ -218,7 +218,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetFlushIntervalMs(

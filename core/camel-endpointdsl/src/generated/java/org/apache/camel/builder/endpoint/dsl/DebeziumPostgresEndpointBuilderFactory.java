@@ -176,7 +176,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetCommitTimeoutMs(
@@ -192,7 +192,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetCommitTimeoutMs(
@@ -205,7 +205,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetFlushIntervalMs(
@@ -218,7 +218,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetFlushIntervalMs(
