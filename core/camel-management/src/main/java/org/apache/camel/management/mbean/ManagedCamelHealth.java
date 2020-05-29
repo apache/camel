@@ -115,4 +115,14 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
         return result.map(r -> r.getState().name()).orElse(HealthCheck.State.UNKNOWN.name());
     }
+
+    @Override
+    public void enableById(String id) {
+        healthCheckRegistry.getCheck(id).ifPresent(h -> h.getConfiguration().setEnabled(true));
+    }
+
+    @Override
+    public void disableById(String id) {
+        healthCheckRegistry.getCheck(id).ifPresent(h -> h.getConfiguration().setEnabled(false));
+    }
 }
