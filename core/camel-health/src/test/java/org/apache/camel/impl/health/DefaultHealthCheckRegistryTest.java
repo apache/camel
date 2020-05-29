@@ -117,7 +117,7 @@ public class DefaultHealthCheckRegistryTest {
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
-        HealthCheck hc = registry.resolveHealthCheckById("context");
+        HealthCheck hc = (HealthCheck) registry.resolveById("context");
         Assert.assertNotNull(hc);
         Assert.assertEquals("camel", hc.getGroup());
         Assert.assertEquals("context", hc.getId());
@@ -150,7 +150,7 @@ public class DefaultHealthCheckRegistryTest {
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
-        HealthCheckRepository hc = registry.resolveHealthCheckRepositoryById("routes");
+        HealthCheckRepository hc = (HealthCheckRepository) registry.resolveById("routes");
         Assert.assertNotNull(hc);
         Assert.assertEquals("routes", hc.getId());
         Assert.assertTrue(hc instanceof RoutesHealthCheckRepository);

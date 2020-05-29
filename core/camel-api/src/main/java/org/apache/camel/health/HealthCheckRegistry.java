@@ -37,39 +37,26 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService {
     String FACTORY = "health-check-registry";
 
     /**
-     * Resolves {@link HealthCheck} by id.
+     * Resolves {@link HealthCheck} or {@link HealthCheckRepository} by id.
      *
      * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry},
      * and lastly do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.
-     * The classpath scanning is attempted first with id-health-check as the key, and then with id as fallback
-     * if not found the first time.
-     */
-    HealthCheck resolveHealthCheckById(String id);
-
-    /**
-     * Resolves {@link HealthCheckRepository} by id.
+     * The classpath scanning is attempted first with id-health-check or id-health-check-repository as the key,
+     * and then with id as fallback if not found the first time.
      *
-     * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry},
-     * and lastly do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.
-     * The classpath scanning is attempted first with id-health-check-repository as the key, and then with id as fallback
-     * if not found the first time.
+     * @return either {@link HealthCheck} or {@link HealthCheckRepository}, or <tt>null</tt> if none found.
      */
-    HealthCheckRepository resolveHealthCheckRepositoryById(String id);
+    Object resolveById(String id);
 
     /**
-     * Registers a {@link HealthCheck}.
+     * Registers a {@link HealthCheck} or {@link HealthCheckRepository}.
      */
-    boolean register(HealthCheck check);
+    boolean register(Object obj);
 
     /**
-     * Unregisters a {@link HealthCheck}.
+     * Unregisters a {@link HealthCheck} or {@link HealthCheckRepository}.
      */
-    boolean unregister(HealthCheck check);
-
-    /**
-     * Registers a {@link HealthCheckRepository}.
-     */
-    boolean register(HealthCheckRepository repository);
+    boolean unregister(Object obj);
 
     /**
      * A collection of health check IDs.
