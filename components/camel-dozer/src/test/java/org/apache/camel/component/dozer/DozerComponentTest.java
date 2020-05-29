@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DozerComponentTest extends CamelTestSupport {
     
@@ -37,22 +39,22 @@ public class DozerComponentTest extends CamelTestSupport {
             + "&mappingFile=" + DOZER_CONFIG_PATH;
     
     @Test
-    public void testCreateEndpoint() throws Exception {
+    void testCreateEndpoint() {
         DozerEndpoint ep = context.getEndpoint(TRANSFORM_EP_1, DozerEndpoint.class);
         DozerConfiguration config = ep.getConfiguration();
-        Assert.assertEquals(NAME, config.getName());
-        Assert.assertEquals(MARSHAL_ID, config.getMarshalId());
-        Assert.assertEquals(UNMARSHAL_ID, config.getUnmarshalId());
-        Assert.assertEquals(SOURCE_MODEL, config.getSourceModel());
-        Assert.assertEquals(TARGET_MODEL, config.getTargetModel());
-        Assert.assertEquals(DOZER_CONFIG_PATH, config.getMappingFile());
+        assertEquals(NAME, config.getName());
+        assertEquals(MARSHAL_ID, config.getMarshalId());
+        assertEquals(UNMARSHAL_ID, config.getUnmarshalId());
+        assertEquals(SOURCE_MODEL, config.getSourceModel());
+        assertEquals(TARGET_MODEL, config.getTargetModel());
+        assertEquals(DOZER_CONFIG_PATH, config.getMappingFile());
     }
     
     @Test
-    public void requiredTargetModelMissing() throws Exception {
+    void requiredTargetModelMissing() {
         try {
-            DozerEndpoint ep = context.getEndpoint("dozer:noTargetModel?mappingFile=mapping.xml", DozerEndpoint.class);
-            Assert.fail("targetModel is a required parameter");
+            context.getEndpoint("dozer:noTargetModel?mappingFile=mapping.xml", DozerEndpoint.class);
+            fail("targetModel is a required parameter");
         } catch (Exception ex) {
             // expected
         }

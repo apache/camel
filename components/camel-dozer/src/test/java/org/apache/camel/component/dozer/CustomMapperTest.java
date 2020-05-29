@@ -19,61 +19,63 @@ package org.apache.camel.component.dozer;
 import java.lang.reflect.Method;
 
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CustomMapperTest {
     
     private CustomMapper customMapper;
     
-    @Before
+    @BeforeEach
     public void setup() {
         customMapper = new CustomMapper(new DefaultClassResolver());
     }
     
     @Test
-    public void selectMapperOneMethod() {
+    void selectMapperOneMethod() {
         customMapper.setParameter(MapperWithOneMethod.class.getName());
-        Assert.assertNotNull(customMapper.selectMethod(MapperWithOneMethod.class, String.class));
+        assertNotNull(customMapper.selectMethod(MapperWithOneMethod.class, String.class));
     }
     
     @Test
-    public void selectMapperMultipleMethods() throws Exception {
+    void selectMapperMultipleMethods() throws Exception {
         Method selectedMethod = customMapper.selectMethod(MapperWithTwoMethods.class, B.class);
-        Assert.assertNotNull(selectedMethod);
-        Assert.assertEquals(
-                MapperWithTwoMethods.class.getMethod("convertToA", B.class),
-                selectedMethod);
+        assertNotNull(selectedMethod);
+        assertEquals(MapperWithTwoMethods.class.getMethod("convertToA", B.class), selectedMethod);
     }
     
     @Test
-    public void mapCustomFindOperation() throws Exception {
+    void mapCustomFindOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName());
-        Assert.assertNotNull(customMapper.mapCustom(new B(), B.class));
+        assertNotNull(customMapper.mapCustom(new B(), B.class));
     }
     
     @Test
-    public void mapCustomDeclaredOperation() throws Exception {
+    void mapCustomDeclaredOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToA");
-        Assert.assertNotNull(customMapper.mapCustom(new B(), B.class));
+        assertNotNull(customMapper.mapCustom(new B(), B.class));
     }
     
     @Test
-    public void mapCustomInvalidOperation() {
+    void mapCustomInvalidOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToB");
         try {
             customMapper.mapCustom(new B(), B.class);
-            Assert.fail("Invalid operation should result in exception");
+            fail("Invalid operation should result in exception");
         } catch (RuntimeException ex) {
-            Assert.assertTrue(ex.getCause() instanceof NoSuchMethodException);
+            assertTrue(ex.getCause() instanceof NoSuchMethodException);
         }
     }
 
     @Test
-    public void mapCustomNullField() throws Exception {
+    void mapCustomNullField() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName());
-        Assert.assertNotNull(customMapper.mapCustom(null, B.class));
+        assertNotNull(customMapper.mapCustom(null, B.class));
     }
 }
 

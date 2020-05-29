@@ -23,15 +23,15 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@CamelSpringTest
 @ContextConfiguration
 public class XmlToJsonTest {
     
@@ -47,23 +47,23 @@ public class XmlToJsonTest {
     @Autowired
     private CamelContext camelContext;
     
-    @After
+    @AfterEach
     public void tearDown() {
         resultEndpoint.reset();
     }
     
     @Test
-    public void testXmlToJson() throws Exception {
+    void testXmlToJson() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         startEndpoint.sendBody(getResourceAsString(ABC_ORDER_PATH));
         // check results
         resultEndpoint.assertIsSatisfied();
         String result = resultEndpoint.getExchanges().get(0).getIn().getBody(String.class);
-        Assert.assertEquals(getResourceAsString(XYZ_ORDER_PATH), result);
+        assertEquals(getResourceAsString(XYZ_ORDER_PATH), result);
     }
     
     @Test
-    public void testMultipleSends() throws Exception {
+    void testMultipleSends() throws Exception {
         resultEndpoint.expectedMessageCount(2);
         startEndpoint.sendBody(getResourceAsString(ABC_ORDER_PATH));
         startEndpoint.sendBody(getResourceAsString(ABC_ORDER_PATH));
@@ -71,8 +71,8 @@ public class XmlToJsonTest {
         resultEndpoint.assertIsSatisfied();
         String result1 = resultEndpoint.getExchanges().get(0).getIn().getBody(String.class);
         String result2 = resultEndpoint.getExchanges().get(1).getIn().getBody(String.class);
-        Assert.assertEquals(getResourceAsString(XYZ_ORDER_PATH), result1);
-        Assert.assertEquals(getResourceAsString(XYZ_ORDER_PATH), result2);
+        assertEquals(getResourceAsString(XYZ_ORDER_PATH), result1);
+        assertEquals(getResourceAsString(XYZ_ORDER_PATH), result2);
     }
     
     private String getResourceAsString(String resourcePath) {
