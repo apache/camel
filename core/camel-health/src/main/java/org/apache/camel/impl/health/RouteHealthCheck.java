@@ -16,19 +16,12 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.api.management.ManagedCamelContext;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheckResultBuilder;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,22 +32,10 @@ public class RouteHealthCheck extends AbstractHealthCheck {
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteHealthCheck.class);
 
     private final Route route;
-    private final List<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators;
 
     public RouteHealthCheck(Route route) {
-        this(route, null);
-    }
-
-    public RouteHealthCheck(Route route, Collection<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators) {
         super("camel", "route:" + route.getId());
-
         this.route = route;
-
-        if (ObjectHelper.isNotEmpty(evaluators)) {
-            this.evaluators = new ArrayList<>(evaluators);
-        } else {
-            this.evaluators = Collections.emptyList();
-        }
     }
 
     @Override
@@ -85,24 +66,6 @@ public class RouteHealthCheck extends AbstractHealthCheck {
                 // route is configured to not to automatically start, then the
                 // route is always up as it is externally managed.
                 builder.up();
-            }
-
-            if (builder.state() != State.DOWN) {
-                // If JMX is enabled, use the Managed MBeans to determine route
-                // health based on performance counters.
-                ManagedCamelContext managedCamelContext = context.getExtension(ManagedCamelContext.class);
-                if (managedCamelContext != null) {
-                    ManagedRouteMBean managedRoute = managedCamelContext.getManagedRoute(route.getId());
-                    if (managedRoute != null && !evaluators.isEmpty()) {
-                        for (PerformanceCounterEvaluator<ManagedRouteMBean> evaluator : evaluators) {
-                            evaluator.test(managedRoute, builder, options);
-
-                            if (builder.state() == State.DOWN) { 
-                                break;
-                            }
-                        }
-                    }
-                }
             }
         }
     }

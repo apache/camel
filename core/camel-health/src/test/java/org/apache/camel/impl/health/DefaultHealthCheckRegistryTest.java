@@ -19,12 +19,13 @@ package org.apache.camel.impl.health;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
@@ -33,17 +34,12 @@ import org.junit.Test;
 public class DefaultHealthCheckRegistryTest {
 
     @Test
-    public void testDefaultHealthCheckRegistryRepositorySetter() {
-        HealthCheckRegistry registry1 = new DefaultHealthCheckRegistry();
-        HealthCheckRegistry registry2 = new DefaultHealthCheckRegistry();
-        registry1.addRepository(() -> Stream.of(new MyHealthCheck("G1", "1")));
-        registry2.setRepositories(registry1.getRepositories());
-        Assert.assertArrayEquals(registry1.getRepositories().toArray(), registry2.getRepositories().toArray());
-    }
-
-    @Test
     public void testDefaultHealthCheckRegistry() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
         DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setCamelContext(context);
+
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
@@ -51,31 +47,6 @@ public class DefaultHealthCheckRegistryTest {
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
         Assert.assertEquals(3, checks.size());
-
-        for (HealthCheck check : checks) {
-            HealthCheck.Result response = check.call();
-
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
-        }
-    }
-
-    @Test
-    public void testDefaultHealthCheckRegistryWithRepositories() throws Exception {
-        DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
-
-        registry.register(new MyHealthCheck("G1", "1"));
-        registry.register(new MyHealthCheck("G1", "1"));
-        registry.register(new MyHealthCheck("G1", "2"));
-        registry.register(new MyHealthCheck("G2", "3"));
-
-        registry.addRepository(() -> Stream.of(new MyHealthCheck("G1", "1"), new MyHealthCheck("G1", "4")));
-
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(4, checks.size());
-        Assert.assertEquals(1, checks.stream().filter(h -> h.getId().equals("4")).count());
-        Assert.assertEquals(3, checks.stream().filter(h -> h.getGroup().equals("G1")).count());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
@@ -95,6 +66,33 @@ public class DefaultHealthCheckRegistryTest {
 
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
+        registry.register(new MyHealthCheck("G2", "3"));
+
+        context.start();
+        registry.start();
+
+        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        Assert.assertEquals(3, checks.size());
+
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+
+            Assert.assertEquals(HealthCheck.State.UP, response.getState());
+            Assert.assertFalse(response.getMessage().isPresent());
+            Assert.assertFalse(response.getError().isPresent());
+            Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+        }
+    }
+
+    @Test
+    public void testDiscoverFromCamelRegistry() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
+        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setCamelContext(context);
+
+        context.getRegistry().bind("check1", new MyHealthCheck("G1", "1"));
+        context.getRegistry().bind("check2", new MyHealthCheck("G1", "2"));
         registry.register(new MyHealthCheck("G2", "3"));
 
         context.start();
@@ -143,6 +141,57 @@ public class DefaultHealthCheckRegistryTest {
             Assert.assertFalse(response.getMessage().isPresent());
             Assert.assertFalse(response.getError().isPresent());
             Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+        }
+    }
+
+    @Test
+    public void testResolveRoutesHealthCheck() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
+        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setCamelContext(context);
+        HealthCheckRepository hc = registry.resolveHealthCheckRepositoryById("routes");
+        Assert.assertNotNull(hc);
+        Assert.assertEquals("routes", hc.getId());
+        Assert.assertTrue(hc instanceof RoutesHealthCheckRepository);
+        registry.register(hc);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("mock:foo").routeId("foo");
+                from("direct:start2").to("mock:bar").routeId("bar");
+            }
+        });
+
+        context.start();
+        registry.start();
+
+        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        Assert.assertEquals(2, checks.size());
+
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+
+            Assert.assertEquals(HealthCheck.State.UP, response.getState());
+            Assert.assertFalse(response.getMessage().isPresent());
+            Assert.assertFalse(response.getError().isPresent());
+        }
+
+        context.getRouteController().stopRoute("foo");
+
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+            boolean foo = "foo".equals(response.getDetails().get("route.id"));
+            if (foo) {
+                Assert.assertEquals(HealthCheck.State.DOWN, response.getState());
+                Assert.assertTrue(response.getMessage().isPresent());
+                Assert.assertFalse(response.getError().isPresent());
+            } else {
+                Assert.assertEquals(HealthCheck.State.UP, response.getState());
+                Assert.assertFalse(response.getMessage().isPresent());
+                Assert.assertFalse(response.getError().isPresent());
+            }
         }
     }
 

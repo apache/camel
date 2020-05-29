@@ -31,6 +31,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base implementation for {@link HealthCheck}.
+ */
 public abstract class AbstractHealthCheck implements HealthCheck {
     public static final String CHECK_ID = "check.id";
     public static final String CHECK_GROUP = "check.group";

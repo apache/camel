@@ -17,33 +17,28 @@
 package org.apache.camel.impl.health;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.Route;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * Repository for routes {@link HealthCheck}s.
  */
+@JdkService("routes-health-check-repository")
 @DeferredContextBinding
 public class RoutesHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
     private final ConcurrentMap<Route, HealthCheck> checks;
     private Set<String> blacklist;
-    private List<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators;
-    private ConcurrentMap<String, Collection<PerformanceCounterEvaluator<ManagedRouteMBean>>> evaluatorMap;
     private volatile CamelContext context;
 
     public RoutesHealthCheckRepository() {
@@ -53,6 +48,11 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.context = camelContext;
+    }
+
+    @Override
+    public String getId() {
+        return "routes";
     }
 
     @Override
@@ -70,46 +70,6 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
         }
 
         this.blacklist.add(routeId);
-    }
-
-    public void setEvaluators(Collection<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators) {
-        evaluators.forEach(this::addEvaluator);
-    }
-
-    public void addEvaluator(PerformanceCounterEvaluator<ManagedRouteMBean> evaluator) {
-        if (this.evaluators == null) {
-            this.evaluators = new CopyOnWriteArrayList<>();
-        }
-
-        this.evaluators.add(evaluator);
-    }
-
-    public void setRoutesEvaluators(Map<String, Collection<PerformanceCounterEvaluator<ManagedRouteMBean>>> evaluators) {
-        evaluators.forEach(this::setRouteEvaluators);
-    }
-
-    public void setRouteEvaluators(String routeId, Collection<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators) {
-        evaluators.forEach(evaluator -> addRouteEvaluator(routeId, evaluator));
-    }
-
-    public void addRouteEvaluator(String routeId, PerformanceCounterEvaluator<ManagedRouteMBean> evaluator) {
-        if (this.evaluatorMap == null) {
-            this.evaluatorMap = new ConcurrentHashMap<>();
-        }
-
-        this.evaluatorMap.computeIfAbsent(routeId, id -> new CopyOnWriteArrayList<>()).add(evaluator);
-    }
-
-    public Stream<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators() {
-        return this.evaluators != null
-            ? this.evaluators.stream()
-            : Stream.empty();
-    }
-
-    public Stream<PerformanceCounterEvaluator<ManagedRouteMBean>> evaluators(String routeId) {
-        return this.evaluatorMap != null
-            ? evaluatorMap.getOrDefault(routeId, Collections.emptyList()).stream()
-            : Stream.empty();
     }
 
     @Override
@@ -143,20 +103,7 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     }
 
     private HealthCheck toRouteHealthCheck(Route route) {
-        return checks.computeIfAbsent(
-            route,
-            r -> {
-                HealthCheck check = new RouteHealthCheck(
-                    route,
-                    evaluatorMap != null
-                        ? evaluatorMap.getOrDefault(r.getId(), evaluators)
-                        : evaluators
-                );
-
-                check.getConfiguration().setEnabled(true);
-
-                return check;
-            }
-        );
+        return checks.computeIfAbsent(route, r -> new RouteHealthCheck(route));
     }
+
 }
