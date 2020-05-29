@@ -37,6 +37,16 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService {
     String FACTORY = "health-check-registry";
 
     /**
+     * Whether Health Check is enabled globally
+     */
+    boolean isEnabled();
+
+    /**
+     * Whether Health Check is enabled globally
+     */
+    void setEnabled(boolean enabled);
+
+    /**
      * Resolves {@link HealthCheck} or {@link HealthCheckRepository} by id.
      *
      * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry},

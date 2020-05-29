@@ -42,6 +42,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheck> checks;
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
+    private boolean enabled;
 
     public DefaultHealthCheckRegistry() {
         this(null);
@@ -53,6 +54,16 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         this.repositories.add(new RegistryRepository());
 
         setCamelContext(camelContext);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -198,9 +209,13 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
     @Override
     public Stream<HealthCheck> stream() {
-        return Stream.concat(
-            checks.stream(),
-            repositories.stream().flatMap(HealthCheckRepository::stream)
-        ).distinct();
+        if (enabled) {
+            return Stream.concat(
+                    checks.stream(),
+                    repositories.stream().flatMap(HealthCheckRepository::stream)
+            ).distinct();
+        } else {
+            return Stream.empty();
+        }
     }
 }

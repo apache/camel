@@ -210,6 +210,20 @@ public final class DefaultConfigurationConfigurer {
         if (config.getRouteControllerRouteStartupLoggingLevel() != null) {
             camelContext.getRouteController().setRouteStartupLoggingLevel(config.getRouteControllerRouteStartupLoggingLevel());
         }
+
+        // health check
+        HealthCheckRegistry hc = camelContext.getExtension(HealthCheckRegistry.class);
+        if (hc != null) {
+            hc.setEnabled(config.isHealthCheckEnabled());
+            if (config.isHealthCheckRoutesEnabled()) {
+                Object routes = hc.resolveById("routes");
+                if (routes != null) {
+                    hc.register(routes);
+                }
+            } else {
+                hc.unregister("routes");
+            }
+        }
     }
 
     /**
