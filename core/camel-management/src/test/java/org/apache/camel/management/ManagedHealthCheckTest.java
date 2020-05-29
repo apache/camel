@@ -20,10 +20,13 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.junit.Test;
 
@@ -68,6 +71,46 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         assertEquals(1, ids.size());
 
         assertEquals("context", ids.iterator().next());
+    }
+
+    @Test
+    public void testHealthCheckDisableById() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        context.getExtension(HealthCheckRegistry.class).register(new AbstractHealthCheck("custom", "myCheck") {
+            @Override
+            protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                // make it always down
+                builder.down();
+            }
+        });
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=health,name=DefaultHealthCheck");
+        assertTrue(mbeanServer.isRegistered(on));
+
+        Boolean up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
+        assertFalse(up);
+
+        Collection<String> ids = (Collection) mbeanServer.invoke(on, "getHealthChecksIDs", null, null);
+        assertEquals(2, ids.size());
+
+        mbeanServer.invoke(on, "disableById", new Object[]{"myCheck"}, new String[]{"java.lang.String"});
+
+        up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
+        assertTrue(up);
+
+        mbeanServer.invoke(on, "enableById", new Object[]{"myCheck"}, new String[]{"java.lang.String"});
+
+        up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
+        assertFalse(up);
     }
 
     @Override

@@ -39,4 +39,11 @@ public interface ManagedCamelHealthMBean {
 
     @ManagedOperation(description = "Invoke an Health Check by ID")
     String invoke(String id);
+
+    @ManagedOperation(description = "Enables an Health Check by ID")
+    void enableById(String id);
+
+    @ManagedOperation(description = "Disables an Health Check by ID")
+    void disableById(String id);
+
 }
