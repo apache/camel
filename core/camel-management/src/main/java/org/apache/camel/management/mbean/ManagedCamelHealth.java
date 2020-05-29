@@ -95,9 +95,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                         result.getCheck().getGroup(),
                         result.getState().name(),
                         result.getCheck().getConfiguration().isEnabled(),
-                        result.getCheck().getConfiguration().getInterval() != null
-                            ? result.getCheck().getConfiguration().getInterval().toMillis()
-                            : null,
+                        result.getCheck().getConfiguration().getInterval(),
                         result.getCheck().getConfiguration().getFailureThreshold()
                     }
                 );
