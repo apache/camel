@@ -214,15 +214,18 @@ public final class DefaultConfigurationConfigurer {
 
         // health check
         HealthCheckRegistry hc = camelContext.getExtension(HealthCheckRegistry.class);
-        if (hc != null) {
-            hc.setEnabled(config.isHealthCheckEnabled());
+        if (hc != null && config.isHealthCheckEnabled()) {
+            // register context health-check by default
+            Object context = hc.resolveById("context");
+            if (context != null) {
+                hc.register(context);
+            }
+            // register routes if enabled
             if (config.isHealthCheckRoutesEnabled()) {
                 Object routes = hc.resolveById("routes");
                 if (routes != null) {
                     hc.register(routes);
                 }
-            } else {
-                hc.unregister("routes");
             }
         }
     }
