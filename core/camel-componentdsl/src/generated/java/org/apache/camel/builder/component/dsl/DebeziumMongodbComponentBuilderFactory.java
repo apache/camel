@@ -558,7 +558,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0.5s
          * Group: mongodb
          */
         default DebeziumMongodbComponentBuilder pollIntervalMs(

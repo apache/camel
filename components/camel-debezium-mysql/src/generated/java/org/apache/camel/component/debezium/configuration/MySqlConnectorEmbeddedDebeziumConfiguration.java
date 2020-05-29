@@ -26,9 +26,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String gtidSourceIncludes;
     @UriParam(label = LABEL_NAME, defaultValue = "class com.mysql.cj.jdbc.Driver")
     private String databaseJdbcDriver = "com.mysql.cj.jdbc.Driver";
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.1s", javaType = "java.time.Duration")
     private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.5s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
     private String databaseInitialStatements;

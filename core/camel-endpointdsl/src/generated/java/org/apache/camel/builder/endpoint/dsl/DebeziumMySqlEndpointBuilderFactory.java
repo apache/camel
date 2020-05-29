@@ -560,7 +560,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0.1s
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -574,7 +574,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0.1s
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -1298,7 +1298,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0.5s
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder pollIntervalMs(long pollIntervalMs) {
@@ -1311,7 +1311,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0.5s
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder pollIntervalMs(

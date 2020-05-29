@@ -36,9 +36,9 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.1s", javaType = "java.time.Duration")
     private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.5s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";

@@ -345,7 +345,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0.1s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -563,7 +563,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0.5s
          * Group: sqlserver
          */
         default DebeziumSqlserverComponentBuilder pollIntervalMs(

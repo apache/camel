@@ -89,7 +89,7 @@ The Debezium MongoDB Connector component supports 43 options, which are listed b
 | *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
 | *mongodbSslInvalidHostname Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
 | *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
-| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 0s | long
+| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 0.5s | long
 | *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0s | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
@@ -163,7 +163,7 @@ with the following path and query parameters:
 | *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
 | *mongodbSslInvalidHostname Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
 | *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
-| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 0s | long
+| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 0.5s | long
 | *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
 | *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0s | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int

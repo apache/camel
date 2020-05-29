@@ -33,7 +33,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private boolean mongodbMembersAutoDiscover = true;
     @UriParam(label = LABEL_NAME)
     private String fieldRenames;
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.5s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";

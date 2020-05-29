@@ -32,7 +32,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME)
     private String databaseSslcert;
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0.5s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
     private String databaseInitialStatements;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.config;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -181,7 +182,9 @@ public final class ConnectorConfigGenerator {
                 // especial case for database.server.id, we don't set the default value, we let debezium do that
                 if (fieldConfig.getDefaultValue() != null && !fieldConfig.getRawName().equals("database.server.id")) {
                     if (fieldConfig.isDurationField()) {
-                        final String defaultValue = (Long.parseLong(fieldConfig.getDefaultValueAsString()) / 1000) + "s";
+                        final DecimalFormat decimalFormat = new DecimalFormat("0.##");
+                        final Double valueAsDouble = (Double.parseDouble(fieldConfig.getDefaultValueAsString()) / 1000);
+                        final String defaultValue = decimalFormat.format(valueAsDouble) + "s";
                         annotation.setLiteralValue("defaultValue", String.format("\"%s\"", defaultValue));
                     } else {
                         annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
