@@ -20,7 +20,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String databaseHistoryKafkaTopic;
     @UriParam(label = LABEL_NAME)
     private String columnBlacklist;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "100")
     private int databaseHistoryKafkaRecoveryAttempts = 100;
@@ -36,9 +36,9 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
-    @UriParam(label = LABEL_NAME, defaultValue = "100")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private int databaseHistoryKafkaRecoveryPollIntervalMs = 100;
-    @UriParam(label = LABEL_NAME, defaultValue = "500")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
@@ -46,7 +46,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
-    @UriParam(label = LABEL_NAME, defaultValue = "10000")
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
@@ -63,7 +63,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databaseServerName;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";

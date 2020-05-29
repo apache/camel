@@ -531,7 +531,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder heartbeatIntervalMs(
@@ -667,7 +667,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 0s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder pollIntervalMs(
@@ -799,7 +799,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 10000
+         * Default: 10s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder slotRetryDelayMs(
@@ -842,7 +842,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder snapshotDelayMs(
@@ -870,7 +870,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 10000
+         * Default: 10s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder snapshotLockTimeoutMs(
@@ -946,7 +946,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 10000
+         * Default: 10s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder statusUpdateIntervalMs(
@@ -1044,7 +1044,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder xminFetchIntervalMs(

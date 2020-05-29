@@ -285,7 +285,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 1000
+         * Default: 1s
          * Group: mongodb
          */
         default DebeziumMongodbComponentBuilder connectBackoffInitialDelayMs(
@@ -300,7 +300,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 120000
+         * Default: 120s
          * Group: mongodb
          */
         default DebeziumMongodbComponentBuilder connectBackoffMaxDelayMs(
@@ -395,7 +395,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: mongodb
          */
         default DebeziumMongodbComponentBuilder heartbeatIntervalMs(
@@ -558,7 +558,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 0s
          * Group: mongodb
          */
         default DebeziumMongodbComponentBuilder pollIntervalMs(
@@ -585,7 +585,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: mongodb
          */
         default DebeziumMongodbComponentBuilder snapshotDelayMs(

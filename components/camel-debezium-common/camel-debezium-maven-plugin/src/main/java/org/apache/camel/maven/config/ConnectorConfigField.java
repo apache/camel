@@ -90,6 +90,17 @@ public class ConnectorConfigField {
         return "";
     }
 
+    public boolean isDurationField() {
+        // since we don't really an info if the field is a time or not, we use a hack that if the field name ends with `ms` and of type
+        // int or long. Not pretty but is the only feasible workaround here.
+        return isFieldAMillSecondFieldFromName(fieldDef.name) && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
+    }
+
+    private boolean isFieldAMillSecondFieldFromName(final String name) {
+        final String[] parts = name.split("\\.");
+        return parts.length > 0 && parts[parts.length - 1].toLowerCase().equals("ms");
+    }
+
     private String getSetterMethodName(final String name) {
         return getCamelCase("set." + name);
     }

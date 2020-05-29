@@ -19,7 +19,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String mongodbPassword;
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int initialSyncMaxThreads = 1;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME)
     private String collectionBlacklist;
@@ -33,7 +33,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private boolean mongodbMembersAutoDiscover = true;
     @UriParam(label = LABEL_NAME)
     private String fieldRenames;
-    @UriParam(label = LABEL_NAME, defaultValue = "500")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
@@ -41,7 +41,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String databaseWhitelist;
     @UriParam(label = LABEL_NAME)
     private String mongodbHosts;
-    @UriParam(label = LABEL_NAME, defaultValue = "1000")
+    @UriParam(label = LABEL_NAME, defaultValue = "1s", javaType = "java.time.Duration")
     private long connectBackoffInitialDelayMs = 1000;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
@@ -55,12 +55,12 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String fieldBlacklist;
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String mongodbName;
-    @UriParam(label = LABEL_NAME, defaultValue = "120000")
+    @UriParam(label = LABEL_NAME, defaultValue = "120s", javaType = "java.time.Duration")
     private long connectBackoffMaxDelayMs = 120000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean mongodbSslInvalidHostnameAllowed = false;
