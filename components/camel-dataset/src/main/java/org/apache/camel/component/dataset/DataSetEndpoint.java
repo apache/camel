@@ -66,11 +66,12 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private String dataSetIndex = "lenient";
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
-        super(endpointUri, component);
+        super(endpointUri, component, false);
         this.dataSet = dataSet;
         this.log = LoggerFactory.getLogger(endpointUri);
         // optimize as we dont need to copy the exchange
         setCopyOnExchange(false);
+        super.doInit();
     }
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
@@ -291,9 +292,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    protected void doInit() {
         if (reporter == null) {
             reporter = createReporter();
         }

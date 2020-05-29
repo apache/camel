@@ -148,8 +148,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public MockEndpoint(String endpointUri, Component component) {
+        this(endpointUri, component, true);
+    }
+
+    public MockEndpoint(String endpointUri, Component component, boolean init) {
         super(endpointUri, component);
-        init();
+        if (init) {
+            init();
+        }
     }
 
     /**
