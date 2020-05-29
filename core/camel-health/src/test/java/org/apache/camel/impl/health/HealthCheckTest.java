@@ -29,6 +29,8 @@ public class HealthCheckTest {
     public void testCheck() throws Exception {
         MyHealthCheck check = new MyHealthCheck();
         check.setState(HealthCheck.State.UP);
+        // disable
+        check.getConfiguration().setEnabled(false);
 
         HealthCheck.Result result;
 

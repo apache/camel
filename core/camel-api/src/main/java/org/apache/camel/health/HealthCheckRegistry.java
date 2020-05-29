@@ -39,6 +39,16 @@ public interface HealthCheckRegistry extends HealthCheckRepository, CamelContext
     String FACTORY = "health-check-registry";
 
     /**
+     * Resolves {@link HealthCheck} by id.
+     *
+     * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry},
+     * and lastly do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.
+     * The classpath scanning is attempted first with id-health-check as the key, and then with id as fallback
+     * if not found the first time.
+     */
+    HealthCheck resolveHealthCheckById(String id);
+
+    /**
      * Registers a service {@link HealthCheck}.
      */
     boolean register(HealthCheck check);

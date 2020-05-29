@@ -23,7 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 
 public class HealthCheckConfiguration implements Cloneable {
-    public static final Boolean DEFAULT_VALUE_ENABLED = Boolean.FALSE;
+    public static final Boolean DEFAULT_VALUE_ENABLED = Boolean.TRUE;
     public static final Duration DEFAULT_VALUE_INTERVAL = Duration.ZERO;
     public static final Integer DEFAULT_VALUE_FAILURE_THRESHOLD = 0;
 
