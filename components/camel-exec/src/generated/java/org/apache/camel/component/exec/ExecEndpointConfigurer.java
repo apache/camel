@@ -32,7 +32,7 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "outfile":
         case "outFile": target.setOutFile(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "usestderronemptystdout":
         case "useStderrOnEmptyStdout": target.setUseStderrOnEmptyStdout(property(camelContext, boolean.class, value)); return true;
         case "workingdir":
