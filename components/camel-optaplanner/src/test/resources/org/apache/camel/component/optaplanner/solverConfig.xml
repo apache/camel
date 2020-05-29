@@ -28,7 +28,7 @@
 
   <!-- Score configuration -->
   <scoreDirectorFactory>
-    <scoreDrl>org/optaplanner/examples/cloudbalancing/solver/cloudBalancingScoreRules.drl</scoreDrl>
+    <scoreDrl>org/optaplanner/examples/cloudbalancing/solver/cloudBalancingConstraints.drl</scoreDrl>
   </scoreDirectorFactory>
 
   <!-- Optimization algorithms configuration -->
