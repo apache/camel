@@ -22,7 +22,11 @@ import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.timer.TimerComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComponentsBuilderFactoryTest extends ContextTestSupport {
 
