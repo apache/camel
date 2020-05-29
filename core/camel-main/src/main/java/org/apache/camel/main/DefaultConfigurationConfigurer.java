@@ -29,7 +29,6 @@ import org.apache.camel.TypeConverters;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -373,12 +372,6 @@ public final class DefaultConfigurationConfigurer {
             healthCheckRegistry = HealthCheckRegistry.get(camelContext);
             if (healthCheckRegistry != null) {
                 healthCheckRegistry.setCamelContext(camelContext);
-            }
-        }
-        if (healthCheckRegistry != null) {
-            Set<HealthCheckRepository> hcrs = registry.findByType(HealthCheckRepository.class);
-            if (!hcrs.isEmpty()) {
-                hcrs.forEach(healthCheckRegistry::addRepository);
             }
         }
 

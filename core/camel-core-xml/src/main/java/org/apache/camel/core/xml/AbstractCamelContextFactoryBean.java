@@ -49,7 +49,6 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
@@ -368,15 +367,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
             healthCheckRegistry = HealthCheckRegistry.get(getContext());
-        }
-        if (healthCheckRegistry != null) {
-            // Health check repository
-            Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
-                for (HealthCheckRepository repository : repositories) {
-                    healthCheckRegistry.addRepository(repository);
-                }
-            }
         }
         // UuidGenerator
         UuidGenerator uuidGenerator = getBeanForType(UuidGenerator.class);

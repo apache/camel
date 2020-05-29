@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class HealthCheckTest {
+
     @Test
     public void testCheck() throws Exception {
         MyHealthCheck check = new MyHealthCheck();

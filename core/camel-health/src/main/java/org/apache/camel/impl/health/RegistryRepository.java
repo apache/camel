@@ -25,9 +25,16 @@ import org.apache.camel.health.HealthCheckRepository;
 
 /**
  * {@link HealthCheckRepository} that uses the Camel {@link org.apache.camel.spi.Registry}.
+ *
+ * Camel will use this by default, so there is no need to register this manually.
  */
 public class RegistryRepository implements CamelContextAware, HealthCheckRepository {
-    private volatile CamelContext context;
+    private CamelContext context;
+
+    @Override
+    public String getId() {
+        return "registry-health-check-repository";
+    }
 
     @Override
     public void setCamelContext(CamelContext camelContext) {

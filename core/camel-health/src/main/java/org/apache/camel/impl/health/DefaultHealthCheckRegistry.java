@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Stream;
@@ -110,7 +108,31 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     @Override
+    public HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
+        HealthCheckRepository answer =
+                repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
+                        .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
+        if (answer == null) {
+            // discover via classpath (try first via -health-check-repository and then id as-is)
+            FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
+            Class<? extends HealthCheckRepository> clazz = (Class<? extends HealthCheckRepository>) ff.findOptionalClass(id + "-health-check-repository").orElse(null);
+            if (clazz == null) {
+                clazz = (Class<? extends HealthCheckRepository>) ff.findOptionalClass(id).orElse(null);
+            }
+            if (clazz != null) {
+                answer = camelContext.getInjector().newInstance(clazz);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     public boolean register(HealthCheck check) {
+        if (check == null) {
+            throw new IllegalArgumentException();
+        }
+
         boolean result = checks.add(check);
         if (result) {
             if (check instanceof CamelContextAware) {
@@ -134,35 +156,19 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     @Override
-    public void setRepositories(Collection<HealthCheckRepository> repositories) {
-        this.repositories.clear();
-        this.repositories.addAll(repositories);
-    }
-
-    @Override
-    public Collection<HealthCheckRepository> getRepositories() {
-        return Collections.unmodifiableCollection(repositories);
-    }
-
-    @Override
-    public boolean addRepository(HealthCheckRepository repository) {
-        boolean result = repositories.add(repository);
-        if (result) {
-            if (repository instanceof CamelContextAware) {
-                ((CamelContextAware) repository).setCamelContext(getCamelContext());
-
-                LOG.debug("HealthCheckRepository {} successfully registered", repository);
-            }
+    public boolean register(HealthCheckRepository repository) {
+        if (repository == null) {
+            throw new IllegalArgumentException();
         }
 
-        return result;
-    }
+        boolean result = this.repositories.add(repository);
 
-    @Override
-    public boolean removeRepository(HealthCheckRepository repository) {
-        boolean result = repositories.remove(repository);
         if (result) {
-            LOG.debug("HealthCheckRepository with {} successfully un-registered", repository);
+            if (repository instanceof CamelContextAware) {
+                ((CamelContextAware) repository).setCamelContext(camelContext);
+            }
+
+            LOG.debug("HealthCheckRepository with id {} successfully registered", repository.getId());
         }
 
         return result;
