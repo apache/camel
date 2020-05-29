@@ -141,4 +141,9 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
     public static HealthCheckResultBuilder on(HealthCheck check) {
         return new HealthCheckResultBuilder(check);
     }
+
+    @Override
+    public String toString() {
+        return "HealthCheck[" + check.getGroup() + "," + check.getId() + "]";
+    }
 }
