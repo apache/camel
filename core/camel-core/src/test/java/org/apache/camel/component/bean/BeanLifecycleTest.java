@@ -25,9 +25,11 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanLifecycleTest extends ContextTestSupport {
 
@@ -36,7 +38,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
     private MyBean statefulInstanceInRegistryNoCache;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         statefulInstance = new MyBean();
         statefulInstanceInRegistry = new MyBean();
@@ -46,7 +48,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 

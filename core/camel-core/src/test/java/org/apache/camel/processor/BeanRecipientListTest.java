@@ -21,10 +21,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BeanRecipientListTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
@@ -43,7 +45,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         checkBean();
@@ -51,7 +53,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
 
     protected void checkBean() throws Exception {
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");
-        assertSame("Lookup of 'myBean' should return same object!", myBean, lookedUpBean);
+        assertSame(myBean, lookedUpBean, "Lookup of 'myBean' should return same object!");
     }
 
     @Override

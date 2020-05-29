@@ -19,7 +19,9 @@ package org.apache.camel.component.properties;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTestSupport {
 
@@ -45,7 +47,7 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
         assertMockEndpointsSatisfied();
 
         // should not have a properties component
-        assertNull("Should not have a properties component", context.hasComponent("properties"));
+        assertNull(context.hasComponent("properties"), "Should not have a properties component");
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test stops a route, mutates it then restarts it

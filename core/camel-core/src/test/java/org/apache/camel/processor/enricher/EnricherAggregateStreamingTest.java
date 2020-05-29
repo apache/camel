@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The original message body is a StreamCache. Therefore the stream cache must

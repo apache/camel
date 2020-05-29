@@ -27,8 +27,10 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
@@ -70,7 +72,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/mail/backup");
         super.setUp();
@@ -82,7 +84,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
         File file = new File("target/data/mail/backup/");
         String[] files = file.list();
-        assertEquals("There should be one file", 1, files.length);
+        assertEquals(1, files.length, "There should be one file");
     }
 
     @Test
@@ -99,11 +101,11 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
         // onCompletion is async so we gotta wait a bit for the file to be
         // deleted
-        assertTrue("Should countdown the latch", LATCH.await(5, TimeUnit.SECONDS));
+        assertTrue(LATCH.await(5, TimeUnit.SECONDS), "Should countdown the latch");
 
         File file = new File("target/data/mail/backup/");
         String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+        assertEquals(0, files.length, "There should be no files");
     }
 
     @Override

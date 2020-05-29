@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
@@ -47,7 +49,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should not have called", CALLLED.get());
+        assertFalse(CALLLED.get(), "Should not have called");
     }
 
     @Override

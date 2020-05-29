@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
@@ -35,7 +37,7 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
         context.start();
 
         Route routeWithNamespace = context.getRoute("routeWithNamespace");
-        assertNotNull("Expected to find route with id: routeWithNamespace", routeWithNamespace);
+        assertNotNull(routeWithNamespace, "Expected to find route with id: routeWithNamespace");
 
         MockEndpoint bar = context.getEndpoint("mock:bar", MockEndpoint.class);
         bar.expectedBodiesReceived("Hello from foo");

@@ -21,7 +21,9 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.model.rest.GetVerbDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlRestParseToDTest extends XmlTestSupport {
 

@@ -28,8 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -40,7 +40,7 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
     private final Hashtable<String, String> env = new Hashtable<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // use the singleton context factory
         env.put(Context.INITIAL_CONTEXT_FACTORY, CamelSingletonInitialContextFactory.class.getName());

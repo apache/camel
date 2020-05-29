@@ -26,9 +26,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResequencerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -42,14 +44,14 @@ public class ResequencerTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
     }
@@ -79,7 +81,7 @@ public class ResequencerTest extends ContextTestSupport {
     @Test
     public void testBatchResequencerTypeWithoutJmx() throws Exception {
         List<Route> list = getRouteList(createRouteBuilder());
-        assertEquals("Number of routes created: " + list, 1, list.size());
+        assertEquals(1, list.size(), "Number of routes created: " + list);
 
         Route route = list.get(0);
         DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);

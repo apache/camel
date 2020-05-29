@@ -23,7 +23,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -44,7 +46,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         ArrayBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(ArrayBlockingQueue.class, queue);
-        assertEquals("remainingCapacity - default", SedaConstants.QUEUE_SIZE, blockingQueue.remainingCapacity());
+        assertEquals(SedaConstants.QUEUE_SIZE, blockingQueue.remainingCapacity(), "remainingCapacity - default");
     }
 
     @SuppressWarnings("unchecked")
@@ -54,7 +56,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         ArrayBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(ArrayBlockingQueue.class, queue);
-        assertEquals("remainingCapacity - custom", 100, blockingQueue.remainingCapacity());
+        assertEquals(100, blockingQueue.remainingCapacity(), "remainingCapacity - custom");
     }
 
     @Test

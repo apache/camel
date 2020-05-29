@@ -18,7 +18,10 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSupport {
 
@@ -41,7 +44,7 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
             fail("Should have thrown an exception");
         } catch (Exception e) {
             assertEquals("Failed to start route bar because of startupOrder clash. Route foo already has startupOrder 5 configured"
-                         + " which this route have as well. Please correct startupOrder to be unique among all your routes.", e.getMessage());
+                             + " which this route have as well. Please correct startupOrder to be unique among all your routes.", e.getMessage());
         }
     }
 

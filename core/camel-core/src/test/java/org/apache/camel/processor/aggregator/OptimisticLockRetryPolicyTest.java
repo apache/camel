@@ -17,10 +17,12 @@
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class OptimisticLockRetryPolicyTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class OptimisticLockRetryPolicyTest {
 
     private static long precision = 100L; // give or take 100ms
 
@@ -123,10 +125,10 @@ public class OptimisticLockRetryPolicyTest extends Assert {
 
     private void assertDelay(long expectedDelay, long actualDelay) {
         String msg = String.format("%d <= %d", actualDelay, expectedDelay + precision);
-        assertTrue(msg, actualDelay <= expectedDelay + precision);
+        assertTrue(actualDelay <= expectedDelay + precision, msg);
 
         msg = String.format("%d >= %d", actualDelay, expectedDelay - precision);
-        assertTrue(msg, actualDelay >= expectedDelay - precision);
+        assertTrue(actualDelay >= expectedDelay - precision, msg);
     }
 
 }

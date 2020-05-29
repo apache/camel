@@ -23,7 +23,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SedaTimeoutTest extends ContextTestSupport {
     private int timeout = 100;
@@ -45,8 +47,8 @@ public class SedaTimeoutTest extends ContextTestSupport {
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
             SedaEndpoint se = (SedaEndpoint)context.getRoute("seda").getEndpoint();
-            assertNotNull("Consumer endpoint cannot be null", se);
-            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getCurrentQueueSize());
+            assertNotNull(se, "Consumer endpoint cannot be null");
+            assertEquals(0, se.getCurrentQueueSize(), "Timeout Exchanges should be removed from queue");
         }
     }
 

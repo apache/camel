@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StreamCachingInOutTest extends ContextTestSupport {
     private static final String TEST_FILE = "org/apache/camel/processor/simple.txt";
@@ -82,7 +85,7 @@ public class StreamCachingInOutTest extends ContextTestSupport {
     // InputStreams from a file
     private InputStream getTestFileStream() {
         InputStream answer = getClass().getClassLoader().getResourceAsStream(TEST_FILE);
-        assertNotNull("Should have found the file: " + TEST_FILE + " on the classpath", answer);
+        assertNotNull(answer, "Should have found the file: " + TEST_FILE + " on the classpath");
         return answer;
     }
 }

@@ -27,8 +27,11 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.Condition;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 
@@ -37,7 +40,7 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
     private Breakpoint breakpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

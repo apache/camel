@@ -44,9 +44,11 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A TransformerTest demonstrates contract based declarative transformation via
@@ -223,7 +225,7 @@ public class TransformerRouteTest extends ContextTestSupport {
             super(new DefaultDataFormat() {
                 @Override
                 public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-                    assertEquals(graph.toString(), XOrderResponse.class, graph.getClass());
+                    assertEquals(XOrderResponse.class, graph.getClass(), graph.toString());
                     LOG.info("DataFormat: XOrderResponse -> JSON");
                     stream.write("{name:XOrderResponse}".getBytes());
                 }

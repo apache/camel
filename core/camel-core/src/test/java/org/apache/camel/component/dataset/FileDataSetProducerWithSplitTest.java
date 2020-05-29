@@ -20,22 +20,23 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    public Path tempFolder;
 
     protected FileDataSet dataSet;
 
@@ -76,20 +77,20 @@ public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File fileDataset = createFileDatasetWithSystemEndOfLine();
         dataSet = new FileDataSet(fileDataset, LS);
-        Assert.assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
+        assertEquals(testDataFileRecordCount, dataSet.getSize(), "Unexpected DataSet size");
         super.setUp();
     }
 
     private File createFileDatasetWithSystemEndOfLine() throws IOException {
-        tempFolder.create();
-        File fileDataset = tempFolder.newFile("file-dataset-test.txt");
+        Files.createDirectories(tempFolder);
+        Path fileDataset = tempFolder.resolve("file-dataset-test.txt");
         ByteArrayInputStream content = new ByteArrayInputStream(String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n").getBytes());
-        Files.copy(content, fileDataset.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        return fileDataset;
+        Files.copy(content, fileDataset, StandardCopyOption.REPLACE_EXISTING);
+        return fileDataset.toFile();
     }
 
     @Override

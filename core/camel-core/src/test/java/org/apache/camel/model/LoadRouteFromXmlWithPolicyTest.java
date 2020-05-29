@@ -26,7 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
@@ -50,8 +53,8 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
-        assertNotNull("Loaded foo route should be there", context.getRoute("foo"));
-        assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
+        assertNotNull(context.getRoute("foo"), "Loaded foo route should be there");
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
         assertEquals(2, context.getRoutes().size());
 
         // test that loaded route works
@@ -70,7 +73,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
 
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
     }
 
     public static class MyPolicy implements Policy {

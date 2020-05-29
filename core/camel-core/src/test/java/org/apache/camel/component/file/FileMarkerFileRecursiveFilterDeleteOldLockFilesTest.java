@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends ContextTestSupport {
 
@@ -36,7 +36,7 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/oldlock");
         super.setUp();

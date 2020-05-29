@@ -18,7 +18,10 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
 
@@ -41,7 +44,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("A new choice clause should start with a when() or otherwise()."
-                         + " If you intend to end the entire choice and are using endChoice() then use end() instead.", e.getMessage());
+                             + " If you intend to end the entire choice and are using endChoice() then use end() instead.", e.getMessage());
         }
     }
 

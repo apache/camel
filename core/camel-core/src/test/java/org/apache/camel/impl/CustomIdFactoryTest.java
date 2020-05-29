@@ -27,10 +27,12 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.processor.DelegateProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Demonstrates how you can use a custom id factory to assign ids to Camel Java
@@ -45,7 +47,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     private static String ids;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ids = "";
         counter = 0;

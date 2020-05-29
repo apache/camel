@@ -30,8 +30,10 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiTest;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -92,7 +94,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -138,7 +140,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         log.debug("tearDown test: {}", getName());
         if (consumer != null) {
@@ -335,7 +337,7 @@ public abstract class ContextTestSupport extends TestSupport {
         Language language = assertResolveLanguage(languageName);
 
         Expression expression = language.createExpression(expressionText);
-        assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
+        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         assertExpression(expression, exchange, expectedValue);
     }
@@ -348,7 +350,7 @@ public abstract class ContextTestSupport extends TestSupport {
         Language language = assertResolveLanguage(languageName);
 
         Predicate predicate = language.createPredicate(expressionText);
-        assertNotNull("No Predicate could be created for text: " + expressionText + " language: " + language, predicate);
+        assertNotNull(predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
 
         assertPredicate(predicate, exchange, expected);
     }
@@ -358,7 +360,7 @@ public abstract class ContextTestSupport extends TestSupport {
      */
     protected Language assertResolveLanguage(String languageName) {
         Language language = context.resolveLanguage(languageName);
-        assertNotNull("No language found for name: " + languageName, language);
+        assertNotNull(language, "No language found for name: " + languageName);
         return language;
     }
 
@@ -384,18 +386,18 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
     }
 
     protected <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
         T endpoint = context.getEndpoint(uri, type);
-        assertNotNull("No endpoint found for uri: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for uri: " + uri);
         return endpoint;
     }
 
     protected Endpoint getMandatoryEndpoint(String uri) {
         Endpoint endpoint = context.getEndpoint(uri);
-        assertNotNull("No endpoint found for uri: " + uri, endpoint);
+        assertNotNull(endpoint, "No endpoint found for uri: " + uri);
         return endpoint;
     }
 

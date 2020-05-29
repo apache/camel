@@ -23,8 +23,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NoStreamCachingTest extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
@@ -61,7 +64,8 @@ public class NoStreamCachingTest extends ContextTestSupport {
         template.sendBody("direct:a", message);
 
         assertMockEndpointsSatisfied();
-        assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream);
+        boolean b1 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
+        assertTrue(b1);
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
@@ -81,7 +85,8 @@ public class NoStreamCachingTest extends ContextTestSupport {
         template.sendBody("direct:a", message);
 
         assertMockEndpointsSatisfied();
-        assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream);
+        boolean b1 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
+        assertTrue(b1);
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
@@ -108,10 +113,12 @@ public class NoStreamCachingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream);
+        boolean b2 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
+        assertTrue(b2);
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
 
-        assertTrue(b.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
+        boolean b1 = b.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache;
+        assertTrue(b1);
         assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 

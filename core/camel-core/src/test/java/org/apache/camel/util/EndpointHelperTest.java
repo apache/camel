@@ -26,9 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.EndpointHelper;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointHelperTest extends ContextTestSupport {
 
@@ -148,14 +150,14 @@ public class EndpointHelperTest extends ContextTestSupport {
         String endpointUriShuffled = "sjms:queue:my-queue?consumerCount=1&transacted=true";
         String notMatchingEndpointUri = "sjms:queue:my-queue?consumerCount=1";
 
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUri), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUriShuffled), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUri), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUriShuffled), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUriShuffled), is(false));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUri), is(false));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, notMatchingEndpointUri), is(false));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, notMatchingEndpointUri), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUri), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUriShuffled), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUri), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUriShuffled), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUriShuffled), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUri), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, notMatchingEndpointUri), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, notMatchingEndpointUri), is(false));
     }
 
     @Test
@@ -164,8 +166,8 @@ public class EndpointHelperTest extends ContextTestSupport {
         String notMatchingEndpointUri = "sjms:queue:my-queue";
         String pattern = "sjms:queue:my-queue?*";
 
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
     }
 
     @Test
@@ -174,8 +176,8 @@ public class EndpointHelperTest extends ContextTestSupport {
         String notMatchingEndpointUri = "sjms:queue:my-queue?transacted=false&consumerCount=1";
         String pattern = "sjms://.*transacted=true.*";
 
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
     }
 
 }

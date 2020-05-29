@@ -22,8 +22,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractDistributedTest extends ContextTestSupport {
 
@@ -31,7 +31,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     protected ProducerTemplate template2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.setUseMDCLogging(true);
@@ -47,7 +47,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         context2.stop();
         template2.stop();

@@ -16,14 +16,15 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UnsafeCharactersEncoderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class UnsafeCharactersEncoderTest {
 
     private void testEncoding(String before, String after) {
         String result = UnsafeUriCharactersEncoder.encode(before);
-        assertEquals("Get the wrong encoding result", after, result);
+        assertEquals(after, result, "Get the wrong encoding result");
     }
 
     @Test

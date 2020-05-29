@@ -34,10 +34,11 @@ import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
@@ -94,7 +95,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(endEndpoint);
 
         ValidatorEndpoint validatorEndpoint = resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class);
-        Assert.assertNotNull(validatorEndpoint);
+        assertNotNull(validatorEndpoint);
         CustomResourceResolver resolver = (CustomResourceResolver)validatorEndpoint.getResourceResolver();
 
         Set<String> uris = resolver.getResolvedResourceUris();
@@ -105,7 +106,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
     }
 
     void checkResourceUri(Set<String> uris, String resourceUri) {
-        Assert.assertTrue("Missing resource uri " + resourceUri + " in resolved resource URI set", uris.contains(resourceUri));
+        assertTrue(uris.contains(resourceUri), "Missing resource uri " + resourceUri + " in resolved resource URI set");
     }
 
     @Override

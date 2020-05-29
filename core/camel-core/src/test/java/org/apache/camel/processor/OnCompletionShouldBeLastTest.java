@@ -22,7 +22,7 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OnCompletionShouldBeLastTest extends ContextTestSupport {
 

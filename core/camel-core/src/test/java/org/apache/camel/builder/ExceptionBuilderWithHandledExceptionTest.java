@@ -24,7 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to test exception configuration
@@ -71,7 +74,8 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
             template.sendBodyAndHeader("direct:a", "Hello IOE", "foo", "something that does not match");
             fail("Should have thrown a IOException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IOException);
+            boolean b = e.getCause() instanceof IOException;
+            assertTrue(b);
             // expected, failure is not handled because predicate doesn't match
         }
 

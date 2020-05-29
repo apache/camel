@@ -22,8 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -31,7 +34,7 @@ import org.junit.Test;
 public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/files");
         super.setUp();
@@ -62,12 +65,12 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
-        assertFalse("Headers should have been removed", mock.getExchanges().get(0).getIn().hasHeaders());
+        assertFalse(mock.getExchanges().get(0).getIn().hasHeaders(), "Headers should have been removed");
 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
         // end users deleting headers
-        assertFalse("File should been deleted", new File("target/data/files/hello.txt").exists());
+        assertFalse(new File("target/data/files/hello.txt").exists(), "File should been deleted");
     }
 
     @Test
@@ -94,7 +97,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
         // end users changing headers
-        assertFalse("File should been deleted", new File("target/data/files/hello.txt").exists());
+        assertFalse(new File("target/data/files/hello.txt").exists(), "File should been deleted");
     }
 
     @Test
@@ -117,12 +120,12 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
-        assertFalse("Headers should have been removed", mock.getExchanges().get(0).getIn().hasHeaders());
+        assertFalse(mock.getExchanges().get(0).getIn().hasHeaders(), "Headers should have been removed");
 
         // the original file should have been moved, as the file consumer should
         // be resilient against
         // end users deleting headers
-        assertTrue("File should been moved", new File("target/data/files/.camel/hello.txt").exists());
+        assertTrue(new File("target/data/files/.camel/hello.txt").exists(), "File should been moved");
     }
 
     @Test
@@ -149,7 +152,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // the original file should have been moved, as the file consumer should
         // be resilient against
         // end users changing headers
-        assertTrue("File should been moved", new File("target/data/files/.camel/hello.txt").exists());
+        assertTrue(new File("target/data/files/.camel/hello.txt").exists(), "File should been moved");
     }
 
 }

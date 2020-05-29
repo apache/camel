@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Handler;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests the XPath annotation 'header' value which when set will cause the XPath
@@ -34,9 +36,9 @@ public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSuppo
     public void testConstantXPathHeaders() throws Exception {
         template.sendBodyAndHeader("bean:myBean", "<response>OK</response>", "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
 
-        assertEquals("bean response:  " + myBean, "OK", myBean.response);
-        assertEquals("bean userName: " + myBean, "Alan", myBean.userName);
-        assertEquals("bean date:  " + myBean, "26/08/2012", myBean.date);
+        assertEquals("OK", myBean.response, "bean response:  " + myBean);
+        assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
+        assertEquals("26/08/2012", myBean.date, "bean date:  " + myBean);
     }
 
     @Override

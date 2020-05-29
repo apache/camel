@@ -19,9 +19,9 @@ package org.apache.camel.reifier;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.ProcessDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProcessorReifierTest {
     @Test

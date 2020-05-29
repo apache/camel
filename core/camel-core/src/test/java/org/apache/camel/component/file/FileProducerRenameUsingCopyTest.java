@@ -22,13 +22,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/file");
         super.setUp();
@@ -45,8 +48,8 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("File not copied", new File("target/data/file/done/hello.txt").exists());
-        assertFalse("File not deleted", new File("target/data/file/hello.txt").exists());
+        assertTrue(new File("target/data/file/done/hello.txt").exists(), "File not copied");
+        assertFalse(new File("target/data/file/hello.txt").exists(), "File not deleted");
     }
 
     @Override

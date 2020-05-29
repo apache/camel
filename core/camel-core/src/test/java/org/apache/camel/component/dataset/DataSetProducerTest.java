@@ -21,8 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DataSetProducerTest extends ContextTestSupport {
 
@@ -182,7 +183,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 
     @Test
@@ -323,7 +324,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 
     @Test
@@ -392,7 +393,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 
     @Test
@@ -435,6 +436,6 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 }

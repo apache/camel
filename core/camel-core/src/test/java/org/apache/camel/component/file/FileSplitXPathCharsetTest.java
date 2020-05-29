@@ -25,8 +25,8 @@ import java.nio.file.Paths;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class FileSplitXPathCharsetTest extends ContextTestSupport {
 
@@ -35,7 +35,7 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
     private static Path inputCsv = Paths.get(TEST_DIR, "input.csv");
     private static Path inputXml = Paths.get(TEST_DIR, "input.xml");
 
-    @BeforeClass
+    @BeforeAll
     public static void clearInputFiles() throws IOException {
         deleteDirectory(TEST_DIR);
     }

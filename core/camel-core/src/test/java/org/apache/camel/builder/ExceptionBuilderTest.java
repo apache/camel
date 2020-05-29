@@ -28,7 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to test exception configuration
@@ -53,7 +56,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello NPE");
             fail("Should have thrown a NullPointerException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof NullPointerException);
+            boolean b = e.getCause() instanceof NullPointerException;
+            assertTrue(b);
             // expected
         }
 
@@ -72,7 +76,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello IO");
             fail("Should have thrown a IOException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IOException);
+            boolean b = e.getCause() instanceof IOException;
+            assertTrue(b);
             // expected
         }
 
@@ -91,7 +96,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello Exception");
             fail("Should have thrown a Exception");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof Exception);
+            boolean b = e.getCause() instanceof Exception;
+            assertTrue(b);
             // expected
         }
 
@@ -110,7 +116,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "Hello business");
             fail("Should have thrown a MyBusinessException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof MyBusinessException);
+            boolean b = e.getCause() instanceof MyBusinessException;
+            assertTrue(b);
             // expected
         }
 
@@ -130,7 +137,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "I am not allowed to do this");
             fail("Should have thrown a GeneralSecurityException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof GeneralSecurityException);
+            boolean b = e.getCause() instanceof GeneralSecurityException;
+            assertTrue(b);
             // expected
         }
 
@@ -150,7 +158,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             template.sendBody("direct:a", "I am not allowed to access this");
             fail("Should have thrown a GeneralSecurityException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalAccessException);
+            boolean b = e.getCause() instanceof IllegalAccessException;
+            assertTrue(b);
             // expected
         }
 

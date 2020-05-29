@@ -29,7 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
 

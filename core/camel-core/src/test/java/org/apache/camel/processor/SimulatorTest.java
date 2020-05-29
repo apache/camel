@@ -23,7 +23,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SimulatorTest extends ContextTestSupport {
 
@@ -54,7 +56,7 @@ public class SimulatorTest extends ContextTestSupport {
             }
         });
 
-        assertNotNull("Should receive a response!", response);
+        assertNotNull(response, "Should receive a response!");
 
         String text = response.getMessage().getMandatoryBody(String.class);
         assertStringContains(text, containedText);

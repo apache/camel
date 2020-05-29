@@ -36,9 +36,12 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.function.ThrowingFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
@@ -53,7 +56,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         // test that we cache at most 1000 producers to avoid it eating to much
         // memory
@@ -66,12 +69,12 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // the eviction is async so force cleanup
             cache.cleanUp();
-            assertEquals("Size should be 1000", 1000, cache.size());
+            assertEquals(1000, cache.size(), "Size should be 1000");
         });
 
         cache.stop();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
     }
 
     @Test
@@ -79,7 +82,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         DefaultProducerCache cache = new DefaultProducerCache(this, context, 5);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         for (int i = 0; i < 8; i++) {
             Endpoint e = newEndpoint(true, i);
@@ -91,7 +94,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // the eviction is async so force cleanup
             cache.cleanUp();
-            assertEquals("Size should be 5", 5, cache.size());
+            assertEquals(5, cache.size(), "Size should be 5");
         });
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
@@ -108,7 +111,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         cache.setExtendedStatistics(true);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         // use 1 = 2 times
         // use 2 = 3 times
@@ -136,7 +139,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
 
-        assertEquals("Size should be 4", 4, cache.size());
+        assertEquals(4, cache.size(), "Size should be 4");
 
         EndpointUtilizationStatistics stats = cache.getEndpointUtilizationStatistics();
         assertEquals(4, stats.size());
@@ -158,21 +161,21 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         MyProducerCache cache = new MyProducerCache(this, context, 2);
         cache.start();
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         Endpoint e = newEndpoint(false, 1);
         e.setCamelContext(context);
 
         AsyncProducer p1 = cache.acquireProducer(e);
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         AsyncProducer p2 = cache.acquireProducer(e);
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         cache.releaseProducer(e, p2);
         cache.releaseProducer(e, p1);
 
-        assertEquals("Size should be 2", 2, cache.size());
+        assertEquals(2, cache.size(), "Size should be 2");
 
         // nothing has stopped yet
         assertEquals(0, stopCounter.get());
@@ -181,7 +184,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         p2 = cache.acquireProducer(e);
         AsyncProducer p3 = cache.acquireProducer(e);
 
-        assertEquals("Size should be 0", 0, cache.size());
+        assertEquals(0, cache.size(), "Size should be 0");
 
         // nothing has stopped yet even we have 3 producers and a cache limit of 2
         assertEquals(0, stopCounter.get());
@@ -238,6 +241,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     }
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         component = new MyComponent(context);

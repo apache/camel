@@ -25,7 +25,9 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LanguageServiceTest extends ContextTestSupport {
 

@@ -28,16 +28,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RestProducerBindingProcessorTest {
 
@@ -87,7 +85,7 @@ public class RestProducerBindingProcessorTest {
 
         that.done(false);
 
-        Assert.assertSame(response, exchange.getMessage().getBody());
+        assertSame(response, exchange.getMessage().getBody());
     }
 
     @Test
@@ -121,7 +119,7 @@ public class RestProducerBindingProcessorTest {
 
         that.done(false);
 
-        Assert.assertSame(response, exchange.getMessage().getBody());
+        assertSame(response, exchange.getMessage().getBody());
     }
 
     @Test

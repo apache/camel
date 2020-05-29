@@ -23,8 +23,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.enricher.SampleAggregator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PollEnricherLightweightTest extends ContextTestSupport {
 
@@ -33,7 +35,7 @@ public class PollEnricherLightweightTest extends ContextTestSupport {
     protected MockEndpoint mock;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUseLightweightContext(true);
         super.setUp();
@@ -95,7 +97,7 @@ public class PollEnricherLightweightTest extends ContextTestSupport {
         // bit later and we wait
         mock.assertIsSatisfied();
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take approx 0.25 sec: was " + delta, delta > 150);
+        assertTrue(delta > 150, "Should take approx 0.25 sec: was " + delta);
     }
 
     // -------------------------------------------------------------

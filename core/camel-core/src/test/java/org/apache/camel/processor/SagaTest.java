@@ -29,11 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SagaTest extends ContextTestSupport {
 
@@ -73,11 +73,11 @@ public class SagaTest extends ContextTestSupport {
             context.createFluentProducerTemplate().to("direct:saga").withHeader("amount", amount).withHeader("fail", failAtTheEnd).request();
 
             if (shouldFail) {
-                Assert.fail("Exception not thrown");
+                fail("Exception not thrown");
             }
         } catch (Exception ex) {
             if (!shouldFail) {
-                Assert.fail("Unexpected exception");
+                fail("Unexpected exception");
             }
         }
     }

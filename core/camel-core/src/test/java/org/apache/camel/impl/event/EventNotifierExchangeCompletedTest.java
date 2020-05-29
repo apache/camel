@@ -26,15 +26,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
 
     private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -82,7 +84,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         // calculate elapsed time
         Date now = new Date();
         long elapsed = now.getTime() - created;
-        assertTrue("Should be > 400, was: " + elapsed, elapsed > 400);
+        assertTrue(elapsed > 400, "Should be > 400, was: " + elapsed);
 
         log.info("Elapsed time in millis: " + elapsed);
     }

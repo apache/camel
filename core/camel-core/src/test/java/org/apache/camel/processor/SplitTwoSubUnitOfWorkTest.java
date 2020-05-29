@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  *
@@ -63,10 +66,11 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(4, counter); // 1 first + 3 redeliveries
+        // 1 first + 3 redeliveries
+        assertEquals(4, counter);
 
         MyBody dead = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getIn().getBody(MyBody.class);
-        assertSame("Should be original message in DLC", body, dead);
+        assertSame(body, dead, "Should be original message in DLC");
     }
 
     @Override

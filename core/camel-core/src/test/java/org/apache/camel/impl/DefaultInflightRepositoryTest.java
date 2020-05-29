@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.engine.DefaultInflightRepository;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultInflightRepositoryTest extends ContextTestSupport {
 

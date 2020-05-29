@@ -24,7 +24,9 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Advice with tests
@@ -42,7 +44,7 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"));
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"), e.getMessage());
         }
     }
 

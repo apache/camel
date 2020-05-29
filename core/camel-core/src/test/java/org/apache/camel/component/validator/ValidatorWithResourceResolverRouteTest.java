@@ -28,8 +28,8 @@ import org.apache.camel.processor.validation.CatalogLSResourceResolver;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.xml.resolver.CatalogManager;
 import org.apache.xml.resolver.tools.CatalogResolver;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
 
@@ -62,7 +62,7 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

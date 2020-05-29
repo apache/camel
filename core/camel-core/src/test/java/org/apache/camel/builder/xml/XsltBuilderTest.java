@@ -40,13 +40,15 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.UnitOfWorkHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XsltBuilderTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/xslt");
         createDirectory("target/data/xslt");
@@ -232,7 +234,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertIsInstanceOf(File.class, exchange.getOut().getBody());
 
         File file = new File("target/data/xslt/xsltout.xml");
-        assertTrue("Output file should exist", file.exists());
+        assertTrue(file.exists(), "Output file should exist");
 
         String body = exchange.getOut().getBody(String.class);
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
@@ -252,7 +254,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertIsInstanceOf(File.class, exchange.getOut().getBody());
 
         File file = new File("target/data/xslt/xsltout.xml");
-        assertTrue("Output file should exist", file.exists());
+        assertTrue(file.exists(), "Output file should exist");
 
         String body = exchange.getOut().getBody(String.class);
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
@@ -262,7 +264,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions, log);
 
         // the file should be deleted
-        assertFalse("Output file should be deleted", file.exists());
+        assertFalse(file.exists(), "Output file should be deleted");
     }
 
     @Test

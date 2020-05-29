@@ -22,8 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TimerGracefulShutdownTest extends ContextTestSupport {
 
@@ -45,11 +47,11 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
-        assertFalse("Should not throw exception during graceful shutdown", eh.isError());
+        assertFalse(eh.isError(), "Should not throw exception during graceful shutdown");
     }
 
     @Override

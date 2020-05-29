@@ -29,7 +29,9 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.CamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
@@ -37,20 +39,21 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     public void testFilter() {
         SSLContextParameters parameters = new SSLContextParameters();
 
-        Collection<String> result = parameters.filter(null, Arrays.asList(new String[] {"SSLv3", "TLSv1", "TLSv1.1"}), Arrays.asList(new Pattern[] {Pattern.compile("TLS.*")}),
-                                                      Arrays.asList(new Pattern[0]));
+        Collection<String> result;
+        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), Arrays.asList(Pattern.compile("TLS.*")),
+                                    Arrays.asList(new Pattern[0]));
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
 
-        result = parameters.filter(null, Arrays.asList(new String[] {"SSLv3", "TLSv1", "TLSv1.1"}), Arrays.asList(new Pattern[] {Pattern.compile(".*")}),
-                                   Arrays.asList(new Pattern[] {Pattern.compile("SSL.*")}));
+        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), Arrays.asList(Pattern.compile(".*")),
+                                   Arrays.asList(Pattern.compile("SSL.*")));
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
         try {
             assertStartsWith((String[])null, "TLS");
             fail("We chould got an exception here!");
         } catch (AssertionError ex) {
-            assertEquals("Get a wrong message", "The values should not be null", ex.getMessage());
+            assertTrue(ex.getMessage().contains("The values should not be null"), "Get a wrong message");
         }
     }
 
@@ -826,16 +829,16 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     protected void assertStartsWith(String[] values, String prefix) {
-        assertNotNull("The values should not be null", values);
+        assertNotNull(values, "The values should not be null");
         for (String value : values) {
-            assertTrue(value + " does not start with the prefix " + prefix, value.startsWith(prefix));
+            assertTrue(value.startsWith(prefix), value + " does not start with the prefix " + prefix);
         }
     }
 
     protected void assertStartsWith(Collection<String> values, String prefix) {
-        assertNotNull("The values should not be null", values);
+        assertNotNull(values, "The values should not be null");
         for (String value : values) {
-            assertTrue(value + " does not start with the prefix " + prefix, value.startsWith(prefix));
+            assertTrue(value.startsWith(prefix), value + " does not start with the prefix " + prefix);
         }
     }
 }

@@ -24,7 +24,10 @@ import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the retry until predicate
@@ -73,7 +76,8 @@ public class OnExceptionRetryUntilWithDefaultErrorHandlerTest extends ContextTes
             invoked++;
 
             assertEquals("Hello World", body);
-            assertTrue(causedBy instanceof MyFunctionalException);
+            boolean b = causedBy instanceof MyFunctionalException;
+            assertTrue(b);
 
             // we can of course do what ever we want to determine the result but
             // this is a unit test so we end after 3 attempts

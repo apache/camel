@@ -30,8 +30,9 @@ import java.util.stream.IntStream;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterServiceViewTest {
 
@@ -42,8 +43,8 @@ public class ClusterServiceViewTest {
         TestClusterView view2 = service.getView("ns1").unwrap(TestClusterView.class);
         TestClusterView view3 = service.getView("ns2").unwrap(TestClusterView.class);
 
-        Assert.assertEquals(view1, view2);
-        Assert.assertNotEquals(view1, view3);
+        assertEquals(view1, view2);
+        assertNotEquals(view1, view3);
     }
 
     @Test
@@ -55,42 +56,42 @@ public class ClusterServiceViewTest {
         TestClusterView view2 = service.getView("ns1").unwrap(TestClusterView.class);
         TestClusterView view3 = service.getView("ns2").unwrap(TestClusterView.class);
 
-        Assert.assertEquals(ServiceStatus.Started, view1.getStatus());
-        Assert.assertEquals(ServiceStatus.Started, view2.getStatus());
-        Assert.assertEquals(ServiceStatus.Started, view3.getStatus());
+        assertEquals(ServiceStatus.Started, view1.getStatus());
+        assertEquals(ServiceStatus.Started, view2.getStatus());
+        assertEquals(ServiceStatus.Started, view3.getStatus());
 
         service.releaseView(view1);
 
-        Assert.assertEquals(ServiceStatus.Started, view1.getStatus());
-        Assert.assertEquals(ServiceStatus.Started, view2.getStatus());
-        Assert.assertEquals(ServiceStatus.Started, view3.getStatus());
+        assertEquals(ServiceStatus.Started, view1.getStatus());
+        assertEquals(ServiceStatus.Started, view2.getStatus());
+        assertEquals(ServiceStatus.Started, view3.getStatus());
 
         service.releaseView(view2);
 
-        Assert.assertEquals(ServiceStatus.Stopped, view1.getStatus());
-        Assert.assertEquals(ServiceStatus.Stopped, view2.getStatus());
-        Assert.assertEquals(ServiceStatus.Started, view3.getStatus());
+        assertEquals(ServiceStatus.Stopped, view1.getStatus());
+        assertEquals(ServiceStatus.Stopped, view2.getStatus());
+        assertEquals(ServiceStatus.Started, view3.getStatus());
 
         service.releaseView(view3);
 
         TestClusterView newView1 = service.getView("ns1").unwrap(TestClusterView.class);
         TestClusterView newView2 = service.getView("ns1").unwrap(TestClusterView.class);
 
-        Assert.assertEquals(newView1, newView2);
-        Assert.assertEquals(view1, newView1);
-        Assert.assertEquals(view1, newView2);
+        assertEquals(newView1, newView2);
+        assertEquals(view1, newView1);
+        assertEquals(view1, newView2);
 
-        Assert.assertEquals(ServiceStatus.Started, newView1.getStatus());
-        Assert.assertEquals(ServiceStatus.Started, newView2.getStatus());
-        Assert.assertEquals(ServiceStatus.Stopped, view3.getStatus());
+        assertEquals(ServiceStatus.Started, newView1.getStatus());
+        assertEquals(ServiceStatus.Started, newView2.getStatus());
+        assertEquals(ServiceStatus.Stopped, view3.getStatus());
 
         service.stop();
 
-        Assert.assertEquals(ServiceStatus.Stopped, view1.getStatus());
-        Assert.assertEquals(ServiceStatus.Stopped, view2.getStatus());
-        Assert.assertEquals(ServiceStatus.Stopped, view3.getStatus());
-        Assert.assertEquals(ServiceStatus.Stopped, newView1.getStatus());
-        Assert.assertEquals(ServiceStatus.Stopped, newView2.getStatus());
+        assertEquals(ServiceStatus.Stopped, view1.getStatus());
+        assertEquals(ServiceStatus.Stopped, view2.getStatus());
+        assertEquals(ServiceStatus.Stopped, view3.getStatus());
+        assertEquals(ServiceStatus.Stopped, newView1.getStatus());
+        assertEquals(ServiceStatus.Stopped, newView2.getStatus());
     }
 
     @Test
@@ -98,26 +99,26 @@ public class ClusterServiceViewTest {
         TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
         TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
 
-        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+        assertEquals(ServiceStatus.Stopped, view.getStatus());
 
         // This should not start the view as the service has not yet started.
         service.startView(view.getNamespace());
 
-        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+        assertEquals(ServiceStatus.Stopped, view.getStatus());
 
         // This should start the view.
         service.start();
 
-        Assert.assertEquals(ServiceStatus.Started, view.getStatus());
+        assertEquals(ServiceStatus.Started, view.getStatus());
 
         service.stopView(view.getNamespace());
-        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+        assertEquals(ServiceStatus.Stopped, view.getStatus());
 
         service.startView(view.getNamespace());
-        Assert.assertEquals(ServiceStatus.Started, view.getStatus());
+        assertEquals(ServiceStatus.Started, view.getStatus());
 
         service.releaseView(view);
-        Assert.assertEquals(ServiceStatus.Stopped, view.getStatus());
+        assertEquals(ServiceStatus.Stopped, view.getStatus());
     }
 
     @Test
@@ -138,7 +139,7 @@ public class ClusterServiceViewTest {
 
         latch.await(10, TimeUnit.SECONDS);
 
-        IntStream.range(0, events).forEach(i -> Assert.assertTrue(results.contains(i)));
+        IntStream.range(0, events).forEach(i -> assertTrue(results.contains(i)));
     }
 
     @Test
@@ -164,7 +165,7 @@ public class ClusterServiceViewTest {
 
         latch.await(10, TimeUnit.SECONDS);
 
-        IntStream.range(0, events * 2).forEach(i -> Assert.assertTrue(results.contains(i)));
+        IntStream.range(0, events * 2).forEach(i -> assertTrue(results.contains(i)));
     }
 
     // *********************************

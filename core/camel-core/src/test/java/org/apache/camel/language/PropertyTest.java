@@ -19,7 +19,9 @@ package org.apache.camel.language;
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.property.ExchangePropertyLanguage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertyTest extends LanguageTestSupport {
 

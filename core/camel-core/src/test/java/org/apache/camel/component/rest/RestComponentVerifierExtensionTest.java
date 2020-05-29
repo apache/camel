@@ -33,8 +33,10 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestComponentVerifierExtensionTest extends ContextTestSupport {
     @Override
@@ -62,7 +64,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
 
         RestComponentVerifierExtension.Result result = verifier.verify(RestComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(RestComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(RestComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -81,11 +83,11 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
 
         RestComponentVerifierExtension.Result result = verifier.verify(RestComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(RestComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(RestComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
+        assertEquals(RestComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(RestComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
 
     // ***************************************************

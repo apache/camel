@@ -21,8 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataSetConsumerTest extends ContextTestSupport {
 
@@ -56,7 +57,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
             }
         });
 
-        Assert.assertEquals("expectedMessageCount should be unset(i.e. -1) for a consumer-only endpoint", -1, getMockEndpoint(dataSetUri).getExpectedCount());
+        assertEquals(-1, getMockEndpoint(dataSetUri).getExpectedCount(), "expectedMessageCount should be unset(i.e. -1) for a consumer-only endpoint");
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int)dataSet.getSize());
@@ -80,8 +81,7 @@ public class DataSetConsumerTest extends ContextTestSupport {
             }
         });
 
-        Assert.assertEquals("expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint", dataSet.getSize(),
-                            getMockEndpoint(dataSetUri).getExpectedCount());
+        assertEquals(dataSet.getSize(), getMockEndpoint(dataSetUri).getExpectedCount(), "expectedMessageCount should be the same as the DataSet size for a consumer-producer endpoint");
 
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMessageCount((int)dataSet.getSize());

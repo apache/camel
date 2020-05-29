@@ -25,8 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IdempotentConsumerEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -132,7 +135,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         // should not contain
-                        assertFalse("Should not eager add to repo", repo.contains(id));
+                        assertFalse(repo.contains(id), "Should not eager add to repo");
                     }
                 }).to("mock:result");
             }
@@ -159,7 +162,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         // should contain
-                        assertTrue("Should eager add to repo", repo.contains(id));
+                        assertTrue(repo.contains(id), "Should eager add to repo");
                     }
                 }).to("mock:result");
             }
@@ -187,7 +190,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

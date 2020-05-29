@@ -22,8 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DataSetEndpointTest extends ContextTestSupport {
 
@@ -38,9 +39,9 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.setCamelContext(context);
         endpoint.setInitialDelay(0);
 
-        Assert.assertEquals(0, endpoint.getPreloadSize());
-        Assert.assertEquals(0, endpoint.getConsumeDelay());
-        Assert.assertEquals(3, endpoint.getProduceDelay());
+        assertEquals(0, endpoint.getPreloadSize());
+        assertEquals(0, endpoint.getConsumeDelay());
+        assertEquals(3, endpoint.getProduceDelay());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -59,11 +60,11 @@ public class DataSetEndpointTest extends ContextTestSupport {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
         endpoint.setConsumeDelay(2);
-        Assert.assertEquals(2, endpoint.getConsumeDelay());
+        assertEquals(2, endpoint.getConsumeDelay());
         endpoint.setProduceDelay(5);
-        Assert.assertEquals(5, endpoint.getProduceDelay());
+        assertEquals(5, endpoint.getProduceDelay());
         endpoint.setInitialDelay(1);
-        Assert.assertEquals(1, endpoint.getInitialDelay());
+        assertEquals(1, endpoint.getInitialDelay());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -99,7 +100,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         context.start();
 
         endpoint.assertIsSatisfied();
-        Assert.assertTrue(reported.get());
+        assertTrue(reported.get());
     }
 
     @Test
@@ -107,7 +108,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         SimpleDataSet ds = new SimpleDataSet();
         ds.setSize(2);
         ds.setDefaultBody("Hi");
-        Assert.assertEquals("Hi", ds.getDefaultBody());
+        assertEquals("Hi", ds.getDefaultBody());
     }
 
     @Test
@@ -121,7 +122,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
                 exchange.getIn().setBody(body);
             }
         });
-        Assert.assertNotNull(ds.getOutputTransformer());
+        assertNotNull(ds.getOutputTransformer());
 
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), ds);
         endpoint.setInitialDelay(0);

@@ -23,8 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Simple unit test to produce a new file
@@ -32,7 +34,7 @@ import org.junit.Test;
 public class NewFileProduceTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/producefile");
         super.setUp();
@@ -52,7 +54,7 @@ public class NewFileProduceTest extends ContextTestSupport {
         });
 
         File file = new File("target/data/producefile/bye.txt");
-        assertTrue("The file should have been created", file.exists());
+        assertTrue(file.exists(), "The file should have been created");
     }
 
 }

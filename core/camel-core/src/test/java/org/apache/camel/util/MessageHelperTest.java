@@ -29,19 +29,20 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.MessageHelper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link MessageHelper}
  */
-public class MessageHelperTest extends Assert {
+public class MessageHelperTest {
 
     private Message message;
     private CamelContext camelContext = new DefaultCamelContext();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         message = new DefaultMessage(camelContext);
     }
@@ -80,7 +81,7 @@ public class MessageHelperTest extends Assert {
             }
         });
         MessageHelper.resetStreamCache(message);
-        assertTrue("Should have reset the stream cache", reset.get());
+        assertTrue(reset.get(), "Should have reset the stream cache");
     }
 
     @Test
@@ -161,7 +162,7 @@ public class MessageHelperTest extends Assert {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message);
-        assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">Hello World</body>"));
+        assertTrue(out.contains("<body type=\"java.lang.String\">Hello World</body>"), "Should contain body");
 
         context.stop();
     }
@@ -178,8 +179,8 @@ public class MessageHelperTest extends Assert {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsXml(message);
-        assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"));
-        assertTrue("Should contain exchangeId", out.contains(message.getExchange().getExchangeId()));
+        assertTrue(out.contains("<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"), "Should contain body");
+        assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
 
         context.stop();
     }

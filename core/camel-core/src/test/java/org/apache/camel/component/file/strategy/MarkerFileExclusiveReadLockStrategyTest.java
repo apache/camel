@@ -25,10 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Tests the MarkerFileExclusiveReadLockStrategy in a multi-threaded scenario.
@@ -40,7 +43,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/marker/");
         createDirectory("target/data/marker/in");
@@ -124,7 +127,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
     private static void assertFileDoesNotExists(String filename) {
         File file = new File(filename);
-        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
+        assertFalse(file.exists(), "File " + filename + " should not exist, it should have been deleted after being processed");
     }
 
 }

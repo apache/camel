@@ -27,10 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for expression option for file consumer.
@@ -43,7 +44,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filelanguage");
         super.setUp();

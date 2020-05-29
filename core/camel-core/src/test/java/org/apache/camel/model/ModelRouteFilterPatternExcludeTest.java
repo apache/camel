@@ -19,7 +19,9 @@ package org.apache.camel.model;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ModelRouteFilterPatternExcludeTest extends ContextTestSupport {
 

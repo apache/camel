@@ -34,13 +34,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.MyAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SplitterLightweightTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUseLightweightContext(true);
         super.setUp();
@@ -71,13 +73,13 @@ public class SplitterLightweightTest extends ContextTestSupport {
             Message in = exchange.getIn();
             ids.add(in.getMessageId());
             ids2.add(exchange.getExchangeId());
-            assertNotNull("The in message should not be null.", in);
+            assertNotNull(in, "The in message should not be null.");
             assertProperty(exchange, Exchange.SPLIT_INDEX, i);
             assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }
 
-        assertEquals("The sub messages should have unique message ids", 4, ids.size());
-        assertEquals("The sub messages should have unique exchange ids", 4, ids2.size());
+        assertEquals(4, ids.size(), "The sub messages should have unique message ids");
+        assertEquals(4, ids2.size(), "The sub messages should have unique exchange ids");
     }
 
     @Test
@@ -108,7 +110,7 @@ public class SplitterLightweightTest extends ContextTestSupport {
             }
         });
 
-        assertFalse("Should not have out", result.hasOut());
+        assertFalse(result.hasOut(), "Should not have out");
     }
 
     @Test
@@ -162,7 +164,7 @@ public class SplitterLightweightTest extends ContextTestSupport {
         Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Object) (Integer) 5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test
@@ -183,7 +185,7 @@ public class SplitterLightweightTest extends ContextTestSupport {
         Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Object) (Integer) 5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test
@@ -211,7 +213,7 @@ public class SplitterLightweightTest extends ContextTestSupport {
     @Test
     public void testSplitterWithStreamingAndFileBody() throws Exception {
         URL url = this.getClass().getResource("/org/apache/camel/processor/simple.txt");
-        assertNotNull("We should find this simple file here.", url);
+        assertNotNull(url, "We should find this simple file here.");
         File file = new File(url.getFile());
         sendToSplitterWithStreaming(file);
     }
@@ -272,7 +274,8 @@ public class SplitterLightweightTest extends ContextTestSupport {
             }
         });
 
-        assertTrue("The result exchange should have a camel exception", result.getException() instanceof CamelException);
+        boolean b = result.getException() instanceof CamelException;
+        assertTrue(b, "The result exchange should have a camel exception");
 
         assertMockEndpointsSatisfied();
     }

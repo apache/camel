@@ -25,15 +25,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
 
     private MyIntercepStrategy strategy;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         strategy = new MyIntercepStrategy();
         super.setUp();

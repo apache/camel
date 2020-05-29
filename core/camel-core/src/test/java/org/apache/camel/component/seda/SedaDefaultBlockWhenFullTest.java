@@ -19,7 +19,9 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that a Seda component properly set blockWhenFull on endpoints.
@@ -68,7 +70,7 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
     public void testSedaDefaultWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
-            assertFalse("Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"", seda.isBlockWhenFull());
+            assertFalse(seda.isBlockWhenFull(), "Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"");
 
             sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE);
 

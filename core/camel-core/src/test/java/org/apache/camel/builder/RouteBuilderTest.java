@@ -44,7 +44,9 @@ import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
@@ -77,16 +79,16 @@ public class RouteBuilderTest extends TestSupport {
     public void testSimpleRoute() throws Exception {
         List<Route> routes = buildSimpleRoute();
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
-            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
 
@@ -109,17 +111,17 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
-            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
 
@@ -142,17 +144,17 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, channel.getNextProcessor());
             List<FilterProcessor> filters = choiceProcessor.getFilters();
-            assertEquals("Should be two when clauses", 2, filters.size());
+            assertEquals(2, filters.size(), "Should be two when clauses");
 
             Processor filter1 = filters.get(0);
             assertSendTo(unwrapChannel(((FilterProcessor)filter1).getProcessor()).getNextProcessor(), "direct://b");
@@ -187,10 +189,10 @@ public class RouteBuilderTest extends TestSupport {
     public void testCustomProcessor() throws Exception {
         List<Route> routes = buildCustomProcessor();
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
         }
     }
 
@@ -213,10 +215,10 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
         }
     }
 
@@ -239,17 +241,17 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
             List<Processor> endpoints = new ArrayList<>(multicastProcessor.getProcessors());
-            assertEquals("Should have 2 endpoints", 2, endpoints.size());
+            assertEquals(2, endpoints.size(), "Should have 2 endpoints");
 
             assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "direct://tap");
             assertSendToProcessor(unwrapChannel(endpoints.get(1)).getNextProcessor(), "direct://b");
@@ -279,10 +281,10 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
 
@@ -311,10 +313,10 @@ public class RouteBuilderTest extends TestSupport {
         List<Route> routes = getRouteList(builder);
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
         }
     }
 
@@ -351,10 +353,10 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -393,10 +395,10 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
@@ -424,20 +426,20 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, channel.getNextProcessor());
-            assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
+            assertEquals("header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString(), "messageIdExpression");
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
-            assertEquals("Endpoint URI", "direct://b", sendProcessor.getDestination().getEndpointUri());
+            assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
 
@@ -461,10 +463,10 @@ public class RouteBuilderTest extends TestSupport {
 
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "direct://a", key.getEndpointUri());
+            assertEquals("direct://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumer = assertIsInstanceOf(DefaultRoute.class, route);
 
@@ -483,7 +485,7 @@ public class RouteBuilderTest extends TestSupport {
         }
 
         SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
-        assertEquals("Endpoint URI", uri, sendProcessor.getDestination().getEndpointUri());
+        assertEquals(uri, sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
     }
 
     protected void assertSendToProcessor(Processor processor, String uri) {
@@ -495,7 +497,7 @@ public class RouteBuilderTest extends TestSupport {
             assertSendTo(processor, uri);
         } else {
             Producer producer = assertIsInstanceOf(Producer.class, processor);
-            assertEquals("Endpoint URI", uri, producer.getEndpoint().getEndpointUri());
+            assertEquals(uri, producer.getEndpoint().getEndpointUri(), "Endpoint URI");
         }
     }
 

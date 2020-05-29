@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for max messages per poll
@@ -32,7 +32,7 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
     private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&" + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/poll");
         super.setUp();

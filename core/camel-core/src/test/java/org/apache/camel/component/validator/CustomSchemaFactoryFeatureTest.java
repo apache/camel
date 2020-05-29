@@ -21,7 +21,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory

@@ -34,7 +34,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StaxConverterTest extends ContextTestSupport {
 
@@ -110,7 +112,7 @@ public class StaxConverterTest extends ContextTestSupport {
             result = result.replace('\'', '"');
         }
         boolean equals = TEST_XML_WITH_XML_HEADER.equals(result) || TEST_XML_WITH_XML_HEADER_ISO_8859_1.equals(result);
-        assertTrue("Should match header", equals);
+        assertTrue(equals, "Should match header");
     }
 
     @Test

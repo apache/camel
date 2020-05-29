@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the processing of a stream-cache in the multi-cast processor in the

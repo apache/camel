@@ -26,9 +26,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
@@ -49,12 +51,12 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
         });
 
         Map<String, Object> foo = myBean.headers;
-        assertNotNull("myBean.foo", foo);
+        assertNotNull(foo, "myBean.foo");
 
-        assertEquals("foo.h1", "xyz", foo.get("h1"));
-        assertEquals("foo.h2", 456, foo.get("h2"));
+        assertEquals("xyz", foo.get("h1"), "foo.h1");
+        assertEquals(456, foo.get("h2"), "foo.h2");
 
-        assertEquals("body", "TheBody", myBean.body);
+        assertEquals("TheBody", myBean.body, "body");
     }
 
     @Override

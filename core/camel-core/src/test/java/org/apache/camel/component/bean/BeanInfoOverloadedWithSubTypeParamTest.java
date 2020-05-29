@@ -17,15 +17,16 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
 
     @Test
     public void testBeanInfoOverloadedWithSubTypedParam() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
-        Assert.assertEquals(2, beanInfo.getMethods().size());
+        assertEquals(2, beanInfo.getMethods().size());
     }
 
     class Bean {

@@ -22,8 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * CAMEL-5848
@@ -31,7 +34,7 @@ import org.junit.Test;
 public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
 
@@ -49,7 +52,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "E", Exchange.FILE_NAME, "foo-e.txt");
         template.sendBodyAndHeader("file:target/data/done", "E", Exchange.FILE_NAME, "foo.done");
 
-        assertTrue("Done file should exists", new File("target/data/done/foo.done").exists());
+        assertTrue(new File("target/data/done/foo.done").exists(), "Done file should exists");
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E");
 
@@ -61,7 +64,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         Thread.sleep(50);
 
         // the done file should be deleted
-        assertFalse("Done file should be deleted", new File("target/data/done/foo.done").exists());
+        assertFalse(new File("target/data/done/foo.done").exists(), "Done file should be deleted");
     }
 
     @Test
@@ -75,9 +78,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done2", "b", Exchange.FILE_NAME, "b.txt.done");
         template.sendBodyAndHeader("file:target/data/done2", "c", Exchange.FILE_NAME, "c.txt.done");
 
-        assertTrue("Done file should exists", new File("target/data/done2/a.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/data/done2/b.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/data/done2/c.txt.done").exists());
+        assertTrue(new File("target/data/done2/a.txt.done").exists(), "Done file should exists");
+        assertTrue(new File("target/data/done2/b.txt.done").exists(), "Done file should exists");
+        assertTrue(new File("target/data/done2/c.txt.done").exists(), "Done file should exists");
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C");
 
@@ -89,9 +92,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         Thread.sleep(50);
 
         // the done file should be deleted
-        assertFalse("Done file should be deleted", new File("target/data/done2/a.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/data/done2/b.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/data/done2/c.txt.done").exists());
+        assertFalse(new File("target/data/done2/a.txt.done").exists(), "Done file should be deleted");
+        assertFalse(new File("target/data/done2/b.txt.done").exists(), "Done file should be deleted");
+        assertFalse(new File("target/data/done2/c.txt.done").exists(), "Done file should be deleted");
 
     }
 
@@ -106,9 +109,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done2", "b", Exchange.FILE_NAME, "$b.txt.done");
         template.sendBodyAndHeader("file:target/data/done2", "c", Exchange.FILE_NAME, "c$.txt.done");
 
-        assertTrue("Done file should exists", new File("target/data/done2/$a$.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/data/done2/$b.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/data/done2/c$.txt.done").exists());
+        assertTrue(new File("target/data/done2/$a$.txt.done").exists(), "Done file should exists");
+        assertTrue(new File("target/data/done2/$b.txt.done").exists(), "Done file should exists");
+        assertTrue(new File("target/data/done2/c$.txt.done").exists(), "Done file should exists");
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C");
 
@@ -120,9 +123,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         Thread.sleep(50);
 
         // the done file should be deleted
-        assertFalse("Done file should be deleted", new File("target/data/done2/$a$.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/data/done2/$b.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/data/done2/c$.txt.done").exists());
+        assertFalse(new File("target/data/done2/$a$.txt.done").exists(), "Done file should be deleted");
+        assertFalse(new File("target/data/done2/$b.txt.done").exists(), "Done file should be deleted");
+        assertFalse(new File("target/data/done2/c$.txt.done").exists(), "Done file should be deleted");
 
     }
 

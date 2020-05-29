@@ -26,7 +26,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Default error handler test
@@ -45,7 +48,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         // this pipeline
         for (Processor child : pipeline.next()) {
             Channel channel = assertIsInstanceOf(Channel.class, child);
-            assertNotNull("There should be an error handler", channel.getErrorHandler());
+            assertNotNull(channel.getErrorHandler(), "There should be an error handler");
             assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
         }
     }

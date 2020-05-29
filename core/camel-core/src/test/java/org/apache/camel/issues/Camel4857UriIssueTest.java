@@ -25,8 +25,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * CAMEL-4857 issue test
@@ -84,7 +87,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyComponent());
@@ -94,7 +97,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
     public void testExclamationInUri() {
         // %3F is not an ?, it's part of tube name.
         MyEndpoint endpoint = context.getEndpoint("my:host:11303/tube1+tube%2B+tube%3F", MyEndpoint.class);
-        assertNotNull("endpoint", endpoint);
+        assertNotNull(endpoint, "endpoint");
         assertEquals("my:host:11303/tube1+tube%2B+tube%3F", endpoint.getUri());
     }
 
@@ -104,7 +107,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         // gets
         // normalized, so that an endpoint sees "tube1+tube+"
         MyEndpoint endpoint = context.getEndpoint("my:host:11303/tube1+tube%2B", MyEndpoint.class);
-        assertEquals("Path contains several tube names, every tube name may have + or ? characters", "host:11303/tube1+tube%2B", endpoint.remaining);
+        assertEquals("host:11303/tube1+tube%2B", endpoint.remaining, "Path contains several tube names, every tube name may have + or ? characters");
     }
 
 }

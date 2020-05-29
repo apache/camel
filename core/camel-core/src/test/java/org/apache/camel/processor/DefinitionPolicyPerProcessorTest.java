@@ -27,7 +27,9 @@ import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
@@ -42,7 +44,7 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
     }
 
     @Override

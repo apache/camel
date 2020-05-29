@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
@@ -37,9 +39,9 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:forceCompletionTrue", "test3", "id", "1");
         template.sendBodyAndHeader("direct:forceCompletionTrue", "test4", "id", "2");
 
-        assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
+        assertEquals(0, myCompletionProcessor.getAggregationCount(), "aggregation should not have completed yet");
         context.stop();
-        assertEquals("aggregation should have completed", 2, myCompletionProcessor.getAggregationCount());
+        assertEquals(2, myCompletionProcessor.getAggregationCount(), "aggregation should have completed");
     }
 
     @Test
@@ -55,9 +57,9 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:forceCompletionFalse", "test3", "id", "1");
         template.sendBodyAndHeader("direct:forceCompletionFalse", "test4", "id", "2");
 
-        assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
+        assertEquals(0, myCompletionProcessor.getAggregationCount(), "aggregation should not have completed yet");
         context.stop();
-        assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
+        assertEquals(0, myCompletionProcessor.getAggregationCount(), "aggregation should not have completed yet");
     }
 
     @Test
@@ -73,10 +75,10 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:forceCompletionTrue", "test3", "id", "1");
         template.sendBodyAndHeader("direct:forceCompletionTrue", "test4", "id", "2");
 
-        assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
+        assertEquals(0, myCompletionProcessor.getAggregationCount(), "aggregation should not have completed yet");
         // stopping a route should also force the completion
         context.getRouteController().stopRoute("foo");
-        assertEquals("aggregation should have completed", 2, myCompletionProcessor.getAggregationCount());
+        assertEquals(2, myCompletionProcessor.getAggregationCount(), "aggregation should have completed");
     }
 
     @Test
@@ -92,9 +94,9 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:forceCompletionFalse", "test3", "id", "1");
         template.sendBodyAndHeader("direct:forceCompletionFalse", "test4", "id", "2");
 
-        assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
+        assertEquals(0, myCompletionProcessor.getAggregationCount(), "aggregation should not have completed yet");
         context.getRouteController().stopRoute("bar");
-        assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
+        assertEquals(0, myCompletionProcessor.getAggregationCount(), "aggregation should not have completed yet");
     }
 
     @Override

@@ -27,9 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListWithInterceptorTest extends ContextTestSupport {
 
@@ -79,7 +81,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
+        assertEquals(1, MyInterceptStrategy.doneCount, "Done method shall be called only once");
     }
 
     @Test
@@ -94,7 +96,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
+        assertEquals(1, MyInterceptStrategy.doneCount, "Done method shall be called only once");
     }
 
     @Override

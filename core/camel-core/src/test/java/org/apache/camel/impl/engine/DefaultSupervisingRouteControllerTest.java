@@ -29,7 +29,9 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.SupervisingRouteController;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
@@ -75,7 +77,8 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         Throwable e = src.getRestartException("cake");
         assertNotNull(e);
         assertEquals("Cannot start", e.getMessage());
-        assertTrue(e instanceof IllegalArgumentException);
+        boolean b = e instanceof IllegalArgumentException;
+        assertTrue(b);
 
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());

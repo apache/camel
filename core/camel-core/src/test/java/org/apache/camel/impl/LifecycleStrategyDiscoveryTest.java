@@ -24,9 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStop;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitialized;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LifecycleStrategyDiscoveryTest extends TestSupport {
     @Test

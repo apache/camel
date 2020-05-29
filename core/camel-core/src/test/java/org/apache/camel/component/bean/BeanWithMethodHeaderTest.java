@@ -23,7 +23,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithMethodHeaderTest extends ContextTestSupport {
 
@@ -37,7 +39,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         template.sendBody("direct:echo", "Hello World");
 
         assertMockEndpointsSatisfied();
-        assertNull("There should no Bean_METHOD_NAME header", mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
+        assertNull(mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME), "There should no Bean_METHOD_NAME header");
     }
 
     @Test

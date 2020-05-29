@@ -30,7 +30,7 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.ProcessorFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomProcessorFactoryTest extends ContextTestSupport {
 

@@ -25,8 +25,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for consuming files but the exchange fails and is handled by the
@@ -35,7 +38,7 @@ import org.junit.Test;
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/messages/input");
         super.setUp();
@@ -102,12 +105,13 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
     private static void assertFiles(String filename, boolean deleted) throws InterruptedException {
         // file should be deleted as delete=true in parameter in the route below
         File file = new File("target/data/messages/input/" + filename);
-        assertEquals("File " + filename + " should be deleted: " + deleted, deleted, !file.exists());
+        Object o2 = !file.exists();
+        assertEquals(deleted, o2, "File " + filename + " should be deleted: " + deleted);
 
         // and no lock files
         String lock = filename + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
         file = new File("target/data/messages/input/" + lock);
-        assertFalse("File " + lock + " should be deleted", file.exists());
+        assertFalse(file.exists(), "File " + lock + " should be deleted");
     }
 
     @Override

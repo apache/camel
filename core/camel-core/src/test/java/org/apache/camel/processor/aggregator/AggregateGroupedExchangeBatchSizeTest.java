@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -50,7 +53,7 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
         Exchange out = result.getExchanges().get(0);
         List<Exchange> grouped = out.getIn().getBody(List.class);
 
-        assertTrue("Should be either 2 or 4, was " + grouped.size(), grouped.size() == 2 || grouped.size() == 4);
+        assertTrue(grouped.size() == 2 || grouped.size() == 4, "Should be either 2 or 4, was " + grouped.size());
 
         assertEquals("100", grouped.get(0).getIn().getBody(String.class));
         assertEquals("150", grouped.get(1).getIn().getBody(String.class));

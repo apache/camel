@@ -22,7 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExpressionAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomParameterMappingStrategyTest extends ContextTestSupport {
 

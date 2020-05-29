@@ -24,8 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.CamelContextHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelContextHelperTest extends ContextTestSupport {
 
@@ -56,7 +57,7 @@ public class CamelContextHelperTest extends ContextTestSupport {
             T t = r.call();
             assertEquals(value, t);
         } catch (Throwable t) {
-            Assert.fail("Exception thrown: " + t);
+            fail("Exception thrown: " + t);
         }
     }
     private <T> void fl(Callable<T> r, Class<? extends Exception> exceptionClass) {
@@ -64,7 +65,7 @@ public class CamelContextHelperTest extends ContextTestSupport {
             r.call();
             fail("Should have thrown an exception");
         } catch (Throwable t) {
-            assertTrue("Expected a " + exceptionClass + " exception", exceptionClass.isInstance(t));
+            assertTrue(exceptionClass.isInstance(t), "Expected a " + exceptionClass + " exception");
         }
     }
 

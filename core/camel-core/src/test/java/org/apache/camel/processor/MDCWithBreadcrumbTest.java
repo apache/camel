@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.MDC;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class MDCWithBreadcrumbTest extends MDCTest {
 
     @Override

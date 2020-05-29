@@ -19,7 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithRouteIdTest extends AdviceWithTest {
 

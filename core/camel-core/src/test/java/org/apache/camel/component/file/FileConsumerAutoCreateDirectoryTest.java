@@ -24,7 +24,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
@@ -44,8 +46,8 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
         // the directory should now exists
         File dir = new File("target/data/file/foo");
-        assertTrue("Directory should be created", dir.exists());
-        assertTrue("Directory should be a directory", dir.isDirectory());
+        assertTrue(dir.exists(), "Directory should be created");
+        assertTrue(dir.isDirectory(), "Directory should be a directory");
     }
 
     @Test
@@ -66,8 +68,8 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
         // the directory should now exists
         File dir = new File(base);
-        assertTrue("Directory should be created", dir.exists());
-        assertTrue("Directory should be a directory", dir.isDirectory());
+        assertTrue(dir.exists(), "Directory should be created");
+        assertTrue(dir.isDirectory(), "Directory should be a directory");
     }
 
     @Test
@@ -86,7 +88,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
         // the directory should NOT exists
         File dir = new File("target/data/file/foo");
-        assertFalse("Directory should NOT be created", dir.exists());
+        assertFalse(dir.exists(), "Directory should NOT be created");
     }
 
     @Test
@@ -105,8 +107,8 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
         // the directory should exist
         File dir = new File("target/data/file/foo.bar");
-        assertTrue("Directory should be created", dir.exists());
-        assertTrue("Directory should be a directory", dir.isDirectory());
+        assertTrue(dir.exists(), "Directory should be created");
+        assertTrue(dir.isDirectory(), "Directory should be a directory");
     }
 
     @Test
@@ -127,7 +129,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
         // the directory should NOT exists
         File dir = new File("target/data/file/foo");
-        assertFalse("Directory should NOT be created", dir.exists());
+        assertFalse(dir.exists(), "Directory should NOT be created");
     }
 
 }

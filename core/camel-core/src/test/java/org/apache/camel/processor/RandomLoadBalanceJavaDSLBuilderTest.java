@@ -27,7 +27,9 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A crude unit test to navigate the route and build a Java DSL from the route

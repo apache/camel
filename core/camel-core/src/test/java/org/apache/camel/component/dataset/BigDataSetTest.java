@@ -22,10 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class BigDataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20000);
 

@@ -26,11 +26,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.cluster.ClusterServiceHelper.lookupService;
 import static org.apache.camel.support.cluster.ClusterServiceHelper.mandatoryLookupService;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterServiceSelectorTest {
 
@@ -46,8 +46,8 @@ public class ClusterServiceSelectorTest {
 
             Optional<CamelClusterService> lookup = lookupService(context);
 
-            Assert.assertTrue(lookup.isPresent());
-            Assert.assertEquals(service1, lookup.get());
+            assertTrue(lookup.isPresent());
+            assertEquals(service1, lookup.get());
         } finally {
             if (context != null) {
                 context.stop();
@@ -66,7 +66,7 @@ public class ClusterServiceSelectorTest {
 
             Optional<CamelClusterService> lookup = lookupService(context);
 
-            Assert.assertFalse(lookup.isPresent());
+            assertFalse(lookup.isPresent());
         } finally {
             if (context != null) {
                 context.stop();
@@ -87,8 +87,8 @@ public class ClusterServiceSelectorTest {
             CamelClusterService.Selector selector = ClusterServiceSelectors.single();
             Optional<CamelClusterService> lookup = lookupService(context, selector);
 
-            Assert.assertTrue(lookup.isPresent());
-            Assert.assertEquals(service1, lookup.get());
+            assertTrue(lookup.isPresent());
+            assertEquals(service1, lookup.get());
         } finally {
             if (context != null) {
                 context.stop();
@@ -108,7 +108,7 @@ public class ClusterServiceSelectorTest {
             CamelClusterService.Selector selector = ClusterServiceSelectors.single();
             Optional<CamelClusterService> lookup = lookupService(context, selector);
 
-            Assert.assertFalse(lookup.isPresent());
+            assertFalse(lookup.isPresent());
         } finally {
             if (context != null) {
                 context.stop();
@@ -128,7 +128,7 @@ public class ClusterServiceSelectorTest {
             CamelClusterService.Selector selector = ClusterServiceSelectors.first();
             Optional<CamelClusterService> lookup = lookupService(context, selector);
 
-            Assert.assertTrue(lookup.isPresent());
+            assertTrue(lookup.isPresent());
         } finally {
             if (context != null) {
                 context.stop();
@@ -145,9 +145,9 @@ public class ClusterServiceSelectorTest {
             context.addService(new DummyClusterService1());
             context.addService(new DummyClusterService2());
 
-            Assert.assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService1.class)).isPresent());
-            Assert.assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService2.class)).isPresent());
-            Assert.assertFalse(lookupService(context, ClusterServiceSelectors.type(FileLockClusterService.class)).isPresent());
+            assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService1.class)).isPresent());
+            assertTrue(lookupService(context, ClusterServiceSelectors.type(DummyClusterService2.class)).isPresent());
+            assertFalse(lookupService(context, ClusterServiceSelectors.type(FileLockClusterService.class)).isPresent());
 
         } finally {
             if (context != null) {
@@ -174,15 +174,15 @@ public class ClusterServiceSelectorTest {
             Optional<CamelClusterService> lookup;
 
             lookup = lookupService(context, ClusterServiceSelectors.attribute("service.type", "zookeeper"));
-            Assert.assertTrue(lookup.isPresent());
-            Assert.assertEquals(service1, lookup.get());
+            assertTrue(lookup.isPresent());
+            assertEquals(service1, lookup.get());
 
             lookup = lookupService(context, ClusterServiceSelectors.attribute("service.type", "file"));
-            Assert.assertTrue(lookup.isPresent());
-            Assert.assertEquals(service2, lookup.get());
+            assertTrue(lookup.isPresent());
+            assertEquals(service2, lookup.get());
 
             lookup = lookupService(context, ClusterServiceSelectors.attribute("service.type", "consul"));
-            Assert.assertFalse(lookup.isPresent());
+            assertFalse(lookup.isPresent());
 
         } finally {
             if (context != null) {
@@ -209,8 +209,8 @@ public class ClusterServiceSelectorTest {
             CamelClusterService.Selector selector = ClusterServiceSelectors.order();
             Optional<CamelClusterService> lookup = lookupService(context, selector);
 
-            Assert.assertTrue(lookup.isPresent());
-            Assert.assertEquals(service2, lookup.get());
+            assertTrue(lookup.isPresent());
+            assertEquals(service2, lookup.get());
 
         } finally {
             if (context != null) {
@@ -241,7 +241,7 @@ public class ClusterServiceSelectorTest {
             CamelClusterService.Selector selector = ClusterServiceSelectors.order();
             Optional<CamelClusterService> lookup = lookupService(context, selector);
 
-            Assert.assertFalse(lookup.isPresent());
+            assertFalse(lookup.isPresent());
         } finally {
             if (context != null) {
                 context.stop();
@@ -262,8 +262,8 @@ public class ClusterServiceSelectorTest {
             CamelClusterService.Selector selector = ClusterServiceSelectors.single();
             CamelClusterService lookup = mandatoryLookupService(context, selector);
 
-            Assert.assertNotNull(lookup);
-            Assert.assertEquals(service1, lookup);
+            assertNotNull(lookup);
+            assertEquals(service1, lookup);
         } finally {
             if (context != null) {
                 context.stop();
@@ -283,8 +283,8 @@ public class ClusterServiceSelectorTest {
 
             CamelClusterService lookup = mandatoryLookupService(context);
 
-            Assert.assertNotNull(lookup);
-            Assert.assertEquals(service1, lookup);
+            assertNotNull(lookup);
+            assertEquals(service1, lookup);
         } finally {
             if (context != null) {
                 context.stop();
@@ -292,14 +292,15 @@ public class ClusterServiceSelectorTest {
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testMandatoryLookupFailure() throws Exception {
         CamelContext context = null;
 
         try {
-            context = new DefaultCamelContext();
+            CamelContext ctx = context = new DefaultCamelContext();
 
-            mandatoryLookupService(context, ClusterServiceSelectors.single());
+            assertThrows(IllegalStateException.class, () ->
+                mandatoryLookupService(ctx, ClusterServiceSelectors.single()));
         } finally {
             if (context != null) {
                 context.stop();
@@ -307,14 +308,15 @@ public class ClusterServiceSelectorTest {
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testMandatoryLookupFailureWithoutSelector() throws Exception {
         CamelContext context = null;
 
         try {
-            context = new DefaultCamelContext();
+            CamelContext ctx = context = new DefaultCamelContext();
 
-            mandatoryLookupService(context);
+            assertThrows(IllegalStateException.class, () ->
+                mandatoryLookupService(ctx));
         } finally {
             if (context != null) {
                 context.stop();

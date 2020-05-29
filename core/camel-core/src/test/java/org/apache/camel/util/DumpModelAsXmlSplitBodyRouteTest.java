@@ -24,7 +24,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -42,7 +45,7 @@ public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
         NodeList nodes = doc.getElementsByTagName("simple");
         assertEquals(1, nodes.getLength());
         Element node = (Element)nodes.item(0);
-        assertNotNull("Node <simple> expected to be instanceof Element", node);
+        assertNotNull(node, "Node <simple> expected to be instanceof Element");
         assertEquals("${body}", node.getTextContent());
 
         nodes = doc.getElementsByTagName("split");
@@ -51,7 +54,7 @@ public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
         nodes = doc.getElementsByTagName("to");
         assertEquals(1, nodes.getLength());
         node = (Element)nodes.item(0);
-        assertNotNull("Node <to> expected to be instanceof Element", node);
+        assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:sub", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));
         assertEquals("true", node.getAttribute("customId"));

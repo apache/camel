@@ -23,7 +23,9 @@ import org.apache.camel.component.log.LogEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.LazyStartProducer;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LazyStartProducerTest extends ContextTestSupport {
 

@@ -28,15 +28,18 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-@Ignore("Test manually")
+@Disabled("Test manually")
 public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
 
     private int size = 20 * 1000;
@@ -47,7 +50,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
@@ -74,7 +77,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
         assertEquals((size / 10) * 3, med.get());
         assertEquals((size / 10) * 1, large.get());
 
-        assertTrue("Should complete route", matches);
+        assertTrue(matches, "Should complete route");
     }
 
     @Override
@@ -90,7 +93,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
                 }).split().xpath("/orders/order").streaming().choice().when().xpath("/order/amount < 10").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>3</amount>"));
+                        assertTrue(xml.contains("<amount>3</amount>"), xml);
 
                         int num = tiny.incrementAndGet();
                         if (num % 100 == 0) {
@@ -101,7 +104,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
                 }).when().xpath("/order/amount < 50").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>44</amount>"));
+                        assertTrue(xml.contains("<amount>44</amount>"), xml);
 
                         int num = small.incrementAndGet();
                         if (num % 100 == 0) {
@@ -112,7 +115,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
                 }).when().xpath("/order/amount < 100").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>88</amount>"));
+                        assertTrue(xml.contains("<amount>88</amount>"), xml);
 
                         int num = med.incrementAndGet();
                         if (num % 100 == 0) {
@@ -123,7 +126,7 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
                 }).otherwise().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String xml = exchange.getIn().getBody(String.class);
-                        assertTrue(xml, xml.contains("<amount>123</amount>"));
+                        assertTrue(xml.contains("<amount>123</amount>"), xml);
 
                         int num = large.incrementAndGet();
                         if (num % 100 == 0) {

@@ -27,8 +27,10 @@ import org.apache.camel.support.processor.validation.NoXmlBodyValidationExceptio
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -38,7 +40,7 @@ public class ValidatingProcessorTest extends ContextTestSupport {
     protected ValidatingProcessor validating;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         validating = new ValidatingProcessor();
         validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd"));
@@ -94,7 +96,8 @@ public class ValidatingProcessorTest extends ContextTestSupport {
             template.sendBody("direct:start", xml);
             fail("Should have thrown a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof SchemaValidationException);
+            boolean b = e.getCause() instanceof SchemaValidationException;
+            assertTrue(b);
             // expected
         }
 
@@ -112,7 +115,8 @@ public class ValidatingProcessorTest extends ContextTestSupport {
             template.sendBody("direct:start", xml);
             fail("Should have thrown a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof SchemaValidationException);
+            boolean b = e.getCause() instanceof SchemaValidationException;
+            assertTrue(b);
             // expected
         }
 

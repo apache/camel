@@ -25,7 +25,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PropertiesComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -70,7 +76,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     @Test
@@ -130,7 +136,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     @Test
@@ -154,7 +160,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue("Should bind all properties", prop.isEmpty());
+        assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
     @Test
@@ -480,7 +486,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertFalse("Should NOT bind all properties", prop.isEmpty());
+        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
         assertEquals(3, prop.size());
         assertTrue(prop.containsKey("?bar.silver-Customer"));
         assertTrue(prop.containsKey("?bar.work.addresss"));
@@ -511,7 +517,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertFalse("Should NOT bind all properties", prop.isEmpty());
+        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
         assertEquals(3, prop.size());
         assertTrue(prop.containsKey("?bar.silver-Customer"));
         assertTrue(prop.containsKey("?bar.work.addresss"));

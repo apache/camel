@@ -28,8 +28,8 @@ import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ReflectionInjector;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Mode;
@@ -44,7 +44,7 @@ import org.openjdk.jmh.runner.options.TimeValue;
 
 public class ConverterBenchmarkTest {
 
-    @Ignore
+    @Disabled
     @Test
     public void launchBenchmark() throws Exception {
 
@@ -139,7 +139,7 @@ public class ConverterBenchmarkTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testConvertEnumPerfs() throws Exception {
         Blackhole bh = new Blackhole("Today's password is swordfish. I understand instantiating Blackholes directly is dangerous.");

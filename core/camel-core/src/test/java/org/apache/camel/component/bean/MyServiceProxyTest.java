@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MyServiceProxyTest extends ContextTestSupport {
 
@@ -86,8 +89,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
         in.id = 100;
         in.request = "Camel";
         MyResponse response = myService.call(in);
-        assertEquals("Get a wrong response id.", 100, response.id);
-        assertEquals("Get a wrong response", "Hi Camel", response.response);
+        assertEquals(100, response.id, "Get a wrong response id.");
+        assertEquals("Hi Camel", response.response, "Get a wrong response");
     }
 
     @Override

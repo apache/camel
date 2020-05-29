@@ -22,7 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RollbackTest extends ContextTestSupport {
 
@@ -45,7 +47,8 @@ public class RollbackTest extends ContextTestSupport {
             template.requestBody("direct:start", "bad");
             fail("Should have thrown a RollbackExchangeException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof RollbackExchangeException);
+            boolean b = e.getCause() instanceof RollbackExchangeException;
+            assertTrue(b);
         }
 
         assertMockEndpointsSatisfied();
@@ -65,7 +68,7 @@ public class RollbackTest extends ContextTestSupport {
 
         assertNotNull(out.getException());
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
-        assertEquals("Should be marked as rollback", true, out.isRollbackOnly());
+        assertEquals(true, out.isRollbackOnly(), "Should be marked as rollback");
     }
 
     @Override

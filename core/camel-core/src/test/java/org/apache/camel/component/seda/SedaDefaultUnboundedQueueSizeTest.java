@@ -17,7 +17,10 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
 

@@ -22,9 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
@@ -37,7 +39,7 @@ public class TimerRouteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should have fired 2 or more times was: " + bean.counter.get(), bean.counter.get() >= 2);
+        assertTrue(bean.counter.get() >= 2, "Should have fired 2 or more times was: " + bean.counter.get());
     }
 
     @Override

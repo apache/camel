@@ -23,7 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
 
@@ -50,7 +52,7 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
         names.add(afterThreadName);
         names.add(resultThreadName);
 
-        assertEquals("Should use 4 different threads", 4, names.size());
+        assertEquals(4, names.size(), "Should use 4 different threads");
     }
 
     @Override

@@ -20,7 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExpressionAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RefTest extends LanguageTestSupport {
 

@@ -22,7 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SetExchangePatternTest extends ContextTestSupport {
 
@@ -126,7 +129,7 @@ public class SetExchangePatternTest extends ContextTestSupport {
         template.sendBodyAndHeader(sendUri, sendPattern, expectedBody, "foo", "bar");
         resultEndpoint.assertIsSatisfied();
         ExchangePattern actualPattern = resultEndpoint.getExchanges().get(0).getPattern();
-        assertEquals("received exchange pattern", actualPattern, expectedPattern);
+        assertEquals(actualPattern, expectedPattern, "received exchange pattern");
     }
 
     @Override

@@ -21,13 +21,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1");
@@ -64,7 +67,7 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
         assertTrue(msg.endsWith("Body: [Body is not logged]]"));
 
         // but body and clipped should not be the same
-        assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
+        assertNotSame(msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class), "clipped log and real body should not be the same");
     }
 
     @Override

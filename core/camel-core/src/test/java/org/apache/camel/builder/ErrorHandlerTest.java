@@ -28,21 +28,23 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErrorHandlerTest extends TestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");
     }
@@ -62,10 +64,10 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e1
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created" + list, 1, list.size());
+        assertEquals(1, list.size(), "Number routes created" + list);
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("seda://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
@@ -98,7 +100,7 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e2
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created" + list, 2, list.size());
+        assertEquals(2, list.size(), "Number routes created" + list);
     }
 
     @Test
@@ -116,10 +118,10 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e3
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created" + list, 1, list.size());
+        assertEquals(1, list.size(), "Number routes created" + list);
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("seda://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
@@ -145,10 +147,10 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e4
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created" + list, 1, list.size());
+        assertEquals(1, list.size(), "Number routes created" + list);
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("seda://a", key.getEndpointUri(), "From endpoint");
 
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
@@ -157,8 +159,8 @@ public class ErrorHandlerTest extends TestSupport {
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
-            assertEquals("getMaximumRedeliveries()", 2, redeliveryPolicy.getMaximumRedeliveries());
-            assertEquals("isUseExponentialBackOff()", true, redeliveryPolicy.isUseExponentialBackOff());
+            assertEquals(2, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
+            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 
@@ -174,10 +176,10 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e5
 
         List<Route> routes = getRouteList(builder);
-        assertEquals("Number routes created", 1, routes.size());
+        assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+            assertEquals("seda://a", key.getEndpointUri(), "From endpoint");
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 

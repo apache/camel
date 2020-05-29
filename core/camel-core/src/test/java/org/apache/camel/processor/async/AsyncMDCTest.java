@@ -21,13 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
-import static org.apache.camel.spi.UnitOfWork.MDC_BREADCRUMB_ID;
-import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.spi.UnitOfWork.MDC_EXCHANGE_ID;
-import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
+import static org.apache.camel.spi.UnitOfWork.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AsyncMDCTest extends ContextTestSupport {
 

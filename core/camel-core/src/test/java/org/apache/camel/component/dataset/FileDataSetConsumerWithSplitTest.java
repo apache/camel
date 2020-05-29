@@ -20,9 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
 
@@ -60,10 +61,10 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         dataSet = new FileDataSet(testDataFileName, "\n");
-        Assert.assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
+        assertEquals(testDataFileRecordCount, dataSet.getSize(), "Unexpected DataSet size");
         super.setUp();
     }
 

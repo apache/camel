@@ -22,8 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Checks that body of type {@link java.io.File} is simply moved avoiding
@@ -31,7 +33,7 @@ import org.junit.Test;
  */
 public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data/filemove");
@@ -48,7 +50,7 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile);
 
         mock.assertIsSatisfied();
-        assertFalse("Temporary body file should have been moved, not copied", temporaryFile.exists());
+        assertFalse(temporaryFile.exists(), "Temporary body file should have been moved, not copied");
     }
 
     @Test
@@ -63,7 +65,7 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile);
 
         mock.assertIsSatisfied();
-        assertFalse("Temporary body file should have been moved, not copied", temporaryFile.exists());
+        assertFalse(temporaryFile.exists(), "Temporary body file should have been moved, not copied");
     }
 
     @Override

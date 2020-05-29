@@ -26,7 +26,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 

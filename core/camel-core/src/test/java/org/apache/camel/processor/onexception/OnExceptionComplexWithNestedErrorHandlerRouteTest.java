@@ -19,7 +19,7 @@ package org.apache.camel.processor.onexception;
 import java.io.IOException;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExceptionComplexRouteTest {
 

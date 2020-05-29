@@ -20,8 +20,11 @@ import java.io.File;
 
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -29,7 +32,7 @@ import org.junit.Test;
 public class ValidatingProcessorFromSourceTest extends ValidatingProcessorTest {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

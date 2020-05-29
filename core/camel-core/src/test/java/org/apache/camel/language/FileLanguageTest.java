@@ -30,7 +30,9 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FileUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for File Language.

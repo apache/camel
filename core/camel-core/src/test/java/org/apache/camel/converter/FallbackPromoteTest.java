@@ -18,7 +18,9 @@ package org.apache.camel.converter;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FallbackPromoteTest extends ContextTestSupport {
 
@@ -33,7 +35,7 @@ public class FallbackPromoteTest extends ContextTestSupport {
         cool.setCool("Camel rocks");
 
         TypeConverter tc = context.getTypeConverterRegistry().lookup(String.class, MyCoolBean.class);
-        assertNull("No regular type converters", tc);
+        assertNull(tc, "No regular type converters");
 
         String s = context.getTypeConverter().convertTo(String.class, cool);
         assertEquals("This is cool: Camel rocks", s);
@@ -43,7 +45,7 @@ public class FallbackPromoteTest extends ContextTestSupport {
         assertEquals("This is cool: It works", s);
 
         tc = context.getTypeConverterRegistry().lookup(String.class, MyCoolBean.class);
-        assertNotNull("Should have been promoted", tc);
+        assertNotNull(tc, "Should have been promoted");
     }
 
 }

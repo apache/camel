@@ -24,7 +24,10 @@ import java.util.Map;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -61,7 +64,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${body} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -72,7 +75,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${body} == ${header.val}", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -82,7 +85,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${body} == 122", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -92,7 +95,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${body} > 120", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -102,7 +105,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${body}++ == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -112,7 +115,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${body}-- == 121", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -123,7 +126,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -134,7 +137,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high}   ==     true", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -146,7 +149,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true && ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -158,7 +161,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false || ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -171,7 +174,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true && ${header.foo} == 123 && ${header.bar} == 'beer'", true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -190,7 +193,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser(sb.toString(), true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -209,7 +212,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         SimplePredicateParser parser = new SimplePredicateParser(sb.toString(), true, null);
         Predicate pre = parser.parsePredicate();
 
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -218,7 +221,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("number", "1234");
         SimplePredicateParser parser = new SimplePredicateParser("${in.header.number} regex '\\d{4}'", true, null);
         Predicate pre = parser.parsePredicate();
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
     }
 
     @Test
@@ -231,21 +234,21 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
         SimplePredicateParser parser = new SimplePredicateParser("${body[foo]} == 123", true, null);
         Predicate pre = parser.parsePredicate();
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
 
         parser = new SimplePredicateParser("${body['foo bar']} == 456", true, null);
         pre = parser.parsePredicate();
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
 
         // the predicate has whitespace in the function
         parser = new SimplePredicateParser("${body[foo bar]} == 456", true, null);
         pre = parser.parsePredicate();
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
 
         // no header with that name
         parser = new SimplePredicateParser("${body[unknown]} == 456", true, null);
         pre = parser.parsePredicate();
-        assertFalse("Should not match", pre.matches(exchange));
+        assertFalse(pre.matches(exchange), "Should not match");
     }
 
     @Override
@@ -270,15 +273,15 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
         SimplePredicateParser parser = new SimplePredicateParser("${body[key]} in ${ref:myList}", true, null);
         Predicate pre = parser.parsePredicate();
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
 
         parser = new SimplePredicateParser("${body[key2]} in ${ref:myList}", true, null);
         pre = parser.parsePredicate();
-        assertTrue("Should match", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match");
 
         parser = new SimplePredicateParser("${body[key3]} in ${ref:myList}", true, null);
         pre = parser.parsePredicate();
-        assertFalse("Should not match", pre.matches(exchange));
+        assertFalse(pre.matches(exchange), "Should not match");
     }
 
     @Test
@@ -287,15 +290,15 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         Predicate pre = parser.parsePredicate();
 
         exchange.getIn().setBody("gold");
-        assertTrue("Should match gold", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match gold");
 
         exchange.getIn().setBody("silver");
-        assertTrue("Should match silver", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match silver");
 
         exchange.getIn().setBody("");
-        assertTrue("Should match empty", pre.matches(exchange));
+        assertTrue(pre.matches(exchange), "Should match empty");
 
         exchange.getIn().setBody("bronze");
-        assertFalse("Should not match bronze", pre.matches(exchange));
+        assertFalse(pre.matches(exchange), "Should not match bronze");
     }
 }

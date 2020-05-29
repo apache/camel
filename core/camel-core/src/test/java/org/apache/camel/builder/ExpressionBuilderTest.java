@@ -30,21 +30,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertiesExpression;
-import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
-import static org.apache.camel.builder.ExpressionBuilder.parseSimpleOrFallbackToConstantExpression;
-import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
-import static org.apache.camel.builder.ExpressionBuilder.regexTokenizeExpression;
-import static org.apache.camel.builder.ExpressionBuilder.sortExpression;
-import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
+import static org.apache.camel.builder.ExpressionBuilder.*;
 import static org.apache.camel.builder.PredicateBuilder.contains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExpressionBuilderTest extends TestSupport {
     protected CamelContext camelContext = new DefaultCamelContext();
@@ -111,7 +102,7 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(expression, exchange, "CamelTestValue");
         expression = camelContextPropertiesExpression();
         Map<?, ?> properties = expression.evaluate(exchange, Map.class);
-        assertEquals("Get a wrong properties size", properties.size(), 1);
+        assertEquals(properties.size(), 1, "Get a wrong properties size");
     }
 
     @Test
@@ -133,7 +124,7 @@ public class ExpressionBuilderTest extends TestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Message in = exchange.getIn();

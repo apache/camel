@@ -26,7 +26,10 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Registry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRestFromXmlTest extends ContextTestSupport {
 
@@ -40,7 +43,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
 
     @Test
     public void testLoadRestFromXml() throws Exception {
-        assertNotNull("Existing foo route should be there", context.getRoute("foo"));
+        assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
 
         assertEquals(2, context.getRoutes().size());
 
@@ -56,7 +59,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
         context.addRestDefinitions(rests.getRests(), true);
 
-        assertNotNull("Loaded rest route should be there", context.getRoute("route1"));
+        assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
         assertEquals(3, context.getRoutes().size());
 
         // test that loaded route works

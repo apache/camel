@@ -24,7 +24,9 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PollEnricherRefTest extends ContextTestSupport {
 

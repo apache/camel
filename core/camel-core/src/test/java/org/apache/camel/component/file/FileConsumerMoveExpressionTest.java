@@ -24,8 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.Registry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for expression option for file consumer.
@@ -33,7 +35,7 @@ import org.junit.Test;
 public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filelanguage");
         super.setUp();
@@ -71,7 +73,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/data/filelanguage/" + id + ".bak");
-        assertTrue("File should have been renamed", file.exists());
+        assertTrue(file.exists(), "File should have been renamed");
     }
 
     @Test
@@ -95,7 +97,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/data/filelanguage/backup-" + id + "-report2.bak");
-        assertTrue("File should have been renamed", file.exists());
+        assertTrue(file.exists(), "File should have been renamed");
     }
 
     @Test

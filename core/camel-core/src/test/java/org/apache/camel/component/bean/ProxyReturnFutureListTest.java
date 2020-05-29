@@ -25,7 +25,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ProxyReturnFutureListTest extends ContextTestSupport {
 
@@ -35,7 +38,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
 
         Future<List<String>> future = service.getUsers(true);
         log.info("Got future");
-        assertFalse("Should not be done", future.isDone());
+        assertFalse(future.isDone(), "Should not be done");
         log.info("Waiting for future to be done ...");
 
         List<String> users = future.get(2, TimeUnit.SECONDS);
@@ -49,7 +52,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
 
         Future<List<String>> future = service.getUsers(true);
         log.info("Got future");
-        assertFalse("Should not be done", future.isDone());
+        assertFalse(future.isDone(), "Should not be done");
         log.info("Waiting for future to be done ...");
 
         List<String> users = future.get(2, TimeUnit.SECONDS);
@@ -58,7 +61,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
 
         future = service.getUsers(true);
         log.info("Got future");
-        assertFalse("Should not be done", future.isDone());
+        assertFalse(future.isDone(), "Should not be done");
         log.info("Waiting for future to be done ...");
 
         users = future.get(2, TimeUnit.SECONDS);
