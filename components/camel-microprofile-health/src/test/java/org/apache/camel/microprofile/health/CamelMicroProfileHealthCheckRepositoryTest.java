@@ -33,7 +33,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     public void testCamelHealthRepositoryUpStatus() {
         HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
         // enable routes health check
-        HealthCheckRepository hc = healthCheckRegistry.resolveHealthCheckRepositoryById("routes");
+        Object hc = healthCheckRegistry.resolveById("routes");
         healthCheckRegistry.register(hc);
 
         CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
@@ -57,7 +57,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     public void testCamelHealthRepositoryDownStatus() throws Exception {
         HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
         // enable routes health check
-        HealthCheckRepository hc = healthCheckRegistry.resolveHealthCheckRepositoryById("routes");
+        Object hc = healthCheckRegistry.resolveById("routes");
         healthCheckRegistry.register(hc);
 
         CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();

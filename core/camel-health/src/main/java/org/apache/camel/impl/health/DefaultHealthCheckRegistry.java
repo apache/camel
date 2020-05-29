@@ -87,8 +87,16 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     @Override
+    public Object resolveById(String id) {
+        Object answer = resolveHealthCheckById(id);
+        if (answer == null) {
+            answer = resolveHealthCheckRepositoryById(id);
+        }
+        return answer;
+    }
+
     @SuppressWarnings("unchecked")
-    public HealthCheck resolveHealthCheckById(String id) {
+    private HealthCheck resolveHealthCheckById(String id) {
         HealthCheck answer =
                 checks.stream().filter(h -> h.getId().equals(id)).findFirst()
                         .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
@@ -107,8 +115,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         return answer;
     }
 
-    @Override
-    public HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
+    @SuppressWarnings("unchecked")
+    private HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
         HealthCheckRepository answer =
                 repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
                         .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
@@ -128,50 +136,60 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     }
 
     @Override
-    public boolean register(HealthCheck check) {
-        if (check == null) {
+    public boolean register(Object obj) {
+        boolean accept = obj instanceof HealthCheck || obj instanceof HealthCheckRepository;
+        if (!accept) {
             throw new IllegalArgumentException();
         }
 
-        boolean result = checks.add(check);
-        if (result) {
-            if (check instanceof CamelContextAware) {
-                ((CamelContextAware) check).setCamelContext(camelContext);
+        if (obj instanceof HealthCheck) {
+            HealthCheck healthCheck = (HealthCheck) obj;
+            boolean result = checks.add(healthCheck);
+            if (result) {
+                if (obj instanceof CamelContextAware) {
+                    ((CamelContextAware) obj).setCamelContext(camelContext);
+                }
+
+                LOG.debug("HealthCheck with id {} successfully registered", healthCheck.getId());
             }
+            return result;
+        } else {
+            HealthCheckRepository repository = (HealthCheckRepository) obj;
+            boolean result = this.repositories.add(repository);
 
-            LOG.debug("HealthCheck with id {} successfully registered", check.getId());
+            if (result) {
+                if (repository instanceof CamelContextAware) {
+                    ((CamelContextAware) repository).setCamelContext(camelContext);
+                }
+
+                LOG.debug("HealthCheckRepository with id {} successfully registered", repository.getId());
+            }
+            return result;
         }
-
-        return result;
     }
 
     @Override
-    public boolean unregister(HealthCheck check) {
-        boolean result = checks.remove(check);
-        if (result) {
-            LOG.debug("HealthCheck with id {} successfully un-registered", check.getId());
-        }
-
-        return result;
-    }
-
-    @Override
-    public boolean register(HealthCheckRepository repository) {
-        if (repository == null) {
+    public boolean unregister(Object obj) {
+        boolean accept = obj instanceof HealthCheck || obj instanceof HealthCheckRepository;
+        if (!accept) {
             throw new IllegalArgumentException();
         }
 
-        boolean result = this.repositories.add(repository);
-
-        if (result) {
-            if (repository instanceof CamelContextAware) {
-                ((CamelContextAware) repository).setCamelContext(camelContext);
+        if (obj instanceof HealthCheck) {
+            HealthCheck healthCheck = (HealthCheck) obj;
+            boolean result = checks.remove(healthCheck);
+            if (result) {
+                LOG.debug("HealthCheck with id {} successfully un-registered", healthCheck.getId());
             }
-
-            LOG.debug("HealthCheckRepository with id {} successfully registered", repository.getId());
+            return result;
+        } else {
+            HealthCheckRepository repository = (HealthCheckRepository) obj;
+            boolean result = this.repositories.remove(repository);
+            if (result) {
+                LOG.debug("HealthCheckRepository with id {} successfully un-registered", repository.getId());
+            }
+            return result;
         }
-
-        return result;
     }
 
     // ************************************

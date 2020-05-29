@@ -19,12 +19,10 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
-
 import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.junit.Test;
@@ -38,7 +36,7 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         // install health check manually
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
-        HealthCheck hc = registry.resolveHealthCheckById("context");
+        Object hc = registry.resolveById("context");
         registry.register(hc);
         context.setExtension(HealthCheckRegistry.class, registry);
 
