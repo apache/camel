@@ -183,7 +183,7 @@ public final class ConnectorConfigGenerator {
                 if (fieldConfig.getDefaultValue() != null && !fieldConfig.getRawName().equals("database.server.id")) {
                     if (fieldConfig.isDurationField()) {
                         final DecimalFormat decimalFormat = new DecimalFormat("0.##");
-                        final Double valueAsDouble = (Double.parseDouble(fieldConfig.getDefaultValueAsString()) / 1000);
+                        final Double valueAsDouble = Double.parseDouble(fieldConfig.getDefaultValueAsString()) / 1000;
                         final String defaultValue = decimalFormat.format(valueAsDouble) + "s";
                         annotation.setLiteralValue("defaultValue", String.format("\"%s\"", defaultValue));
                     } else {
