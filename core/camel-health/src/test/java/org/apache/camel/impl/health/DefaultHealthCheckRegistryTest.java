@@ -44,7 +44,6 @@ public class DefaultHealthCheckRegistryTest {
     @Test
     public void testDefaultHealthCheckRegistry() throws Exception {
         DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
-        registry.setIncludeContextCheck(false);
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
@@ -65,7 +64,6 @@ public class DefaultHealthCheckRegistryTest {
     @Test
     public void testDefaultHealthCheckRegistryWithRepositories() throws Exception {
         DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
-        registry.setIncludeContextCheck(false);
 
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "1"));
@@ -103,7 +101,39 @@ public class DefaultHealthCheckRegistryTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        // should also include default
+        Assert.assertEquals(3, checks.size());
+
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+
+            Assert.assertEquals(HealthCheck.State.UP, response.getState());
+            Assert.assertFalse(response.getMessage().isPresent());
+            Assert.assertFalse(response.getError().isPresent());
+            Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+        }
+    }
+
+    @Test
+    public void testResolveContextHealthCheck() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+
+        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setCamelContext(context);
+        HealthCheck hc = registry.resolveHealthCheckById("context");
+        Assert.assertNotNull(hc);
+        Assert.assertEquals("camel", hc.getGroup());
+        Assert.assertEquals("context", hc.getId());
+        Assert.assertTrue(hc instanceof ContextHealthCheck);
+
+        registry.register(hc);
+        registry.register(new MyHealthCheck("G1", "1"));
+        registry.register(new MyHealthCheck("G1", "2"));
+        registry.register(new MyHealthCheck("G2", "3"));
+
+        context.start();
+        registry.start();
+
+        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
         Assert.assertEquals(4, checks.size());
 
         for (HealthCheck check : checks) {

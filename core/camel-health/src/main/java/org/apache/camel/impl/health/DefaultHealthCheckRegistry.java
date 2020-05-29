@@ -24,10 +24,11 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -43,7 +44,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private final Set<HealthCheck> checks;
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
-    private boolean includeContextCheck = true;
 
     public DefaultHealthCheckRegistry() {
         this(null);
@@ -60,14 +60,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-
-        // include the basic context check if not already present
-        if (checks.stream().noneMatch(ContextHealthCheck.class::isInstance)) {
-            ContextHealthCheck check = new ContextHealthCheck();
-            // and make it enabled
-            check.setConfiguration(HealthCheckConfiguration.builder().enabled(true).build());
-            checks.add(check);
-        }
 
         for (HealthCheck check : checks) {
             if (check instanceof CamelContextAware) {
@@ -86,17 +78,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     // Properties
     // ************************************
 
-    public boolean isIncludeContextCheck() {
-        return includeContextCheck;
-    }
-
-    /**
-     * Whether to automatic include the basic {@link ContextHealthCheck}.
-     */
-    public void setIncludeContextCheck(boolean includeContextCheck) {
-        this.includeContextCheck = includeContextCheck;
-    }
-
     @Override
     public final void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -105,6 +86,27 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     public final CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public HealthCheck resolveHealthCheckById(String id) {
+        HealthCheck answer =
+                checks.stream().filter(h -> h.getId().equals(id)).findFirst()
+                        .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
+        if (answer == null) {
+            // discover via classpath (try first via -health-check and then id as-is)
+            FactoryFinder ff = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder();
+            Class<? extends HealthCheck> clazz = (Class<? extends HealthCheck>) ff.findOptionalClass(id + "-health-check").orElse(null);
+            if (clazz == null) {
+                clazz = (Class<? extends HealthCheck>) ff.findOptionalClass(id).orElse(null);
+            }
+            if (clazz != null) {
+                answer = camelContext.getInjector().newInstance(clazz);
+            }
+        }
+
+        return answer;
     }
 
     @Override
