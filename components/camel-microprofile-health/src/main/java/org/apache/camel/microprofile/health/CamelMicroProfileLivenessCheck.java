@@ -16,9 +16,15 @@
  */
 package org.apache.camel.microprofile.health;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.eclipse.microprofile.health.Liveness;
 
+/**
+ * Liveness checks
+ */
 @Liveness
+@ApplicationScoped
 public class CamelMicroProfileLivenessCheck extends AbstractCamelMicroProfileHealthCheck {
 
     @Override

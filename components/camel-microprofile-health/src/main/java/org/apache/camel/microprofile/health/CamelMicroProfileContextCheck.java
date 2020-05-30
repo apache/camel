@@ -19,6 +19,7 @@ package org.apache.camel.microprofile.health;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
@@ -37,6 +38,7 @@ import org.eclipse.microprofile.health.Readiness;
  */
 @Readiness
 @Liveness
+@ApplicationScoped
 public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextAware {
 
     @Inject
@@ -50,9 +52,11 @@ public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextA
         if (hcr != null) {
             // load and register context health check into Camel and use it here with microprofile
             hcr.setId("camel-microprofile-health");
-            contextHealthCheck = (org.apache.camel.health.HealthCheck) hcr.resolveById("context");
-            if (contextHealthCheck != null) {
-                hcr.register(contextHealthCheck);
+            if (!hcr.getCheck("context").isPresent()) {
+                contextHealthCheck = (org.apache.camel.health.HealthCheck) hcr.resolveById("context");
+                if (contextHealthCheck != null) {
+                    hcr.register(contextHealthCheck);
+                }
             }
         }
     }
