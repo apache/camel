@@ -202,7 +202,7 @@ over xref:components::jms-component.adoc[JMS] where the queue name is dynamic de
   <get uri="/hello//{language}">
     <toD uri="jms:queue:hello-${header.language}"/>
   </get>
-<rest>
+</rest>
 ----
 
 See more details at Message Endpoint about
@@ -415,7 +415,7 @@ rest("/users/")
   <post type="UserPojo" outType="CountryPojo">
     <to uri="direct:newUser"/>
   </post>
-<rest>
+</rest>
 ----
 
 To specify input and/or output using an array, append `[]` to the end
