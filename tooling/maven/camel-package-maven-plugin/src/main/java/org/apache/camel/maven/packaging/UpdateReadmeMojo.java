@@ -23,10 +23,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -56,6 +60,10 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  */
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractGeneratorMojo {
+
+    //Header attributes that are preserved through header generation
+    private static final Pattern[] MANUAL_ATTRIBUTES = {Pattern.compile(":(group): *(.*)"),
+            Pattern.compile(":(summary-group): *(.*)")};
 
     /**
      * The project build directory
@@ -471,6 +479,21 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 return false;
             }
 
+            // find manual attributes
+            Map<String, String> manualAttributes = new LinkedHashMap<>();
+            for (String line: lines) {
+                if (line.length() == 0) {
+                    break;
+                }
+                for (Pattern attrName: MANUAL_ATTRIBUTES) {
+                    Matcher m = attrName.matcher(line);
+                    if (m.matches()) {
+                        manualAttributes.put(m.group(1), m.group(2));
+                        break;
+                    }
+                }
+            }
+
             List<String> newLines = new ArrayList<>(lines.length + 8);
 
             //link
@@ -498,6 +521,13 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 newLines.add(":component-header: " + generateComponentHeader((ComponentModel)model));
                 if (Arrays.asList(model.getLabel().split(",")).contains("core")) {
                     newLines.add(":core:");
+                }
+            }
+
+            if (!manualAttributes.isEmpty()) {
+                newLines.add("//Manually maintained attributes");
+                for (Map.Entry<String, String> entry: manualAttributes.entrySet()) {
+                    newLines.add(":" + entry.getKey() + ": " + entry.getValue());
                 }
             }
 
