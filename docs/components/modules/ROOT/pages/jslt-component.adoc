@@ -107,8 +107,28 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Passing values to JSLT
 
+Camel can supply exchange information as variables when applying a JSLT expression on the body. The available variables from the *Exchange* are:
 
+[width="100%",cols="2,5",options="header"]
+|===
+| name | value
+| headers | The headers of the In message as a json object
+| exchange.properties | The *Exchange* properties as a json object. _exchange_ is the name of the variable and _properties_ is the path to the exchange properties. Available if _allowContextMapAll_ option is true.
+|===
+
+All the values that cannot be converted to json with Jackson are denied and will not be available in the jslt expression.
+
+For example, the header named "type" and the exchange property "instance" can be accessed like
+
+[source,json]
+--------------------------------------
+{
+  "type": $headers.type,
+  "instance": $exchange.properties.instance
+}
+--------------------------------------
 
 == Samples
 
@@ -146,6 +166,14 @@ Or send whole jslt expression via header: (suitable for querying)
 from("direct:in").
   setHeader("CamelJsltResourceUri").constant(".published").
   to("jslt:dummy");
+---------------------------------------------------------------------
+
+Passing exchange properties to the jslt expression can be done like this
+
+[source,java]
+---------------------------------------------------------------------
+from("direct:in").
+  to("jslt:com/acme/MyResponse.json?allowContextMapAll=true");
 ---------------------------------------------------------------------
 
 include::camel-spring-boot::page$jslt-starter.adoc[]
