@@ -24,12 +24,13 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A registry for health checks.
  */
-public interface HealthCheckRegistry extends CamelContextAware, StaticService {
+public interface HealthCheckRegistry extends CamelContextAware, StaticService, IdAware {
 
     /**
      * Service factory key.
