@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
 
+    private String id = "camel-health";
     private final Set<HealthCheck> checks;
     private final Set<HealthCheckRepository> repositories;
     private CamelContext camelContext;
@@ -54,6 +55,16 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         this.repositories.add(new RegistryRepository());
 
         setCamelContext(camelContext);
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

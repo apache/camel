@@ -23,7 +23,6 @@ import io.smallrye.health.SmallRyeHealth;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.health.HealthCheckRepository;
 import org.eclipse.microprofile.health.HealthCheckResponse.State;
 import org.junit.Test;
 

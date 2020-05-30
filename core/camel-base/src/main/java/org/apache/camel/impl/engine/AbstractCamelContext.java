@@ -2810,6 +2810,11 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("BeanIntrospection invoked {} times during starting Camel", invokedCounter);
         }
 
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr != null && hcr.isEnabled()) {
+            LOG.info("HealthCheck enabled ({})", hcr.getId());
+        }
+
         // starting will continue in the start method
     }
 

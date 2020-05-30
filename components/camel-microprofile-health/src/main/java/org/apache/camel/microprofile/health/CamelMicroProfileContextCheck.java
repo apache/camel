@@ -18,13 +18,14 @@ package org.apache.camel.microprofile.health;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck.Result;
 import org.apache.camel.health.HealthCheck.State;
-import org.apache.camel.impl.health.ContextHealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
@@ -39,12 +40,21 @@ import org.eclipse.microprofile.health.Readiness;
 public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextAware {
 
     @Inject
-    private CamelContext camelContext;
+    CamelContext camelContext;
 
-    private ContextHealthCheck contextHealthCheck = new ContextHealthCheck();
+    private org.apache.camel.health.HealthCheck contextHealthCheck;
 
-    public CamelMicroProfileContextCheck() {
-        contextHealthCheck.getConfiguration().setEnabled(true);
+    @PostConstruct
+    public void init() {
+        HealthCheckRegistry hcr = camelContext.getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            // load and register context health check into Camel and use it here with microprofile
+            hcr.setId("camel-microprofile-health");
+            contextHealthCheck = (org.apache.camel.health.HealthCheck) hcr.resolveById("context");
+            if (contextHealthCheck != null) {
+                hcr.register(contextHealthCheck);
+            }
+        }
     }
 
     @Override
@@ -53,9 +63,7 @@ public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextA
         builder.name("camel");
         builder.down();
 
-        if (camelContext != null) {
-            contextHealthCheck.setCamelContext(camelContext);
-
+        if (contextHealthCheck != null) {
             Result result = contextHealthCheck.call();
             Map<String, Object> details = result.getDetails();
             builder.withData("name", details.get("context.name").toString());
