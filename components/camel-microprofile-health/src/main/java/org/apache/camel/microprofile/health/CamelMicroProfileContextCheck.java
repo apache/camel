@@ -16,17 +16,15 @@
  */
 package org.apache.camel.microprofile.health;
 
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck.Result;
 import org.apache.camel.health.HealthCheck.State;
-import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.impl.health.ContextHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
@@ -38,28 +36,10 @@ import org.eclipse.microprofile.health.Readiness;
  */
 @Readiness
 @Liveness
-@ApplicationScoped
 public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextAware {
 
     @Inject
     CamelContext camelContext;
-
-    private org.apache.camel.health.HealthCheck contextHealthCheck;
-
-    @PostConstruct
-    public void init() {
-        HealthCheckRegistry hcr = camelContext.getExtension(HealthCheckRegistry.class);
-        if (hcr != null) {
-            // load and register context health check into Camel and use it here with microprofile
-            hcr.setId("camel-microprofile-health");
-            if (!hcr.getCheck("context").isPresent()) {
-                contextHealthCheck = (org.apache.camel.health.HealthCheck) hcr.resolveById("context");
-                if (contextHealthCheck != null) {
-                    hcr.register(contextHealthCheck);
-                }
-            }
-        }
-    }
 
     @Override
     public HealthCheckResponse call() {
@@ -67,8 +47,10 @@ public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextA
         builder.name("camel");
         builder.down();
 
-        if (contextHealthCheck != null) {
-            Result result = contextHealthCheck.call();
+        if (camelContext != null) {
+            ContextHealthCheck chc = new ContextHealthCheck();
+            chc.setCamelContext(camelContext);
+            Result result = chc.call();
             Map<String, Object> details = result.getDetails();
             builder.withData("name", details.get("context.name").toString());
             builder.withData("contextStatus", details.get("context.status").toString());

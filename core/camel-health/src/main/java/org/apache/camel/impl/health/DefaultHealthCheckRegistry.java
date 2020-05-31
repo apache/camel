@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +54,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     public DefaultHealthCheckRegistry(CamelContext camelContext) {
         this.checks = new CopyOnWriteArraySet<>();
         this.repositories = new CopyOnWriteArraySet<>();
-        this.repositories.add(new RegistryRepository());
+        this.repositories.add(new HealthCheckRegistryRepository());
 
         setCamelContext(camelContext);
     }
@@ -114,6 +116,9 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         if (answer == null) {
             answer = resolveHealthCheckRepositoryById(id);
         }
+        if (answer instanceof CamelContextAware) {
+            ((CamelContextAware) answer).setCamelContext(camelContext);
+        }
         return answer;
     }
 
@@ -166,6 +171,10 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
+            // do we have this already
+            if (getCheck(healthCheck.getId()).isPresent()) {
+                return false;
+            }
             boolean result = checks.add(healthCheck);
             if (result) {
                 if (obj instanceof CamelContextAware) {
@@ -177,8 +186,11 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             return result;
         } else {
             HealthCheckRepository repository = (HealthCheckRepository) obj;
+            // do we have this already
+            if (getRepository(repository.getId()).isPresent()) {
+                return false;
+            }
             boolean result = this.repositories.add(repository);
-
             if (result) {
                 if (repository instanceof CamelContextAware) {
                     ((CamelContextAware) repository).setCamelContext(camelContext);
@@ -217,6 +229,15 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     // ************************************
     //
     // ************************************
+
+    /**
+     * Returns the repository identified by the given <code>id</code> if available.
+     */
+    public Optional<HealthCheckRepository> getRepository(String id) {
+        return repositories.stream()
+                .filter(r -> ObjectHelper.equal(r.getId(), id))
+                .findFirst();
+    }
 
     @Override
     public Stream<HealthCheck> stream() {

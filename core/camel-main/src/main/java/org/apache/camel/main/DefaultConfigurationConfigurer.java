@@ -216,15 +216,19 @@ public final class DefaultConfigurationConfigurer {
         HealthCheckRegistry hc = camelContext.getExtension(HealthCheckRegistry.class);
         if (hc != null && config.isHealthCheckEnabled()) {
             // register context health-check by default
-            Object context = hc.resolveById("context");
-            if (context != null) {
-                hc.register(context);
+            if (!hc.getCheck("context").isPresent()) {
+                Object context = hc.resolveById("context");
+                if (context != null) {
+                    hc.register(context);
+                }
             }
             // register routes if enabled
             if (config.isHealthCheckRoutesEnabled()) {
-                Object routes = hc.resolveById("routes");
-                if (routes != null) {
-                    hc.register(routes);
+                if (!hc.getCheck("routes").isPresent()) {
+                    Object routes = hc.resolveById("routes");
+                    if (routes != null) {
+                        hc.register(routes);
+                    }
                 }
             }
         }
@@ -406,16 +410,6 @@ public final class DefaultConfigurationConfigurer {
         initThreadPoolProfiles(registry, camelContext);
     }
 
-    private static <T> void registerPropertyForBeanType(final Registry registry, final Class<T> beanType, final Consumer<T> propertySetter) {
-        T propertyBean = getSingleBeanOfType(registry, beanType);
-        if (propertyBean == null) {
-            return;
-        }
-
-        LOG.info("Using custom {}: {}", beanType.getSimpleName(), propertyBean);
-        propertySetter.accept(propertyBean);
-    }
-
     private static <T> T getSingleBeanOfType(Registry registry, Class<T> type) {
         Map<String, T> beans = registry.findByTypeWithName(type);
         if (beans.size() == 1) {
@@ -423,10 +417,6 @@ public final class DefaultConfigurationConfigurer {
         } else {
             return null;
         }
-    }
-
-    private static <T> void registerPropertiesForBeanTypes(final Registry registry, final Class<T> beanType, final Consumer<T> propertySetter) {
-        registerPropertiesForBeanTypesWithCondition(registry, beanType, b -> true, propertySetter);
     }
 
     private static <T> void registerPropertiesForBeanTypesWithCondition(final Registry registry, final Class<T> beanType, final Predicate<T> condition,

@@ -88,6 +88,11 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
     }
 
     /**
+     * Returns the repository identified by the given <code>id</code> if available.
+     */
+    Optional<HealthCheckRepository> getRepository(String id);
+
+    /**
      * Returns an optional {@link HealthCheckRegistry}, by default no registry is
      * present and it must be explicit activated. Components can register/unregister
      * health checks in response to life-cycle events (i.e. start/stop).

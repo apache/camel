@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
@@ -28,7 +29,7 @@ import org.apache.camel.health.HealthCheckRepository;
  *
  * Camel will use this by default, so there is no need to register this manually.
  */
-public class RegistryRepository implements CamelContextAware, HealthCheckRepository {
+public class HealthCheckRegistryRepository implements CamelContextAware, HealthCheckRepository {
     private CamelContext context;
 
     @Override
@@ -48,8 +49,11 @@ public class RegistryRepository implements CamelContextAware, HealthCheckReposit
 
     @Override
     public Stream<HealthCheck> stream() {
-        return this.context != null
-            ? this.context.getRegistry().findByType(HealthCheck.class).stream()
-            : Stream.empty();
+        if (context != null) {
+            Set<HealthCheck> set = this.context.getRegistry().findByType(HealthCheck.class);
+            return set.stream();
+        } else {
+            return Stream.empty();
+        }
     }
 }

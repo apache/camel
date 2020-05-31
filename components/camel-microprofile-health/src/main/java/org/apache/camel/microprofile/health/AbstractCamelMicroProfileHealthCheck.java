@@ -46,7 +46,10 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
         builder.name(getHealthCheckName());
 
         if (camelContext != null) {
-            Collection<Result> results = HealthCheckHelper.invoke(camelContext, (HealthCheckFilter) check -> check.getGroup() != null && check.getGroup().equals(getHealthGroupFilterExclude()));
+            Collection<Result> results = HealthCheckHelper.invoke(camelContext,
+                    (HealthCheckFilter) check ->
+                            // skip context as we have our own context check
+                            check.getId().equals("context") || check.getGroup() != null && check.getGroup().equals(getHealthGroupFilterExclude()));
             if (!results.isEmpty()) {
                 builder.up();
             }
