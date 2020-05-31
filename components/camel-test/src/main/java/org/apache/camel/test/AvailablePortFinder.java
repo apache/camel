@@ -48,7 +48,6 @@ public final class AvailablePortFinder {
         return probePort(0);
     }
 
-
     /**
      * Gets the next available port in the given range.
      *
@@ -69,13 +68,12 @@ public final class AvailablePortFinder {
         throw new IllegalStateException("Cannot find free port");
     }
 
-
     /**
      * Probe a port to see if it is free
      *
      * @param port an integer port number to be tested. If port is 0, then the next available port is returned.
-     * @throws IllegalStateException if the port is not free or, in casi of port 0, if there are no ports available at all.
-     * @return the port number itself if the port is free or, inc ase of port 0, the first available port number.
+     * @throws IllegalStateException if the port is not free or, in case of port 0, if there are no ports available at all.
+     * @return the port number itself if the port is free or, in case of port 0, the first available port number.
      */
     private static int probePort(int port) {
         try (ServerSocket ss = new ServerSocket()) {
@@ -88,6 +86,5 @@ public final class AvailablePortFinder {
             throw new IllegalStateException("Cannot find free port", e);
         }
     }
-
 
 }
