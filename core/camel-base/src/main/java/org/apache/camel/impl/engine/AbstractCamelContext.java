@@ -2338,7 +2338,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doSuspend() throws Exception {
         EventHelper.notifyCamelContextSuspending(this);
 
-        LOG.info("Apache Camel {} (CamelContext: {}) is suspending", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is suspending", getVersion(), getName());
         StopWatch watch = new StopWatch();
 
         // update list of started routes to be suspended
@@ -2379,7 +2379,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         watch.taken();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Apache Camel {} (CamelContext: {}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+            LOG.info("Apache Camel {} ({}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
         }
 
         EventHelper.notifyCamelContextSuspended(this);
@@ -2390,7 +2390,7 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             EventHelper.notifyCamelContextResuming(this);
 
-            LOG.info("Apache Camel {} (CamelContext: {}) is resuming", getVersion(), getName());
+            LOG.info("Apache Camel {} ({}) is resuming", getVersion(), getName());
             StopWatch watch = new StopWatch();
 
             // start the suspended routes (do not check for route clashes, and
@@ -2409,7 +2409,7 @@ public abstract class AbstractCamelContext extends BaseService
 
             if (LOG.isInfoEnabled()) {
                 LOG.info("Resumed {} routes", suspendedRouteServices.size());
-                LOG.info("Apache Camel {} (CamelContext: {}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+                LOG.info("Apache Camel {} ({}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
             }
 
             // and clear the list as they have been resumed
@@ -2625,7 +2625,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartContext() throws Exception {
-        LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
         vetoed = null;
         startDate = new Date();
         stopWatch.restart();
@@ -2682,7 +2682,7 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}", getRoutes().size(), started, controlledRoutes.size(),
                         getRouteController().getClass().getName());
             }
-            LOG.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+            LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
         }
     }
 
@@ -2823,7 +2823,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     protected void doStop() throws Exception {
         stopWatch.restart();
-        LOG.info("Apache Camel {} (CamelContext: {}) is shutting down", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is shutting down", getVersion(), getName());
         EventHelper.notifyCamelContextStopping(this);
         EventHelper.notifyCamelContextRoutesStopping(this);
 
@@ -2941,8 +2941,8 @@ public abstract class AbstractCamelContext extends BaseService
         forceStopLazyInitialization();
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") uptime {}", getUptime());
-            LOG.info("Apache Camel {} (CamelContext: {}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+            LOG.info("Apache Camel {} ({}) uptime {}", getVersion(), getName(), getUptime());
+            LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
         }
 
         // and clear start date

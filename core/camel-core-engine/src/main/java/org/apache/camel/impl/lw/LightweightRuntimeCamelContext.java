@@ -292,13 +292,13 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public void start() {
         startDate = new Date();
-        LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
         for (Route route : routes) {
             route.getConsumer().start();
         }
         if (LOG.isInfoEnabled()) {
             long l = System.currentTimeMillis() - startDate.getTime();
-            LOG.info("Apache Camel {} (CamelContext: {}) {} routes started in {}",
+            LOG.info("Apache Camel {} ({}) {} routes started in {}",
                     getVersion(), getName(), routes.size(), TimeUtils.printDuration(l));
         }
     }
