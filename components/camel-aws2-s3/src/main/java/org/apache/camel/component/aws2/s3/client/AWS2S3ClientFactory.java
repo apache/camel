@@ -33,7 +33,7 @@ public final class AWS2S3ClientFactory {
     /**
      * Return the correct aws s3 client (based on remote vs local).
      * 
-     * @param maxConnections max connections
+     * @param configuration configuration
      * @return AWSS3Client
      */
     public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration) {
