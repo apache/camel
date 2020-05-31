@@ -60,15 +60,15 @@ public final class OrderedComparator implements Comparator<Object> {
 
     @Override
     public int compare(Object o1, Object o2) {
-        Integer num1 = 0;
-        Integer num2 = 0;
+        int num1 = 0;
+        int num2 = 0;
         if (o1 instanceof Ordered) {
             num1 = ((Ordered) o1).getOrder();
         }
         if (o2 instanceof Ordered) {
             num2 = ((Ordered) o2).getOrder();
         }
-        int answer = num1.compareTo(num2);
+        int answer = Integer.compare(num1, num2);
         return reverse ? -1 * answer : answer;
     }
 }
