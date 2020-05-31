@@ -2802,6 +2802,11 @@ public abstract class AbstractCamelContext extends BaseService
         internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
         EventHelper.notifyCamelContextRoutesStarted(this);
 
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr != null && hcr.isEnabled()) {
+            LOG.debug("HealthCheck module loaded ({})", hcr.getId());
+        }
+
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
             LOG.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
@@ -2810,11 +2815,6 @@ public abstract class AbstractCamelContext extends BaseService
         long invokedCounter = beanIntrospection != null ? beanIntrospection.getInvokedCounter() : 0;
         if (invokedCounter > 0) {
             LOG.debug("BeanIntrospection invoked {} times during starting Camel", invokedCounter);
-        }
-
-        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
-        if (hcr != null && hcr.isEnabled()) {
-            LOG.info("HealthCheck enabled ({})", hcr.getId());
         }
 
         // starting will continue in the start method
