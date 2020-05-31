@@ -164,7 +164,7 @@ public final class PropertyConfigurerGenerator {
         // target.setGroupSize(property(camelContext, java.lang.Integer.class, value))
         String rv;
         if ("duration".equals(optionKind) && "long".equals(type)) {
-            rv = String.format("property(camelContext, java.time.Duration.class, value).toMillis()", type);
+            rv = "property(camelContext, java.time.Duration.class, value).toMillis()";
         } else {
             rv = String.format("property(camelContext, %s.class, value)", type);
         }
