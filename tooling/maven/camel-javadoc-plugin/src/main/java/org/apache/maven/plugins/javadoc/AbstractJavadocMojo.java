@@ -2507,7 +2507,7 @@ public abstract class AbstractJavadocMojo
      * Method to get the excluded source files from the javadoc and create the argument string
      * that will be included in the javadoc commandline execution.
      *
-     * @param sourceFolders the collection of paths to the source files
+     * @param sourcePaths the collection of paths to the source files
      * @return a String that contains the exclude argument that will be used by javadoc
      * @throws MavenReportException
      */
