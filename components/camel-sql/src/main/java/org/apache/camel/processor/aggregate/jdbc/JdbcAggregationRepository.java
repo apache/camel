@@ -168,7 +168,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                         LOG.debug("Updating record with key {} and version {}", key, version);
                         update(camelContext, correlationId, exchange, getRepositoryName(), version);
                     } else {
-                        LOG.debug("Inserting record with key {}");
+                        LOG.debug("Inserting record with key {}", key);
                         insert(camelContext, correlationId, exchange, getRepositoryName(), 1L);
                     }
 
