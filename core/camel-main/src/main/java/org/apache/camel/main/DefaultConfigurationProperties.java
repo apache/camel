@@ -1070,6 +1070,9 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether health check is enabled.
      * Is default enabled.
+     *
+     * If using camel-quarkus then camel-quarkus-microprofile-health has its own configuration for health-check
+     * which you should use instead.
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
@@ -1088,6 +1091,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * they can influence the health check and report its UP or DOWN.
      *
      * Is default disabled.
+     *
+     * If using camel-quarkus then camel-quarkus-microprofile-health has its own configuration for health-check
+     * which you should use instead.
      */
     public void setHealthCheckRoutesEnabled(boolean healthCheckRoutesEnabled) {
         this.healthCheckRoutesEnabled = healthCheckRoutesEnabled;
