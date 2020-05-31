@@ -16,15 +16,12 @@
  */
 package org.apache.camel.microprofile.health;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.health.Readiness;
 
 /**
  * Readiness checks
  */
 @Readiness
-@ApplicationScoped
 public class CamelMicroProfileReadinessCheck extends AbstractCamelMicroProfileHealthCheck {
 
     @Override
