@@ -2497,10 +2497,12 @@ public abstract class AbstractCamelContext extends BaseService
         // setup health-check registry as its needed this early phase for 3rd party to register custom repositories
         HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
         if (hcr == null) {
-            // install health-check registry if discovered from classpath
             hcr = createHealthCheckRegistry();
-            hcr.setCamelContext(this);
-            setExtension(HealthCheckRegistry.class, hcr);
+            if (hcr != null) {
+                // install health-check registry if it was discovered from classpath (camel-health)
+                hcr.setCamelContext(this);
+                setExtension(HealthCheckRegistry.class, hcr);
+            }
         }
 
         // Call all registered trackers with this context
