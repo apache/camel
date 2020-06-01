@@ -16,9 +16,10 @@
  */
 package org.apache.camel.microprofile.health;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
