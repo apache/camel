@@ -25,19 +25,21 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
-public class CamelContextFactoryBeanTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CamelContextFactoryBeanTest {
     
     private CamelContextFactoryBean factory;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         factory = new CamelContextFactoryBean();
         factory.setId("camelContext");
@@ -80,7 +82,7 @@ public class CamelContextFactoryBeanTest extends Assert {
         URL expectedContext = getClass().getResource("/org/apache/camel/spring/context-with-endpoint.xml");
         Diff diff = DiffBuilder.compare(expectedContext).withTest(Input.fromJaxb(camelContext))
                 .ignoreWhitespace().ignoreComments().checkForSimilar().build();
-        assertFalse("Expected context and actual context differ:\n" + diff.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), "Expected context and actual context differ:\n" + diff.toString());
     }
 
     @Test

@@ -20,10 +20,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringLogMaskTest {
 
@@ -62,7 +63,7 @@ public class SpringLogMaskTest {
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("direct:mock", "password=passw0rd@", "headerPassword", "#header-password$");
         context.stop();
-        Assert.assertTrue(customFormatter.received.contains("password=passw0rd@"));
+        assertTrue(customFormatter.received.contains("password=passw0rd@"));
     }
 
     public static class MockMaskingFormatter implements MaskingFormatter {

@@ -19,9 +19,12 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 @ContextConfiguration
 public class ConsumerTemplateHasTwoTemplatesTest extends SpringRunWithTestSupport {
@@ -32,12 +35,12 @@ public class ConsumerTemplateHasTwoTemplatesTest extends SpringRunWithTestSuppor
     @Test
     public void testHasTwoTemplates() {
         ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ConsumerTemplate.class);
-        assertNotNull("Should lookup producer template", lookup);
+        assertNotNull(lookup, "Should lookup producer template");
 
         ConsumerTemplate lookup2 = context.getRegistry().lookupByNameAndType("myOtherTemplate", ConsumerTemplate.class);
-        assertNotNull("Should lookup producer template", lookup2);
+        assertNotNull(lookup2, "Should lookup producer template");
 
-        assertNotSame("Should not be same", lookup, lookup2);
+        assertNotSame(lookup, lookup2, "Should not be same");
     }
 
 }

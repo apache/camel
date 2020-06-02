@@ -20,9 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringCamelContextSimpleCustomDefaultThreadPoolProfileTest extends SpringTestSupport {
 

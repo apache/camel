@@ -25,13 +25,14 @@ import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test that verifies JMX is enabled by default.
@@ -46,7 +47,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
@@ -58,7 +59,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             releaseMBeanServers();
@@ -86,7 +87,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
 
         int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
-        assertTrue("Should have added consumer to JMX, before: " + before + ", after: " + after, after > before);
+        assertTrue(after > before, "Should have added consumer to JMX, before: " + before + ", after: " + after);
     }
 
     @Override

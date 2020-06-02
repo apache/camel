@@ -17,9 +17,12 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";
@@ -28,21 +31,21 @@ public class BeanRouteTest extends SpringTestSupport {
     public void testSayHello() throws Exception {
         Object value = template.requestBody("bean:myBean?method=sayHello", body);
 
-        assertEquals("Returned value", "Hello James!", value);
+        assertEquals("Hello James!", value, "Returned value");
     }
 
     @Test
     public void testSayGoodbye() throws Exception {
         Object value = template.requestBody("bean:myBean?method=sayGoodbye", body);
 
-        assertEquals("Returned value", "Bye James!", value);
+        assertEquals("Bye James!", value, "Returned value");
     }
 
     @Test
     public void testChooseMethodUsingBodyType() throws Exception {
         Object value = template.requestBody("bean:myBean", 4);
 
-        assertEquals("Returned value", 8L, value);
+        assertEquals(8L, value, "Returned value");
     }
 
     @Test

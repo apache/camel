@@ -19,12 +19,13 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class RouteRefMultipleCamelContextRefsTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+public class RouteRefMultipleCamelContextRefsTest {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefMultipleCamelContextRefsTest.xml");

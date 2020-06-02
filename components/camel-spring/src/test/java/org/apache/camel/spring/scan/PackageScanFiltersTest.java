@@ -30,10 +30,13 @@ import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
 import org.apache.camel.util.CollectionHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PackageScanFiltersTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class PackageScanFiltersTest {
 
     @Test
     public void testAssignableToPackageScanFilter() {

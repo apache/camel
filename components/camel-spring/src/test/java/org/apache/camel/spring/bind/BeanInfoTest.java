@@ -26,11 +26,13 @@ import org.apache.camel.component.bean.DefaultParameterMappingStrategy;
 import org.apache.camel.component.bean.MethodInvocation;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class BeanInfoTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class BeanInfoTest {
     protected DefaultCamelContext camelContext = new DefaultCamelContext();
     protected Exchange exchange = new DefaultExchange(camelContext);
     protected ExampleBean bean = new ExampleBean();
@@ -39,7 +41,7 @@ public class BeanInfoTest extends Assert {
     @Test
     public void testFindsSingleMethodMatchingBody() throws Throwable {
         MethodInvocation invocation = info.createInvocation(bean, exchange);
-        assertNotNull("Should have found a method invocation!", invocation);
+        assertNotNull(invocation, "Should have found a method invocation!");
 
         AtomicBoolean sync = new AtomicBoolean(true);
         invocation.proceed(new AsyncCallback() {
@@ -59,7 +61,7 @@ public class BeanInfoTest extends Assert {
         assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         exchange.getIn().setBody("James");

@@ -25,9 +25,11 @@ import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErrorHandlerTest extends SpringTestSupport {
 
@@ -40,7 +42,7 @@ public class ErrorHandlerTest extends SpringTestSupport {
     public void testEndpointConfiguration() throws Exception {
         SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         List<Route> list = context.getRoutes();
-        assertEquals("Number routes created" + list, 2, list.size());
+        assertEquals(2, list.size(), "Number routes created" + list);
         for (Route route : list) {
             DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
@@ -48,8 +50,8 @@ public class ErrorHandlerTest extends SpringTestSupport {
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
-            assertEquals("getMaximumRedeliveries()", 1, redeliveryPolicy.getMaximumRedeliveries());
-            assertEquals("isUseExponentialBackOff()", true, redeliveryPolicy.isUseExponentialBackOff());
+            assertEquals(1, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
+            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 

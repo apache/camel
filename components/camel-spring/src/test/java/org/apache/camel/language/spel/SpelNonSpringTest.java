@@ -19,7 +19,7 @@ package org.apache.camel.language.spel;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.spel.bean.Dummy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test access to beans defined in non-Spring context from SpEL expressions/predicates.

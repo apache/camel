@@ -24,9 +24,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.apache.camel.support.DefaultThreadPoolFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
@@ -39,7 +41,7 @@ public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
 
         MyCustomThreadPoolFactory factory = assertIsInstanceOf(MyCustomThreadPoolFactory.class, context.getExecutorServiceManager().getThreadPoolFactory());
-        assertTrue("Should use custom thread pool factory", factory.isInvoked());
+        assertTrue(factory.isInvoked(), "Should use custom thread pool factory");
     }
 
     public static class MyCustomThreadPoolFactory extends DefaultThreadPoolFactory {

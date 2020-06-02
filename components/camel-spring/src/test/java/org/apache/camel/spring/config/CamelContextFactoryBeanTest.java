@@ -26,9 +26,9 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -36,12 +36,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
 
     private AbstractApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // disable JMX
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
@@ -49,7 +54,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         // enable JMX
@@ -93,13 +98,13 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
 
         List<Route> routes = context.getRoutes();
         LOG.debug("Found routes: " + routes);
 
-        assertNotNull("Should have found some routes", routes);
-        assertEquals("One Route should be found", 1, routes.size());
+        assertNotNull(routes, "Should have found some routes");
+        assertEquals(1, routes.size(), "One Route should be found");
 
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
@@ -116,7 +121,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextRouteBuilderRef.xml");
 
         CamelContext context = applicationContext.getBean("camel5", CamelContext.class);
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
         
         assertValidContext(context);
     }

@@ -19,10 +19,11 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringLogEipMaskTest {
 
@@ -46,7 +47,7 @@ public class SpringLogEipMaskTest {
         context.start();
         MockMaskingFormatter customFormatter = applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");
-        Assert.assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
+        assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
         context.stop();
     }
 

@@ -18,9 +18,11 @@ package org.apache.camel.spring;
 
 import javax.management.ObjectName;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test that verifies JMX can be disabled via Spring.
@@ -45,7 +47,7 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
 
         int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
-        assertEquals("Should not have added consumer to JMX", before, after);
+        assertEquals(before, after, "Should not have added consumer to JMX");
     }
 
 }

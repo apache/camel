@@ -21,11 +21,15 @@ import javax.sql.DataSource;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * For testing with mixed transacted propagation (required, requires new)
@@ -42,7 +46,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -57,7 +61,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Test
@@ -67,7 +71,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // we do 2x the book service so we should get 2 tiger books
         assertEquals(new Integer(2), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -76,7 +80,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Elephant in Action"));
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Test
@@ -85,7 +89,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(new Integer(2), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals("Number of books", 3, count);
+        assertEquals(3, count, "Number of books");
     }
 
     @Test
@@ -102,7 +106,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Test
@@ -119,7 +123,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Test
@@ -137,7 +141,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
         assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
         // the tiger in action should be committed, but our 2nd route should rollback
-        assertEquals("Number of books", 2, count);
+        assertEquals(2, count, "Number of books");
     }
 
     @Override
