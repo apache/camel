@@ -20,13 +20,15 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CamelContextAutoStartupTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class CamelContextAutoStartupTest {
 
     private AbstractXmlApplicationContext ac;
 
@@ -83,7 +85,7 @@ public class CamelContextAutoStartupTest extends Assert {
         mock.assertIsSatisfied();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(ac);
 

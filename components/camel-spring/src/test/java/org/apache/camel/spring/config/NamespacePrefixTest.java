@@ -20,9 +20,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class NamespacePrefixTest extends SpringRunWithTestSupport {
@@ -36,8 +38,8 @@ public class NamespacePrefixTest extends SpringRunWithTestSupport {
 
     @Test
     public void testAssertThatInjectionWorks() throws Exception {
-        assertNotNull("Bean should be injected", template);
-        assertNotNull("endpoint should be injected", endpoint);
+        assertNotNull(template, "Bean should be injected");
+        assertNotNull(endpoint, "endpoint should be injected");
     }
 
 }

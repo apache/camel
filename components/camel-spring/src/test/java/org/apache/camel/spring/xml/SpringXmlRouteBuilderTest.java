@@ -22,9 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilderTest;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A test case of the builder using Spring 2.0 to load the rules
@@ -101,9 +103,9 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     protected List<Route> getRoutesFromContext(String classpathConfigFile) {
         applicationContext = new ClassPathXmlApplicationContext(classpathConfigFile);
         SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
-        assertNotNull("No Camel Context in file: " + classpathConfigFile, context);
+        assertNotNull(context, "No Camel Context in file: " + classpathConfigFile);
         List<Route> routes = context.getRoutes();
-        assertNotNull("No routes available for context: " + context.getName() + " in file: " + classpathConfigFile, routes);
+        assertNotNull(routes, "No routes available for context: " + context.getName() + " in file: " + classpathConfigFile);
         return routes;
     }
 }

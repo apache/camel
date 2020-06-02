@@ -17,9 +17,12 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringEndpointPropertyTest extends SpringTestSupport {
 

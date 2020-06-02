@@ -24,9 +24,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spring.example.DummyBean;
 import org.apache.camel.support.CamelContextHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";
@@ -40,11 +45,11 @@ public class EndpointReferenceTest extends SpringTestSupport {
     public void testEndpointConfiguration() throws Exception {
         Endpoint endpoint = getMandatoryBean(Endpoint.class, "endpoint1");
 
-        assertEquals("endpoint URI", "direct://start", endpoint.getEndpointUri());
+        assertEquals("direct://start", endpoint.getEndpointUri(), "endpoint URI");
 
         DummyBean dummyBean = getMandatoryBean(DummyBean.class, "mybean");
-        assertNotNull("The bean should have an endpoint injected", dummyBean.getEndpoint());
-        assertEquals("endpoint URI", "direct://start", dummyBean.getEndpoint().getEndpointUri());
+        assertNotNull(dummyBean.getEndpoint(), "The bean should have an endpoint injected");
+        assertEquals("direct://start", dummyBean.getEndpoint().getEndpointUri(), "endpoint URI");
 
         log.debug("Found dummy bean: " + dummyBean);
 
@@ -81,7 +86,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
             CamelContextHelper.resolveEndpoint(context, null, "endpoint1");
             fail("Should have thrown exception");
         } catch (NoSuchEndpointException exception) {
-            assertTrue("Get a wrong exception message", exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"));
+            assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"), "Get a wrong exception message");
         }
     }
 

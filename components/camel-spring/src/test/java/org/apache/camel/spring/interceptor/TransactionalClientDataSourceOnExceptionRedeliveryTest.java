@@ -22,7 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends TransactionalClientDataSourceTest {
 
@@ -35,7 +39,7 @@ public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends Tran
         });
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
 
         assertNotNull(out);
 

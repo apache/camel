@@ -20,14 +20,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HealthCheckRegistryTest {
 
@@ -39,14 +40,14 @@ public class HealthCheckRegistryTest {
         assertNotNull(hc);
 
         List<HealthCheck> checks = hc.stream().collect(Collectors.toList());
-        Assert.assertEquals(2, checks.size());
+        assertEquals(2, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
 
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
         }
 
         context.getRouteController().stopRoute("foo");
@@ -55,13 +56,13 @@ public class HealthCheckRegistryTest {
             HealthCheck.Result response = check.call();
             boolean foo = "foo".equals(response.getDetails().get("route.id"));
             if (foo) {
-                Assert.assertEquals(HealthCheck.State.DOWN, response.getState());
-                Assert.assertTrue(response.getMessage().isPresent());
-                Assert.assertFalse(response.getError().isPresent());
+                assertEquals(HealthCheck.State.DOWN, response.getState());
+                assertTrue(response.getMessage().isPresent());
+                assertFalse(response.getError().isPresent());
             } else {
-                Assert.assertEquals(HealthCheck.State.UP, response.getState());
-                Assert.assertFalse(response.getMessage().isPresent());
-                Assert.assertFalse(response.getError().isPresent());
+                assertEquals(HealthCheck.State.UP, response.getState());
+                assertFalse(response.getMessage().isPresent());
+                assertFalse(response.getError().isPresent());
             }
         }
     }
@@ -70,7 +71,7 @@ public class HealthCheckRegistryTest {
         ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(classpathConfigFile);
 
         CamelContext camelContext = appContext.getBean(CamelContext.class);
-        assertNotNull("No Camel Context in file: " + classpathConfigFile, camelContext);
+        assertNotNull(camelContext, "No Camel Context in file: " + classpathConfigFile);
 
         return camelContext;
     }

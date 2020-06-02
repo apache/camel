@@ -20,9 +20,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class DependencyInjectCamelTemplateTest extends SpringRunWithTestSupport {
@@ -36,9 +38,9 @@ public class DependencyInjectCamelTemplateTest extends SpringRunWithTestSupport 
 
     @Test
     public void testBeanHasCamelTemplateInjected() throws Exception {
-        assertNotNull("Bean should be injected", bean);
+        assertNotNull(bean, "Bean should be injected");
         ProducerTemplate template = bean.getTemplate();
-        assertNotNull("Bean should have a CamelTemplate", template);
+        assertNotNull(template, "Bean should have a CamelTemplate");
 
         endpoint.expectedBodiesReceived(body);
 

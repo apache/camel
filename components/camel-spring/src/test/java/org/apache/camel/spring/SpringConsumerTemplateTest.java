@@ -20,9 +20,11 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test using the ConsumerTemplate
@@ -50,7 +52,7 @@ public class SpringConsumerTemplateTest extends SpringRunWithTestSupport {
 
         // we consume the body from seda:start
         String body = consumer.receiveBody("seda:start", String.class);
-        assertEquals("Hello World", body);
+        assertEquals(body, "Hello World");
 
         // and then we send the body again to seda:foo so it will be routed to the mock
         // endpoint so our unit test can complete

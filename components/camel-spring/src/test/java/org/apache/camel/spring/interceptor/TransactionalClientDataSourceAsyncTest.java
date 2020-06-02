@@ -22,7 +22,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -48,7 +52,7 @@ public class TransactionalClientDataSourceAsyncTest extends TransactionalClientD
         assertMockEndpointsSatisfied();
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Override

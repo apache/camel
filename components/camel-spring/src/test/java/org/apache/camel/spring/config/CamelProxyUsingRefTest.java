@@ -17,12 +17,13 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CamelProxyUsingRefTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CamelProxyUsingRefTest {
 
     @Test
     public void testCamelProxyUsingRef() throws Exception {

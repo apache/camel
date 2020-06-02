@@ -19,9 +19,13 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 @ContextConfiguration
 public class ProducerTemplateAlreadyExistTest extends SpringRunWithTestSupport {
@@ -34,23 +38,23 @@ public class ProducerTemplateAlreadyExistTest extends SpringRunWithTestSupport {
 
     @Test
     public void testHasExistingTemplate() {
-        assertNotNull("Should have injected a producer template", template);
+        assertNotNull(template, "Should have injected a producer template");
 
         ProducerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
-        assertNotNull("Should lookup producer template", lookup);
+        assertNotNull(lookup, "Should lookup producer template");
 
         ProducerTemplate lookup2 = context.getRegistry().lookupByNameAndType("template", ProducerTemplate.class);
-        assertNull("Should not be able to lookup producer template", lookup2);
+        assertNull(lookup2, "Should not be able to lookup producer template");
     }
 
     @Test
     public void testShouldBeSingleton() {
         ProducerTemplate lookup = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
-        assertNotNull("Should lookup producer template", lookup);
+        assertNotNull(lookup, "Should lookup producer template");
 
         ProducerTemplate lookup2 = context.getRegistry().lookupByNameAndType("myTemplate", ProducerTemplate.class);
-        assertNotNull("Should lookup producer template", lookup);
+        assertNotNull(lookup, "Should lookup producer template");
 
-        assertSame("Should be same instances (singleton)", lookup, lookup2);
+        assertSame(lookup, lookup2, "Should be same instances (singleton)");
     }
 }

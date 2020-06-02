@@ -17,11 +17,13 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.util.FileUtil.normalizePath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringStreamCachingStrategyTest extends SpringTestSupport {
 

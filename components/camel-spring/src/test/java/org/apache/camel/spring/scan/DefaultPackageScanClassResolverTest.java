@@ -26,8 +26,10 @@ import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
@@ -36,7 +38,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     private String scanPackage = "org.apache.camel.spring.scan";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         resolver = new DefaultPackageScanClassResolver();
