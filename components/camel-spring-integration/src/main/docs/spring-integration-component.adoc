@@ -6,6 +6,7 @@
 :since: 1.4
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+//Manually maintained attributes
 :group: Spring
 
 *Since Camel {since}*

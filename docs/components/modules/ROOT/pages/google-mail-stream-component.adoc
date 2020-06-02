@@ -8,6 +8,8 @@
 :since: 2.22
 :supportLevel: Stable
 :component-header: Only consumer is supported
+//Manually maintained attributes
+:group: Google
 
 *Since Camel {since}*
 

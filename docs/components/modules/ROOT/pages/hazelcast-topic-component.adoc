@@ -8,6 +8,8 @@
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Hazelcast
 
 *Since Camel {since}*
 

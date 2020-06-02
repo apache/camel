@@ -7,6 +7,7 @@
 :description: Distributed tracing using AWS XRay
 :since: 2.21
 :supportLevel: Stable
+:group: AWS
 
 *Since Camel {since}*
 
