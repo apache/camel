@@ -31,8 +31,11 @@ import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.processor.channel.DefaultChannel;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServiceCallConfigurationTest {
 
@@ -68,11 +71,11 @@ public class ServiceCallConfigurationTest {
 
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-        Assert.assertNotNull(proc);
-        Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertNotNull(proc);
+        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer)proc.getLoadBalancer();
-        Assert.assertEquals(sd, loadBalancer.getServiceDiscovery());
+        assertEquals(sd, loadBalancer.getServiceDiscovery());
 
         // call the route
         context.createFluentProducerTemplate().to("direct:start").withHeader("customerId", "123").send();
@@ -114,12 +117,12 @@ public class ServiceCallConfigurationTest {
 
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-        Assert.assertNotNull(proc);
-        Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertNotNull(proc);
+        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer)proc.getLoadBalancer();
-        Assert.assertEquals(sd, loadBalancer.getServiceDiscovery());
-        Assert.assertEquals(sf, loadBalancer.getServiceFilter());
+        assertEquals(sd, loadBalancer.getServiceDiscovery());
+        assertEquals(sf, loadBalancer.getServiceFilter());
 
         context.stop();
     }
@@ -156,12 +159,12 @@ public class ServiceCallConfigurationTest {
 
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-        Assert.assertNotNull(proc);
-        Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertNotNull(proc);
+        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer)proc.getLoadBalancer();
-        Assert.assertEquals(sd, loadBalancer.getServiceDiscovery());
-        Assert.assertEquals(sf, loadBalancer.getServiceFilter());
+        assertEquals(sd, loadBalancer.getServiceDiscovery());
+        assertEquals(sf, loadBalancer.getServiceFilter());
 
         context.stop();
     }
@@ -199,12 +202,12 @@ public class ServiceCallConfigurationTest {
 
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-        Assert.assertNotNull(proc);
-        Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertNotNull(proc);
+        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer)proc.getLoadBalancer();
-        Assert.assertEquals(sd, loadBalancer.getServiceDiscovery());
-        Assert.assertEquals(sf, loadBalancer.getServiceFilter());
+        assertEquals(sd, loadBalancer.getServiceDiscovery());
+        assertEquals(sf, loadBalancer.getServiceFilter());
 
         context.stop();
     }
@@ -280,36 +283,36 @@ public class ServiceCallConfigurationTest {
             // Default
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-            Assert.assertNotNull(proc);
-            Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertNotNull(proc);
+            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
             DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
-            Assert.assertEquals(defaultServiceDiscovery, loadBalancer.getServiceDiscovery());
-            Assert.assertEquals(defaultServiceFilter, loadBalancer.getServiceFilter());
+            assertEquals(defaultServiceDiscovery, loadBalancer.getServiceDiscovery());
+            assertEquals(defaultServiceFilter, loadBalancer.getServiceFilter());
         }
 
         {
             // Named
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("named"));
 
-            Assert.assertNotNull(proc);
-            Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertNotNull(proc);
+            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
             DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
-            Assert.assertEquals(defaultServiceDiscovery, loadBalancer.getServiceDiscovery());
-            Assert.assertEquals(namedServiceFilter, loadBalancer.getServiceFilter());
+            assertEquals(defaultServiceDiscovery, loadBalancer.getServiceDiscovery());
+            assertEquals(namedServiceFilter, loadBalancer.getServiceFilter());
         }
 
         {
             // Local
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("local"));
 
-            Assert.assertNotNull(proc);
-            Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertNotNull(proc);
+            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
 
             DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
-            Assert.assertEquals(localServiceDiscovery, loadBalancer.getServiceDiscovery());
-            Assert.assertEquals(namedServiceFilter, loadBalancer.getServiceFilter());
+            assertEquals(localServiceDiscovery, loadBalancer.getServiceDiscovery());
+            assertEquals(namedServiceFilter, loadBalancer.getServiceFilter());
         }
 
         context.stop();
@@ -356,26 +359,26 @@ public class ServiceCallConfigurationTest {
 
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-            Assert.assertNotNull(proc);
-            Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
-            Assert.assertEquals("service-name", proc.getName());
-            Assert.assertEquals("file", proc.getScheme());
-            Assert.assertEquals("direct:service-name", proc.getUri());
+            assertNotNull(proc);
+            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertEquals("service-name", proc.getName());
+            assertEquals("file", proc.getScheme());
+            assertEquals("direct:service-name", proc.getUri());
 
             DefaultServiceLoadBalancer lb = (DefaultServiceLoadBalancer)proc.getLoadBalancer();
 
-            Assert.assertTrue(lb.getServiceFilter() instanceof BlacklistServiceFilter);
+            assertTrue(lb.getServiceFilter() instanceof BlacklistServiceFilter);
             BlacklistServiceFilter filter = (BlacklistServiceFilter)lb.getServiceFilter();
             List<ServiceDefinition> blacklist = filter.getBlacklistedServices();
-            Assert.assertEquals(1, blacklist.size());
+            assertEquals(1, blacklist.size());
 
-            Assert.assertTrue(lb.getServiceDiscovery() instanceof StaticServiceDiscovery);
+            assertTrue(lb.getServiceDiscovery() instanceof StaticServiceDiscovery);
 
             List<ServiceDefinition> services1 = lb.getServiceDiscovery().getServices("hello-service");
-            Assert.assertEquals(2,  filter.apply(services1).size());
+            assertEquals(2,  filter.apply(services1).size());
 
             List<ServiceDefinition> services2 = lb.getServiceDiscovery().getServices("hello-svc");
-            Assert.assertEquals(1, filter.apply(services2).size());
+            assertEquals(1, filter.apply(services2).size());
 
         } finally {
             if (context != null) {
@@ -425,8 +428,8 @@ public class ServiceCallConfigurationTest {
 
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
-            Assert.assertNotNull(proc);
-            Assert.assertEquals("file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}",
+            assertNotNull(proc);
+            assertEquals("file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}",
                     proc.getExpression().toString());
 
         } finally {

@@ -26,8 +26,9 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServiceRegistryTest extends ContextTestSupport {
 
@@ -71,21 +72,21 @@ public class ServiceRegistryTest extends ContextTestSupport {
 
         final Map<String, ServiceDefinition> defs = sr.getDefinitions();
 
-        Assertions.assertThat(defs).hasSize(1);
+        assertThat(defs).hasSize(1);
 
         // basic properties
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
 
         // metadata
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
+        assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
     }
 
     @Test
@@ -116,21 +117,21 @@ public class ServiceRegistryTest extends ContextTestSupport {
 
         final Map<String, ServiceDefinition> defs = sr.getDefinitions();
 
-        Assertions.assertThat(defs).hasSize(1);
+        assertThat(defs).hasSize(1);
 
         // basic properties
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
 
         // metadata
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
+        assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
     }
 
     // *********************
@@ -163,21 +164,21 @@ public class ServiceRegistryTest extends ContextTestSupport {
 
         final Map<String, ServiceDefinition> defs = sr.getDefinitions();
 
-        Assertions.assertThat(defs).hasSize(1);
+        assertThat(defs).hasSize(1);
 
         // basic properties
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
-        Assertions.assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("name", serviceName);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("id", serviceId);
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("host", "localhost");
+        assertThat(defs.values()).first().hasFieldOrPropertyWithValue("port", port);
 
         // metadata
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
-        Assertions.assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, serviceName);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_ID, serviceId);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_HOST, "localhost");
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_PORT, "" + port);
+        assertThat(defs.get(serviceId).getMetadata()).containsEntry("service.meta1", "meta1");
+        assertThat(defs.get(serviceId).getMetadata()).doesNotContainKeys("meta2");
     }
 
     // *********************
