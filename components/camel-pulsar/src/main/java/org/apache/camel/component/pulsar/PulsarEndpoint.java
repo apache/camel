@@ -158,7 +158,9 @@ public class PulsarEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         ObjectHelper.notNull(persistence, "persistence", this);
         ObjectHelper.notNull(tenant, "tenant", this);
         ObjectHelper.notNull(namespace, "namespace", this);
