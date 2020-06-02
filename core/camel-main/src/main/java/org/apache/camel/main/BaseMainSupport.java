@@ -951,7 +951,17 @@ public abstract class BaseMainSupport extends BaseService {
 
         // common health checks to make them easy to turn on|off
         String contextEnabled = (String) healthCheckProperties.remove(".context.enabled");
+        if (contextEnabled != null) {
+            autoConfiguredProperties.put("camel.health.context.enabled", contextEnabled);
+        }
         String routesEnabled = (String) healthCheckProperties.remove(".routes.enabled");
+        if (routesEnabled != null) {
+            autoConfiguredProperties.put("camel.health.routes.enabled", routesEnabled);
+        }
+        String registryEnabled = (String) healthCheckProperties.remove(".registry.enabled");
+        if (registryEnabled != null) {
+            autoConfiguredProperties.put("camel.health.registry.enabled", registryEnabled);
+        }
 
         Map<String, Map<String, String>> checks = new LinkedHashMap<>();
         // the id of the health-check is in the key [xx]
@@ -978,7 +988,7 @@ public abstract class BaseMainSupport extends BaseService {
         healthCheckProperties.clear();
 
         // context is enabled by default
-        if (hcr.isEnabled() && !checks.containsKey("context")) {
+        if (hcr.isEnabled() && (!checks.containsKey("context") || contextEnabled != null)) {
             HealthCheck hc = (HealthCheck) hcr.resolveById("context");
             if (hc != null) {
                 if (contextEnabled != null) {
@@ -988,14 +998,22 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         // routes is enabled by default
-        if (hcr.isEnabled() && !checks.containsKey("routes")) {
-            HealthCheckRepository hc = (HealthCheckRepository) hcr.resolveById("routes");
+        if (hcr.isEnabled() && (!checks.containsKey("routes") || routesEnabled != null)) {
+            HealthCheckRepository hc = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
             if (hc != null) {
                 if (routesEnabled != null) {
                     hc.setEnabled(CamelContextHelper.parseBoolean(camelContext, routesEnabled));
                 }
                 hcr.register(hc);
             }
+        }
+        // registry is enabled by default
+        if (hcr.isEnabled() && (!checks.containsKey("registry") || registryEnabled != null)) {
+            hcr.getRepository("registry").ifPresent(h -> {
+                if (registryEnabled != null) {
+                    h.setEnabled(CamelContextHelper.parseBoolean(camelContext, registryEnabled));
+                }
+            });
         }
 
         // extract all keys that are for sub configuration (such as fine grained on routes)

@@ -235,7 +235,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
      */
     public Optional<HealthCheckRepository> getRepository(String id) {
         return repositories.stream()
-                .filter(r -> ObjectHelper.equal(r.getId(), id))
+                // try also shorthand naming
+                .filter(r -> ObjectHelper.equal(r.getId(), id) || ObjectHelper.equal(r.getId().replace("-health-check-repository", ""), id))
                 .findFirst();
     }
 
