@@ -134,8 +134,8 @@ public class JpaComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // lookup entity manager factory and use it if only one provided
         if (entityManagerFactory == null) {
