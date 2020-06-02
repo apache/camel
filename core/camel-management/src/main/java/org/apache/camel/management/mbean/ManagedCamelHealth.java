@@ -33,6 +33,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelHealthMBean;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.ManagementStrategy;
 
 public class ManagedCamelHealth implements ManagedCamelHealthMBean {
@@ -118,11 +119,23 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
     @Override
     public void enableById(String id) {
-        healthCheckRegistry.getCheck(id).ifPresent(h -> h.getConfiguration().setEnabled(true));
+        Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
+        if (hc.isPresent()) {
+            hc.get().getConfiguration().setEnabled(true);
+        } else {
+            Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
+            hcr.ifPresent(repository -> repository.setEnabled(true));
+        }
     }
 
     @Override
     public void disableById(String id) {
-        healthCheckRegistry.getCheck(id).ifPresent(h -> h.getConfiguration().setEnabled(false));
+        Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
+        if (hc.isPresent()) {
+            hc.get().getConfiguration().setEnabled(false);
+        } else {
+            Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
+            hcr.ifPresent(repository -> repository.setEnabled(false));
+        }
     }
 }

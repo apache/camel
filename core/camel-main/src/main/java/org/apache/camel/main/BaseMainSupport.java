@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,6 +45,10 @@ import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
+import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -93,6 +98,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String SENSITIVE_KEYS = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
     private static final String VALID_THREAD_POOL_KEYS = "id|poolSize|maxPoolSize|keepAliveTime|timeUnit|maxQueueSize|allowCoreThreadTimeout|rejectedPolicy";
+    private static final String VALID_HEALTH_KEYS = "id|enabled|interval|failureThreshold";
 
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
@@ -682,6 +688,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> faultToleranceProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
         Map<String, Object> threadPoolProperties = new LinkedHashMap<>();
+        Map<String, Object> healthProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
@@ -720,6 +727,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(16);
                 validateOptionAndValue(key, option, value);
                 threadPoolProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.health")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                healthProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -735,7 +748,6 @@ public abstract class BaseMainSupport extends BaseService {
             bindBeansToRegistry(camelContext, beansProperties, "camel.beans.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
-
         if (!contextProperties.isEmpty()) {
             LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
             setPropertiesOnTarget(camelContext, camelContext, contextProperties, "camel.context.",
@@ -788,6 +800,10 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             setThreadPoolProfileProperties(camelContext, threadPoolProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
+        if (!healthProperties.isEmpty()) {
+            LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
+            setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+        }
 
         // log which options was not set
         if (!beansProperties.isEmpty()) {
@@ -832,6 +848,11 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.warn("Property not auto-configured: camel.threadpool{}={} on bean: ThreadPoolProfileBuilder", k, v);
             });
         }
+        if (!healthProperties.isEmpty()) {
+            healthProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.health{}={}", k, v);
+            });
+        }
     }
 
     private void setThreadPoolProfileProperties(CamelContext camelContext, Map<String, Object> threadPoolProperties,
@@ -856,13 +877,14 @@ public abstract class BaseMainSupport extends BaseService {
                 throw new PropertyBindingException("ThreadPoolProfileBuilder", key, value);
             }
 
-            autoConfiguredProperties.put(k, value);
+            autoConfiguredProperties.put("camel.threadpool" + k, value);
         });
+        // clear as we have validated all parameters
+        threadPoolProperties.clear();
 
         // now build profiles from those options
         for (String id : profiles.keySet()) {
             Map<String, String> map = profiles.get(id);
-            // camel-main will lower-case keys
             String overrideId = map.remove("id");
             String poolSize = map.remove("poolSize");
             String maxPoolSize = map.remove("maxPoolSize");
@@ -907,6 +929,119 @@ public abstract class BaseMainSupport extends BaseService {
                 esm.setDefaultThreadPoolProfile(builder.build());
             } else {
                 esm.registerThreadPoolProfile(builder.build());
+            }
+        }
+    }
+
+    private void setHealthCheckProperties(CamelContext camelContext, Map<String, Object> healthCheckProperties,
+                                          boolean failIfNotSet, Map<String, String> autoConfiguredProperties) {
+
+        HealthCheckRegistry hcr = camelContext.getExtension(HealthCheckRegistry.class);
+        if (hcr == null) {
+            LOG.warn("Cannot find HealthCheckRegistry from classpath. Add camel-health to classpath.");
+            return;
+        }
+
+        // grab global option for enabled or disabled
+        String global = (String) healthCheckProperties.remove(".enabled");
+        if (global != null) {
+            hcr.setEnabled(CamelContextHelper.parseBoolean(camelContext, global));
+            autoConfiguredProperties.put("camel.health.enabled", global);
+        }
+
+        // common health checks to make them easy to turn on|off
+        String contextEnabled = (String) healthCheckProperties.remove(".context.enabled");
+        String routesEnabled = (String) healthCheckProperties.remove(".routes.enabled");
+
+        Map<String, Map<String, String>> checks = new LinkedHashMap<>();
+        // the id of the health-check is in the key [xx]
+        healthCheckProperties.forEach((k, v) -> {
+            String id = StringHelper.between(k, "[", "].");
+            if (id == null) {
+                throw new IllegalArgumentException("Invalid syntax for key: camel.health" + k + " should be: camel.health[id]");
+            }
+            String key = StringHelper.after(k, "].");
+            String value = v.toString();
+            if (key == null) {
+                throw new PropertyBindingException("HealthCheckConfiguration", k, value);
+            }
+            Map<String, String> map = checks.computeIfAbsent(id, o -> new HashMap<>());
+            map.put(optionKey(key), value);
+
+            if (failIfNotSet && !VALID_HEALTH_KEYS.contains(key)) {
+                throw new PropertyBindingException("HealthCheckConfiguration", key, value);
+            }
+
+            autoConfiguredProperties.put("camel.health" + k, value);
+        });
+        // clear as we have validated all parameters
+        healthCheckProperties.clear();
+
+        // context is enabled by default
+        if (hcr.isEnabled() && !checks.containsKey("context")) {
+            HealthCheck hc = (HealthCheck) hcr.resolveById("context");
+            if (hc != null) {
+                if (contextEnabled != null) {
+                    hc.getConfiguration().setEnabled(CamelContextHelper.parseBoolean(camelContext, contextEnabled));
+                }
+                hcr.register(hc);
+            }
+        }
+        // routes is enabled by default
+        if (hcr.isEnabled() && !checks.containsKey("routes")) {
+            HealthCheckRepository hc = (HealthCheckRepository) hcr.resolveById("routes");
+            if (hc != null) {
+                if (routesEnabled != null) {
+                    hc.setEnabled(CamelContextHelper.parseBoolean(camelContext, routesEnabled));
+                }
+                hcr.register(hc);
+            }
+        }
+
+        // grab keys that are yet another map
+//        Map<String, Map<String, String>> subConfig = new LinkedHashMap<>();
+//        Iterator<String> it = checks.keySet().iterator();
+//        while (it.hasNext()) {
+//            String key = it.next();
+//            if (key.startsWith("[") && key.e)
+//        }
+
+
+        // configure health checks configurations
+        for (String id : checks.keySet()) {
+            Map<String, String> map = checks.get(id);
+            String enabled = map.remove("enabled");
+            String interval = map.remove("interval");
+            String failureThreshold = map.remove("failureThreshold");
+
+            HealthCheckConfiguration hcc = new HealthCheckConfiguration();
+            if (enabled != null) {
+                hcc.setEnabled(CamelContextHelper.parseBoolean(camelContext, enabled));
+            }
+            if (interval != null) {
+                hcc.setInterval(CamelContextHelper.parseDuration(camelContext, interval).toMillis());
+            }
+            if (failureThreshold != null) {
+                hcc.setFailureThreshold(CamelContextHelper.parseInt(camelContext, failureThreshold));
+            }
+
+            // lookup health check by id
+            Object hc = hcr.getCheck(id).orElse(null);
+            if (hc == null) {
+                hc = hcr.resolveById(id);
+                if (hc == null) {
+                    LOG.warn("Cannot resolve HealthCheck with id: " + id + " from classpath.");
+                    continue;
+                }
+                hcr.register(hc);
+                if (hc instanceof HealthCheck) {
+                    ((HealthCheck) hc).getConfiguration().setEnabled(hcc.isEnabled());
+                    ((HealthCheck) hc).getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
+                    ((HealthCheck) hc).getConfiguration().setInterval(hcc.getInterval());
+                } else if (hc instanceof HealthCheckRepository) {
+                    // ((HealthCheckRepository) hc).setEnabled(hcc.isEnabled());
+                    // TODO: The other configurations
+                }
             }
         }
     }
