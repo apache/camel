@@ -47,6 +47,14 @@ public interface HealthCheckRepository extends HasId {
     Map<String, HealthCheckConfiguration> getConfigurations();
 
     /**
+     * Adds a health check configuration
+     *
+     * @param id             the health check id (can use patterns)
+     * @param configuration  the configuration
+     */
+    void addConfiguration(String id, HealthCheckConfiguration configuration);
+
+    /**
      * Returns a sequential {@code Stream} with the known {@link HealthCheck}
      * as its source.
      */

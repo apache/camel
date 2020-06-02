@@ -998,14 +998,18 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
-        // grab keys that are yet another map
-//        Map<String, Map<String, String>> subConfig = new LinkedHashMap<>();
-//        Iterator<String> it = checks.keySet().iterator();
-//        while (it.hasNext()) {
-//            String key = it.next();
-//            if (key.startsWith("[") && key.e)
-//        }
-
+        // extract all keys that are for sub configuration (such as fine grained on routes)
+        Map<String, Map<String, String>> subConfig = new LinkedHashMap<>();
+        Iterator<String> it = checks.keySet().iterator();
+        while (it.hasNext()) {
+            String key = it.next();
+            // the key have their starting [ and ] removed, so we look for sub keys via [id][id2].key
+            if (key.contains("][")) {
+                String newKey = key.replace("][", ":");
+                subConfig.put(newKey, checks.get(key));
+                it.remove();
+            }
+        }
 
         // configure health checks configurations
         for (String id : checks.keySet()) {
@@ -1039,11 +1043,43 @@ public abstract class BaseMainSupport extends BaseService {
                     ((HealthCheck) hc).getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
                     ((HealthCheck) hc).getConfiguration().setInterval(hcc.getInterval());
                 } else if (hc instanceof HealthCheckRepository) {
-                    // ((HealthCheckRepository) hc).setEnabled(hcc.isEnabled());
-                    // TODO: The other configurations
+                    ((HealthCheckRepository) hc).setEnabled(hcc.isEnabled());
                 }
             }
         }
+
+        // apply sub configuration for health check repositories
+
+        // for example you can specify for all
+        // camel.health[routes][*].interval = 10s
+        //
+        // ... or per id
+        //
+        // camel.health[routes][timer].enabled = true
+        // camel.health[routes][timer].interval = 10s
+        // camel.health[routes][timer].failure-threshold = 5
+        subConfig.forEach((k, v) -> {
+            String key = StringHelper.after(k, ":");
+            Map configs = v;
+            String enabled = (String) configs.remove("enabled");
+            String interval = (String) configs.remove("interval");
+            String failureThreshold = (String) configs.remove("failureThreshold");
+            HealthCheckConfiguration hcc = new HealthCheckConfiguration();
+            if (enabled != null) {
+                hcc.setEnabled(CamelContextHelper.parseBoolean(camelContext, enabled));
+            }
+            if (interval != null) {
+                hcc.setInterval(CamelContextHelper.parseDuration(camelContext, interval).toMillis());
+            }
+            if (failureThreshold != null) {
+                hcc.setFailureThreshold(CamelContextHelper.parseInt(camelContext, failureThreshold));
+            }
+            String id = StringHelper.before(k, ":");
+            Object obj = hcr.resolveById(id);
+            if (obj instanceof HealthCheckRepository) {
+                ((HealthCheckRepository) obj).addConfiguration(key, hcc);
+            }
+        });
     }
 
     private void bindBeansToRegistry(CamelContext camelContext, Map<String, Object> properties,

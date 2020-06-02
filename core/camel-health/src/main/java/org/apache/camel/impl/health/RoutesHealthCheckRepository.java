@@ -17,6 +17,7 @@
 package org.apache.camel.impl.health;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * Repository for routes {@link HealthCheck}s.
@@ -72,6 +74,14 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     @Override
     public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
         this.configurations = configurations;
+    }
+
+    @Override
+    public void addConfiguration(String id, HealthCheckConfiguration configuration) {
+        if (configurations == null) {
+            configurations = new HashMap<>();
+        }
+        configurations.put(id, configuration);
     }
 
     @Override
@@ -129,12 +139,23 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     private HealthCheck toRouteHealthCheck(Route route) {
         return checks.computeIfAbsent(route, r -> {
             RouteHealthCheck rhc = new RouteHealthCheck(route);
-            if (configurations != null && configurations.containsKey(rhc.getId())) {
-                HealthCheckConfiguration hcc = configurations.get(rhc.getId());
-                rhc.setConfiguration(hcc);
+            if (configurations != null) {
+                HealthCheckConfiguration hcc = matchConfiguration(route.getRouteId());
+                if (hcc != null) {
+                    rhc.setConfiguration(hcc);
+                }
             }
             return rhc;
         });
+    }
+
+    private HealthCheckConfiguration matchConfiguration(String id) {
+        for (String key : configurations.keySet()) {
+            if (PatternHelper.matchPattern(id, key)) {
+                return configurations.get(key);
+            }
+        }
+        return null;
     }
 
 }
