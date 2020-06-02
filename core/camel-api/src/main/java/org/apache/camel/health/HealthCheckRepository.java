@@ -16,6 +16,7 @@
  */
 package org.apache.camel.health;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.camel.spi.HasId;
@@ -24,6 +25,26 @@ import org.apache.camel.spi.HasId;
  * A repository for health checks.
  */
 public interface HealthCheckRepository extends HasId {
+
+    /**
+     * Set if the checks associated to this repository is enabled or not.
+     */
+    boolean isEnabled();
+
+    /**
+     * Set if the checks associated to this repository is enabled or not.
+     */
+    void setEnabled(boolean enabled);
+
+    /**
+     * Configurations for health checks based on their ids
+     */
+    void setConfigurations(Map<String, HealthCheckConfiguration> configurations);
+
+    /**
+     * Configurations for health checks based on their ids
+     */
+    Map<String, HealthCheckConfiguration> getConfigurations();
 
     /**
      * Returns a sequential {@code Stream} with the known {@link HealthCheck}

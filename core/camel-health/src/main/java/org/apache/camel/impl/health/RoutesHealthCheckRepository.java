@@ -18,6 +18,7 @@ package org.apache.camel.impl.health;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -28,6 +29,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.annotations.JdkService;
 
@@ -40,6 +42,8 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     private final ConcurrentMap<Route, HealthCheck> checks;
     private Set<String> blacklist;
     private volatile CamelContext context;
+    private Map<String, HealthCheckConfiguration> configurations;
+    private boolean enabled = true;
 
     public RoutesHealthCheckRepository() {
         this.checks = new ConcurrentHashMap<>();
@@ -58,6 +62,26 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     @Override
     public CamelContext getCamelContext() {
         return context;
+    }
+
+    @Override
+    public Map<String, HealthCheckConfiguration> getConfigurations() {
+        return configurations;
+    }
+
+    @Override
+    public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
+        this.configurations = configurations;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setBlacklistedRoutes(Collection<String> blacklistedRoutes) {
@@ -85,7 +109,7 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
         //     void forEachRoute(Consumer<Route> consumer);
         // }
         //
-        return this.context != null
+        return this.context != null && enabled
             ? this.context.getRoutes()
                 .stream()
                 .filter(route -> route.getId() != null)
@@ -103,7 +127,14 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     }
 
     private HealthCheck toRouteHealthCheck(Route route) {
-        return checks.computeIfAbsent(route, r -> new RouteHealthCheck(route));
+        return checks.computeIfAbsent(route, r -> {
+            RouteHealthCheck rhc = new RouteHealthCheck(route);
+            if (configurations != null && configurations.containsKey(rhc.getId())) {
+                HealthCheckConfiguration hcc = configurations.get(rhc.getId());
+                rhc.setConfiguration(hcc);
+            }
+            return rhc;
+        });
     }
 
 }
