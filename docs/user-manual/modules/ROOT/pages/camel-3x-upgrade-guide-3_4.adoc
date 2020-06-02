@@ -25,6 +25,13 @@ For example to use JMX during testing you the following dependency as test scope
 === Health Check
 
 The default health check implementation has been moved out of `camel-base` into `camel-health` as a separate module.
+The health check has been refactored and there are some APIs and classes that has been changed.
+The health check in `camel-consul` has been removed.
+
+The old health check was not fully implemented and was only targeting Spring Boot.
+The new system is more generic and supports all Camel runtimes.
+
+An example is provided in `camel-example-main-health`.
 
 === Template components
 
