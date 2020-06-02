@@ -1339,6 +1339,9 @@ public interface KafkaComponentBuilderFactory {
         /**
          * SSL configuration using a Camel SSLContextParameters object. If
          * configured it's applied before the other SSL endpoint parameters.
+         * NOTE: Kafka only supports loading keystore from file locations, so
+         * prefix the location with file: in the KeyStoreParameters.resource
+         * option.
          * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.

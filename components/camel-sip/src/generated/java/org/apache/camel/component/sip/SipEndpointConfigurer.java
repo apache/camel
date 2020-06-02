@@ -85,7 +85,7 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "presenceagent":
         case "presenceAgent": target.getConfiguration().setPresenceAgent(property(camelContext, boolean.class, value)); return true;
         case "receivetimeoutmillis":
-        case "receiveTimeoutMillis": target.getConfiguration().setReceiveTimeoutMillis(property(camelContext, long.class, value)); return true;
+        case "receiveTimeoutMillis": target.getConfiguration().setReceiveTimeoutMillis(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sipfactory":
         case "sipFactory": target.getConfiguration().setSipFactory(property(camelContext, javax.sip.SipFactory.class, value)); return true;
         case "sipstack":

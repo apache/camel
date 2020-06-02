@@ -10,12 +10,9 @@
 
 *Since Camel {since}*
 
-*Since Camel 3.1*
-
-
 *{component-header}*
 
-The EKS component supports create, delete, describe and list
+The AWS2 EKS component supports create, delete, describe and list
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.
 
 Prerequisites

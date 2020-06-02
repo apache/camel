@@ -13,8 +13,6 @@
 
 *{component-header}*
 
-== Deep Java Library
-
 The *Deep Java Library* component is used to infer Deep Learning models from message exchanges data.
 This component uses https://djl.ai/[Deep Java Library] as underlying library.
 

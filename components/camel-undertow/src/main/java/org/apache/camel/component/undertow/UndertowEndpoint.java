@@ -476,8 +476,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (this.securityProvider == null) {
             initSecurityProvider();

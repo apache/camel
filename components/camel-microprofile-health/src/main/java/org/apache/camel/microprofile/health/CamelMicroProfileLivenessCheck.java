@@ -18,6 +18,9 @@ package org.apache.camel.microprofile.health;
 
 import org.eclipse.microprofile.health.Liveness;
 
+/**
+ * Liveness checks
+ */
 @Liveness
 public class CamelMicroProfileLivenessCheck extends AbstractCamelMicroProfileHealthCheck {
 

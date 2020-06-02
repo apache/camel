@@ -560,10 +560,6 @@ public class SimpleTest extends LanguageTestSupport {
         inHeaderCalendar.set(1974, Calendar.APRIL, 20);
         exchange.getIn().setHeader("birthday", inHeaderCalendar.getTime());
 
-        Calendar outHeaderCalendar = Calendar.getInstance();
-        outHeaderCalendar.set(1975, Calendar.MAY, 21);
-        exchange.getOut().setHeader("birthday", outHeaderCalendar.getTime());
-
         Calendar propertyCalendar = Calendar.getInstance();
         propertyCalendar.set(1976, Calendar.JUNE, 22);
         exchange.setProperty("birthday", propertyCalendar.getTime());
@@ -572,10 +568,9 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${date:header.birthday:yyyyMMdd}", "19740420");
         assertExpression("${date:header.birthday+24h:yyyyMMdd}", "19740421");
 
-        assertExpression("${date:in.header.birthday}", inHeaderCalendar.getTime());
-        assertExpression("${date:in.header.birthday:yyyyMMdd}", "19740420");
-        assertExpression("${date:in.header.birthday+24h:yyyyMMdd}", "19740421");
-
+        // long
+        assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime().getTime());
+        // date
         assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime());
         assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19760622");
         assertExpression("${date:exchangeProperty.birthday+24h:yyyyMMdd}", "19760623");
@@ -614,6 +609,12 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testDateNow() throws Exception {
         Object out = evaluateExpression("${date:now:hh:mm:ss a}", null);
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testDateExchangeCreated() throws Exception {
+        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", "" + exchange.getCreated());
         assertNotNull(out);
     }
 

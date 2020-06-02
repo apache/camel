@@ -117,9 +117,24 @@ public class JingEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (ResourceHelper.isClasspathUri(resourceUri)) {
+            initialize();
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+            initialize();
+        }
+    }
+
+    private void initialize() throws Exception {
         if (inputSource == null) {
             StringHelper.notEmpty(resourceUri, "resourceUri", this);
             InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);

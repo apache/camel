@@ -38,9 +38,9 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "nodeTypeNames": target.setNodeTypeNames(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "sessionlivecheckinterval":
-        case "sessionLiveCheckInterval": target.setSessionLiveCheckInterval(property(camelContext, long.class, value)); return true;
+        case "sessionLiveCheckInterval": target.setSessionLiveCheckInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sessionlivecheckintervalonstart":
-        case "sessionLiveCheckIntervalOnStart": target.setSessionLiveCheckIntervalOnStart(property(camelContext, long.class, value)); return true;
+        case "sessionLiveCheckIntervalOnStart": target.setSessionLiveCheckIntervalOnStart(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "uuids": target.setUuids(property(camelContext, java.lang.String.class, value)); return true;

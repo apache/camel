@@ -110,6 +110,19 @@ public interface JsltComponentBuilderFactory {
             doSetProperty("functions", functions);
             return this;
         }
+        /**
+         * JSLT can be extended by plugging in a custom jslt object filter.
+         * 
+         * The option is a:
+         * <code>com.schibsted.spt.data.jslt.filters.JsonFilter</code> type.
+         * 
+         * Group: advanced
+         */
+        default JsltComponentBuilder objectFilter(
+                com.schibsted.spt.data.jslt.filters.JsonFilter objectFilter) {
+            doSetProperty("objectFilter", objectFilter);
+            return this;
+        }
     }
 
     class JsltComponentBuilderImpl
@@ -131,6 +144,7 @@ public interface JsltComponentBuilderFactory {
             case "lazyStartProducer": ((JsltComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((JsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "functions": ((JsltComponent) component).setFunctions((java.util.Collection) value); return true;
+            case "objectFilter": ((JsltComponent) component).setObjectFilter((com.schibsted.spt.data.jslt.filters.JsonFilter) value); return true;
             default: return false;
             }
         }

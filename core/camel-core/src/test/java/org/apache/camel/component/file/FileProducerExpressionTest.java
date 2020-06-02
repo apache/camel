@@ -100,7 +100,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
+        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
 
         assertFileExists("target/data/filelanguage/mybirthday-19740420.txt");
     }

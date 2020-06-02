@@ -12,7 +12,7 @@
 
 *{component-header}*
 
-The KMS component supports the ability to work with keys stored in
+The AWS2 KMS component supports the ability to work with keys stored in
 https://aws.amazon.com/kms/[AWS KMS] instances.
 
 Prerequisites

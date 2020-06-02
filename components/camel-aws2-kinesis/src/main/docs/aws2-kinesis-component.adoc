@@ -12,7 +12,7 @@
 
 *{component-header}*
 
-The Kinesis component supports receiving messages from and sending messages to Amazon Kinesis
+The AWS2 Kinesis component supports receiving messages from and sending messages to Amazon Kinesis
 service.
 
 Prerequisites

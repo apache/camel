@@ -80,11 +80,11 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before first event is triggered.
+         * Delay before first event is triggered.
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 1000
+         * Default: 1s
          * Group: consumer
          */
         default TimerEndpointBuilder delay(long delay) {
@@ -92,11 +92,11 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before first event is triggered.
+         * Delay before first event is triggered.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 1000
+         * Default: 1s
          * Group: consumer
          */
         default TimerEndpointBuilder delay(String delay) {
@@ -156,12 +156,11 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * If greater than 0, generate periodic events every period
-         * milliseconds.
+         * If greater than 0, generate periodic events every period.
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 1000
+         * Default: 1s
          * Group: consumer
          */
         default TimerEndpointBuilder period(long period) {
@@ -169,12 +168,11 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * If greater than 0, generate periodic events every period
-         * milliseconds.
+         * If greater than 0, generate periodic events every period.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 1000
+         * Default: 1s
          * Group: consumer
          */
         default TimerEndpointBuilder period(String period) {

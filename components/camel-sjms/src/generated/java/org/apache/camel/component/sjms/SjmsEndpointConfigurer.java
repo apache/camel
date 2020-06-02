@@ -75,11 +75,11 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "producercount":
         case "producerCount": target.setProducerCount(property(camelContext, int.class, value)); return true;
         case "reconnectbackoff":
-        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, long.class, value)); return true;
+        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "reconnectonerror":
         case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
         case "responsetimeout":
-        case "responseTimeOut": target.setResponseTimeOut(property(camelContext, long.class, value)); return true;
+        case "responseTimeOut": target.setResponseTimeOut(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sharedjmssession":
         case "sharedJMSSession": target.setSharedJMSSession(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -87,10 +87,10 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transactionbatchcount":
         case "transactionBatchCount": target.setTransactionBatchCount(property(camelContext, int.class, value)); return true;
         case "transactionbatchtimeout":
-        case "transactionBatchTimeout": target.setTransactionBatchTimeout(property(camelContext, long.class, value)); return true;
+        case "transactionBatchTimeout": target.setTransactionBatchTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
-        case "ttl": target.setTtl(property(camelContext, long.class, value)); return true;
+        case "ttl": target.setTtl(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }

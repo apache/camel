@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Generated;
@@ -47,22 +48,51 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder connectTimeout(
+                Duration connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointConsumerBuilder connectTimeoutMillis(
                 Long connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointConsumerBuilder connectTimeoutMillis(
                 String connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
@@ -131,22 +161,49 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder readTimeout(Duration readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointConsumerBuilder readTimeoutMillis(
                 Long readTimeoutMillis) {
             doSetProperty("readTimeoutMillis", readTimeoutMillis);
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointConsumerBuilder readTimeoutMillis(
                 String readTimeoutMillis) {
             doSetProperty("readTimeoutMillis", readTimeoutMillis);
@@ -190,22 +247,49 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder writeTimeout(Duration writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointConsumerBuilder writeTimeoutMillis(
                 Long writeTimeoutMillis) {
             doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointConsumerBuilder writeTimeoutMillis(
                 String writeTimeoutMillis) {
             doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
@@ -600,22 +684,51 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder connectTimeout(
+                Duration connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointProducerBuilder connectTimeoutMillis(
                 Long connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointProducerBuilder connectTimeoutMillis(
                 String connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
@@ -684,22 +797,49 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder readTimeout(Duration readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointProducerBuilder readTimeoutMillis(
                 Long readTimeoutMillis) {
             doSetProperty("readTimeoutMillis", readTimeoutMillis);
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointProducerBuilder readTimeoutMillis(
                 String readTimeoutMillis) {
             doSetProperty("readTimeoutMillis", readTimeoutMillis);
@@ -743,22 +883,49 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder writeTimeout(Duration writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointProducerBuilder writeTimeoutMillis(
                 Long writeTimeoutMillis) {
             doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointProducerBuilder writeTimeoutMillis(
                 String writeTimeoutMillis) {
             doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
@@ -1065,22 +1232,49 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder connectTimeout(Duration connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
+         * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointBuilder connectTimeoutMillis(
                 Long connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout for OkHttpClient. Deprecation note: Use
+         * connectTimeout instead.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointBuilder connectTimeoutMillis(
                 String connectTimeoutMillis) {
             doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
@@ -1149,21 +1343,48 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          */
-        default ConsulEndpointBuilder readTimeoutMillis(Long readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+        default ConsulEndpointBuilder readTimeout(Duration readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
          * Read timeout for OkHttpClient.
          * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        @Deprecated
+        default ConsulEndpointBuilder readTimeoutMillis(Long readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
+         * instead.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointBuilder readTimeoutMillis(String readTimeoutMillis) {
             doSetProperty("readTimeoutMillis", readTimeoutMillis);
             return this;
@@ -1206,21 +1427,48 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: <code>java.time.Duration</code> type.
          * 
          * Group: common
          */
-        default ConsulEndpointBuilder writeTimeoutMillis(Long writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+        default ConsulEndpointBuilder writeTimeout(Duration writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
          * Write timeout for OkHttpClient.
          * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        @Deprecated
+        default ConsulEndpointBuilder writeTimeoutMillis(Long writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
+         * instead.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default ConsulEndpointBuilder writeTimeoutMillis(
                 String writeTimeoutMillis) {
             doSetProperty("writeTimeoutMillis", writeTimeoutMillis);

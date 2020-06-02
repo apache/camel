@@ -19,18 +19,18 @@ package org.apache.camel.health;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A registry for health checks.
- * <p>
- * Note that this registry can be superseded by the future camel context internal
- * registry, @see <a href="https://issues.apache.org/jira/browse/CAMEL-10792"/>.
  */
-public interface HealthCheckRegistry extends HealthCheckRepository, CamelContextAware {
+public interface HealthCheckRegistry extends CamelContextAware, StaticService, IdAware {
 
     /**
      * Service factory key.
@@ -38,34 +38,36 @@ public interface HealthCheckRegistry extends HealthCheckRepository, CamelContext
     String FACTORY = "health-check-registry";
 
     /**
-     * Registers a service {@link HealthCheck}.
+     * Whether Health Check is enabled globally
      */
-    boolean register(HealthCheck check);
+    boolean isEnabled();
 
     /**
-     * Unregisters a service {@link HealthCheck}.
+     * Whether Health Check is enabled globally
      */
-    boolean unregister(HealthCheck check);
+    void setEnabled(boolean enabled);
 
     /**
-     * Set the health check repositories to use..
+     * Resolves {@link HealthCheck} or {@link HealthCheckRepository} by id.
+     *
+     * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry},
+     * and lastly do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.
+     * The classpath scanning is attempted first with id-health-check or id-health-check-repository as the key,
+     * and then with id as fallback if not found the first time.
+     *
+     * @return either {@link HealthCheck} or {@link HealthCheckRepository}, or <tt>null</tt> if none found.
      */
-    void setRepositories(Collection<HealthCheckRepository> repositories);
+    Object resolveById(String id);
 
     /**
-     * Get a collection of health check repositories.
+     * Registers a {@link HealthCheck} or {@link HealthCheckRepository}.
      */
-    Collection<HealthCheckRepository> getRepositories();
+    boolean register(Object obj);
 
     /**
-     * Add an Health Check repository.
+     * Unregisters a {@link HealthCheck} or {@link HealthCheckRepository}.
      */
-    boolean addRepository(HealthCheckRepository repository);
-
-    /**
-     * Remove an Health Check repository.
-     */
-    boolean removeRepository(HealthCheckRepository repository);
+    boolean unregister(Object obj);
 
     /**
      * A collection of health check IDs.
@@ -86,6 +88,11 @@ public interface HealthCheckRegistry extends HealthCheckRepository, CamelContext
     }
 
     /**
+     * Returns the repository identified by the given <code>id</code> if available.
+     */
+    Optional<HealthCheckRepository> getRepository(String id);
+
+    /**
      * Returns an optional {@link HealthCheckRegistry}, by default no registry is
      * present and it must be explicit activated. Components can register/unregister
      * health checks in response to life-cycle events (i.e. start/stop).
@@ -101,4 +108,10 @@ public interface HealthCheckRegistry extends HealthCheckRepository, CamelContext
     static HealthCheckRegistry get(CamelContext context) {
         return context.getExtension(HealthCheckRegistry.class);
     }
+
+    /**
+     * Returns a sequential {@code Stream} with the known {@link HealthCheck}
+     * as its source.
+     */
+    Stream<HealthCheck> stream();
 }

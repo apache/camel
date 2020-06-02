@@ -152,7 +152,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 5000
+         * Default: 5s
          * Group: consumer
          */
         default DebeziumMysqlComponentBuilder offsetCommitTimeoutMs(
@@ -165,7 +165,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: consumer
          */
         default DebeziumMysqlComponentBuilder offsetFlushIntervalMs(
@@ -321,7 +321,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60000
+         * Default: 60s
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder connectKeepAliveIntervalMs(
@@ -335,7 +335,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 30000
+         * Default: 30s
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder connectTimeoutMs(
@@ -422,7 +422,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 100
+         * Default: 0.1s
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -831,7 +831,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder heartbeatIntervalMs(
@@ -960,7 +960,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 0.5s
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder pollIntervalMs(long pollIntervalMs) {
@@ -972,7 +972,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0
+         * Default: 0s
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder snapshotDelayMs(

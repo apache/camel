@@ -18,7 +18,6 @@ package org.apache.camel.impl.health;
 
 import java.util.Collections;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,12 +25,12 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class RouteHealthCheckTest extends TestCase {
+public class RouteHealthCheckTest {
 
     private static final String TEST_ROUTE_ID = "Test-Route";
 
     @Test
-    public void testDoCallDoesNotHaveNPEWhenJmxDisabled() throws Exception{
+    public void testDoCallDoesNotHaveNPEWhenJmxDisabled() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -33,7 +33,7 @@
  ** xref:eips:from-eip.adoc[From]
  ** xref:eips:guaranteed-delivery.adoc[Guaranteed Delivery]
  ** xref:eips:hystrixConfiguration-eip.adoc[Hystrix Configuration]
- ** xref:eips:hystrix-eip.adoc[Hystrix EIP]
+ ** xref:eips:hystrix-eip.adoc[Hystrix EIP (deprecated)]
  ** xref:eips:idempotentConsumer-eip.adoc[Idempotent Consumer]
  ** xref:eips:inOnly-eip.adoc[In Only]
  ** xref:eips:inOut-eip.adoc[In Out]

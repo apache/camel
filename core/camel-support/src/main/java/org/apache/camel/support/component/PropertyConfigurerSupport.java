@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Base class used by Camel Package Maven Plugin when it generates source code for fast
@@ -40,10 +41,10 @@ public abstract class PropertyConfigurerSupport {
         // if the type is not string based and the value is a bean reference, then we need to lookup
         // the bean from the registry
         if (value instanceof String && String.class != type) {
-            Object obj = null;
-
             String text = value.toString();
+
             if (EndpointHelper.isReferenceParameter(text)) {
+                Object obj;
                 // special for a list where we refer to beans which can be either a list or a single element
                 // so use Object.class as type
                 if (type == List.class) {
@@ -55,9 +56,25 @@ public abstract class PropertyConfigurerSupport {
                     // no bean found so throw an exception
                     throw new NoSuchBeanException(text, type.getName());
                 }
-            }
-            if (obj != null) {
                 value = obj;
+            } else if (type == long.class || type == Long.class || type == int.class || type == Integer.class) {
+                Object obj = null;
+                // string to long/int then it may be a duration where we can convert the value to milli seconds
+                // it may be a time pattern, such as 5s for 5 seconds = 5000
+                try {
+                    long num = TimeUtils.toMilliSeconds(text);
+                    if (type == int.class || type == Integer.class) {
+                        // need to cast to int
+                        obj = (int) num;
+                    } else {
+                        obj = num;
+                    }
+                } catch (IllegalArgumentException e) {
+                    // ignore
+                }
+                if (obj != null) {
+                    value = obj;
+                }
             }
         }
 

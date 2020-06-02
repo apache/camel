@@ -51,7 +51,7 @@ public class AtomixSetEndpointConfigurer extends PropertyConfigurerSupport imple
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transportclassname":
         case "transportClassName": target.getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "ttl": target.getConfiguration().setTtl(property(camelContext, long.class, value)); return true;
+        case "ttl": target.getConfiguration().setTtl(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }

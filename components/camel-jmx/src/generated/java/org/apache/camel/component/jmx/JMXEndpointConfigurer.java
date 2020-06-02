@@ -33,7 +33,7 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "executorService": target.setExecutorService(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
         case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "granularityperiod":
-        case "granularityPeriod": target.setGranularityPeriod(property(camelContext, long.class, value)); return true;
+        case "granularityPeriod": target.setGranularityPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "handback": target.setHandback(property(camelContext, java.lang.Object.class, value)); return true;
         case "initthreshold":
         case "initThreshold": target.setInitThreshold(property(camelContext, int.class, value)); return true;

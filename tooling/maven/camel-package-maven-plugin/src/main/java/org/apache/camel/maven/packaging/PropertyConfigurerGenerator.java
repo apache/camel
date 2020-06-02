@@ -73,7 +73,7 @@ public final class PropertyConfigurerGenerator {
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(), option.getConfigurationField(), component);
+                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(), option.getConfigurationField(), component, option.getType());
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
@@ -145,7 +145,7 @@ public final class PropertyConfigurerGenerator {
         return options.stream().filter(o -> o.getConfigurationField() != null).findFirst();
     }
 
-    private static String setterLambda(String getOrSet, String type, String setterMethod, String configurationField, boolean component) {
+    private static String setterLambda(String getOrSet, String type, String setterMethod, String configurationField, boolean component, String optionKind) {
         // type may contain generics so remove those
         if (type.indexOf('<') != -1) {
             type = type.substring(0, type.indexOf('<'));
@@ -161,9 +161,13 @@ public final class PropertyConfigurerGenerator {
             getOrSet = "target.set" + getOrSet;
         }
 
-        // ((LogComponent) target).setGroupSize(property(camelContext,
-        // java.lang.Integer.class, value))
-        String rv = String.format("property(camelContext, %s.class, value)", type);
+        // target.setGroupSize(property(camelContext, java.lang.Integer.class, value))
+        String rv;
+        if ("duration".equals(optionKind) && "long".equals(type)) {
+            rv = "property(camelContext, java.time.Duration.class, value).toMillis()";
+        } else {
+            rv = String.format("property(camelContext, %s.class, value)", type);
+        }
         String v = setterMethod != null ? String.format(setterMethod, rv) : rv;
         return String.format("%s(%s)", getOrSet, v);
     }

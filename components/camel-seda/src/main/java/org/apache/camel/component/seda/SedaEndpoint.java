@@ -85,9 +85,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.time.Duration")
     private long offerTimeout;
     @UriParam(label = "producer")
     private boolean blockWhenFull;
@@ -505,8 +505,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (discardWhenFull && blockWhenFull) {
             throw new IllegalArgumentException("Cannot enable both discardWhenFull=true and blockWhenFull=true."

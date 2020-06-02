@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -31,6 +32,8 @@ public class JsltComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private Collection<Function> functions;
+    @Metadata(label = "advanced")
+    private JsonFilter objectFilter;
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
 
@@ -55,13 +58,13 @@ public class JsltComponent extends DefaultComponent {
         return answer;
     }
 
-    /**
-     * JSLT can be extended by plugging in functions written in Java.
-     */
     public Collection<Function> getFunctions() {
         return functions;
     }
 
+    /**
+     * JSLT can be extended by plugging in functions written in Java.
+     */
     public void setFunctions(Collection<Function> functions) {
         this.functions = functions;
     }
@@ -80,4 +83,14 @@ public class JsltComponent extends DefaultComponent {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
+    public JsonFilter getObjectFilter() {
+        return objectFilter;
+    }
+
+    /**
+     * JSLT can be extended by plugging in a custom jslt object filter
+     */
+    public void setObjectFilter(JsonFilter objectFilter) {
+        this.objectFilter = objectFilter;
+    }
 }

@@ -9,6 +9,7 @@
 ** xref:headersmap.adoc[Headersmap]
 ** xref:hystrix.adoc[Hystrix]
 ** xref:jasypt.adoc[Jasypt]
+** xref:jta.adoc[JTA]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:lra.adoc[LRA]
 ** xref:microprofile-config.adoc[Microprofile Config]

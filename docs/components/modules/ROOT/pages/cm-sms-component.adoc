@@ -14,9 +14,9 @@
 *{component-header}*
 
 *Camel-Cm-Sms* is an http://camel.apache.org/[Apache Camel] component 
-for the [CM SMS Gateway](https://www.cmtelecom.com). 
+for the https://www.cmtelecom.com[CM SMS Gateway]
 
-It allows to integrate https://dashboard.onlinesmsgateway.com/docs[CM SMS API]in an application as a camel component. 
+It allows to integrate https://dashboard.onlinesmsgateway.com/docs[CM SMS API] in an application as a camel component. 
 
 You must have a valid account.  More information is available at https://www.cmtelecom.com/support[CM Telecom].
 

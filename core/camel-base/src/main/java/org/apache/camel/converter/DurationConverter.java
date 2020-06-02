@@ -32,10 +32,15 @@ public final class DurationConverter {
      */
     private DurationConverter() {
     }
-    
+
     @Converter
-    public static long toMilliSeconds(Duration source) {
+    public static Long toMilliSeconds(Duration source) {
         return source.toMillis();
+    }
+
+    @Converter
+    public static Duration toDuration(Long source) {
+        return Duration.ofMillis(source);
     }
 
     @Converter

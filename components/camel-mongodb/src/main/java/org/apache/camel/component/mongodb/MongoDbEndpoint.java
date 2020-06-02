@@ -93,7 +93,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private boolean writeResultAsHeader;
     @UriParam(label = "consumer")
     private String consumerType;
-    @UriParam(label = "advanced", defaultValue = "1000")
+    @UriParam(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private long cursorRegenerationDelay = 1000L;
     @UriParam(label = "tail")
     private String tailTrackIncreasingField;

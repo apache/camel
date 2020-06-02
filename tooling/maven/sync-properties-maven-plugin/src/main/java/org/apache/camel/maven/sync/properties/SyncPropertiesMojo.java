@@ -95,9 +95,13 @@ public class SyncPropertiesMojo extends AbstractMojo {
             int pos = sb.indexOf("<project");
             sb.insert(pos, text2);
 
+            // avoid annoying http -> https change when rebuilding
+            String out = sb.toString();
+            out = out.replace("https://maven.apache.org/xsd/maven-4.0.0.xsd", "http://maven.apache.org/xsd/maven-4.0.0.xsd");
+
             // write lines
             FileOutputStream outputStream = new FileOutputStream(targetPom);
-            byte[] strToBytes = sb.toString().getBytes();
+            byte[] strToBytes = out.getBytes();
             outputStream.write(strToBytes);     
             outputStream.close();
         } catch (Exception ex) {

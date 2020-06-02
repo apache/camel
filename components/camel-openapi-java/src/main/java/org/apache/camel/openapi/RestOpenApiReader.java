@@ -122,8 +122,8 @@ public class RestOpenApiReader {
     }
 
     private void parse(OasDocument openApi, RestDefinition rest, String camelContextId,
-                       ClassResolver classResolver)
-        throws ClassNotFoundException {
+                       ClassResolver classResolver) throws ClassNotFoundException {
+
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
@@ -132,19 +132,11 @@ public class RestOpenApiReader {
         String pathAsTag = rest.getTag() != null
             ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath());
         if (openApi instanceof Oas20Document) {
-            
-            
             parseOas20((Oas20Document)openApi, rest, pathAsTag);
-
-            
         } else if (openApi instanceof Oas30Document) {
-            
-
-            
             parseOas30((Oas30Document)openApi, rest, pathAsTag);
-
-            
         }
+
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
         for (VerbDefinition verb : verbs) {
@@ -160,7 +152,6 @@ public class RestOpenApiReader {
             if (apiDocs != null && !Boolean.parseBoolean(apiDocs)) {
                 continue;
             }
-
 
             String type = verb.getType();
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(type)) {
@@ -346,8 +337,8 @@ public class RestOpenApiReader {
 
     private void doParseVerbs(OasDocument openApi, RestDefinition rest, String camelContextId,
                               List<VerbDefinition> verbs, String pathAsTag) {
-        // used during gathering of apis
 
+        // used during gathering of apis
         String basePath = rest.getPath();
 
         for (VerbDefinition verb : verbs) {
@@ -420,7 +411,6 @@ public class RestOpenApiReader {
 
             // add path
             openApi.paths.addPathItem(opPath, path);
-
         }
     }
 
@@ -472,7 +462,6 @@ public class RestOpenApiReader {
 
                 // set type on parameter
                 if (!parameter.in.equals("body")) {
-
                     Oas30Parameter parameter30 = (Oas30Parameter)parameter;
                     Oas30Schema oas30Schema = null;
                     final boolean isArray = param.getDataType().equalsIgnoreCase("array");
@@ -542,9 +531,7 @@ public class RestOpenApiReader {
 
                 // set schema on body parameter
                 if (parameter.in.equals("body")) {
-
                     Oas30Parameter bp = (Oas30Parameter)parameter;
-
                     String type = param.getDataType() != null ? param.getDataType() : verb.getType();
                     if (type != null) {
                         if (type.endsWith("[]")) {
@@ -563,9 +550,7 @@ public class RestOpenApiReader {
                             } else {
                                 OasSchema model = (Oas30Schema)bp.createSchema();
                                 model = modelTypeAsProperty(type, openApi, model);
-
                                 bp.schema = model;
-
                             }
                         }
                     }
@@ -582,9 +567,9 @@ public class RestOpenApiReader {
                             mediaType.schema = mediaType.createSchema();
                             mediaType.schema.$ref = bp.schema.$ref;
                             op.requestBody.addMediaType(part, mediaType);
-
                         }
                     }
+
                     // add examples
                     if (param.getExamples() != null) {
                         Extension exampleExtension = op.requestBody.createExtension();
@@ -607,7 +592,6 @@ public class RestOpenApiReader {
 
                 op.addParameter(parameter);
             }
-
         }
 
         // clear parameters if its empty
@@ -617,7 +601,6 @@ public class RestOpenApiReader {
 
         // if we have an out type then set that as response message
         if (verb.getOutType() != null) {
-
             if (op.responses == null) {
                 op.responses = op.createResponses();
             }
@@ -635,8 +618,8 @@ public class RestOpenApiReader {
                     op.responses.addResponse("200", response);
                 }
             }
-
         }
+
     }
 
     private void doParseVerbOas20(Oas20Document openApi, VerbDefinition verb, Oas20Operation op, String consumes,
@@ -774,13 +757,11 @@ public class RestOpenApiReader {
                             serializableParameter.addExtension("x-examples", exampleExtension);
                         }
                     }
-
                 }
 
                 // set schema on body parameter
                 if (parameter.in.equals("body")) {
                     Oas20Parameter bp = (Oas20Parameter)parameter;
-
                     String type = param.getDataType() != null ? param.getDataType() : verb.getType();
                     if (type != null) {
                         if (type.endsWith("[]")) {
@@ -801,6 +782,7 @@ public class RestOpenApiReader {
                             }
                         }
                     }
+
                     // add examples
                     if (param.getExamples() != null) {
                         Extension exampleExtension = bp.createExtension();
@@ -821,7 +803,6 @@ public class RestOpenApiReader {
                 }
                 op.addParameter(parameter);
             }
-
         }
 
         // clear parameters if its empty
@@ -831,7 +812,6 @@ public class RestOpenApiReader {
 
         // if we have an out type then set that as response message
         if (verb.getOutType() != null) {
-
             if (op.responses == null) {
                 op.responses = op.createResponses();
             }
@@ -842,7 +822,6 @@ public class RestOpenApiReader {
             response.schema = (Oas20Schema)model;
             response.description = "Output type";
             op.responses.addResponse("200", response);
-
         }
     }
 
@@ -881,7 +860,6 @@ public class RestOpenApiReader {
     private static void defineSchemas(final Oas30Parameter serializableParameter,
                                     final List<String> allowableValues, 
                                     final Class<?> type) {
-        
         if (allowableValues != null && !allowableValues.isEmpty()) {
             if (String.class.equals(type)) {
                 ((Oas30Schema)serializableParameter.schema).enum_ = allowableValues;
@@ -905,7 +883,6 @@ public class RestOpenApiReader {
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException)e;
                     }
-
                     throw new IllegalStateException(e);
                 }
             }).collect(Collectors.toList());
@@ -914,7 +891,6 @@ public class RestOpenApiReader {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException)e;
             }
-
             throw new IllegalStateException(e);
         }
     }
@@ -1183,7 +1159,6 @@ public class RestOpenApiReader {
                 for (Oas20SchemaDefinition model : ((Oas20Document)openApi).definitions.getDefinitions()) {
                     @SuppressWarnings("rawtypes")
                     Map modelType = (Map)model.getExtension("x-className").value;
-
                     if (modelType != null && typeName.equals(modelType.get("format"))) {
                         return model;
                     }
@@ -1200,7 +1175,6 @@ public class RestOpenApiReader {
                 for (Oas30SchemaDefinition model : ((Oas30Document)openApi).components.schemas.values()) {
                     @SuppressWarnings("rawtypes")
                     Map modelType = (Map)model.getExtension("x-className").value;
-
                     if (modelType != null && typeName.equals(modelType.get("format"))) {
                         return model;
                     }
@@ -1340,7 +1314,6 @@ public class RestOpenApiReader {
 
         @Override
         public int compare(VerbDefinition a, VerbDefinition b) {
-
             String u1 = "";
             if (a.getUri() != null) {
                 // replace { with _ which comes before a when soring by char

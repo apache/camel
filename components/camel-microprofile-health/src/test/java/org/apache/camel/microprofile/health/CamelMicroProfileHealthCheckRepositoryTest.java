@@ -23,7 +23,6 @@ import io.smallrye.health.SmallRyeHealth;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.health.RoutesHealthCheckRepository;
 import org.eclipse.microprofile.health.HealthCheckResponse.State;
 import org.junit.Test;
 
@@ -32,7 +31,9 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     @Test
     public void testCamelHealthRepositoryUpStatus() {
         HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
-        healthCheckRegistry.addRepository(new RoutesHealthCheckRepository());
+        // enable routes health check
+        Object hc = healthCheckRegistry.resolveById("routes");
+        healthCheckRegistry.register(hc);
 
         CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
         readinessCheck.setCamelContext(context);
@@ -54,7 +55,9 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     @Test
     public void testCamelHealthRepositoryDownStatus() throws Exception {
         HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
-        healthCheckRegistry.addRepository(new RoutesHealthCheckRepository());
+        // enable routes health check
+        Object hc = healthCheckRegistry.resolveById("routes");
+        healthCheckRegistry.register(hc);
 
         CamelMicroProfileReadinessCheck readinessCheck = new CamelMicroProfileReadinessCheck();
         readinessCheck.setCamelContext(context);

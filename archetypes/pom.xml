@@ -40,7 +40,6 @@
         <module>camel-archetype-component</module>
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>
-        <module>camel-archetype-java8</module>
         <module>camel-archetype-main</module>
         <module>camel-archetype-spring</module>
         <module>camel-archetype-spring-boot</module>

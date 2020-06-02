@@ -23,7 +23,7 @@ public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implem
         case "anyOrder": target.setAnyOrder(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         case "split": target.setSplit(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }

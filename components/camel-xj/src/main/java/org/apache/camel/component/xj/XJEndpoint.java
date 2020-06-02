@@ -58,14 +58,14 @@ public class XJEndpoint extends XsltSaxonEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        if (ObjectHelper.isEmpty(getResourceUri())) {
+    protected void doInit() throws Exception {
+        if ("identity".equalsIgnoreCase(getResourceUri())) {
             // Using a stylesheet for "identity" transform is slow. but with a {@link TransformerFactory}
             // we can't get an identity transformer. But for now we leave it that way.
             setResourceUri("org/apache/camel/component/xj/identity.xsl");
         }
 
-        super.doStart();
+        super.doInit();
     }
 
     @Override

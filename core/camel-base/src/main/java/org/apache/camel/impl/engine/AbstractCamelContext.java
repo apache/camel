@@ -336,49 +336,8 @@ public abstract class AbstractCamelContext extends BaseService
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
 
-        // add a default LifecycleStrategy that discover strategies on the registry
-        // and invoke them
-        this.lifecycleStrategies.add(new LifecycleStrategySupport() {
-            @Override
-            public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
-                for (OnCamelContextInitialized handler : context.getRegistry().findByType(OnCamelContextInitialized.class)) {
-                    // RoutesBuilder should register them-self to the camel context
-                    // to avoid invoking them multiple times if routes are discovered
-                    // from the registry (i.e. camel-main)
-                    if (!(handler instanceof RoutesBuilder)) {
-                        handler.onContextInitialized(context);
-                    }
-                }
-            }
-
-            @Override
-            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                for (OnCamelContextStart handler : context.getRegistry().findByType(OnCamelContextStart.class)) {
-                    // RoutesBuilder should register them-self to the camel context
-                    // to avoid invoking them multiple times if routes are discovered
-                    // from the registry (i.e. camel-main)
-                    if (!(handler instanceof RoutesBuilder)) {
-                        handler.onContextStart(context);
-                    }
-                }
-            }
-
-            @Override
-            public void onContextStop(CamelContext context) {
-                for (OnCamelContextStop handler : context.getRegistry().findByType(OnCamelContextStop.class)) {
-                    // RoutesBuilder should register them-self to the camel context
-                    // to avoid invoking them multiple times if routes are discovered
-                    // from the registry (i.e. camel-main)
-                    if (!(handler instanceof RoutesBuilder)) {
-                        handler.onContextStop(context);
-                    }
-                }
-            }
-        });
-
-        setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
-        // TODO: is route controller needed as extension?
-        setDefaultExtension(RouteController.class, this::createRouteController);
+        // add a default LifecycleStrategy that discover strategies on the registry and invoke them
+        this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
 
         if (build) {
             try {
@@ -431,15 +390,19 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public <T> void setExtension(Class<T> type, T module) {
-        try {
-            extensions.put(type, doAddService(module));
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        if (module != null) {
+            try {
+                extensions.put(type, doAddService(module));
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
         }
     }
 
     public <T> void setDefaultExtension(Class<T> type, Supplier<T> module) {
-        extensions.putIfAbsent(type, module);
+        if (module != null) {
+            extensions.putIfAbsent(type, module);
+        }
     }
 
     @Override
@@ -2375,7 +2338,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doSuspend() throws Exception {
         EventHelper.notifyCamelContextSuspending(this);
 
-        LOG.info("Apache Camel {} (CamelContext: {}) is suspending", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is suspending", getVersion(), getName());
         StopWatch watch = new StopWatch();
 
         // update list of started routes to be suspended
@@ -2416,7 +2379,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         watch.taken();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Apache Camel {} (CamelContext: {}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+            LOG.info("Apache Camel {} ({}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
         }
 
         EventHelper.notifyCamelContextSuspended(this);
@@ -2427,7 +2390,7 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             EventHelper.notifyCamelContextResuming(this);
 
-            LOG.info("Apache Camel {} (CamelContext: {}) is resuming", getVersion(), getName());
+            LOG.info("Apache Camel {} ({}) is resuming", getVersion(), getName());
             StopWatch watch = new StopWatch();
 
             // start the suspended routes (do not check for route clashes, and
@@ -2446,7 +2409,7 @@ public abstract class AbstractCamelContext extends BaseService
 
             if (LOG.isInfoEnabled()) {
                 LOG.info("Resumed {} routes", suspendedRouteServices.size());
-                LOG.info("Apache Camel {} (CamelContext: {}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+                LOG.info("Apache Camel {} ({}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
             }
 
             // and clear the list as they have been resumed
@@ -2531,6 +2494,17 @@ public abstract class AbstractCamelContext extends BaseService
         // notifiers using the management strategy before the CamelContext has been started
         setupManagement(null);
 
+        // setup health-check registry as its needed this early phase for 3rd party to register custom repositories
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr == null) {
+            hcr = createHealthCheckRegistry();
+            if (hcr != null) {
+                // install health-check registry if it was discovered from classpath (camel-health)
+                hcr.setCamelContext(this);
+                setExtension(HealthCheckRegistry.class, hcr);
+            }
+        }
+
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextCreated(this);
@@ -2539,7 +2513,6 @@ public abstract class AbstractCamelContext extends BaseService
         if (eagerCreateTypeConverter()) {
             getOrCreateTypeConverter();
         }
-
     }
 
     @Override
@@ -2654,7 +2627,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartContext() throws Exception {
-        LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
         vetoed = null;
         startDate = new Date();
         stopWatch.restart();
@@ -2711,7 +2684,7 @@ public abstract class AbstractCamelContext extends BaseService
                 LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}", getRoutes().size(), started, controlledRoutes.size(),
                         getRouteController().getClass().getName());
             }
-            LOG.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+            LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
         }
     }
 
@@ -2831,6 +2804,11 @@ public abstract class AbstractCamelContext extends BaseService
         internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
         EventHelper.notifyCamelContextRoutesStarted(this);
 
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr != null && hcr.isEnabled()) {
+            LOG.debug("HealthCheck module loaded ({})", hcr.getId());
+        }
+
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
             LOG.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
@@ -2847,7 +2825,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     protected void doStop() throws Exception {
         stopWatch.restart();
-        LOG.info("Apache Camel {} (CamelContext: {}) is shutting down", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is shutting down", getVersion(), getName());
         EventHelper.notifyCamelContextStopping(this);
         EventHelper.notifyCamelContextRoutesStopping(this);
 
@@ -2965,8 +2943,8 @@ public abstract class AbstractCamelContext extends BaseService
         forceStopLazyInitialization();
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") uptime {}", getUptime());
-            LOG.info("Apache Camel {} (CamelContext: {}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+            LOG.info("Apache Camel {} ({}) uptime {}", getVersion(), getName(), getUptime());
+            LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
         }
 
         // and clear start date

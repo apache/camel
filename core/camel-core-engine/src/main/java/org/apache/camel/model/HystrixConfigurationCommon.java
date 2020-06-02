@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.camel.spi.Metadata;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class HystrixConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute

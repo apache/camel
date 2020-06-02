@@ -42,8 +42,8 @@ public class MsvEndpoint extends ValidatorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // use relax schema factory by default
         if (getSchemaFactory() == null) {

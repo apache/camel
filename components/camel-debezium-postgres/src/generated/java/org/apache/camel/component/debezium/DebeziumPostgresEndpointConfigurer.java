@@ -90,9 +90,9 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "offsetstorage":
         case "offsetStorage": target.getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetstoragefilename":
@@ -106,7 +106,7 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "pluginname":
         case "pluginName": target.getConfiguration().setPluginName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
-        case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
         case "publicationname":
@@ -124,17 +124,17 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "slotname":
         case "slotName": target.getConfiguration().setSlotName(property(camelContext, java.lang.String.class, value)); return true;
         case "slotretrydelayms":
-        case "slotRetryDelayMs": target.getConfiguration().setSlotRetryDelayMs(property(camelContext, long.class, value)); return true;
+        case "slotRetryDelayMs": target.getConfiguration().setSlotRetryDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "slotstreamparams":
         case "slotStreamParams": target.getConfiguration().setSlotStreamParams(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotcustomclass":
         case "snapshotCustomClass": target.getConfiguration().setSnapshotCustomClass(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
-        case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotlocktimeoutms":
-        case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
@@ -155,7 +155,7 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         case "xminfetchintervalms":
-        case "xminFetchIntervalMs": target.getConfiguration().setXminFetchIntervalMs(property(camelContext, long.class, value)); return true;
+        case "xminFetchIntervalMs": target.getConfiguration().setXminFetchIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }

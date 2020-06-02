@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The ses component supports sending emails with
+The AWS2 SES component supports sending emails with
 https://aws.amazon.com/ses[Amazon's SES] service.
 
 Prerequisites

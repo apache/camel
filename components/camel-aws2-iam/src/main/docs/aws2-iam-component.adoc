@@ -10,12 +10,9 @@
 
 *Since Camel {since}*
 
-*Since Camel 3.1*
-
-
 *{component-header}*
 
-The KMS component supports create, run, start, stop and terminate
+The AWS2 IAM component supports create, run, start, stop and terminate
 https://aws.amazon.com/iam/[AWS IAM] instances.
 
 Prerequisites

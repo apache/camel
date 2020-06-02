@@ -37,7 +37,7 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerKey": getOrCreateConfiguration(target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
         case "consumersecret":
         case "consumerSecret": getOrCreateConfiguration(target).setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "delay": getOrCreateConfiguration(target).setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": getOrCreateConfiguration(target).setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": getOrCreateConfiguration(target).setLimit(property(camelContext, int.class, value)); return true;

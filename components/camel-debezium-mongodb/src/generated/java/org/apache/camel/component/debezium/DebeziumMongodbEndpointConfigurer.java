@@ -30,9 +30,9 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "collectionwhitelist":
         case "collectionWhitelist": target.getConfiguration().setCollectionWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "connectbackoffinitialdelayms":
-        case "connectBackoffInitialDelayMs": target.getConfiguration().setConnectBackoffInitialDelayMs(property(camelContext, long.class, value)); return true;
+        case "connectBackoffInitialDelayMs": target.getConfiguration().setConnectBackoffInitialDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connectbackoffmaxdelayms":
-        case "connectBackoffMaxDelayMs": target.getConfiguration().setConnectBackoffMaxDelayMs(property(camelContext, long.class, value)); return true;
+        case "connectBackoffMaxDelayMs": target.getConfiguration().setConnectBackoffMaxDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connectmaxattempts":
         case "connectMaxAttempts": target.getConfiguration().setConnectMaxAttempts(property(camelContext, int.class, value)); return true;
         case "databaseblacklist":
@@ -80,9 +80,9 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "offsetstorage":
         case "offsetStorage": target.getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetstoragefilename":
@@ -94,11 +94,11 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "offsetstoragetopic":
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
-        case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
-        case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotmode":

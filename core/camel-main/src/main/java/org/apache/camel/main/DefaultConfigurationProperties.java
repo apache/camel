@@ -82,6 +82,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRoutes = "classpath:camel/*.xml";
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
+    // route controller
     private LoggingLevel routeControllerRouteStartupLoggingLevel;
     private boolean routeControllerSuperviseEnabled;
     private String routeControllerIncludeRoutes;
@@ -93,6 +94,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxElapsedTime;
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
+    // health check
+    private boolean healthCheckEnabled = true;
+    private boolean healthCheckRoutesEnabled;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -1059,6 +1063,42 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
     }
 
+    public boolean isHealthCheckEnabled() {
+        return healthCheckEnabled;
+    }
+
+    /**
+     * Whether health check is enabled.
+     * Is default enabled.
+     *
+     * If using camel-quarkus then camel-quarkus-microprofile-health has its own configuration for health-check
+     * which you should use instead.
+     */
+    public void setHealthCheckEnabled(boolean healthCheckEnabled) {
+        this.healthCheckEnabled = healthCheckEnabled;
+    }
+
+    public boolean isHealthCheckRoutesEnabled() {
+        return healthCheckRoutesEnabled;
+    }
+
+    /**
+     * Whether routes should be included in the health check.
+     *
+     * By default only the camel context is part of the health check.
+     * Enabling routes allows to let routes that are controlled by the routes controller
+     * take part of the health check, so if there is problems starting up routes, then
+     * they can influence the health check and report its UP or DOWN.
+     *
+     * Is default disabled.
+     *
+     * If using camel-quarkus then camel-quarkus-microprofile-health has its own configuration for health-check
+     * which you should use instead.
+     */
+    public void setHealthCheckRoutesEnabled(boolean healthCheckRoutesEnabled) {
+        this.healthCheckRoutesEnabled = healthCheckRoutesEnabled;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1793,6 +1833,30 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
         this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
+        return (T) this;
+    }
+
+    /**
+     * Whether health check is enabled.
+     * Is default enabled.
+     */
+    public T healthCheckEnabled(boolean healthCheckEnabled) {
+        this.healthCheckEnabled = healthCheckEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Whether routes should be included in the health check.
+     *
+     * By default only the camel context is part of the health check.
+     * Enabling routes allows to let routes that are controlled by the routes controller
+     * take part of the health check, so if there is problems starting up routes, then
+     * they can influence the health check and report its UP or DOWN.
+     *
+     * Is default disabled.
+     */
+    public T healthCheckRoutesEnabled(boolean healthCheckRoutesEnabled) {
+        this.healthCheckRoutesEnabled = healthCheckRoutesEnabled;
         return (T) this;
     }
 

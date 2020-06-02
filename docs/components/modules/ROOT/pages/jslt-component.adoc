@@ -52,7 +52,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JSLT component supports 4 options, which are listed below.
+The JSLT component supports 5 options, which are listed below.
 
 
 
@@ -63,6 +63,7 @@ The JSLT component supports 4 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *functions* (advanced) | JSLT can be extended by plugging in functions written in Java. |  | Collection
+| *objectFilter* (advanced) | JSLT can be extended by plugging in a custom jslt object filter |  | JsonFilter
 |===
 // component options: END
 
@@ -106,8 +107,28 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Passing values to JSLT
 
+Camel can supply exchange information as variables when applying a JSLT expression on the body. The available variables from the *Exchange* are:
 
+[width="100%",cols="2,5",options="header"]
+|===
+| name | value
+| headers | The headers of the In message as a json object
+| exchange.properties | The *Exchange* properties as a json object. _exchange_ is the name of the variable and _properties_ is the path to the exchange properties. Available if _allowContextMapAll_ option is true.
+|===
+
+All the values that cannot be converted to json with Jackson are denied and will not be available in the jslt expression.
+
+For example, the header named "type" and the exchange property "instance" can be accessed like
+
+[source,json]
+--------------------------------------
+{
+  "type": $headers.type,
+  "instance": $exchange.properties.instance
+}
+--------------------------------------
 
 == Samples
 
@@ -145,6 +166,14 @@ Or send whole jslt expression via header: (suitable for querying)
 from("direct:in").
   setHeader("CamelJsltResourceUri").constant(".published").
   to("jslt:dummy");
+---------------------------------------------------------------------
+
+Passing exchange properties to the jslt expression can be done like this
+
+[source,java]
+---------------------------------------------------------------------
+from("direct:in").
+  to("jslt:com/acme/MyResponse.json?allowContextMapAll=true");
 ---------------------------------------------------------------------
 
 include::camel-spring-boot::page$jslt-starter.adoc[]

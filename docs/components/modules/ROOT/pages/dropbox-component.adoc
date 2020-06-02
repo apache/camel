@@ -16,8 +16,8 @@
 The Dropbox component allows you to treat
 https://www.dropbox.com[Dropbox] remote folders as a producer or
 consumer of messages. Using the
-http://dropbox.github.io/dropbox-sdk-java/api-docs/v1.7.x/[Dropbox Java
-Core API] (reference version for this component is 1.7.x), this camel
+https://github.com/dropbox/dropbox-sdk-java[Dropbox Java
+Core API], this camel
 component has the following features:
 
 * As a consumer, download files and search files by queries

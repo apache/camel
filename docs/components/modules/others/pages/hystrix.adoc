@@ -1,12 +1,13 @@
 [[hystrix-component]]
-= Hystrix Component
+= Hystrix Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-hystrix/src/main/docs/hystrix.adoc
 :docTitle: Hystrix
 :artifactId: camel-hystrix
 :description: Circuit Breaker EIP using Netflix Hystrix
 :since: 2.18
-:supportLevel: Stable
+:supportLevel: Stable-deprecated
+:deprecated: *deprecated*
 
 *Since Camel {since}*
 

@@ -183,11 +183,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     private ObjectMapper objectMapper;
 
     // Streaming connection restart attempt backoff interval increment
-    @UriParam(defaultValue = "" + DEFAULT_BACKOFF_INCREMENT)
+    @UriParam(javaType = "java.time.Duration", defaultValue = "" + DEFAULT_BACKOFF_INCREMENT)
     private long backoffIncrement = DEFAULT_BACKOFF_INCREMENT;
 
     // Streaming connection restart attempt maximum backoff interval
-    @UriParam(defaultValue = "" + DEFAULT_MAX_BACKOFF)
+    @UriParam(javaType = "java.time.Duration", defaultValue = "" + DEFAULT_MAX_BACKOFF)
     private long maxBackoff = DEFAULT_MAX_BACKOFF;
 
     @UriParam

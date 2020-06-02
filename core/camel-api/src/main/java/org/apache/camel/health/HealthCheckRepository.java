@@ -18,10 +18,13 @@ package org.apache.camel.health;
 
 import java.util.stream.Stream;
 
+import org.apache.camel.spi.HasId;
+
 /**
  * A repository for health checks.
  */
-public interface HealthCheckRepository {
+public interface HealthCheckRepository extends HasId {
+
     /**
      * Returns a sequential {@code Stream} with the known {@link HealthCheck}
      * as its source.

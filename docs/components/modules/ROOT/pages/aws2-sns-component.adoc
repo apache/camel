@@ -11,12 +11,9 @@
 
 *Since Camel {since}*
 
-*Since Camel 3.1*
-
-
 *{component-header}*
 
-The SNS component allows messages to be sent to an
+The AWS2 SNS component allows messages to be sent to an
 https://aws.amazon.com/sns[Amazon Simple Notification] Topic. The
 implementation of the Amazon API is provided by
 the https://aws.amazon.com/sdkforjava/[AWS SDK].

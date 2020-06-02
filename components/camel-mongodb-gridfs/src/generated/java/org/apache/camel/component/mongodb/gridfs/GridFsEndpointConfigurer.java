@@ -25,7 +25,7 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -33,7 +33,7 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "fileattributename":
         case "fileAttributeName": target.setFileAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
-        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "initialDelay": target.setInitialDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;

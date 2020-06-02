@@ -197,7 +197,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private boolean mergeProtocolHeaders;
     @UriParam(label = "advanced")
     private CxfConfigurer cxfConfigurer;
-    @UriParam(label = "advanced", defaultValue = "30000")
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long continuationTimeout = 30000;
     @UriParam(label = "security", secret = true)
     private String username;
@@ -1050,7 +1050,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfHeaderFilterStrategy();
         }

@@ -18,12 +18,12 @@ package org.apache.camel.reifier.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -35,18 +35,20 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        DefaultErrorHandler answer = new DefaultErrorHandler(camelContext, processor, definition.getLogger(), definition.getOnRedelivery(),
-                                                             definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(),
-                                                             definition.getRetryWhilePolicy(camelContext), getExecutorService(camelContext),
-                                                             definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
+        DefaultErrorHandler answer = new DefaultErrorHandler(camelContext, processor, definition.getLogger(),
+                                                             getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
+                                                             definition.getRedeliveryPolicy(),
+                                                             getBean(ExceptionPolicyStrategy.class, definition.getExceptionPolicyStrategy(), definition.getExceptionPolicyStrategyRef()),
+                                                             getPredicate(definition.getRetryWhile(), definition.getRetryWhileRef()),
+                                                             getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
+                                                             getBean(Processor.class, definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),
+                                                             getBean(Processor.class, definition.getOnExceptionOccurred(), definition.getOnExceptionOccurredRef()));
         // configure error handler before we can use it
         configure(answer);
         return answer;
     }
 
-    protected synchronized ScheduledExecutorService getExecutorService(CamelContext camelContext) {
-        ScheduledExecutorService executorService = definition.getExecutorService();
-        String executorServiceRef = definition.getExecutorServiceRef();
+    protected synchronized ScheduledExecutorService getExecutorService(ScheduledExecutorService executorService, String executorServiceRef) {
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no
             // need to shut it down when stopping
@@ -67,8 +69,6 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
                 // CamelContext#getErrorHandlerExecutorService
                 executorService = null;
             }
-            // TODO: ErrorHandler: no modification to the model should be done
-            definition.setExecutorService(executorService);
         }
         return executorService;
     }

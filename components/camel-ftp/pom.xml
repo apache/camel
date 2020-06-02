@@ -42,7 +42,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-file</artifactId>
         </dependency>
-        <!-- TODO: needed for dynamic to, until we have a better solution -->
+        <!-- needed for dynamic to -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-catalog</artifactId>

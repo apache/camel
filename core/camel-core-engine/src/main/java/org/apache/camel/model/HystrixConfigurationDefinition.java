@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "hystrixConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer
+@Deprecated
 public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
 
     public static final String DEFAULT_GROUP_KEY = "CamelHystrix";

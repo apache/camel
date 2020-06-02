@@ -39,6 +39,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:architecture.adoc[Architecture]
 * xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * xref:Endpoint-dsl.adoc[Endpoint-dsl]
+* xref:component-dsl.adoc[Component-dsl]
 * xref:dsl.adoc[DSL]
 * xref:components::index.adoc[Components]
 * xref:components:dataformats:index.adoc[Data Formats]

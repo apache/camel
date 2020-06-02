@@ -18,6 +18,7 @@ package org.apache.camel.microprofile.health;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
@@ -39,13 +40,7 @@ import org.eclipse.microprofile.health.Readiness;
 public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextAware {
 
     @Inject
-    private CamelContext camelContext;
-
-    private ContextHealthCheck contextHealthCheck = new ContextHealthCheck();
-
-    public CamelMicroProfileContextCheck() {
-        contextHealthCheck.getConfiguration().setEnabled(true);
-    }
+    CamelContext camelContext;
 
     @Override
     public HealthCheckResponse call() {
@@ -54,9 +49,9 @@ public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextA
         builder.down();
 
         if (camelContext != null) {
-            contextHealthCheck.setCamelContext(camelContext);
-
-            Result result = contextHealthCheck.call();
+            ContextHealthCheck chc = new ContextHealthCheck();
+            chc.setCamelContext(camelContext);
+            Result result = chc.call();
             Map<String, Object> details = result.getDetails();
             builder.withData("name", details.get("context.name").toString());
             builder.withData("contextStatus", details.get("context.status").toString());

@@ -320,6 +320,18 @@ public class ResourceHelperTest extends TestSupport {
     }
 
     @Test
+    public void testIsClasspath() throws Exception {
+        assertFalse(ResourceHelper.isClasspathUri("direct:foo"));
+        assertFalse(ResourceHelper.isClasspathUri("file:foo/bar.properties"));
+        assertFalse(ResourceHelper.isClasspathUri("http://camel.apache.org"));
+        assertFalse(ResourceHelper.isClasspathUri(""));
+        assertFalse(ResourceHelper.isClasspathUri(null));
+
+        assertTrue(ResourceHelper.isClasspathUri("classpath:foo/bar.properties"));
+        assertTrue(ResourceHelper.isClasspathUri("foo/bar.properties"));
+    }
+
+    @Test
     public void testGetScheme() throws Exception {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));

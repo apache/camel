@@ -12,7 +12,7 @@
 
 *{component-header}*
 
-The EC2 component supports the ability to create, run, start, stop and terminate
+The AWS2 EC2 component supports the ability to create, run, start, stop and terminate
 https://aws.amazon.com/ec2/[AWS EC2] instances.
 
 Prerequisites

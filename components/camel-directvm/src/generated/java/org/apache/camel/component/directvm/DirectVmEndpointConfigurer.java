@@ -37,7 +37,7 @@ public class DirectVmEndpointConfigurer extends PropertyConfigurerSupport implem
         case "propagateproperties":
         case "propagateProperties": target.setPropagateProperties(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }

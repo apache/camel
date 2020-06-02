@@ -28,6 +28,8 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "blockSeconds": target.getConfiguration().setBlockSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "connecttimeoutmillis":
         case "connectTimeoutMillis": target.getConfiguration().setConnectTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "consistencymode":
@@ -51,6 +53,8 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pinginstance":
         case "pingInstance": target.getConfiguration().setPingInstance(property(camelContext, boolean.class, value)); return true;
+        case "readtimeout":
+        case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "readtimeoutmillis":
         case "readTimeoutMillis": target.getConfiguration().setReadTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
@@ -63,6 +67,8 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "valueasstring":
         case "valueAsString": target.getConfiguration().setValueAsString(property(camelContext, boolean.class, value)); return true;
+        case "writetimeout":
+        case "writeTimeout": target.getConfiguration().setWriteTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "writetimeoutmillis":
         case "writeTimeoutMillis": target.getConfiguration().setWriteTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
@@ -77,6 +83,7 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("blockSeconds", java.lang.Integer.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("connectTimeout", java.time.Duration.class);
         answer.put("connectTimeoutMillis", java.lang.Long.class);
         answer.put("consistencyMode", com.orbitz.consul.option.ConsistencyMode.class);
         answer.put("consulClient", com.orbitz.consul.Consul.class);
@@ -90,6 +97,7 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("nodeMeta", java.util.List.class);
         answer.put("password", java.lang.String.class);
         answer.put("pingInstance", boolean.class);
+        answer.put("readTimeout", java.time.Duration.class);
         answer.put("readTimeoutMillis", java.lang.Long.class);
         answer.put("recursive", boolean.class);
         answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
@@ -98,6 +106,7 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("url", java.lang.String.class);
         answer.put("userName", java.lang.String.class);
         answer.put("valueAsString", boolean.class);
+        answer.put("writeTimeout", java.time.Duration.class);
         answer.put("writeTimeoutMillis", java.lang.Long.class);
         return answer;
     }
@@ -115,6 +124,8 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "blockSeconds": return target.getConfiguration().getBlockSeconds();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "connecttimeout":
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "connecttimeoutmillis":
         case "connectTimeoutMillis": return target.getConfiguration().getConnectTimeoutMillis();
         case "consistencymode":
@@ -138,6 +149,8 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "password": return target.getConfiguration().getPassword();
         case "pinginstance":
         case "pingInstance": return target.getConfiguration().isPingInstance();
+        case "readtimeout":
+        case "readTimeout": return target.getConfiguration().getReadTimeout();
         case "readtimeoutmillis":
         case "readTimeoutMillis": return target.getConfiguration().getReadTimeoutMillis();
         case "recursive": return target.getConfiguration().isRecursive();
@@ -150,6 +163,8 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "userName": return target.getConfiguration().getUserName();
         case "valueasstring":
         case "valueAsString": return target.getConfiguration().isValueAsString();
+        case "writetimeout":
+        case "writeTimeout": return target.getConfiguration().getWriteTimeout();
         case "writetimeoutmillis":
         case "writeTimeoutMillis": return target.getConfiguration().getWriteTimeoutMillis();
         default: return null;

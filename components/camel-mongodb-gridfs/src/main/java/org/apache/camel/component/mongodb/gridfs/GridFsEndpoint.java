@@ -69,9 +69,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "consumer")
     private String query;
-    @UriParam(label = "consumer", defaultValue = "1000")
+    @UriParam(label = "consumer", defaultValue = "1000", javaType = "java.time.Duration")
     private long initialDelay = 1000;
-    @UriParam(label = "consumer", defaultValue = "500")
+    @UriParam(label = "consumer", defaultValue = "500", javaType = "java.time.Duration")
     private long delay = 500;
     @UriParam(label = "consumer", defaultValue = "TimeStamp")
     private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;

@@ -51,7 +51,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "copyTo": target.getConfiguration().setCopyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "debugmode":
         case "debugMode": target.getConfiguration().setDebugMode(property(camelContext, boolean.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "delete": target.getConfiguration().setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":

@@ -53,7 +53,7 @@ public class AtomixMultiMapComponentConfigurer extends PropertyConfigurerSupport
         case "resultHeader": getOrCreateConfiguration(target).setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "transportclassname":
         case "transportClassName": getOrCreateConfiguration(target).setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "ttl": getOrCreateConfiguration(target).setTtl(property(camelContext, long.class, value)); return true;
+        case "ttl": getOrCreateConfiguration(target).setTtl(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }

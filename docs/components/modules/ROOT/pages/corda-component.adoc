@@ -15,8 +15,8 @@
 
 *Since Camel {since}*
 
-Camel connector for R3's https://www.corda.net/[corda] blockchain platform using corda-rpc library.
-This component uses the corda rpc client.
+Camel connector for R3's https://www.corda.net/[Corda] blockchain platform using corda-rpc library.
+This component uses the Corda RPC client.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

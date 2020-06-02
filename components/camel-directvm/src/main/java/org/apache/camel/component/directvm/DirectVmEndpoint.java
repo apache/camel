@@ -41,7 +41,7 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000L;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers = true;

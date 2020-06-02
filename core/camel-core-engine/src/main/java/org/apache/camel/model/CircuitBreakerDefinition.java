@@ -113,10 +113,12 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     // Getter/Setter
     // -------------------------------------------------------------------------
 
+    @Deprecated
     public HystrixConfigurationDefinition getHystrixConfiguration() {
         return hystrixConfiguration;
     }
 
+    @Deprecated
     public void setHystrixConfiguration(HystrixConfigurationDefinition hystrixConfiguration) {
         this.hystrixConfiguration = hystrixConfiguration;
     }
@@ -166,6 +168,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * Use <tt>end</tt> when configuration is complete, to return back to the
      * Circuit Breaker EIP.
      */
+    @Deprecated
     public HystrixConfigurationDefinition hystrixConfiguration() {
         hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
         return hystrixConfiguration;
@@ -174,6 +177,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     /**
      * Configures the circuit breaker to use Hystrix with the given configuration.
      */
+    @Deprecated
     public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
         return this;

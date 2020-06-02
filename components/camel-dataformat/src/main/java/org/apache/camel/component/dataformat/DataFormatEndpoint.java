@@ -109,7 +109,8 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         if (dataFormat == null && name != null) {
             dataFormat = getCamelContext().resolveDataFormat(name);
         }
@@ -124,7 +125,10 @@ public class DataFormatEndpoint extends DefaultEndpoint {
 
             processor = unmarshal;
         }
+    }
 
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(dataFormat, processor);
         super.doStart();
     }

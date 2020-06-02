@@ -28,7 +28,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "backoffincrement":
-        case "backoffIncrement": target.getConfiguration().setBackoffIncrement(property(camelContext, long.class, value)); return true;
+        case "backoffIncrement": target.getConfiguration().setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchid":
@@ -58,7 +58,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": target.getConfiguration().setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxbackoff":
-        case "maxBackoff": target.getConfiguration().setMaxBackoff(property(camelContext, long.class, value)); return true;
+        case "maxBackoff": target.getConfiguration().setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "notfoundbehaviour":
         case "notFoundBehaviour": target.getConfiguration().setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
         case "notifyforfields":

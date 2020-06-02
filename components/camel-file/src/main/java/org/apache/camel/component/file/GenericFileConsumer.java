@@ -746,11 +746,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         // inject CamelContext before starting as it may be needed
         if (processStrategy instanceof CamelContextAware) {
             ((CamelContextAware)processStrategy).setCamelContext(getEndpoint().getCamelContext());
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(processStrategy);
         super.doStart();
     }

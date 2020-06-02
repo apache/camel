@@ -66,7 +66,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpCommunity = DEFAULT_COMMUNITY;
     @UriParam
     private SnmpActionType type;
-    @UriParam(label = "consumer", defaultValue = "60000")
+    @UriParam(label = "consumer", defaultValue = "60000", javaType = "java.time.Duration")
     private long delay = 60000;
     @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
@@ -265,8 +265,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         URI uri = URI.create(getEndpointUri());
         String host = uri.getHost();

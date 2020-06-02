@@ -122,7 +122,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int loggingSizeLimit;
     @UriParam
     private boolean skipFaultLogging;
-    @UriParam(label = "advanced", defaultValue = "30000")
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long continuationTimeout = 30000;
     @UriParam(label = "advanced")
     private boolean defaultBus;
@@ -720,7 +720,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfRsHeaderFilterStrategy();
         }
