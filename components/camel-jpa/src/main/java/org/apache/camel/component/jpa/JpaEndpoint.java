@@ -584,8 +584,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (entityManagerFactory == null && getComponent() != null) {
             entityManagerFactory = getComponent().getEntityManagerFactory();

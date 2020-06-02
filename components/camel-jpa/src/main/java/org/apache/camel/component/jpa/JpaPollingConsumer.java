@@ -211,7 +211,9 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (queryFactory == null) {
             queryFactory = createQueryFactory();
             if (queryFactory == null) {
