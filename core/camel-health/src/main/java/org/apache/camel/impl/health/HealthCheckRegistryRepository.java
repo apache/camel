@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -36,6 +36,7 @@ import org.apache.camel.support.PatternHelper;
 public class HealthCheckRegistryRepository implements CamelContextAware, HealthCheckRepository {
     private CamelContext context;
     private Map<String, HealthCheckConfiguration> configurations;
+    private HealthCheckConfiguration fallbackConfiguration;
     private boolean enabled = true;
 
     @Override
@@ -65,10 +66,14 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
 
     @Override
     public void addConfiguration(String id, HealthCheckConfiguration configuration) {
-        if (configurations == null) {
-            configurations = new HashMap<>();
+        if ("*".equals(id)) {
+            fallbackConfiguration = configuration;
+        } else {
+            if (configurations == null) {
+                configurations = new LinkedHashMap<>();
+            }
+            configurations.put(id, configuration);
         }
-        configurations.put(id, configuration);
     }
 
     @Override
@@ -92,7 +97,7 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
     }
 
     private HealthCheck toHealthCheck(HealthCheck hc) {
-        if (configurations != null && configurations.containsKey(hc.getId())) {
+        if (configurations != null) {
             HealthCheckConfiguration hcc = matchConfiguration(hc.getId());
             if (hcc != null) {
                 hc.getConfiguration().setEnabled(hcc.isEnabled());
@@ -104,12 +109,14 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
     }
 
     private HealthCheckConfiguration matchConfiguration(String id) {
-        for (String key : configurations.keySet()) {
-            if (PatternHelper.matchPattern(id, key)) {
-                return configurations.get(key);
+        if (configurations != null) {
+            for (String key : configurations.keySet()) {
+                if (PatternHelper.matchPattern(id, key)) {
+                    return configurations.get(key);
+                }
             }
         }
-        return null;
+        return fallbackConfiguration;
     }
 
 }
