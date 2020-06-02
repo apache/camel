@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.health;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -25,6 +26,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * {@link HealthCheckRepository} that uses the Camel {@link org.apache.camel.spi.Registry}.
@@ -51,12 +53,22 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
         return context;
     }
 
+    @Override
     public Map<String, HealthCheckConfiguration> getConfigurations() {
         return configurations;
     }
 
+    @Override
     public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
         this.configurations = configurations;
+    }
+
+    @Override
+    public void addConfiguration(String id, HealthCheckConfiguration configuration) {
+        if (configurations == null) {
+            configurations = new HashMap<>();
+        }
+        configurations.put(id, configuration);
     }
 
     @Override
@@ -81,12 +93,23 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
 
     private HealthCheck toHealthCheck(HealthCheck hc) {
         if (configurations != null && configurations.containsKey(hc.getId())) {
-            HealthCheckConfiguration hcc = configurations.get(hc.getId());
-            hc.getConfiguration().setEnabled(hcc.isEnabled());
-            hc.getConfiguration().setInterval(hcc.getInterval());
-            hc.getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
+            HealthCheckConfiguration hcc = matchConfiguration(hc.getId());
+            if (hcc != null) {
+                hc.getConfiguration().setEnabled(hcc.isEnabled());
+                hc.getConfiguration().setInterval(hcc.getInterval());
+                hc.getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
+            }
         }
         return hc;
+    }
+
+    private HealthCheckConfiguration matchConfiguration(String id) {
+        for (String key : configurations.keySet()) {
+            if (PatternHelper.matchPattern(id, key)) {
+                return configurations.get(key);
+            }
+        }
+        return null;
     }
 
 }
