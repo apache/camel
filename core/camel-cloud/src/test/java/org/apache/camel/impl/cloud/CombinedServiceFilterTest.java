@@ -23,8 +23,11 @@ import java.util.stream.Collectors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CombinedServiceFilterTest extends ContextTestSupport {
     @Test
@@ -35,9 +38,9 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
                 .passThrough();
 
         CombinedServiceFilter filter = (CombinedServiceFilter)conf.newInstance(context);
-        Assert.assertEquals(2, filter.getDelegates().size());
-        Assert.assertTrue(filter.getDelegates().get(0) instanceof HealthyServiceFilter);
-        Assert.assertTrue(filter.getDelegates().get(1) instanceof PassThroughServiceFilter);
+        assertEquals(2, filter.getDelegates().size());
+        assertTrue(filter.getDelegates().get(0) instanceof HealthyServiceFilter);
+        assertTrue(filter.getDelegates().get(1) instanceof PassThroughServiceFilter);
     }
 
 
@@ -57,10 +60,10 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
             new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(false))
         ));
 
-        Assert.assertEquals(2, services.size());
-        Assert.assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));
-        Assert.assertFalse(services.stream().anyMatch(s -> s.getPort() > 2000));
-        Assert.assertTrue(services.stream().anyMatch(s -> s.getPort() == 1000));
-        Assert.assertTrue(services.stream().anyMatch(s -> s.getPort() == 1002));
+        assertEquals(2, services.size());
+        assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));
+        assertFalse(services.stream().anyMatch(s -> s.getPort() > 2000));
+        assertTrue(services.stream().anyMatch(s -> s.getPort() == 1000));
+        assertTrue(services.stream().anyMatch(s -> s.getPort() == 1002));
     }
 }
