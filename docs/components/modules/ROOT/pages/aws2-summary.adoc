@@ -1,7 +1,7 @@
 = AWS2 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-aws2-cw/src/main/docs/aws2-summary.adoc
-:docTitle: AWS 2
+:docTitle: AWS2
 :summary-group: AWS2
 
 *Since Camel {since}*

@@ -155,19 +155,36 @@ function titleFrom(file) {
     return maybeName[1];
 }
 
-function checkAttributeExistence(file) {
-    var summaryGroup = /(?::summary-group: )(.*)/.exec(file.contents.toString())
-    var group = /(?::group: )(.*)/.exec(file.contents.toString())
-    if (summaryGroup != null || group != null) return {summaryGroup: summaryGroup, group: group};
-    return false;
+function groupFrom(file) {
+    var groupName = /(?::group: )(.*)/.exec(file.contents.toString())
+    if (groupName != null) return groupName[1];
+    return null;
 }
 
-
-function compare (file1, file2) {
+function compare(file1, file2) {
     if (file1 === file2) return 0
+    if (titleFrom(file1).indexOf('AWS 2') > -1 && titleFrom(file2) == 'AWS') { return -1 }
     return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
 }
 
+function compareComponents(file1, file2) { 
+    var group1 = groupFrom(file1)
+    var group2 = groupFrom(file2)
+    if (file1 === file2) return 0
+    if (group1 == null && group2 == null) return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
+    if (titleFrom(file1) && group2 != null && group1 == null) {
+        if (titleFrom(file1).toUpperCase() == group2.toUpperCase()) return -1
+        return titleFrom(file1).toUpperCase() < group2.toUpperCase() ? -1: 1
+    }
+    if (titleFrom(file2) && group1 != null && group2 == null) {
+        if (titleFrom(file2).toUpperCase() == group1.toUpperCase()) return 1
+        return group1.toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
+    }
+    if (group1 != null && group2 != null) {
+        return group1.toUpperCase() < group2.toUpperCase() ? -1: 1
+    }
+}
+    
 function insertGeneratedNotice() {
     return inject(src('./generated.txt'), {
         name: 'generated',
@@ -188,13 +205,13 @@ function createComponentNav() {
     return src('component-nav.adoc.template')
         .pipe(insertGeneratedNotice())
         .pipe(inject(src(['components/modules/ROOT/pages/**/*.adoc', '!components/modules/ROOT/pages/index.adoc'])
-            .pipe(sort(compare)), {
+            .pipe(sort(compareComponents)), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
-                let attribute = checkAttributeExistence(file);
-                if (attribute.group != null) return `*** xref:${filepath}[${title}]`;
+                let attribute = groupFrom(file);
+                if (attribute != null) return `*** xref:${filepath}[${title}]`;
                 return `** xref:${filepath}[${title}]`;
             }
         }))
