@@ -117,6 +117,26 @@ public interface SupervisingRouteController extends RouteController {
     void setBackOffMultiplier(double backOffMultiplier);
 
     /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    void setUnhealthyOnExhausted(boolean unhealthyOnExhausted);
+
+    /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    boolean isUnhealthyOnExhausted();
+
+    /**
      * Return the list of routes that are currently under restarting by this controller.
      *
      * In other words the routes which has failed during startup and are know managed

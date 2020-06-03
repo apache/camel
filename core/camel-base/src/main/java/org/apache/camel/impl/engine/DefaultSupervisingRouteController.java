@@ -42,6 +42,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.SupervisingRouteController;
@@ -84,6 +85,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private long backOffMaxElapsedTime;
     private long backOffMaxAttempts;
     private double backOffMultiplier = 1.0d;
+    private boolean unhealthyOnExhausted;
 
     public DefaultSupervisingRouteController() {
         this.lock = new Object();
@@ -168,6 +170,14 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     public void setBackOffMultiplier(double backOffMultiplier) {
         this.backOffMultiplier = backOffMultiplier;
+    }
+
+    public boolean isUnhealthyOnExhausted() {
+        return unhealthyOnExhausted;
+    }
+
+    public void setUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
+        this.unhealthyOnExhausted = unhealthyOnExhausted;
     }
 
     protected BackOff getBackOff(String id) {
@@ -518,6 +528,14 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                     r.get().setRouteController(null);
                                     // remember exhausted routes
                                     routeManager.exhausted.put(r, task);
+
+                                    if (unhealthyOnExhausted) {
+                                        // store as last error on route as it was exhausted
+                                        Throwable t = getRestartException(route.getId());
+                                        if (t != null) {
+                                            DefaultRouteError.set(getCamelContext(), r.getId(), RouteError.Phase.START, t, true);
+                                        }
+                                    }
                                 }
                             }
                         }
