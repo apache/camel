@@ -25,13 +25,21 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
  */
 public abstract class AbstractCamelMicroProfileLivenessCheck extends AbstractHealthCheck {
 
-    public static final String HEALTH_GROUP_LIVENESS = "camel.health.liveness";
-
     public AbstractCamelMicroProfileLivenessCheck(String id) {
-        super(HEALTH_GROUP_LIVENESS, id);
+        super("camel", id);
     }
 
-    public AbstractCamelMicroProfileLivenessCheck(String id, Map<String, Object> meta) {
-        super(HEALTH_GROUP_LIVENESS, id, meta);
+    protected AbstractCamelMicroProfileLivenessCheck(String group, String id) {
+        super(group, id);
     }
+
+    protected AbstractCamelMicroProfileLivenessCheck(String group, String id, Map<String, Object> meta) {
+        super(group, id, meta);
+    }
+
+    @Override
+    public boolean isReadiness() {
+        return false;
+    }
+
 }

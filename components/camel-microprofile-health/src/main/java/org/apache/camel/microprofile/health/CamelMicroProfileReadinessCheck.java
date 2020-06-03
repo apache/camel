@@ -24,9 +24,8 @@ import org.eclipse.microprofile.health.Readiness;
 @Readiness
 public class CamelMicroProfileReadinessCheck extends AbstractCamelMicroProfileHealthCheck {
 
-    @Override
-    String getHealthGroupFilterExclude() {
-        return AbstractCamelMicroProfileLivenessCheck.HEALTH_GROUP_LIVENESS;
+    public boolean isLiveness() {
+        return false;
     }
 
     @Override
