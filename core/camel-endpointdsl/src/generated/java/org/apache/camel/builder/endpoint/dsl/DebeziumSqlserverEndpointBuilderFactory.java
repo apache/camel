@@ -426,7 +426,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0.1s
+         * Default: 100ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -440,7 +440,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0.1s
+         * Default: 100ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -599,7 +599,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder heartbeatIntervalMs(
@@ -614,7 +614,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder heartbeatIntervalMs(
@@ -716,7 +716,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
@@ -730,7 +730,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
@@ -769,7 +769,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotDelayMs(
@@ -782,7 +782,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotDelayMs(

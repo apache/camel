@@ -43,7 +43,7 @@ public class ConnectorConfigFieldTest {
         assertEquals("\"I am overriden\"", connectorConfigField.getDefaultValueAsString());
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
-        assertFalse(connectorConfigField.isDurationField());
+        assertFalse(connectorConfigField.isTimeField());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ConnectorConfigFieldTest {
         assertEquals(String.class, connectorConfigField.getRawType());
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
-        assertFalse(connectorConfigField.isDurationField());
+        assertFalse(connectorConfigField.isTimeField());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ConnectorConfigFieldTest {
 
         final ConnectorConfigField connectorConfigField = new ConnectorConfigField(configKey, false, true, null);
 
-        assertTrue(connectorConfigField.isDurationField());
+        assertTrue(connectorConfigField.isTimeField());
 
 
         final ConfigDef.ConfigKey configKey2 = new ConfigDef.ConfigKey("field.test_underscore.ms", ConfigDef.Type.INT, "100",
@@ -80,7 +80,7 @@ public class ConnectorConfigFieldTest {
 
         final ConnectorConfigField connectorConfigField2 = new ConnectorConfigField(configKey2, false, true, null);
 
-        assertTrue(connectorConfigField2.isDurationField());
+        assertTrue(connectorConfigField2.isTimeField());
 
         final ConfigDef.ConfigKey configKey3 = new ConfigDef.ConfigKey("field", ConfigDef.Type.INT, "100",
                 null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
@@ -88,7 +88,7 @@ public class ConnectorConfigFieldTest {
 
         final ConnectorConfigField connectorConfigField3 = new ConnectorConfigField(configKey3, false, true, null);
 
-        assertFalse(connectorConfigField3.isDurationField());
+        assertFalse(connectorConfigField3.isTimeField());
 
         final ConfigDef.ConfigKey configKey4 = new ConfigDef.ConfigKey("field.ms.field", ConfigDef.Type.LONG, "100",
                 null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
@@ -96,6 +96,6 @@ public class ConnectorConfigFieldTest {
 
         final ConnectorConfigField connectorConfigField4 = new ConnectorConfigField(configKey4, false, true, null);
 
-        assertFalse(connectorConfigField4.isDurationField());
+        assertFalse(connectorConfigField4.isTimeField());
     }
 }

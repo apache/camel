@@ -90,13 +90,13 @@ public class ConnectorConfigField {
         return "";
     }
 
-    public boolean isDurationField() {
-        // since we don't really an info if the field is a time or not, we use a hack that if the field name ends with `ms` and of type
+    public boolean isTimeField() {
+        // since we don't really have an info if the field is a time or not, we use a hack that if the field name ends with `ms` and of type
         // int or long. Not pretty but is the only feasible workaround here.
-        return isFieldAMillSecondFieldFromName(fieldDef.name) && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
+        return isMillSecondsInTheFieldName(fieldDef.name) && (fieldDef.type == ConfigDef.Type.INT || fieldDef.type == ConfigDef.Type.LONG);
     }
 
-    private boolean isFieldAMillSecondFieldFromName(final String name) {
+    private boolean isMillSecondsInTheFieldName(final String name) {
         final String[] parts = name.split("\\.");
         return parts.length > 0 && parts[parts.length - 1].toLowerCase().equals("ms");
     }

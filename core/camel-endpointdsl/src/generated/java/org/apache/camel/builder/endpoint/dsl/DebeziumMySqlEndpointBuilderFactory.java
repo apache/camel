@@ -415,7 +415,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60s
+         * Default: 1m
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder connectKeepAliveIntervalMs(
@@ -429,7 +429,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 60s
+         * Default: 1m
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder connectKeepAliveIntervalMs(
@@ -560,7 +560,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0.1s
+         * Default: 100ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -574,7 +574,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0.1s
+         * Default: 100ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -1092,7 +1092,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder heartbeatIntervalMs(
@@ -1107,7 +1107,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder heartbeatIntervalMs(
@@ -1298,7 +1298,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder pollIntervalMs(long pollIntervalMs) {
@@ -1311,7 +1311,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder pollIntervalMs(
@@ -1324,7 +1324,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotDelayMs(
@@ -1337,7 +1337,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotDelayMs(
