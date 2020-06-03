@@ -16,10 +16,8 @@
  */
 package org.apache.camel.microprofile.health;
 
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -29,14 +27,12 @@ import org.apache.camel.impl.health.ContextHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
-import org.eclipse.microprofile.health.Liveness;
 import org.eclipse.microprofile.health.Readiness;
 
 /**
  * A simple health check implementation for checking the status of a CamelContext
  */
 @Readiness
-@Liveness
 public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextAware {
 
     @Inject
