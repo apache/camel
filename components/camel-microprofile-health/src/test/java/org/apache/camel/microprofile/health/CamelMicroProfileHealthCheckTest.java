@@ -216,16 +216,16 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         SmallRyeHealth health = reporter.getHealth();
 
         JsonObject healthObject = getHealthJson(health);
-        assertEquals(State.DOWN.name(), healthObject.getString("status"));
+        assertEquals(State.UP.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(2, checks.size());
 
-        assertHealthCheckOutput("camel-readiness-checks", State.DOWN, checks.getJsonObject(0), jsonObject -> {
+        assertHealthCheckOutput("camel-readiness-checks", State.UP, checks.getJsonObject(0), jsonObject -> {
             assertNull(jsonObject);
         });
 
-        assertHealthCheckOutput("camel-liveness-checks", State.DOWN, checks.getJsonObject(1), jsonObject -> {
+        assertHealthCheckOutput("camel-liveness-checks", State.UP, checks.getJsonObject(1), jsonObject -> {
             assertNull(jsonObject);
         });
     }
