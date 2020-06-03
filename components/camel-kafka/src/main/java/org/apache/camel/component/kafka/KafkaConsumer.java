@@ -431,8 +431,13 @@ public class KafkaConsumer extends DefaultConsumer {
                     offset = -1l;
                 }
                 log.debug("Saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey, offset);
-                commitOffset(offsetRepository, partition, offset, true);
-                lastProcessedOffset.remove(offsetKey);
+                try {
+                    commitOffset(offsetRepository, partition, offset, true);
+                } catch (Exception e) {
+                    log.error("Error saving offset repository state {} from offsetKey {} with offset: {}", threadId, offsetKey, offset);
+                } finally {
+                    lastProcessedOffset.remove(offsetKey);
+                }
             }
         }
 
