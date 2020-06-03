@@ -27,6 +27,21 @@ With the prefix `-health-check` or `-health-check-repository`. When looking up o
 
 For example `context-health-check` is the ID but can also be used by its shorthand `context`.
 
+== Readiness and Liveness
+
+A health check is by default useable for both readiness and liveness checks.
+
+To specify a custom health check as only useable for liveness checks,
+you would need to turn off readiness, by overriding the `isReadiness` method and return `false`.
+
+[source,java]
+----
+    @Override
+    public boolean isLiveness() {
+        return false;
+    }
+----
+
 == Health Check configuration
 
 The `HealthCheckConfiguration` has the following options:
@@ -98,6 +113,14 @@ This MBean allows at runtime to manage health-checks where you can enable and di
 As well have the latest status whether the overall health check is healthy or not.
 The MBean also allows invoking health checks based on IDs (or all of them).
 
+== Invoking health checks
+
+You can invoke the health checks from Java by using the `org.apache.camel.health.HealthCheckHelper` which has APIs
+to easily invoke all the health checks and gather their results, or filter out unwanated checkes, or invoke only
+the readiness or liveness checks.
+
+The health checks can also be invoked from JMX.
+
 == Writing a custom check:
 
 There are a limited number of health checks provided by Camel out of the box, so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some useful methods:
@@ -127,7 +150,7 @@ public final class MyHealthCheck extends AbstractHealthCheck {
 }
 ----
 
-You can now make _MyHealthCheck_ available to camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.
+You can now make _MyHealthCheck_ available to Camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.
 The example `camel-example-main-health` has a custom health check.
 
 == Examples
