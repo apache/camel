@@ -44,19 +44,17 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     public HealthCheckResponse call() {
         final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
         builder.name(getHealthCheckName());
+        builder.up();
 
         if (camelContext != null) {
             Collection<Result> results = HealthCheckHelper.invoke(camelContext,
                     (HealthCheckFilter) check ->
                             // skip context as we have our own context check
                             check.getId().equals("context")
-                                    // or that its either supposed to be only a livness or readness and the Camel health check is not
+                                    // or that its either supposed to be only a liveness or readiness and the Camel health check is not
                                     || (isLiveness() && !check.isLiveness() || isReadiness() && !check.isReadiness()));
-            if (!results.isEmpty()) {
-                builder.up();
-            }
 
-            for (Result result: results) {
+            for (Result result : results) {
                 Map<String, Object> details = result.getDetails();
                 boolean enabled = true;
 
