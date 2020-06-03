@@ -32,7 +32,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME)
     private String databaseSslcert;
-    @UriParam(label = LABEL_NAME, defaultValue = "0.5s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
     private String databaseInitialStatements;
@@ -56,7 +56,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databaseSslkey;
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "v2")
     private String sourceStructVersion = "v2";
@@ -85,7 +85,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String slotName = "debezium";
     @UriParam(label = LABEL_NAME, defaultValue = "json")
     private String hstoreHandlingMode = "json";
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
@@ -103,7 +103,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databaseHistoryFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean slotDropOnStop = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "0s", javaType = "java.time.Duration")
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long xminFetchIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";

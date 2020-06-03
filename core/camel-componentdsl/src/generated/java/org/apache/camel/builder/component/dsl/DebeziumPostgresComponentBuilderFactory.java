@@ -531,7 +531,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder heartbeatIntervalMs(
@@ -667,7 +667,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder pollIntervalMs(
@@ -842,7 +842,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder snapshotDelayMs(
@@ -1044,7 +1044,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresComponentBuilder xminFetchIntervalMs(

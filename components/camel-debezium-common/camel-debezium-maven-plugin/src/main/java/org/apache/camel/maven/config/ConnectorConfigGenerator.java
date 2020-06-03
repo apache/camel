@@ -181,18 +181,16 @@ public final class ConnectorConfigGenerator {
 
                 // especial case for database.server.id, we don't set the default value, we let debezium do that
                 if (fieldConfig.getDefaultValue() != null && !fieldConfig.getRawName().equals("database.server.id")) {
-                    if (fieldConfig.isDurationField()) {
-                        final DecimalFormat decimalFormat = new DecimalFormat("0.##");
-                        final Double valueAsDouble = Double.parseDouble(fieldConfig.getDefaultValueAsString()) / 1000;
-                        final String defaultValue = decimalFormat.format(valueAsDouble) + "s";
-                        annotation.setLiteralValue("defaultValue", String.format("\"%s\"", defaultValue));
+                    if (fieldConfig.isTimeField()) {
+                        final long defaultValueAsLong = Long.parseLong(fieldConfig.getDefaultValueAsString());
+                        annotation.setLiteralValue("defaultValue", String.format("\"%s\"", ConnectorConfigGeneratorUtils.toTimeAsString(defaultValueAsLong)));
                     } else {
                         annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
                     }
                 }
 
                 // especial case for Duration field
-                if (fieldConfig.isDurationField()) {
+                if (fieldConfig.isTimeField()) {
                     annotation.setLiteralValue("javaType", "\"java.time.Duration\"");
                 }
 

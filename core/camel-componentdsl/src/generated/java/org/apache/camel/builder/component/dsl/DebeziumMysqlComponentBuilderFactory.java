@@ -321,7 +321,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 60s
+         * Default: 1m
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder connectKeepAliveIntervalMs(
@@ -422,7 +422,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0.1s
+         * Default: 100ms
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -831,7 +831,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder heartbeatIntervalMs(
@@ -960,7 +960,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder pollIntervalMs(long pollIntervalMs) {
@@ -972,7 +972,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mysql
          */
         default DebeziumMysqlComponentBuilder snapshotDelayMs(
