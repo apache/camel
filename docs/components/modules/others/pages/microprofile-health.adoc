@@ -40,6 +40,7 @@ public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
 
     public MyHealthCheck() {
         super("my-liveness-check-id");
+        getConfiguration().setEnabled(true);
     }
 
     @Override
