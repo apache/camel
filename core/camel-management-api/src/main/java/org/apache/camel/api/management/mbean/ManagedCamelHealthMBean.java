@@ -28,8 +28,14 @@ public interface ManagedCamelHealthMBean {
     @ManagedAttribute(description = "Whether Health Check is enabled globally")
     boolean isEnabled();
 
-    @ManagedAttribute(description = "Application Health")
+    @ManagedAttribute(description = "Application Health (all checks)")
     boolean isHealthy();
+
+    @ManagedAttribute(description = "Application Health (only readiness checks)")
+    boolean isHealthyReadiness();
+
+    @ManagedAttribute(description = "Application Health (only liveness checks)")
+    boolean isHealthyLiveness();
 
     @ManagedAttribute(description = "Registered Health Checks IDs")
     Collection<String> getHealthChecksIDs();

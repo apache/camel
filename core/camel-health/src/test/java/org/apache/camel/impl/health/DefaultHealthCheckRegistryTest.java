@@ -201,7 +201,6 @@ public class DefaultHealthCheckRegistryTest {
 
         protected MyHealthCheck(String group, String id) {
             super(group, id);
-            getConfiguration().setEnabled(true);
         }
 
         @Override
