@@ -548,7 +548,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.9.1</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.1.1.Final</undertow-version>
+    <undertow-version>2.1.2.Final</undertow-version>
     <univocity-parsers-version>2.8.4</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
