@@ -94,6 +94,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxElapsedTime;
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
+    private boolean routeControllerUnhealthyOnExhausted;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -1060,6 +1061,22 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
     }
 
+    public boolean isRouteControllerUnhealthyOnExhausted() {
+        return routeControllerUnhealthyOnExhausted;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    public void setRouteControllerUnhealthyOnExhausted(boolean routeControllerUnhealthyOnExhausted) {
+        this.routeControllerUnhealthyOnExhausted = routeControllerUnhealthyOnExhausted;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1794,6 +1811,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteControllerThreadPoolSize(int routeControllerThreadPoolSize) {
         this.routeControllerThreadPoolSize = routeControllerThreadPoolSize;
+        return (T) this;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
+     */
+    public T withRouteControllerUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
+        this.routeControllerUnhealthyOnExhausted = unhealthyOnExhausted;
         return (T) this;
     }
 

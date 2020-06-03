@@ -207,6 +207,7 @@ public final class DefaultConfigurationConfigurer {
             if (config.getRouteControllerBackOffMultiplier() > 0) {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
+            src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
         }
         if (config.getRouteControllerRouteStartupLoggingLevel() != null) {
             camelContext.getRouteController().setRouteStartupLoggingLevel(config.getRouteControllerRouteStartupLoggingLevel());

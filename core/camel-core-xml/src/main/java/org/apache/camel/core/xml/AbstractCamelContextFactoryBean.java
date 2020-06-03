@@ -700,6 +700,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (backOffMultiplier != null && src != null) {
             src.setBackOffMultiplier(backOffMultiplier);
         }
+        Boolean unhealthyOnExhausted = CamelContextHelper.parseBoolean(getContext(), rc.getUnhealthyOnExhausted());
+        if (unhealthyOnExhausted != null && unhealthyOnExhausted) {
+            src.setUnhealthyOnExhausted(unhealthyOnExhausted);
+        }
     }
 
     protected void initPropertyPlaceholder() throws Exception {
