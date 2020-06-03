@@ -29,6 +29,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Helper for invoking {@link HealthCheck}'s.
+ *
+ * The helper will lookup the {@link HealthCheckRegistry} from {@link CamelContext} and gather
+ * all the registered {@link HealthCheck}s and invoke them and gather their responses.
+ *
+ * The helper allows to filter out unwanted health checks using {@link HealthCheckFilter} or
+ * to invoke only readiness or liveness checks.
+ */
 public final class HealthCheckHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckHelper.class);
 
