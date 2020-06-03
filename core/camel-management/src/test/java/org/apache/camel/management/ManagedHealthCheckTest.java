@@ -64,6 +64,10 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
 
         Boolean up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertTrue(up);
+        up = (Boolean) mbeanServer.getAttribute(on, "HealthyReadiness");
+        assertTrue(up);
+        up = (Boolean) mbeanServer.getAttribute(on, "HealthyLiveness");
+        assertTrue(up);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "details", null, null);
         assertEquals(1, data.size());

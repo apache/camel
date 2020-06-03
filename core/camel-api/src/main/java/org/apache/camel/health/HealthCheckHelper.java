@@ -53,6 +53,20 @@ public final class HealthCheckHelper {
     }
 
     /**
+     * Invokes the readiness checks and returns a collection of results.
+     */
+    public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext) {
+        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isReadiness());
+    }
+
+    /**
+     * Invokes the liveness checks and returns a collection of results.
+     */
+    public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
+        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isLiveness());
+    }
+
+    /**
      * Invokes the checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invoke(

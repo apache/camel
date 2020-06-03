@@ -36,6 +36,12 @@ public class RouteHealthCheck extends AbstractHealthCheck {
     }
 
     @Override
+    public boolean isLiveness() {
+        // this check is only for readiness
+        return false;
+    }
+
+    @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         if (route.getId() != null) {
             final CamelContext context = route.getCamelContext();
