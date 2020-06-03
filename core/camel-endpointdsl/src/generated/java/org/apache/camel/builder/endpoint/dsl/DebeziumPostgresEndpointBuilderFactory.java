@@ -623,7 +623,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder heartbeatIntervalMs(
@@ -638,7 +638,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder heartbeatIntervalMs(
@@ -815,7 +815,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder pollIntervalMs(
@@ -829,7 +829,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder pollIntervalMs(
@@ -1059,7 +1059,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotDelayMs(
@@ -1072,7 +1072,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotDelayMs(
@@ -1332,7 +1332,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder xminFetchIntervalMs(
@@ -1352,7 +1352,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder xminFetchIntervalMs(
