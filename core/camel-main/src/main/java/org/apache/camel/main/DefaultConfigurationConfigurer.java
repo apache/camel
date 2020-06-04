@@ -207,30 +207,10 @@ public final class DefaultConfigurationConfigurer {
             if (config.getRouteControllerBackOffMultiplier() > 0) {
                 src.setBackOffMultiplier(config.getRouteControllerBackOffMultiplier());
             }
+            src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
         }
         if (config.getRouteControllerRouteStartupLoggingLevel() != null) {
             camelContext.getRouteController().setRouteStartupLoggingLevel(config.getRouteControllerRouteStartupLoggingLevel());
-        }
-
-        // health check
-        HealthCheckRegistry hc = camelContext.getExtension(HealthCheckRegistry.class);
-        if (hc != null && config.isHealthCheckEnabled()) {
-            // register context health-check by default
-            if (!hc.getCheck("context").isPresent()) {
-                Object context = hc.resolveById("context");
-                if (context != null) {
-                    hc.register(context);
-                }
-            }
-            // register routes if enabled
-            if (config.isHealthCheckRoutesEnabled()) {
-                if (!hc.getCheck("routes").isPresent()) {
-                    Object routes = hc.resolveById("routes");
-                    if (routes != null) {
-                        hc.register(routes);
-                    }
-                }
-            }
         }
     }
 

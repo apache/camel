@@ -52,8 +52,8 @@ public class StAXEndpoint extends ProcessorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         Processor target;
         if (EndpointHelper.isReferenceParameter(contentHandlerClass)) {

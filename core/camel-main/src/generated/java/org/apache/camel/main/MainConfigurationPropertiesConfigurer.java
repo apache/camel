@@ -71,10 +71,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "EndpointRuntimeStatisticsEnabled": target.setEndpointRuntimeStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
         case "fileconfigurations":
         case "FileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
-        case "healthcheckenabled":
-        case "HealthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckroutesenabled":
-        case "HealthCheckRoutesEnabled": target.setHealthCheckRoutesEnabled(property(camelContext, boolean.class, value)); return true;
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": target.setInflightRepositoryBrowseEnabled(property(camelContext, boolean.class, value)); return true;
         case "javaroutesexcludepattern":
@@ -129,6 +125,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerSuperviseEnabled": target.setRouteControllerSuperviseEnabled(property(camelContext, boolean.class, value)); return true;
         case "routecontrollerthreadpoolsize":
         case "RouteControllerThreadPoolSize": target.setRouteControllerThreadPoolSize(property(camelContext, int.class, value)); return true;
+        case "routecontrollerunhealthyonexhausted":
+        case "RouteControllerUnhealthyOnExhausted": target.setRouteControllerUnhealthyOnExhausted(property(camelContext, boolean.class, value)); return true;
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": target.setRouteFilterExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routefilterincludepattern":
@@ -218,8 +216,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("EndpointLazyStartProducer", boolean.class);
         answer.put("EndpointRuntimeStatisticsEnabled", boolean.class);
         answer.put("FileConfigurations", java.lang.String.class);
-        answer.put("HealthCheckEnabled", boolean.class);
-        answer.put("HealthCheckRoutesEnabled", boolean.class);
         answer.put("InflightRepositoryBrowseEnabled", boolean.class);
         answer.put("JavaRoutesExcludePattern", java.lang.String.class);
         answer.put("JavaRoutesIncludePattern", java.lang.String.class);
@@ -247,6 +243,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         answer.put("RouteControllerRouteStartupLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("RouteControllerSuperviseEnabled", boolean.class);
         answer.put("RouteControllerThreadPoolSize", int.class);
+        answer.put("RouteControllerUnhealthyOnExhausted", boolean.class);
         answer.put("RouteFilterExcludePattern", java.lang.String.class);
         answer.put("RouteFilterIncludePattern", java.lang.String.class);
         answer.put("RoutesBuilderClasses", java.lang.String.class);
@@ -334,10 +331,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "EndpointRuntimeStatisticsEnabled": return target.isEndpointRuntimeStatisticsEnabled();
         case "fileconfigurations":
         case "FileConfigurations": return target.getFileConfigurations();
-        case "healthcheckenabled":
-        case "HealthCheckEnabled": return target.isHealthCheckEnabled();
-        case "healthcheckroutesenabled":
-        case "HealthCheckRoutesEnabled": return target.isHealthCheckRoutesEnabled();
         case "inflightrepositorybrowseenabled":
         case "InflightRepositoryBrowseEnabled": return target.isInflightRepositoryBrowseEnabled();
         case "javaroutesexcludepattern":
@@ -392,6 +385,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerSuperviseEnabled": return target.isRouteControllerSuperviseEnabled();
         case "routecontrollerthreadpoolsize":
         case "RouteControllerThreadPoolSize": return target.getRouteControllerThreadPoolSize();
+        case "routecontrollerunhealthyonexhausted":
+        case "RouteControllerUnhealthyOnExhausted": return target.isRouteControllerUnhealthyOnExhausted();
         case "routefilterexcludepattern":
         case "RouteFilterExcludePattern": return target.getRouteFilterExcludePattern();
         case "routefilterincludepattern":

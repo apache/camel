@@ -33,6 +33,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelHealthMBean;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.ManagementStrategy;
 
 public class ManagedCamelHealth implements ManagedCamelHealthMBean {
@@ -69,6 +70,28 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
     }
 
     @Override
+    public boolean isHealthyReadiness() {
+        for (HealthCheck.Result result : HealthCheckHelper.invokeReadiness(context)) {
+            if (result.getState() == HealthCheck.State.DOWN) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isHealthyLiveness() {
+        for (HealthCheck.Result result : HealthCheckHelper.invokeLiveness(context)) {
+            if (result.getState() == HealthCheck.State.DOWN) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public Collection<String> getHealthChecksIDs() {
         return healthCheckRegistry.getCheckIDs();
     }
@@ -87,6 +110,8 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                         "group",
                         "state",
                         "enabled",
+                        "readiness",
+                        "liveness",
                         "interval",
                         "failureThreshold"
                     },
@@ -95,6 +120,8 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
                         result.getCheck().getGroup(),
                         result.getState().name(),
                         result.getCheck().getConfiguration().isEnabled(),
+                        result.getCheck().isReadiness(),
+                        result.getCheck().isLiveness(),
                         result.getCheck().getConfiguration().getInterval(),
                         result.getCheck().getConfiguration().getFailureThreshold()
                     }
@@ -118,11 +145,23 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
     @Override
     public void enableById(String id) {
-        healthCheckRegistry.getCheck(id).ifPresent(h -> h.getConfiguration().setEnabled(true));
+        Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
+        if (hc.isPresent()) {
+            hc.get().getConfiguration().setEnabled(true);
+        } else {
+            Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
+            hcr.ifPresent(repository -> repository.setEnabled(true));
+        }
     }
 
     @Override
     public void disableById(String id) {
-        healthCheckRegistry.getCheck(id).ifPresent(h -> h.getConfiguration().setEnabled(false));
+        Optional<HealthCheck> hc = healthCheckRegistry.getCheck(id);
+        if (hc.isPresent()) {
+            hc.get().getConfiguration().setEnabled(false);
+        } else {
+            Optional<HealthCheckRepository> hcr = healthCheckRegistry.getRepository(id);
+            hcr.ifPresent(repository -> repository.setEnabled(false));
+        }
     }
 }

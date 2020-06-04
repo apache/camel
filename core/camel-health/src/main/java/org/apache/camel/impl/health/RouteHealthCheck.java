@@ -36,6 +36,12 @@ public class RouteHealthCheck extends AbstractHealthCheck {
     }
 
     @Override
+    public boolean isLiveness() {
+        // this check is only for readiness
+        return false;
+    }
+
+    @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         if (route.getId() != null) {
             final CamelContext context = route.getCamelContext();
@@ -60,7 +66,14 @@ public class RouteHealthCheck extends AbstractHealthCheck {
                 } else if (route.getRouteController() == null) {
                     // the route has no route controller which mean it may be supervised and then failed
                     // all attempts and be exhausted, and if so then we are in unknown status
-                    builder.unknown();
+
+                    // the supervised route controller would store the last error if the route is regarded
+                    // as unhealthy which we use to signal its down, otherwise we are in unknown state
+                    if (route.getLastError() != null && route.getLastError().isUnhealthy()) {
+                        builder.down();
+                    } else {
+                        builder.unknown();
+                    }
                 }
             }
         }

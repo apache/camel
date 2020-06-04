@@ -52,6 +52,8 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
     private String backOffMaxAttempts;
     @XmlAttribute @Metadata(defaultValue = "1.0")
     private String backOffMultiplier;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private String unhealthyOnExhausted;
 
     public String getSupervising() {
         return supervising;
@@ -194,4 +196,17 @@ public class CamelRouteControllerDefinition extends IdentifiedType {
         this.backOffMultiplier = backOffMultiplier;
     }
 
+    public String getUnhealthyOnExhausted() {
+        return unhealthyOnExhausted;
+    }
+
+    /**
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
+     *
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     */
+    public void setUnhealthyOnExhausted(String unhealthyOnExhausted) {
+        this.unhealthyOnExhausted = unhealthyOnExhausted;
+    }
 }

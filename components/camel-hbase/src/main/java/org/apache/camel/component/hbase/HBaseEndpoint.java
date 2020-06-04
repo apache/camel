@@ -244,8 +244,8 @@ public class HBaseEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (rowModel == null && rowMapping != null) {
             rowModel = createRowModel(rowMapping);

@@ -48,6 +48,20 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
+     * Whether this health check can be used for readiness checks
+     */
+    default boolean isReadiness() {
+        return true;
+    }
+
+    /**
+     * Whether this health check can be used for liveness checks
+     */
+    default boolean isLiveness() {
+        return true;
+    }
+
+    /**
      * Return the configuration associated with this {@link HealthCheck}.
      */
     HealthCheckConfiguration getConfiguration();

@@ -518,7 +518,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         // need to setup entity manager first
         if (getEndpoint().isSharedEntityManager()) {
             this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
@@ -526,8 +528,6 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             this.entityManager = entityManagerFactory.createEntityManager();
         }
         LOG.trace("Created EntityManager {} on {}", entityManager, this);
-
-        super.doStart();
     }
 
     @Override

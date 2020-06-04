@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
@@ -28,8 +27,10 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * Repository for routes {@link HealthCheck}s.
@@ -38,8 +39,10 @@ import org.apache.camel.spi.annotations.JdkService;
 @DeferredContextBinding
 public class RoutesHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
     private final ConcurrentMap<Route, HealthCheck> checks;
-    private Set<String> blacklist;
     private volatile CamelContext context;
+    private Map<String, HealthCheckConfiguration> configurations;
+    private HealthCheckConfiguration fallbackConfiguration;
+    private boolean enabled = true;
 
     public RoutesHealthCheckRepository() {
         this.checks = new ConcurrentHashMap<>();
@@ -60,16 +63,36 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
         return context;
     }
 
-    public void setBlacklistedRoutes(Collection<String> blacklistedRoutes) {
-        blacklistedRoutes.forEach(this::addBlacklistedRoute);
+    @Override
+    public Map<String, HealthCheckConfiguration> getConfigurations() {
+        return configurations;
     }
 
-    public void addBlacklistedRoute(String routeId) {
-        if (this.blacklist == null) {
-            this.blacklist = new HashSet<>();
-        }
+    @Override
+    public void setConfigurations(Map<String, HealthCheckConfiguration> configurations) {
+        this.configurations = configurations;
+    }
 
-        this.blacklist.add(routeId);
+    @Override
+    public void addConfiguration(String id, HealthCheckConfiguration configuration) {
+        if ("*".equals(id)) {
+            fallbackConfiguration = configuration;
+        } else {
+            if (configurations == null) {
+                configurations = new LinkedHashMap<>();
+            }
+            configurations.put(id, configuration);
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -85,11 +108,10 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
         //     void forEachRoute(Consumer<Route> consumer);
         // }
         //
-        return this.context != null
+        return this.context != null && enabled
             ? this.context.getRoutes()
                 .stream()
                 .filter(route -> route.getId() != null)
-                .filter(route -> isNotBlacklisted(route))
                 .map(this::toRouteHealthCheck)
             : Stream.empty();
     }
@@ -98,12 +120,26 @@ public class RoutesHealthCheckRepository implements CamelContextAware, HealthChe
     // Helpers
     // *****************************
 
-    private boolean isNotBlacklisted(Route route) {
-        return this.blacklist == null || !this.blacklist.contains(route.getId());
+    private HealthCheck toRouteHealthCheck(Route route) {
+        return checks.computeIfAbsent(route, r -> {
+            RouteHealthCheck rhc = new RouteHealthCheck(route);
+            HealthCheckConfiguration hcc = matchConfiguration(route.getRouteId());
+            if (hcc != null) {
+                rhc.setConfiguration(hcc);
+            }
+            return rhc;
+        });
     }
 
-    private HealthCheck toRouteHealthCheck(Route route) {
-        return checks.computeIfAbsent(route, r -> new RouteHealthCheck(route));
+    private HealthCheckConfiguration matchConfiguration(String id) {
+        if (configurations != null) {
+            for (String key : configurations.keySet()) {
+                if (PatternHelper.matchPattern(id, key)) {
+                    return configurations.get(key);
+                }
+            }
+        }
+        return fallbackConfiguration;
     }
 
 }

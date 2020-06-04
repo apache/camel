@@ -380,7 +380,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 120s
+         * Default: 2m
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder connectBackoffMaxDelayMs(
@@ -395,7 +395,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 120s
+         * Default: 2m
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder connectBackoffMaxDelayMs(
@@ -506,7 +506,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
@@ -521,7 +521,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
@@ -766,7 +766,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
@@ -780,7 +780,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0.5s
+         * Default: 500ms
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
@@ -807,7 +807,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder snapshotDelayMs(
@@ -820,7 +820,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 0s
+         * Default: 0ms
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder snapshotDelayMs(

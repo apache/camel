@@ -23,10 +23,16 @@ import org.apache.camel.spi.RouteError;
 public class DefaultRouteError implements RouteError {
     private final RouteError.Phase phase;
     private final Throwable throwable;
+    private final boolean unhealthy;
 
     public DefaultRouteError(Phase phase, Throwable throwable) {
+        this(phase, throwable, false);
+    }
+
+    public DefaultRouteError(Phase phase, Throwable throwable, boolean unhealthy) {
         this.phase = phase;
         this.throwable = throwable;
+        this.unhealthy = unhealthy;
     }
 
     @Override
@@ -40,11 +46,8 @@ public class DefaultRouteError implements RouteError {
     }
 
     @Override
-    public String toString() {
-        return "DefaultRouteError{"
-            + "phase=" + phase
-            + ", throwable=" + throwable
-            + '}';
+    public boolean isUnhealthy() {
+        return unhealthy;
     }
 
     // ***********************************
@@ -55,6 +58,13 @@ public class DefaultRouteError implements RouteError {
         Route route = context.getRoute(routeId);
         if (route != null) {
             route.setLastError(new DefaultRouteError(phase, throwable));
+        }
+    }
+
+    public static void set(CamelContext context, String routeId, RouteError.Phase phase, Throwable throwable, boolean unhealthy) {
+        Route route = context.getRoute(routeId);
+        if (route != null) {
+            route.setLastError(new DefaultRouteError(phase, throwable, unhealthy));
         }
     }
 

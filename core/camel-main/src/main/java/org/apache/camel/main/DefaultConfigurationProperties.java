@@ -94,9 +94,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private long routeControllerBackOffMaxElapsedTime;
     private long routeControllerBackOffMaxAttempts;
     private double routeControllerBackOffMultiplier;
-    // health check
-    private boolean healthCheckEnabled = true;
-    private boolean healthCheckRoutesEnabled;
+    private boolean routeControllerUnhealthyOnExhausted;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -1063,40 +1061,20 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routeControllerBackOffMultiplier = routeControllerBackOffMultiplier;
     }
 
-    public boolean isHealthCheckEnabled() {
-        return healthCheckEnabled;
+    public boolean isRouteControllerUnhealthyOnExhausted() {
+        return routeControllerUnhealthyOnExhausted;
     }
 
     /**
-     * Whether health check is enabled.
-     * Is default enabled.
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
      *
-     * If using camel-quarkus then camel-quarkus-microprofile-health has its own configuration for health-check
-     * which you should use instead.
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
+     *
+     * The default is false.
      */
-    public void setHealthCheckEnabled(boolean healthCheckEnabled) {
-        this.healthCheckEnabled = healthCheckEnabled;
-    }
-
-    public boolean isHealthCheckRoutesEnabled() {
-        return healthCheckRoutesEnabled;
-    }
-
-    /**
-     * Whether routes should be included in the health check.
-     *
-     * By default only the camel context is part of the health check.
-     * Enabling routes allows to let routes that are controlled by the routes controller
-     * take part of the health check, so if there is problems starting up routes, then
-     * they can influence the health check and report its UP or DOWN.
-     *
-     * Is default disabled.
-     *
-     * If using camel-quarkus then camel-quarkus-microprofile-health has its own configuration for health-check
-     * which you should use instead.
-     */
-    public void setHealthCheckRoutesEnabled(boolean healthCheckRoutesEnabled) {
-        this.healthCheckRoutesEnabled = healthCheckRoutesEnabled;
+    public void setRouteControllerUnhealthyOnExhausted(boolean routeControllerUnhealthyOnExhausted) {
+        this.routeControllerUnhealthyOnExhausted = routeControllerUnhealthyOnExhausted;
     }
 
     // fluent builders
@@ -1837,26 +1815,15 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether health check is enabled.
-     * Is default enabled.
-     */
-    public T healthCheckEnabled(boolean healthCheckEnabled) {
-        this.healthCheckEnabled = healthCheckEnabled;
-        return (T) this;
-    }
-
-    /**
-     * Whether routes should be included in the health check.
+     * Whether to mark the route as unhealthy (down) when all restarting attempts (backoff) have failed
+     * and the route is not successfully started and the route manager is giving up.
      *
-     * By default only the camel context is part of the health check.
-     * Enabling routes allows to let routes that are controlled by the routes controller
-     * take part of the health check, so if there is problems starting up routes, then
-     * they can influence the health check and report its UP or DOWN.
+     * Setting this to true allows health checks to know about this and can report the Camel application as DOWN.
      *
-     * Is default disabled.
+     * The default is false.
      */
-    public T healthCheckRoutesEnabled(boolean healthCheckRoutesEnabled) {
-        this.healthCheckRoutesEnabled = healthCheckRoutesEnabled;
+    public T withRouteControllerUnhealthyOnExhausted(boolean unhealthyOnExhausted) {
+        this.routeControllerUnhealthyOnExhausted = unhealthyOnExhausted;
         return (T) this;
     }
 

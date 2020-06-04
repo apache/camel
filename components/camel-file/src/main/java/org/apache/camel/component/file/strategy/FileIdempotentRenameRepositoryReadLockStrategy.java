@@ -78,7 +78,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
 
         // check if we can begin on this file
         String key = asKey(file);
-        boolean answer = idempotentRepository.add(key);
+        boolean answer = idempotentRepository.add(exchange, key);
         if (!answer) {
             // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
@@ -89,7 +89,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
             answer = rename.acquireExclusiveReadLock(operations, file, exchange);
             if (!answer) {
                 // remove from idempontent as we did not acquire it from changed
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             }
         }
         return answer;
@@ -104,10 +104,10 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
         if (removeOnRollback) {
-            idempotentRepository.remove(key);
+            idempotentRepository.remove(exchange, key);
         } else {
             // okay we should not remove then confirm it instead
-            idempotentRepository.confirm(key);
+            idempotentRepository.confirm(exchange, key);
         }
 
         rename.releaseExclusiveReadLockOnRollback(operations, file, exchange);
@@ -117,10 +117,10 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
         if (removeOnCommit) {
-            idempotentRepository.remove(key);
+            idempotentRepository.remove(exchange, key);
         } else {
             // confirm on commit
-            idempotentRepository.confirm(key);
+            idempotentRepository.confirm(exchange, key);
         }
 
         rename.releaseExclusiveReadLockOnCommit(operations, file, exchange);

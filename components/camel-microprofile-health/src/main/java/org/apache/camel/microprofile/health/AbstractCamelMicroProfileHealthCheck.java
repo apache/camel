@@ -44,17 +44,17 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     public HealthCheckResponse call() {
         final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
         builder.name(getHealthCheckName());
+        builder.up();
 
         if (camelContext != null) {
             Collection<Result> results = HealthCheckHelper.invoke(camelContext,
                     (HealthCheckFilter) check ->
                             // skip context as we have our own context check
-                            check.getId().equals("context") || check.getGroup() != null && check.getGroup().equals(getHealthGroupFilterExclude()));
-            if (!results.isEmpty()) {
-                builder.up();
-            }
+                            check.getId().equals("context")
+                                    // or that its either supposed to be only a liveness or readiness and the Camel health check is not
+                                    || (isLiveness() && !check.isLiveness() || isReadiness() && !check.isReadiness()));
 
-            for (Result result: results) {
+            for (Result result : results) {
                 Map<String, Object> details = result.getDetails();
                 boolean enabled = true;
 
@@ -85,10 +85,18 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     }
 
     /**
-     * Gets the name of a specific health group to exclude when invoking a Camel HealthCheck
-     * @return the health group to exclude
+     * Whether this health check can be used for readiness checks
      */
-    abstract String getHealthGroupFilterExclude();
+    public boolean isReadiness() {
+        return true;
+    }
+
+    /**
+     * Whether this health check can be used for liveness checks
+     */
+    public boolean isLiveness() {
+        return true;
+    }
 
     /**
      * Gets the name of the health check which will be used as a heading for the associated checks.

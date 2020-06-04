@@ -80,8 +80,8 @@ public class XmlVerifierEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         Object ns = configuration.getOutputNodeSearch();
         if (ns instanceof String && ns.toString().startsWith("#")) {

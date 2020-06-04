@@ -83,7 +83,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      */
     default Optional<HealthCheck> getCheck(String id) {
         return stream()
-            .filter(check -> ObjectHelper.equal(check.getId(), id))
+            .filter(r -> ObjectHelper.equal(r.getId(), id) || ObjectHelper.equal(r.getId().replace("-health-check", ""), id))
             .findFirst();
     }
 

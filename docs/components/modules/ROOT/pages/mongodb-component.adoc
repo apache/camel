@@ -15,7 +15,7 @@
 
 [NOTE]
 ====
-MongoDB Camel component Use the Mongo Driver for Java 3.x.
+The MongoDB Camel component uses Mongo Java Driver 4.x.
 ====
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined

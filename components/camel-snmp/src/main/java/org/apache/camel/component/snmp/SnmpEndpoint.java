@@ -265,8 +265,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         URI uri = URI.create(getEndpointUri());
         String host = uri.getHost();
