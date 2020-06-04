@@ -18,9 +18,12 @@ package org.apache.camel.maven.config;
 
 import java.time.Duration;
 
-public class ConnectorConfigGeneratorUtils {
+public final class ConnectorConfigGeneratorUtils {
 
     private static final int ONE_UNIT = 1;
+
+    private ConnectorConfigGeneratorUtils() {       
+    }
 
     /**
      * This will print time in human readable format from milliseconds.
