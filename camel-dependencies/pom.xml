@@ -161,7 +161,7 @@
     <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
     <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <debezium-mysql-connector-version>8.0.16</debezium-mysql-connector-version>
-    <debezium-version>1.1.0.Final</debezium-version>
+    <debezium-version>1.1.2.Final</debezium-version>
     <deltaspike-version>1.9.0</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
