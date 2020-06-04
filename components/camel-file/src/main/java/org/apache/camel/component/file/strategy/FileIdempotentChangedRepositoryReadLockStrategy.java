@@ -86,7 +86,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
 
         // check if we can begin on this file
         String key = asKey(file);
-        boolean answer = idempotentRepository.add(key);
+        boolean answer = idempotentRepository.add(exchange, key);
         if (!answer) {
             // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
@@ -97,7 +97,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             answer = changed.acquireExclusiveReadLock(operations, file, exchange);
             if (!answer) {
                 // remove from idempontent as we did not acquire it from changed
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             }
         }
         return answer;
@@ -113,10 +113,10 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         String key = asKey(file);
         Runnable r = () -> {
             if (removeOnRollback) {
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             } else {
                 // okay we should not remove then confirm it instead
-                idempotentRepository.confirm(key);
+                idempotentRepository.confirm(exchange, key);
             }
 
             try {
@@ -143,10 +143,10 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         String key = asKey(file);
         Runnable r = () -> {
             if (removeOnCommit) {
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             } else {
                 // confirm on commit
-                idempotentRepository.confirm(key);
+                idempotentRepository.confirm(exchange, key);
             }
 
             try {
