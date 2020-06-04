@@ -162,26 +162,29 @@ function groupFrom(file) {
 }
 
 function compare(file1, file2) {
-    if (file1 === file2) return 0
-    if (titleFrom(file1).indexOf('AWS 2') > -1 && titleFrom(file2) == 'AWS') { return -1 }
-    return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
+    if (file1 == file2) return 0
+    return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1 : 1
 }
 
 function compareComponents(file1, file2) { 
-    var group1 = groupFrom(file1)
-    var group2 = groupFrom(file2)
-    if (file1 === file2) return 0
-    if (group1 == null && group2 == null) return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
-    if (titleFrom(file1) && group2 != null && group1 == null) {
-        if (titleFrom(file1).toUpperCase() == group2.toUpperCase()) return -1
-        return titleFrom(file1).toUpperCase() < group2.toUpperCase() ? -1: 1
+    if (file1 == file2) return 0    
+    const group1 = groupFrom(file1) ? groupFrom(file1).toUpperCase() : null
+    const group2 = groupFrom(file2) ? groupFrom(file2).toUpperCase() : null
+    const title1 = titleFrom(file1).toUpperCase()
+    const title2 = titleFrom(file2).toUpperCase()
+
+    if (group1 == null && group2 == null) return title1 < title2 ? -1 : 1
+    if (group2 != null && group1 == null) {
+        if (title1 == group2) return -1
+        return title1 < group2 ? -1 : 1
     }
-    if (titleFrom(file2) && group1 != null && group2 == null) {
-        if (titleFrom(file2).toUpperCase() == group1.toUpperCase()) return 1
-        return group1.toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
+    if (group1 != null && group2 == null) {
+        if (title2 == group1) return 1
+        return group1 < title2 ? -1 : 1
     }
     if (group1 != null && group2 != null) {
-        return group1.toUpperCase() < group2.toUpperCase() ? -1: 1
+        if (group1 == group2) return title1 < title2 ? -1 : 1
+        return group1 < group2 ? -1: 1
     }
 }
     
@@ -210,8 +213,7 @@ function createComponentNav() {
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
-                let attribute = groupFrom(file);
-                if (attribute != null) return `*** xref:${filepath}[${title}]`;
+                if (groupFrom(file) != null) return `*** xref:${filepath}[${title}]`;
                 return `** xref:${filepath}[${title}]`;
             }
         }))

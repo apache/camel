@@ -1,6 +1,6 @@
 = AWS2 Component
-:docTitle: AWS2
-:summary-group: AWS2
+:docTitle: AWS 2
+:summary-group: AWS 2
 
 *Since Camel {since}*
 
