@@ -71,9 +71,9 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
                          + "&traversableResolver=#myTraversableResolver" + "&constraintValidatorFactory=#myConstraintValidatorFactory", BeanValidatorEndpoint.class);
 
         assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", endpoint.getGroup());
-        assertSame(endpoint.getMessageInterpolator(), this.messageInterpolator);
-        assertSame(endpoint.getTraversableResolver(), this.traversableResolver);
-        assertSame(endpoint.getConstraintValidatorFactory(), this.constraintValidatorFactory);
+        assertSame(this.messageInterpolator, endpoint.getMessageInterpolator());
+        assertSame(this.traversableResolver, endpoint.getTraversableResolver());
+        assertSame(this.constraintValidatorFactory, endpoint.getConstraintValidatorFactory());
     }
 
     class MyMessageInterpolator implements MessageInterpolator {

@@ -148,6 +148,18 @@ public interface BeanValidatorComponentBuilderFactory {
             doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
+        /**
+         * To use a custom ValidatorFactory.
+         * 
+         * The option is a: <code>javax.validation.ValidatorFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default BeanValidatorComponentBuilder validatorFactory(
+                javax.validation.ValidatorFactory validatorFactory) {
+            doSetProperty("validatorFactory", validatorFactory);
+            return this;
+        }
     }
 
     class BeanValidatorComponentBuilderImpl
@@ -172,6 +184,7 @@ public interface BeanValidatorComponentBuilderFactory {
             case "messageInterpolator": ((BeanValidatorComponent) component).setMessageInterpolator((javax.validation.MessageInterpolator) value); return true;
             case "traversableResolver": ((BeanValidatorComponent) component).setTraversableResolver((javax.validation.TraversableResolver) value); return true;
             case "validationProviderResolver": ((BeanValidatorComponent) component).setValidationProviderResolver((javax.validation.ValidationProviderResolver) value); return true;
+            case "validatorFactory": ((BeanValidatorComponent) component).setValidatorFactory((javax.validation.ValidatorFactory) value); return true;
             default: return false;
             }
         }
