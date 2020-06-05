@@ -44,6 +44,7 @@
         <module>camel-javadoc-plugin</module>
         <module>camel-resources-plugin</module>
         <module>sync-properties-maven-plugin</module>
+        <module>camel-component-maven-plugin</module>
     </modules>
 
     <!-- Apply to children. -->
