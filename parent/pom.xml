@@ -433,7 +433,7 @@
         <netty40-version>4.0.56.Final</netty40-version>
         <networknt-json-schema-validator-version>1.0.40</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
-        <nitrite-version>3.4.1</nitrite-version>
+        <nitrite-version>3.4.2</nitrite-version>
         <!-- should be in-sync with deltaspike -->
         <openwebbeans1-version>1.2.7</openwebbeans1-version>
         <openwebbeans-version>1.7.3</openwebbeans-version>
