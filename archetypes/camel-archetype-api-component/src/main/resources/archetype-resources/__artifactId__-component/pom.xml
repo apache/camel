@@ -185,13 +185,13 @@
       <!-- generate camel meta-data -->
       <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
+        <artifactId>camel-component-maven-plugin</artifactId>
         <version>${camelVersion}</version>
         <executions>
           <execution>
             <id>generate</id>
             <goals>
-              <goal>generate-component</goal>
+              <goal>generate</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
