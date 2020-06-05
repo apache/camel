@@ -447,6 +447,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.awsTranslate();
     }
     /**
+     * AWS 2 Athena (camel-aws2-athena)
+     * Access AWS Athena service using AWS SDK version 2.x.
+     * 
+     * Category: cloud,database
+     * Since: 3.4
+     * Maven coordinates: org.apache.camel:camel-aws2-athena
+     */
+    static org.apache.camel.builder.component.dsl.Aws2AthenaComponentBuilderFactory.Aws2AthenaComponentBuilder aws2Athena() {
+        return org.apache.camel.builder.component.dsl.Aws2AthenaComponentBuilderFactory.aws2Athena();
+    }
+    /**
      * AWS 2 CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 

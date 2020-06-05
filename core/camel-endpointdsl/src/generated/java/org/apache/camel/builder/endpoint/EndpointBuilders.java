@@ -33,6 +33,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory,

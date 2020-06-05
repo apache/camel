@@ -86,6 +86,7 @@
         <include>org.apache.camel:camel-aws-swf</include>
         <include>org.apache.camel:camel-aws-translate</include>
         <include>org.apache.camel:camel-aws-xray</include>
+        <include>org.apache.camel:camel-aws2-athena</include>
         <include>org.apache.camel:camel-aws2-cw</include>
         <include>org.apache.camel:camel-aws2-ddb</include>
         <include>org.apache.camel:camel-aws2-ec2</include>
