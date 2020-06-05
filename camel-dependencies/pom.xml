@@ -343,7 +343,7 @@
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.1.6</jira-rest-client-api-version>
     <jmh-version>1.23</jmh-version>
-    <jnats-version>2.6.7</jnats-version>
+    <jnats-version>2.6.8</jnats-version>
     <jodatime2-bundle-version>2.10.5</jodatime2-bundle-version>
     <johnzon-version>1.2.6</johnzon-version>
     <jolokia-version>1.6.2</jolokia-version>
