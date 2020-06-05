@@ -781,6 +781,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS 2 Athena (camel-aws2-athena)
+     * Access AWS Athena service using AWS SDK version 2.x.
+     * 
+     * Category: cloud,database
+     * Since: 3.4
+     * Maven coordinates: org.apache.camel:camel-aws2-athena
+     * 
+     * Syntax: <code>aws2-athena:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     */
+    static org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.endpointBuilder("aws2-athena", path);
+    }
+    /**
+     * AWS 2 Athena (camel-aws2-athena)
+     * Access AWS Athena service using AWS SDK version 2.x.
+     * 
+     * Category: cloud,database
+     * Since: 3.4
+     * Maven coordinates: org.apache.camel:camel-aws2-athena
+     * 
+     * Syntax: <code>aws2-athena:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     */
+    static org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS 2 CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
      * 
