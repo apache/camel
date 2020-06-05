@@ -335,10 +335,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
             }
             if (definition.getRetriesExhaustedLogLevel() != null) {
-                answer.setRetriesExhaustedLogLevel(LoggingLevel.valueOf(definition.getRetriesExhaustedLogLevel()));
+                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetriesExhaustedLogLevel()));
             }
             if (definition.getRetryAttemptedLogLevel() != null) {
-                answer.setRetryAttemptedLogLevel(LoggingLevel.valueOf(definition.getRetryAttemptedLogLevel()));
+                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetryAttemptedLogLevel()));
             }
             if (definition.getRetryAttemptedLogInterval() != null) {
                 answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, definition.getRetryAttemptedLogInterval()));
