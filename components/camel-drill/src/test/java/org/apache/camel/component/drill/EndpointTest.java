@@ -17,8 +17,11 @@
 package org.apache.camel.component.drill;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EndpointTest extends CamelTestSupport {
 
@@ -29,7 +32,7 @@ public class EndpointTest extends CamelTestSupport {
     private static final DrillConnectionMode MODE = DrillConnectionMode.ZK;
 
     @Test
-    public void testZKJdbcURL() throws Exception {
+    void testZKJdbcURL() {
         Endpoint endpoint = context.getEndpoint("drill://" + HOST + "?port=" + PORT + "&directory=" + DIRECTORY + "&clusterId=" + CLUSTERID + "&mode=" + MODE);
 
         final String uri = "jdbc:drill:zk=" + HOST + ":" + PORT + "/" + DIRECTORY + "/" + CLUSTERID;

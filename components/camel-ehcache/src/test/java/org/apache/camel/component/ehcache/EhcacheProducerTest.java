@@ -23,7 +23,11 @@ import java.util.stream.Collectors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.ehcache.Cache;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EhcacheProducerTest extends EhcacheTestSupport {
 
@@ -32,7 +36,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     // ****************************
 
     @Test
-    public void testCacheClear() throws Exception {
+    void testCacheClear() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived((Object)null);
@@ -52,7 +56,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     // ****************************
 
     @Test
-    public void testCachePut() throws Exception {
+    void testCachePut() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val = generateRandomString();
@@ -77,7 +81,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testCachePutAll() throws Exception {
+    void testCachePutAll() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final Map<String, String> map = generateRandomMapOfString(3);
 
@@ -101,7 +105,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testCachePutIfAbsent() throws Exception {
+    void testCachePutIfAbsent() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val1 = generateRandomString();
@@ -142,7 +146,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     // ****************************
 
     @Test
-    public void testCacheGet() throws Exception {
+    void testCacheGet() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val = generateRandomString();
@@ -166,7 +170,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testCacheGetAll() throws Exception {
+    void testCacheGetAll() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
@@ -198,7 +202,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     // ****************************
 
     @Test
-    public void testCacheRemove() throws Exception {
+    void testCacheRemove() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val = generateRandomString();
@@ -222,7 +226,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testCacheRemoveIf() throws Exception {
+    void testCacheRemoveIf() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val1 = generateRandomString();
@@ -261,7 +265,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     }
 
     @Test
-    public void testCacheRemoveAll() throws Exception {
+    void testCacheRemoveAll() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
@@ -289,7 +293,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     // ****************************
 
     @Test
-    public void testCacheReplace() throws Exception {
+    void testCacheReplace() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
         final String key = generateRandomString();
         final String val1 = generateRandomString();
@@ -348,7 +352,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
     // ****************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")

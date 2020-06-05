@@ -26,7 +26,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
     private static final String ENDPOINT_MOCK = "mock:result";
@@ -42,7 +42,7 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
     private ProducerTemplate producer;
 
     @Test
-    public void checkAggregationFromOneRoute() throws Exception {
+    void checkAggregationFromOneRoute() throws Exception {
         mock.expectedMessageCount(VALUES.length);
         mock.expectedBodiesReceived(SUM);
 
@@ -68,10 +68,10 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(ENDPOINT_DIRECT)
                     .routeId("AggregatingRouteOne")
                     .aggregate(header(CORRELATOR))
