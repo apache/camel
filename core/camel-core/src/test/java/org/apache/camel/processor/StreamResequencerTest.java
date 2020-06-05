@@ -96,7 +96,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(header("seqnum")).stream().timeout(100).deliveryAttemptInterval(10).to("mock:result");
+                from("direct:start").resequence(header("seqnum")).stream().timeout(1000).deliveryAttemptInterval(10).to("mock:result");
                 // END SNIPPET: example
             }
         };
@@ -146,7 +146,7 @@ public class StreamResequencerTest extends ContextTestSupport {
             for (long i = start; i < end; i += increment) {
                 try {
                     // let's sleep randomly
-                    Thread.sleep(random.nextInt(20));
+                    Thread.sleep(random.nextInt(10));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
