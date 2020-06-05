@@ -447,7 +447,7 @@
     <netty40-version>4.0.56.Final</netty40-version>
     <networknt-json-schema-validator-version>1.0.40</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
-    <nitrite-version>3.4.1</nitrite-version>
+    <nitrite-version>3.4.2</nitrite-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
     <ognl-version>3.1.12</ognl-version>
     <okclient-version>3.14.7</okclient-version>
