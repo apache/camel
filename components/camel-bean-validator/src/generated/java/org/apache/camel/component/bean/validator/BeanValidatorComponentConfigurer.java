@@ -33,6 +33,8 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "traversableResolver": target.setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
         case "validationproviderresolver":
         case "validationProviderResolver": target.setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
+        case "validatorfactory":
+        case "validatorFactory": target.setValidatorFactory(property(camelContext, javax.validation.ValidatorFactory.class, value)); return true;
         default: return false;
         }
     }
@@ -47,6 +49,7 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         answer.put("messageInterpolator", javax.validation.MessageInterpolator.class);
         answer.put("traversableResolver", javax.validation.TraversableResolver.class);
         answer.put("validationProviderResolver", javax.validation.ValidationProviderResolver.class);
+        answer.put("validatorFactory", javax.validation.ValidatorFactory.class);
         return answer;
     }
 
@@ -68,6 +71,8 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "traversableResolver": return target.getTraversableResolver();
         case "validationproviderresolver":
         case "validationProviderResolver": return target.getValidationProviderResolver();
+        case "validatorfactory":
+        case "validatorFactory": return target.getValidatorFactory();
         default: return null;
         }
     }

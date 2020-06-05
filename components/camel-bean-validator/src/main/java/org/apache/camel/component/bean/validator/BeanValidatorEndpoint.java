@@ -170,14 +170,14 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         this.constraintValidatorFactory = constraintValidatorFactory;
     }
 
-    public ValidatorFactory getValidatorFactory() {
-        return validatorFactory;
-    }
-
     /**
      * To use a custom {@link ValidatorFactory}
      */
     public void setValidatorFactory(ValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;
+    }
+
+    public ValidatorFactory getValidatorFactory() {
+        return validatorFactory;
     }
 }

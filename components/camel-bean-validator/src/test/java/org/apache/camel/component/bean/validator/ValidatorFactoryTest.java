@@ -55,8 +55,8 @@ public class ValidatorFactoryTest extends CamelTestSupport {
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator:dummy?validatorFactory=#myValidatorFactory", BeanValidatorEndpoint.class);
         BeanValidatorProducer producer = (BeanValidatorProducer)endpoint.createProducer();
 
-        assertSame(endpoint.getValidatorFactory(), this.validatorFactory);
-        assertSame(producer.getValidatorFactory(), this.validatorFactory);
+        assertSame(this.validatorFactory, endpoint.getValidatorFactory());
+        assertSame(this.validatorFactory, producer.getValidatorFactory());
     }
 
     @DisabledOnOs(AIX)
@@ -67,8 +67,8 @@ public class ValidatorFactoryTest extends CamelTestSupport {
         BeanValidatorProducer producer = (BeanValidatorProducer)endpoint.createProducer();
 
         assertNull(endpoint.getValidatorFactory());
-        assertNotSame(endpoint.getValidatorFactory(), this.validatorFactory);
+        assertNotSame(this.validatorFactory, endpoint.getValidatorFactory());
         assertNotNull(producer.getValidatorFactory());
-        assertNotSame(producer.getValidatorFactory(), this.validatorFactory);
+        assertNotSame(this.validatorFactory, producer.getValidatorFactory());
     }
 }
