@@ -380,6 +380,27 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "Aws2AthenaComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws2-athena",
+    "title": "AWS 2 Athena",
+    "description": "Access AWS Athena service using AWS SDK version 2.x.",
+    "deprecated": false,
+    "firstVersion": "3.4.0",
+    "label": "cloud,database",
+    "javaType": "org.apache.camel.component.aws2.athena.Athena2Component",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-athena",
+    "version": "3.4.0-SNAPSHOT",
+    "scheme": "aws2-athena",
+    "extendsScheme": "",
+    "syntax": "aws2-athena:label",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Aws2CwComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-cw",

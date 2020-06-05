@@ -19,6 +19,7 @@
 ** xref:atomix-set-component.adoc[Atomix Set]
 ** xref:atomix-value-component.adoc[Atomix Value]
 ** xref:avro-component.adoc[Avro RPC]
+** xref:aws2-athena-component.adoc[AWS 2 Athena]
 ** xref:aws2-cw-component.adoc[AWS 2 CloudWatch]
 ** xref:aws2-ddb-component.adoc[AWS 2 DynamoDB]
 ** xref:aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams]
