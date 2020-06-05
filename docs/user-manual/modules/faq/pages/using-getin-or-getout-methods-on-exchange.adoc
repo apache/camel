@@ -20,7 +20,7 @@ message.
 [[UsinggetInorgetOutmethodsonExchange-Flowofanexchangethrougharoute]]
 == Flow of an exchange through a route
 
-image::images/using-getin-or-getout-methods-on-exchange/message-flow-in-route.png[image]
+image::using-getin-or-getout-methods-on-exchange/message-flow-in-route.png[image]
 
 * The out message from each step is used as the in message for the next
 step
