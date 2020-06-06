@@ -160,7 +160,7 @@ Camel-AWS2 IAM component provides the following operation on the producer side:
 --------------------------------------------------------------------------------
 from("direct:createUser")
     .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
-    .to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser")
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
 --------------------------------------------------------------------------------
 
 == Automatic detection of IamClient client in registry
@@ -177,7 +177,7 @@ In AWS IAM there are multiple operations you can submit, as an example for Creat
 ------------------------------------------------------------------------------------------------------
 from("direct:createUser")
      .setBody(CreateUserRequest.builder().userName("camel").build())
-    .to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true")
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser&pojoRequest=true")
 ------------------------------------------------------------------------------------------------------
 
 In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.

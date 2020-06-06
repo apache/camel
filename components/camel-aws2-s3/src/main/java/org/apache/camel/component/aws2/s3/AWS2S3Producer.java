@@ -129,7 +129,7 @@ public class AWS2S3Producer extends DefaultProducer {
         if (obj instanceof File) {
             filePayload = (File)obj;
         } else {
-            throw new IllegalArgumentException("aws-s3: MultiPart upload requires a File input.");
+            throw new IllegalArgumentException("aws2-s3: MultiPart upload requires a File input.");
         }
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
