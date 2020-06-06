@@ -8,6 +8,8 @@
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
 
 *Since Camel {since}*
 
