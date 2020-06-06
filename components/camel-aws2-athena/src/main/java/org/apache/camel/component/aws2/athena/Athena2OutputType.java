@@ -23,29 +23,29 @@ import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable
  * that will eventually yield all results, a static list of rows and next token, or a pointer to the results in S3.
  */
 public enum Athena2OutputType {
-  /**
-   * When using an endpoint that returns rows directly back to the caller, such as {@code getQueryResults}, use
-   * AWS 2 Athena {@link GetQueryResultsIterable} to return a streaming list of results.  Returning a streaming
-   * result means that no API requests happen until the streaming result is accessed the first time.
-   *
-   * <p>This is the type to use if you need to process large result sets in memory (as opposed to in another process
-   * like an EMR job), as the iterable returned using this method will stream results from AWS a page at a time,
-   * thus limiting the amount of memory consumed at any one point in time.
-   */
-  StreamList,
+    /**
+     * When using an endpoint that returns rows directly back to the caller, such as {@code getQueryResults}, use
+     * AWS 2 Athena {@link GetQueryResultsIterable} to return a streaming list of results.  Returning a streaming
+     * result means that no API requests happen until the streaming result is accessed the first time.
+     *
+     * <p>This is the type to use if you need to process large result sets in memory (as opposed to in another process
+     * like an EMR job), as the iterable returned using this method will stream results from AWS a page at a time,
+     * thus limiting the amount of memory consumed at any one point in time.
+     */
+    StreamList,
 
-  /**
-   * Return a static list of rows.  The amount of rows returned is limited to the max response size of Athena's
-   * {@code GetQueryResults} (currently 1,000).  Will also set the {@link Athena2Constants#NEXT_TOKEN} header
-   * to allow access to the next page of results.
-   *
-   * @see <a href="https://docs.aws.amazon.com/athena/latest/APIReference/API_GetQueryResults.html">GetQueryResults</a>
-   */
-  SelectList,
+    /**
+     * Return a static list of rows.  The amount of rows returned is limited to the max response size of Athena's
+     * {@code GetQueryResults} (currently 1,000).  Will also set the {@link Athena2Constants#NEXT_TOKEN} header
+     * to allow access to the next page of results.
+     *
+     * @see <a href="https://docs.aws.amazon.com/athena/latest/APIReference/API_GetQueryResults.html">GetQueryResults</a>
+     */
+    SelectList,
 
-  /**
-   * Return the path to the results in S3.  This may be preferred if you want to pass a pointer to the results to
-   * another process for handling.
-   */
-  S3Pointer
+    /**
+     * Return the path to the results in S3.  This may be preferred if you want to pass a pointer to the results to
+     * another process for handling.
+     */
+    S3Pointer
 }

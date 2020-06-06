@@ -42,105 +42,105 @@ import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable
 
 public class AmazonAthenaClientMock implements AthenaClient {
 
-  private Queue<String> startQueryExecutionResults = new LinkedList<>();
-  private Queue<QueryExecution> getQueryExecutionResults = new LinkedList<>();
+    private Queue<String> startQueryExecutionResults = new LinkedList<>();
+    private Queue<QueryExecution> getQueryExecutionResults = new LinkedList<>();
 
-  /**
-   * Optionally provide a FIFO queue of results in the order they should be returned for each call to
-   * {@link #startQueryExecution(StartQueryExecutionRequest)}.
-   *
-   * @param startQueryExecutionResults FIFO ordered queue of results in the order they will be returned
-   */
-  public void setStartQueryExecutionResults(LinkedList<String> startQueryExecutionResults) {
-    this.startQueryExecutionResults = startQueryExecutionResults;
-  }
-
-  /**
-   * Optionally provide a FIFO queue of results in the order they should be returned for each call to
-   * {@link #getQueryExecution(GetQueryExecutionRequest)}.
-   *
-   * @param getQueryExecutionResults FIFO ordered queue of results in the order they will be returned
-   */
-  public void setGetQueryExecutionResults(LinkedList<QueryExecution> getQueryExecutionResults) {
-    this.getQueryExecutionResults = getQueryExecutionResults;
-  }
-
-  @Override
-  public GetQueryExecutionResponse getQueryExecution(GetQueryExecutionRequest getQueryExecutionRequest)
-      throws SdkException {
-    QueryExecution defaultResult = QueryExecution.builder()
-        .queryExecutionId("11111111-1111-1111-1111-111111111111")
-        .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
-        .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-        .build();
-    QueryExecution result = getQueryExecutionResults.isEmpty() ? defaultResult : getQueryExecutionResults.poll();
-    
-    // if query execution id is 3333..., sleep for 500 ms to imitate a long running query
-    if ("33333333-3333-3333-3333-333333333333".equals(result.queryExecutionId())) {
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        // noop
-      }
+    /**
+     * Optionally provide a FIFO queue of results in the order they should be returned for each call to
+     * {@link #startQueryExecution(StartQueryExecutionRequest)}.
+     *
+     * @param startQueryExecutionResults FIFO ordered queue of results in the order they will be returned
+     */
+    public void setStartQueryExecutionResults(LinkedList<String> startQueryExecutionResults) {
+        this.startQueryExecutionResults = startQueryExecutionResults;
     }
 
-    return GetQueryExecutionResponse.builder()
-        .queryExecution(result)
-        .build();
-  }
+    /**
+     * Optionally provide a FIFO queue of results in the order they should be returned for each call to
+     * {@link #getQueryExecution(GetQueryExecutionRequest)}.
+     *
+     * @param getQueryExecutionResults FIFO ordered queue of results in the order they will be returned
+     */
+    public void setGetQueryExecutionResults(LinkedList<QueryExecution> getQueryExecutionResults) {
+        this.getQueryExecutionResults = getQueryExecutionResults;
+    }
 
-  @Override
-  public ListQueryExecutionsResponse listQueryExecutions(ListQueryExecutionsRequest listQueryExecutionsRequest)
-      throws SdkException {
-    return ListQueryExecutionsResponse.builder()
-        .queryExecutionIds(
-            "11111111-1111-1111-1111-111111111111",
-            "22222222-2222-2222-2222-222222222222"
-        )
-        .nextToken(listQueryExecutionsRequest.nextToken())
-        .build();
-  }
+    @Override
+    public GetQueryExecutionResponse getQueryExecution(GetQueryExecutionRequest getQueryExecutionRequest)
+        throws SdkException {
+        QueryExecution defaultResult = QueryExecution.builder()
+            .queryExecutionId("11111111-1111-1111-1111-111111111111")
+            .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
+            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+            .build();
+        QueryExecution result = getQueryExecutionResults.isEmpty() ? defaultResult : getQueryExecutionResults.poll();
 
-  @Override
-  public StartQueryExecutionResponse startQueryExecution(StartQueryExecutionRequest startQueryExecutionRequest)
-      throws SdkException {
-    String defaultResult = "11111111-1111-1111-1111-111111111111";
-    String result = startQueryExecutionResults.isEmpty() ? defaultResult : startQueryExecutionResults.poll();
-    
-    return StartQueryExecutionResponse.builder()
-        .queryExecutionId(result)
-        .build();
-  }
+        // if query execution id is 3333..., sleep for 500 ms to imitate a long running query
+        if ("33333333-3333-3333-3333-333333333333".equals(result.queryExecutionId())) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // noop
+            }
+        }
 
-  @Override
-  public GetQueryResultsResponse getQueryResults(GetQueryResultsRequest getQueryResultsRequest) throws SdkException {
-    return GetQueryResultsResponse.builder()
-        .nextToken(null)
-        .resultSet(ResultSet.builder()
-            .resultSetMetadata(ResultSetMetadata.builder()
-                .columnInfo(ColumnInfo.builder().name("id").build())
+        return GetQueryExecutionResponse.builder()
+            .queryExecution(result)
+            .build();
+    }
+
+    @Override
+    public ListQueryExecutionsResponse listQueryExecutions(ListQueryExecutionsRequest listQueryExecutionsRequest)
+        throws SdkException {
+        return ListQueryExecutionsResponse.builder()
+            .queryExecutionIds(
+                "11111111-1111-1111-1111-111111111111",
+                "22222222-2222-2222-2222-222222222222"
+            )
+            .nextToken(listQueryExecutionsRequest.nextToken())
+            .build();
+    }
+
+    @Override
+    public StartQueryExecutionResponse startQueryExecution(StartQueryExecutionRequest startQueryExecutionRequest)
+        throws SdkException {
+        String defaultResult = "11111111-1111-1111-1111-111111111111";
+        String result = startQueryExecutionResults.isEmpty() ? defaultResult : startQueryExecutionResults.poll();
+
+        return StartQueryExecutionResponse.builder()
+            .queryExecutionId(result)
+            .build();
+    }
+
+    @Override
+    public GetQueryResultsResponse getQueryResults(GetQueryResultsRequest getQueryResultsRequest) throws SdkException {
+        return GetQueryResultsResponse.builder()
+            .nextToken(null)
+            .resultSet(ResultSet.builder()
+                .resultSetMetadata(ResultSetMetadata.builder()
+                    .columnInfo(ColumnInfo.builder().name("id").build())
+                    .build())
+                .rows(Row.builder()
+                    .data(Datum.builder().varCharValue("42").build())
+                    .build())
                 .build())
-            .rows(Row.builder()
-                .data(Datum.builder().varCharValue("42").build())
-                .build())
-            .build())
-        .build();
-  }
+            .build();
+    }
 
-  @Override
-  public GetQueryResultsIterable getQueryResultsPaginator(GetQueryResultsRequest getQueryResultsRequest)
-      throws SdkException {
-    return new GetQueryResultsIterable(this, getQueryResultsRequest);
-  }
+    @Override
+    public GetQueryResultsIterable getQueryResultsPaginator(GetQueryResultsRequest getQueryResultsRequest)
+        throws SdkException {
+        return new GetQueryResultsIterable(this, getQueryResultsRequest);
+    }
 
-  @Override
-  public String serviceName() {
-    return null;
-  }
+    @Override
+    public String serviceName() {
+        return null;
+    }
 
-  @Override
-  public void close() {
-    // noop
-  }
+    @Override
+    public void close() {
+        // noop
+    }
 
 }
