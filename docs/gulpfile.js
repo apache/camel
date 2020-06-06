@@ -155,11 +155,39 @@ function titleFrom(file) {
     return maybeName[1];
 }
 
-function compare (file1, file2) {
-    if (file1 === file2) return 0
-    return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1: 1
+function groupFrom(file) {
+    var groupName = /(?::group: )(.*)/.exec(file.contents.toString())
+    if (groupName != null) return groupName[1];
+    return null;
 }
 
+function compare(file1, file2) {
+    if (file1 == file2) return 0
+    return titleFrom(file1).toUpperCase() < titleFrom(file2).toUpperCase() ? -1 : 1
+}
+
+function compareComponents(file1, file2) { 
+    if (file1 == file2) return 0    
+    const group1 = groupFrom(file1) ? groupFrom(file1).toUpperCase() : null
+    const group2 = groupFrom(file2) ? groupFrom(file2).toUpperCase() : null
+    const title1 = titleFrom(file1).toUpperCase()
+    const title2 = titleFrom(file2).toUpperCase()
+
+    if (group1 == null && group2 == null) return title1 < title2 ? -1 : 1
+    if (group2 != null && group1 == null) {
+        if (title1 == group2) return -1
+        return title1 < group2 ? -1 : 1
+    }
+    if (group1 != null && group2 == null) {
+        if (title2 == group1) return 1
+        return group1 < title2 ? -1 : 1
+    }
+    if (group1 != null && group2 != null) {
+        if (group1 == group2) return title1 < title2 ? -1 : 1
+        return group1 < group2 ? -1: 1
+    }
+}
+    
 function insertGeneratedNotice() {
     return inject(src('./generated.txt'), {
         name: 'generated',
@@ -180,11 +208,12 @@ function createComponentNav() {
     return src('component-nav.adoc.template')
         .pipe(insertGeneratedNotice())
         .pipe(inject(src(['components/modules/ROOT/pages/**/*.adoc', '!components/modules/ROOT/pages/index.adoc'])
-            .pipe(sort(compare)), {
+            .pipe(sort(compareComponents)), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
                 const title = titleFrom(file);
+                if (groupFrom(file) != null) return `*** xref:${filepath}[${title}]`;
                 return `** xref:${filepath}[${title}]`;
             }
         }))
