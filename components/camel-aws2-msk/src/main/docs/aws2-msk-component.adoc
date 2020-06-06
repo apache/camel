@@ -6,6 +6,7 @@
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
+:group: AWS 2
 
 *Since Camel {since}*
 

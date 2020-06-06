@@ -5,6 +5,7 @@
 :description: Security using Spring Security
 :since: 2.3
 :supportLevel: Stable
+:group: Spring
 
 *Since Camel {since}*
 

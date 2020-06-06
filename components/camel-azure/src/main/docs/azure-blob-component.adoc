@@ -6,6 +6,7 @@
 :since: 2.19
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+:group: Azure
 
 *Since Camel {since}*
 
