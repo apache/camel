@@ -51,9 +51,7 @@ public class Athena2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Athena2Configuration
-            configuration =
-            this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
+        Athena2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration, endpoint);

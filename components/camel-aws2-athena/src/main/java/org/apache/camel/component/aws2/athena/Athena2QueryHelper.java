@@ -133,10 +133,9 @@ class Athena2QueryHelper {
         long now = now();
         long millisWaited = now - this.startMs;
         if (millisWaited >= this.waitTimeout) {
-            LOG
-                .trace("AWS Athena start query execution waited for {}, which exceeded wait timeout of {}",
-                    millisWaited,
-                    this.waitTimeout);
+            LOG.trace("AWS Athena start query execution waited for {}, which exceeded wait timeout of {}",
+                millisWaited,
+                this.waitTimeout);
             return false;
         }
 
@@ -168,9 +167,8 @@ class Athena2QueryHelper {
             Thread.sleep(this.currentDelay);
         } catch (InterruptedException e) {
             this.interrupted = Thread.interrupted(); // store, then clear, interrupt status
-            LOG
-                .trace(
-                    "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
+            LOG.trace(
+                "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
         }
         this.currentDelay = this.delay;
     }
