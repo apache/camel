@@ -6,6 +6,7 @@
 :since: 2.17
 :supportLevel: Stable
 :component-header: Only producer is supported
+:group: Kubernetes
 
 *Since Camel {since}*
 
