@@ -2,7 +2,6 @@
 //attributes written by hand, not generated
 :docTitle: Hazelcast
 :since: 2.7
-:summary-group: Hazelcast
 
 *Since Camel {since}*
 

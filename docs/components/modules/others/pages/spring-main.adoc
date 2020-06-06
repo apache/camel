@@ -7,6 +7,8 @@
 :description: Camel Spring Main support
 :since: 3.2
 :supportLevel: Stable
+//Manually maintained attributes
+:group: Spring
 
 *Since Camel {since}*
 

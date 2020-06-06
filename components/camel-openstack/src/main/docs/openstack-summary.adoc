@@ -3,7 +3,6 @@
 //attributes written by hand, not generated
 :docTitle: Openstack
 :since: 2.19
-:summary-group: OpenStack
 
 *Since Camel {since}*
 

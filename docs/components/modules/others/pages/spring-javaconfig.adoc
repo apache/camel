@@ -7,6 +7,8 @@
 :description: Using Camel with Spring Java Configuration
 :since: 2.0
 :supportLevel: Stable
+//Manually maintained attributes
+:group: Spring
 
 *Since Camel {since}*
 
