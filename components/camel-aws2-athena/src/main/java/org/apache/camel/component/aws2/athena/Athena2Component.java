@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.athena;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -24,10 +27,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.Set;
-
 import software.amazon.awssdk.services.athena.AthenaClient;
 
 /**
@@ -52,11 +51,14 @@ public class Athena2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Athena2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
+        Athena2Configuration
+            configuration =
+            this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration, endpoint);
-        if (configuration.getAmazonAthenaClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonAthenaClient() == null && (configuration.getAccessKey() == null
+            || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or amazonAthenaClient must be specified");
         }
         return endpoint;

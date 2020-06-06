@@ -21,33 +21,33 @@ package org.apache.camel.component.aws2.athena;
  */
 public interface Athena2Constants {
 
-  // common
-  String OPERATION = "CamelAwsAthenaOperation";
-  String DATABASE = "CamelAwsAthenaDatabase";
-  String QUERY_EXECUTION_ID = "CamelAwsAthenaQueryExecutionId";
-  String WORK_GROUP = "CamelAwsAthenaWorkGroup";
-  String NEXT_TOKEN = "CamelAwsAthenaNextToken";
-  String MAX_RESULTS = "CamelAwsAthenaMaxResults";
-  String INCLUDE_TRACE = "CamelAwsAthenaIncludeTrace";
-  String OUTPUT_LOCATION = "CamelAwsAthenaOutputLocation";
-  String OUTPUT_TYPE = "CamelAwsAthenaOutputType";
-  String QUERY_EXECUTION_STATE = "CamelAwsAthenaQueryExecutionState"; // read only
+    // common
+    String OPERATION = "CamelAwsAthenaOperation";
+    String DATABASE = "CamelAwsAthenaDatabase";
+    String QUERY_EXECUTION_ID = "CamelAwsAthenaQueryExecutionId";
+    String WORK_GROUP = "CamelAwsAthenaWorkGroup";
+    String NEXT_TOKEN = "CamelAwsAthenaNextToken";
+    String MAX_RESULTS = "CamelAwsAthenaMaxResults";
+    String INCLUDE_TRACE = "CamelAwsAthenaIncludeTrace";
+    String OUTPUT_LOCATION = "CamelAwsAthenaOutputLocation";
+    String OUTPUT_TYPE = "CamelAwsAthenaOutputType";
+    String QUERY_EXECUTION_STATE = "CamelAwsAthenaQueryExecutionState"; // read only
 
-  // startQueryExecution
-  String CLIENT_REQUEST_TOKEN = "CamelAwsAthenaClientRequestToken";
-  String QUERY_STRING = "CamelAwsAthenaQueryString";
-  String ENCRYPTION_OPTION = "CamelAwsAthenaEncryptionOption";
-  String KMS_KEY = "CamelAwsAthenaKmsKey";
+    // startQueryExecution
+    String CLIENT_REQUEST_TOKEN = "CamelAwsAthenaClientRequestToken";
+    String QUERY_STRING = "CamelAwsAthenaQueryString";
+    String ENCRYPTION_OPTION = "CamelAwsAthenaEncryptionOption";
+    String KMS_KEY = "CamelAwsAthenaKmsKey";
 
-  String WAIT_TIMEOUT = "CamelAwsAthenaWaitTimeout";
-  String INITIAL_DELAY = "CamelAwsAthenaInitialDelay";
-  String DELAY = "CamelAwsAthenaDelay";
+    String WAIT_TIMEOUT = "CamelAwsAthenaWaitTimeout";
+    String INITIAL_DELAY = "CamelAwsAthenaInitialDelay";
+    String DELAY = "CamelAwsAthenaDelay";
 
-  String MAX_ATTEMPTS = "CamelAwsAthenaMaxAttempts";
-  String RETRY = "CamelAwsAthenaRetry";
-  String RESET_WAIT_TIMEOUT_ON_RETRY = "CamelAwsAthenaResetWaitTimeoutOnRetry";
-  String START_QUERY_EXECUTION_ATTEMPTS = "CamelAwsAthenaStartQueryExecutionAttempts"; // read only
-  String START_QUERY_EXECUTION_ELAPSED_MILLIS = "CamelAwsAthenaStartQueryExecutionElapsedMillis"; // read only
+    String MAX_ATTEMPTS = "CamelAwsAthenaMaxAttempts";
+    String RETRY = "CamelAwsAthenaRetry";
+    String RESET_WAIT_TIMEOUT_ON_RETRY = "CamelAwsAthenaResetWaitTimeoutOnRetry";
+    String START_QUERY_EXECUTION_ATTEMPTS = "CamelAwsAthenaStartQueryExecutionAttempts"; // read only
+    String START_QUERY_EXECUTION_ELAPSED_MILLIS = "CamelAwsAthenaStartQueryExecutionElapsedMillis"; // read only
 
 
 }

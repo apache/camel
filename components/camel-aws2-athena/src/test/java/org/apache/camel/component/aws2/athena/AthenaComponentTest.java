@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.aws2.athena;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -31,13 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import software.amazon.awssdk.services.athena.model.GetQueryExecutionResponse;
 import software.amazon.awssdk.services.athena.model.GetQueryResultsResponse;
 import software.amazon.awssdk.services.athena.model.ListQueryExecutionsResponse;
@@ -47,331 +42,348 @@ import software.amazon.awssdk.services.athena.model.QueryExecutionStatus;
 import software.amazon.awssdk.services.athena.model.ResultConfiguration;
 import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class AthenaComponentTest extends CamelTestSupport {
 
-  @EndpointInject("direct:start")
-  private ProducerTemplate template;
+    @EndpointInject("direct:start")
+    private ProducerTemplate template;
 
-  @EndpointInject("mock:result")
-  private MockEndpoint result;
+    @EndpointInject("mock:result")
+    private MockEndpoint result;
 
-  @BindToRegistry("amazonAthenaClient")
-  private AmazonAthenaClientMock client = new AmazonAthenaClientMock();
+    @BindToRegistry("amazonAthenaClient")
+    private AmazonAthenaClientMock client = new AmazonAthenaClientMock();
 
-  @Test
-  public void getQueryExecution() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void getQueryExecution() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:getQueryExecution", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
-      }
-    }).getMessage();
+        Message message = template.send("direct:getQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
+            }
+        }).getMessage();
 
-    assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
-    assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
 
-    GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
-    assertEquals("11111111-1111-1111-1111-111111111111", result.queryExecution().queryExecutionId());
+        GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
+        assertEquals("11111111-1111-1111-1111-111111111111", result.queryExecution().queryExecutionId());
 
-    assertMockEndpointsSatisfied();
-  }
+        assertMockEndpointsSatisfied();
+    }
 
-  @Test
-  public void getQueryResultsForStreamList() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void getQueryResultsForStreamList() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:getQueryResults", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.StreamList);
-      }
-    }).getMessage();
+        Message message = template.send("direct:getQueryResults", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.StreamList);
+            }
+        }).getMessage();
 
-    assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
 
-    GetQueryResultsIterable result = message.getBody(GetQueryResultsIterable.class);
-    List<GetQueryResultsResponse> responses = new ArrayList<>();
-    result.forEach(responses::add);
-    assertEquals(1, responses.size());
+        GetQueryResultsIterable result = message.getBody(GetQueryResultsIterable.class);
+        List<GetQueryResultsResponse> responses = new ArrayList<>();
+        result.forEach(responses::add);
+        assertEquals(1, responses.size());
 
-    assertMockEndpointsSatisfied();
-  }
+        assertMockEndpointsSatisfied();
+    }
 
-  @Test
-  public void getQueryResultsForSelectList() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void getQueryResultsForSelectList() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:getQueryResults", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.SelectList);
-      }
-    }).getMessage();
+        Message message = template.send("direct:getQueryResults", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.SelectList);
+            }
+        }).getMessage();
 
-    assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
 
-    GetQueryResultsResponse result = message.getBody(GetQueryResultsResponse.class);
-    assertEquals(1, result.resultSet().rows().size());
+        GetQueryResultsResponse result = message.getBody(GetQueryResultsResponse.class);
+        assertEquals(1, result.resultSet().rows().size());
 
-    assertMockEndpointsSatisfied();
-  }
+        assertMockEndpointsSatisfied();
+    }
 
-  @Test
-  public void getQueryResultsForS3Pointer() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void getQueryResultsForS3Pointer() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:getQueryResults", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.S3Pointer);
-      }
-    }).getMessage();
+        Message message = template.send("direct:getQueryResults", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.S3Pointer);
+            }
+        }).getMessage();
 
-    assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
-    assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
 
-    String result = message.getBody(String.class);
-    assertEquals("s3://bucket/file.csv", result);
+        String result = message.getBody(String.class);
+        assertEquals("s3://bucket/file.csv", result);
 
-    assertMockEndpointsSatisfied();
-  }
+        assertMockEndpointsSatisfied();
+    }
 
-  @Test
-  public void listQueryExecutions() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void listQueryExecutions() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:listQueryExecutions", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setHeader(Athena2Constants.MAX_RESULTS, 42);
-        exchange.getIn().setHeader(Athena2Constants.NEXT_TOKEN, "next-token");
-      }
-    }).getMessage();
+        Message message = template.send("direct:listQueryExecutions", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.MAX_RESULTS, 42);
+                exchange.getIn().setHeader(Athena2Constants.NEXT_TOKEN, "next-token");
+            }
+        }).getMessage();
 
-    assertEquals("next-token", message.getHeader(Athena2Constants.NEXT_TOKEN, String.class));
+        assertEquals("next-token", message.getHeader(Athena2Constants.NEXT_TOKEN, String.class));
 
-    ListQueryExecutionsResponse result = message.getBody(ListQueryExecutionsResponse.class);
-    assertEquals(Arrays.asList(
-        "11111111-1111-1111-1111-111111111111",
-        "22222222-2222-2222-2222-222222222222"),
-        result.queryExecutionIds());
-    assertEquals("next-token", result.nextToken());
+        ListQueryExecutionsResponse result = message.getBody(ListQueryExecutionsResponse.class);
+        assertEquals(Arrays.asList(
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222"),
+            result.queryExecutionIds());
+        assertEquals("next-token", result.nextToken());
 
-    assertMockEndpointsSatisfied();
-  }
+        assertMockEndpointsSatisfied();
+    }
 
-  @Test
-  public void startQueryExecution() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void startQueryExecution() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setBody("SELECT 1");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
-      }
-    }).getMessage();
+        Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+            }
+        }).getMessage();
 
-    assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
-    assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) >= 0);
+        assertEquals("11111111-1111-1111-1111-111111111111",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
+        assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) >= 0);
 
-    assertNull(message.getBody());
+        assertNull(message.getBody());
 
-    assertMockEndpointsSatisfied();
-  }
+        assertMockEndpointsSatisfied();
+    }
 
-  @Test
-  public void startQueryExecutionAndWaitForQueryCompletion() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void startQueryExecutionAndWaitForQueryCompletion() throws Exception {
+        result.expectedMessageCount(1);
 
-    Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setBody("SELECT 1");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
-        exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
-        exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
-      }
-    }).getMessage();
+        Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
+                exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
+            }
+        }).getMessage();
 
-    assertEquals("11111111-1111-1111-1111-111111111111", message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-    assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("11111111-1111-1111-1111-111111111111",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
-    assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
-    assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
+        assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
+        assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
 
-    GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
-    assertEquals("11111111-1111-1111-1111-111111111111", result.queryExecution().queryExecutionId());
-  }
+        GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
+        assertEquals("11111111-1111-1111-1111-111111111111", result.queryExecution().queryExecutionId());
+    }
 
-  @Test
-  public void startQueryExecutionAndWaitForQueryCompletionWithTransientErrors() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void startQueryExecutionAndWaitForQueryCompletionWithTransientErrors() throws Exception {
+        result.expectedMessageCount(1);
 
-    // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
-    client.setStartQueryExecutionResults(new LinkedList<>(Arrays.asList(
-        "11111111-1111-1111-1111-111111111111",
-        "22222222-2222-2222-2222-222222222222"
-    )));
+        // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
+        client.setStartQueryExecutionResults(new LinkedList<>(Arrays.asList(
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222"
+        )));
 
-    client.setGetQueryExecutionResults(new LinkedList<>(Arrays.asList(
-        QueryExecution.builder()
-            .queryExecutionId("11111111-1111-1111-1111-111111111111")
-            .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
-            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-            .build(),
-        QueryExecution.builder()
-            .queryExecutionId("22222222-2222-2222-2222-222222222222")
-            .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
-            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-            .build()
-    )));
+        client.setGetQueryExecutionResults(new LinkedList<>(Arrays.asList(
+            QueryExecution.builder()
+                .queryExecutionId("11111111-1111-1111-1111-111111111111")
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
+                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .build(),
+            QueryExecution.builder()
+                .queryExecutionId("22222222-2222-2222-2222-222222222222")
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
+                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .build()
+        )));
 
-    Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setBody("SELECT 1");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
-        exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
-        exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
-        exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
-        exchange.getIn().setHeader(Athena2Constants.MAX_ATTEMPTS, 2);
-        exchange.getIn().setHeader(Athena2Constants.RETRY, "always");
-      }
-    }).getMessage();
+        Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
+                exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
+                exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
+                exchange.getIn().setHeader(Athena2Constants.MAX_ATTEMPTS, 2);
+                exchange.getIn().setHeader(Athena2Constants.RETRY, "always");
+            }
+        }).getMessage();
 
-    assertEquals("22222222-2222-2222-2222-222222222222",
-        message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-    assertEquals(QueryExecutionState.SUCCEEDED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("22222222-2222-2222-2222-222222222222",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+        assertEquals(QueryExecutionState.SUCCEEDED,
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
-    assertEquals(2, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
-    assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
+        assertEquals(2, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
+        assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
 
-    GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
-    assertEquals("22222222-2222-2222-2222-222222222222", result.queryExecution().queryExecutionId());
-  }
+        GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
+        assertEquals("22222222-2222-2222-2222-222222222222", result.queryExecution().queryExecutionId());
+    }
 
-  @Test
-  public void startQueryExecutionAndWaitForQueryCompletionWithUnrecoverableErrors() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void startQueryExecutionAndWaitForQueryCompletionWithUnrecoverableErrors() throws Exception {
+        result.expectedMessageCount(1);
 
-    // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
-    client.setStartQueryExecutionResults(new LinkedList<>(Arrays.asList(
-        "11111111-1111-1111-1111-111111111111",
-        "22222222-2222-2222-2222-222222222222"
-    )));
+        // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
+        client.setStartQueryExecutionResults(new LinkedList<>(Arrays.asList(
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222"
+        )));
 
-    client.setGetQueryExecutionResults(new LinkedList<>(Arrays.asList(
-        QueryExecution.builder()
-            .queryExecutionId("11111111-1111-1111-1111-111111111111")
-            .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
-            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-            .build(),
-        QueryExecution.builder()
-            .queryExecutionId("22222222-2222-2222-2222-222222222222")
-            .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
-            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-            .build()
-    )));
+        client.setGetQueryExecutionResults(new LinkedList<>(Arrays.asList(
+            QueryExecution.builder()
+                .queryExecutionId("11111111-1111-1111-1111-111111111111")
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
+                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .build(),
+            QueryExecution.builder()
+                .queryExecutionId("22222222-2222-2222-2222-222222222222")
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.FAILED).build())
+                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .build()
+        )));
 
-    Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setBody("SELECT 1");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
-        exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
-        exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
-        exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
-        exchange.getIn().setHeader(Athena2Constants.MAX_ATTEMPTS, 2);
-        exchange.getIn().setHeader(Athena2Constants.RETRY, "always");
-      }
-    }).getMessage();
+        Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
+                exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
+                exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
+                exchange.getIn().setHeader(Athena2Constants.MAX_ATTEMPTS, 2);
+                exchange.getIn().setHeader(Athena2Constants.RETRY, "always");
+            }
+        }).getMessage();
 
-    assertEquals("22222222-2222-2222-2222-222222222222",
-        message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-    assertEquals(QueryExecutionState.FAILED, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("22222222-2222-2222-2222-222222222222",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+        assertEquals(QueryExecutionState.FAILED,
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
-    assertEquals(2, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
-    assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
+        assertEquals(2, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
+        assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 0);
 
-    GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
-    assertEquals("22222222-2222-2222-2222-222222222222", result.queryExecution().queryExecutionId());
-  }
+        GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
+        assertEquals("22222222-2222-2222-2222-222222222222", result.queryExecution().queryExecutionId());
+    }
 
-  @Test
-  public void startQueryExecutionAndWaitForQueryCompletionTimesOut() throws Exception {
-    result.expectedMessageCount(1);
+    @Test
+    public void startQueryExecutionAndWaitForQueryCompletionTimesOut() throws Exception {
+        result.expectedMessageCount(1);
 
-    // 3333... will be returned on the first call to startQueryExecution
-    client.setStartQueryExecutionResults(new LinkedList<>(Collections.singletonList(
-        "33333333-3333-3333-3333-333333333333"
-    )));
+        // 3333... will be returned on the first call to startQueryExecution
+        client.setStartQueryExecutionResults(new LinkedList<>(Collections.singletonList(
+            "33333333-3333-3333-3333-333333333333"
+        )));
 
-    client.setGetQueryExecutionResults(new LinkedList<>(Collections.singletonList(
-        QueryExecution.builder()
-            .queryExecutionId("33333333-3333-3333-3333-333333333333") // causes 500ms sleep
-            .status(QueryExecutionStatus.builder().state(QueryExecutionState.RUNNING).build()) // not complete
-            .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
-            .build()
-    )));
+        client.setGetQueryExecutionResults(new LinkedList<>(Collections.singletonList(
+            QueryExecution.builder()
+                .queryExecutionId("33333333-3333-3333-3333-333333333333") // causes 500ms sleep
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.RUNNING).build()) // not complete
+                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .build()
+        )));
 
-    Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
-      @Override
-      public void process(Exchange exchange) {
-        exchange.getIn().setBody("SELECT 1");
-        exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
-        exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 100); // insufficient for query execution time (500ms)
-        exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
-        exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
-        exchange.getIn().setHeader(Athena2Constants.MAX_ATTEMPTS, 1);
-        exchange.getIn().setHeader(Athena2Constants.RETRY, "always");
-      }
-    }).getMessage();
+        Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn()
+                    .setHeader(Athena2Constants.WAIT_TIMEOUT, 100); // insufficient for query execution time (500ms)
+                exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
+                exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
+                exchange.getIn().setHeader(Athena2Constants.MAX_ATTEMPTS, 1);
+                exchange.getIn().setHeader(Athena2Constants.RETRY, "always");
+            }
+        }).getMessage();
 
-    assertEquals("33333333-3333-3333-3333-333333333333",
-        message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
-    assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
-    assertEquals(QueryExecutionState.RUNNING, message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
+        assertEquals("33333333-3333-3333-3333-333333333333",
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class));
+        assertEquals("s3://bucket/file.csv", message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+        assertEquals(QueryExecutionState.RUNNING,
+            message.getHeader(Athena2Constants.QUERY_EXECUTION_STATE, QueryExecutionState.class));
 
-    assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
-    assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 500);
+        assertEquals(1, message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, Integer.class));
+        assertTrue(message.getHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, Integer.class) > 500);
 
-    GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
-    assertEquals("33333333-3333-3333-3333-333333333333", result.queryExecution().queryExecutionId());
-  }
+        GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
+        assertEquals("33333333-3333-3333-3333-333333333333", result.queryExecution().queryExecutionId());
+    }
 
-  @Override
-  protected RouteBuilder createRouteBuilder() {
-    return new RouteBuilder() {
-      @Override
-      public void configure() {
-        from("direct:getQueryExecution")
-            .to("aws2-athena://label?operation=getQueryExecution")
-            .to("mock:result");
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:getQueryExecution")
+                    .to("aws2-athena://label?operation=getQueryExecution")
+                    .to("mock:result");
 
-        from("direct:getQueryResults")
-            .to("aws2-athena://label?operation=getQueryResults")
-            .to("mock:result");
+                from("direct:getQueryResults")
+                    .to("aws2-athena://label?operation=getQueryResults")
+                    .to("mock:result");
 
-        from("direct:listQueryExecutions")
-            .to("aws2-athena://label?operation=listQueryExecutions")
-            .to("mock:result");
+                from("direct:listQueryExecutions")
+                    .to("aws2-athena://label?operation=listQueryExecutions")
+                    .to("mock:result");
 
-        from("direct:startQueryExecution")
-            .to("aws2-athena://label")
-            .to("mock:result");
-      }
-    };
-  }
+                from("direct:startQueryExecution")
+                    .to("aws2-athena://label")
+                    .to("mock:result");
+            }
+        };
+    }
 }
