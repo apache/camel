@@ -230,8 +230,7 @@ public class Athena2QueryHelperTest {
     @Test
     public void shouldRetryReturnsFalseWhenRetryIsNever() {
         Athena2QueryHelper helper = athena2QueryHelperWithRetry("never");
-        assertFalse(
-            helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
+        assertFalse(helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
     }
 
     @Test
@@ -243,15 +242,13 @@ public class Athena2QueryHelperTest {
     @Test
     public void shouldRetryReturnsTrueForGenericInternalError() {
         Athena2QueryHelper helper = athena2QueryHelperWithRetry("retryable");
-        assertTrue(
-            helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
+        assertTrue(helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "GENERIC_INTERNAL_ERROR")));
     }
 
     @Test
     public void shouldRetryReturnsTrueForExhaustedResourcedError() {
         Athena2QueryHelper helper = athena2QueryHelperWithRetry("retryable");
-        assertTrue(helper.shouldRetry(
-            newGetQueryExecutionResponse(QueryExecutionState.FAILED, "exhausted resources at this scale factor")));
+        assertTrue(helper.shouldRetry(newGetQueryExecutionResponse(QueryExecutionState.FAILED, "exhausted resources at this scale factor")));
     }
 
     @Test
