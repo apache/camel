@@ -40,9 +40,7 @@ public class AthenaComponentVerifierExtensionTest extends CamelTestSupport {
     public void testParameters() throws Exception {
         Component component = context().getComponent("aws2-athena");
 
-        ComponentVerifierExtension
-            verifier =
-            component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -51,9 +49,7 @@ public class AthenaComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("label", "l");
         parameters.put("operation", "startQueryExecution");
 
-        ComponentVerifierExtension.Result
-            result =
-            verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
@@ -61,9 +57,7 @@ public class AthenaComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivity() throws Exception {
         Component component = context().getComponent("aws2-athena");
-        ComponentVerifierExtension
-            verifier =
-            component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -72,9 +66,7 @@ public class AthenaComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("label", "l");
         parameters.put("operation", "startQueryExecution");
 
-        ComponentVerifierExtension.Result
-            result =
-            verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
@@ -82,9 +74,7 @@ public class AthenaComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivityAndRegion() throws Exception {
         Component component = context().getComponent("aws2-athena");
-        ComponentVerifierExtension
-            verifier =
-            component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -93,11 +83,8 @@ public class AthenaComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("label", "l");
         parameters.put("operation", "startQueryExecution");
 
-        ComponentVerifierExtension.Result
-            result =
-            verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 }
-

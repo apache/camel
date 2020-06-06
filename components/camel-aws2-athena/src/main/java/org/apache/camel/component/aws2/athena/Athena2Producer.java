@@ -81,8 +81,7 @@ public class Athena2Producer extends DefaultProducer {
         Athena2Operations operation = exchange.getIn().getHeader(Athena2Constants.OPERATION, Athena2Operations.class);
         if (operation == null) {
             Athena2Operations defaultOperation = Athena2Operations.startQueryExecution;
-            operation =
-                getConfiguration().getOperation() == null ? defaultOperation : getConfiguration().getOperation();
+            operation = getConfiguration().getOperation() == null ? defaultOperation : getConfiguration().getOperation();
         }
         return operation;
     }
@@ -94,12 +93,9 @@ public class Athena2Producer extends DefaultProducer {
         String queryExecutionId = determineQueryExecutionId(exchange);
         GetQueryExecutionResponse getQueryExecutionResponse = doGetQueryExecution(queryExecutionId, athenaClient);
         Message message = getMessageForResponse(exchange);
-        message.setHeader(Athena2Constants.QUERY_EXECUTION_ID,
-            getQueryExecutionResponse.queryExecution().queryExecutionId());
-        message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE,
-            getQueryExecutionResponse.queryExecution().status().state());
-        message.setHeader(Athena2Constants.OUTPUT_LOCATION,
-            getQueryExecutionResponse.queryExecution().resultConfiguration().outputLocation());
+        message.setHeader(Athena2Constants.QUERY_EXECUTION_ID, getQueryExecutionResponse.queryExecution().queryExecutionId());
+        message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, getQueryExecutionResponse.queryExecution().status().state());
+        message.setHeader(Athena2Constants.OUTPUT_LOCATION, getQueryExecutionResponse.queryExecution().resultConfiguration().outputLocation());
         message.setBody(getQueryExecutionResponse);
     }
 
@@ -133,8 +129,7 @@ public class Athena2Producer extends DefaultProducer {
             GetQueryExecutionResponse response = doGetQueryExecution(queryExecutionId, athenaClient);
             String outputLocation = response.queryExecution().resultConfiguration().outputLocation();
             message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, response.queryExecution().status().state());
-            message.setHeader(Athena2Constants.OUTPUT_LOCATION,
-                response.queryExecution().resultConfiguration().outputLocation());
+            message.setHeader(Athena2Constants.OUTPUT_LOCATION, response.queryExecution().resultConfiguration().outputLocation());
             message.setBody(outputLocation);
         } else {
             throw new IllegalArgumentException("AWS Athena output type [" + outputType + "] is not supported.  Must be "
@@ -143,9 +138,7 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private Athena2OutputType determineOutputType(Exchange exchange) {
-        Athena2OutputType
-            outputType =
-            exchange.getIn().getHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.class);
+        Athena2OutputType outputType = exchange.getIn().getHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.class);
 
         if (ObjectHelper.isEmpty(outputType)) {
             outputType = getConfiguration().getOutputType();
@@ -214,10 +207,10 @@ public class Athena2Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setHeader(Athena2Constants.QUERY_EXECUTION_ID, queryExecutionId);
-        message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE,
-            getQueryExecutionResponse == null ? null : getQueryExecutionResponse.queryExecution().status().state());
-        message.setHeader(Athena2Constants.OUTPUT_LOCATION, getQueryExecutionResponse == null ? null
-            : getQueryExecutionResponse.queryExecution().resultConfiguration().outputLocation());
+        message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, getQueryExecutionResponse == null
+            ? null : getQueryExecutionResponse.queryExecution().status().state());
+        message.setHeader(Athena2Constants.OUTPUT_LOCATION, getQueryExecutionResponse == null
+            ? null : getQueryExecutionResponse.queryExecution().resultConfiguration().outputLocation());
 
         message.setHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, athena2QueryHelper.getAttempts());
         message.setHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, athena2QueryHelper.getElapsedMillis());
@@ -371,8 +364,7 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private EncryptionOption determineEncryptionOption(final Exchange exchange) {
-        EncryptionOption encryptionOption =
-            exchange.getIn().getHeader(Athena2Constants.ENCRYPTION_OPTION, EncryptionOption.class);
+        EncryptionOption encryptionOption = exchange.getIn().getHeader(Athena2Constants.ENCRYPTION_OPTION, EncryptionOption.class);
 
         if (ObjectHelper.isEmpty(encryptionOption)) {
             encryptionOption = getConfiguration().getEncryptionOption();

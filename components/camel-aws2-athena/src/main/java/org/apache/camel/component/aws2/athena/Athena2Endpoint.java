@@ -66,9 +66,8 @@ public class Athena2Endpoint extends DefaultEndpoint {
     public void doInit() throws Exception {
         super.doInit();
 
-        athenaClient =
-            configuration.getAmazonAthenaClient() != null ? configuration.getAmazonAthenaClient()
-                : createAthenaClient();
+        athenaClient = configuration.getAmazonAthenaClient() != null ? configuration.getAmazonAthenaClient()
+            : createAthenaClient();
     }
 
     @Override
@@ -103,25 +102,17 @@ public class Athena2Endpoint extends DefaultEndpoint {
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper
-            .isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI
-                proxyEndpoint =
-                URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration
-                    .getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials
-                cred =
-                AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder =
-                    clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
