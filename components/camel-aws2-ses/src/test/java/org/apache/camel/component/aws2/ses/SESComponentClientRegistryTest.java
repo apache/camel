@@ -30,7 +30,7 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = new Ses2Component(context);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws-ses://from@example.com");
+        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
         component.close();
@@ -41,7 +41,7 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
 
         Ses2Component component = new Ses2Component(context);
         assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws-ses://from@example.com");
+            component.createEndpoint("aws2-ses://from@example.com");
         });
         component.close();
     }

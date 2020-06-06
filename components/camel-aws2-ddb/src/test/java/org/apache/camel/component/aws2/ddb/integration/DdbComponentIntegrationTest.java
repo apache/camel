@@ -137,7 +137,7 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws-ddb://" + tableName + "?" + "region=" + region + "&accessKey=" + accessKey + "&secretKey=RAW(" + secretKey + ")");
+                from("direct:start").to("aws2-ddb://" + tableName + "?" + "region=" + region + "&accessKey=" + accessKey + "&secretKey=RAW(" + secretKey + ")");
             }
         };
     }

@@ -30,7 +30,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws-ecs://TestDomain");
+        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEcsClient());
     }
@@ -40,7 +40,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
 
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws-ecs://TestDomain");
+            component.createEndpoint("aws2-ecs://TestDomain");
         });
     }
 }

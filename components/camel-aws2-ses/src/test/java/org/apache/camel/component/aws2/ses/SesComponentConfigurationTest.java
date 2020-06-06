@@ -168,7 +168,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws-ses://from@example.com?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
