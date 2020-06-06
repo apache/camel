@@ -5,6 +5,7 @@
 :description: Using Camel with Spring Java Configuration
 :since: 2.0
 :supportLevel: Stable
+:group: Spring
 
 *Since Camel {since}*
 
