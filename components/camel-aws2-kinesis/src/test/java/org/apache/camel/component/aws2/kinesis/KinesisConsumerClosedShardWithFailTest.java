@@ -80,6 +80,7 @@ public class KinesisConsumerClosedShardWithFailTest {
         when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class))).thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
     }
 
+    @Test
     public void itObtainsAShardIteratorOnFirstPoll() throws Exception {
         assertThrows(ReachedClosedStatusException.class, () -> {
             undertest.poll();
