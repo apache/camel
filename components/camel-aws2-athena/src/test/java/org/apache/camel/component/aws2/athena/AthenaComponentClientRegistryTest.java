@@ -16,29 +16,29 @@
  */
 package org.apache.camel.component.aws2.athena;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class AthenaComponentClientRegistryTest extends CamelTestSupport {
 
-  @Test
-  public void createEndpointWithMinimalAthenaClientConfiguration() throws Exception {
-    AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
-    context.getRegistry().bind("amazonAthenaClient", clientMock);
-    Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
-    Athena2Endpoint endpoint = (Athena2Endpoint) component.createEndpoint("aws2-athena://label");
+    @Test
+    public void createEndpointWithMinimalAthenaClientConfiguration() throws Exception {
+        AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
+        context.getRegistry().bind("amazonAthenaClient", clientMock);
+        Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
+        Athena2Endpoint endpoint = (Athena2Endpoint) component.createEndpoint("aws2-athena://label");
 
-    assertEquals(clientMock, endpoint.getConfiguration().getAmazonAthenaClient());
-  }
+        assertEquals(clientMock, endpoint.getConfiguration().getAmazonAthenaClient());
+    }
 
-  @Test
-  public void createEndpointWithMinimalAthenaClientMisconfiguration() throws Exception {
-    Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
-    assertThrows(IllegalArgumentException.class, () -> {
-      component.createEndpoint("aws2-athena://label");
-    });
-  }
+    @Test
+    public void createEndpointWithMinimalAthenaClientMisconfiguration() throws Exception {
+        Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-athena://label");
+        });
+    }
 }
