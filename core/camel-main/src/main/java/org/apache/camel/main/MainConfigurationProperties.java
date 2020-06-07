@@ -46,6 +46,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private List<Object> configurations = new ArrayList<>();
 
     // extended configuration
+    private final HealthConfigurationProperties healthConfigurationProperties = new HealthConfigurationProperties(this);
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
     private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
     private final FaultToleranceConfigurationProperties faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
@@ -53,6 +54,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // extended
     // --------------------------------------------------------------
+
+    /**
+     * To configure Health Check
+     */
+    public HealthConfigurationProperties health() {
+        return healthConfigurationProperties;
+    }
 
     /**
      * To configure Circuit Breaker EIP with Hystrix
