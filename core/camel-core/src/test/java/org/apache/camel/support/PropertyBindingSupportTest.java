@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.PropertiesComponent;
 import org.junit.Test;
 
 /**
@@ -70,6 +71,42 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals("Acme", foo.getBar().getWork().getName());
 
         assertTrue("Should bind all properties", prop.isEmpty());
+    }
+
+    @Test
+    public void testProperty() throws Exception {
+        PropertiesComponent pc = context.getPropertiesComponent();
+        Properties prop = new Properties();
+        prop.setProperty("customerName", "James");
+        prop.setProperty("customerAge", "33");
+        prop.setProperty("workKey", "customerWork");
+        prop.setProperty("customerWork", "Acme");
+        pc.setInitialProperties(prop);
+
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "#property:customerName");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "#property:customerAge");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work.id", "456");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work.name", "#property:{{workKey}}");
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(456, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        try {
+            PropertyBindingSupport.build().bind(context, foo, "name", "#property:unknown");
+            fail("Should have thrown exception");
+        } catch (PropertyBindingException e) {
+            assertEquals("name", e.getPropertyName());
+            assertEquals("#property:unknown", e.getValue());
+            assertEquals("Property with key unknown not found by properties component", e.getCause().getMessage());
+        }
     }
 
     @Test
