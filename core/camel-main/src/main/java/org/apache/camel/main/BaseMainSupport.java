@@ -98,7 +98,6 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String SENSITIVE_KEYS = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
     private static final String VALID_THREAD_POOL_KEYS = "id|poolSize|maxPoolSize|keepAliveTime|timeUnit|maxQueueSize|allowCoreThreadTimeout|rejectedPolicy";
-    private static final String VALID_HEALTH_KEYS = "id|enabled|interval|failureThreshold";
 
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
@@ -727,10 +726,10 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(16);
                 validateOptionAndValue(key, option, value);
                 threadPoolProperties.put(optionKey(option), value);
-            } else if (key.startsWith("camel.health")) {
+            } else if (key.startsWith("camel.health.")) {
                 // grab the value
                 String value = prop.getProperty(key);
-                String option = key.substring(12);
+                String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 healthProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
@@ -802,7 +801,10 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!healthProperties.isEmpty()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
-            setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+            HealthConfigurationProperties health = mainConfigurationProperties.health();
+            setPropertiesOnTarget(camelContext, health, healthProperties, "camel.health.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            // TODO: setup health check via HealthConfigurationProperties
         }
 
         // log which options was not set
@@ -933,6 +935,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    @Deprecated
     private void setHealthCheckProperties(CamelContext camelContext, Map<String, Object> healthCheckProperties,
                                           boolean failIfNotSet, Map<String, String> autoConfiguredProperties) {
 
@@ -978,9 +981,9 @@ public abstract class BaseMainSupport extends BaseService {
             Map<String, String> map = checks.computeIfAbsent(id, o -> new HashMap<>());
             map.put(optionKey(key), value);
 
-            if (failIfNotSet && !VALID_HEALTH_KEYS.contains(key)) {
-                throw new PropertyBindingException("HealthCheckConfiguration", key, value);
-            }
+//            if (failIfNotSet && !VALID_HEALTH_KEYS.contains(key)) {
+//                throw new PropertyBindingException("HealthCheckConfiguration", key, value);
+//            }
 
             autoConfiguredProperties.put("camel.health" + k, value);
         });
