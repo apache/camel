@@ -158,8 +158,13 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
     @Override
     public Optional<String> resolveProperty(String key) {
-        String value = parseUri(key, propertiesLookup);
-        return Optional.of(value);
+        try {
+            String value = parseUri(key, propertiesLookup);
+            return Optional.of(value);
+        } catch (IllegalArgumentException e) {
+            // property not found
+            return Optional.empty();
+        }
     }
 
     @Override

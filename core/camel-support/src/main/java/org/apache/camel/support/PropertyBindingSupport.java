@@ -28,11 +28,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
@@ -51,6 +53,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
  *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
  *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
+ *     <li>reference by property placeholder id - Values can refer to a property placeholder key with #property:myKey</li>
  *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
@@ -639,7 +642,8 @@ public final class PropertyBindingSupport {
     private static Object resolveValue(CamelContext context, Object target, String name, Object value,
                                        boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter) throws Exception {
         if (value instanceof String) {
-            if (value.toString().equals("#autowired")) {
+            String str = value.toString();
+            if (str.equals("#autowired")) {
                 // we should get the type from the setter
                 Method method = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter, ignoreCase);
                 if (method != null) {
@@ -654,6 +658,16 @@ public final class PropertyBindingSupport {
                     }
                 } else {
                     throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
+                }
+            } else if (str.startsWith("#property:")) {
+                String key = str.substring(10);
+                // the key may have property placeholder so resolve those first
+                key = context.resolvePropertyPlaceholders(key);
+                Optional<String> resolved = context.getPropertiesComponent().resolveProperty(key);
+                if (resolved.isPresent()) {
+                    value = resolved.get();
+                } else {
+                    throw new IllegalArgumentException("Property with key " + key + " not found by properties component");
                 }
             } else {
                 value = resolveBean(context, name, value);
@@ -856,7 +870,25 @@ public final class PropertyBindingSupport {
      * @return <tt>true</tt> if its a reference parameter
      */
     private static boolean isReferenceParameter(String parameter) {
-        return parameter != null && parameter.trim().startsWith("#");
+        if (parameter == null) {
+            return false;
+        }
+        parameter = parameter.trim();
+        if (!parameter.startsWith("#")) {
+            return false;
+        }
+
+        // non reference parameters are
+        // #bean: #class: #type: #property: #autowired
+        if (parameter.equals("#autowired")
+                || parameter.startsWith("#bean:")
+                || parameter.startsWith("#class:")
+                || parameter.startsWith("#type")
+                || parameter.startsWith("#property")) {
+            return false;
+        }
+
+        return true;
     }
 
     private static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters) throws Exception {
