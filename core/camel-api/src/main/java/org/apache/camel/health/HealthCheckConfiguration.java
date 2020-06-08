@@ -22,31 +22,40 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
 
+/**
+ * Configuration for {@link HealthCheck}.
+ */
 public class HealthCheckConfiguration implements Cloneable {
 
-    /**
-     * Set if the check associated to this configuration is enabled or not.
-     */
+    private String parent;
     private boolean enabled = true;
-
-    /**
-     * Set the check interval in milli seconds.
-     */
     private long interval;
-
-    /**
-     * Set the number of failure before reporting the service as un-healthy.
-     */
     private int failureThreshold;
 
     // *************************************************
     // Properties
     // *************************************************
 
+    public String getParent() {
+        return parent;
+    }
+
+    /**
+     * The id of the health check such as routes or registry (can use * as wildcard)
+     */
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Set if the check associated to this configuration is enabled or not.
+     *
+     * Is default enabled.
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -55,6 +64,9 @@ public class HealthCheckConfiguration implements Cloneable {
         return interval;
     }
 
+    /**
+     * Set the check interval in milli seconds.
+     */
     public void setInterval(long interval) {
         this.interval = interval;
     }
@@ -63,6 +75,9 @@ public class HealthCheckConfiguration implements Cloneable {
         return failureThreshold;
     }
 
+    /**
+     * Set the number of failure before reporting the service as un-healthy.
+     */
     public void setFailureThreshold(int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
@@ -84,6 +99,7 @@ public class HealthCheckConfiguration implements Cloneable {
     // *************************************************
 
     public static final class Builder implements org.apache.camel.Builder<HealthCheckConfiguration> {
+        private String parent;
         private Boolean enabled;
         private Long interval;
         private Integer failureThreshold;
@@ -93,6 +109,9 @@ public class HealthCheckConfiguration implements Cloneable {
 
         public Builder complete(HealthCheckConfiguration template) {
             if (template != null) {
+                if (this.parent == null) {
+                    this.parent = template.parent;
+                }
                 if (this.enabled == null) {
                     this.enabled = template.enabled;
                 }
@@ -104,6 +123,11 @@ public class HealthCheckConfiguration implements Cloneable {
                 }
             }
 
+            return this;
+        }
+
+        public Builder parent(String parent) {
+            this.parent = parent;
             return this;
         }
 
@@ -136,6 +160,9 @@ public class HealthCheckConfiguration implements Cloneable {
         @Override
         public HealthCheckConfiguration build() {
             HealthCheckConfiguration conf = new HealthCheckConfiguration();
+            if (parent != null) {
+                conf.setParent(parent);
+            }
             if (enabled != null) {
                 conf.setEnabled(enabled);
             }

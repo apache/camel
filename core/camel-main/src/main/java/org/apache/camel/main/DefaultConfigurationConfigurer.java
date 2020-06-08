@@ -221,7 +221,7 @@ public final class DefaultConfigurationConfigurer {
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean
      * or in camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
      */
-    public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
+    public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
@@ -388,6 +388,10 @@ public final class DefaultConfigurationConfigurer {
 
         // set the default thread pool profile if defined
         initThreadPoolProfiles(registry, camelContext);
+    }
+
+    public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
+        // additional configuration
     }
 
     private static <T> T getSingleBeanOfType(Registry registry, Class<T> type) {

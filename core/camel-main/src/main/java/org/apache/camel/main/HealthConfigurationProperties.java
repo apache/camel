@@ -33,7 +33,7 @@ public class HealthConfigurationProperties {
     private Boolean contextEnabled;
     private Boolean routesEnabled;
     private Boolean registryEnabled;
-    private Map<String, HealthConfiguration> config = new HashMap<>();
+    private Map<String, HealthCheckConfigurationProperties> config = new HashMap<>();
 
     public HealthConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -47,6 +47,9 @@ public class HealthConfigurationProperties {
         return enabled;
     }
 
+    /**
+     * Whether health check is enabled globally
+     */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
@@ -55,6 +58,11 @@ public class HealthConfigurationProperties {
         return contextEnabled;
     }
 
+    /**
+     * Whether context health check is enabled
+     *
+     * Is default enabled
+     */
     public void setContextEnabled(Boolean contextEnabled) {
         this.contextEnabled = contextEnabled;
     }
@@ -63,6 +71,11 @@ public class HealthConfigurationProperties {
         return routesEnabled;
     }
 
+    /**
+     * Whether routes health check is enabled
+     *
+     * Is default enabled
+     */
     public void setRoutesEnabled(Boolean routesEnabled) {
         this.routesEnabled = routesEnabled;
     }
@@ -71,49 +84,70 @@ public class HealthConfigurationProperties {
         return registryEnabled;
     }
 
+    /**
+     * Whether registry health check is enabled
+     *
+     * Is default enabled
+     */
     public void setRegistryEnabled(Boolean registryEnabled) {
         this.registryEnabled = registryEnabled;
     }
 
-    public Map<String, HealthConfiguration> getConfig() {
+    public Map<String, HealthCheckConfigurationProperties> getConfig() {
         return config;
     }
 
-    public void setConfig(Map<String, HealthConfiguration> config) {
+    /**
+     * Set additional {@link HealthConfigurationProperties} for fine grained configuration of health checks.
+     */
+    public void setConfig(Map<String, HealthCheckConfigurationProperties> config) {
         this.config = config;
     }
 
-    // TODO: Fluent builder
-
-    @Configurer
-    public static class HealthConfiguration {
-
-        private Boolean enabled;
-        private Long interval;
-        private Integer failureThreshold;
-
-        public Boolean getEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(Boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public Long getInterval() {
-            return interval;
-        }
-
-        public void setInterval(Long interval) {
-            this.interval = interval;
-        }
-
-        public Integer getFailureThreshold() {
-            return failureThreshold;
-        }
-
-        public void setFailureThreshold(Integer failureThreshold) {
-            this.failureThreshold = failureThreshold;
-        }
+    /**
+     * Whether health check is enabled globally
+     */
+    public HealthConfigurationProperties withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
+
+    /**
+     * Whether context health check is enabled
+     *
+     * Is default enabled
+     */
+    public HealthConfigurationProperties withContextEnabled(boolean contextEnabled) {
+        this.contextEnabled = contextEnabled;
+        return this;
+    }
+
+    /**
+     * Whether routes health check is enabled
+     *
+     * Is default enabled
+     */
+    public HealthConfigurationProperties withRoutesEnabled(boolean routesEnabled) {
+        this.routesEnabled = routesEnabled;
+        return this;
+    }
+
+    /**
+     * Whether registry health check is enabled
+     *
+     * Is default enabled
+     */
+    public HealthConfigurationProperties withRegistryEnabled(boolean registryEnabled) {
+        this.registryEnabled = registryEnabled;
+        return this;
+    }
+
+    /**
+     * Additional {@link HealthConfigurationProperties} for fine grained configuration of health checks.
+     */
+    public HealthConfigurationProperties addConfig(String id, HealthCheckConfigurationProperties config) {
+        this.config.put(id, config);
+        return this;
+    }
+
 }
