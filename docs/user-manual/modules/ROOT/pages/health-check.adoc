@@ -70,14 +70,14 @@ They are all enabled by default. However you can configure them, for example to 
 
 [source,properties]
 ----
-# global option to turn health-check off (will not install healt-check)
+# global option to turn health-check off (will not install health-check)
 ### camel.health.enabled=false
 
 # allows to enable or disable health-checks from startup
 # for example to only use context health-check
-camel.health.context=true
-camel.health.registry=false
-camel.health.routes=false
+camel.health.contextEnabled=true
+camel.health.routesEnabled=false
+camel.health.registryEnabled=false
 ----
 
 == Configuring routes health-check
@@ -85,23 +85,23 @@ camel.health.routes=false
 The `routes` health check supports filtering by route id, or endpoint uri using a pattern style (* as wildcard, and regexp supported).
 For example to turn off all routes that are from kafka, you can do:
 
-NOTE: Notice the syntax is a double map `[][]` to first index the health check by id (eg `routes`), and then
-      the 2nd `[]` is the route id pattern. The double map `[][]` syntax is also supported for custom health checks
-      that are of type `HealthCheckRepository`.
+NOTE: Notice the syntax is a map `[]` where the key is the route id pattern. Its important to set the `parent`
+option to refer to what health-check this configuration applies for such as `routes` or `registry`.
 
 [source,properties]
 ----
-camel.health[routes][kafka*].enabled=false
-camel.health[routes][kafka*].failure-threshold=3
+camel.health.config[kafka*].parent=routes
+camel.health.config[kafka*].enabled=false
 ----
 
 It's possible to set a default fallback configuration using `[*]` as the route id:
 [source,properties]
 ----
-camel.health[routes][kafka*].enabled=false
-camel.health[routes][kafka*].failure-threshold=3
-camel.health[routes][*].enabled=true
-camel.health[routes][*].failure-threshold=10
+camel.health.config[kafka*].parent=routes
+camel.health.config[kafka*].enabled=false
+camel.health.config[*].parent=routes
+camel.health.config[*].enabled=true
+camel.health.config[*].failure-threshold=10
 ----
 
 == JMX management
