@@ -34,8 +34,8 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.service.ServiceHelper;
@@ -748,7 +748,16 @@ public final class PropertyBindingSupport {
                 value = resolveValue(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter);
             }
         }
-        boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter, ignoreCase);
+        // use configurer if possible
+        boolean hit = false;
+        GeneratedPropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+        if (configurer != null) {
+            hit = configurer.configure(context, target, name, value, ignoreCase);
+        }
+        if (!hit) {
+            // fallback to reflection based
+            hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter, ignoreCase);
+        }
         if (!hit && mandatory) {
             // there is no setter with this given name, so lets report this as a problem
             throw new IllegalArgumentException("Cannot find setter method: " + name + " on bean: " + target + " of type: " + target.getClass().getName() + " when binding property: " + ognlPath);
@@ -767,7 +776,19 @@ public final class PropertyBindingSupport {
             key = property.substring(0, pos);
         }
 
-        Object answer = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(target, key, defaultValue, ignoreCase);
+        // use configurer if possible
+        Object answer = null;
+        GeneratedPropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+        if (configurer instanceof PropertyConfigurerGetter) {
+            answer = ((PropertyConfigurerGetter) configurer).getOptionValue(target, key, ignoreCase);
+            if (answer == null) {
+                answer = defaultValue;
+            }
+        }
+        if (answer == null) {
+            // fallback to reflection based
+            answer = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(target, key, defaultValue, ignoreCase);
+        }
         if (answer instanceof Map && lookupKey != null) {
             Map map = (Map) answer;
             answer = map.getOrDefault(lookupKey, defaultValue);
@@ -851,7 +872,16 @@ public final class PropertyBindingSupport {
             String value = v != null ? v.toString() : null;
             if (isReferenceParameter(value)) {
                 try {
-                    boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), target, name, null, value, true, false, false);
+                    // use configurer if possible
+                    boolean hit = false;
+                    GeneratedPropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+                    if (configurer != null) {
+                        hit = configurer.configure(context, target, name, value, false);
+                    }
+                    if (!hit) {
+                        // fallback to reflection
+                        hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), target, name, null, value, true, false, false);
+                    }
                     if (hit) {
                         // must remove as its a valid option and we could configure it
                         it.remove();
