@@ -41,6 +41,7 @@
 *** xref:aws-sdb-component.adoc[AWS SimpleDB]
 *** xref:aws-translate-component.adoc[AWS Translate]
 ** xref:aws2-summary.adoc[AWS 2]
+*** xref:aws2-athena-component.adoc[AWS 2 Athena]
 *** xref:aws2-cw-component.adoc[AWS 2 CloudWatch]
 *** xref:aws2-ddb-component.adoc[AWS 2 DynamoDB]
 *** xref:aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams]
@@ -59,7 +60,6 @@
 *** xref:aws2-sns-component.adoc[AWS 2 Simple Notification System (SNS)]
 *** xref:aws2-sqs-component.adoc[AWS 2 Simple Queue Service (SQS)]
 *** xref:aws2-translate-component.adoc[AWS 2 Translate]
->>>>>>> CAMEL-14910: compile and build to generate the docs and components
 ** xref:azure-summary.adoc[Azure]
 *** xref:azure-storage-blob-component.adoc[Azure Storage Blob Service]
 *** xref:azure-blob-component.adoc[Azure Storage Blob Service (Legacy)]
