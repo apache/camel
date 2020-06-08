@@ -7,6 +7,7 @@
 ** xref:camel-jar-dependencies.adoc[Camel JAR Dependencies]
 ** xref:camel-boot.adoc[Camel Boot]
 ** xref:camel-maven-plugin.adoc[Camel Maven Plugin] 
+** xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] 
 ** xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin]
 ** xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 ** xref:configuring-camel.adoc[Configuring Camel]
