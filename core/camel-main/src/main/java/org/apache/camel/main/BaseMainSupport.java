@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -664,7 +663,7 @@ public abstract class BaseMainSupport extends BaseService {
         // configure the common/default options
         DefaultConfigurationConfigurer.configure(camelContext, config);
         // lookup and configure SPI beans
-        DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
+        DefaultConfigurationConfigurer.afterConfigure(camelContext);
 
         // now configure context/hystrix/resilience4j/rest with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
@@ -801,10 +800,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!healthProperties.isEmpty()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
-            HealthConfigurationProperties health = mainConfigurationProperties.health();
-            setPropertiesOnTarget(camelContext, health, healthProperties, "camel.health.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-            // TODO: setup health check via HealthConfigurationProperties
+            setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
 
         // log which options was not set
@@ -855,6 +851,9 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.warn("Property not auto-configured: camel.health{}={}", k, v);
             });
         }
+
+        // and call after all properties are set
+        DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
     }
 
     private void setThreadPoolProfileProperties(CamelContext camelContext, Map<String, Object> threadPoolProperties,
@@ -935,9 +934,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    @Deprecated
     private void setHealthCheckProperties(CamelContext camelContext, Map<String, Object> healthCheckProperties,
-                                          boolean failIfNotSet, Map<String, String> autoConfiguredProperties) {
+                                          boolean failIfNotSet, Map<String, String> autoConfiguredProperties) throws Exception {
 
         HealthCheckRegistry hcr = camelContext.getExtension(HealthCheckRegistry.class);
         if (hcr == null) {
@@ -945,162 +943,87 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
-        // grab global option for enabled or disabled
-        String global = (String) healthCheckProperties.remove(".enabled");
-        if (global != null) {
-            hcr.setEnabled(CamelContextHelper.parseBoolean(camelContext, global));
-            autoConfiguredProperties.put("camel.health.enabled", global);
-        }
+        HealthConfigurationProperties health = mainConfigurationProperties.health();
 
-        // common health checks to make them easy to turn on|off
-        String contextEnabled = (String) healthCheckProperties.remove(".context.enabled");
-        if (contextEnabled != null) {
-            autoConfiguredProperties.put("camel.health.context.enabled", contextEnabled);
-        }
-        String routesEnabled = (String) healthCheckProperties.remove(".routes.enabled");
-        if (routesEnabled != null) {
-            autoConfiguredProperties.put("camel.health.routes.enabled", routesEnabled);
-        }
-        String registryEnabled = (String) healthCheckProperties.remove(".registry.enabled");
-        if (registryEnabled != null) {
-            autoConfiguredProperties.put("camel.health.registry.enabled", registryEnabled);
-        }
-
-        Map<String, Map<String, String>> checks = new LinkedHashMap<>();
-        // the id of the health-check is in the key [xx]
-        healthCheckProperties.forEach((k, v) -> {
-            String id = StringHelper.between(k, "[", "].");
-            if (id == null) {
-                throw new IllegalArgumentException("Invalid syntax for key: camel.health" + k + " should be: camel.health[id]");
+        // extract all config to know their parent ids so we can set the values afterwards
+        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(healthCheckProperties, "config", false);
+        Map<String, HealthCheckConfigurationProperties> hcConfigs = new HashMap<>();
+        // build set of configuration objects
+        for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {
+            String parent = StringHelper.between(entry.getKey(), "[", "]");
+            if (parent != null) {
+                HealthCheckConfigurationProperties hcp = hcConfigs.get(parent);
+                if (hcp == null) {
+                    hcp = new HealthCheckConfigurationProperties();
+                    hcConfigs.put(parent, hcp);
+                }
             }
-            String key = StringHelper.after(k, "].");
-            String value = v.toString();
-            if (key == null) {
-                throw new PropertyBindingException("HealthCheckConfiguration", k, value);
-            }
-            Map<String, String> map = checks.computeIfAbsent(id, o -> new HashMap<>());
-            map.put(optionKey(key), value);
+        }
+        if (health.getConfig() != null) {
+            health.getConfig().putAll(hcConfigs);
+        } else {
+            health.setConfig(hcConfigs);
+        }
 
-//            if (failIfNotSet && !VALID_HEALTH_KEYS.contains(key)) {
-//                throw new PropertyBindingException("HealthCheckConfiguration", key, value);
-//            }
+        setPropertiesOnTarget(camelContext, health, healthCheckProperties, "camel.health.",
+                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
-            autoConfiguredProperties.put("camel.health" + k, value);
-        });
-        // clear as we have validated all parameters
-        healthCheckProperties.clear();
-
+        if (health.getEnabled() != null) {
+            hcr.setEnabled(health.getEnabled());
+        }
         // context is enabled by default
-        if (hcr.isEnabled() && (!checks.containsKey("context") || contextEnabled != null)) {
+        if (hcr.isEnabled() && (!health.getConfig().containsKey("context") || health.getContextEnabled() != null)) {
             HealthCheck hc = (HealthCheck) hcr.resolveById("context");
             if (hc != null) {
-                if (contextEnabled != null) {
-                    hc.getConfiguration().setEnabled(CamelContextHelper.parseBoolean(camelContext, contextEnabled));
+                if (health.getContextEnabled() != null) {
+                    hc.getConfiguration().setEnabled(health.getContextEnabled());
                 }
                 hcr.register(hc);
             }
         }
         // routes is enabled by default
-        if (hcr.isEnabled() && (!checks.containsKey("routes") || routesEnabled != null)) {
+        if (hcr.isEnabled() && (!health.getConfig().containsKey("routes") || health.getRoutesEnabled() != null)) {
             HealthCheckRepository hc = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
             if (hc != null) {
-                if (routesEnabled != null) {
-                    hc.setEnabled(CamelContextHelper.parseBoolean(camelContext, routesEnabled));
+                if (health.getRoutesEnabled() != null) {
+                    hc.setEnabled(health.getRoutesEnabled());
                 }
                 hcr.register(hc);
             }
         }
         // registry is enabled by default
-        if (hcr.isEnabled() && (!checks.containsKey("registry") || registryEnabled != null)) {
+        if (hcr.isEnabled() && (!health.getConfig().containsKey("registry") || health.getRegistryEnabled() != null)) {
             hcr.getRepository("registry").ifPresent(h -> {
-                if (registryEnabled != null) {
-                    h.setEnabled(CamelContextHelper.parseBoolean(camelContext, registryEnabled));
+                if (health.getRegistryEnabled() != null) {
+                    h.setEnabled(health.getRegistryEnabled());
                 }
             });
         }
 
-        // extract all keys that are for sub configuration (such as fine grained on routes)
-        Map<String, Map<String, String>> subConfig = new LinkedHashMap<>();
-        Iterator<String> it = checks.keySet().iterator();
-        while (it.hasNext()) {
-            String key = it.next();
-            // the key have their starting [ and ] removed, so we look for sub keys via [id][id2].key
-            if (key.contains("][")) {
-                String newKey = key.replace("][", ":");
-                subConfig.put(newKey, checks.get(key));
-                it.remove();
-            }
-        }
-
         // configure health checks configurations
-        for (String id : checks.keySet()) {
-            Map<String, String> map = checks.get(id);
-            String enabled = map.remove("enabled");
-            String interval = map.remove("interval");
-            String failureThreshold = map.remove("failureThreshold");
-
-            HealthCheckConfiguration hcc = new HealthCheckConfiguration();
-            if (enabled != null) {
-                hcc.setEnabled(CamelContextHelper.parseBoolean(camelContext, enabled));
-            }
-            if (interval != null) {
-                hcc.setInterval(CamelContextHelper.parseDuration(camelContext, interval).toMillis());
-            }
-            if (failureThreshold != null) {
-                hcc.setFailureThreshold(CamelContextHelper.parseInt(camelContext, failureThreshold));
-            }
-
+        for (String id : health.getConfig().keySet()) {
+            HealthCheckConfiguration hcc = health.getConfig().get(id);
+            String parent = hcc.getParent();
             // lookup health check by id
-            Object hc = hcr.getCheck(id).orElse(null);
+            Object hc = hcr.getCheck(parent).orElse(null);
             if (hc == null) {
-                hc = hcr.resolveById(id);
+                hc = hcr.resolveById(parent);
                 if (hc == null) {
-                    LOG.warn("Cannot resolve HealthCheck with id: " + id + " from classpath.");
+                    LOG.warn("Cannot resolve HealthCheck with id: " + parent + " from classpath.");
                     continue;
                 }
                 hcr.register(hc);
                 if (hc instanceof HealthCheck) {
+                    ((HealthCheck) hc).getConfiguration().setParent(hcc.getParent());
                     ((HealthCheck) hc).getConfiguration().setEnabled(hcc.isEnabled());
                     ((HealthCheck) hc).getConfiguration().setFailureThreshold(hcc.getFailureThreshold());
                     ((HealthCheck) hc).getConfiguration().setInterval(hcc.getInterval());
                 } else if (hc instanceof HealthCheckRepository) {
                     ((HealthCheckRepository) hc).setEnabled(hcc.isEnabled());
+                    ((HealthCheckRepository) hc).addConfiguration(id, hcc);
                 }
             }
         }
-
-        // apply sub configuration for health check repositories
-
-        // for example you can specify for all
-        // camel.health[routes][*].interval = 10s
-        //
-        // ... or per id
-        //
-        // camel.health[routes][timer].enabled = true
-        // camel.health[routes][timer].interval = 10s
-        // camel.health[routes][timer].failure-threshold = 5
-        subConfig.forEach((k, v) -> {
-            String key = StringHelper.after(k, ":");
-            Map configs = v;
-            String enabled = (String) configs.remove("enabled");
-            String interval = (String) configs.remove("interval");
-            String failureThreshold = (String) configs.remove("failureThreshold");
-            HealthCheckConfiguration hcc = new HealthCheckConfiguration();
-            if (enabled != null) {
-                hcc.setEnabled(CamelContextHelper.parseBoolean(camelContext, enabled));
-            }
-            if (interval != null) {
-                hcc.setInterval(CamelContextHelper.parseDuration(camelContext, interval).toMillis());
-            }
-            if (failureThreshold != null) {
-                hcc.setFailureThreshold(CamelContextHelper.parseInt(camelContext, failureThreshold));
-            }
-            String id = StringHelper.before(k, ":");
-            Object obj = hcr.resolveById(id);
-            if (obj instanceof HealthCheckRepository) {
-                ((HealthCheckRepository) obj).addConfiguration(key, hcc);
-            }
-        });
     }
 
     private void bindBeansToRegistry(CamelContext camelContext, Map<String, Object> properties,
