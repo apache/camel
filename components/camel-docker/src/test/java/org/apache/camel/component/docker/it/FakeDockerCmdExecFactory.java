@@ -96,12 +96,7 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     public FakeDockerCmdExecFactory() {
     }
-
-    @Override
-    public void init(DockerClientConfig dockerClientConfig) {
-        // Noop
-    }
-
+    
     @Override
     public VersionCmd.Exec createVersionCmdExec() {
         return new VersionCmd.Exec() {
@@ -456,4 +451,28 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     public Exec pruneCmdExec() {
         return null;
     }
+
+	@Override
+	public com.github.dockerjava.api.command.SaveImagesCmd.Exec createSaveImagesCmdExec() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public com.github.dockerjava.api.command.ListSecretsCmd.Exec createListSecretsCmdExec() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public com.github.dockerjava.api.command.CreateSecretCmd.Exec createCreateSecretCmdExec() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public com.github.dockerjava.api.command.RemoveSecretCmd.Exec createRemoveSecretCmdExec() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
