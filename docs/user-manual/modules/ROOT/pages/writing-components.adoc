@@ -20,7 +20,19 @@ following line -- `class=com.example.CustomComponent`.
 Users can then either explicitly create your component, configure it and
 register with a `CamelContext` or users can use a URI which auto-creates your component.
 
-*Note:* It is recommended to bootstrap your initial component using xref:camel-maven-archetypes.adoc[Camel Maven Archetypes], as it will give you all the necessary bits to start developing your component with ease.
+[NOTE]
+====
+
+It is recommended to bootstrap your initial component using xref:camel-maven-archetypes.adoc[Camel Maven Archetypes], as it will give you all the necessary bits to start developing your component with ease.
+
+====
+
+[NOTE]
+====
+
+You will need as well to make sure to have xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] included in your component's `pom.xml` file, order to generate all the necessary metadata and Java files for your component.
+
+====
 
 [[WritingComponents-WritingEndpoints]]
 == Writing Endpoints
