@@ -118,22 +118,46 @@ pop3://host:port?password=foo
 [[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
 === Referring beans from Endpoint URIs
 
-*Since Camel 2.0*
-
 When configuring endpoints using URI syntax you can now refer to beans
-in the Registry using the `#` notation.
+in the Registry using the `#bean:id` notation.
 
-If the parameter value starts with a `#` sign then Camel will lookup in
+NOTE: The older syntax with just `#id` has been deprecated due to ambiguity
+as Camel supports a number of additional functions that start with the # notation.
+
+If the parameter value starts with a `#bean:` sign then Camel will lookup in
 the Registry for a bean of the given type. For
 instance:
 
 [source]
 ----
-file://inbox?sorter=#mySpecialFileSorter
+file://inbox?sorter=#bean:mySpecialFileSorter
 ----
 
 Will lookup a bean with the id `mySpecialFileSorter` in the
 Registry.
+
+Camel also supports to refer to beans by their class type.
+
+[[HowdoIconfigureendpoints-ReferringbeansbytypefromEndpointURIs]]
+=== Referring beans by type from Endpoint URIs
+
+When configuring endpoints using URI syntax you can now refer to bean by type (class name)
+using the `#type:fullyQualifiedName` notation.
+
+If the parameter value starts with a `#type:` sign then Camel will load the
+class with the given name, and create an instanace of the bean using its _no-arg_ constructor:
+
+[source]
+----
+file://inbox?sorter=#type:com.foo.MySpecialSorter
+----
+
+If you need to provide parameters to the constructor, then you should use `#class:` notation instead:
+
+[source]
+----
+file://inbox?sorter=#class:com.foo.MySpecialSorter(10, 'Hello world', true)
+----
 
 [[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
 === Configuring parameter values using raw values, eg such as passwords
@@ -162,7 +186,7 @@ actual password would be as typed, eg `se+re?t&23`.
 [[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
 === Using property placeholders
 
-Camel have extensive support for using property placeholders, which you
+Camel has extensive support for using property placeholders, which you
 can read more about here. For
 example in the ftp example above we can externalize the password to a
 `.properties` file.
@@ -174,7 +198,7 @@ documentation for more details.
 
 [source,xml]
 ----
-<camelContext ...>
+<camelContext>
    <propertyPlaceholder id="properties" location="myftp.properties"/>
    ...
 </camelContext>
@@ -213,6 +237,30 @@ myFtpPassword=se+re?t&23
 To understand more about property placeholders, read the
 documentation.
 
+In Camel 3.4 you can use an alternative than RAW to refer to a property placeholder by its
+key, as discussed in the following section.
+
+=== Referring to a property placeholder
+
+*Since Camel 3.4*
+
+When using `{{key}}` in configuring endpoint URIs then Camel will replace the `{{key}}` while parsing the endpoint URI.
+This has its pros but also a few cons, such as when using sensitive information such as passwords. As we have seen
+in the previous section you can use RAW() syntax. Instead of using RAW() you can use `#property:key` notation,
+as shown in the example below:
+
+[source,java]
+----
+.to("ftp:joe@myftpserver.com?password=#property:myFtpPassword&binary=true")
+----
+
+... and in XML:
+
+[source,xml]
+----
+<to uri="ftp:joe@myftpserver.com?password=#property:myFtpPassword&amp;binary=true"/>
+----
+
 [[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
 == Configuring URIs using endpoint with bean property style
 
@@ -227,7 +275,7 @@ routes refer to the endpoints using their shorthand ids.
 
 [source,xml]
 ----
-<camelContext ...>
+<camelContext>
  
   <endpoint id="foo" uri="ftp://foo@myserver">
     <property key="password" value="secret"/>
@@ -242,8 +290,6 @@ routes refer to the endpoints using their shorthand ids.
   </route>
 </camelContext>
 ----
-
- 
 
 In the example above, the endpoint with id `foo`, is defined using
 `<endpoint>` which under the covers assembles this as an URI, with all the
@@ -260,8 +306,6 @@ as:
   <property key="ftpClient.serverLanguageCode" value="fr"/>
 </endpoint>
 ----
-
- 
 
 [[HowdoIconfigureendpoints-Configuringlongurisusingnewlines]]
 == Configuring long URIs using new lines
@@ -286,7 +330,7 @@ shown below:
 </route>
 ----
 
-Notice that it still requires to use escape `&` as `&amp;` in XML. Also you
+Notice that it still requires escaping `&` as `&amp;` in XML. Also you
 can have multiple options in one line, eg this is the same:
 
 [source,xml]
