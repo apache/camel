@@ -2794,6 +2794,11 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Using ReactiveExecutor: {}", getReactiveExecutor());
         }
 
+        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        if (hcr != null && hcr.isEnabled()) {
+            LOG.info("Using HealthCheck: {}", hcr.getId());
+        }
+
         // start routes
         if (doNotStartRoutesOnFirstStart) {
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
@@ -2803,11 +2808,6 @@ public abstract class AbstractCamelContext extends BaseService
         EventHelper.notifyCamelContextRoutesStarting(this);
         internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
         EventHelper.notifyCamelContextRoutesStarted(this);
-
-        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
-        if (hcr != null && hcr.isEnabled()) {
-            LOG.debug("HealthCheck module loaded ({})", hcr.getId());
-        }
 
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
