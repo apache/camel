@@ -39,13 +39,14 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.Invocation;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doCallRealMethod;
