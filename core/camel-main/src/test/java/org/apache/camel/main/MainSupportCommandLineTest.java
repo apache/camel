@@ -19,8 +19,7 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 public class MainSupportCommandLineTest {
 
     private class MyMainSupport extends MainCommandLineSupport {

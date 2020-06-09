@@ -18,10 +18,10 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainRouteOrderedTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+public class MainRouteOrderedTest {
 
     @Test
     public void testOrdered() throws Exception {

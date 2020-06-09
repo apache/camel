@@ -19,10 +19,11 @@ package org.apache.camel.main;
 import java.util.Properties;
 
 import org.apache.camel.component.seda.SedaComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ServicesAutoConfigurationTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+public class ServicesAutoConfigurationTest {
     @Test
     public void testComponentAutoConfiguredWhenGlobalAutoConfigurationIsDisabled() {
         Properties properties = new Properties();

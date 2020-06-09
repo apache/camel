@@ -19,10 +19,11 @@ package org.apache.camel.main.xml;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.Main;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainXmlTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+public class MainXmlTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {

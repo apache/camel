@@ -22,10 +22,11 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStop;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ContextEventsTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ContextEventsTest {
     @Test
     public void testEvents() throws Exception {
         MyConfig config = new MyConfig();

@@ -16,17 +16,23 @@
  */
 package org.apache.camel.main;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainPropertyPlaceholderTest extends Assert {
-    @Test(expected = IllegalArgumentException.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class MainPropertyPlaceholderTest {
+    @Test
     public void testDefaultPropertyPlaceholderLocationDisabled() {
         Main main = new Main();
         try {
             main.setDefaultPropertyPlaceholderLocation("false");
             main.start();
             main.getCamelContext().resolvePropertyPlaceholders("{{hello}}");
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // ok
         } finally {
             main.stop();
         }
