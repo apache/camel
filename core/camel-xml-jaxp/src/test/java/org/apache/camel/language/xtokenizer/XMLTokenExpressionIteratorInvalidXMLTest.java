@@ -26,13 +26,15 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
  */
-public class XMLTokenExpressionIteratorInvalidXMLTest extends Assert {
+public class XMLTokenExpressionIteratorInvalidXMLTest {
     private static final String DATA_TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"utf-u\"?>"
         + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
@@ -68,9 +70,9 @@ public class XMLTokenExpressionIteratorInvalidXMLTest extends Assert {
         }
 
         if (error) {
-            assertNotNull("the error expected", exp);
+            assertNotNull(exp, "the error expected");
         } else {
-            assertNull("no error expected", exp);
+            assertNull(exp, "no error expected");
         }
     }
 
