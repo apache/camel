@@ -22,12 +22,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ManagementStrategy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MainTest extends Assert {
+public class MainTest {
 
     @Test
     public void testMain() throws Exception {
@@ -41,7 +44,7 @@ public class MainTest extends Assert {
         CamelContext camelContext = main.getCamelContext();
 
         assertNotNull(camelContext);
-        assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
+        assertEquals(31, camelContext.getRegistry().lookupByName("foo"), "Could not find the registry bound object");
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);
@@ -68,7 +71,7 @@ public class MainTest extends Assert {
 
         CamelContext camelContext = main.getCamelContext();
 
-        assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
+        assertEquals(31, camelContext.getRegistry().lookupByName("foo"), "Could not find the registry bound object");
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);
@@ -119,7 +122,7 @@ public class MainTest extends Assert {
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
-        assertFalse("Tracing should be disabled", camelContext.isTracing());
+        assertFalse(camelContext.isTracing(), "Tracing should be disabled");
 
         main.stop();
     }
@@ -142,7 +145,7 @@ public class MainTest extends Assert {
         CamelContext camelContext = main.getCamelContext();
         ManagementStrategy strategy = camelContext.getManagementStrategy();
 
-        assertEquals("DurationMaxMessages should be set to 1", 1, durationMaxMessages.get());
+        assertEquals(1, durationMaxMessages.get(), "DurationMaxMessages should be set to 1");
         assertTrue(strategy.getEventNotifiers().stream().anyMatch(n -> n instanceof MainDurationEventNotifier));
 
         main.stop();

@@ -27,10 +27,14 @@ import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.PriorityBlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.model.ModelCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainIoCTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class MainIoCTest {
 
     @Test
     public void testMainIoC() throws Exception {
@@ -121,7 +125,7 @@ public class MainIoCTest extends Assert {
         @BindToRegistry
         public BlockingQueueFactory queueFactory(CamelContext myCamel) {
             // we can optionally include camel context as parameter
-            Assert.assertNotNull(myCamel);
+            assertNotNull(myCamel);
             return new PriorityBlockingQueueFactory();
         }
 
@@ -130,9 +134,9 @@ public class MainIoCTest extends Assert {
                            @PropertyInject(value = "magic", defaultValue = "456") int num,
                            @BeanInject("myBar") MyBar bar) {
             // should lookup MyCoolBean type from the registry and find the property
-            Assert.assertNotNull(cool);
-            Assert.assertEquals(456, num);
-            Assert.assertNotNull(bar);
+            assertNotNull(cool);
+            assertEquals(456, num);
+            assertNotNull(bar);
             return cool.getName();
         }
 

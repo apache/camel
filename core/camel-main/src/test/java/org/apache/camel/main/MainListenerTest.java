@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class MainListenerTest extends Assert {
+public class MainListenerTest {
 
     @Test
     public void testEventOrder() throws Exception {

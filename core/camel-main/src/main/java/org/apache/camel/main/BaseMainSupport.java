@@ -79,6 +79,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
 import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
+import static org.apache.camel.main.MainHelper.toEnvVar;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -1097,6 +1098,9 @@ public abstract class BaseMainSupport extends BaseService {
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
             Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
+            propENV.remove(INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
+            propENV.remove(OVERRIDE_PROPERTIES_LOCATION.replace('-', '.'));
+            propENV.remove(PROPERTY_PLACEHOLDER_LOCATION.replace('-', '.'));
             if (!propENV.isEmpty()) {
                 prop.putAll(propENV);
             }

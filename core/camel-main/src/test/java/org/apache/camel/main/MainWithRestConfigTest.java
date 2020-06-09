@@ -19,10 +19,10 @@ package org.apache.camel.main;
 import java.util.Properties;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainWithRestConfigTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+public class MainWithRestConfigTest {
     @Test
     public void testRestConfigurationPropagation() {
         Properties properties = new Properties();

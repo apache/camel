@@ -18,10 +18,10 @@ package org.apache.camel.main;
 
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainPropertyPlaceholderWithSystemTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+public class MainPropertyPlaceholderWithSystemTest {
     @Test
     public void testCustomPropertyPlaceholderLocation() {
         Main main = new Main();

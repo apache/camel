@@ -26,10 +26,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainSupervisingRouteControllerFilterFailToStartRouteTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
 
     @Test
     public void testMain() throws Exception {
