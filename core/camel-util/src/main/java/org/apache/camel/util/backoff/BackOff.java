@@ -113,9 +113,9 @@ public final class BackOff {
     @Override
     public String toString() {
         return "BackOff["
-            + "delay=" + delay
-            + ", maxDelay=" + (maxDelay != MAX_DURATION ? maxDelay : "")
-            + ", maxElapsedTime=" + (maxElapsedTime != MAX_DURATION ? maxElapsedTime : "")
+            + "delay=" + delay.toMillis()
+            + ", maxDelay=" + (maxDelay != MAX_DURATION ? maxDelay.toMillis() : "")
+            + ", maxElapsedTime=" + (maxElapsedTime != MAX_DURATION ? maxElapsedTime.toMillis() : "")
             + ", maxAttempts=" + maxAttempts
             + ", multiplier=" + multiplier
             + ']';
