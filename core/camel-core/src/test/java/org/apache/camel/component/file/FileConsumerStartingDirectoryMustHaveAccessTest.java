@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,9 +40,9 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
         if (file1.exists()) {
             file1.setReadable(true);
         }
-        deleteDirectory("target/noAccess");
-        file1.mkdirs();
-        file1.setReadable(false);
+        deleteDirectory(file1);
+        Assumptions.assumeTrue(file1.mkdirs());
+        Assumptions.assumeTrue(file1.setReadable(false));
         super.setUp();
     }
 
