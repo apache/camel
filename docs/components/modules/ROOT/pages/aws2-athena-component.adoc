@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Athena component supports running queries with https://aws.amazon.com/athena/[AWS Athena] and working with results.
+The AWS2 Athena component supports running queries with https://aws.amazon.com/athena/[AWS Athena] and working with results.
 
 Prerequisites
 
