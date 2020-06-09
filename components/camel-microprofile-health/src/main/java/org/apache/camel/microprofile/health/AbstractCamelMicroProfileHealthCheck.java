@@ -40,6 +40,8 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     @Inject
     protected CamelContext camelContext;
 
+    protected abstract boolean acceptHealthCheck(AbstractHealthCheck check);
+
     @Override
     public HealthCheckResponse call() {
         final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
@@ -51,8 +53,8 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
                     (HealthCheckFilter) check ->
                             // skip context as we have our own context check
                             check.getId().equals("context")
-                                    // or that its either supposed to be only a liveness or readiness and the Camel health check is not
-                                    || (isLiveness() && !check.isLiveness() || isReadiness() && !check.isReadiness()));
+                            // or if not accepted
+                            || check instanceof AbstractHealthCheck && !acceptHealthCheck((AbstractHealthCheck) check));
 
             for (Result result : results) {
                 Map<String, Object> details = result.getDetails();
