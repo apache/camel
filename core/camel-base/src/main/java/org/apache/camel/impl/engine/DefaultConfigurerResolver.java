@@ -24,6 +24,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,10 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
     @Override
     public GeneratedPropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context) {
+        if (ObjectHelper.isEmpty(name)) {
+            return null;
+        }
+
         // lookup in registry first
         GeneratedPropertyConfigurer configurer = context.getRegistry().lookupByNameAndType(name, GeneratedPropertyConfigurer.class);
         if (configurer != null) {
