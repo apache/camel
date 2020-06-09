@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -340,7 +341,8 @@ public final class ResourceHelper {
                 .filter(Files::isRegularFile)
                 .filter(entry -> {
                     Path relative = root.relativize(entry);
-                    boolean match = AntPathMatcher.INSTANCE.match(pattern, relative.toString());
+                    String str = relative.toString().replaceAll(Pattern.quote(File.separator), AntPathMatcher.DEFAULT_PATH_SEPARATOR);
+                    boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
                     LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
                     return match;
                 })
