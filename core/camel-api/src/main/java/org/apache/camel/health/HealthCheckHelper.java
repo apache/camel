@@ -119,6 +119,7 @@ public final class HealthCheckHelper {
                     .flatMap(Collection::stream)
                     .filter(check -> !filter.test(check))
                     .sorted(Comparator.comparingInt(HealthCheck::getOrder))
+                    .distinct()
                     .map(check -> check.call(optionsSupplier.apply(check)))
                     .collect(Collectors.toList());
         } else {

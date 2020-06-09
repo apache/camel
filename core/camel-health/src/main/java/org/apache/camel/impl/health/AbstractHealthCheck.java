@@ -211,13 +211,13 @@ public abstract class AbstractHealthCheck implements HealthCheck {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof AbstractHealthCheck)) {
             return false;
         }
 
-        AbstractHealthCheck check = (AbstractHealthCheck) o;
+        AbstractHealthCheck that = (AbstractHealthCheck) o;
 
-        return id != null ? id.equals(check.id) : check.id == null;
+        return id.equals(that.id);
     }
 
     @Override

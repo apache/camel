@@ -16,6 +16,7 @@
  */
 package org.apache.camel.microprofile.health;
 
+import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.eclipse.microprofile.health.Readiness;
 
 /**
@@ -26,6 +27,10 @@ public class CamelMicroProfileReadinessCheck extends AbstractCamelMicroProfileHe
 
     public boolean isLiveness() {
         return false;
+    }
+
+    protected boolean acceptHealthCheck(AbstractHealthCheck check) {
+        return check.isReadiness();
     }
 
     @Override
