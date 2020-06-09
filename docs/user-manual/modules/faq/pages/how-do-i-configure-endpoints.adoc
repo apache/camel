@@ -164,7 +164,7 @@ file://inbox?sorter=#class:com.foo.MySpecialSorter(10, 'Hello world', true)
 === Referring beans by type from Endpoint URIs
 
 When configuring endpoints using URI syntax you can now refer to bean by its type which
-are used to lookup the bean by the given type from the xref:pages::registry.adoc[Registry].
+are used to lookup the bean by the given type from the xref:ROOT:registry.adoc[Registry].
 If there is one bean found in the registry of the given type, then that bean instance will be used;
 otherwise an exception is thrown.
 
