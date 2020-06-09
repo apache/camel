@@ -30,13 +30,14 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
-public class XMLTokenExpressionIteratorCharsetTest extends Assert {
+public class XMLTokenExpressionIteratorCharsetTest {
     private static final String DATA_TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"{0}\"?>"
         + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
@@ -96,9 +97,9 @@ public class XMLTokenExpressionIteratorCharsetTest extends Assert {
         }
         ((Closeable)tokenizer).close();
         
-        assertEquals("token count", RESULTS.length, results.size());
+        assertEquals(RESULTS.length, results.size(), "token count");
         for (int i = 0; i < RESULTS.length; i++) {
-            assertEquals("mismatch [" + i + "]", RESULTS[i], results.get(i));
+            assertEquals(RESULTS[i], results.get(i), "mismatch [" + i + "]");
         }
         
     }

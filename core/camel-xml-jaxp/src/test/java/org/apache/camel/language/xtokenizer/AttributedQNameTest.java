@@ -19,10 +19,12 @@ package org.apache.camel.language.xtokenizer;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.language.xtokenizer.XMLTokenExpressionIterator.AttributedQName;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AttributedQNameTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class AttributedQNameTest {
 
     @Test
     public void testMatches() {

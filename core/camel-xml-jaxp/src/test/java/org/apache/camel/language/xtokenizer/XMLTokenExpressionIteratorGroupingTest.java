@@ -26,11 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class XMLTokenExpressionIteratorGroupingTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class XMLTokenExpressionIteratorGroupingTest {
 
     // the input containing multiple Cs
     private static final byte[] TEST_BODY = (
@@ -313,7 +314,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends Assert {
     private Map<String, String> nsmap;
         
     
-    @Before
+    @BeforeEach
     public void setUp() {
         nsmap = new HashMap<>();
         nsmap.put("g", "urn:g");
@@ -425,9 +426,9 @@ public class XMLTokenExpressionIteratorGroupingTest extends Assert {
         }
         ((Closeable)it).close();
 
-        Assert.assertEquals("token count", expected.length, results.size());
+        assertEquals(expected.length, results.size(), "token count");
         for (int i = 0; i < expected.length; i++) {
-            Assert.assertEquals("mismatch [" + i + "]", expected[i], results.get(i));
+            assertEquals(expected[i], results.get(i), "mismatch [" + i + "]");
         }
     }
 }
