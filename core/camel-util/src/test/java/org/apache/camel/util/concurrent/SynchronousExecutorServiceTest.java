@@ -18,10 +18,12 @@ package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.ExecutorService;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SynchronousExecutorServiceTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class SynchronousExecutorServiceTest {
 
     private static boolean invoked;
     private static String name1;
@@ -39,8 +41,8 @@ public class SynchronousExecutorServiceTest extends Assert {
             }
         });
 
-        assertTrue("Should have been invoked", invoked);
-        assertEquals("Should use same thread", name1, name2);
+        assertTrue(invoked, "Should have been invoked");
+        assertEquals(name1, name2, "Should use same thread");
     }
 
     @Test
