@@ -138,25 +138,39 @@ Registry.
 
 Camel also supports to refer to beans by their class type.
 
-[[HowdoIconfigureendpoints-ReferringbeansbytypefromEndpointURIs]]
-=== Referring beans by type from Endpoint URIs
+[[HowdoIconfigureendpoints-ReferringbeansbyclassfromEndpointURIs]]
+=== Referring beans by class from Endpoint URIs
 
-When configuring endpoints using URI syntax you can now refer to bean by type (class name)
-using the `#type:fullyQualifiedName` notation.
+When configuring endpoints using URI syntax you can now refer to bean by its class name
+using the `#class:fullyQualifiedName` notation.
 
-If the parameter value starts with a `#type:` sign then Camel will load the
+If the parameter value starts with a `#class:` sign then Camel will load the
 class with the given name, and create an instanace of the bean using its _no-arg_ constructor:
 
 [source]
 ----
-file://inbox?sorter=#type:com.foo.MySpecialSorter
+file://inbox?sorter=#class:com.foo.MySpecialSorter
 ----
 
-If you need to provide parameters to the constructor, then you should use `#class:` notation instead:
+If you need to provide parameters to the constructor, then this is also possible
+(limited to numbers, boolean, literal, and null values)
 
 [source]
 ----
 file://inbox?sorter=#class:com.foo.MySpecialSorter(10, 'Hello world', true)
+----
+
+[[HowdoIconfigureendpoints-ReferringbeansbytypefromEndpointURIs]]
+=== Referring beans by type from Endpoint URIs
+
+When configuring endpoints using URI syntax you can now refer to bean by its type which
+are used to lookup the bean by the given type from the xref:pages::registry.adoc[Registry].
+If there is one bean found in the registry of the given type, then that bean instance will be used;
+otherwise an exception is thrown.
+
+[source]
+----
+file://inbox?idempontentRepository=#type:org.apache.camel.spi.IdempotentRepository
 ----
 
 [[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
