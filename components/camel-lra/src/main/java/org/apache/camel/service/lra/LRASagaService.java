@@ -99,6 +99,7 @@ public class LRASagaService extends ServiceSupport implements CamelSagaService {
             this.executorService = null;
         }
         if (this.client != null) {
+            this.client.close();
             this.client = null;
         }
     }
