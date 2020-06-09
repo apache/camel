@@ -28,8 +28,13 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultHealthCheckRegistryTest {
 
@@ -46,14 +51,14 @@ public class DefaultHealthCheckRegistryTest {
         registry.register(new MyHealthCheck("G2", "3"));
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(3, checks.size());
+        assertEquals(3, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
 
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
         }
     }
 
@@ -72,15 +77,15 @@ public class DefaultHealthCheckRegistryTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(3, checks.size());
+        assertEquals(3, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
 
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
-            Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
+            assertSame(context, ((CamelContextAware) check).getCamelContext());
         }
     }
 
@@ -99,15 +104,15 @@ public class DefaultHealthCheckRegistryTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(3, checks.size());
+        assertEquals(3, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
 
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
-            Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
+            assertSame(context, ((CamelContextAware) check).getCamelContext());
         }
     }
 
@@ -118,10 +123,10 @@ public class DefaultHealthCheckRegistryTest {
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
         HealthCheck hc = (HealthCheck) registry.resolveById("context");
-        Assert.assertNotNull(hc);
-        Assert.assertEquals("camel", hc.getGroup());
-        Assert.assertEquals("context", hc.getId());
-        Assert.assertTrue(hc instanceof ContextHealthCheck);
+        assertNotNull(hc);
+        assertEquals("camel", hc.getGroup());
+        assertEquals("context", hc.getId());
+        assertTrue(hc instanceof ContextHealthCheck);
 
         registry.register(hc);
         registry.register(new MyHealthCheck("G1", "1"));
@@ -132,15 +137,15 @@ public class DefaultHealthCheckRegistryTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(4, checks.size());
+        assertEquals(4, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
 
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
-            Assert.assertSame(context, ((CamelContextAware) check).getCamelContext());
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
+            assertSame(context, ((CamelContextAware) check).getCamelContext());
         }
     }
 
@@ -151,9 +156,9 @@ public class DefaultHealthCheckRegistryTest {
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
         HealthCheckRepository hc = (HealthCheckRepository) registry.resolveById("routes");
-        Assert.assertNotNull(hc);
-        Assert.assertEquals("routes", hc.getId());
-        Assert.assertTrue(hc instanceof RoutesHealthCheckRepository);
+        assertNotNull(hc);
+        assertEquals("routes", hc.getId());
+        assertTrue(hc instanceof RoutesHealthCheckRepository);
         registry.register(hc);
 
         context.addRoutes(new RouteBuilder() {
@@ -168,14 +173,14 @@ public class DefaultHealthCheckRegistryTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(2, checks.size());
+        assertEquals(2, checks.size());
 
         for (HealthCheck check : checks) {
             HealthCheck.Result response = check.call();
 
-            Assert.assertEquals(HealthCheck.State.UP, response.getState());
-            Assert.assertFalse(response.getMessage().isPresent());
-            Assert.assertFalse(response.getError().isPresent());
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
         }
 
         context.getRouteController().stopRoute("foo");
@@ -184,13 +189,13 @@ public class DefaultHealthCheckRegistryTest {
             HealthCheck.Result response = check.call();
             boolean foo = "foo".equals(response.getDetails().get("route.id"));
             if (foo) {
-                Assert.assertEquals(HealthCheck.State.DOWN, response.getState());
-                Assert.assertTrue(response.getMessage().isPresent());
-                Assert.assertFalse(response.getError().isPresent());
+                assertEquals(HealthCheck.State.DOWN, response.getState());
+                assertTrue(response.getMessage().isPresent());
+                assertFalse(response.getError().isPresent());
             } else {
-                Assert.assertEquals(HealthCheck.State.UP, response.getState());
-                Assert.assertFalse(response.getMessage().isPresent());
-                Assert.assertFalse(response.getError().isPresent());
+                assertEquals(HealthCheck.State.UP, response.getState());
+                assertFalse(response.getMessage().isPresent());
+                assertFalse(response.getError().isPresent());
             }
         }
     }

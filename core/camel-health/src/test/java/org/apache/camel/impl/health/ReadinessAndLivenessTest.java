@@ -28,8 +28,11 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReadinessAndLivenessTest {
 
@@ -47,23 +50,23 @@ public class ReadinessAndLivenessTest {
         registry.start();
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
-        Assert.assertEquals(2, checks.size());
+        assertEquals(2, checks.size());
 
         Collection<HealthCheck.Result> results = HealthCheckHelper.invokeReadiness(context);
-        Assert.assertEquals(1, results.size());
+        assertEquals(1, results.size());
         HealthCheck.Result result = results.iterator().next();
-        Assert.assertEquals(HealthCheck.State.UP, result.getState());
-        Assert.assertFalse(result.getCheck().isLiveness());
-        Assert.assertTrue(result.getCheck().isReadiness());
-        Assert.assertTrue(result.getCheck() instanceof MyReadyCheck);
+        assertEquals(HealthCheck.State.UP, result.getState());
+        assertFalse(result.getCheck().isLiveness());
+        assertTrue(result.getCheck().isReadiness());
+        assertTrue(result.getCheck() instanceof MyReadyCheck);
 
         results = HealthCheckHelper.invokeLiveness(context);
-        Assert.assertEquals(1, results.size());
+        assertEquals(1, results.size());
         result = results.iterator().next();
-        Assert.assertEquals(HealthCheck.State.DOWN, result.getState());
-        Assert.assertTrue(result.getCheck().isLiveness());
-        Assert.assertFalse(result.getCheck().isReadiness());
-        Assert.assertTrue(result.getCheck() instanceof MyLiveCheck);
+        assertEquals(HealthCheck.State.DOWN, result.getState());
+        assertTrue(result.getCheck().isLiveness());
+        assertFalse(result.getCheck().isReadiness());
+        assertTrue(result.getCheck() instanceof MyLiveCheck);
     }
 
     private class MyReadyCheck extends AbstractHealthCheck implements CamelContextAware {
