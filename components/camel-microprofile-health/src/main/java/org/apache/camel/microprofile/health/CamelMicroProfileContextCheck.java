@@ -42,7 +42,7 @@ public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextA
     @Override
     public HealthCheckResponse call() {
         final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
-        builder.name("camel");
+        builder.name("camel-context-check");
         builder.down();
 
         if (camelContext != null) {
