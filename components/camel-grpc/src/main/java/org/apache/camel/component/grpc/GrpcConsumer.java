@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 
 import io.grpc.BindableService;
@@ -29,20 +28,23 @@ import io.grpc.netty.NettyServerBuilder;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
+import org.apache.camel.component.grpc.server.BindableServiceFactory;
+import org.apache.camel.component.grpc.server.DefaultBindableServiceFactory;
 import org.apache.camel.component.grpc.server.GrpcHeaderInterceptor;
-import org.apache.camel.component.grpc.server.GrpcMethodHandler;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.grpc.GrpcConstants.GRPC_BINDABLE_SERVICE_FACTORY_NAME;
 
 /**
  * Represents gRPC server consumer implementation
@@ -55,6 +57,7 @@ public class GrpcConsumer extends DefaultConsumer {
     protected final GrpcEndpoint endpoint;
 
     private Server server;
+    private BindableServiceFactory factory;
 
     public GrpcConsumer(GrpcEndpoint endpoint, Processor processor, GrpcConfiguration configuration) {
         super(endpoint, processor);
@@ -88,18 +91,9 @@ public class GrpcConsumer extends DefaultConsumer {
     }
 
     protected void initializeServer() throws Exception {
-        NettyServerBuilder serverBuilder = null;
-        BindableService bindableService = null;
-        ProxyFactory serviceProxy = new ProxyFactory();
+        NettyServerBuilder serverBuilder;
+        BindableService bindableService = getBindableServiceFactory().createBindableService(this);
         ServerInterceptor headerInterceptor = new GrpcHeaderInterceptor();
-        MethodHandler methodHandler = new GrpcMethodHandler(endpoint, this);
-
-        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.getCamelContext()));
-        try {
-            bindableService = (BindableService)serviceProxy.create(new Class<?>[0], new Object[0], methodHandler);
-        } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Unable to create bindable proxy service for " + configuration.getService());
-        }
 
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             LOG.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
@@ -178,5 +172,20 @@ public class GrpcConsumer extends DefaultConsumer {
             callback.done(true);
             return true;
         }
+    }
+
+    private BindableServiceFactory getBindableServiceFactory() {
+        CamelContext context = endpoint.getCamelContext();
+        if (this.factory == null) {
+            // Try to resolve from the registry
+            BindableServiceFactory bindableServiceFactory = CamelContextHelper.lookup(context, GRPC_BINDABLE_SERVICE_FACTORY_NAME, BindableServiceFactory.class);
+            if (bindableServiceFactory != null) {
+                this.factory = bindableServiceFactory;
+            } else {
+                // Fallback to the default implementation if an alternative is not available
+                this.factory = new DefaultBindableServiceFactory();
+            }
+        }
+        return this.factory;
     }
 }

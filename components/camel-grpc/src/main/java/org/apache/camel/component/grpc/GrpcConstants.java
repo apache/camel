@@ -50,4 +50,9 @@ public interface GrpcConstants {
     String GRPC_EVENT_TYPE_ON_NEXT = "onNext";
     String GRPC_EVENT_TYPE_ON_ERROR = "onError";
     String GRPC_EVENT_TYPE_ON_COMPLETED = "onCompleted";
+
+    /*
+     * The registry key to lookup a custom BindableServiceFactory
+     */
+    String GRPC_BINDABLE_SERVICE_FACTORY_NAME = "grpcBindableServiceFactory";
 }
