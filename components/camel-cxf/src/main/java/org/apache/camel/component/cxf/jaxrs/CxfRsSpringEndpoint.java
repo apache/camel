@@ -20,6 +20,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.Component;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -58,8 +59,12 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
             setBeanId(((BeanIdAware)bean).getBeanId());
         }
 
+        
         ApplicationContext applicationContext = ((SpringCamelContext)getCamelContext()).getApplicationContext();
         configurer = new ConfigurerImpl(applicationContext);
+        if (bus == null) {
+            bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(applicationContext);
+        }
     }
 
     @Override
