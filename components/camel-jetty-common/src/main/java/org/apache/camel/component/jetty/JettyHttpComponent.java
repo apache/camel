@@ -34,6 +34,7 @@ import javax.management.MBeanServer;
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -1236,7 +1237,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             ErrorHandler eh = new ErrorHandler() {
                 public void handle(String target, Request baseRequest,
                                    HttpServletRequest request, HttpServletResponse response)
-                    throws IOException {
+                        throws IOException, ServletException {
                     String msg = HttpStatus.getMessage(response.getStatus());
                     request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
                     super.handle(target, baseRequest, request, response);
