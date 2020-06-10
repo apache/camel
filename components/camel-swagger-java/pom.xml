@@ -130,15 +130,6 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- testing -->
-        <!--
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-undertow</artifactId>
-            <scope>test</scope>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit5</artifactId>

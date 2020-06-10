@@ -31,14 +31,12 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.swagger.producer.DummyRestProducerFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
 
@@ -46,6 +44,9 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
 
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
+
+    @BindToRegistry("dummy-rest-consumer")
+    private DummyRestConsumerFactory consumerFactory = new DummyRestConsumerFactory();
 
     @Override
     protected boolean useJmx() {
