@@ -16,8 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,12 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,10 +43,8 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30License;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.model.Model;
+import org.apache.camel.impl.engine.BaseServiceResolver;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
@@ -63,6 +55,7 @@ import org.slf4j.LoggerFactory;
 
 
 import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
+import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
 
 /**
  * A support class for that allows SPI to plugin and offer OpenApi API service listings as part of the Camel
@@ -77,7 +70,9 @@ public class RestOpenApiSupport {
     static final String HEADER_HOST = "Host";
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiSupport.class);
-    private RestOpenApiReader reader = new RestOpenApiReader();
+    private final RestOpenApiReader reader = new RestOpenApiReader();
+    private final RestDefinitionsResolver localRestDefinitionResolver = new DefaultRestDefinitionsResolver();
+    private volatile RestDefinitionsResolver jmxRestDefinitionResolver;
     private boolean cors;
 
     public void initOpenApi(BeanConfig openApiConfig, Map<String, Object> config) {
@@ -188,60 +183,20 @@ public class RestOpenApiSupport {
     }
 
     public List<RestDefinition> getRestDefinitions(CamelContext camelContext) throws Exception {
-        Model model = camelContext.getExtension(Model.class);
-        List<RestDefinition> rests = model.getRestDefinitions();
-        if (rests.isEmpty()) {
-            return null;
-        }
-        return rests;
+        return localRestDefinitionResolver.getRestDefinitions(camelContext, null);
     }
 
     public List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception {
-        ObjectName found = null;
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("org.apache.camel:type=context,*"), null);
-        for (ObjectName on : names) {
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-            if (camelId == null || camelId.equals(id)) {
-                found = on;
-            }
+        if (jmxRestDefinitionResolver == null) {
+            jmxRestDefinitionResolver = createJmxRestDefinitionsResolver(camelContext);
         }
-
-        if (found != null) {
-            String xml = (String)server.invoke(found, "dumpRestsAsXml", new Object[] {true},
-                                            new String[] {"boolean"});
-            if (xml != null) {
-                LOG.debug("DumpRestAsXml:\n{}", xml);
-                InputStream xmlis = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
-                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, xmlis);
-                if (rests != null) {
-                    return rests.getRests();
-                }
-            }
-        }
-
-        return null;
+        return jmxRestDefinitionResolver.getRestDefinitions(camelContext, camelId);
     }
 
-    public List<String> findCamelContexts() throws Exception {
-        List<String> answer = new ArrayList<>();
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("*:type=context,*"), null);
-        for (ObjectName on : names) {
-
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-            answer.add(id);
-        }
-        return answer;
+    protected RestDefinitionsResolver createJmxRestDefinitionsResolver(CamelContext camelContext) {
+        return new BaseServiceResolver<>(JMX_REST_DEFINITION_RESOLVER, RestDefinitionsResolver.class)
+                .resolve(camelContext)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find JMX_REST_DEFINITION_RESOLVER on classpath."));
     }
 
     public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response,
@@ -323,7 +278,7 @@ public class RestOpenApiSupport {
     /**
      * Renders a list of available CamelContexts in the JVM
      */
-    public void renderCamelContexts(RestApiResponseAdapter response, String contextId,
+    public void renderCamelContexts(CamelContext camelContext, RestApiResponseAdapter response, String contextId,
                                     String contextIdPattern, boolean json, boolean yaml,
                                     RestConfiguration configuration)
         throws Exception {
@@ -333,7 +288,7 @@ public class RestOpenApiSupport {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<String> contexts = findCamelContexts();
+        List<String> contexts = findCamelContexts(camelContext);
 
         // filter non matched CamelContext's
         if (contextIdPattern != null) {
@@ -380,6 +335,13 @@ public class RestOpenApiSupport {
         response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
         response.writeBytes(sb.toString().getBytes());
+    }
+
+    private List<String> findCamelContexts(CamelContext camelContext) throws Exception {
+        if (jmxRestDefinitionResolver == null) {
+            jmxRestDefinitionResolver = createJmxRestDefinitionsResolver(camelContext);
+        }
+        return jmxRestDefinitionResolver.findCamelContexts();
     }
 
     private static void setupCorsHeaders(RestApiResponseAdapter response, Map<String, String> corsHeaders) {
