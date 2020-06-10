@@ -16,23 +16,18 @@
  */
 package org.apache.camel.swagger;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
-import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,7 +52,6 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,34 +148,17 @@ public class RestSwaggerSupport {
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, def);
 
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        final AtomicBoolean changed = new AtomicBoolean();
-        InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-            @Override
-            public String transform(String text) {
-                try {
-                    String after = camelContext.resolvePropertyPlaceholders(text);
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
-                    }
-                    return after;
-                } catch (Exception e) {
-                    // ignore
-                    return text;
-                }
-            }
-        });
-        // okay there were some property placeholder replaced so re-create the model
-        if (changed.get()) {
-            xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, dom);
-            InputStream isxml = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        String originalXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, def);
+        String changedXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, def, true, true);
+        if (!Objects.equals(originalXml, changedXml)) {
+            // okay so the model had property placeholders which we needed to resolve and output their actual values
+            // and therefore regenerate the model classes
+            InputStream isxml = camelContext.getTypeConverter().convertTo(InputStream.class, changedXml);
             def = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, isxml);
             if (def != null) {
-                return def.getRests();
+                rests = def.getRests();
             }
         }
 

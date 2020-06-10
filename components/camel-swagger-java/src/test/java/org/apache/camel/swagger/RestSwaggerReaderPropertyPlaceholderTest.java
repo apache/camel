@@ -40,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderPropertyPlaceholderTest.class);
@@ -84,7 +83,7 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestSwaggerReader reader = new RestSwaggerReader();
 
         RestSwaggerSupport support = new RestSwaggerSupport();
-        List<RestDefinition> rests = support.getRestDefinitions(context, context.getName());
+        List<RestDefinition> rests = support.getRestDefinitions(context);
 
         Swagger swagger = reader.read(rests, null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);

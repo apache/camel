@@ -98,14 +98,15 @@ public class RestOpenApiReader {
     public OasDocument read(List<RestDefinition> rests, String route, BeanConfig config,
                             String camelContextId, ClassResolver classResolver)
         throws ClassNotFoundException {
-        OasDocument openApi = null;
+
+        OasDocument openApi;
         if (config.isOpenApi3()) {
             openApi = new Oas30Document();
         } else {
             openApi = new Oas20Document();
         }
-        for (RestDefinition rest : rests) {
 
+        for (RestDefinition rest : rests) {
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
                 // filter by route
                 if (!rest.getPath().equals(route)) {
