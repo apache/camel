@@ -69,7 +69,7 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
     
     @Test
     public void testDefaultHeaderValueOverride() throws Exception {
-        getMockEndpoint("mock:bye").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:bye").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:bye").expectedHeaderReceived("indicator", "enabled");
 
         // the rest becomes routes and the input is a seda endpoint created by
