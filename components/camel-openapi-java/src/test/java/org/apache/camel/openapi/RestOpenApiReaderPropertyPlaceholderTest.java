@@ -39,6 +39,9 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
 
+    @BindToRegistry("dummy-rest-consumer")
+    private DummyRestConsumerFactory consumerFactory = new DummyRestConsumerFactory();
+
     @Override
     protected boolean useJmx() {
         return true;
