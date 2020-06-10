@@ -46,7 +46,7 @@ public class ModelParserXMLRoutesDefinitionLoader implements XMLRoutesDefinition
 
     @Override
     public <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws Exception {
-        throw new UnsupportedOperationException("Not support use camel-xml-jaxb instead");
+        throw new UnsupportedOperationException("Not supported use camel-xml-jaxb instead");
     }
 
     @Override
