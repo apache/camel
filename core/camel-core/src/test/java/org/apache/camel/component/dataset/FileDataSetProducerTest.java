@@ -40,7 +40,7 @@ public class FileDataSetProducerTest extends ContextTestSupport {
 
     protected FileDataSet dataSet;
 
-    final String testPayload = String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n");
+    final String testPayload = "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\n";
 
     final String sourceUri = "direct://source";
     final String dataSetName = "foo";
@@ -77,13 +77,13 @@ public class FileDataSetProducerTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        File fileDataset = createFileDatasetWithSystemEndOfLine();
+        File fileDataset = createFileDataset();
         dataSet = new FileDataSet(fileDataset);
         assertEquals(1, dataSet.getSize(), "Unexpected DataSet size");
         super.setUp();
     }
 
-    private File createFileDatasetWithSystemEndOfLine() throws IOException {
+    private File createFileDataset() throws IOException {
         Files.createDirectories(tempFolder);
         Path fileDataset = tempFolder.resolve("file-dataset-test.txt");
         Files.copy(new ByteArrayInputStream(testPayload.getBytes()), fileDataset, StandardCopyOption.REPLACE_EXISTING);

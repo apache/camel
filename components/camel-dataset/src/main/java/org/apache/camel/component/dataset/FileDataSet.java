@@ -34,8 +34,6 @@ public class FileDataSet extends ListDataSet {
     private File sourceFile;
     private String delimiter;
 
-    private List<Object> defaultBodies;
-
     public FileDataSet(String sourceFileName) throws IOException {
         this(new File(sourceFileName));
     }
