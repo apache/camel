@@ -16,27 +16,21 @@
  */
 package org.apache.camel.openapi;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
-import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -64,9 +58,9 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
 
@@ -199,24 +193,6 @@ public class RestOpenApiSupport {
         if (rests.isEmpty()) {
             return null;
         }
-
-        // use a routes definition to dump the rests
-        RestsDefinition def = new RestsDefinition();
-        def.setRests(rests);
-
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        String originalXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, def);
-        String changedXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, def, true, true);
-        if (!Objects.equals(originalXml, changedXml)) {
-            // okay so the model had property placeholders which we needed to resolve and output their actual values
-            // and therefore regenerate the model classes
-            InputStream isxml = camelContext.getTypeConverter().convertTo(InputStream.class, changedXml);
-            def = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, isxml);
-            if (def != null) {
-                rests = def.getRests();
-            }
-        }
-
         return rests;
     }
 
@@ -298,7 +274,7 @@ public class RestOpenApiSupport {
                     .getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi = reader.read(rests, route, openApiConfig, contextId, classResolver);
+                OasDocument openApi = reader.read(camelContext, rests, route, openApiConfig, contextId, classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
@@ -318,7 +294,7 @@ public class RestOpenApiSupport {
                     .getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi = reader.read(rests, route, openApiConfig, contextId, classResolver);
+                OasDocument openApi = reader.read(camelContext, rests, route, openApiConfig, contextId, classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
                 }
