@@ -56,7 +56,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
         OasDocument openApi = null;
-        openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         
         assertNotNull(openApi);
 
@@ -84,7 +84,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         config.setBasePath("/api");
         RestOpenApiReader reader = new RestOpenApiReader();
         OasDocument openApi = null;
-        openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         
         assertNotNull(openApi);
 
