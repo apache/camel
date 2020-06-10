@@ -82,7 +82,7 @@ public class RestOpenApiProcessor implements Processor {
         try {
             // render list of camel contexts as root
             if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, contextIdPattern, json, yaml, configuration);
+                support.renderCamelContexts(exchange.getContext(), adapter, contextId, contextIdPattern, json, yaml, configuration);
             } else {
                 String name;
                 if (ObjectHelper.isNotEmpty(route)) {
