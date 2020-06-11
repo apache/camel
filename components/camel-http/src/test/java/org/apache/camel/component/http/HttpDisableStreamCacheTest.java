@@ -23,17 +23,22 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -49,7 +54,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -73,7 +78,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
         // should be closed by http client
         try {
-            assertEquals("camel rocks!", context.getTypeConverter().convertTo(String.class, exchange, is));
+            assertEquals(context.getTypeConverter().convertTo(String.class, exchange, is), "camel rocks!");
             fail("Should fail");
         } catch (TypeConversionException e) {
             // expected

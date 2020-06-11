@@ -20,17 +20,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.DelayValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpSOTimeoutTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -45,7 +46,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -68,7 +69,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
         Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?httpClient.SocketTimeout=1000", exchange -> {
         });
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
     }
 
     @Test
@@ -84,7 +85,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
         Exchange reply = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=1000", exchange -> {
         });
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
     }
 
 }

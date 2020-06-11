@@ -17,8 +17,10 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class HttpClientConfigurerTest extends CamelTestSupport {
     private HttpClientConfigurer configurer;

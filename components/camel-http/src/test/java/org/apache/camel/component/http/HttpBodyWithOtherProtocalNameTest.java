@@ -17,11 +17,11 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.CamelContext;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class HttpBodyWithOtherProtocalNameTest extends HttpBodyTest {
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

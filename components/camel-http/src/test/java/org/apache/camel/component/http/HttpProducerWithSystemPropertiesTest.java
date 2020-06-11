@@ -23,24 +23,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
 
     private static Object defaultSystemHttpAgent;
     private HttpServer localServer;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpHttpAgentSystemProperty() throws Exception {
         // the 'http.agent' java system-property corresponds to the http 'User-Agent' header
         defaultSystemHttpAgent = System.setProperty("http.agent", "myCoolCamelCaseAgent");
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetHttpAgentSystemProperty() throws Exception {
         if (defaultSystemHttpAgent != null) {
             System.setProperty("http.agent", String.valueOf(defaultSystemHttpAgent));
@@ -49,7 +49,7 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
         }
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
@@ -67,7 +67,7 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();

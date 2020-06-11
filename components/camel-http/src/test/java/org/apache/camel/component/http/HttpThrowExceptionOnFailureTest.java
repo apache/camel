@@ -25,11 +25,15 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
@@ -37,7 +41,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
 
     private String baseUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -54,7 +58,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -85,7 +89,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         });
 
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
         assertEquals(501, cause.getStatusCode());
     }
@@ -110,7 +114,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true&ignoreResponseBody=true", exchange -> { });
 
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
         assertEquals(501, cause.getStatusCode());
     }
