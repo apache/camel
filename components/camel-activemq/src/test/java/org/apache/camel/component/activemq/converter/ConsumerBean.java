@@ -31,7 +31,7 @@ public class ConsumerBean implements MessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumerBean.class);
     private final List<Message> messages = new ArrayList();
     private boolean verbose;
-    private String id = null;
+    private String id;
 
     public ConsumerBean() {
     }
@@ -42,7 +42,7 @@ public class ConsumerBean implements MessageListener {
 
     public List<Message> flushMessages() {
         List<Message> answer = null;
-        synchronized(this.messages) {
+        synchronized (this.messages) {
             answer = new ArrayList(this.messages);
             this.messages.clear();
             return answer;
@@ -50,7 +50,7 @@ public class ConsumerBean implements MessageListener {
     }
 
     public void onMessage(Message message) {
-        synchronized(this.messages) {
+        synchronized (this.messages) {
             this.messages.add(message);
             if (this.verbose) {
                 LOG.info("" + this.id + "Received: " + message);
@@ -66,7 +66,7 @@ public class ConsumerBean implements MessageListener {
 
         try {
             if (this.hasReceivedMessage()) {
-                synchronized(this.messages) {
+                synchronized (this.messages) {
                     this.messages.wait(4000L);
                 }
             }
@@ -83,13 +83,13 @@ public class ConsumerBean implements MessageListener {
     }
 
     public void waitForMessagesToArrive(int messageCount, long maxWaitTime) {
-        long maxRemainingMessageCount = (long)Math.max(0, messageCount - this.messages.size());
+        long maxRemainingMessageCount = (long) Math.max(0, messageCount - this.messages.size());
         LOG.info("Waiting for (" + maxRemainingMessageCount + ") message(s) to arrive");
         long start = System.currentTimeMillis();
 
-        for(long endTime = start + maxWaitTime; maxRemainingMessageCount > 0L; maxRemainingMessageCount = (long)Math.max(0, messageCount - this.messages.size())) {
+        for (long endTime = start + maxWaitTime; maxRemainingMessageCount > 0L; maxRemainingMessageCount = (long) Math.max(0, messageCount - this.messages.size())) {
             try {
-                synchronized(this.messages) {
+                synchronized (this.messages) {
                     this.messages.wait(1000L);
                 }
 
@@ -107,17 +107,17 @@ public class ConsumerBean implements MessageListener {
 
     public void assertMessagesArrived(int total) {
         this.waitForMessagesToArrive(total);
-        synchronized(this.messages) {
+        synchronized (this.messages) {
             int count = this.messages.size();
-            assertEquals((long)total, (long)count, "Messages received");
+            assertEquals((long) total, (long) count, "Messages received");
         }
     }
 
     public void assertMessagesArrived(int total, long maxWaitTime) {
         this.waitForMessagesToArrive(total, maxWaitTime);
-        synchronized(this.messages) {
+        synchronized (this.messages) {
             int count = this.messages.size();
-            assertEquals((long)total, (long)count, "Messages received");
+            assertEquals((long) total, (long) count, "Messages received");
         }
     }
 
@@ -138,7 +138,7 @@ public class ConsumerBean implements MessageListener {
     }
 
     protected boolean hasReceivedMessages(int messageCount) {
-        synchronized(this.messages) {
+        synchronized (this.messages) {
             return this.messages.size() >= messageCount;
         }
     }
