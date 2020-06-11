@@ -18,11 +18,13 @@ package org.apache.camel.component.ribbon.cloud;
 
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DirtiesContext
 public class SpringBeanServiceCallRouteTest extends SpringRibbonServiceCallRouteTest {
@@ -35,11 +37,11 @@ public class SpringBeanServiceCallRouteTest extends SpringRibbonServiceCallRoute
     public void testServiceCallConfiguration() throws Exception {
         DefaultServiceCallProcessor processor = findServiceCallProcessor();
 
-        Assert.assertNotNull(processor.getLoadBalancer());
-        Assert.assertTrue(processor.getLoadBalancer() instanceof RibbonServiceLoadBalancer);
+        assertNotNull(processor.getLoadBalancer());
+        assertTrue(processor.getLoadBalancer() instanceof RibbonServiceLoadBalancer);
 
         RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
-        Assert.assertTrue(loadBalancer.getServiceDiscovery() instanceof StaticServiceDiscovery);
+        assertTrue(loadBalancer.getServiceDiscovery() instanceof StaticServiceDiscovery);
     }
 }
 
