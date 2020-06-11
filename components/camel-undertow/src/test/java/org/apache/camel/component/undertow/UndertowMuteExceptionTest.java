@@ -22,8 +22,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
@@ -36,9 +38,9 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
         HttpResponse response = client.execute(get);
 
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        Assert.assertNotNull(responseString);
-        Assert.assertEquals("Exception", responseString);
-        Assert.assertEquals(500, response.getStatusLine().getStatusCode());
+        assertNotNull(responseString);
+        assertEquals("Exception", responseString);
+        assertEquals(500, response.getStatusLine().getStatusCode());
 
         client.close();
     }
@@ -53,10 +55,10 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
         HttpResponse response = client.execute(get);
 
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        Assert.assertNotNull(responseString);
-        Assert.assertEquals("Exception", responseString);
+        assertNotNull(responseString);
+        assertEquals("Exception", responseString);
 
-        Assert.assertEquals(500, response.getStatusLine().getStatusCode());
+        assertEquals(500, response.getStatusLine().getStatusCode());
 
         client.close();
     }

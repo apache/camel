@@ -29,7 +29,11 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     private final ObjectMapper mapper = new ObjectMapper();

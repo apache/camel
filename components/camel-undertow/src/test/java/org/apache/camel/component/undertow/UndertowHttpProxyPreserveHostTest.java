@@ -18,7 +18,10 @@ package org.apache.camel.component.undertow;
 
 import io.undertow.util.Headers;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class UndertowHttpProxyPreserveHostTest extends BaseUndertowTest {
 

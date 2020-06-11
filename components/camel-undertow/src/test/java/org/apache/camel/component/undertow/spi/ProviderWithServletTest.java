@@ -18,9 +18,11 @@ package org.apache.camel.component.undertow.spi;
 
 import io.undertow.servlet.handlers.ServletRequestContext;
 import org.apache.camel.Exchange;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test for case that UndertowSecurityProvider.requireServletContext returns true.
@@ -37,11 +39,11 @@ public class ProviderWithServletTest extends AbstractProviderServletTest {
 
         @Override
         void assertServletContext(ServletRequestContext servletRequestContext) {
-            Assert.assertNotNull(servletRequestContext);
+            assertNotNull(servletRequestContext);
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initProvider() throws Exception {
         createSecurtyProviderConfigurationFile(org.apache.camel.component.undertow.spi.ProviderWithServletTest.MockSecurityProvider.class);
     }
@@ -52,7 +54,7 @@ public class ProviderWithServletTest extends AbstractProviderServletTest {
 
         String out = template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
 
-        Assert.assertEquals("user", out);
+        assertEquals("user", out);
 
         assertMockEndpointsSatisfied();
     }

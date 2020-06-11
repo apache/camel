@@ -24,8 +24,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UndertowTransferExceptionTest extends BaseUndertowTest {
 
@@ -39,9 +41,9 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
 
         ObjectInputStream in = new ObjectInputStream(response.getEntity().getContent());
         IllegalArgumentException e = (IllegalArgumentException)in.readObject();
-        Assert.assertNotNull(e);
-        Assert.assertEquals(500, response.getStatusLine().getStatusCode());
-        Assert.assertEquals("Camel cannot do this", e.getMessage());
+        assertNotNull(e);
+        assertEquals(500, response.getStatusLine().getStatusCode());
+        assertEquals("Camel cannot do this", e.getMessage());
 
         client.close();
     }

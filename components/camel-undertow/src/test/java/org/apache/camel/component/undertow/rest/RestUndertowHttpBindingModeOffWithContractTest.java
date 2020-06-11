@@ -23,7 +23,11 @@ import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestUndertowHttpBindingModeOffWithContractTest extends BaseUndertowTest {
 
@@ -37,7 +41,7 @@ public class RestUndertowHttpBindingModeOffWithContractTest extends BaseUndertow
         Object answer = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/users/new", body, Exchange.CONTENT_TYPE, "application/json");
         assertNotNull(answer);
         String answerString = new String((byte[])answer);
-        assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
+        assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
         assertMockEndpointsSatisfied();
 

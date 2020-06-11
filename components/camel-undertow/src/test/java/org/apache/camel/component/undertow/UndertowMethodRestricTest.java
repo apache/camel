@@ -25,14 +25,16 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowMethodRestricTest extends BaseUndertowTest {
 
     private static String url;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         url = "http://localhost:" + getPort() + "/methodRestrict";
     }
@@ -61,7 +63,7 @@ public class UndertowMethodRestricTest extends BaseUndertowTest {
         HttpResponse response = client.execute(httpGet);
         int status = response.getStatusLine().getStatusCode();
 
-        assertEquals("Get a wrong response status", 405, status);
+        assertEquals(405, status, "Get a wrong response status");
 
         client.close();
     }
