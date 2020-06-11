@@ -22,9 +22,10 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test CXF-CamelConduit when the destination is not a pipeline
@@ -56,7 +57,7 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
    
     @Test
     public void testStart1() {
-        assertThat(getSampleWS("direct:start1").getSomething(), is("Something"));
+        assertEquals("Something", getSampleWS("direct:start1").getSomething());
         
     }
 
@@ -65,13 +66,13 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
      */
     @Test
     public void testStart2() {
-        assertThat(getSampleWSWithCXFAPI("direct:start2").getSomething(), is("Something"));
+        assertEquals("Something", getSampleWSWithCXFAPI("direct:start2").getSomething());
     }
     
     // test the content type
     @Test
     public void testStart3() {
-        assertThat(getSampleWS("direct:start3").getSomething(), is("Something"));
+        assertEquals("Something", getSampleWS("direct:start3").getSomething());
     }
     
     @Test
