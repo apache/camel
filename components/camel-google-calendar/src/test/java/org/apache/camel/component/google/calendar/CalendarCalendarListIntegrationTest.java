@@ -22,7 +22,9 @@ import com.google.api.services.calendar.model.CalendarListEntry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarListApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$CalendarList} APIs.
@@ -34,7 +36,7 @@ public class CalendarCalendarListIntegrationTest extends AbstractGoogleCalendarT
     @Test
     public void testCalendarList() throws Exception {
         Calendar calendar = getCalendar();
-        assertTrue("Test calendar should be in the list", isCalendarInList(calendar));
+        assertTrue(isCalendarInList(calendar), "Test calendar should be in the list");
 
         CalendarListEntry calendarFromGet = requestBody("direct://GET", calendar.getId());
         assertTrue(calendar.getId().equals(calendarFromGet.getId()));
