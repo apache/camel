@@ -21,8 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonMarshalTest extends CamelTestSupport {
 
@@ -57,7 +59,7 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
         Object marshalled = template.requestBody("direct:inPretty", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        String expected = String.format("{%s  \"name\" : \"Camel\"%s}", LS, LS);
+        String expected = String.format("{%s  \"name\" : \"Camel\"%s}", System.lineSeparator(), System.lineSeparator());
         assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:backPretty", marshalled);

@@ -21,10 +21,14 @@ import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SpringJacksonObjectMapperRegistryTest extends CamelSpringTestSupport {
 
