@@ -23,7 +23,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
     private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -40,7 +43,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
     protected void checkRequest(String expect, String request) {
         if (expect.equals(ECHO_REQUEST)) {
             // just check the namespace of xsd
-            assertTrue("Expect to find the namesapce", request.indexOf("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"") > 0);
+            assertTrue(request.indexOf("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"") > 0, "Expect to find the namesapce");
         }
     }
     
@@ -60,7 +63,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseBody = EntityUtils.toString(response.getEntity());
             
-            assertEquals("Get a wrong response", ECHO_RESPONSE, responseBody);
+            assertEquals(ECHO_RESPONSE, responseBody, "Get a wrong response");
         } finally {
             httpclient.close();
         }

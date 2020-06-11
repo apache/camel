@@ -25,9 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.telnet.TelnetClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * UnitOfWork should complete even if client disconnected during the processing.

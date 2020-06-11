@@ -23,15 +23,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomException;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 
@@ -93,8 +95,8 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
 
         try {
             HttpResponse response = httpclient.execute(get);
-            assertEquals("Get a wrong status code", 500, response.getStatusLine().getStatusCode());
-            assertEquals("Get a worng message header", "exception: Here is the exception", response.getHeaders("exception")[0].toString());
+            assertEquals(500, response.getStatusLine().getStatusCode(), "Get a wrong status code");
+            assertEquals("exception: Here is the exception", response.getHeaders("exception")[0].toString(), "Get a worng message header");
         } finally {
             httpclient.close();
         }

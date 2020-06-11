@@ -17,18 +17,22 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 
 /**
  * Unit test to verify using '#' notation to reference serviceClass.
  */
 @ContextConfiguration
-public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class ServiceClassRefTest {
 
     static {
         CXFTestSupport.getPort1();

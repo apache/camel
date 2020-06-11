@@ -19,10 +19,12 @@ package org.apache.camel.component.cxf;
 import javax.xml.ws.Endpoint;
 
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A unit test for testing a CXF client invoking a CXF server via route 
@@ -30,7 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
-    @AfterClass
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
@@ -38,7 +40,7 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRo
     }
 
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() 
@@ -46,7 +48,7 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRo
         endpoint = Endpoint.publish(address, implementor); 
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         setUseRouteBuilder(false);

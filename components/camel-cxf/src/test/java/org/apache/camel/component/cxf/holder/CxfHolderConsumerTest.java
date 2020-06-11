@@ -20,10 +20,12 @@ import javax.xml.ws.Holder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfHolderConsumerTest extends CamelTestSupport {
     protected static final String ADDRESS = "http://localhost:"
@@ -58,9 +60,9 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         strCustomer.value = "";
 
         String result = client.myOrder(strPart, 2, strCustomer);
-        assertEquals("Get a wrong order result", "Ordered ammount 2", result);
-        assertEquals("Get a wrong parts", "parts", strPart.value);
-        assertEquals("Get a wrong customer", "newCustomer", strCustomer.value);
+        assertEquals("Ordered ammount 2", result, "Get a wrong order result");
+        assertEquals("parts", strPart.value, "Get a wrong parts");
+        assertEquals("newCustomer", strCustomer.value, "Get a wrong customer");
     }
     
     
@@ -77,8 +79,8 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         header.value = "parts";
 
         String result = client.mySecureOrder(1, header);
-        assertEquals("Get a wrong order result", "Ordered ammount 1", result);
-        assertEquals("Get a wrong parts", "secureParts", header.value);
+        assertEquals("Ordered ammount 1", result, "Get a wrong order result");
+        assertEquals("secureParts", header.value, "Get a wrong parts");
         
     }
 

@@ -19,12 +19,16 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
 
     private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() 
@@ -40,12 +44,8 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
                 + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=RAW&synchronous=false";
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws Exception {        
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -61,8 +61,8 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         String response = template.requestBody("direct:start", REQUEST_MESSAGE, String.class);
-        assertTrue("It should has the echo message", response.indexOf("echo " + TEST_MESSAGE) > 0);
-        assertTrue("It should has the echoResponse tag", response.indexOf("echoResponse") > 0);
+        assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
+        assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");
 
         assertMockEndpointsSatisfied();
     }

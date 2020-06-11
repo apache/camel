@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
@@ -38,11 +38,18 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String SERVICE_NAME = "{http://camel.apache.org/wsdl-first}PersonService";
@@ -60,10 +67,6 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected final String fromURI = "cxf://" + serviceAddress + "?" 
         + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -105,8 +108,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
             fail("expect UnknownPersonFault");
         } catch (UnknownPersonFault e) {
             t = e;
-            assertEquals("Get the wrong fault detail", 
-                         "", e.getFaultInfo().getPersonId());
+            assertEquals("", e.getFaultInfo().getPersonId(), "Get the wrong fault detail");
         }
         
         assertNotNull(t);

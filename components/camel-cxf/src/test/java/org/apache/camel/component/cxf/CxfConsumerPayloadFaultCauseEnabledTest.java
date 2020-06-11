@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.cxf.endpoint.Client;
@@ -38,10 +38,15 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
@@ -53,12 +58,12 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfConsumerFaultCauseEnabledBeans.xml");
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
     
     @Override

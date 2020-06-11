@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
@@ -33,14 +33,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
         + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";        
+        + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomConsumerTest.class);
 
     private final QName serviceName = new QName("http://apache.org/camel/cxf/mtom_feature", "HelloService");
     
@@ -54,18 +61,18 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                     @SuppressWarnings("unchecked")
                     public void process(final Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
-                        assertEquals("We should not get any attachements here.", 0, in.getAttachments().size());
-                        assertEquals("Get a wrong Content-Type header", "application/xop+xml", in.getHeader("Content-Type"));
+                        assertEquals(0, in.getAttachments().size(), "We should not get any attachements here.");
+                        assertEquals("application/xop+xml", in.getHeader("Content-Type"), "Get a wrong Content-Type header");
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Get the operation name
                         Holder<byte[]> photo = (Holder<byte[]>)parameter.get(0);
-                        assertNotNull("The photo should not be null", photo.value);
+                        assertNotNull(photo.value, "The photo should not be null");
                         assertEquals("Should get the right request", new String(photo.value, "UTF-8"),
                                      "RequestFromCXF");
                         photo.value = "ResponseFromCamel".getBytes("UTF-8");
                         Holder<Image> image = (Holder<Image>)parameter.get(1);
-                        assertNotNull("We should get the image here", image.value);
+                        assertNotNull(image.value, "We should get the image here");
                         // set the holder message back    
                         exchange.getOut().setBody(new Object[] {null, photo, image});
 
@@ -77,10 +84,10 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
     
     private Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
-        assertNotNull("WSDL is null", wsdl);
+        assertNotNull(wsdl, "WSDL is null");
 
         HelloService service = new HelloService(wsdl, serviceName);
-        assertNotNull("Service is null ", service);
+        assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
         
         ((BindingProvider)port).getRequestContext()
@@ -95,7 +102,7 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
     
     @Test
     public void testInvokingService() throws Exception {        
-        if (MtomTestHelper.isAwtHeadless(null, log)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 

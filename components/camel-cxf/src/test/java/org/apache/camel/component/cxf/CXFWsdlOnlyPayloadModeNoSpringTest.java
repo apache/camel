@@ -26,7 +26,7 @@ import javax.xml.ws.Holder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
@@ -35,10 +35,18 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     
     protected static final String SERVICE_NAME_PROP =  "serviceName=";
@@ -49,18 +57,13 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected int port1 = CXFTestSupport.getPort1(); 
     protected int port2 = CXFTestSupport.getPort2(); 
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Before
+    @BeforeEach
     public void startService() {
         endpoint = Endpoint.publish("http://localhost:" + port1 + "/" + getClass().getSimpleName()
                                     + "/PersonService", new PersonImpl());
     }
     
-    @After
+    @AfterEach
     public void stopService() {
         if (endpoint != null) {
             endpoint.stop();

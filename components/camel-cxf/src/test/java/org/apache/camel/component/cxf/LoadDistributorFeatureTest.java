@@ -25,9 +25,10 @@ import org.apache.cxf.clustering.LoadDistributorFeature;
 import org.apache.cxf.clustering.SequentialStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoadDistributorFeatureTest {
     
@@ -44,7 +45,7 @@ public class LoadDistributorFeatureTest {
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
 
         // publish two web-service
@@ -62,8 +63,8 @@ public class LoadDistributorFeatureTest {
     @Test
     public void testPojo() throws Exception {
         startRoutePojo();
-        Assert.assertEquals("hello Server1", tryLoadDistributor(POJO_PROXY_ADDRESS));
-        Assert.assertEquals("hello Server2", tryLoadDistributor(POJO_PROXY_ADDRESS));
+        assertEquals("hello Server1", tryLoadDistributor(POJO_PROXY_ADDRESS));
+        assertEquals("hello Server2", tryLoadDistributor(POJO_PROXY_ADDRESS));
         if (context2 != null) {
             context2.stop();
         }
@@ -72,8 +73,8 @@ public class LoadDistributorFeatureTest {
     @Test
     public void testPayload() throws Exception {
         startRoutePayload();
-        Assert.assertEquals("hello Server1", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
-        Assert.assertEquals("hello Server2", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
+        assertEquals("hello Server1", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
+        assertEquals("hello Server2", tryLoadDistributor(PAYLOAD_PROXY_ADDRESS));
         if (context1 != null) {
             context1.stop();
         }

@@ -20,17 +20,17 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.wsdl_first.PersonImpl12;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayloadModeNoSpringTest {
-    
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     @Override
-    @Before
+    @BeforeEach
     public void startService() {
         endpoint = Endpoint.publish("http://localhost:" + port1 + "/" 
             + getClass().getSimpleName() 

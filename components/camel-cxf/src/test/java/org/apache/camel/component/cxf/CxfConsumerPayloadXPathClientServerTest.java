@@ -31,13 +31,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.language.xpath.XPathBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
     private static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
@@ -131,11 +134,11 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo(testMessage);
-        assertEquals("We should get the echo string result from router", "echo Hello World!", result);
+        assertEquals("echo Hello World!", result, "We should get the echo string result from router");
 
         //check received requests
-        assertEquals("Lengths of testMessage and receiveMessage should be equal (conversion body to String),", testMessage.length(), receivedMessageStringApplyingXPath.length());
-        assertEquals("Lengths of receivedMessageByDom and receivedMessageCxfPayloadApplyingXPath should be equal", receivedMessageCxfPayloadApplyingXPath.length(), receivedMessageByDom.length());
-        assertEquals("Lengths of testMessage and receiveMessage should be equal (body is CxfPayload),", testMessage.length(), receivedMessageCxfPayloadApplyingXPath.length());
+        assertEquals(testMessage.length(), receivedMessageStringApplyingXPath.length(), "Lengths of testMessage and receiveMessage should be equal (conversion body to String)");
+        assertEquals(receivedMessageCxfPayloadApplyingXPath.length(), receivedMessageByDom.length(), "Lengths of receivedMessageByDom and receivedMessageCxfPayloadApplyingXPath should be equal");
+        assertEquals(testMessage.length(), receivedMessageCxfPayloadApplyingXPath.length(), "Lengths of testMessage and receiveMessage should be equal (body is CxfPayload)");
     }
 }

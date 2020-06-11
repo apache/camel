@@ -26,15 +26,18 @@ import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CXFMultiPartTest extends CamelTestSupport {
     public static final QName SERVICE_NAME = new QName("http://camel.apache.org/cxf/multipart",
@@ -46,21 +49,21 @@ public class CXFMultiPartTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
 
         IOHelper.close(applicationContext);
         super.tearDown();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new MultiPartInvokeImpl();
         String address = "http://localhost:" + CXFTestSupport.getPort1() + "/CXFMultiPartTest/SoapContext/SoapPort";
@@ -68,7 +71,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
        
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
@@ -80,10 +83,10 @@ public class CXFMultiPartTest extends CamelTestSupport {
         String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3() 
                                               + "/CXFMultiPartTest/CamelContext/RouterPort",
                                               "in0", "in1");
-        assertNotNull("No response received from service", reply);
+        assertNotNull(reply, "No response received from service");
         assertTrue(reply.equals("in0 in1"));
 
-        assertNotNull("No response received from service", reply);
+        assertNotNull(reply, "No response received from service");
         assertTrue(reply.equals("in0 in1"));
 
     }

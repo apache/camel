@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
@@ -30,29 +30,39 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  */
 @ContextConfiguration
-public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTests {
-    static int port1 = CXFTestSupport.getPort1();    
-    static int port2 = CXFTestSupport.getPort2();    
-    
+@ExtendWith(SpringExtension.class)
+public class CxfMtomRouterPayloadModeTest {
+
+    static int port1 = CXFTestSupport.getPort1();
+    static int port2 = CXFTestSupport.getPort2();
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomRouterPayloadModeTest.class);
+
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         endpoint = Endpoint.publish("http://localhost:" + port2 + "/" 
             + getClass().getSimpleName() + "/jaxws-mtom/hello", getImpl());
@@ -61,7 +71,7 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
         
     }
     
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (endpoint != null) {
             endpoint.stop();
@@ -70,7 +80,7 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
@@ -84,21 +94,21 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
 
         port.detail(photo, image);
         
-        MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA,  photo.value);      
-        Assert.assertNotNull(image.value);
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA,  photo.value);
+        assertNotNull(image.value);
         if (image.value instanceof BufferedImage) {
-            Assert.assertEquals(560, ((BufferedImage)image.value).getWidth());
-            Assert.assertEquals(300, ((BufferedImage)image.value).getHeight());            
+            assertEquals(560, ((BufferedImage)image.value).getWidth());
+            assertEquals(300, ((BufferedImage)image.value).getHeight());            
         }
         
     }
     
     protected Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
-        assertNotNull("WSDL is null", wsdl);
+        assertNotNull(wsdl, "WSDL is null");
 
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
-        assertNotNull("Service is null ", service);
+        assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
         ((BindingProvider)port).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,

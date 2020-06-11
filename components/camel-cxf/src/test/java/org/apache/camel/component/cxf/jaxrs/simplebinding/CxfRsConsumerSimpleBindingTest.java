@@ -35,7 +35,7 @@ import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
@@ -51,9 +51,15 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
@@ -67,7 +73,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private CloseableHttpClient httpclient;
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
@@ -75,7 +81,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     }
     
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
@@ -124,7 +130,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                 
                 from("direct:listVipCustomers").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals("gold", exchange.getIn().getHeader("status", String.class));
+                        assertEquals(exchange.getIn().getHeader("status", String.class), "gold");
                         assertEquals(MessageContentsList.class, exchange.getIn().getBody().getClass());
                         assertEquals(0, exchange.getIn().getBody(MessageContentsList.class).size());
                         CustomerList response = new CustomerList();
@@ -138,7 +144,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                 
                 from("direct:updateVipCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals("gold", exchange.getIn().getHeader("status", String.class));
+                        assertEquals(exchange.getIn().getHeader("status", String.class), "gold");
                         assertEquals("123", exchange.getIn().getHeader("id"));
                         Customer c = exchange.getIn().getBody(Customer.class);
                         assertEquals(123, c.getId());
@@ -148,7 +154,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                 
                 from("direct:deleteVipCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals("gold", exchange.getIn().getHeader("status", String.class));
+                        assertEquals(exchange.getIn().getHeader("status", String.class), "gold");
                         assertEquals("123", exchange.getIn().getHeader("id"));
                     }
                 });

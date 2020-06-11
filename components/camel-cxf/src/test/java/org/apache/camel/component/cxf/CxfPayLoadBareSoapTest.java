@@ -24,11 +24,13 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
@@ -39,7 +41,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
             String.format("http://localhost:%s/proxy/Service", PORT);
     private static final BareSoapServiceImpl IMPLEMENTATION = new BareSoapServiceImpl();
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Endpoint.publish(ORIGINAL_URL, IMPLEMENTATION);
     }
@@ -71,7 +73,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
         client.doSomething();
 
-        assertEquals("Proxied service should have been invoked once", 1, IMPLEMENTATION.invocations.get());
+        assertEquals(1, IMPLEMENTATION.invocations.get(), "Proxied service should have been invoked once");
     }
 
     @WebService

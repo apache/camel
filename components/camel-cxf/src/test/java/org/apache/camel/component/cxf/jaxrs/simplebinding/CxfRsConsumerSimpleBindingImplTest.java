@@ -28,16 +28,19 @@ import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
@@ -51,7 +54,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     private CloseableHttpClient httpclient;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
@@ -59,7 +62,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
