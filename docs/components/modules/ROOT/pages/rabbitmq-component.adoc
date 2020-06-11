@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The RabbitMQ component allows you produce and consume messages from
+The RabbitMQ component allows you to produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
 client, this component offers a pure RabbitMQ approach over the generic
 http://camel.apache.org/amqp.html[AMQP] component.
@@ -38,6 +38,9 @@ The old syntax is *deprecated*:
 ----
 rabbitmq://hostname[:port]/exchangeName?[options]
 ----
+Where *hostname* is the hostname of the running rabbitmq instance or
+cluster. Port is optional and if not specified then defaults to the
+RabbitMQ client default (5672).
 
 Instead the hostname and port is configured on the component level, or
 can be provided as uri query parameters instead.
@@ -48,11 +51,9 @@ The new syntax is:
 rabbitmq:exchangeName?[options]
 ----
 
-Where *hostname* is the hostname of the running rabbitmq instance or
-cluster. Port is optional and if not specified then defaults to the
-RabbitMQ client default (5672). The exchange name determines which
-exchange produced messages will sent to. In the case of consumers, the
-exchange name determines which exchange the queue will bind to.
+The exchange name determines the exchange to which the produced 
+messages will be sent to. In the case of consumers, the exchange name 
+determines the exchange the queue will be bound to.
 
 == Options
 
@@ -136,7 +137,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *exchangeName* | *Required* The exchange name determines which exchange produced messages will sent to. In the case of consumers, the exchange name determines which exchange the queue will bind to. |  | String
+| *exchangeName* | *Required* The exchange name determines the exchange to which the produced messages will be sent to. In the case of consumers, the exchange name determines the exchange the queue will be bound to. |  | String
 |===
 
 
@@ -218,7 +219,7 @@ See
 https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/ConnectionFactory.html[https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/ConnectionFactory.html]
 and the AMQP specification for more information on connection options.
 
-== Using connection factory
+== Using a connection factory
 
 To connect to RabbitMQ you can setup a `ConnectionFactory` (same as with JMS) with the login details such as:
 
@@ -256,7 +257,7 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 </camelContext>
 ----
 
-In case you have multiple connection factories in your application or multiple connection factories in your registry, don't forge to set the `autoDetectConnectionFactory` to false.
+In case you have multiple connection factories in your application or multiple connection factories in your registry, don't forget to set the `autoDetectConnectionFactory` to false.
 
 == Message Headers
 
@@ -326,8 +327,37 @@ camel exchange then they will be set on the RabbitMQ message.
 
 Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
-exchange has taken place. Any headers set prior to production that the
-producer sets will be overridden.
+exchange has taken place.
+
+== Troubleshooting headers
+
+Watch out when consuming from a RabbitMq queue and producing to *the same* RabbitMq exchange. The header details on the exchange may be populated with headers that will not be overriden by the destination endpoint. The following example will help understand the pitfall.
+
+[source,java]
+----
+from("rabbitmq:A?queue=IN&declare=false&autoDelete=false&arg.queue.x-message-ttl=20000")
+  // ... your route
+  .to("rabbitmq:A?queue=OUT&routingKey=OUT&declare=false&autoDelete=false&arg.queue.x-message-ttl=20000");
+----
+
+You would think that it would be a straight forward operation. However, if the source queue has a routing key set in the headers, it will pass down to the destination and not be overriden with the URI query parameters. Because the exchange is the same and the routing key is the same, an infinitely growing loop is created.
+
+Either make a second exchange for the producer to avoid the headers to pass through or manually access the exchange headers in a processor and get rid of the misbehaving key. (Example is written in Kotlin)
+
+[source,kotlin]
+----
+from("rabbitmq:A?queue=IN&declare=false&autoDelete=false&arg.queue.x-message-ttl=20000")
+  // ...
+  .process(Processor { exchange: Exchange ->
+    val input = exchange.`in`.body as InputModel
+    exchange.`in`.removeHeader("rabbitmq.ROUTING_KEY")
+    exchange.`in`.body = OutputModel(...)
+  })
+  // ...
+  .to("rabbitmq:A?queue=OUT&routingKey=OUT&declare=false&autoDelete=false&arg.queue.x-message-ttl=20000");
+----
+
+Now you are at least guaranteed to not create a loop from the camel route.
 
 == Allowing custom Headers
 
