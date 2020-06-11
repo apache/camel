@@ -11587,9 +11587,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rabbitmq:exchangeName</code>
      * 
      * Path parameter: exchangeName (required)
-     * The exchange name determines which exchange produced messages will sent
-     * to. In the case of consumers, the exchange name determines which exchange
-     * the queue will bind to.
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to.
      * 
      * @param path exchangeName
      */
@@ -11608,9 +11608,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rabbitmq:exchangeName</code>
      * 
      * Path parameter: exchangeName (required)
-     * The exchange name determines which exchange produced messages will sent
-     * to. In the case of consumers, the exchange name determines which exchange
-     * the queue will bind to.
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
