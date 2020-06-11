@@ -19,7 +19,7 @@ package org.apache.camel.generator.openapi;
 import io.apicurio.datamodels.openapi.models.OasInfo;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

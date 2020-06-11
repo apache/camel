@@ -36,8 +36,8 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -103,7 +103,7 @@ public class RestDslXmlGeneratorV3Test {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void readOpenApiDoc() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = RestDslXmlGeneratorV3Test.class.getResourceAsStream("openapi-spec.json")) {
