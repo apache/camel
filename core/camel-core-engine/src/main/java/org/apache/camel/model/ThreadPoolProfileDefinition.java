@@ -201,7 +201,7 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
      * Whether idle core threads is allowed to timeout and therefore can shrink
      * the pool size below the core pool size
      * <p/>
-     * Is by default <tt>false</tt>
+     * Is by default <tt>true</tt>
      */
     public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;

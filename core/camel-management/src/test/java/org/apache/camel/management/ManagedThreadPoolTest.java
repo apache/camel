@@ -53,7 +53,7 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         assertEquals(60, keepAlive.intValue());
 
         Boolean allow = (Boolean) mbeanServer.getAttribute(on, "AllowCoreThreadTimeout");
-        assertEquals(false, allow.booleanValue());
+        assertEquals(true, allow.booleanValue());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

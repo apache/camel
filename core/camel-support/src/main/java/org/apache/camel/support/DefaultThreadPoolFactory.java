@@ -46,8 +46,8 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
     
     @Override
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
-        // allow core thread timeout is default false if not configured
-        boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : false;
+        // allow core thread timeout is default true if not configured
+        boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : true;
         return newThreadPool(profile.getPoolSize(), 
                              profile.getMaxPoolSize(), 
                              profile.getKeepAliveTime(),

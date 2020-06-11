@@ -76,7 +76,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         defaultProfile.setKeepAliveTime(60L);
         defaultProfile.setTimeUnit(TimeUnit.SECONDS);
         defaultProfile.setMaxQueueSize(1000);
-        defaultProfile.setAllowCoreThreadTimeOut(false);
+        defaultProfile.setAllowCoreThreadTimeOut(true);
         defaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
 
         registerThreadPoolProfile(defaultProfile);
@@ -227,12 +227,16 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         profile.setPoolSize(poolSize);
         profile.setMaxPoolSize(poolSize);
         profile.setKeepAliveTime(0L);
+        profile.setAllowCoreThreadTimeOut(false);
         return newThreadPool(source, name, profile);
     }
 
     @Override
     public ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name) {
-        return newScheduledThreadPool(source, name, 1);
+        ThreadPoolProfile profile = new ThreadPoolProfile(name);
+        profile.setPoolSize(1);
+        profile.setAllowCoreThreadTimeOut(false);
+        return newScheduledThreadPool(source, name, profile);
     }
     
     @Override
