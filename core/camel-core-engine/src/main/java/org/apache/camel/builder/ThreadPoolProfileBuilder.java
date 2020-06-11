@@ -39,28 +39,40 @@ public class ThreadPoolProfileBuilder {
     }
 
     public ThreadPoolProfileBuilder defaultProfile(Boolean defaultProfile) {
-        this.profile.setDefaultProfile(defaultProfile);
+        if (defaultProfile != null) {
+            this.profile.setDefaultProfile(defaultProfile);
+        }
         return this;
     }
 
     public ThreadPoolProfileBuilder poolSize(Integer poolSize) {
-        profile.setPoolSize(poolSize);
+        if (poolSize != null) {
+            profile.setPoolSize(poolSize);
+        }
         return this;
     }
 
     public ThreadPoolProfileBuilder maxPoolSize(Integer maxPoolSize) {
-        profile.setMaxPoolSize(maxPoolSize);
+        if (maxPoolSize != null) {
+            profile.setMaxPoolSize(maxPoolSize);
+        }
         return this;
     }
 
     public ThreadPoolProfileBuilder keepAliveTime(Long keepAliveTime, TimeUnit timeUnit) {
-        profile.setKeepAliveTime(keepAliveTime);
-        profile.setTimeUnit(timeUnit);
+        if (keepAliveTime != null) {
+            profile.setKeepAliveTime(keepAliveTime);
+        }
+        if (timeUnit != null) {
+            profile.setTimeUnit(timeUnit);
+        }
         return this;
     }
 
     public ThreadPoolProfileBuilder keepAliveTime(Long keepAliveTime) {
-        profile.setKeepAliveTime(keepAliveTime);
+        if (keepAliveTime != null) {
+            profile.setKeepAliveTime(keepAliveTime);
+        }
         return this;
     }
 
@@ -72,12 +84,16 @@ public class ThreadPoolProfileBuilder {
     }
 
     public ThreadPoolProfileBuilder allowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
-        profile.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        if (allowCoreThreadTimeOut != null) {
+            profile.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        }
         return this;
     }
 
     public ThreadPoolProfileBuilder rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
-        profile.setRejectedPolicy(rejectedPolicy);
+        if (rejectedPolicy != null) {
+            profile.setRejectedPolicy(rejectedPolicy);
+        }
         return this;
     }
 
