@@ -24,10 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroovyShellFactoryTest extends CamelTestSupport {
 
@@ -44,7 +47,7 @@ public class GroovyShellFactoryTest extends CamelTestSupport {
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
-        assertExpression(GroovyLanguage.groovy("dummy()"), new DefaultExchange(camelContext), "foo");
+        TestSupport.assertExpression(GroovyLanguage.groovy("dummy()"), new DefaultExchange(camelContext), "foo");
     }
 
     @Test
