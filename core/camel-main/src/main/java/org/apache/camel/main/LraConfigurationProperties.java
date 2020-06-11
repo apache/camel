@@ -86,4 +86,41 @@ public class LraConfigurationProperties {
     public void setLocalParticipantContextPath(String localParticipantContextPath) {
         this.localParticipantContextPath = localParticipantContextPath;
     }
+
+    /**
+     * The URL for the LRA coordinator service that orchestrates the transactions
+     */
+    public LraConfigurationProperties withCoordinatorUrl(String coordinatorUrl) {
+        this.coordinatorUrl = coordinatorUrl;
+        return this;
+    }
+
+    /**
+     * The context-path for the LRA coordinator.
+     *
+     * Is default /lra-coordinator
+     */
+    public LraConfigurationProperties withCoordinatorContextPath(String coordinatorContextPath) {
+        this.coordinatorContextPath = coordinatorContextPath;
+        return this;
+    }
+
+    /**
+     * The URL for the local participant
+     */
+    public LraConfigurationProperties withLocalParticipantUrl(String localParticipantUrl) {
+        this.localParticipantUrl = localParticipantUrl;
+        return this;
+    }
+
+    /**
+     * The context-path for the local participant.
+     *
+     * Is default /lra-participant
+     */
+    public LraConfigurationProperties withLocalParticipantContextPath(String localParticipantContextPath) {
+        this.localParticipantContextPath = localParticipantContextPath;
+        return this;
+    }
+
 }
