@@ -97,6 +97,11 @@ CREATE TABLE aggregation_completed (
 );
 ----
 
+=== camel-lra-starter
+
+The Spring Boot LRA starter component have changed its auto configuration keys to be similar to using camel-lra with camel-main or camel-quarkus.
+Change the keys from `camel.service.lra` to `camel.lra`, eg `camel.service.lra.coordinator-url` to `camel.lra.coordinator-url`.
+
 === Maven Archetypes
 
 The `camel-archetype-java8` has been removed, as you can just use `camel-archetype-java` instead.
