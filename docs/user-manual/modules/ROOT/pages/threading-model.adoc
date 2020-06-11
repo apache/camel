@@ -24,9 +24,12 @@ default thread pool profile which is:
 [source,xml]
 --------------------------------------------------------------------------------------------------------
     <threadPoolProfile id="defaultThreadPoolProfile" defaultProfile="true"
-                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="false"
+                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="true"
                        rejectedPolicy="CallerRuns"/>
 --------------------------------------------------------------------------------------------------------
+
+NOTE: From Camel 3.4 onwards the default thread pool profile has `allowCoreThreadTimeOut=true` while
+it was `allowCoreThreadTimeOut=false` in older Camel versions.
 
 What that means is that for example when you use
 xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
