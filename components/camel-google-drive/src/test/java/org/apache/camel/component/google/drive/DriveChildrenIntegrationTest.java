@@ -23,9 +23,13 @@ import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveChildrenApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link com.google.api.services.drive.Drive$Children} APIs.
@@ -53,11 +57,11 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
         requestBodyAndHeaders("direct://INSERT", null, headers);
 
         final com.google.api.services.drive.model.ChildList result = requestBody("direct://LIST", folder.getId());
-        assertNotNull("insert result", result);
+        assertNotNull(result, "insert result");
         LOG.debug("insert: " + result);
         headers.put("CamelGoogleDrive.childId", child.getId());
         com.google.api.services.drive.model.ChildReference childReference = requestBodyAndHeaders("direct://GET", null, headers);
-        assertNotNull("inserted child", childReference);
+        assertNotNull(childReference, "inserted child");
         requestBodyAndHeaders("direct://DELETE", null, headers);
         try {
             childReference = requestBodyAndHeaders("direct://GET", null, headers);
@@ -85,7 +89,7 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
       
         headers.put("CamelGoogleDrive.childId", child.getId());
         com.google.api.services.drive.model.ChildReference childReference = requestBodyAndHeaders("direct://GET-BODY", child.getId(), headers);
-        assertNotNull("inserted child", childReference);
+        assertNotNull(childReference, "inserted child");
         requestBodyAndHeaders("direct://DELETE", null, headers);
         try {
             childReference = requestBodyAndHeaders("direct://GET-BODY", child.getId(), headers, com.google.api.services.drive.model.ChildReference.class);

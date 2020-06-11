@@ -30,8 +30,10 @@ import com.google.api.services.drive.model.File;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
     protected static final String CAMEL_TEST_TAG = "camel_was_here";
@@ -89,7 +91,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line;
         while ((line = reader.readLine()) != null) {
-            builder.append(line).append(LS);
+            builder.append(line).append(System.lineSeparator());
         }
         propertyText = builder.toString();
 
@@ -121,12 +123,6 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         context.addComponent("google-drive", component);
 
         return context;
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        // only create the context once for this class
-        return true;
     }
 
     protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)

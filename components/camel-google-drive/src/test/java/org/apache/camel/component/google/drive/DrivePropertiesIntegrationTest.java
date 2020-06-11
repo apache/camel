@@ -20,9 +20,11 @@ import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DrivePropertiesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Properties APIs.
@@ -40,7 +42,7 @@ public class DrivePropertiesIntegrationTest extends AbstractGoogleDriveTestSuppo
         // using String message body for single parameter "fileId"
         final com.google.api.services.drive.model.PropertyList result = requestBody("direct://LIST", fileId);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
     }
 
