@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -43,13 +43,21 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfPayloadRouterContentLengthTest.class);
 
     /*
      * The response message is generated directly. The issue here is that the
@@ -85,14 +93,14 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         /*
          * We start a Jetty for the service in order to have better control over
          * the response The response must contain only a Content-Type and a
          * Content-Length but no other header
          */
-        log.info("Starting jetty server at port {}", JETTY_PORT);
+        LOG.info("Starting jetty server at port {}", JETTY_PORT);
         server = new Server();
         // Do not send a Server header
         HttpConfiguration httpconf = new HttpConfiguration();
@@ -117,14 +125,14 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
 
         server.start();
         // Load the CXF endpoints for the route
-        log.info("Start Routing Scenario at port {}", CXFTestSupport.getPort1());
+        LOG.info("Start Routing Scenario at port {}", CXFTestSupport.getPort1());
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfPayloadRouterContentLengthBeans.xml");
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // close the spring context
         IOHelper.close(applicationContext);
@@ -177,9 +185,9 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
         if (!isChunked) {
             assertEquals(receivedContent.length(), contentLength);
         }
-        assertTrue("[" + receivedContent + "] does not contain [" + RESPONSE_STRING + "]", receivedContent.contains(RESPONSE_STRING));
+        assertTrue(receivedContent.contains(RESPONSE_STRING), "[" + receivedContent + "] does not contain [" + RESPONSE_STRING + "]");
         // check whether the response was cut off by the client because the
         // Content-Length was wrong
-        assertTrue("[" + receivedContent + "] does not contain the closing Envelope tag.", receivedContent.matches(".*\\</.*:Envelope\\>"));
+        assertTrue(receivedContent.matches(".*\\</.*:Envelope\\>"), "[" + receivedContent + "] does not contain the closing Envelope tag.");
     }
 }

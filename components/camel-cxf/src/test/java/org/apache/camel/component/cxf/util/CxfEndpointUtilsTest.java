@@ -26,10 +26,15 @@ import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CxfEndpointUtilsTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class CxfEndpointUtilsTest {
     // set up the port name and service name
     protected static final QName SERVICE_NAME =
         new QName("http://www.example.com/test", "ServiceName");
@@ -67,7 +72,7 @@ public class CxfEndpointUtilsTest extends Assert {
     public void testGetProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI());
         QName service = endpoint.getServiceNameAsQName();
-        assertEquals("We should get the right service name", service, SERVICE_NAME);
+        assertEquals(service, SERVICE_NAME, "We should get the right service name");
     }
 
     public char sepChar() {
@@ -77,12 +82,12 @@ public class CxfEndpointUtilsTest extends Assert {
     @Test
     public void testGetDataFormatCXF() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE");
-        assertEquals("We should get the Message DataFormat", DataFormat.CXF_MESSAGE, endpoint.getDataFormat());
+        assertEquals(DataFormat.CXF_MESSAGE, endpoint.getDataFormat(), "We should get the Message DataFormat");
     }
     @Test
     public void testGetDataFormatRAW() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=RAW");
-        assertEquals("We should get the Message DataFormat", DataFormat.RAW, endpoint.getDataFormat());
+        assertEquals(DataFormat.RAW, endpoint.getDataFormat(), "We should get the Message DataFormat");
     }
 
     @Test
@@ -112,7 +117,7 @@ public class CxfEndpointUtilsTest extends Assert {
             cxfConsumer.start();
             fail("Should have thrown exception");
         } catch (IllegalArgumentException exception) {
-            assertNotNull("Should get a CamelException here", exception);
+            assertNotNull(exception, "Should get a CamelException here");
             assertTrue(exception.getMessage().startsWith("serviceClass must be specified"));
         }
     }

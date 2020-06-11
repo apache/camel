@@ -21,13 +21,16 @@ import org.w3c.dom.Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport {
     /*
@@ -61,15 +64,15 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GetTokenBeans.xml");
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
         super.tearDown();

@@ -18,9 +18,11 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
     static int port1 = CXFTestSupport.getPort1(); 
     static int port2 = CXFTestSupport.getPort2(); 
@@ -33,10 +35,6 @@ public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
         return "cxf:http://localhost:" + port2 + "/" + getClass().getSimpleName()
             + "/new_pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
     }     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
  
     protected void start(String n) {
@@ -46,7 +44,7 @@ public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
         Endpoint.publish(address, implementor);        
     }
     
-    @Before
+    @BeforeEach
     public void startService() {
         start(getClass().getSimpleName());
     }

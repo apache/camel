@@ -24,16 +24,23 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     
     private static Endpoint endpoint1;
@@ -44,11 +51,6 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     private static int port3 = CXFTestSupport.getPort3(); 
     private static int port4 = CXFTestSupport.getPort4(); 
         
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         System.setProperty("CXFWsdlOnlyTest.port1", Integer.toString(port1));
@@ -63,10 +65,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
     @Override
     protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServices() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + port1 + "/CXFWsdlOnlyTest/PersonService/";
@@ -76,7 +78,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         endpoint2 = Endpoint.publish(address, implementor);
     }
     
-    @AfterClass
+    @AfterAll
     public static void stopServices() {
         if (endpoint1 != null) {
             endpoint1.stop();

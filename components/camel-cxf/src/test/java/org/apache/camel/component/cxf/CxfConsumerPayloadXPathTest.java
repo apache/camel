@@ -26,10 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
     
@@ -217,13 +221,13 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
 
         //Verify
         String result = exchgOut.getOut().getBody(String.class);
-        assertNotNull("response on http call", result);
+        assertNotNull(result, "response on http call");
         
         //check for data loss in received input (after xpath)
         String headerSize = exchgOut.getOut().getHeader(HEADER_SIZE, String.class);
         assertEquals("" + repeat, headerSize);
         
-        assertTrue("dataloss in output occurred", result.length() > repeat);
+        assertTrue(result.length() > repeat, "dataloss in output occurred");
         
         stopCamelContext();
     }

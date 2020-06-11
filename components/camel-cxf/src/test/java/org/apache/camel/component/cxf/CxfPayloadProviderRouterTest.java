@@ -27,10 +27,14 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
@@ -41,14 +45,14 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
     private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http",
                                                 "RouterPort");
     
-    @AfterClass
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() + "/CxfPayLoadProviderRouterTest/SoapContext/SoapPort";
@@ -78,7 +82,7 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
         final String path = getClass().getSimpleName() + "/CamelContext/RouterPort/" + getClass().getSimpleName();
         String response = template.requestBody("http://localhost:" + getPort2() + "/" + path
                                                + "?wsdl", null, String.class);
-        assertTrue("Can't find the right service location.", response.indexOf(path) > 0);
+        assertTrue(response.indexOf(path) > 0, "Can't find the right service location.");
     }
 
     @Test
@@ -96,16 +100,16 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
 
         icp.setCalled(false);
         String reply = greeter.greetMe("test");
-        assertEquals("Got the wrong reply ", "Hello test", reply);
-        assertTrue("No Inbound message received", icp.isCalled());
-        assertEquals("The target service not invoked", ++ic, implementor.getInvocationCount());
+        assertEquals("Hello test", reply, "Got the wrong reply");
+        assertTrue(icp.isCalled(), "No Inbound message received");
+        assertEquals(++ic, implementor.getInvocationCount(), "The target service not invoked");
         
         icp.setCalled(false);
         greeter.greetMeOneWay("call greetMe OneWay !");
-        assertFalse("An unnecessary inbound message", icp.isCalled());
+        assertFalse(icp.isCalled(), "An unnecessary inbound message");
         // wait a few seconds for the async oneway service to be invoked
         Thread.sleep(3000);
-        assertEquals("The target service not invoked", ++ic, implementor.getInvocationCount());
+        assertEquals(++ic, implementor.getInvocationCount(), "The target service not invoked");
     }
     
     static class VerifyInboundInterceptor extends AbstractPhaseInterceptor<Message> {

@@ -21,29 +21,32 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         
         IOHelper.close(applicationContext);
@@ -89,7 +92,7 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
         factory.setAddress(address);
         Greeter greeter = factory.create(Greeter.class);
         String response = greeter.greetMe("Willem");
-        assertEquals("Get a wrong response", "Hello Willem", response);
+        assertEquals("Hello Willem", response, "Get a wrong response");
     }
     
     

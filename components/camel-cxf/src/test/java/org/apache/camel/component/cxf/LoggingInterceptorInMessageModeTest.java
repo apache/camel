@@ -26,18 +26,23 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
+
 
 @ContextConfiguration
-public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class LoggingInterceptorInMessageModeTest {
     protected static int port1 = CXFTestSupport.getPort1(); 
     protected static int port2 = CXFTestSupport.getPort2(); 
 
@@ -49,7 +54,7 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
     @Autowired
     protected CamelContext context;
     
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -60,7 +65,7 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
     
         server = svrBean.create();
     }
-    @AfterClass
+    @AfterAll
     public static void stopService() {
         server.stop();
         server.destroy();
@@ -94,7 +99,7 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", result, "echo hello world");
+        assertEquals(result, "echo hello world", "we should get the right answer from router");
         //assertTrue(writer.getString().indexOf("hello world") > 0);
 
     }

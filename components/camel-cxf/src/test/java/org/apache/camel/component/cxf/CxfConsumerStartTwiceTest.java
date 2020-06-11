@@ -19,10 +19,12 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CxfConsumerStartTwiceTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class CxfConsumerStartTwiceTest {
     static final int PORT = CXFTestSupport.getPort6(); 
     
     
