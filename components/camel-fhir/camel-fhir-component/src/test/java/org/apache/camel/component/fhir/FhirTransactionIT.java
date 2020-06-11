@@ -30,9 +30,12 @@ import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirTransaction} APIs.
@@ -48,7 +51,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://WITH_BUNDLE", createTransactionBundle());
 
-        assertNotNull("withBundle result", result);
+        assertNotNull(result, "withBundle result");
         assertTrue(result.getEntry().get(0).getResponse().getStatus().contains("Created"));
         LOG.debug("withBundle: " + result);
     }
@@ -61,7 +64,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using String message body for single parameter "sBundle"
         final String result = requestBody("direct://WITH_STRING_BUNDLE", stringBundle);
 
-        assertNotNull("withBundle result", result);
+        assertNotNull(result, "withBundle result");
         assertTrue(result.contains("Bundle"));
         LOG.debug("withBundle: " + result);
     }
@@ -77,7 +80,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using java.util.List message body for single parameter "resources"
         List<IBaseResource> result = requestBody("direct://WITH_RESOURCES", patients);
 
-        assertNotNull("withResources result", result);
+        assertNotNull(result, "withResources result");
         LOG.debug("withResources: " + result);
         assertTrue(result.size() == 2);
     }
@@ -95,7 +98,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using java.util.List message body for single parameter "resources"
         List<IBaseResource> result = requestBodyAndHeaders("direct://WITH_RESOURCES", patients, headers);
 
-        assertNotNull("withResources result", result);
+        assertNotNull(result, "withResources result");
         LOG.debug("withResources: " + result);
         assertTrue(result.size() == 2);
     }

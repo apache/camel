@@ -23,9 +23,12 @@ import org.apache.camel.component.fhir.internal.FhirValidateApiMethod;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirValidate} APIs.
@@ -42,7 +45,7 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
         // using org.hl7.fhir.instance.model.api.IBaseResource message body for single parameter "resource"
         MethodOutcome result = requestBody("direct://RESOURCE", bobbyHebb);
 
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
         assertNotNull(result.getOperationOutcome());
         assertTrue(((OperationOutcome) result.getOperationOutcome()).getText().getDivAsString().contains("No issues detected during validation"));
@@ -54,7 +57,7 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
         // using org.hl7.fhir.instance.model.api.IBaseResource message body for single parameter "resource"
         MethodOutcome result = requestBody("direct://RESOURCE_AS_STRING", this.fhirContext.newXmlParser().encodeResourceToString(bobbyHebb));
 
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
         assertNotNull(result.getOperationOutcome());
         assertTrue(((OperationOutcome) result.getOperationOutcome()).getText().getDivAsString().contains("No issues detected during validation"));

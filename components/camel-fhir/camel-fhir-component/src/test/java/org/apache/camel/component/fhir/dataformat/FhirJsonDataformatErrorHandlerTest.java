@@ -26,10 +26,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.FhirJsonDataFormat;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
 
@@ -39,18 +43,19 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
     private final FhirContext fhirContext = FhirContext.forDstu3();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
 
-    @Test(expected = DataFormatException.class)
+    @Test
     public void unmarshalParserErrorHandler() throws Throwable {
         try {
             template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
+            fail("Expected a DataFormatException");
         } catch (CamelExecutionException e) {
-            throw e.getCause();
+            assertTrue(e.getCause() instanceof DataFormatException);
         }
     }
 

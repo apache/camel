@@ -31,10 +31,13 @@ import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirLoadPage} APIs.
@@ -64,7 +67,7 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         IBaseBundle result = requestBodyAndHeaders("direct://BY_URL", null, headers);
 
         LOG.debug("byUrl: " + result);
-        assertNotNull("byUrl result", result);
+        assertNotNull(result, "byUrl result");
     }
 
     @Test
@@ -78,7 +81,7 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://NEXT", bundle);
 
-        assertNotNull("next result", result);
+        assertNotNull(result, "next result");
         LOG.debug("next: " + result);
     }
 
@@ -98,7 +101,7 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         Bundle result = requestBody("direct://PREVIOUS", bundle);
 
         LOG.debug("previous: " + result);
-        assertNotNull("previous result", result);
+        assertNotNull(result, "previous result");
     }
 
     @Test
@@ -119,10 +122,10 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://PREVIOUS", bundle, headers);
 
         LOG.debug("previous: " + result);
-        assertNotNull("previous result", result);
+        assertNotNull(result, "previous result");
     }
 
-    @Before
+    @BeforeEach
     public void populateServer() {
         List<IBaseResource> input = new ArrayList<>();
 

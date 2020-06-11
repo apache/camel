@@ -24,7 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test demonstrates how to convert a HL7V2 patient to a FHIR dtsu3 Patient and then insert it into a FHIR server.
@@ -68,7 +71,7 @@ public class Hl7v2PatientToFhirPatientIntegrationTest extends AbstractFhirTestSu
         mock.assertIsSatisfied();
 
         MethodOutcome result = mock.getExchanges().get(0).getIn().getBody(MethodOutcome.class);
-        assertNotNull("resource result", result);
+        assertNotNull(result, "resource result");
         assertTrue(result.getCreated());
     }
 
