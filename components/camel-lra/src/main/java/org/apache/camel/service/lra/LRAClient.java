@@ -43,11 +43,8 @@ import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLET
 
 public class LRAClient implements Closeable {
 
-
     private final LRASagaService sagaService;
-
     private final Client client;
-
     private final WebTarget target;
 
     public LRAClient(LRASagaService sagaService) {
