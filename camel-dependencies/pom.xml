@@ -254,7 +254,7 @@
     <guava-eventbus-version>28.2-jre</guava-eventbus-version>
     <guice3-version>3.0</guice3-version>
     <hadoop2-protobuf-version>2.5.0</hadoop2-protobuf-version>
-    <hadoop2-version>2.10.0</hadoop2-version>
+    <hadoop2-version>3.2.1</hadoop2-version>
     <hamcrest-version>2.2</hamcrest-version>
     <hapi-fhir-version>4.1.0</hapi-fhir-version>
     <hapi-version>2.3</hapi-version>
