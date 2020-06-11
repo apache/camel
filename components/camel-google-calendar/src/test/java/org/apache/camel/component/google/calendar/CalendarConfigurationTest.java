@@ -21,11 +21,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport {
 
@@ -33,12 +36,12 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
     private static final String TEST_URI = "google-calendar://" + PATH_PREFIX + "/get?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
-    @Before
+    @BeforeEach
     @Override    
     public void createTestCalendar() {
     }
 
-    @After
+    @AfterEach
     @Override
     public void deleteTestCalendar() {
     }

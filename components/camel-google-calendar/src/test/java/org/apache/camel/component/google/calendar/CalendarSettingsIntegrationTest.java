@@ -19,9 +19,11 @@ package org.apache.camel.component.google.calendar;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarSettingsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Settings} APIs.
@@ -36,7 +38,7 @@ public class CalendarSettingsIntegrationTest extends AbstractGoogleCalendarTestS
         // using String message body for single parameter "setting"
         final com.google.api.services.calendar.model.Setting result = requestBody("direct://GET", "timezone");
 
-        assertNotNull("get result", result);
+        assertNotNull(result, "get result");
         LOG.debug("get: " + result);
     }
 
@@ -44,7 +46,7 @@ public class CalendarSettingsIntegrationTest extends AbstractGoogleCalendarTestS
     public void testList() throws Exception {
         final com.google.api.services.calendar.model.Settings result = requestBody("direct://LIST", null);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
     }
 
