@@ -45,19 +45,22 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWssRouteTest extends BaseUndertowTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpJaas() throws Exception {
         URL trustStoreUrl = UndertowHttpsSpringTest.class.getClassLoader().getResource("ssl/keystore.jks");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownJaas() throws Exception {
         System.clearProperty("java.security.auth.login.config");
     }

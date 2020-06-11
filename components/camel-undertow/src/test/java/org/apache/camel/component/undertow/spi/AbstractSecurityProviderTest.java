@@ -32,7 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowComponent;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * Abstract parent for test involving securityProvider.
@@ -127,7 +127,7 @@ public abstract class  AbstractSecurityProviderTest extends BaseUndertowTest {
         return camelContext;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void createSecurtyProviderConfigurationFile() throws Exception {
         URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
         File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());

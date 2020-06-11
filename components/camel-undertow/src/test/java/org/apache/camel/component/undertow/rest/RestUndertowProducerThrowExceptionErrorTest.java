@@ -19,7 +19,11 @@ package org.apache.camel.component.undertow.rest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTest {
 
@@ -33,7 +37,7 @@ public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTes
     public void testUndertowProducerFail() throws Exception {
         Exchange out = fluentTemplate.withHeader("id", "777").to("direct:start").request(Exchange.class);
         assertNotNull(out);
-        assertFalse("Should not have thrown exception", out.isFailed());
+        assertFalse(out.isFailed(), "Should not have thrown exception");
         assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 

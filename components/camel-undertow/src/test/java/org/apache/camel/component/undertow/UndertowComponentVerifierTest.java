@@ -22,8 +22,10 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
@@ -37,7 +39,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -50,11 +52,11 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("httpURI"));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("httpURI"));
     }
 
     @Test
@@ -68,7 +70,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -81,13 +83,13 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
 
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, error.getCode());
-        Assert.assertTrue(error.getDetail(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof UnknownHostException);
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, error.getCode());
+        assertTrue(error.getDetail(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof UnknownHostException);
     }
 
     @Override
