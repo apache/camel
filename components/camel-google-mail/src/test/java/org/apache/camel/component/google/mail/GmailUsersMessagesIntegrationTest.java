@@ -33,9 +33,13 @@ import com.google.api.services.gmail.model.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages}
@@ -60,7 +64,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         headers.put("CamelGoogleMail.content", testEmail);
 
         com.google.api.services.gmail.model.Message result = requestBodyAndHeaders("direct://SEND", null, headers);
-        assertNotNull("send result", result);
+        assertNotNull(result, "send result");
         String testEmailId = result.getId();
 
         // ==== Search for message we just sent ====
@@ -117,7 +121,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
     }
 
     private boolean idInList(String testEmailId, ListMessagesResponse listOfMessages) {
-        assertNotNull("list result", listOfMessages);
+        assertNotNull(listOfMessages, "list result");
         assertTrue(!listOfMessages.getMessages().isEmpty());
         boolean foundMessage = false;
         for (Message m : listOfMessages.getMessages()) {
