@@ -29,10 +29,12 @@ import java.util.stream.IntStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MasterComponentTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterComponentTest.class);
@@ -50,8 +52,8 @@ public class MasterComponentTest {
         LATCH.await(1, TimeUnit.MINUTES);
         SCHEDULER.shutdownNow();
 
-        Assert.assertEquals(INSTANCES.size(), RESULTS.size());
-        Assert.assertTrue(RESULTS.containsAll(INSTANCES));
+        assertEquals(INSTANCES.size(), RESULTS.size());
+        assertTrue(RESULTS.containsAll(INSTANCES));
     }
 
     // ************************************

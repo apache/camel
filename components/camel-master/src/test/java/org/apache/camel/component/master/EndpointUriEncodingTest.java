@@ -29,8 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class EndpointUriEncodingTest extends CamelTestSupport {
 
