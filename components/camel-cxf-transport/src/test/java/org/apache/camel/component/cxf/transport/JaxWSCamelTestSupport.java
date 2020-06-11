@@ -28,12 +28,12 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class JaxWSCamelTestSupport extends CamelTestSupport {
     
@@ -89,7 +89,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
     /**
      * Initialize CamelTransportFactory without Spring
      */
-    @Before
+    @BeforeEach
     public void setUpCXFCamelContext() {
         bus = BusFactory.getThreadDefaultBus();
         // make sure the CamelTransportFactory is injected with right camel context
