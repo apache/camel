@@ -19,32 +19,33 @@ package org.apache.camel.tests.typeconverterscan;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteMainTest {
 
     @Test
-    public void testLoadTypeConverter() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.setLoadTypeConverters(true);
+    void testLoadTypeConverter() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.setLoadTypeConverters(true);
 
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").convertBodyTo(MyBean.class);
-            }
-        });
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").convertBodyTo(MyBean.class);
+                }
+            });
 
-        context.start();
+            context.start();
 
-        Object out = context.createProducerTemplate().requestBody("direct:start", "foo:bar");
-        Assert.assertNotNull(out);
+            Object out = context.createProducerTemplate().requestBody("direct:start", "foo:bar");
+            assertNotNull(out);
 
-        MyBean my = (MyBean) out;
-        Assert.assertEquals("foo", my.getA());
-        Assert.assertEquals("bar", my.getB());
-
-        context.stop();
+            MyBean my = (MyBean)out;
+            assertEquals("foo", my.getA());
+            assertEquals("bar", my.getB());
+        }
     }
 }
