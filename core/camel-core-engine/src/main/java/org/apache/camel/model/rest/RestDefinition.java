@@ -796,9 +796,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 binding.setEnableCORS(getEnableCORS());
             }
             for (RestOperationParamDefinition param : verb.getParams()) {
-                // register all the default values for the query parameters
+                // register all the default values for the query and header parameters
                 RestParamType type = param.getType();
-                if (RestParamType.query == type && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                if ((RestParamType.query == type || RestParamType.header == type) 
+                        && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), param.getDefaultValue());
                 }
                 // register which parameters are required

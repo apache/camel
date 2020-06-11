@@ -776,7 +776,7 @@ onException(JsonParseException.class)
     .setBody().constant("Invalid json data");
 ----
 
-== Query Parameter default Values
+== Query/Header Parameter default Values
 
 You can specify default values for parameters in the rest-dsl, such as
 the verbose parameter below:
@@ -797,6 +797,18 @@ the `/customers/id/orders` do not include a query parameter with
 key `verbose` then Camel will now include a header with key `verbose`
 and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
+
+From *Camel 3.3* onwards request headers may also be defaulted in the same way.
+
+[source,java]
+----
+  rest("/customers/")
+      .get("/{id}").to("direct:customerDetail")
+      .get("/{id}/orders")
+        .param().name("indicator").type(RestParamType.header).defaultValue("disabled").description("Feature Enabled Indicator").endParam()
+          .to("direct:customerOrders")
+      .post("/neworder").to("direct:customerNewOrder");
+----
 
 
 == Client Request Validation
