@@ -27,7 +27,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpMethodRestrictTest extends BaseJettyTest {
 
@@ -42,9 +44,9 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
         httpPost.setEntity(new StringEntity("This is a test"));
         HttpResponse response = client.execute(httpPost);
 
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertEquals("Get a wrong result", "This is a test response", responseString);
+        assertEquals("This is a test response", responseString, "Get a wrong result");
 
         client.close();
     }
@@ -55,7 +57,7 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
         HttpGet httpGet = new HttpGet(getUrl());
         HttpResponse response = client.execute(httpGet);
 
-        assertEquals("Get a wrong response status", 405, response.getStatusLine().getStatusCode());
+        assertEquals(405, response.getStatusLine().getStatusCode(), "Get a wrong response status");
     }
 
     @Override

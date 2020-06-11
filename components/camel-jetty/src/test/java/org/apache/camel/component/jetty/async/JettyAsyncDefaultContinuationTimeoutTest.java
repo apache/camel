@@ -23,10 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.StopWatch;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("This test takes a long time to run, so run it manually")
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@Disabled("This test takes a long time to run, so run it manually")
 public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
 
     @Test
@@ -46,7 +51,7 @@ public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
             assertEquals(504, cause.getStatusCode());
 
             // should be approx 30-34 sec.
-            assertTrue("Timeout should occur faster than " + taken, taken < 34000);
+            assertTrue(taken < 34000, "Timeout should occur faster than " + taken);
         }
 
         assertMockEndpointsSatisfied(2, TimeUnit.MINUTES);

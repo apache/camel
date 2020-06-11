@@ -27,7 +27,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
 
@@ -46,7 +50,7 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         while ((line = reader.readLine()) != null) {
             answerString += line;
         }
-        assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
+        assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
         assertMockEndpointsSatisfied();
 

@@ -22,7 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
 

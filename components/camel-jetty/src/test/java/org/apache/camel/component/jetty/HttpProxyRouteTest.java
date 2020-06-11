@@ -22,7 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyRouteTest extends BaseJettyTest {
 
@@ -53,14 +55,14 @@ public class HttpProxyRouteTest extends BaseJettyTest {
     @Test
     public void testHttpProxyHostHeader() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
-        assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
+        assertEquals("localhost:" + getPort2(), out, "Get a wrong host header");
     }
 
     @Test
     public void testHttpProxyFormHeader() throws Exception {
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded",
                                                    String.class);
-        assertEquals("Get a wrong response message", "username=abc&pass=password", out);
+        assertEquals("username=abc&pass=password", out, "Get a wrong response message");
     }
 
     @Override

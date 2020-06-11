@@ -25,7 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiThreadedHttpGetTest extends BaseJettyTest {
 
@@ -88,8 +92,8 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
             String body = exchange.getIn().getBody(String.class);
 
             log.debug("Body: " + body);
-            assertNotNull("Should have a body!", body);
-            assertTrue("body should contain: <html", body.contains("<html"));
+            assertNotNull(body, "Should have a body!");
+            assertTrue(body.contains("<html"), "body should contain: <html");
         }
     }
 

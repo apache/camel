@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJettyTest {
 
@@ -44,11 +47,11 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
                         String body = exchange.getIn().getBody(String.class);
 
                         // for unit testing make sure we got right message
-                        assertEquals("The body message is wrong", "b1=x&b2=y", body);
-                        assertEquals("Get a wrong query parameter from the message header", "a", exchange.getIn().getHeader("query1"));
-                        assertEquals("Get a wrong query parameter from the message header", "b", exchange.getIn().getHeader("query2"));
-                        assertNotEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
-                        assertNotEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
+                        assertEquals("b1=x&b2=y", body, "The body message is wrong");
+                        assertEquals("a", exchange.getIn().getHeader("query1"), "Get a wrong query parameter from the message header");
+                        assertEquals("b", exchange.getIn().getHeader("query2"), "Get a wrong query parameter from the message header");
+                        assertNotEquals("x", exchange.getIn().getHeader("b1"), "Get a wrong form parameter from the message header");
+                        assertNotEquals("y", exchange.getIn().getHeader("b2"), "Get a wrong form parameter from the message header");
 
                         // send a response
                         exchange.getOut().setBody("Request message is OK");

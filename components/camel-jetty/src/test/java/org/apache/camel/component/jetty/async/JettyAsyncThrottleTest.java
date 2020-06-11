@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty.async;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * CAMEL-4795, there should be no exceptions in the logs (before the fix there

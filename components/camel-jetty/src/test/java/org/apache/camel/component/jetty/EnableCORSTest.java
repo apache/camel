@@ -21,7 +21,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EnableCORSTest extends BaseJettyTest {
 
@@ -35,10 +39,10 @@ public class EnableCORSTest extends BaseJettyTest {
 
         HttpResponse response = client.execute(httpMethod);
 
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
 
         Object responseHeader = response.getFirstHeader("Access-Control-Allow-Credentials");
-        assertNull("Access-Control-Allow-Credentials HEADER should not be set", responseHeader);
+        assertNull(responseHeader, "Access-Control-Allow-Credentials HEADER should not be set");
 
         client.close();
     }
@@ -53,10 +57,10 @@ public class EnableCORSTest extends BaseJettyTest {
 
         HttpResponse response = client.execute(httpMethod);
 
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
 
         String responseHeader = response.getFirstHeader("Access-Control-Allow-Credentials").getValue();
-        assertTrue("CORS not enabled", Boolean.parseBoolean(responseHeader));
+        assertTrue(Boolean.parseBoolean(responseHeader), "CORS not enabled");
 
         client.close();
     }

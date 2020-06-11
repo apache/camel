@@ -26,7 +26,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpClientRouteTest extends BaseJettyTest {
 
@@ -54,16 +59,16 @@ public class HttpClientRouteTest extends BaseJettyTest {
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Map<String, Object> headers = in.getHeaders();
 
         log.info("Headers: " + headers);
 
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -93,7 +98,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost:" + port2 + "/querystring?id=test");
             }
         });
-        assertEquals("Get a wrong response.", "test", exchange.getOut().getBody(String.class));
+        assertEquals("test", exchange.getOut().getBody(String.class), "Get a wrong response.");
     }
 
     @Override

@@ -23,7 +23,10 @@ import org.apache.camel.component.jetty.rest.CountryPojo;
 import org.apache.camel.component.jetty.rest.UserPojo;
 import org.apache.camel.component.jetty.rest.UserService;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
 

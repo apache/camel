@@ -24,7 +24,9 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.jetty.JettyRestHttpBinding;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyDefaultValueTest extends BaseJettyTest {
 

@@ -18,7 +18,7 @@ package org.apache.camel.component.jetty.rest.producer;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JettyRestProducerPutTest extends BaseJettyTest {
 
