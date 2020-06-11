@@ -171,6 +171,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.faulttolerance.";
                 } else if (file.getName().contains("Rest")) {
                     prefix = "camel.rest.";
+                } else if (file.getName().contains("HealthCheck")) {
+                    prefix = "camel.health.";
+                } else if (file.getName().contains("Lra")) {
+                    prefix = "camel.lra.";
                 } else {
                     prefix = "camel.main.";
                 }
@@ -212,6 +216,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getGroups().add(new MainGroupModel("camel.hystrix", "camel-hystrix configurations.", "org.apache.camel.main.HystrixConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.resilience4j", "camel-resilience4j configurations.", "org.apache.camel.main.Resilience4jConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.rest", "camel-rest configurations.", "org.apache.camel.spi.RestConfiguration"));
+            model.getGroups().add(new MainGroupModel("camel.health", "camel-health configurations.", "org.apache.camel.main.HealthCheckConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel("camel.lra", "camel-lra configurations.", "org.apache.camel.main.LraConfigurationProperties"));
 
             String json = JsonMapper.createJsonSchema(model);
 
