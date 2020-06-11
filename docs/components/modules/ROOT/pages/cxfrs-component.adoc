@@ -427,11 +427,11 @@ Exchange exchange = template.send("direct://proxy", new Processor() {
 // get the response message
 Customer response = (Customer) exchange.getOut().getBody();
 
-assertNotNull("The response should not be null ", response);
-assertEquals("Get a wrong customer id ", 123, response.getId());
-assertEquals("Get a wrong customer name", "John", response.getName());
-assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
+assertNotNull(response, "The response should not be null");
+assertEquals(123, response.getId(), "Get a wrong customer id");
+assertEquals("John", response.getName(), "Get a wrong customer name");
+assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+assertEquals("value", exchange.getOut().getHeader("key"), "Get a wrong header value");
 ----
 
 The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end] also
