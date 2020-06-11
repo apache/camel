@@ -21,16 +21,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataFormatTest extends CamelTestSupport {
     
     private MockEndpoint resultEndpoint;
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -68,9 +71,9 @@ public class DataFormatTest extends CamelTestSupport {
         int indexPerson = result.indexOf("<Person>");
         int indexFirstName = result.indexOf("<firstName>");
 
-        assertTrue("we should find the <Person>", indexPerson > 0);
-        assertTrue("we should find the <firstName>", indexFirstName > 0);
-        assertTrue("There should some sapce between <Person> and <firstName>", indexFirstName - indexPerson > 8);
+        assertTrue(indexPerson > 0, "we should find the <Person>");
+        assertTrue(indexFirstName > 0, "we should find the <firstName>");
+        assertTrue(indexFirstName - indexPerson > 8, "There should some sapce between <Person> and <firstName>");
     }
 
     @Override
