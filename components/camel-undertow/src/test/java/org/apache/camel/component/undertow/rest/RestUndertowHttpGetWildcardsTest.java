@@ -21,7 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.DefaultUndertowHttpBinding;
 import org.apache.camel.component.undertow.UndertowHttpBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
 

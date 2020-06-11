@@ -18,7 +18,10 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowSendDynamicAwareTest extends BaseUndertowTest {
 
@@ -32,7 +35,7 @@ public class UndertowSendDynamicAwareTest extends BaseUndertowTest {
 
         // and there should only be one http endpoint as they are both on same host
         boolean found = context.getEndpointMap().containsKey("undertow://http://localhost:" + getPort() + "?throwExceptionOnFailure=false");
-        assertTrue("Should find static uri", found);
+        assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 2xundertow
         assertEquals(4, context.getEndpointMap().size());

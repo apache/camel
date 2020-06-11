@@ -19,7 +19,9 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
     

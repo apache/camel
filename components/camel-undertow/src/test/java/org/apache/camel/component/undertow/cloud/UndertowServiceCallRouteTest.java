@@ -20,22 +20,24 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowServiceCallRouteTest extends CamelTestSupport {
 
     @Test
     public void testCustomCall() throws Exception {
-        Assert.assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
-        Assert.assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
+        assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
+        assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
     }
 
     @Test
     public void testDefaultSchema() throws Exception {
         try {
-            Assert.assertEquals("8081", template.requestBody("direct:default", "hello", String.class));
+            assertEquals("8081", template.requestBody("direct:default", "hello", String.class));
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ResolveEndpointFailedException);
         }

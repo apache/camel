@@ -45,19 +45,26 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWssRouteTest extends BaseUndertowTest {
 
-    @BeforeClass
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWssRouteTest.class);
+
+    @BeforeAll
     public static void setUpJaas() throws Exception {
         URL trustStoreUrl = UndertowHttpsSpringTest.class.getClassLoader().getResource("ssl/keystore.jks");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownJaas() throws Exception {
         System.clearProperty("java.security.auth.login.config");
     }
@@ -123,7 +130,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
                             @Override
                             public void onTextFrame(String message, boolean finalFragment, int rsv) {
                                 received.add(message);
-                                log.info("received --> " + message);
+                                LOG.info("received --> " + message);
                                 latch.countDown();
                             }
 
