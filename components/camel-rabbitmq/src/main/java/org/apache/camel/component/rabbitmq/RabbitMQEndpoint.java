@@ -382,9 +382,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * The exchange name determines which exchange produced messages will sent
-     * to. In the case of consumers, the exchange name determines which exchange
-     * the queue will bind to.
+     * The exchange name determines the exchange to which the produced 
+     * messages will be sent to. In the case of consumers, the exchange name determines 
+     * the exchange the queue will be bound to.
      */
     public void setExchangeName(String exchangeName) {
         this.exchangeName = exchangeName;
