@@ -20,8 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
 

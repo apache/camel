@@ -20,13 +20,21 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Hystrix using timeout with Java DSL
  */
 public class HystrixTimeoutTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HystrixManagementTest.class);
 
     @Test
     public void testFast() throws Exception {
@@ -52,7 +60,7 @@ public class HystrixTimeoutTest extends CamelTestSupport {
         // this calls the slow route and therefore causes a timeout which triggers an exception
         for (int i = 0; i < 10; i++) {
             try {
-                log.info(">>> test run " + i + " <<<");
+                LOG.info(">>> test run " + i + " <<<");
                 template.requestBody("direct:start", "slow");
                 fail("Should fail due to timeout");
             } catch (Exception e) {
