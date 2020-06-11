@@ -330,6 +330,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
             int i = 0;
             for (String argType : argTypes) {
 
+                // javadoc sometimes contains zero-width spaces
+                if (argType.charAt(0) == '\u200b') {
+                    argType = argType.substring(1);
+                }
+
                 // try loading as is first
                 try {
                     parameterizedType.append(getCanonicalName(getProjectClassLoader().loadClass(argType)));
