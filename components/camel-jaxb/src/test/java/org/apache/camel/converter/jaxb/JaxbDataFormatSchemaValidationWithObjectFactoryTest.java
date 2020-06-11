@@ -29,8 +29,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.converter.jaxb.message.ObjectFactory;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTestSupport {
 
@@ -43,6 +49,7 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
     private JAXBContext jbCtx;
     
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         
         super.setUp();

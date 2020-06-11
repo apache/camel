@@ -32,12 +32,23 @@ import org.apache.camel.converter.jaxb.address.Address;
 import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.converter.jaxb.message.ObjectFactory;
 import org.apache.camel.converter.jaxb.person.Person;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormatSchemaValidationSpringTest.class);
 
     @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;
@@ -48,6 +59,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
     private JAXBContext jbCtx;
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         jbCtx = JAXBContext.newInstance(Person.class, Message.class);
@@ -70,7 +82,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
         assertMockEndpointsSatisfied();
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
-        log.info(payload);
+        LOG.info(payload);
         
         Person unmarshalledPerson = (Person) jbCtx.createUnmarshaller().unmarshal(new InputSource(new StringReader(payload)));
 
