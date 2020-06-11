@@ -35,13 +35,17 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.JmsMessage;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * shows rollback and redelivery dlq respected with external tm
@@ -60,13 +64,13 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         try {
             conn.createStatement().execute(createStatement);
         } catch (SQLException alreadyExists) {
-            log.info("ex on create tables", alreadyExists);
+            LOG.info("ex on create tables", alreadyExists);
         }
 
         try {
             conn.createStatement().execute("DELETE FROM SCP_INPUT_MESSAGES");
         } catch (SQLException ex) {
-            log.info("ex on create delete all", ex);
+            LOG.info("ex on create delete all", ex);
         }
 
         return conn;
@@ -82,7 +86,7 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            log.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
+            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
         }
         return count;
     }
@@ -101,8 +105,8 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
                 return consumedFrom(SharedDeadLetterStrategy.DEFAULT_DEAD_LETTER_QUEUE_NAME);
             }
         });
-        assertEquals("message in db, commit to db worked", 0, dumpDb(jdbcConn));
-        assertFalse("Nothing to to out q", consumedFrom("scp_transacted_out"));
+        assertEquals(0, dumpDb(jdbcConn), "message in db, commit to db worked");
+        assertFalse(consumedFrom("scp_transacted_out"), "Nothing to to out q");
 
     }
 

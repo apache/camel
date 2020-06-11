@@ -25,13 +25,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ComplexRequestReplyTest {
 
@@ -52,7 +52,7 @@ public class ComplexRequestReplyTest {
     private final String toEndpoint = "activemq:queue:send";
     private final String brokerEndpoint = "activemq:send";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         createBrokerA();
@@ -64,7 +64,7 @@ public class ComplexRequestReplyTest {
         senderContext = createSenderContext();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             shutdownBrokerA();

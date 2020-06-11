@@ -34,12 +34,16 @@ import org.apache.activemq.broker.ConnectionContext;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.TransactionId;
 import org.apache.activemq.util.Wait;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * shows broker 'once only delivery' and recovery with XA
@@ -57,13 +61,13 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         try {
             conn.createStatement().execute(createStatement);
         } catch (SQLException alreadyExists) {
-            log.info("ex on create tables", alreadyExists);
+            LOG.info("ex on create tables", alreadyExists);
         }
 
         try {
             conn.createStatement().execute("DELETE FROM SCP_INPUT_MESSAGES");
         } catch (SQLException ex) {
-            log.info("ex on create delete all", ex);
+            LOG.info("ex on create delete all", ex);
         }
 
         return conn;
@@ -79,7 +83,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            log.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
+            LOG.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
         }
         return count;
     }
@@ -92,13 +96,13 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         LOG.info("waiting for route to kick in, it will kill the broker on first 2pc commit");
         // will be stopped by the plugin on first 2pc commit
         broker.waitUntilStopped();
-        assertEquals("message in db, commit to db worked", 1, dumpDb(jdbcConn));
+        assertEquals(1, dumpDb(jdbcConn), "message in db, commit to db worked");
 
         LOG.info("Broker stopped, restarting...");
         broker = createBroker(false);
         broker.start();
         broker.waitUntilStarted();
-        assertEquals("pending transactions", 1, broker.getBroker().getPreparedTransactions(null).length);
+        assertEquals(1, broker.getBroker().getPreparedTransactions(null).length, "pending transactions");
 
         // TM stays actively committing first message ack which won't get
         // redelivered - xa once only delivery
@@ -110,7 +114,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
             }
         }));
         // verify recovery complete
-        assertEquals("recovery complete", 0, broker.getBroker().getPreparedTransactions(null).length);
+        assertEquals(0, broker.getBroker().getPreparedTransactions(null).length, "recovery complete");
 
         final java.sql.Connection freshConnection = getJDBCConnection();
         assertTrue("did not get replay", Wait.waitFor(new Wait.Condition() {
@@ -119,7 +123,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
                 return 1 == dumpDb(freshConnection);
             }
         }));
-        assertEquals("still one message in db", 1, dumpDb(freshConnection));
+        assertEquals(1, dumpDb(freshConnection), "still one message in db");
 
         // let once complete ok
         sendJMSMessageToKickOffRoute();
@@ -130,7 +134,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
                 return 2 == dumpDb(freshConnection);
             }
         }));
-        assertEquals("two messages in db", 2, dumpDb(freshConnection));
+        assertEquals(2, dumpDb(freshConnection), "two messages in db");
     }
 
     private void sendJMSMessageToKickOffRoute() throws Exception {
