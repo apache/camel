@@ -34,12 +34,14 @@ import org.apache.activemq.broker.ProducerBrokerExchange;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConnectionInfo;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsBridge extends CamelSpringTestSupport {
 
@@ -61,7 +63,7 @@ public class JmsBridge extends CamelSpringTestSupport {
         consumeMessages();
 
         LOG.info("ConnectionCount: " + connectionCount.get());
-        assertEquals("x connections", 5 + errorLimit, connectionCount.get());
+        assertEquals(5 + errorLimit, connectionCount.get(), "x connections");
     }
 
     private void consumeMessages() throws Exception {

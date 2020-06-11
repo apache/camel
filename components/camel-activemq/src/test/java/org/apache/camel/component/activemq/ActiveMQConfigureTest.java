@@ -24,11 +24,16 @@ import org.apache.camel.component.jms.JmsConsumer;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsProducer;
 import org.apache.camel.support.processor.CamelLogProcessor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 
@@ -41,7 +46,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
         JmsProducer producer = (JmsProducer)endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
-        assertEquals("pubSubDomain", false, template.isPubSubDomain());
+        assertEquals(false, template.isPubSubDomain(), "pubSubDomain");
         assertIsInstanceOf(PooledConnectionFactory.class, template.getConnectionFactory());
     }
 
@@ -51,7 +56,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
         JmsProducer producer = (JmsProducer)endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
-        assertEquals("pubSubDomain", false, template.isPubSubDomain());
+        assertEquals(false, template.isPubSubDomain(), "pubSubDomain");
         SingleConnectionFactory connectionFactory = assertIsInstanceOf(SingleConnectionFactory.class, template.getConnectionFactory());
         assertIsInstanceOf(ActiveMQConnectionFactory.class, connectionFactory.getTargetConnectionFactory());
     }
@@ -63,11 +68,11 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
 
         assertIsInstanceOf(ActiveMQConfiguration.class, configuration);
 
-        assertTrue("The JMS sessions are not transacted!", endpoint.isTransacted());
-        assertTrue("The JMS sessions are not transacted!", configuration.isTransacted());
+        assertTrue(endpoint.isTransacted(), "The JMS sessions are not transacted!");
+        assertTrue(configuration.isTransacted(), "The JMS sessions are not transacted!");
 
-        assertNull("A transaction manager has been lazy-created!", endpoint.getTransactionManager());
-        assertNull("A transaction manager has been lazy-created!", configuration.getTransactionManager());
+        assertNull(endpoint.getTransactionManager(), "A transaction manager has been lazy-created!");
+        assertNull(configuration.getTransactionManager(), "A transaction manager has been lazy-created!");
     }
 
     @Test
@@ -76,7 +81,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
         JmsProducer producer = (JmsProducer)endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
-        assertEquals("pubSubDomain", false, template.isPubSubDomain());
+        assertEquals(false, template.isPubSubDomain(), "pubSubDomain");
         assertIsInstanceOf(ActiveMQConnectionFactory.class, template.getConnectionFactory());
     }
 
@@ -86,7 +91,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
         JmsConsumer consumer = endpoint.createConsumer(new CamelLogProcessor());
 
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
-        assertEquals("pubSubDomain", true, listenerContainer.isPubSubDomain());
+        assertEquals(true, listenerContainer.isPubSubDomain(), "pubSubDomain");
         assertIsInstanceOf(PooledConnectionFactory.class, listenerContainer.getConnectionFactory());
     }
 
