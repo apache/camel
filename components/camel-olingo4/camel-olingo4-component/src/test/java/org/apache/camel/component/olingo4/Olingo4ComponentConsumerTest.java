@@ -26,8 +26,16 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
     private static final String PEOPLE = "People";
@@ -36,11 +44,6 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
     public Olingo4ComponentConsumerTest() {
         setUseRouteBuilder(false);
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return false;
     }
 
     private void addRouteAndStartContext(RouteBuilder builder) throws Exception {
