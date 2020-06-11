@@ -43,14 +43,15 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration test for
@@ -65,14 +66,14 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
     private static Olingo2SampleServer server;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         startServers(PORT);
         Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
         setupClient();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         if (olingoApp != null) {
             olingoApp.close();
@@ -117,11 +118,11 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         final ServiceDocument serviceDocument = responseHandler.await();
         final List<Collection> collections = serviceDocument.getAtomInfo().getWorkspaces().get(0).getCollections();
-        assertEquals("Service Atom Collections", 3, collections.size());
+        assertEquals(3, collections.size(), "Service Atom Collections");
         LOG.info("Service Atom Collections:  {}", collections);
 
         final List<EdmEntitySetInfo> entitySetsInfo = serviceDocument.getEntitySetsInfo();
-        assertEquals("Service Entity Sets", 3, entitySetsInfo.size());
+        assertEquals(3, entitySetsInfo.size(), "Service Entity Sets");
         LOG.info("Service Document Entries:  {}", entitySetsInfo);
     }
 
@@ -132,7 +133,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.read(edm, MANUFACTURERS, null, null, responseHandler);
 
         final ODataFeed dataFeed = responseHandler.await();
-        assertNotNull("Data feed", dataFeed);
+        assertNotNull(dataFeed, "Data feed");
         LOG.info("Entries:  {}", prettyPrint(dataFeed));
     }
 
@@ -143,7 +144,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.uread(edm, MANUFACTURERS, null, null, responseHandler);
 
         final InputStream rawfeed = responseHandler.await();
-        assertNotNull("Data feed", rawfeed);
+        assertNotNull(rawfeed, "Data feed");
         // for this test, we just let EP to verify the stream data
         final ODataFeed dataFeed = EntityProvider.readFeed(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawfeed, EntityProviderReadProperties.init().build());
         LOG.info("Entries:  {}", prettyPrint(dataFeed));
@@ -428,7 +429,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.batch(edm, null, batchParts, responseHandler);
 
         final List<Olingo2BatchResponse> responseParts = responseHandler.await(15, TimeUnit.MINUTES);
-        assertEquals("Batch responses expected", 8, responseParts.size());
+        assertEquals(8, responseParts.size(), "Batch responses expected");
 
         assertNotNull(responseParts.get(0).getBody());
         final ODataFeed feed = (ODataFeed)responseParts.get(1).getBody();
