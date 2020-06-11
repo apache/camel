@@ -45,7 +45,7 @@ public class DrivePermissionsIntegrationTest extends AbstractGoogleDriveTestSupp
         LOG.debug("list: " + result);
     }
 
-    private void assertNotNull(PermissionList result, String list_result) {
+    private void assertNotNull(PermissionList result, String listResult) {
     }
 
     @Override
