@@ -54,6 +54,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -688,6 +689,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> restProperties = new LinkedHashMap<>();
         Map<String, Object> threadPoolProperties = new LinkedHashMap<>();
         Map<String, Object> healthProperties = new LinkedHashMap<>();
+        Map<String, Object> lraProperties = new LinkedHashMap<>();
         Map<String, Object> beansProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
@@ -732,6 +734,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 healthProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.lra.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(10);
+                validateOptionAndValue(key, option, value);
+                lraProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.beans.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -803,6 +811,10 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
             setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
+        if (!lraProperties.isEmpty()) {
+            LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
+            setLraCheckProperties(camelContext, lraProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+        }
 
         // log which options was not set
         if (!beansProperties.isEmpty()) {
@@ -849,7 +861,12 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!healthProperties.isEmpty()) {
             healthProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.health{}={}", k, v);
+                LOG.warn("Property not auto-configured: camel.health.{}={}", k, v);
+            });
+        }
+        if (!lraProperties.isEmpty()) {
+            lraProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.lra.{}={}", k, v);
             });
         }
 
@@ -1025,6 +1042,36 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
         }
+    }
+
+    private void setLraCheckProperties(CamelContext camelContext, Map<String, Object> lraProperties,
+                                       boolean failIfNotSet, Map<String, String> autoConfiguredProperties) throws Exception {
+
+        Object obj = lraProperties.get("enabled");
+        if (obj != null) {
+            autoConfiguredProperties.put("camel.lra.enabled", obj.toString());
+        }
+        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        if (enabled) {
+            CamelSagaService css = resolveLraSagaService(camelContext);
+            setPropertiesOnTarget(camelContext, css, lraProperties, "camel.lra.", failIfNotSet, true, autoConfiguredProperties);
+        }
+    }
+
+    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
+        // lookup in service registry first
+        Set<CamelSagaService> set = camelContext.getRegistry().findByType(CamelSagaService.class);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        }
+        CamelSagaService answer = camelContext.adapt(ExtendedCamelContext.class).getDefaultFactoryFinder()
+                .newInstance("lra-saga-service", CamelSagaService.class)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find LRASagaService on classpath. "
+                        + "Add camel-lra to classpath."));
+
+        // add as service so its discover by saga eip
+        camelContext.addService(answer, true, false);
+        return answer;
     }
 
     private void bindBeansToRegistry(CamelContext camelContext, Map<String, Object> properties,

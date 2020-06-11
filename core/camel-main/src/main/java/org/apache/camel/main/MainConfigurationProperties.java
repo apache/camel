@@ -47,6 +47,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // extended configuration
     private final HealthConfigurationProperties healthConfigurationProperties = new HealthConfigurationProperties(this);
+    private final LraConfigurationProperties lraConfigurationProperties = new LraConfigurationProperties(this);
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
     private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
     private final FaultToleranceConfigurationProperties faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
@@ -60,6 +61,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public HealthConfigurationProperties health() {
         return healthConfigurationProperties;
+    }
+
+    /**
+     * To configure Saga LRA
+     */
+    public LraConfigurationProperties lra() {
+        return lraConfigurationProperties;
     }
 
     /**
