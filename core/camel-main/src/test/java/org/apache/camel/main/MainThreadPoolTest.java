@@ -83,6 +83,41 @@ public class MainThreadPoolTest {
         main.stop();
     }
 
+    @Test
+    public void testDefaultAndCustomThreadPool() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.addProperty("camel.threadpool.pool-size", "5");
+        main.addProperty("camel.threadpool.max-pool-size", "10");
+        main.addProperty("camel.threadpool.max-queue-size", "20");
+        main.addProperty("camel.threadpool.rejectedPolicy", "DiscardOldest");
+        main.addProperty("camel.threadpool.config[myPool].id", "myPool");
+        main.addProperty("camel.threadpool.config[myPool].pool-size", "1");
+        main.addProperty("camel.threadpool.config[myPool].rejectedPolicy", "Abort");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        ThreadPoolProfile tp = camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile();
+        assertEquals("default", tp.getId());
+        assertEquals(Boolean.TRUE, tp.isDefaultProfile());
+        assertEquals("5", tp.getPoolSize().toString());
+        assertEquals("10", tp.getMaxPoolSize().toString());
+        assertEquals("20", tp.getMaxQueueSize().toString());
+        assertEquals("DiscardOldest", tp.getRejectedPolicy().toString());
+
+        tp = camelContext.getExecutorServiceManager().getThreadPoolProfile("myPool");
+        assertEquals("myPool", tp.getId());
+        assertEquals(Boolean.FALSE, tp.isDefaultProfile());
+        assertEquals("1", tp.getPoolSize().toString());
+        assertEquals("10", tp.getMaxPoolSize().toString());
+        assertEquals("20", tp.getMaxQueueSize().toString());
+        assertEquals("Abort", tp.getRejectedPolicy().toString());
+
+        main.stop();
+    }
+
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
