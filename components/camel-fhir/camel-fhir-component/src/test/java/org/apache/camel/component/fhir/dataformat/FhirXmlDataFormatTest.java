@@ -23,14 +23,16 @@ import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Base;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FhirXmlDataFormatTest extends CamelTestSupport {
 
@@ -42,7 +44,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
     private MockEndpoint mockEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -58,7 +60,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         Patient patient = (Patient) exchange.getIn().getBody();
-        assertTrue("Patients should be equal!", patient.equalsDeep(getPatient()));
+        assertTrue(patient.equalsDeep(getPatient()), "Patients should be equal!");
     }
 
     @Test
@@ -73,7 +75,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
         final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
-        assertTrue("Patients should be equal!", patient.equalsDeep((Base) iBaseResource));
+        assertTrue(patient.equalsDeep((Base) iBaseResource), "Patients should be equal!");
     }
 
     private Patient getPatient() {

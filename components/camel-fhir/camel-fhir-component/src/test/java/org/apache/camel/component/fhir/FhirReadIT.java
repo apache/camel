@@ -25,9 +25,12 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirReadApiMethod;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirRead} APIs.
@@ -214,7 +217,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
 
     private void assertValidResponse(Patient result) {
         LOG.debug("response: " + result);
-        assertNotNull("resourceByUrl result", result);
+        assertNotNull(result, "resourceByUrl result");
         assertEquals("Freeman", result.getName().get(0).getFamily());
     }
 
