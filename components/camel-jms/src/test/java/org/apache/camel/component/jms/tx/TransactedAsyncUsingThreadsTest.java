@@ -17,10 +17,12 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
@@ -34,7 +36,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
                 "/org/apache/camel/component/jms/tx/TransactedAsyncUsingThreadsTest.xml");
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         counter = 0;
         thread1 = "";
@@ -53,7 +55,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         // transacted causes Camel to force sync routing
-        assertEquals("Should use a same thread when doing transacted async routing", thread1, thread2);
+        assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
     }
 
     @Test
@@ -75,7 +77,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         // transacted causes Camel to force sync routing
-        assertEquals("Should use a same thread when doing transacted async routing", thread1, thread2);
+        assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
     }
 
     @Override

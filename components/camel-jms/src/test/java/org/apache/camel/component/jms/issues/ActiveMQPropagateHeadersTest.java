@@ -29,10 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
 
@@ -59,7 +60,7 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);        
-        assertEquals("ReplyTo", replyQueue.toString(), replyTo);
+        assertEquals(replyQueue.toString(), replyTo, "ReplyTo");
     }
 
     @Override

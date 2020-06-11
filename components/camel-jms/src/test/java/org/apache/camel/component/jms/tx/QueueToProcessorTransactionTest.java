@@ -19,7 +19,7 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case derived from:

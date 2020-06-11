@@ -24,11 +24,13 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Concurrent consumer with JMSReply test.
@@ -58,10 +60,10 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
 
         // wait for test completion, timeout after 30 sec to let other unit test run to not wait forever
         assertTrue(latch.await(30000L, TimeUnit.MILLISECONDS));
-        assertEquals("Latch should be zero", 0, latch.getCount());
+        assertEquals(0, latch.getCount(), "Latch should be zero");
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should be faster than 20000 millis, took " + delta + " millis", delta < 20000L);
+        assertTrue(delta < 20000L, "Should be faster than 20000 millis, took " + delta + " millis");
         executor.shutdown();
     }
 

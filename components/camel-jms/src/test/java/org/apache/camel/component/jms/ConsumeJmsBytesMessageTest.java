@@ -26,14 +26,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsBytesMessageTest.class);
+
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
@@ -75,17 +83,17 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
         assertNotNull(in);
         
         byte[] bytes = exchange.getIn().getBody(byte[].class);
-        log.info("Received bytes: " + Arrays.toString(bytes));
+        LOG.info("Received bytes: " + Arrays.toString(bytes));
 
-        assertNotNull("Should have received a bytes message!", bytes);
+        assertNotNull(bytes, "Should have received a bytes message!");
         assertIsInstanceOf(BytesMessage.class, in.getJmsMessage());
-        assertEquals("Wrong byte 1", 1, bytes[0]);
-        assertEquals("Wrong payload lentght", 3, bytes.length);
+        assertEquals(1, bytes[0], "Wrong byte 1");
+        assertEquals(3, bytes.length);
     }
 
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         endpoint = getMockEndpoint("mock:result");

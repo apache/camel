@@ -32,11 +32,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
 
@@ -47,7 +48,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
     private Calendar calValue;
     private Map<String, Object> mapValue;
 
-    @Before
+    @BeforeEach
     public void setup() {
         calValue = Calendar.getInstance();
         mapValue = new LinkedHashMap<>();
@@ -73,15 +74,15 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
         Exchange exchange = list.get(0);
         {
             String headerValue = exchange.getIn().getHeader("myString", String.class);
-            assertEquals("myString", "stringValue", headerValue);
+            assertEquals("stringValue", headerValue, "myString");
         }
         {
             Calendar headerValue = exchange.getIn().getHeader("myCal", Calendar.class);
-            assertEquals("myCal", calValue, headerValue);
+            assertEquals(calValue, headerValue, "myCal");
         }
         {
             Map<String, Object> headerValue = exchange.getIn().getHeader("myMap", Map.class);
-            assertEquals("myMap", mapValue, headerValue);
+            assertEquals(mapValue, headerValue, "myMap");
         }
     }
 

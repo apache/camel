@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -35,12 +36,18 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
@@ -62,6 +69,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected static AtomicBoolean inited = new AtomicBoolean(false);
     protected static Map<String, ContextBuilder> contextBuilders = new HashMap<>();
     protected static Map<String, RouteBuilder> routeBuilders = new HashMap<>();
+
+    protected TestInfo testInfo;
 
     private interface ContextBuilder {
         CamelContext buildContext(CamelContext context) throws Exception;
@@ -281,12 +290,12 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
 
         public void assertSuccess() {
-            assertTrue(message, ok);
+            assertTrue(ok, message);
         }
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         init();
         super.setUp();
@@ -351,7 +360,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     // see (1)
     @Test
-    @Ignore
+    @Disabled
     public void testUseCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
         int oldMaxTasks = maxTasks;
         int oldMaxServerTasks = maxServerTasks;
@@ -436,11 +445,20 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         for (int i = 0; i < maxTasks; i++) {
             Future<Task> future = completionService.take();
             Task task = future.get(60, TimeUnit.SECONDS);
-            assertNotNull("Should complete the task", task);
+            assertNotNull(task, "Should complete the task");
             task.assertSuccess();
         }
 
         context.getExecutorServiceManager().shutdownNow(executor);
+    }
+
+    @BeforeEach
+    protected void setUp(TestInfo testInfo) {
+        this.testInfo = testInfo;
+    }
+
+    protected String getTestMethodName() {
+        return testInfo.getTestMethod().map(Method::getName).orElse("<unknown>");
     }
 
     @Override

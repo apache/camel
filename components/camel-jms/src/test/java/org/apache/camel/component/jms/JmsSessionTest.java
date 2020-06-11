@@ -22,10 +22,11 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsSessionTest extends CamelTestSupport {
 
@@ -61,7 +62,7 @@ public class JmsSessionTest extends CamelTestSupport {
                             JmsMessage jms = exchange.getIn(JmsMessage.class);
                             assertNotNull(jms);
                             Session session = jms.getJmsSession();
-                            assertNotNull("Should have JMS session", session);
+                            assertNotNull(session, "Should have JMS session");
                         })
                         .to("mock:result");
             }

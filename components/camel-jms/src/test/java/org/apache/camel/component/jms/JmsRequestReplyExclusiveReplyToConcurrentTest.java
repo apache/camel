@@ -25,13 +25,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyExclusiveReplyToConcurrentTest.class);
 
     private final int size = 100;
     private final CountDownLatch latch = new CountDownLatch(size);
@@ -44,20 +51,20 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
             final Integer num = i;
             executor.submit(() -> {
                 String reply = template.requestBody("direct:start", "" + num, String.class);
-                log.info("Sent {} expecting reply 'Hello {}' got --> {}", num, num, reply);
+                LOG.info("Sent {} expecting reply 'Hello {}' got --> {}", num, num, reply);
                 assertNotNull(reply);
                 assertEquals("Hello " + num, reply);
                 latch.countDown();
             });
         }
 
-        log.info("Waiting to process {} messages...", size);
+        LOG.info("Waiting to process {} messages...", size);
 
         // if any of the assertions above fails then the latch will not get decremented 
-        assertTrue("All assertions outside the main thread above should have passed", latch.await(3, TimeUnit.SECONDS));
+        assertTrue(latch.await(3, TimeUnit.SECONDS), "All assertions outside the main thread above should have passed");
 
         long delta = watch.taken();
-        log.info("Took {} millis", delta);
+        LOG.info("Took {} millis", delta);
 
         // just sleep a bit before shutting down
         Thread.sleep(1000);

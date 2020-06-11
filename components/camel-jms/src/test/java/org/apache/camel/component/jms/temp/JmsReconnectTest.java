@@ -23,9 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.CamelBeanPostProcessor;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for issue CAMEL-3193. Camel should support reconnects in case of
@@ -55,7 +56,7 @@ public class JmsReconnectTest {
      * TODO Find a way to recreate the problem with ActiveMQ and fully automate the test
      * @throws Exception
      */
-    @Ignore
+    @Disabled
     @Test
     public void testRequestReply() throws Exception {
         BrokerService broker = new BrokerService();
@@ -98,7 +99,7 @@ public class JmsReconnectTest {
         context.start();
 
         String ret = proxy.echo("test");
-        Assert.assertEquals("test", ret);
+        assertEquals("test", ret);
 
         broker.stop();
         /**
@@ -116,7 +117,7 @@ public class JmsReconnectTest {
          * which contains an InvalidJmsDestination
          */
         String ret2 = proxy.echo("test");
-        Assert.assertEquals("test", ret2);
+        assertEquals("test", ret2);
 
     }
 }

@@ -23,10 +23,11 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsPollingConsumerTest extends CamelTestSupport {
 
@@ -59,7 +60,7 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
             String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
-            assertNull("Should be null", body);
+            assertNull(body, "Should be null");
 
             template.sendBody("activemq:queue.foo", "Hello Claus");
         });
@@ -81,7 +82,7 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
             String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
-            assertNull("Should be null", body);
+            assertNull(body, "Should be null");
 
             template.sendBody("activemq:queue.foo", "Hello Claus");
         });

@@ -17,10 +17,13 @@
 package org.apache.camel.component.jms.config;
 
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport {
 
@@ -34,8 +37,8 @@ public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport
     @Test
     public void testMessageSentToCustomEndpoint() throws Exception {
         ActiveMQQueue jmsQueue = context.getRegistry().lookupByNameAndType("jmsQueue", ActiveMQQueue.class);
-        assertNotNull("jmsQueue", jmsQueue);
-        assertEquals("jmsqueue.getPhysicalName()", "Test.Camel.CustomEndpoint", jmsQueue.getPhysicalName());
+        assertNotNull(jmsQueue, "jmsQueue");
+        assertEquals("Test.Camel.CustomEndpoint", jmsQueue.getPhysicalName(), "jmsqueue.getPhysicalName()");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(expectedBody);
 
