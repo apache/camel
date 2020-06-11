@@ -19,7 +19,9 @@ package org.apache.camel.component.google.drive;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.

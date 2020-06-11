@@ -22,9 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.

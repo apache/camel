@@ -20,8 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GoogleDriveFilesConverterTest extends CamelTestSupport {
     
@@ -40,7 +43,7 @@ public class GoogleDriveFilesConverterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         
         Message result = mock.getExchanges().get(0).getIn();
-        assertTrue("We should get google file instance here", result.getBody() instanceof com.google.api.services.drive.model.File);
+        assertTrue(result.getBody() instanceof com.google.api.services.drive.model.File, "We should get google file instance here");
         
     }
     

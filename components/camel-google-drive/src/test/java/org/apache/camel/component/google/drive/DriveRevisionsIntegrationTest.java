@@ -20,9 +20,11 @@ import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveRevisionsApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Revisions APIs.
@@ -40,7 +42,7 @@ public class DriveRevisionsIntegrationTest extends AbstractGoogleDriveTestSuppor
         // using String message body for single parameter "fileId"
         final com.google.api.services.drive.model.RevisionList result = requestBody("direct://LIST", fileId);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
     }
 

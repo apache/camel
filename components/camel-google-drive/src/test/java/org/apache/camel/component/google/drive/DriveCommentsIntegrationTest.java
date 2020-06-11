@@ -25,9 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveCommentsApiMethod;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Comments APIs.
@@ -72,7 +75,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
 
         final com.google.api.services.drive.model.Comment result3 = requestBodyAndHeaders("direct://GET", null, headers);
 
-        assertNotNull("get result", result3);
+        assertNotNull(result3, "get result");
         
         // 5. delete the comment
         
@@ -94,7 +97,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
 
         try {
             final com.google.api.services.drive.model.Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
-            assertTrue("Should have thrown an exception.", false);
+            fail("Should have thrown an exception.");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -22,9 +22,11 @@ import com.google.api.services.drive.model.Change;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
@@ -45,7 +47,7 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
             // using String message body for single parameter "changeId"
             final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
     
-            assertNotNull("get result", result);
+            assertNotNull(result, "get result");
             LOG.debug("get: " + result);
         }
     }
@@ -54,7 +56,7 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
     public void testList() throws Exception {
         final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
     }
 
