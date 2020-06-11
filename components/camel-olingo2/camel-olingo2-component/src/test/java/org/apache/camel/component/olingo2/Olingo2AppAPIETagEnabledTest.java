@@ -41,13 +41,13 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.eclipse.jetty.http.HttpHeader;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests support for concurrency properties which generate and require reading
@@ -65,13 +65,13 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
     private static Edm edm;
     private static EdmEntitySet manufacturersSet;
 
-    @BeforeClass
+    @BeforeAll
     public static void scaffold() throws Exception {
         initEdm();
         initServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void unscaffold() throws Exception {
         if (olingoApp != null) {
             olingoApp.close();

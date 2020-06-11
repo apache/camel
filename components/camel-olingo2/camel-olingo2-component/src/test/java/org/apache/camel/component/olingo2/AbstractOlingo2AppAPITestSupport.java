@@ -35,8 +35,8 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // CHECKSTYLE:OFF
 public class AbstractOlingo2AppAPITestSupport {
@@ -178,11 +178,11 @@ public class AbstractOlingo2AppAPITestSupport {
         }
 
         public T await(long timeout, TimeUnit unit) throws Exception {
-            assertTrue("Timeout waiting for response", latch.await(timeout, unit));
+            assertTrue(latch.await(timeout, unit), "Timeout waiting for response");
             if (error != null) {
                 throw error;
             }
-            assertNotNull("Response", response);
+            assertNotNull(response, "Response");
             return response;
         }
 
