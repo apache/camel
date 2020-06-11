@@ -18,15 +18,15 @@ package org.apache.camel.maven;
 
 import java.io.File;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link org.apache.camel.maven.FileApiMethodGeneratorMojo}
  */
 public class DocumentGeneratorMojoTest extends AbstractGeneratorMojoTest {
 
-    @Ignore(value = "Can only be run manually after generating and compiling code from other generators")
+    @Disabled(value = "Can only be run manually after generating and compiling code from other generators")
     @Test
     public void testExecute() throws Exception {
         // delete target file to begin
