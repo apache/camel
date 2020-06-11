@@ -19,8 +19,10 @@ package org.apache.camel.component.jackson;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonJAXBAnnotationTest extends CamelTestSupport {
 
