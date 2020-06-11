@@ -24,8 +24,9 @@ import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HystrixHierarchicalConfigTest {
 
@@ -57,9 +58,9 @@ public class HystrixHierarchicalConfigTest {
         );
         final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 
     @Test
@@ -89,9 +90,9 @@ public class HystrixHierarchicalConfigTest {
         );
         final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 
     @Test
@@ -130,8 +131,8 @@ public class HystrixHierarchicalConfigTest {
         );
         final HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
+        assertEquals("local-conf-group-key", config.getGroupKey());
+        assertEquals("global-thread-key", config.getThreadPoolKey());
+        assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 }
