@@ -32,11 +32,15 @@ import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsProducerRouteRestartTest.class);
 
     private static final String ROUTE_ID = UndertowWsProducerRouteRestartTest.class.getSimpleName();
 
@@ -76,7 +80,7 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
                 @Override
                 public void onTextFrame(String message, boolean finalFragment, int rsv) {
                     received.add(message);
-                    log.info("received --> " + message);
+                    LOG.info("received --> " + message);
                     latch.countDown();
                 }
 

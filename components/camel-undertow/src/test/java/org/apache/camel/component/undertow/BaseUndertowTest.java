@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseUndertowTest extends CamelTestSupport {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
     private static volatile int port;
     private static volatile int port2;
     private final AtomicInteger counter = new AtomicInteger(1);

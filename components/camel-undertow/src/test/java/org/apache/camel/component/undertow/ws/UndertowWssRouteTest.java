@@ -48,11 +48,15 @@ import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWssRouteTest extends BaseUndertowTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWssRouteTest.class);
 
     @BeforeAll
     public static void setUpJaas() throws Exception {
@@ -126,7 +130,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
                             @Override
                             public void onTextFrame(String message, boolean finalFragment, int rsv) {
                                 received.add(message);
-                                log.info("received --> " + message);
+                                LOG.info("received --> " + message);
                                 latch.countDown();
                             }
 

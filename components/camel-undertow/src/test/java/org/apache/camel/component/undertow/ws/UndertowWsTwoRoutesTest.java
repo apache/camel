@@ -29,11 +29,15 @@ import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsTwoRoutesTest.class);
 
     @Test
     public void testWSHttpCallEcho() throws Exception {
@@ -49,7 +53,7 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
                         @Override
                         public void onTextFrame(String message, boolean finalFragment, int rsv) {
                             received.add(message);
-                            log.info("received --> " + message);
+                            LOG.info("received --> " + message);
                             latch.countDown();
                         }
 
@@ -89,7 +93,7 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
                                 @Override
                                 public void onTextFrame(String message, boolean finalFragment, int rsv) {
                                     received.add(message);
-                                    log.info("received --> " + message);
+                                    LOG.info("received --> " + message);
                                     latch.countDown();
                                 }
 
