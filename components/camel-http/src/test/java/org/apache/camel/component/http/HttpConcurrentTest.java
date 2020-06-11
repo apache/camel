@@ -29,9 +29,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpConcurrentTest extends BaseHttpTest {
 
@@ -40,7 +42,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -63,7 +65,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -102,7 +104,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
         }
 
         // should be 'files' unique responses
-        assertEquals("Should be " + files + " unique responses", files, unique.size());
+        assertEquals(files, unique.size(), "Should be " + files + " unique responses");
         executor.shutdownNow();
     }
 

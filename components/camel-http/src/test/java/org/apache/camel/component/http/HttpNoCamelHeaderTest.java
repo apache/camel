@@ -21,15 +21,20 @@ import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpNoCamelHeaderTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -41,11 +46,11 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
                 registerHandler("/hello", (request, response, context) -> {
                     response.setStatusCode(HttpStatus.SC_OK);
                     Object header = request.getFirstHeader(Exchange.FILE_NAME);
-                    assertNull("There should be no Camel header", header);
+                    assertNull(header, "There should be no Camel header");
 
                     for (Header h : request.getAllHeaders()) {
                         if (h.getName().startsWith("Camel") || h.getName().startsWith("org.apache.camel")) {
-                            assertNull("There should be no Camel header", h);
+                            assertNull(h, "There should be no Camel header");
                         }
                     }
 
@@ -58,7 +63,7 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -77,7 +82,7 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertEquals("dude", out.getMessage().getHeader("MyApp"));
         assertNull(out.getMessage().getHeader(Exchange.TO_ENDPOINT));
     }

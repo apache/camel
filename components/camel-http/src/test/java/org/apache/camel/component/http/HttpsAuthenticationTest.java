@@ -33,9 +33,9 @@ import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
@@ -51,7 +51,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     @BindToRegistry("sslContextParameters")
     private SSLContextParameters sslContextParameters = new SSLContextParameters();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -66,7 +66,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();

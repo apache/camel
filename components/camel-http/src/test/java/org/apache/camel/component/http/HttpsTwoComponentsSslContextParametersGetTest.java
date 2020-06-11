@@ -23,9 +23,9 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest {
 
@@ -47,7 +47,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     @BindToRegistry("https-bar")
     private HttpComponent httpComponent1 = new HttpComponent();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -62,7 +62,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
