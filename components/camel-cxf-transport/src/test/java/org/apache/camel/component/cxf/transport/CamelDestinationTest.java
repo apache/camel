@@ -47,8 +47,12 @@ import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;
@@ -87,9 +91,9 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         assertEquals("{http://camel.apache.org/camel-test}port.camel-destination", destination.getBeanName());
         CamelContext context = destination.getCamelContext();
 
-        assertNotNull("The camel context which get from camel destination is not null", context);
-        assertEquals("Get the wrong camel context", context.getName(), "dest_context");
-        assertEquals("The camel context should has two routers", context.getRoutes().size(), 2);
+        assertNotNull(context, "The camel context which get from camel destination is not null");
+        assertEquals(context.getName(), "dest_context", "Get the wrong camel context");
+        assertEquals(context.getRoutes().size(), 2, "The camel context should has two routers");
         bus.shutdown(false);
     }
 
@@ -132,13 +136,13 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
             destination = setupCamelDestination(endpointInfo, true);
             // destination.activate();
         } catch (IOException e) {
-            assertFalse("The CamelDestination activate should not through exception ", false);
+            fail("The CamelDestination activate should not through exception ");
             e.printStackTrace();
         }
         sendoutMessage(conduit, outMessage, true, "HelloWorld");
 
         // just verify the Destination inMessage
-        assertTrue("The destiantion should have got the message ", destMessage != null);
+        assertNotNull(destMessage, "The destiantion should have got the message");
         verifyReceivedMessage(destMessage, "HelloWorld");
         destination.shutdown();
     }
@@ -150,7 +154,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         byte bytes[] = new byte[bis.available()];
         bis.read(bytes);
         String reponse = new String(bytes);
-        assertEquals("The reponse date should be equals", content, reponse);
+        assertEquals(content, reponse, "The reponse date should be equals");
     }
     
     @Test
