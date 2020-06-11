@@ -23,10 +23,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.address.Address;
 import org.apache.camel.converter.jaxb.person.Person;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConcurrentJaxbDataFormatSchemaValidationTest.class);
 
     @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;
@@ -55,10 +62,10 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied();
-        log.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
+        LOG.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
-        log.info(payload);
+        LOG.info(payload);
 
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
         assertTrue(payload.contains("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
@@ -92,7 +99,7 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
-        log.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
+        LOG.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
 
         Person person = mockUnmarshall.getExchanges().get(0).getIn().getBody(Person.class);
 

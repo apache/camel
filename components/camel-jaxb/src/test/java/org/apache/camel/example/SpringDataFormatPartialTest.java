@@ -18,9 +18,11 @@ package org.apache.camel.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.XPathExpression;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Partial operations test.
@@ -45,8 +47,7 @@ public class SpringDataFormatPartialTest extends CamelSpringTestSupport {
         mock.assertIsSatisfied();
         
         //To make sure there is no XML declaration.
-        assertFalse("There should have no XML declaration.", 
-                    mock.getExchanges().get(0).getIn().getBody(String.class).startsWith("<?xml version="));
+        assertFalse(mock.getExchanges().get(0).getIn().getBody(String.class).startsWith("<?xml version="), "There should have no XML declaration.");
     }
 
     @Test

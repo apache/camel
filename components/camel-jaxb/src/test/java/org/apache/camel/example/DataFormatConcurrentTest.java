@@ -31,11 +31,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DataFormatConcurrentTest.class);
+    
     private int size = 2000;
     private int warmupCount = 100;
     private int testCycleCount = 10000;
@@ -180,7 +184,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         latch.await();
         long end = System.currentTimeMillis();
 
-        log.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
+        LOG.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
     }
 
     public void marshal(final CountDownLatch latch) throws Exception {
@@ -205,7 +209,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         latch.await();
         long end = System.currentTimeMillis();
 
-        log.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
+        LOG.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
     }
 
     /**

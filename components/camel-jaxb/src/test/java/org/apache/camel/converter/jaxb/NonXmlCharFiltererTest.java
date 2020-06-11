@@ -16,18 +16,18 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyChar;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -37,13 +37,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class NonXmlCharFiltererTest {
     private NonXmlCharFilterer nonXmlCharFilterer;
     @Mock
     private NonXmlCharFilterer nonXmlCharFiltererMock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nonXmlCharFilterer = new NonXmlCharFilterer();
     }
@@ -86,7 +86,7 @@ public class NonXmlCharFiltererTest {
 
         verify(nonXmlCharFiltererMock).filter(new char[] {'a', 'b', 'c'}, 0, 3);
 
-        assertSame("Should have returned the same string if nothing was filtered", string, result);
+        assertSame(string, result, "Should have returned the same string if nothing was filtered");
     }
 
     @Test
@@ -104,7 +104,7 @@ public class NonXmlCharFiltererTest {
 
         String result = nonXmlCharFiltererMock.filter("abc");
         verify(nonXmlCharFiltererMock).filter(any(char[].class), eq(0), eq(3));
-        assertEquals("Should have returned filtered string", "ioc", result);
+        assertEquals("ioc", result, "Should have returned filtered string");
     }
 
     @Test
@@ -125,8 +125,7 @@ public class NonXmlCharFiltererTest {
         verify(nonXmlCharFiltererMock).isFiltered('4');
         verify(nonXmlCharFiltererMock).isFiltered('5');
 
-        assertArrayEquals("Unexpected buffer contents",
-                new char[] {'1', '2', ' ', '4', ' ', '6'}, buffer);
+        assertArrayEquals(new char[] {'1', '2', ' ', '4', ' ', '6'}, buffer, "Unexpected buffer contents");
     }
 
     @Test
