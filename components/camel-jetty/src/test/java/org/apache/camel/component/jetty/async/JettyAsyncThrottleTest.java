@@ -19,13 +19,17 @@ package org.apache.camel.component.jetty.async;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CAMEL-4795, there should be no exceptions in the logs (before the fix there
  * was a NPE)
  */
 public class JettyAsyncThrottleTest extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyAsyncThrottleTest.class);
 
     @Test
     public void testJettyAsync() throws Exception {
@@ -42,7 +46,7 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
 
         for (int i = 0; i < size; i++) {
             Exchange exchange = getMockEndpoint("mock:result").getReceivedExchanges().get(i);
-            log.info("Reply " + exchange);
+            LOG.info("Reply " + exchange);
         }
     }
 

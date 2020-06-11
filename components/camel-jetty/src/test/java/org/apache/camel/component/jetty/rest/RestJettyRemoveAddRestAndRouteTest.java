@@ -23,7 +23,11 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
 
@@ -41,7 +45,7 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
         context.getRouteController().stopRoute("issues");
         boolean removed = context.removeRoute("issues");
 
-        assertTrue("Should have removed route", removed);
+        assertTrue(removed, "Should have removed route");
 
         try (InputStream stream = new URL("http://localhost:" + getPort() + "/issues/35").openStream()) {
             fail();

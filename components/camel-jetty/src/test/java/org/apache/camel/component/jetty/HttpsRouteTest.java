@@ -38,15 +38,25 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpsRouteTest extends BaseJettyTest {
 
     public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpsRouteTest.class);
 
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
@@ -59,7 +69,7 @@ public class HttpsRouteTest extends BaseJettyTest {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         port1 = getNextPort();
         port2 = getNextPort();
@@ -75,7 +85,7 @@ public class HttpsRouteTest extends BaseJettyTest {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         restoreSystemProperties();
         super.tearDown();
@@ -125,16 +135,16 @@ public class HttpsRouteTest extends BaseJettyTest {
         mockEndpointB.assertIsSatisfied();
         List<Exchange> list = mockEndpointA.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -150,7 +160,7 @@ public class HttpsRouteTest extends BaseJettyTest {
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
-        assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
+        assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 
     @Test

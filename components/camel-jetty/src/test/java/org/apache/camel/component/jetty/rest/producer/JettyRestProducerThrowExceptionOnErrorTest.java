@@ -20,7 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
 
@@ -34,7 +38,7 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
     public void testJettyProducerFail() throws Exception {
         Exchange out = fluentTemplate.withHeader("id", "666").to("direct:start").request(Exchange.class);
         assertNotNull(out);
-        assertFalse("Should not have thrown exception", out.isFailed());
+        assertFalse(out.isFailed(), "Should not have thrown exception");
         assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 

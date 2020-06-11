@@ -19,8 +19,8 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to verify that we can have URI options for external system
@@ -56,7 +56,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

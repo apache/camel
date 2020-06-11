@@ -25,9 +25,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiThreadedHttpGetTest extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MultiThreadedHttpGetTest.class);
 
     @Test
     public void testHttpGetWithConversion() throws Exception {
@@ -87,9 +95,9 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
         for (Exchange exchange : list) {
             String body = exchange.getIn().getBody(String.class);
 
-            log.debug("Body: " + body);
-            assertNotNull("Should have a body!", body);
-            assertTrue("body should contain: <html", body.contains("<html"));
+            LOG.debug("Body: " + body);
+            assertNotNull(body, "Should have a body!");
+            assertTrue(body.contains("<html"), "body should contain: <html");
         }
     }
 

@@ -21,7 +21,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
 

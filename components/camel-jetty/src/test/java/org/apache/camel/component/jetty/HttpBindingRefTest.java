@@ -25,7 +25,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for http binding ref option.
@@ -47,7 +49,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
-        assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
+        assertEquals(context.getTypeConverter().convertTo(String.class, out), "Something went wrong but we dont care");
     }
 
     @Override

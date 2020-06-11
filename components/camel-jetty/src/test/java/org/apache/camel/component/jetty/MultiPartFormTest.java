@@ -30,7 +30,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormTest extends BaseJettyTest {
     private HttpEntity createMultipartRequestEntity() throws Exception {
@@ -47,16 +51,16 @@ public class MultiPartFormTest extends BaseJettyTest {
         HttpResponse response = client.execute(post);
         int status = response.getStatusLine().getStatusCode();
 
-        assertEquals("Get a wrong response status", 200, status);
+        assertEquals(200, status, "Get a wrong response status");
         String result = IOHelper.loadText(response.getEntity().getContent()).trim();
 
-        assertEquals("Get a wrong result", "A binary file of some kind", result);
+        assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
     @Test
     public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
         String result = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
-        assertEquals("Get a wrong result", "A binary file of some kind", result);
+        assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
     @Override
@@ -75,11 +79,11 @@ public class MultiPartFormTest extends BaseJettyTest {
 
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
-                        assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
+                        assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
                         // The file name is attachment id
                         DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandle log4j2.properties", data);
+                        assertNotNull(data, "Should get the DataHandle log4j2.properties");
                         // This assert is wrong, but the correct content-type
                         // (application/octet-stream)
                         // will not be returned until Jetty makes it available -
@@ -88,9 +92,9 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // the implentation being used)
                         // assertEquals("Get a wrong content type",
                         // "text/plain", data.getContentType());
-                        assertEquals("Got the wrong name", "log4j2.properties", data.getName());
+                        assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue("We should get the data from the DataHandle", data.getDataSource().getInputStream().available() > 0);
+                        assertTrue(data.getDataSource().getInputStream().available() > 0, "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message
                         // header

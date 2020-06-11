@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpSendFileTest extends BaseJettyTest {
 
@@ -54,7 +57,7 @@ public class HttpSendFileTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").to("mock:result").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        assertNotNull("Body should not be null", body);
+                        assertNotNull(body, "Body should not be null");
                     }
                 }).transform(constant("OK")).setHeader("Content-Type", constant("text/plain"));
             }

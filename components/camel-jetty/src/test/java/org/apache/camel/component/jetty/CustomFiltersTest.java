@@ -39,7 +39,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CustomFiltersTest extends BaseJettyTest {
 
@@ -73,14 +75,14 @@ public class CustomFiltersTest extends BaseJettyTest {
 
         HttpResponse response = client.execute(httppost);
 
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        assertEquals("Get a wrong result", "This is a test response", responseString);
-        assertEquals("Did not use custom multipart filter", "true", response.getFirstHeader("MyTestFilter").getValue());
+        assertEquals("This is a test response", responseString, "Get a wrong result");
+        assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
 
         // just make sure the KeyWord header is set
-        assertEquals("Did not set the right KeyWord header", "KEY", response.getFirstHeader("KeyWord").getValue());
+        assertEquals("KEY", response.getFirstHeader("KeyWord").getValue(), "Did not set the right KeyWord header");
 
         client.close();
     }

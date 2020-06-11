@@ -22,8 +22,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyMuteExceptionTest extends BaseJettyTest {
 
@@ -36,8 +37,8 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         HttpResponse response = client.execute(get);
 
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        Assert.assertEquals("Exception", responseString);
-        Assert.assertEquals(500, response.getStatusLine().getStatusCode());
+        assertEquals("Exception", responseString);
+        assertEquals(500, response.getStatusLine().getStatusCode());
 
         client.close();
     }
