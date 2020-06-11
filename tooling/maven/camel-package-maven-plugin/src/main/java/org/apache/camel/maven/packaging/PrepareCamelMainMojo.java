@@ -77,6 +77,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             String javaType = f.getType().getQualifiedName();
             String sourceType = clazz.getQualifiedName();
             String defaultValue = f.getStringInitializer();
+            // skip constructors
+            if (defaultValue != null && defaultValue.startsWith("new ")) {
+                defaultValue = null;
+            }
 
             // the field must have a setter
             String setterName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
@@ -171,10 +175,13 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.faulttolerance.";
                 } else if (file.getName().contains("Rest")) {
                     prefix = "camel.rest.";
-                } else if (file.getName().contains("HealthCheck")) {
+                } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
+                } else if (file.getName().contains("ThreadPoolConfigurationProperties")) {
+                    // we only want this properties class for thread pool
+                    prefix = "camel.threadpool.";
                 } else {
                     prefix = "camel.main.";
                 }
@@ -216,8 +223,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getGroups().add(new MainGroupModel("camel.hystrix", "camel-hystrix configurations.", "org.apache.camel.main.HystrixConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.resilience4j", "camel-resilience4j configurations.", "org.apache.camel.main.Resilience4jConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.rest", "camel-rest configurations.", "org.apache.camel.spi.RestConfiguration"));
-            model.getGroups().add(new MainGroupModel("camel.health", "camel-health configurations.", "org.apache.camel.main.HealthCheckConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel("camel.health", "camel-health configurations.", "org.apache.camel.main.HealthConfigurationProperties"));
             model.getGroups().add(new MainGroupModel("camel.lra", "camel-lra configurations.", "org.apache.camel.main.LraConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel("camel.threadpool", "camel-threadpool configurations.", "org.apache.camel.main.ThreadPoolConfigurationProperties"));
 
             String json = JsonMapper.createJsonSchema(model);
 

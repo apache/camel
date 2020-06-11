@@ -266,6 +266,11 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
         }
     }
 
+    public boolean isEmpty() {
+        return poolSize == null && maxPoolSize == null && keepAliveTime == null && timeUnit == null
+                && maxQueueSize == null && allowCoreThreadTimeOut == null && rejectedPolicy == null;
+    }
+
     @Override
     public ThreadPoolProfile clone() {
         ThreadPoolProfile cloned = new ThreadPoolProfile();
