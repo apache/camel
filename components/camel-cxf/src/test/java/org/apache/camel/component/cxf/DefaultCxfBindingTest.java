@@ -34,8 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -55,12 +53,18 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DefaultCxfBindingTest extends TestCase {
+public class DefaultCxfBindingTest {
     
     private static final String SOAP_MESSAGE_1 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
         + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
@@ -74,9 +78,8 @@ public class DefaultCxfBindingTest extends TestCase {
 
     private DefaultCamelContext context;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         context = new DefaultCamelContext();
         context.start();
     }
@@ -87,7 +90,7 @@ public class DefaultCxfBindingTest extends TestCase {
         HeaderFilterStrategy hfs = new DefaultHeaderFilterStrategy();
         
         cxfBinding.setHeaderFilterStrategy(hfs);        
-        assertSame("The header filter strategy is set", hfs, cxfBinding.getHeaderFilterStrategy());
+        assertSame(hfs, cxfBinding.getHeaderFilterStrategy(), "The header filter strategy is set");
     }
     
     private Document getDocument(String soapMessage) throws Exception {
@@ -130,7 +133,7 @@ public class DefaultCxfBindingTest extends TestCase {
         assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
         
         Element element = (Element)document.getElementsByTagName("ns1:identifier").item(0);
-        assertNotNull("We should get the element", element);
+        assertNotNull(element, "We should get the element");
         DefaultCxfBinding.addNamespace(element, nsMap);
         assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns"));
         assertEquals("http://www.mycompany.com/test/", element.getAttribute("xmlns:ns1"));
@@ -146,12 +149,12 @@ public class DefaultCxfBindingTest extends TestCase {
         cxfBinding.setCharsetWithContentType(exchange);
         
         String charset = ExchangeHelper.getCharsetName(exchange);
-        assertEquals("Get a wrong charset", "ISO-8859-1", charset);
+        assertEquals("ISO-8859-1", charset, "Get a wrong charset");
         
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         cxfBinding.setCharsetWithContentType(exchange);
         charset = ExchangeHelper.getCharsetName(exchange);
-        assertEquals("Get a worng charset name", "UTF-8", charset);
+        assertEquals("UTF-8", charset, "Get a worng charset name");
     }
     
     @Test
@@ -397,14 +400,14 @@ public class DefaultCxfBindingTest extends TestCase {
 
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
-        assertEquals("The value must match", value, values);
+        assertTrue(values != null && values.size() == ((List<?>)value).size(), "The entry must be available");
+        assertEquals(value, values, "The value must match");
     }
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == 1);
-        assertEquals("The value must match", values.get(0), value);
+        assertTrue(values != null && values.size() == 1, "The entry must be available");
+        assertEquals(values.get(0), value, "The value must match");
     }
 
 }

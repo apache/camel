@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,9 +47,14 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * 
@@ -59,6 +64,8 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomDisabledProducerPayloadModeTest.class);
 
     @Override
     protected boolean isMtomEnabled() {
@@ -73,7 +80,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
     @Override
     @Test
     public void testProducer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
@@ -99,19 +106,19 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         // process response - verify response attachments
         
         CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
-        Assert.assertEquals(1, out.getBody().size());
+        assertEquals(1, out.getBody().size());
         
 
         DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
-        Assert.assertEquals("application/octet-stream", dr.getContentType());
-        MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+        assertEquals("application/octet-stream", dr.getContentType());
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
    
         dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_IMAGE_CID);
-        Assert.assertEquals("image/jpeg", dr.getContentType());
+        assertEquals("image/jpeg", dr.getContentType());
         
         BufferedImage image = ImageIO.read(dr.getInputStream());
-        Assert.assertEquals(560, image.getWidth());
-        Assert.assertEquals(300, image.getHeight());
+        assertEquals(560, image.getWidth());
+        assertEquals(300, image.getHeight());
         
     }
  
@@ -126,20 +133,20 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             // verify request attachments
             Map<String, DataHandler> map 
                 = CastUtils.cast((Map<?, ?>)ctx.getMessageContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS));
-            Assert.assertEquals(2, map.size());
+            assertEquals(2, map.size());
             
             DataHandler dh = map.get(MtomTestHelper.REQ_PHOTO_CID);
-            Assert.assertEquals("application/octet-stream", dh.getContentType());
+            assertEquals("application/octet-stream", dh.getContentType());
             byte[] bytes = null;
             try {
                 bytes = IOUtils.readBytesFromStream(dh.getInputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            MtomTestHelper.assertEquals(bytes, MtomTestHelper.REQ_PHOTO_DATA);
+            assertArrayEquals(bytes, MtomTestHelper.REQ_PHOTO_DATA);
             
             dh = map.get(MtomTestHelper.REQ_IMAGE_CID);
-            Assert.assertEquals("image/jpeg", dh.getContentType());
+            assertEquals("image/jpeg", dh.getContentType());
 
             BufferedImage bufferedImage = null;
             try {  
@@ -148,9 +155,9 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Assert.assertNotNull(bufferedImage);
-            Assert.assertEquals(41, bufferedImage.getWidth());
-            Assert.assertEquals(39, bufferedImage.getHeight());  
+            assertNotNull(bufferedImage);
+            assertEquals(41, bufferedImage.getWidth());
+            assertEquals(39, bufferedImage.getHeight());  
 
             // add output attachments
             map = CastUtils.cast((Map<?, ?>)ctx.getMessageContext().get(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS)); 

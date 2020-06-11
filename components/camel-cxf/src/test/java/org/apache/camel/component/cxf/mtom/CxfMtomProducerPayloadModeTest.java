@@ -47,26 +47,35 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.helpers.XPathUtils;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
  */
 @ContextConfiguration
-public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class CxfMtomProducerPayloadModeTest {
+
     static int port = CXFTestSupport.getPort1();
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomProducerPayloadModeTest.class);
+
     @Autowired
     protected CamelContext context;
     protected Endpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         endpoint = Endpoint.publish("http://localhost:" + port + "/" + getClass().getSimpleName() 
                                     + "/jaxws-mtom/hello", getServiceImpl());
@@ -74,7 +83,7 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         binding.setMTOMEnabled(isMtomEnabled());
     }
     
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (endpoint != null) {
             endpoint.stop();
@@ -84,7 +93,7 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
     @SuppressWarnings("unchecked")
     @Test
     public void testProducer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
@@ -112,7 +121,7 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         // process response 
         
         CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
-        Assert.assertEquals(1, out.getBody().size());
+        assertEquals(1, out.getBody().size());
         
         Map<String, String> ns = new HashMap<>();
         ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
@@ -130,15 +139,15 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
 
         
         DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(photoId));
-        Assert.assertEquals("application/octet-stream", dr.getContentType());
-        MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+        assertEquals("application/octet-stream", dr.getContentType());
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
    
         dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(imageId));
-        Assert.assertEquals("image/jpeg", dr.getContentType());
+        assertEquals("image/jpeg", dr.getContentType());
         
         BufferedImage image = ImageIO.read(dr.getInputStream());
-        Assert.assertEquals(560, image.getWidth());
-        Assert.assertEquals(300, image.getHeight());
+        assertEquals(560, image.getWidth());
+        assertEquals(300, image.getHeight());
         
         // END SNIPPET: producer
 

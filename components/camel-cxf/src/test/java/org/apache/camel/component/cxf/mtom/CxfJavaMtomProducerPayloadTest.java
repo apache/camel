@@ -16,25 +16,31 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 
 import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
     protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = 
         MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true"
         + "&defaultOperationName=Detail";
-    
+    private static final Logger LOG = LoggerFactory.getLogger(CxfJavaMtomProducerPayloadTest.class);
+
     @Override
     @SuppressWarnings("unchecked")
     @Test
     public void testInvokingService() throws Exception {   
-        if (MtomTestHelper.isAwtHeadless(null, log)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
@@ -52,7 +58,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         });
         
         // Make sure we don't put the attachement into out message
-        assertEquals("The attachement size should be 0 ", 0, exchange.getOut(AttachmentMessage.class).getAttachments().size());
+        assertEquals(0, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 0");
         
         Object[] result = exchange.getOut().getBody(Object[].class);
         

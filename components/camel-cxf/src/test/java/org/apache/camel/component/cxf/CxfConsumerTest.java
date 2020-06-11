@@ -27,13 +27,19 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerTest extends CamelTestSupport {
     protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
         + CXFTestSupport.getPort1() + "/CxfConsumerTest/test";
@@ -49,11 +55,6 @@ public class CxfConsumerTest extends CamelTestSupport {
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
     private static final String TEST_MESSAGE = "Hello World!";
     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-    
     // START SNIPPET: example
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -65,13 +66,13 @@ public class CxfConsumerTest extends CamelTestSupport {
                         Message in = exchange.getIn();
                         // check the remote IP from the cxfMessage
                         org.apache.cxf.message.Message cxfMessage = in.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
-                        assertNotNull("Should get the cxfMessage instance from message header", cxfMessage);
+                        assertNotNull(cxfMessage, "Should get the cxfMessage instance from message header");
                         ServletRequest request = (ServletRequest)cxfMessage.get("HTTP.REQUEST");
-                        assertNotNull("Should get the ServletRequest", request);
-                        assertNotNull("Should get the RemoteAddress", request.getRemoteAddr());
+                        assertNotNull(request, "Should get the ServletRequest");
+                        assertNotNull(request.getRemoteAddr(), "Should get the RemoteAddress");
                         // Could verify the HttpRequest 
                         String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
-                        assertNotNull("Should get the contentType.", contentType);
+                        assertNotNull(contentType, "Should get the contentType.");
                         
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
@@ -111,23 +112,23 @@ public class CxfConsumerTest extends CamelTestSupport {
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo(TEST_MESSAGE);
-        assertEquals("We should get the echo string result from router", result, "echo " + TEST_MESSAGE);
+        assertEquals(result, "echo " + TEST_MESSAGE, "We should get the echo string result from router");
 
         Boolean bool = client.echoBoolean(Boolean.TRUE);
-        assertNotNull("The result should not be null", bool);
-        assertEquals("We should get the echo boolean result from router ", bool.toString(), "true");
+        assertNotNull(bool, "The result should not be null");
+        assertEquals(bool.toString(), "true", "We should get the echo boolean result from router");
     }
     
     @Test
     public void testXmlDeclaration() throws Exception {
         String response = template.requestBodyAndHeader(SIMPLE_ENDPOINT_ADDRESS, ECHO_REQUEST, Exchange.CONTENT_TYPE, "text/xml; charset=UTF-8", String.class);
-        assertTrue("Can't find the xml declaration.", response.startsWith("<?xml version='1.0' encoding="));
+        assertTrue(response.startsWith("<?xml version='1.0' encoding="), "Can't find the xml declaration.");
     }
     
     @Test
     public void testPublishEndpointUrl() throws Exception {
         String response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS + "?wsdl", null, String.class);
-        assertTrue("Can't find the right service location.", response.indexOf("http://www.simple.com/services/test") > 0);
+        assertTrue(response.indexOf("http://www.simple.com/services/test") > 0, "Can't find the right service location.");
     }
 
 

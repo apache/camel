@@ -24,17 +24,22 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.wsdl_first.PersonMultiPartImpl;
 import org.apache.camel.wsdl_first.PersonMultiPartPortType;
 import org.apache.camel.wsdl_first.PersonMultiPartService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test that verifies multi part SOAP message functionality
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1(); 
     protected static int port2 = CXFTestSupport.getPort2(); 
@@ -46,17 +51,12 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
         + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
     protected Endpoint endpoint;
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Before
+    @BeforeEach
     public void startService() {
         endpoint = Endpoint.publish(SERVICE_ADDRESS, new PersonMultiPartImpl());
     }
     
-    @After
+    @AfterEach
     public void stopService() {
         if (endpoint != null) {
             endpoint.stop();

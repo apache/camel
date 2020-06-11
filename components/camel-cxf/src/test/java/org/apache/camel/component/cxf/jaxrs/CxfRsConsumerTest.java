@@ -44,7 +44,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -52,7 +52,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
@@ -221,7 +225,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         public void processGetCustomer(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-            assertEquals("Get a wrong http method", "GET", httpMethod);
+            assertEquals("GET", httpMethod, "Get a wrong http method");
             String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
             // The parameter of the invocation is stored in the body of in message
             String id = inMessage.getBody(String.class);
@@ -237,7 +241,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     org.apache.cxf.message.Message cxfMessage = inMessage.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
                     ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
                     // Just make sure the request object is not null
-                    assertNotNull("The request object should not be null", request);
+                    assertNotNull(request, "The request object should not be null");
                     Response r = Response.status(200).entity("The remoteAddress is 127.0.0.1").build();
                     exchange.getOut().setBody(r);
                     return;
@@ -276,13 +280,13 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             if ("getCustomer".equals(operationName)) {
                 processGetCustomer(exchange);
             } else if ("updateCustomer".equals(operationName)) {
-                assertEquals("Get a wrong customer message header", "header1;header2", inMessage.getHeader("test"));
+                assertEquals("header1;header2", inMessage.getHeader("test"), "Get a wrong customer message header");
                 String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-                assertEquals("Get a wrong http method", "PUT", httpMethod);
+                assertEquals("PUT", httpMethod, "Get a wrong http method");
                 Customer customer = inMessage.getBody(Customer.class);
-                assertNotNull("The customer should not be null.", customer);
+                assertNotNull(customer, "The customer should not be null.");
                 // Now you can do what you want on the customer object
-                assertEquals("Get a wrong customer name.", "Mary", customer.getName());
+                assertEquals("Mary", customer.getName(), "Get a wrong customer name.");
                 // set the response back
                 exchange.getOut().setBody(Response.ok().build());
             }

@@ -23,17 +23,14 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
    
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
-    
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
     
     // START SNIPPET: example
     @Override

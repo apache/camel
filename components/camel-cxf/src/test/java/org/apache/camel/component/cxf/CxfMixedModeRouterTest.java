@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Server;
@@ -37,10 +37,14 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfMixedModeRouterTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1(); 
     protected static int port2 = CXFTestSupport.getPort2(); 
@@ -52,12 +56,8 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
 
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD&allowStreaming=false";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {       
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -70,7 +70,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
         server.start();
     }
     
-    @AfterClass
+    @AfterAll
     public static void shutdownService() {
         if (server != null) {
             server.stop();
@@ -157,7 +157,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", result, "echo hello world");
+        assertEquals("echo hello world", result, "we should get the right answer from router");
 
     }
 

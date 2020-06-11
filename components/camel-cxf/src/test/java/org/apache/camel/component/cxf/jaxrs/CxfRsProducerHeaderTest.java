@@ -28,22 +28,26 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+
 
 /**
  * Unit test that verify header propagation functionality for CxfRsProducer
  * that uses WebClient API.
  *  
  */
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {
+public class CxfRsProducerHeaderTest {
     static int port2 = CXFTestSupport.getPort2(); 
     static int port3 = CXFTestSupport.getPort("CxfRsProducerHeaderTest.1");
     
@@ -70,7 +74,7 @@ public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {
      
         // verify the out message is a Response object by default
         Response response = (Response)exchange.getOut().getBody();
-        assertNotNull("The response should not be null ", response);
+        assertNotNull(response, "The response should not be null");
         assertEquals(200, response.getStatus());
         
         // test converter (from Response to InputStream)

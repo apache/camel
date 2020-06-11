@@ -23,15 +23,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
@@ -58,15 +63,15 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     protected abstract ClassPathXmlApplicationContext createApplicationContext();
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         
         IOHelper.close(applicationContext);
@@ -83,11 +88,11 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
 
         String reply = greeter.greetMe("test");
-        assertNotNull("No response received from service", reply);
-        assertEquals("Got the wrong reply ", "Hello test", reply);
+        assertNotNull(reply, "No response received from service");
+        assertEquals("Hello test", reply, "Got the wrong reply");
         reply = greeter.sayHi();
-        assertNotNull("No response received from service", reply);
-        assertEquals("Got the wrong reply ", "Bonjour", reply);
+        assertNotNull(reply, "No response received from service");
+        assertEquals("Bonjour", reply, "Got the wrong reply");
 
         greeter.greetMeOneWay("call greetMe OneWay !");
 
@@ -98,7 +103,7 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
             fail("Should get the NoSuchCodeLitFault here.");
         } catch (NoSuchCodeLitFault fault) {
             // expect the fault here
-            assertNotNull("The fault info should not be null", fault.getFaultInfo());
+            assertNotNull(fault.getFaultInfo(), "The fault info should not be null");
         }
 
     }
@@ -112,8 +117,8 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
                               testDocLitFaultBody);
             fail("Should get an exception here.");
         } catch (RuntimeCamelException exception) {
-            assertTrue("It should get the response error", exception.getCause() instanceof HttpOperationFailedException);
-            assertEquals("Get a wrong response code", ((HttpOperationFailedException)exception.getCause()).getStatusCode(), 500);
+            assertTrue(exception.getCause() instanceof HttpOperationFailedException, "It should get the response error");
+            assertEquals(((HttpOperationFailedException)exception.getCause()).getStatusCode(), 500, "Get a wrong response code");
         }
     }
     
@@ -122,7 +127,7 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
         String response = template.requestBody("http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
                                                + "/CamelContext/RouterPort/"
             + getClass().getSimpleName() + "?wsdl", null, String.class);
-        assertTrue("Can't find the right service location.", response.indexOf("http://www.simple.com/services/test") > 0);
+        assertTrue(response.indexOf("http://www.simple.com/services/test") > 0, "Can't find the right service location.");
     }
     
     @Override

@@ -20,18 +20,17 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.PersonImpl;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + getPort1() 

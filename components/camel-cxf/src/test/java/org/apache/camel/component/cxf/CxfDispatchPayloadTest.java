@@ -27,9 +27,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for setting arbitrary payload in PAYLOAD mode
@@ -45,25 +50,25 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
     public void testDispatchPayload() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchPayload(name, false);
-        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
+        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         
         org.apache.camel.Message response = exchange.getOut();
-        assertNotNull("The response must not be null ", response);
+        assertNotNull(response, "The response must not be null");
         
         String value = decodeResponseFromPayload((CxfPayload<?>)response.getBody(CxfPayload.class), exchange);
-        assertTrue("The response must match the request ", value.endsWith(name));
+        assertTrue(value.endsWith(name), "The response must match the request");
     }
     
     @Test
     public void testDispatchPayloadOneway() throws Exception {
         final String name = "Tila";
         Exchange exchange = sendJaxWsDispatchPayload(name, true);
-        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
+        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         
         org.apache.camel.Message response = exchange.getOut();
-        assertNotNull("The response must not be null ", response);
+        assertNotNull(response, "The response must not be null");
         
-        assertNull("The response must be null ", response.getBody());
+        assertNull(response.getBody(), "The response must be null");
     }
 
     

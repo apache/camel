@@ -20,15 +20,16 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRouterTest {
     protected static Endpoint endpoint;
     protected static String serverAddress = "http://localhost:" + getPort1() 
         + "/CxfGreeterMessageCamelHttpRouterTest/SoapContext/SoapPort";
-    @AfterClass
+
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
@@ -36,7 +37,7 @@ public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRoute
     }
 
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() 

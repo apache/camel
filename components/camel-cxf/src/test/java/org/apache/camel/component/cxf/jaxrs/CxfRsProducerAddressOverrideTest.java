@@ -23,10 +23,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
@@ -68,9 +71,9 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
         
-        assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", 123, response.getId());
-        assertEquals("Get a wrong customer name", "John", response.getName());
+        assertNotNull(response, "The response should not be null");
+        assertEquals(123, response.getId(), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
     }
 
     @Test
@@ -94,9 +97,9 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
         
-        assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", 123, response.getId());
-        assertEquals("Get a wrong customer name", "John", response.getName());
+        assertNotNull(response, "The response should not be null");
+        assertEquals(123, response.getId(), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
     }
     
     @Test
@@ -119,9 +122,9 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
         
-        assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", 123, response.getId());
-        assertEquals("Get a wrong customer name", "John", response.getName());
+        assertNotNull(response, "The response should not be null");
+        assertEquals(123, response.getId(), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
     }
 
     @Test
@@ -146,9 +149,9 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         // get the response message
         Customer response = (Customer)exchange.getOut().getBody();
 
-        assertNotNull("The response should not be null", response);
-        assertEquals("Get a wrong customer id ", 123, response.getId());
-        assertEquals("Get a wrong customer name", "John", response.getName());
+        assertNotNull(response, "The response should not be null");
+        assertEquals(123, response.getId(), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
     }
 
     @Test
@@ -157,7 +160,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://http", new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
         // get the response message
         Customer response = exchange.getOut().getBody(Customer.class);
-        assertNotNull("The response should not be null ", response);
+        assertNotNull(response, "The response should not be null");
 
         // Second call with override url
         exchange = template.send("direct://http", new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerNonExistingAddressOverrideTest"));
@@ -166,7 +169,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         exchange = template.send("direct://http", new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
         // get the response message
         response = exchange.getOut().getBody(Customer.class);
-        assertNotNull("The response should not be null ", response);
+        assertNotNull(response, "The response should not be null");
     }
 
     class SendProcessor implements Processor {

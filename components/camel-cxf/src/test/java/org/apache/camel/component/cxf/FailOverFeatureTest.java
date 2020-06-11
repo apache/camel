@@ -26,9 +26,10 @@ import org.apache.cxf.clustering.FailoverFeature;
 import org.apache.cxf.clustering.RandomStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FailOverFeatureTest {
     
@@ -44,7 +45,7 @@ public class FailOverFeatureTest {
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
 
         // publish a web-service
@@ -57,7 +58,7 @@ public class FailOverFeatureTest {
     @Test
     public void testPojo() throws Exception {
         startRoutePojo();
-        Assert.assertEquals("hello", tryFailover(POJO_PROXY_ADDRESS));
+        assertEquals("hello", tryFailover(POJO_PROXY_ADDRESS));
         if (context2 != null) {
             context2.stop();
         }
@@ -66,7 +67,7 @@ public class FailOverFeatureTest {
     @Test
     public void testPayload() throws Exception {
         startRoutePayload();
-        Assert.assertEquals("hello", tryFailover(PAYLOAD_PROXY_ADDRESS));
+        assertEquals("hello", tryFailover(PAYLOAD_PROXY_ADDRESS));
         if (context1 != null) {
             context1.stop();
         }

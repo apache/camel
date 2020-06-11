@@ -28,18 +28,21 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     
@@ -54,7 +57,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
         return "http://cxf.apache.org/bindings/xformat";
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void startService() {       
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
@@ -69,15 +72,15 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     }
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {       
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         
         IOHelper.close(applicationContext);
@@ -113,11 +116,11 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> elements = payload.getBodySources();
-                        assertNotNull("We should get the elements here", elements);
-                        assertEquals("Get the wrong elements size", elements.size(), 1);
+                        assertNotNull(elements, "We should get the elements here");
+                        assertEquals(elements.size(), 1, "Get the wrong elements size");
                         
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals("Get the wrong namespace URI", el.getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                        assertEquals(el.getNamespaceURI(), "http://cxf.component.camel.apache.org/", "Get the wrong namespace URI");
                     }
                     
                 })
@@ -131,12 +134,12 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", result, "echo hello world");
+        assertEquals("echo hello world", result, "we should get the right answer from router");
 
         int count = client.getInvocationCount();
         client.ping();
         //oneway ping invoked, so invocationCount ++
-        assertEquals("The ping should be invocated", client.getInvocationCount(), ++count);
+        assertEquals(client.getInvocationCount(), ++count, "The ping should be invocated");
     }
 
 }

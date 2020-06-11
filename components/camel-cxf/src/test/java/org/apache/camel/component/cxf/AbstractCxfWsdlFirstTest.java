@@ -28,13 +28,19 @@ import javax.xml.ws.WebServiceException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     static int port1 = CXFTestSupport.getPort1();
     
@@ -45,10 +51,6 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         return CXFTestSupport.getPort2();
     }
     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
 
@@ -71,7 +73,7 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         Holder<String> ssn = new Holder<>();
         Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
-        assertEquals("we should get the right answer from router", "Bonjour", name.value);
+        assertEquals("Bonjour", name.value, "we should get the right answer from router");
 
         personId.value = "";
         try {
@@ -87,9 +89,9 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
             fail("We expect to get the WebSerivceException here");        
         } catch (WebServiceException ex) {
             // Caught expected WebServiceException here
-            assertTrue("Should get the xml vaildate error! " + ex.getMessage(),
-                       ex.getMessage().indexOf("MyStringType") > 0
-                       || ex.getMessage().indexOf("Could not parse the XML stream") != -1);         
+            assertTrue(ex.getMessage().indexOf("MyStringType") > 0
+                       || ex.getMessage().indexOf("Could not parse the XML stream") != -1,
+                    "Should get the xml vaildate error! " + ex.getMessage());
         }
 
         verifyJaxwsHandlers(fromHandler, toHandler);
@@ -107,17 +109,17 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     @SuppressWarnings("unchecked")
     public void testInvokingServiceWithCamelProducer() throws Exception {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");
-        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
+        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
         org.apache.camel.Message out = exchange.getOut();
         List<Object> result =  out.getBody(List.class);
-        assertEquals("The result list should not be empty", result.size(), 4);
+        assertEquals(result.size(), 4, "The result list should not be empty");
         Holder<String> name = (Holder<String>) result.get(3);
-        assertEquals("we should get the right answer from router", "Bonjour", name.value);
+        assertEquals("Bonjour", name.value, "we should get the right answer from router");
 
         exchange = sendJaxWsMessageWithHolders("");
-        assertEquals("We should get a fault here", exchange.isFailed(), true);
+        assertEquals(exchange.isFailed(), true, "We should get a fault here");
         Throwable ex = exchange.getException();
-        assertTrue("We should get the UnknowPersonFault here", ex instanceof UnknownPersonFault);
+        assertTrue(ex instanceof UnknownPersonFault, "We should get the UnknowPersonFault here");
     }
 
     protected Exchange sendJaxWsMessageWithHolders(final String personIdString) {

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadConsumerDuplicateNamespaceStreamCacheTest extends CxfPayloadConsumerNamespaceOnEnvelopeStreamCacheTest {
     /*

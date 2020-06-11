@@ -24,21 +24,28 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A unit test for java only CXF in payload mode
  */
 public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
-    private static int port1 = CXFTestSupport.getPort1(); 
+    private static final Logger LOG = LoggerFactory.getLogger(CxfJavaOnlyCamelContextAwareTest.class);
+
+    private static int port1 = CXFTestSupport.getPort1();
 
     @Test
     public void testCxfEndpointHasCamelContext() throws Exception {
         String s = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>123</personId></GetPerson>";
         Document xml = context.getTypeConverter().convertTo(Document.class, s);
 
-        log.info("Endpoints: {}", context.getEndpoints());
+        LOG.info("Endpoints: {}", context.getEndpoints());
         Object output = template.requestBody("personService", xml);
         assertNotNull(output);
 
@@ -54,7 +61,7 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
         assertTrue(reply.contains("<name>Donald Duck</name"));
         
         assertTrue(context.getEndpoint("personService") instanceof CamelContextAware);
-        assertNotNull("CamelContext should be set on CxfEndpoint", context.getEndpoint("personService").getCamelContext());
+        assertNotNull(context.getEndpoint("personService").getCamelContext(), "CamelContext should be set on CxfEndpoint");
     }
 
     @Override

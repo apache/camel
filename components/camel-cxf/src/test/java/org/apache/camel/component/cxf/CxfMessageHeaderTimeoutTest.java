@@ -27,27 +27,26 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final String SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfMessageHeaderTimeoutTest/SoapContext/SoapPort";
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-   
-
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Greeter implementor = new GreeterImplWithSleep();
         Endpoint.publish(SERVER_ADDRESS, implementor); 
@@ -61,8 +60,8 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
-        assertNotNull("We should get the exception cause here", e);
-        assertTrue("We should get the socket time out exception here", e instanceof SocketTimeoutException);
+        assertNotNull(e, "We should get the exception cause here");
+        assertTrue(e instanceof SocketTimeoutException, "We should get the socket time out exception here");
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {

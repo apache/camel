@@ -23,9 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
 
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"";
@@ -47,11 +53,6 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
     protected ExecutorService pool;
     
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -67,7 +68,7 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
                         Message in = exchange.getIn();
                         // check the content-length header is filtered
                         Object value = in.getHeader("Content-Length");
-                        assertNull("The Content-Length header should be removed", value);
+                        assertNull(value, "The Content-Length header should be removed");
                         // Get the request message
                         String request = in.getBody(String.class);
                         String priority = in.getHeader("priority", "fast", String.class);

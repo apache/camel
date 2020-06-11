@@ -19,20 +19,20 @@ package org.apache.camel.component.cxf;
 import javax.xml.ws.Endpoint;
 
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
-    @AfterClass
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1()

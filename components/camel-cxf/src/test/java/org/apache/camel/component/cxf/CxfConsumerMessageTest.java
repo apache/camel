@@ -20,12 +20,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerMessageTest extends CamelTestSupport {
     private static final String TEST_MESSAGE = "Hello World!";
     
@@ -46,10 +52,6 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -58,7 +60,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
                         Message in = exchange.getIn();
                         // check the content-length header is filtered 
                         Object value = in.getHeader("Content-Length");
-                        assertNull("The Content-Length header should be removed", value);
+                        assertNull(value, "The Content-Length header should be removed");
                         // Get the request message
                         String request = in.getBody(String.class);
                         // Send the response message back
@@ -85,11 +87,11 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo(TEST_MESSAGE);
-        assertEquals("We should get the echo string result from router", result, "echo " + TEST_MESSAGE);
+        assertEquals(result, "echo " + TEST_MESSAGE, "We should get the echo string result from router");
 
         Boolean bool = client.echoBoolean(Boolean.TRUE);
-        assertNotNull("The result should not be null", bool);
-        assertEquals("We should get the echo boolean result from router ", bool.toString(), "true");
+        assertNotNull(bool, "The result should not be null");
+        assertEquals(bool.toString(), "true", "We should get the echo boolean result from router");
 
     }
 
