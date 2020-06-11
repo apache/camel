@@ -20,16 +20,22 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(RibbonServiceCallUpdateRouteTest.class);
     private final StaticServiceDiscovery servers = new StaticServiceDiscovery();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // setup a static ribbon server list with these 2 servers to start with
         servers.addServer("myService@localhost:9090");
@@ -60,9 +66,9 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
         assertEquals("9091", out3);
 
         // sleep a bit to make the server updated run and detect that a server is no longer in the list
-        log.debug("Sleeping to all the server list updated to run");
+        LOG.debug("Sleeping to all the server list updated to run");
         Thread.sleep(1000);
-        log.debug("Calling the service now");
+        LOG.debug("Calling the service now");
 
         // call again and it should call 9091 as its the only active server
         String out4 = template.requestBody("direct:start", null, String.class);
