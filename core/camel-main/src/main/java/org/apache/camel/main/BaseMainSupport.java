@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -57,11 +56,11 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -74,13 +73,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
 import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
-import static org.apache.camel.main.MainHelper.toEnvVar;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -97,8 +94,6 @@ public abstract class BaseMainSupport extends BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
     private static final String SENSITIVE_KEYS = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
-
-    private static final String VALID_THREAD_POOL_KEYS = "id|poolSize|maxPoolSize|keepAliveTime|timeUnit|maxQueueSize|allowCoreThreadTimeout|rejectedPolicy";
 
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
@@ -722,10 +717,10 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
                 restProperties.put(optionKey(option), value);
-            } else if (key.startsWith("camel.threadpool")) {
+            } else if (key.startsWith("camel.threadpool.")) {
                 // grab the value
                 String value = prop.getProperty(key);
-                String option = key.substring(16);
+                String option = key.substring(17);
                 validateOptionAndValue(key, option, value);
                 threadPoolProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.health.")) {
@@ -805,7 +800,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!threadPoolProperties.isEmpty()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
-            setThreadPoolProfileProperties(camelContext, threadPoolProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+            setThreadPoolProperties(camelContext, threadPoolProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
         }
         if (!healthProperties.isEmpty()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
@@ -856,7 +851,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!threadPoolProperties.isEmpty()) {
             threadPoolProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.threadpool{}={} on bean: ThreadPoolProfileBuilder", k, v);
+                LOG.warn("Property not auto-configured: camel.threadpool.{}={}", k, v);
             });
         }
         if (!healthProperties.isEmpty()) {
@@ -874,82 +869,62 @@ public abstract class BaseMainSupport extends BaseService {
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
     }
 
-    private void setThreadPoolProfileProperties(CamelContext camelContext, Map<String, Object> threadPoolProperties,
-                                                boolean failIfNotSet, Map<String, String> autoConfiguredProperties) {
+    private void setThreadPoolProperties(CamelContext camelContext, Map<String, Object> threadPoolProperties,
+                                         boolean failIfNotSet, Map<String, String> autoConfiguredProperties) throws Exception {
 
-        Map<String, Map<String, String>> profiles = new LinkedHashMap<>();
-        // the id of the profile is in the key [xx]
-        threadPoolProperties.forEach((k, v) -> {
-            String id = StringHelper.between(k, "[", "].");
-            if (id == null) {
-                throw new IllegalArgumentException("Invalid syntax for key: camel.threadpool" + k + " should be: camel.threadpool[id]");
-            }
-            String key = StringHelper.after(k, "].");
-            String value = v.toString();
-            if (key == null) {
-                throw new PropertyBindingException("ThreadPoolProfileBuilder", k, value);
-            }
-            Map<String, String> map = profiles.computeIfAbsent(id, o -> new HashMap<>());
-            map.put(optionKey(key), value);
+        ThreadPoolConfigurationProperties tp = mainConfigurationProperties.threadPool();
 
-            if (failIfNotSet && !VALID_THREAD_POOL_KEYS.contains(key)) {
-                throw new PropertyBindingException("ThreadPoolProfileBuilder", key, value);
-            }
-
-            autoConfiguredProperties.put("camel.threadpool" + k, value);
-        });
-        // clear as we have validated all parameters
-        threadPoolProperties.clear();
-
-        // now build profiles from those options
-        for (String id : profiles.keySet()) {
-            Map<String, String> map = profiles.get(id);
-            String overrideId = map.remove("id");
-            String poolSize = map.remove("poolSize");
-            String maxPoolSize = map.remove("maxPoolSize");
-            String keepAliveTime = map.remove("keepAliveTime");
-            String timeUnit = map.remove("timeUnit");
-            String maxQueueSize = map.remove("maxQueueSize");
-            String allowCoreThreadTimeOut = map.remove("allowCoreThreadTimeout");
-            String rejectedPolicy = map.remove("rejectedPolicy");
-
-            if (overrideId != null) {
-                id = CamelContextHelper.parseText(camelContext, overrideId);
-            }
-            ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder(id);
-            if ("default".equals(id)) {
-                builder.defaultProfile(true);
-            }
-            if (poolSize != null) {
-                builder.poolSize(CamelContextHelper.parseInteger(camelContext, poolSize));
-            }
-            if (maxPoolSize != null) {
-                builder.maxPoolSize(CamelContextHelper.parseInteger(camelContext, maxPoolSize));
-            }
-            if (keepAliveTime != null && timeUnit != null) {
-                String text = CamelContextHelper.parseText(camelContext, timeUnit);
-                builder.keepAliveTime(CamelContextHelper.parseLong(camelContext, keepAliveTime), camelContext.getTypeConverter().convertTo(TimeUnit.class, text));
-            }
-            if (keepAliveTime != null && timeUnit == null) {
-                builder.keepAliveTime(CamelContextHelper.parseLong(camelContext, keepAliveTime));
-            }
-            if (maxQueueSize != null) {
-                builder.maxQueueSize(CamelContextHelper.parseInteger(camelContext, maxQueueSize));
-            }
-            if (allowCoreThreadTimeOut != null) {
-                builder.allowCoreThreadTimeOut(CamelContextHelper.parseBoolean(camelContext, allowCoreThreadTimeOut));
-            }
-            if (rejectedPolicy != null) {
-                String text = CamelContextHelper.parseText(camelContext, rejectedPolicy);
-                builder.rejectedPolicy(camelContext.getTypeConverter().convertTo(ThreadPoolRejectedPolicy.class, text));
-            }
-            ExecutorServiceManager esm = camelContext.adapt(ExtendedCamelContext.class).getExecutorServiceManager();
-            if ("default".equals(id)) {
-                esm.setDefaultThreadPoolProfile(builder.build());
-            } else {
-                esm.registerThreadPoolProfile(builder.build());
+        // extract all config to know their parent ids so we can set the values afterwards
+        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties, "config", false);
+        Map<String, ThreadPoolProfileConfigurationProperties> tpConfigs = new HashMap<>();
+        // build set of configuration objects
+        for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {
+            String id = StringHelper.between(entry.getKey(), "[", "]");
+            if (id != null) {
+                ThreadPoolProfileConfigurationProperties tcp = tpConfigs.get(id);
+                if (tcp == null) {
+                    tcp = new ThreadPoolProfileConfigurationProperties();
+                    tcp.setId(id);
+                    tpConfigs.put(id, tcp);
+                }
             }
         }
+        if (tp.getConfig() != null) {
+            tp.getConfig().putAll(tpConfigs);
+        } else {
+            tp.setConfig(tpConfigs);
+        }
+
+        setPropertiesOnTarget(camelContext, tp, threadPoolProperties, "camel.threadpool.",
+                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+
+        // okay we have all properties set so we should be able to create thread pool profiles and register them on camel
+        final ThreadPoolProfile dp = new ThreadPoolProfileBuilder("default")
+                .poolSize(tp.getPoolSize())
+                .maxPoolSize(tp.getMaxPoolSize())
+                .keepAliveTime(tp.getKeepAliveTime(), tp.getTimeUnit())
+                .maxQueueSize(tp.getMaxQueueSize())
+                .allowCoreThreadTimeOut(tp.getAllowCoreThreadTimeOut())
+                .rejectedPolicy(tp.getRejectedPolicy()).build();
+
+        for (ThreadPoolProfileConfigurationProperties config : tp.getConfig().values()) {
+            ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder(config.getId(), dp);
+            final ThreadPoolProfile tpp = builder.poolSize(config.getPoolSize())
+                    .maxPoolSize(config.getMaxPoolSize())
+                    .keepAliveTime(config.getKeepAliveTime(), config.getTimeUnit())
+                    .maxQueueSize(config.getMaxQueueSize())
+                    .allowCoreThreadTimeOut(config.getAllowCoreThreadTimeOut())
+                    .rejectedPolicy(config.getRejectedPolicy()).build();
+            if (!tpp.isEmpty()) {
+                camelContext.getExecutorServiceManager().registerThreadPoolProfile(tpp);
+            }
+        }
+
+        if (!dp.isEmpty()) {
+            dp.setDefaultProfile(true);
+            camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(dp);
+        }
+
     }
 
     private void setHealthCheckProperties(CamelContext camelContext, Map<String, Object> healthCheckProperties,
