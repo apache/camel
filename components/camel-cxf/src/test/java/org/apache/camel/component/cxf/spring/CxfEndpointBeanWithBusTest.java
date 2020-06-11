@@ -60,7 +60,7 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
-        assertEquals( "http://localhost:" + port1
+        assertEquals("http://localhost:" + port1
                      + "/CxfEndpointBeanWithBusTest/router/", routerEndpoint.getAddress(), "Got the wrong endpoint address");
         assertEquals("org.apache.camel.component.cxf.HelloService",
                      routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");

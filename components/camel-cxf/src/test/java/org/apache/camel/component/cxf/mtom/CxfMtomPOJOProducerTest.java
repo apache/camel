@@ -51,10 +51,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 public class CxfMtomPOJOProducerTest {
-    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomPOJOProducerTest.class);
 
     static int port = CXFTestSupport.getPort1();
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomPOJOProducerTest.class);
+
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;
@@ -77,7 +78,7 @@ public class CxfMtomPOJOProducerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testInvokingServiceFromCxfProducer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless( null, LOG)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 

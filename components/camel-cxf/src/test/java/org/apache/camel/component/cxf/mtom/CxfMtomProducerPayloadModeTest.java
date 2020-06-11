@@ -66,10 +66,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 public class CxfMtomProducerPayloadModeTest {
-    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomProducerPayloadModeTest.class);
 
     static int port = CXFTestSupport.getPort1();
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomProducerPayloadModeTest.class);
+
     @Autowired
     protected CamelContext context;
     protected Endpoint endpoint;
@@ -92,7 +93,7 @@ public class CxfMtomProducerPayloadModeTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testProducer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless( null, LOG)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 

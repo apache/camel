@@ -53,11 +53,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 public class CxfMtomRouterPayloadModeTest {
 
+    static int port1 = CXFTestSupport.getPort1();
+    static int port2 = CXFTestSupport.getPort2();
+
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomRouterPayloadModeTest.class);
 
-    static int port1 = CXFTestSupport.getPort1();    
-    static int port2 = CXFTestSupport.getPort2();    
-    
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;

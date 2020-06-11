@@ -62,10 +62,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 public class CxfMtomConsumerPayloadModeTest {
 
+    static int port = CXFTestSupport.getPort1();
+
     private static final Logger LOG = LoggerFactory.getLogger(CxfMtomConsumerPayloadModeTest.class);
 
-    static int port = CXFTestSupport.getPort1();
-    
     @Autowired
     protected CamelContext context;
     
