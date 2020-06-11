@@ -38,7 +38,11 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
@@ -66,11 +70,11 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         httppost.setEntity(entity);
 
         HttpResponse response = client.execute(httppost);
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
         String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        assertEquals("Get a wrong result", "A binary file of some kind", responseString);
-        assertNotNull("Did not use custom multipart filter", response.getFirstHeader("MyMultipartFilter").getValue());
+        assertEquals("A binary file of some kind", responseString, "Get a wrong result");
+        assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
 
         client.close();
     }
@@ -87,8 +91,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
         HttpResponse response = client.execute(httppost);
 
-        assertEquals("Get a wrong response status", 200, response.getStatusLine().getStatusCode());
-        assertNotNull("Did not use custom multipart filter", response.getFirstHeader("MyMultipartFilter").getValue());
+        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
+        assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
     }
 
     @Override
@@ -106,11 +110,11 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
-                        assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
+                        assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
                         // The file name is attachment id
                         DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandle log4j2.properties", data);
+                        assertNotNull(data, "Should get the DataHandle log4j2.properties");
                         // This assert is wrong, but the correct content-type
                         // (application/octet-stream)
                         // will not be returned until Jetty makes it available -
@@ -119,9 +123,9 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         // the implentation being used)
                         // assertEquals("Get a wrong content type",
                         // "text/plain", data.getContentType());
-                        assertEquals("Got the wrong name", "log4j2.properties", data.getName());
+                        assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue("We should get the data from the DataHandle", data.getDataSource().getInputStream().available() > 0);
+                        assertTrue(data.getDataSource().getInputStream().available() > 0, "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message
                         // header
@@ -135,10 +139,10 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
-                        assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
+                        assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
                         DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandle log4j2.properties", data);
+                        assertNotNull(data, "Should get the DataHandle log4j2.properties");
                         // The other form date can be get from the message
                         // header
                         exchange.getOut().setBody(in.getHeader("comment"));

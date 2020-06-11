@@ -24,15 +24,21 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpStreamCacheFileTest extends BaseJettyTest {
 
     private final String responseBody = "12345678901234567890123456789012345678901234567890";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/cachedir");
         createDirectory("target/cachedir");
@@ -47,7 +53,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         // the temporary files should have been deleted
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+        assertEquals(0, files.length, "There should be no files");
     }
 
     @Test
@@ -58,13 +64,13 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         } catch (CamelExecutionException e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
-            assertEquals("Response body", responseBody, s);
+            assertEquals(responseBody, s, "Response body");
         }
 
         // the temporary files should have been deleted
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+        assertEquals(0, files.length, "There should be no files");
     }
 
     @Override

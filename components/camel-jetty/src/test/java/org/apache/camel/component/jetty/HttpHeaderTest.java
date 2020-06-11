@@ -24,14 +24,18 @@ import javax.servlet.ServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpHeaderTest extends BaseJettyTest {
 
     @Test
     public void testHttpHeaders() throws Exception {
         String result = template.requestBody("direct:start", "hello", String.class);
-        assertEquals("Should send a right http header to the server.", "Find the key!", result);
+        assertEquals("Find the key!", result, "Should send a right http header to the server.");
     }
 
     @Test
@@ -69,7 +73,7 @@ public class HttpHeaderTest extends BaseJettyTest {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
                         ServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
                         assertNotNull(request);
-                        assertEquals("Get a wong http protocol version", request.getProtocol(), "HTTP/1.0");
+                        assertEquals(request.getProtocol(), "HTTP/1.0", "Get a wong http protocol version");
                         for (Entry<String, Object> entry : headers.entrySet()) {
                             if ("SOAPAction".equals(entry.getKey()) && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {
                                 exchange.getOut().setBody("Find the key!");

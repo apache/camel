@@ -24,7 +24,9 @@ import java.net.URL;
 import java.util.Enumeration;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InterfacesTest extends BaseJettyTest {
     private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");

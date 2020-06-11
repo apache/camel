@@ -35,10 +35,16 @@ import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@Disabled
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
@@ -84,7 +90,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
             // JAXB 2.2 uses a slightly different message
             boolean b = cause.getMessage().contains("No enum const") && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
-            assertTrue("Bad fault message: " + cause.getMessage(), b);
+            assertTrue(b, "Bad fault message: " + cause.getMessage());
         }
     }
 

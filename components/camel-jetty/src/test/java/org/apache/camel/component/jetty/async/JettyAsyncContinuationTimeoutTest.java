@@ -19,11 +19,21 @@ package org.apache.camel.component.jetty.async;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.jetty.MultiThreadedHttpGetTest;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyAsyncContinuationTimeoutTest.class);
 
     @Test
     public void testJettyAsyncTimeout() throws Exception {
@@ -34,7 +44,7 @@ public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
             template.requestBody("http://localhost:{{port}}/myservice", null, String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            log.info("Timeout hit and client got reply with failure status code");
+            LOG.info("Timeout hit and client got reply with failure status code");
 
             long taken = watch.taken();
 
@@ -42,7 +52,7 @@ public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
             assertEquals(504, cause.getStatusCode());
 
             // should be approx 3-4 sec.
-            assertTrue("Timeout should occur faster than " + taken, taken < 4500);
+            assertTrue(taken < 4500, "Timeout should occur faster than " + taken);
         }
 
         assertMockEndpointsSatisfied();

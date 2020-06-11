@@ -25,9 +25,17 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientRouteEnableChunkedTest.class);
 
     @Test
     public void testHttpRouteWithOption() throws Exception {
@@ -45,19 +53,19 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
 
         // should get the Content-Length
-        assertEquals("Should get the transfer-encoding as chunked", "chunked", headers.get("Transfer-Encoding"));
+        assertEquals("chunked", headers.get("Transfer-Encoding"), "Should get the transfer-encoding as chunked");
         // remove the system property
         System.clearProperty("HTTPClient.dontChunkRequests");
     }

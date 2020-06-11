@@ -23,19 +23,21 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.server.Server;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
-
+    
     private static volatile int port;
 
     private static volatile int port2;
 
     private final AtomicInteger counter = new AtomicInteger(1);
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         // find another ports for proxy route test
