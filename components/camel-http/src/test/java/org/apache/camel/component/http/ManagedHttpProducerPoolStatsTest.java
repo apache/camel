@@ -24,9 +24,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
 
@@ -37,7 +41,7 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
         return true;
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -55,7 +59,7 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();

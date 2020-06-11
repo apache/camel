@@ -24,11 +24,22 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.*;
+import static org.apache.camel.component.http.HttpMethods.DELETE;
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.component.http.HttpMethods.HEAD;
+import static org.apache.camel.component.http.HttpMethods.OPTIONS;
+import static org.apache.camel.component.http.HttpMethods.PATCH;
+import static org.apache.camel.component.http.HttpMethods.POST;
+import static org.apache.camel.component.http.HttpMethods.PUT;
+import static org.apache.camel.component.http.HttpMethods.TRACE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpMethodsTest extends BaseHttpTest {
 
@@ -36,7 +47,7 @@ public class HttpMethodsTest extends BaseHttpTest {
 
     private String baseUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().
@@ -63,7 +74,7 @@ public class HttpMethodsTest extends BaseHttpTest {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -103,7 +114,7 @@ public class HttpMethodsTest extends BaseHttpTest {
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("OK", headers.get(Exchange.HTTP_RESPONSE_TEXT));
         assertEquals("12", headers.get("Content-Length"));
-        assertNotNull("Should have Content-Type header", headers.get("Content-Type"));
+        assertNotNull(headers.get("Content-Type"), "Should have Content-Type header");
         assertEquals("camel rocks!", out.getBody(String.class));
     }
 

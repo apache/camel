@@ -34,9 +34,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.http.HttpHeaders.HOST;
@@ -73,7 +73,7 @@ public class HeaderFilteringTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void startHttpServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
         server.createContext("/test", this::handleTest);
@@ -82,7 +82,7 @@ public class HeaderFilteringTest {
         port = server.getAddress().getPort();
     }
 
-    @After
+    @AfterEach
     public void stopHttpServer() {
         server.stop(0);
     }

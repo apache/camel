@@ -25,15 +25,15 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
 
     private static final String KEYSTORE = "/localhost.p12";
     private static final String PASSWORD = "changeit";
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         System.setProperty("javax.net.ssl.trustStorePassword", PASSWORD);
@@ -43,7 +43,7 @@ public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
