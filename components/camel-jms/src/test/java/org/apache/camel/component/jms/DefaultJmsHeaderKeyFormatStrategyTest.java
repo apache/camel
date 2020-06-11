@@ -17,7 +17,9 @@
 package org.apache.camel.component.jms;
 
 
-import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultJmsHeaderKeyFormatStrategyTest {
 

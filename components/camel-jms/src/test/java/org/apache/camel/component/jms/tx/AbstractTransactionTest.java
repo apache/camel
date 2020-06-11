@@ -28,7 +28,6 @@ import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 

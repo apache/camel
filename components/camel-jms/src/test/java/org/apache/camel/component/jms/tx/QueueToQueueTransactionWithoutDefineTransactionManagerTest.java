@@ -19,8 +19,10 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
 

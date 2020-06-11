@@ -19,7 +19,7 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

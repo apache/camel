@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
 

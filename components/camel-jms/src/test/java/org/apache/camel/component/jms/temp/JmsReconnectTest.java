@@ -23,9 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-
-import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for issue CAMEL-3193. Camel should support reconnects in case of

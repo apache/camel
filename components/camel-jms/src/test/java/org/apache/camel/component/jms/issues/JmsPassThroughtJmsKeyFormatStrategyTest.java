@@ -27,9 +27,10 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
 
