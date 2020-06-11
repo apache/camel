@@ -159,12 +159,12 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
             FileSystem fileSystem = hdfsInfo.getFileSystem();
             FileUtil.copy(fileSystem, new Path(hdfsPath), outputDest, false, fileSystem.getConf());
             try {
-                FileUtil.copyMerge(
+                FileUtil.copy(
                         fileSystem, // src
                         new Path(hdfsPath),
                         FileSystem.getLocal(new Configuration()), // dest
                         new Path(outputDest.toURI()),
-                        false, fileSystem.getConf(), null);
+                        false, fileSystem.getConf());
             } catch (IOException e) {
                 return outputDest;
             }
