@@ -18,8 +18,8 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -43,7 +43,7 @@ public class AsyncEndpointJmsTXRecipientListTest extends CamelSpringTestSupport 
         assertMockEndpointsSatisfied();
 
         // we are asynchronous due to multicast so we should ideally use same thread during processing
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertTrue(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use same threads");
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AsyncEndpointJmsTXRecipientListTest extends CamelSpringTestSupport 
                         .to("log:before")
                         .process(exchange -> {
                             beforeThreadName = Thread.currentThread().getName();
-                            assertTrue("Exchange should be transacted", exchange.isTransacted());
+                            assertTrue(exchange.isTransacted(), "Exchange should be transacted");
                         })
                         .recipientList(constant("direct:foo"));
 
@@ -67,7 +67,7 @@ public class AsyncEndpointJmsTXRecipientListTest extends CamelSpringTestSupport 
                         .to("async:bye:camel")
                         .process(exchange -> {
                             afterThreadName = Thread.currentThread().getName();
-                            assertTrue("Exchange should be transacted", exchange.isTransacted());
+                            assertTrue(exchange.isTransacted(), "Exchange should be transacted");
                         })
                         .to("log:after")
                         .to("mock:after")

@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -55,7 +55,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
             JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
             final TextMessage msg = (TextMessage) jms.receive("nameRequestor");
-            assertEquals("What's your name", msg.getText());
+            assertEquals(msg.getText(), "What's your name");
 
             // there should be a JMSReplyTo so we know where to send the reply
             final Destination replyTo = msg.getJMSReplyTo();

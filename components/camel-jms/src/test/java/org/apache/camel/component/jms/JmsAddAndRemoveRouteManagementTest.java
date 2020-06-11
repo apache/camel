@@ -24,8 +24,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -60,7 +60,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         });
 
         Set<ObjectName> during = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals("There should be one more thread pool in JMX", before.size() + 1, during.size());
+        assertEquals(before.size() + 1, during.size(), "There should be one more thread pool in JMX");
 
         template.sendBody("activemq:queue:in", "Hello World");
 
@@ -71,7 +71,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         context.removeRoute("myNewRoute");
 
         Set<ObjectName> after = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals("Should have removed all thread pools from removed route", before.size(), after.size());
+        assertEquals(before.size(), after.size(), "Should have removed all thread pools from removed route");
     }
 
     @Override

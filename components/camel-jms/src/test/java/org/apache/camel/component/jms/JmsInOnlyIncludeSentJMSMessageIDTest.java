@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -48,7 +48,7 @@ public class JmsInOnlyIncludeSentJMSMessageIDTest extends CamelTestSupport {
         assertEquals("Hello World", body);
 
         String id = done.getIn().getHeader("JMSMessageID", String.class);
-        assertNotNull("Should have enriched with JMSMessageID", id);
+        assertNotNull(id, "Should have enriched with JMSMessageID");
     }
 
     @Override

@@ -20,7 +20,7 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test case derived from:
@@ -58,8 +58,8 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
 
         for (int i = 0; i < 5; ++i) {
             Object reply = template.requestBody("activemq:queue:foo", "blah" + i);
-            assertTrue("Received unexpeced reply", reply.equals("Re: blah" + i));
-            assertTrue(cp.getErrorMessage(), cp.getErrorMessage() == null);
+            assertTrue(reply.equals("Re: blah" + i), "Received unexpeced reply");
+            assertNull(cp.getErrorMessage(), cp.getErrorMessage());
         }
     }
 

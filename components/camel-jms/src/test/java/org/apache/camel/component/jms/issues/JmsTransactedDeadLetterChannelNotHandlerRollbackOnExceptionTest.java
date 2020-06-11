@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import org.junit.Test;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest extends JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest {
 

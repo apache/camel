@@ -18,8 +18,8 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -54,7 +54,7 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
             if (counter++ < 3) {
                 throw new IllegalArgumentException("Forced exception as counter is " + counter);
             }
-            assertTrue("Should be transacted", exchange.isTransacted());
+            assertTrue(exchange.isTransacted(), "Should be transacted");
             exchange.getIn().setBody("Bye World");
         }
     }

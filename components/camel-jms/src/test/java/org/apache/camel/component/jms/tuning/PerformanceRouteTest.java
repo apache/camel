@@ -21,14 +21,21 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.component.jms.JmsRequestReplyExclusiveReplyToConcurrentTest;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-@Ignore
+@Disabled
 public class PerformanceRouteTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PerformanceRouteTest.class);
 
     private int size = 200;
 
@@ -61,7 +68,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        log.info("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
+        LOG.info("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
     private boolean canRunOnThisPlatform() {

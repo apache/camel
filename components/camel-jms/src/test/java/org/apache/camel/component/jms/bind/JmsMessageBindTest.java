@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsMessageBindTest extends CamelSpringTestSupport {
@@ -44,13 +44,13 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
 
         // now lets test that the bean is correct
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");
-        assertEquals("body", "SomeBody", bean.getBody());
+        assertEquals(bean.getBody(), "SomeBody", "body");
 
         Map<?, ?> beanHeaders = bean.getHeaders();
-        assertNotNull("No headers!", beanHeaders);
+        assertNotNull(beanHeaders, "No headers!");
         
-        assertEquals("foo header", "bar", beanHeaders.get("foo"));
-        assertNull("Should get a null value", beanHeaders.get("binding"));
+        assertEquals("bar", beanHeaders.get("foo"), "foo header");
+        assertNull(beanHeaders.get("binding"), "Should get a null value");
     }
 
 

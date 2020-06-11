@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -52,7 +52,7 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
         notify.matchesMockWaitTime();
 
         File file = new File("target/file2file/out/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        assertTrue(file.exists(), "The file should exists");
     }
 
     @Override

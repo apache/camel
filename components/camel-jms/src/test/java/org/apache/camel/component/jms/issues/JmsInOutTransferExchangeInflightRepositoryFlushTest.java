@@ -24,8 +24,8 @@ import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.SerializableRequestDto;
 import org.apache.camel.component.jms.SerializableResponseDto;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 

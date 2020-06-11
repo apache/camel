@@ -26,8 +26,8 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -64,7 +64,7 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
 
         ObjectName on = set.iterator().next();
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         String selector = (String) mbeanServer.getAttribute(on, "MessageSelector");
         assertEquals("brand='beer'", selector);

@@ -24,8 +24,8 @@ import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
@@ -69,7 +69,7 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
         // as we handle new exception, then the exception is ignored
         // and causes the transaction to commit, so there is no message in the ActiveMQ DLQ queue
         Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
-        assertNull("Should not rollback the transaction", dlqBody);
+        assertNull(dlqBody, "Should not rollback the transaction");
     }
 
     @Override

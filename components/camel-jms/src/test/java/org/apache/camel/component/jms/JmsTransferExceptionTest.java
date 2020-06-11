@@ -21,9 +21,9 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -36,7 +36,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         counter = 0;
         super.setUp();
@@ -60,7 +60,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             assertEquals("Boom", e.getCause().getMessage());
-            assertNotNull("Should contain a remote stacktrace", e.getCause().getStackTrace());
+            assertNotNull(e.getCause().getStackTrace(), "Should contain a remote stacktrace");
         }
 
         // we still try redeliver

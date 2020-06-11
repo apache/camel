@@ -27,8 +27,8 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -91,8 +91,8 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
 
         result.assertIsSatisfied();
 
-        assertNotNull("We are expecting the exception here!", out.getException());
-        assertTrue("Get a wrong exception", out.getException() instanceof IllegalArgumentException);
+        assertNotNull(out.getException(), "We are expecting the exception here!");
+        assertTrue(out.getException() instanceof IllegalArgumentException, "Get a wrong exception");
         
     }
 
@@ -122,7 +122,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         String correlationId = out.getMessage().getHeader("JMSCorrelationID", String.class);
         assertNotNull(correlationId);
         // In ActiveMQ messageIds start with ID: (currently) so the ID should not be generated from AMQ
-        assertFalse("CorrelationID should NOT start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
+        assertFalse(correlationId.startsWith("ID:"), "CorrelationID should NOT start with ID, was: " + correlationId);
     }
 
     /**
@@ -148,7 +148,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         String correlationId = out.getMessage().getHeader("JMSCorrelationID", String.class);
         assertNotNull(correlationId);
         // In ActiveMQ messageIds start with ID: (currently) so the ID should not be generated from AMQ
-        assertFalse("CorrelationID should NOT start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
+        assertFalse(correlationId.startsWith("ID:"), "CorrelationID should NOT start with ID, was: " + correlationId);
     }
 
     /**
@@ -175,7 +175,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
 
         assertNotNull(correlationId);
         // In ActiveMQ messageIds start with ID: (currently)
-        assertTrue("CorrelationID should start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
+        assertTrue(correlationId.startsWith("ID:"), "CorrelationID should start with ID, was: " + correlationId);
     }
 
     /**

@@ -23,8 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -39,19 +39,19 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
     @Test
     public void testA() throws Exception {
         Object response = template.requestBody("activemq:testA", "Hello World");
-        assertEquals("Reply", "Hello World,From Bean,From A,From B", response);
+        assertEquals("Hello World,From Bean,From A,From B", response, "Reply");
     }
 
     @Test
     public void testB() throws Exception {
         Object response = template.requestBody("activemq:testB", "Hello World");
-        assertEquals("Reply", "Hello World,From A,From Bean,From B", response);
+        assertEquals("Hello World,From A,From Bean,From B", response, "Reply");
     }
 
     @Test
     public void testC() throws Exception {
         Object response = template.requestBody("activemq:testC", "Hello World");
-        assertEquals("Reply", "Hello World,From A,From B,From Bean", response);
+        assertEquals("Hello World,From A,From B,From Bean", response, "Reply");
     }
 
     @Override

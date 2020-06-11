@@ -26,8 +26,8 @@ import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -46,8 +46,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
 
         doSendMessages(1000);
 
-        assertTrue("Expected multiple consuming threads, but only found: " +  msgsPerThread.keySet().size(),
-                msgsPerThread.keySet().size() > 1);
+        assertTrue(msgsPerThread.keySet().size() > 1, "Expected multiple consuming threads, but only found: " +  msgsPerThread.keySet().size());
 
         context.getExecutorServiceManager().shutdown(executorService);
     }

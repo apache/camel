@@ -19,7 +19,7 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
@@ -51,8 +51,9 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
 
         notify.matchesMockWaitTime();
 
-        assertTrue("Expected only 1 calls to process() (1 failure) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + ".", getConditionalExceptionProcessor().getCount() == 1);
+        assertTrue(getConditionalExceptionProcessor().getCount() == 1,
+                "Expected only 1 calls to process() (1 failure) but encountered "
+                   + getConditionalExceptionProcessor().getCount() + ".");
     }
     
 }

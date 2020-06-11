@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -39,7 +39,7 @@ public class JmsRouteTimeoutTest extends CamelTestSupport {
             template.requestBody("activemq:queue:slow?requestTimeout=1000", "Hello World");
             fail("Should have timed out with an exception");
         } catch (RuntimeCamelException e) {
-            assertTrue("Should have timed out with an exception", e.getCause() instanceof ExchangeTimedOutException);
+            assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
         }
     }
 

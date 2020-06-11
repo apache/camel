@@ -20,9 +20,9 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -42,7 +42,7 @@ public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
         assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "E"));
 
         long delta = watch.taken();
-        assertTrue("Should be slower than about 2 seconds, was: " + delta, delta > 2000);
+        assertTrue(delta > 2000, "Should be slower than about 2 seconds, was: " + delta);
     }
 
     @Override

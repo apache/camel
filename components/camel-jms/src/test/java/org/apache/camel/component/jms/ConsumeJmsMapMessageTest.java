@@ -27,14 +27,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class ConsumeJmsMapMessageTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsMapMessageTest.class);
+
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
@@ -62,13 +68,13 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
         assertNotNull(in);
         
         Map<?, ?> map = exchange.getIn().getBody(Map.class);
-        log.info("Received map: " + map);
+        LOG.info("Received map: " + map);
 
-        assertNotNull("Should have received a map message!", map);
+        assertNotNull(map, "Should have received a map message!");
         assertIsInstanceOf(MapMessage.class, in.getJmsMessage());
-        assertEquals("map.foo", "abc", map.get("foo"));
-        assertEquals("map.bar", "xyz", map.get("bar"));
-        assertEquals("map.size", 2, map.size());
+        assertEquals("abc", map.get("foo"), "map.foo");
+        assertEquals("xyz", map.get("bar"), "map.bar");
+        assertEquals(2, map.size(), "map.size");
     }
 
     @Test
@@ -87,7 +93,7 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         endpoint = getMockEndpoint("mock:result");

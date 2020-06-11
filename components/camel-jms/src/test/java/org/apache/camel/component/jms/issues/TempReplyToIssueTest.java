@@ -27,8 +27,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.*;import static org.apache.camel.test.junit5.TestSupport.*;import static org.junit.jupiter.api.Assertions.*;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -45,7 +45,7 @@ public class TempReplyToIssueTest extends CamelTestSupport {
                                 @Header("JMSCorrelationID") final String id,
                                 @Body String body, Exchange exchange) throws Exception {
         assertNotNull(jmsReplyTo);
-        assertTrue("Should be a temp queue", jmsReplyTo.toString().startsWith("temp-queue"));
+        assertTrue(jmsReplyTo.toString().startsWith("temp-queue"), "Should be a temp queue");
 
         // we send the reply manually (notice we just use a bogus endpoint uri)
         ProducerTemplate producer = exchange.getContext().createProducerTemplate();
