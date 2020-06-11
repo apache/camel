@@ -26,10 +26,14 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case derived from:
@@ -40,7 +44,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         setCamelContextService(null);
@@ -61,8 +65,9 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
         notify.matchesMockWaitTime();
 
-        assertTrue("Expected only 2 calls to process() (1 failure, 1 success) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + ".", getConditionalExceptionProcessor().getCount() == 2);
+        assertTrue(getConditionalExceptionProcessor().getCount() == 2,
+                    "Expected only 2 calls to process() (1 failure, 1 success) but encountered "
+                   + getConditionalExceptionProcessor().getCount() + ".");
     }
 
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor() {

@@ -23,10 +23,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsMutateMessageTest extends CamelTestSupport {
 
@@ -61,7 +64,7 @@ public class JmsMutateMessageTest extends CamelTestSupport {
                     .process(exchange -> {
                         // do not mutate it
                         JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                        assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
+                        assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
 
                         // get header should not mutate it
                         assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
@@ -71,7 +74,7 @@ public class JmsMutateMessageTest extends CamelTestSupport {
                     .process(exchange -> {
                         // it should have been mutated
                         JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                        assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
+                        assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
 
                         // get header should not mutate it
                         assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));

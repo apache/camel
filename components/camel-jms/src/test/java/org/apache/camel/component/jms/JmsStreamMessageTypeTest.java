@@ -22,17 +22,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsStreamMessageTypeTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/stream");
         super.setUp();
@@ -67,7 +70,7 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
         String dstContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.xml"));
-        assertEquals("both the source and destination files should have the same content", srcContent, dstContent);
+        assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
     @Override

@@ -24,13 +24,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class AsyncJmsInOutTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncJmsInOutTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -57,7 +62,7 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
         // just in case we run on slow boxes
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
-        log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
+        LOG.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
     }
 
     @Override

@@ -24,10 +24,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JmsInOnlyIssueTest extends CamelTestSupport {
 
@@ -62,7 +63,7 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
-        assertFalse("Should not have OUT", out.hasOut());
+        assertFalse(out.hasOut(), "Should not have OUT");
     }
 
     @Test

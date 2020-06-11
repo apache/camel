@@ -31,13 +31,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests CAMEL-5769.
@@ -107,7 +108,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         assertTrue(latch.await(3000, TimeUnit.MILLISECONDS));
     }
     
-    @After
+    @AfterEach
     public void cleanup() {
         LOG.info(">>>>> Latch countdown count was: " + latch.getCount());
     }

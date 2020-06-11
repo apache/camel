@@ -21,10 +21,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport {
 
@@ -32,16 +34,16 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
     public void testJmsRequestReplyTempReplyTo() throws Exception {
         Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
-        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
         String replyTo = reply.getMessage().getHeader("JMSReplyTo", String.class);
-        assertTrue("Should be a temp queue", replyTo.startsWith("temp-queue"));
+        assertTrue(replyTo.startsWith("temp-queue"), "Should be a temp queue");
     }
 
     @Test
     public void testJmsRequestReplyFixedReplyToInEndpoint() throws Exception {
         Exchange reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
-        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
         assertEquals("queue://bar", reply.getMessage().getHeader("JMSReplyTo", String.class));
     }
 
@@ -49,12 +51,12 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
     public void testJmsRequestReplyFixedReplyToInEndpointTwoMessages() throws Exception {
         Exchange reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
-        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
         assertEquals("queue://bar", reply.getMessage().getHeader("JMSReplyTo", String.class));
 
         reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("Moon"));
         assertEquals("Hello Moon", reply.getMessage().getBody());
-        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
         assertEquals("queue://bar", reply.getMessage().getHeader("JMSReplyTo", String.class));
     }
 

@@ -18,10 +18,12 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
     private static String beforeThreadName;
@@ -43,7 +45,7 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         // we are synchronous due to TX so the we are using same threads during the routing
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertTrue(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use same threads");
     }
 
     @Override
@@ -59,12 +61,12 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
                         .to("log:before")
                         .process(exchange -> {
                             beforeThreadName = Thread.currentThread().getName();
-                            assertTrue("Exchange should be transacted", exchange.isTransacted());
+                            assertTrue(exchange.isTransacted(), "Exchange should be transacted");
                         })
                         .to("async:hi:camel")
                         .process(exchange -> {
                             afterThreadName = Thread.currentThread().getName();
-                            assertTrue("Exchange should be transacted", exchange.isTransacted());
+                            assertTrue(exchange.isTransacted(), "Exchange should be transacted");
                         })
                         .to("log:after")
                         .to("mock:after")
