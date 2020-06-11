@@ -43,6 +43,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,6 +55,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpsRouteTest extends BaseJettyTest {
 
     public static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpsRouteTest.class);
 
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
@@ -138,7 +142,7 @@ public class HttpsRouteTest extends BaseJettyTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
         assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }

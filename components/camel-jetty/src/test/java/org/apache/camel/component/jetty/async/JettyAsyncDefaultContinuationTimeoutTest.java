@@ -25,6 +25,8 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Disabled("This test takes a long time to run, so run it manually")
 public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyAsyncDefaultContinuationTimeoutTest.class);
 
     @Test
     public void testJettyAsyncTimeout() throws Exception {
@@ -43,7 +47,7 @@ public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
             template.requestBody("http://localhost:{{port}}/myservice", null, String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            log.info("Timeout hit and client got reply with failure status code");
+            LOG.info("Timeout hit and client got reply with failure status code");
 
             long taken = watch.taken();
 

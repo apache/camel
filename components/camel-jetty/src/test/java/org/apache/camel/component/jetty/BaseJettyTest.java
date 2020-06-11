@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class BaseJettyTest extends CamelTestSupport {
     
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
     private static volatile int port;
 
     private static volatile int port2;

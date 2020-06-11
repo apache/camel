@@ -42,6 +42,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,7 +51,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpRouteTest extends BaseJettyTest {
+
     protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " + "<test>Hello World</test>";
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpRouteTest.class);
+
     protected String expectedBody = "<hello>world!</hello>";
 
     private int port1;
@@ -74,7 +80,7 @@ public class HttpRouteTest extends BaseJettyTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
         assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }

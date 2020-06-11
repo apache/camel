@@ -37,6 +37,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,6 +47,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
 
     @Override
     @BeforeEach
@@ -113,7 +117,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        log.info("Headers: " + headers);
+        LOG.info("Headers: " + headers);
 
         assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }

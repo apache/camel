@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * aggregator
  */
 public class JettyHandle404Test extends BaseJettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHandle404Test.class);
 
     public String getProducerUrl() {
         return "http://localhost:{{port}}/myserver?user=Camel";
@@ -52,7 +56,7 @@ public class JettyHandle404Test extends BaseJettyTest {
     public void testCustomerErrorHandler() throws Exception {
         String response = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
         // look for the error message which is sent by MyErrorHandler
-        log.info("Response: {}", response);
+        LOG.info("Response: {}", response);
         assertTrue(response.indexOf("MyErrorHandler") > 0, "Get a wrong error message");
     }
 

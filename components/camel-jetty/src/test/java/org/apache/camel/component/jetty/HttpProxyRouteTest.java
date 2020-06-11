@@ -23,16 +23,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyRouteTest extends BaseJettyTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HttpProxyRouteTest.class);
+
     private int size = 10;
 
     @Test
     public void testHttpProxy() throws Exception {
-        log.info("Sending " + size + " messages to a http endpoint which is proxied/bridged");
+        LOG.info("Sending " + size + " messages to a http endpoint which is proxied/bridged");
 
         StopWatch watch = new StopWatch();
         for (int i = 0; i < size; i++) {
@@ -40,7 +44,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
             assertEquals("Bye " + i, out);
         }
 
-        log.info("Time taken: " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Time taken: " + TimeUtils.printDuration(watch.taken()));
     }
 
     @Test
