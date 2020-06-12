@@ -20,6 +20,14 @@ persistence, network configuration (if needed), near cache, eviction
 and so on. For more information consult the Hazelcast documentation on
 http://www.hazelcast.com/docs.jsp[http://www.hazelcast.com/docs.jsp].
 
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+
+== Installation
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -32,24 +40,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
-
-
-== Hazelcast components
-
-See the following for each component usage:
-
-* xref:hazelcast-map-component.adoc[map]
-* xref:hazelcast-multimap-component.adoc[multimap]
-* xref:hazelcast-queue-component.adoc[queue]
-* xref:hazelcast-topic-component.adoc[topic]
-* xref:hazelcast-list-component.adoc[list]
-* xref:hazelcast-seda-component.adoc[seda]
-* xref:hazelcast-set-component.adoc[set]
-* xref:hazelcast-atomicvalue-component.adoc[atomic number]
-* xref:hazelcast-instance-component.adoc[cluster support (instance)]
-* xref:hazelcast-replicatedmap-component.adoc[replicatedmap] 
-* xref:hazelcast-ringbuffer-component.adoc[ringbuffer] 
-
 
 
 == Using hazelcast reference
