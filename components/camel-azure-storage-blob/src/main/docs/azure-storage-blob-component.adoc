@@ -54,7 +54,7 @@ located on the `container1` in the `camelazure` storage account, use the followi
 
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey").
+from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accessKey=yourAccessKey").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
