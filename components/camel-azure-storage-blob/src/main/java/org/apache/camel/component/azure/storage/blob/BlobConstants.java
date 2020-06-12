@@ -74,8 +74,8 @@ public final class BlobConstants {
     public static final String PAGE_BLOB_SIZE = HEADER_PREFIX + "PageBlobSize";
     public static final String COMMIT_BLOCK_LIST_LATER = HEADER_PREFIX + "CommitBlobBlockListLater";
     public static final String BLOCK_LIST_TYPE = HEADER_PREFIX + "BlockListType";
-    public static final String APPEND_BLOCK_CREATED = HEADER_PREFIX + "AppendBlobCreated";
-    public static final String PAGE_BLOCK_CREATED = HEADER_PREFIX + "PageBlockCreated";
+    public static final String CREATE_APPEND_BLOB = HEADER_PREFIX + "CreateAppendBlob";
+    public static final String CREATE_PAGE_BLOB = HEADER_PREFIX + "CreatePageBlob";
     public static final String DELETE_SNAPSHOT_OPTION_TYPE = HEADER_PREFIX + "DeleteSnapshotsOptionType";
     public static final String LIST_BLOB_CONTAINERS_OPTIONS = HEADER_PREFIX + "ListBlobContainersOptions";
     public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";

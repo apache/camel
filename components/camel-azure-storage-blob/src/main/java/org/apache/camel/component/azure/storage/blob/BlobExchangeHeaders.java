@@ -189,12 +189,12 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.COMMIT_BLOCK_LIST_LATER, boolean.class);
     }
 
-    public static boolean getAppendBlockCreatedFlagFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.APPEND_BLOCK_CREATED, boolean.class);
+    public static boolean getCreateAppendBlobFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CREATE_APPEND_BLOB, boolean.class);
     }
 
-    public static boolean getPageBlockCreatedFlagFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, BlobConstants.PAGE_BLOCK_CREATED, boolean.class);
+    public static boolean getCreatePageBlobFlagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.CREATE_PAGE_BLOB, boolean.class);
     }
 
     public static BlockListType getBlockListTypeFromHeaders(final Exchange exchange) {
