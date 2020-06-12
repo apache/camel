@@ -109,7 +109,7 @@ See xref:onFallback-eip.adoc[onFallback].
 
 == Other examples
 
-You can find an example with the source code: https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-resilience4j[camel-example-spring-boot-resilience4j].
+You can find an example with the source code: https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-resilience4j[camel-example-spring-boot-resilience4j].
 
 == Using Resilience4j with Spring Boot
 
