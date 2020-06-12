@@ -209,7 +209,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     protected String detectRestComponentFromClasspath() {
         for (final Dependency dep : mavenProject.getDependencies()) {
-            if ("org.apache.camel".equals(dep.getGroupId())) {
+            if ("org.apache.camel".equals(dep.getGroupId()) || "org.apache.camel.springboot".equals(dep.getGroupId())) {
                 final String aid = dep.getArtifactId();
                 final Optional<String> comp = Arrays.asList(DEFAULT_REST_CONSUMER_COMPONENTS).stream()
                     .filter(c -> aid.startsWith("camel-" + c)).findFirst();
