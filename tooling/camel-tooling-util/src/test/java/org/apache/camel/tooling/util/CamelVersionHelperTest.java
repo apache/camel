@@ -45,7 +45,7 @@ public class CamelVersionHelperTest {
         assertTrue(isGE("3.4.0", "3.4.0-SNAPSHOT"));
 
         assertTrue(isGE("3.3.0", "3.3.0.jdk11-800001-0000001"));
-   }
+    }
 
     @Test
     public void testPrevMinor() throws Exception {
