@@ -109,7 +109,7 @@ See xref:onFallback-eip.adoc[onFallback].
 
 == Other examples
 
-You can find an example with the source code: https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-hystrix[camel-example-spring-boot-hystrix].
+You can find an example with the source code: https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-hystrix[camel-example-spring-boot-hystrix].
 
 == Using Hystrix with Spring Boot
 
