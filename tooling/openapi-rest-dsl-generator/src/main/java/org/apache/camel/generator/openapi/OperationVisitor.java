@@ -114,10 +114,12 @@ class OperationVisitor<T> {
                     final String style = serializableParameter.style;
                     if (ObjectHelper.isNotEmpty(style)) {
                         if (style.equals("form")) {
-                            if (serializableParameter.explode) {
-                                emit("collectionFormat", CollectionFormat.multi);
-                            } else {
+                            // Guard against null explode value
+                            // See: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
+                            if (Boolean.FALSE.equals(serializableParameter.explode)) {
                                 emit("collectionFormat", CollectionFormat.csv);
+                            } else {
+                                emit("collectionFormat", CollectionFormat.multi);
                             }
                         }
                     }
