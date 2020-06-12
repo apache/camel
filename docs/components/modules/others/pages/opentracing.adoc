@@ -98,11 +98,11 @@ compatible with OpenTracing Java API version 0.31 or higher.
 
 The `Tracer` used will be implicitly loaded from the camel context `Registry` or using the `ServiceLoader`.
 
-How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option.
+How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option.
 
 == Example
 
 You can find an example demonstrating the three ways to configure OpenTracing here:
-https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing]
+https://github.com/apache/camel-spring-boot-examples/tree/master/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing]
 
 include::camel-spring-boot::page$opentracing-starter.adoc[]
