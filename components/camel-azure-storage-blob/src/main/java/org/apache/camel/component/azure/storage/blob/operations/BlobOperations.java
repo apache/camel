@@ -317,9 +317,9 @@ public class BlobOperations {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
         final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
-        final boolean appendBlockCreated = BlobExchangeHeaders.getAppendBlockCreatedFlagFromHeaders(exchange);
+        final boolean createAppendBlob = BlobExchangeHeaders.getCreateAppendBlobFlagFromHeaders(exchange);
 
-        if (!appendBlockCreated) {
+        if (createAppendBlob) {
             createAppendBlob(exchange);
         }
 
@@ -356,9 +356,9 @@ public class BlobOperations {
     public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws IOException {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
 
-        final boolean pageBlobCreated = BlobExchangeHeaders.getPageBlockCreatedFlagFromHeaders(exchange);
+        final boolean createPageBlob = BlobExchangeHeaders.getCreatePageBlobFlagFromHeaders(exchange);
 
-        if (!pageBlobCreated) {
+        if (createPageBlob) {
             createPageBlob(exchange);
         }
 
