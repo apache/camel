@@ -21,9 +21,9 @@ import java.util.Iterator;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class JdbcProducerOutputTypeStreamListOutputClassTest extends AbstractJdbcTestSupport {
     private static final String QUERY = "select * from customer";
@@ -38,7 +38,7 @@ public class JdbcProducerOutputTypeStreamListOutputClassTest extends AbstractJdb
         template.sendBody("direct:start", QUERY);
 
         result.assertIsSatisfied();
-        assertThat(resultBodyAt(0), instanceOf(Iterator.class));
+        assertIsInstanceOf(Iterator.class, resultBodyAt(0));
     }
 
     @Test
@@ -48,9 +48,9 @@ public class JdbcProducerOutputTypeStreamListOutputClassTest extends AbstractJdb
         template.sendBody("direct:withSplit", QUERY);
 
         result.assertIsSatisfied();
-        assertThat(resultBodyAt(0), instanceOf(CustomerModel.class));
-        assertThat(resultBodyAt(1), instanceOf(CustomerModel.class));
-        assertThat(resultBodyAt(2), instanceOf(CustomerModel.class));
+        assertIsInstanceOf(CustomerModel.class, resultBodyAt(0));
+        assertIsInstanceOf(CustomerModel.class, resultBodyAt(1));
+        assertIsInstanceOf(CustomerModel.class, resultBodyAt(2));
     }
 
     @Override
