@@ -170,8 +170,8 @@ can be used to retrieve lower level clients.
 |`CamelAzureStorageBlobContentMD5`|`BlobConstants.CONTENT_MD5`|`byte[]`|Most operations related to upload blob|An MD5 hash of the block content. This hash is used to verify the integrity of the block during transport. When this header is specified, the storage service compares the hash of the content that has arrived with this header value. Note that this MD5 hash is not stored with the blob. If the two hashes do not match, the operation will fail.
 |`CamelAzureStorageBlobPageBlobRange`|`BlobConstants.PAGE_BLOB_RANGE`|`PageRange`|Operations related to page blob| A {@link PageRange} object. Given that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of 512 and the end offset must be a modulus of 512 - 1. Examples of valid byte ranges are 0-511, 512-1023, etc.
 |`CamelAzureStorageBlobCommitBlobBlockListLater`|`BlobConstants.COMMIT_BLOCK_LIST_LATER`|`boolean`|`stageBlockBlobList`| When is set to `true`, the staged blocks will not be committed directly.
-|`CamelAzureStorageBlobAppendBlobCreated`|`BlobConstants.APPEND_BLOCK_CREATED`|`boolean`|`commitAppendBlob`| When is set to `true`, the append blocks will not be created when committing append blocks.
-|`CamelAzureStorageBlobPageBlockCreated`|`BlobConstants.PAGE_BLOCK_CREATED`|`boolean`|`uploadPageBlob`| When is set to `true`, the page blob will not be created when uploading page blob.
+|`CamelAzureStorageBlobCreateAppendBlob`|`BlobConstants.CREATE_APPEND_BLOB`|`boolean`|`commitAppendBlob`| When is set to `true`, the append blocks will be created when committing append blocks.
+|`CamelAzureStorageBlobCreatePageBlob`|`BlobConstants.CREATE_PAGE_BLOB`|`boolean`|`uploadPageBlob`| When is set to `true`, the page blob will be created when uploading page blob.
 |`CamelAzureStorageBlobBlockListType`|`BlobConstants.BLOCK_LIST_TYPE`|`BlockListType`|`getBlobBlockList`| Specifies which type of blocks to return.
 |`CamelAzureStorageBlobPageBlobSize`|`BlobConstants.PAGE_BLOB_SIZE`|`Long`|`createPageBlob`, `resizePageBlob`| Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary.
 |`CamelAzureStorageBlobSequenceNumber`|`BlobConstants.BLOB_SEQUENCE_NUMBER`|`Long`|`createPageBlob`|A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 2^63 - 1.The default value is 0.
@@ -299,9 +299,9 @@ For these operations, `accountName`, `containerName` and `blobName` are *require
                                     and existing blocks together. Any blocks not specified in the block list and permanently deleted.
 |`getBlobBlockList`  |`BlockBlob`|Returns the list of blocks that have been uploaded as part of a block blob using the specified block list filter.
 |`createAppendBlob` |`AppendBlob`|Creates a 0-length append blob. Call commitAppendBlo`b operation to append data to an append blob.
-|`commitAppendBlob` |`AppendBlob`|Commits a new block of data to the end of the existing append blob. In case of header `CamelAzureStorageBlobAppendBlobCreated` is set to false, it will attempt to create the appendBlob through internal call to `createAppendBlob` operation.
+|`commitAppendBlob` |`AppendBlob`|Commits a new block of data to the end of the existing append blob. In case of header `CamelAzureStorageBlobCreateAppendBlob` is set to true, it will attempt to create the appendBlob through internal call to `createAppendBlob` operation.
 |`createPageBlob`|`PageBlob`|Creates a page blob of the specified length. Call `uploadPageBlob` operation to upload data data to a page blob.
-|`uploadPageBlob`|`PageBlob`|Writes one or more pages to the page blob. The write size must be a multiple of 512. In case of header `CamelAzureStorageBlobPageBlockCreated` is set to false, it will attempt to create the appendBlob through internal call to `createPageBlob` operation.
+|`uploadPageBlob`|`PageBlob`|Writes one or more pages to the page blob. The write size must be a multiple of 512. In case of header `CamelAzureStorageBlobCreatePageBlob` is set to true, it will attempt to create the appendBlob through internal call to `createPageBlob` operation.
 |`resizePageBlob`|`PageBlob`| Resizes the page blob to the specified size (which must be a multiple of 512).
 |`clearPageBlob`|`PageBlob`| Frees the specified pages from the page blob. The size of the range must be a multiple of 512.
 |`getPageBlobRanges`|`PageBlob`|Returns the list of valid page ranges for a page blob or snapshot of a page blob.

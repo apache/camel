@@ -122,6 +122,7 @@ public class BlobProducerIT extends CamelTestSupport {
 
         template.send("direct:commitAppendBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
+            exchange.getIn().setHeader(BlobConstants.CREATE_APPEND_BLOB, true);
 
             final String data = "Hello world from my awesome tests!";
             final InputStream dataStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
@@ -145,6 +146,7 @@ public class BlobProducerIT extends CamelTestSupport {
 
         template.send("direct:uploadPageBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
+            exchange.getIn().setHeader(BlobConstants.CREATE_PAGE_BLOB, true);
 
             byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
             new Random().nextBytes(dataBytes);

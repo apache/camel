@@ -260,6 +260,7 @@ class BlobOperationsIT extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(dataStream);
+        exchange.getIn().setHeader(BlobConstants.CREATE_APPEND_BLOB, true);
 
         final BlobOperationResponse response = operations.commitAppendBlob(exchange);
 
@@ -291,6 +292,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(dataStream);
         exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+        exchange.getIn().setHeader(BlobConstants.CREATE_PAGE_BLOB, true);
 
         final BlobOperationResponse response = operations.uploadPageBlob(exchange);
 
@@ -322,6 +324,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(dataStream);
         exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+        exchange.getIn().setHeader(BlobConstants.CREATE_PAGE_BLOB, true);
 
         // create our page
         operations.uploadPageBlob(exchange);
@@ -358,6 +361,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(dataStream);
         exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+        exchange.getIn().setHeader(BlobConstants.CREATE_PAGE_BLOB, true);
 
         // create our page
         operations.uploadPageBlob(exchange);
@@ -386,6 +390,7 @@ class BlobOperationsIT extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(dataStream);
         exchange.getIn().setHeader(BlobConstants.PAGE_BLOB_RANGE, pageRange);
+        exchange.getIn().setHeader(BlobConstants.CREATE_PAGE_BLOB, true);
 
         // create our page
         operations.uploadPageBlob(exchange);
