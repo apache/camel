@@ -4250,7 +4250,52 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <version>${impsort-maven-plugin-version}</version>
+                <configuration>
+                    <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
+                    <excludes>**/package-info.java</excludes>
+                    <staticAfter>true</staticAfter>
+                    <removeUnused>true</removeUnused>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sort-imports</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>${formatter-maven-plugin.version}</version>
+                <configuration>
+                    <configFile>camel-eclipse-formatter-config.xml</configFile>
+                    <skip>${format.skip}</skip>
+                    <skipHtmlFormatting>true</skipHtmlFormatting>
+                    <cachedir>${basedir}/target</cachedir>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-buildtools</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>format</id>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -4363,40 +4408,45 @@
         </profile>
 
         <profile>
-            <id>impsort</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.revelc.code</groupId>
-                        <artifactId>impsort-maven-plugin</artifactId>
-                        <version>${impsort-maven-plugin-version}</version>
-                        <executions>
-                            <execution>
-                                <id>sort-imports</id>
-                                <goals>
-                                    <goal>sort</goal>
-                                </goals>
-                                <phase>process-sources</phase>
-                                <configuration>
-                                    <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
-                                    <excludes>**/package-info.java</excludes>
-                                    <staticAfter>true</staticAfter>
-                                    <removeUnused>true</removeUnused>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
             <id>sourcecheck</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.revelc.code.formatter</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>format</id>
+                                <phase />
+                            </execution>
+                            <execution>
+                                <id>validate</id>
+                                <goals>
+                                    <goal>validate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.revelc.code</groupId>
+                        <artifactId>impsort-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sort-imports</id>
+                                <phase />
+                            </execution>
+                            <execution>
+                                <id>check</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
