@@ -100,8 +100,8 @@ public final class CamelVersionHelper {
             String[] thatParts = that.getVersion().split("\\.");
             int length = Math.max(thisParts.length, thatParts.length);
             for (int i = 0; i < length; i++) {
-                int thisPart = i < thisParts.length ? Integer.parseInt(thisParts[i]) : 0;
-                int thatPart = i < thatParts.length ? Integer.parseInt(thatParts[i]) : 0;
+                long thisPart = i < thisParts.length ? Long.parseLong(thisParts[i]) : 0;
+                long thatPart = i < thatParts.length ? Long.parseLong(thatParts[i]) : 0;
                 if (thisPart < thatPart) {
                     return -1;
                 } else if (thisPart > thatPart) {
