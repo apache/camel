@@ -29,7 +29,7 @@
     <artifactId>camel-hdfs</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: HDFS</name>
-    <description>Camel HDFS support with Hadoop 2.x libraries</description>
+    <description>Camel HDFS support with Hadoop 3.x libraries</description>
 
     <properties>
         <camel.osgi.import.additional>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>${hadoop2-version}</version>
+            <version>${hadoop3-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -80,17 +80,17 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${hadoop2-guava-version}</version>
+            <version>${hadoop3-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop2-version}</version>
+            <version>${hadoop3-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs-client</artifactId>
-            <version>${hadoop2-version}</version>
+            <version>${hadoop3-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
