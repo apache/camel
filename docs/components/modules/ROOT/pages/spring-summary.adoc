@@ -5,6 +5,12 @@
 //attributes written by hand, not generated
 :docTitle: Spring
 
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+
 Apache Camel is designed to work nicely with the
 Spring Framework in a number of ways.
 

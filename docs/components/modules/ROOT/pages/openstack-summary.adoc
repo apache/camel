@@ -1,15 +1,23 @@
 [[Openstack-OpenstackComponent]]
-= Openstack Component
+= OpenStack Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-openstack/src/main/docs/openstack-summary.adoc
 //attributes written by hand, not generated
-:docTitle: Openstack
+:docTitle: OpenStack
 :since: 2.19
 
 *Since Camel {since}*
 
-The Openstack component is a component for managing your
-https://www.openstack.org//[OpenStack] applications. 
+The OpenStack component is a component for managing your
+https://www.openstack.org//[OpenStack] applications.
+
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+
+== Installation
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -22,18 +30,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
-
-[width="100%", options="header"]
-|=======================================================================
-| OpenStack service | Camel Component| Description
-| https://wiki.openstack.org/wiki/Cinder[OpenStack Cinder] | xref:openstack-cinder-component.adoc[openstack-cinder] | Component to maintain OpenStack cinder.
-| https://wiki.openstack.org/wiki/Glance[OpenStack Glance] | xref:openstack-glance-component.adoc[openstack-glance] | Component to maintain OpenStack glance.
-| https://wiki.openstack.org/wiki/Keystone[OpenStack Keystone] | xref:openstack-keystone-component.adoc[openstack-keystone] | Component to maintain OpenStack keystone.
-| https://wiki.openstack.org/wiki/Neutron[OpenStack Neutron] | xref:openstack-neutron-component.adoc[openstack-neutron] | Component to maintain OpenStack neutron.
-| https://wiki.openstack.org/wiki/Nova[OpenStack Nova] | xref:openstack-nova-component.adoc[openstack-nova] | Component to maintain OpenStack nova.
-| https://wiki.openstack.org/wiki/Swift[OpenStack Swift] | xref:openstack-swift-component.adoc[openstack-swift] | Component to maintain OpenStack swift.
-|=======================================================================
-
 
 
 include::camel-spring-boot::page$openstack-starter.adoc[]
