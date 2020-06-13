@@ -4855,6 +4855,27 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "MinioComponentBuilderFactory": {
+    "kind": "component",
+    "name": "minio",
+    "title": "Minio",
+    "description": "Minio component which does bla bla.",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "custom",
+    "javaType": "org.apache.camel.component.minio.MinioComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-minio",
+    "version": "3.4.0-SNAPSHOT",
+    "scheme": "minio",
+    "extendsScheme": "",
+    "syntax": "minio:name",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "MllpComponentBuilderFactory": {
     "kind": "component",
     "name": "mllp",

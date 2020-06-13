@@ -10073,6 +10073,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Minio (camel-minio)
+     * Minio component which does bla bla.
+     * 
+     * Category: custom
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * Syntax: <code>minio:name</code>
+     * 
+     * Path parameter: name (required)
+     * Some description of this option, and what it does
+     * 
+     * @param path name
+     */
+    static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder("minio", path);
+    }
+    /**
+     * Minio (camel-minio)
+     * Minio component which does bla bla.
+     * 
+     * Category: custom
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * Syntax: <code>minio:name</code>
+     * 
+     * Path parameter: name (required)
+     * Some description of this option, and what it does
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     */
+    static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
      * 

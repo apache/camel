@@ -2615,6 +2615,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MinaComponentBuilderFactory.mina();
     }
     /**
+     * Minio (camel-minio)
+     * Minio component which does bla bla.
+     * 
+     * Category: custom
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     */
+    static org.apache.camel.builder.component.dsl.MinioComponentBuilderFactory.MinioComponentBuilder minio() {
+        return org.apache.camel.builder.component.dsl.MinioComponentBuilderFactory.minio();
+    }
+    /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
      * 

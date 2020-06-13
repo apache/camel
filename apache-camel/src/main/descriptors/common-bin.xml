@@ -264,6 +264,7 @@
         <include>org.apache.camel:camel-microprofile-metrics</include>
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina</include>
+        <include>org.apache.camel:camel-minio</include>
         <include>org.apache.camel:camel-mllp</include>
         <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb</include>
