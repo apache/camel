@@ -1,0 +1,14 @@
+[[minio-component]]
+= Minio Component
+:docTitle: MinIO
+:artifactId: camel-minio
+:description: A Camel MinIO cloud storage server Component.
+:since:
+:supportLevel:
+:component-header:
+
+// component options: START
+// component options: END
+
+// endpoint options: START
+// endpoint options: END

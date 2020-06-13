@@ -391,6 +391,7 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
+        <module>camel-minio</module>
   </modules>
 
     <properties>
