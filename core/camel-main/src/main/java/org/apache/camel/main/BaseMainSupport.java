@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -404,7 +406,11 @@ public abstract class BaseMainSupport extends BaseService {
 
         if (mainConfigurationProperties.getPackageScanRouteBuilders() != null) {
             String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
-            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(RoutesBuilder.class, pkgs);
+            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
+                    .getPackageScanClassResolver()
+                    .findImplementations(RoutesBuilder.class, pkgs)
+                    .stream().filter(c -> !Modifier.isAbstract(c.getModifiers()))
+                    .collect(Collectors.toSet());
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
                 if (builder instanceof RoutesBuilder) {
