@@ -24,23 +24,23 @@ import java.util.function.Consumer;
  * Used for demonstrations purpose to simulate some external system event bus/broker, where messages are sent to, and
  * this component can consume from.
  */
-public class EventBusHelper {
+final class EventBusHelper {
 
     // TODO: Delete me when you implementy your custom component
 
-    private static EventBusHelper INSTANCE;
+    private static EventBusHelper instance;
 
-    final private Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
+    final Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
 
     private EventBusHelper() {
     }
 
     public static EventBusHelper getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new EventBusHelper();
+        if (instance == null) {
+            instance = new EventBusHelper();
         }
 
-        return INSTANCE;
+        return instance;
     }
 
     public <T> void subscribe(final Consumer<T> subscriber) {
