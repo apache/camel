@@ -18,14 +18,15 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 /**
  * Allows interacting with the Telegram server to exchange messages.
  */
 public interface TelegramService {
 
-    void setHttpProxy(String host, Integer port);
-  
+    void setProxy(String host, Integer port, ProxyServerType type);
+
     UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds);
 
     void sendMessage(String authorizationToken, OutgoingMessage message);

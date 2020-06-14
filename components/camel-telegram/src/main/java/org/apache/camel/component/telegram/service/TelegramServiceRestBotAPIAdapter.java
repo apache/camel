@@ -41,6 +41,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 /**
  * Adapts the {@code RestBotAPI} to the {@code TelegramService} interface.
@@ -56,10 +57,11 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     }
 
     @Override
-    public void setHttpProxy(String host, Integer port) {
+    public void setProxy(String host, Integer port, ProxyServerType type) {
         HTTPConduit httpConduit = WebClient.getConfig(this.api).getHttpConduit();
         httpConduit.getClient().setProxyServer(host);
         httpConduit.getClient().setProxyServerPort(port);
+        httpConduit.getClient().setProxyServerType(type);
     }
 
     @Override
@@ -186,10 +188,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private String escapeMimeName(String name) {
         return name.replace("\"", "");
     }
-    
+
     private JacksonJsonProvider providerByCustomObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
         return new JacksonJsonProvider(mapper);
-    }    
+    }
 }
