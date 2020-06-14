@@ -216,8 +216,9 @@ public class JsonPathEngine {
 
         InputStream is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, json);
 
-        if (json instanceof StreamCache)
+        if (json instanceof StreamCache) {
             ((StreamCache) json).reset();
+        }
 
         if (is != null) {
             String jsonEncoding = exchange.getIn().getHeader(JsonPathConstants.HEADER_JSON_ENCODING, String.class);
@@ -245,8 +246,9 @@ public class JsonPathEngine {
             LOG.trace("Attempting to use JacksonJsonAdapter: {}", adapter);
             Map map = adapter.readValue(json, exchange);
 
-            if (json instanceof StreamCache)
+            if (json instanceof StreamCache) {
                 ((StreamCache) json).reset();
+            }
 
             if (map != null) {
                 if (LOG.isDebugEnabled()) {

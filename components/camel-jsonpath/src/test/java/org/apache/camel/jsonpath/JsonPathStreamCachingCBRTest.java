@@ -16,15 +16,15 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FileInputStream;
 
 public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
@@ -45,7 +45,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
                             .to("mock:average")
                         .otherwise()
                             .to("mock:expensive");
-                
+
                 from("direct:bicycle")
                     .streamCaching()
                     .choice()
@@ -53,7 +53,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
                             .to("mock:cheap")
                         .otherwise()
                             .to("mock:expensive");
-                
+
                 from("direct:bicycle2")
                     .streamCaching()
                     .choice()
@@ -64,20 +64,20 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public static class BeanPredicate {
         public boolean checkPrice(@JsonPath("$.store.bicycle.price") double price) {
             return price < 100;
         }
     }
-    
+
     @Test
     public void testCheapBicycle() throws Exception {
         sendMessageToBicycleRoute("direct:bicycle");
         resetMocks();
         sendMessageToBicycleRoute("direct:bicycle2");
     }
-    
+
     private void sendMessageToBicycleRoute(String startPoint) throws Exception {
         getMockEndpoint("mock:cheap").expectedMessageCount(1);
         getMockEndpoint("mock:average").expectedMessageCount(0);
