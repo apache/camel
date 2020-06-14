@@ -26,6 +26,7 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +45,9 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
         // setup the proxy setting here
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(), configuration.getProxyPort());
-            TelegramServiceProvider.get().getService().setHttpProxy(configuration.getProxyHost(), configuration.getProxyPort());
+            ProxyServerType proxyServerType = getProxyServerType(configuration.getProxyType());
+            LOG.debug("Setup {} proxy host:{} port:{} for TelegramService", proxyServerType, configuration.getProxyHost(), configuration.getProxyPort());
+            TelegramServiceProvider.get().getService().setProxy(configuration.getProxyHost(), configuration.getProxyPort(), proxyServerType);
         }
     }
 
@@ -94,4 +96,18 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    private ProxyServerType getProxyServerType(TelegramProxyType type) {
+        if (type == null) {
+            return ProxyServerType.HTTP;
+        }
+
+        switch (type) {
+            case HTTP:
+                return ProxyServerType.HTTP;
+            case SOCKS:
+                return ProxyServerType.SOCKS;
+            default:
+                throw new IllegalArgumentException("Unknown proxy type: " + type);
+        }
+    }
 }
