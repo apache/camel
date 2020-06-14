@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>3.4.0</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -35,9 +35,9 @@
     <properties>
         <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
-        <cxf.codegen.jvmArgs/>
-        <camel.surefire.fork.vmargs/>
-        <cxf.xjc.jvmArgs/>
+        <cxf.codegen.jvmArgs />
+        <camel.surefire.fork.vmargs />
+        <cxf.xjc.jvmArgs />
         <trimStackTrace>false</trimStackTrace>
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
