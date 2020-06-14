@@ -33,6 +33,7 @@ import com.jayway.jsonpath.Option;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -214,6 +215,10 @@ public class JsonPathEngine {
         LOG.trace("JSonPath: {} is read as InputStream: {}", path, json);
 
         InputStream is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, json);
+
+        if (json instanceof StreamCache)
+            ((StreamCache) json).reset();
+
         if (is != null) {
             String jsonEncoding = exchange.getIn().getHeader(JsonPathConstants.HEADER_JSON_ENCODING, String.class);
             if (jsonEncoding != null) {
@@ -239,6 +244,10 @@ public class JsonPathEngine {
         if (adapter != null) {
             LOG.trace("Attempting to use JacksonJsonAdapter: {}", adapter);
             Map map = adapter.readValue(json, exchange);
+
+            if (json instanceof StreamCache)
+                ((StreamCache) json).reset();
+
             if (map != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map", ObjectHelper.classCanonicalName(json));
