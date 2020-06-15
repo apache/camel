@@ -179,8 +179,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
+                } else if (file.getName().contains("ThreadPoolProfileConfigurationProperties")) {
+                    // skip this file
+                    continue;
                 } else if (file.getName().contains("ThreadPoolConfigurationProperties")) {
-                    // we only want this properties class for thread pool
                     prefix = "camel.threadpool.";
                 } else {
                     prefix = "camel.main.";
