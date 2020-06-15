@@ -1,0 +1,13 @@
+[[main-component]]
+= Main Component
+:docTitle: Main
+:artifactId: camel-main
+:description: Camel Main support
+:since: 3.0
+:supportLevel: Stable
+//Manually maintained attributes
+:group: Core
+
+*Since Camel {since}*
+
+This module is used for running Camel standalone via a main class extended from `camel-main`.
