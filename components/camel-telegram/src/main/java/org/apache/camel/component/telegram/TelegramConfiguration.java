@@ -43,6 +43,9 @@ public class TelegramConfiguration {
     @UriParam(description = "HTTP proxy port which could be used when sending out the message.", label = "proxy")
     private Integer proxyPort;
 
+    @UriParam(description = "HTTP proxy type which could be used when sending out the message.", label = "proxy", defaultValue = "HTTP")
+    private TelegramProxyType proxyType = TelegramProxyType.HTTP;
+
     @UriParam(description = "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "
             + "(eg. when a telegram user starts a conversation with a bot, its client sends automatically a '/start' message containing the chat id). "
             + "It is an optional parameter, as the chat id can be set dynamically for each outgoing message (using body or headers).", label = "producer")
@@ -92,6 +95,14 @@ public class TelegramConfiguration {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public TelegramProxyType getProxyType() {
+        return proxyType;
+    }
+
+    public void setProxyType(TelegramProxyType proxyType) {
+        this.proxyType = proxyType;
     }
 
     public String getChatId() {

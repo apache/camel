@@ -203,6 +203,35 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
+         * HTTP proxy type which could be used when sending out the message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
+         * type.
+         * 
+         * Default: HTTP
+         * Group: proxy
+         */
+        default TelegramEndpointConsumerBuilder proxyType(
+                TelegramProxyType proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
+         * HTTP proxy type which could be used when sending out the message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
+         * type.
+         * 
+         * Default: HTTP
+         * Group: proxy
+         */
+        default TelegramEndpointConsumerBuilder proxyType(String proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -916,6 +945,35 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
+         * HTTP proxy type which could be used when sending out the message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
+         * type.
+         * 
+         * Default: HTTP
+         * Group: proxy
+         */
+        default TelegramEndpointProducerBuilder proxyType(
+                TelegramProxyType proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
+         * HTTP proxy type which could be used when sending out the message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
+         * type.
+         * 
+         * Default: HTTP
+         * Group: proxy
+         */
+        default TelegramEndpointProducerBuilder proxyType(String proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
          * The authorization token for using the bot (ask the BotFather).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1110,6 +1168,34 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
+         * HTTP proxy type which could be used when sending out the message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
+         * type.
+         * 
+         * Default: HTTP
+         * Group: proxy
+         */
+        default TelegramEndpointBuilder proxyType(TelegramProxyType proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
+         * HTTP proxy type which could be used when sending out the message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
+         * type.
+         * 
+         * Default: HTTP
+         * Group: proxy
+         */
+        default TelegramEndpointBuilder proxyType(String proxyType) {
+            doSetProperty("proxyType", proxyType);
+            return this;
+        }
+        /**
          * The authorization token for using the bot (ask the BotFather).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1252,6 +1338,16 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.telegram.TelegramProxyType</code> enum.
+     */
+    enum TelegramProxyType {
+        HTTP,
+        SOCKS4,
+        SOCKS5;
     }
 
     public interface TelegramBuilders {
