@@ -81,6 +81,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     /**
      * To configure Circuit Breaker EIP with Hystrix
      */
+    @Deprecated
     public HystrixConfigurationProperties hystrix() {
         return hystrixConfigurationProperties;
     }
