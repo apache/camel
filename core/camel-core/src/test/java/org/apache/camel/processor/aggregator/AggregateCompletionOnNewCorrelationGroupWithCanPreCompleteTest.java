@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,16 +27,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AggregateCompletionOnNewCorrelationGroupWithCanPreCompleteTest extends ContextTestSupport {
 
     @Test
     public void testCompletionOnNewCorrelationGroup() throws Exception {
         int numItems = 2000;
 
-        getMockEndpoint("mock:aggregated").expectedMessageCount((numItems) + 1);
+        getMockEndpoint("mock:aggregated").expectedMessageCount(numItems + 1);
 
         List<String> input = new ArrayList<>();
 
