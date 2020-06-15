@@ -1263,7 +1263,6 @@ public interface InfinispanEndpointBuilderFactory {
         CACHE_MODE_LOCAL,
         SKIP_LOCKING,
         FORCE_WRITE_LOCK,
-        SKIP_CACHE_STATUS_CHECK,
         FORCE_ASYNCHRONOUS,
         FORCE_SYNCHRONOUS,
         SKIP_CACHE_STORE,
@@ -1287,7 +1286,9 @@ public interface InfinispanEndpointBuilderFactory {
         ROLLING_UPGRADE,
         REMOTE_ITERATION,
         SKIP_SIZE_OPTIMIZATION,
-        IGNORE_TRANSACTION;
+        IGNORE_TRANSACTION,
+        IRAC_UPDATE,
+        IRAC_STATE;
     }
 
     public interface InfinispanBuilders {
