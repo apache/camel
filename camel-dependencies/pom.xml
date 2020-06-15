@@ -339,7 +339,7 @@
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
     <jgroups-raft-version>0.5.1.Final</jgroups-raft-version>
-    <jgroups-version>4.2.3.Final</jgroups-version>
+    <jgroups-version>4.2.4.Final</jgroups-version>
     <jing-version>20030619</jing-version>
     <jira-guava-version>26.0-jre</jira-guava-version>
     <jira-rest-client-api-version>5.1.6</jira-rest-client-api-version>
