@@ -64,7 +64,8 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!mainJsonFile.exists()) {
-            throw new MojoExecutionException("Main json file does not exist: " + mainJsonFile);
+            // its not this module so skip
+            return;
         }
 
         File file = new File(docDocDir, "main.adoc");
