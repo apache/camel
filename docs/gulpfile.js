@@ -58,7 +58,7 @@ function createComponentSymlinks() {
 
 function createComponentOthersSymlinks() {
     const f = filter(['**','!**/*-language.adoc', '!**/*-dataformat.adoc', '!**/*-component.adoc', '!**/*-summary.adoc'])
-    return src(['../core/camel-base/src/main/docs/*.adoc','../components/{*,*/*}/src/main/docs/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc','../core/camel-main/src/main/docs/*.adoc','../components/{*,*/*}/src/main/docs/*.adoc'])
         .pipe(f)
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
