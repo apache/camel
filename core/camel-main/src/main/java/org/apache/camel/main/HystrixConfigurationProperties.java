@@ -27,6 +27,7 @@ import org.apache.camel.spi.Configurer;
  * Global configuration for Hystrix EIP circuit breaker.
  */
 @Configurer
+@Deprecated
 public class HystrixConfigurationProperties {
 
     private final MainConfigurationProperties parent;

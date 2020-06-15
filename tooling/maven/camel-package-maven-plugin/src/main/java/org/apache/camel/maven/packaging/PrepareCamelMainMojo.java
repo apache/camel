@@ -87,7 +87,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             MethodSource<?> setter = clazz.getMethod(setterName, javaType);
             if (setter != null) {
                 String desc = setter.getJavaDoc().getFullText();
-                boolean deprecated = setter.getAnnotation(Deprecated.class) != null;
+                boolean deprecated = clazz.getAnnotation(Deprecated.class) != null || setter.getAnnotation(Deprecated.class) != null;
                 String type = fromMainToType(javaType);
                 MainModel.MainOptionModel model = new MainModel.MainOptionModel();
                 model.setName(name);
