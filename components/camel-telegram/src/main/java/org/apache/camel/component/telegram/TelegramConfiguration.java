@@ -105,23 +105,23 @@ public class TelegramConfiguration {
     }
 
     public String getProxyHost() {
-      return proxyHost;
+        return proxyHost;
     }
 
     public void setProxyHost(String proxyHost) {
-      this.proxyHost = proxyHost;
+        this.proxyHost = proxyHost;
     }
 
     public Integer getProxyPort() {
-      return proxyPort;
+        return proxyPort;
     }
 
     public void setProxyPort(Integer proxyPort) {
-      this.proxyPort = proxyPort;
+        this.proxyPort = proxyPort;
     }
 
 
-  public String getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
