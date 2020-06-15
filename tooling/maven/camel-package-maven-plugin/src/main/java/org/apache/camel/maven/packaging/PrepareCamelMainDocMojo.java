@@ -56,6 +56,8 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        docDocDir = new File(project.getBasedir(), "src/main/docs");
+        mainJsonFile = new File(project.getBasedir(), "src/generated/resources/META-INF/camel-main-configuration-metadata.json");
         super.execute(project, projectHelper, buildContext);
     }
 
