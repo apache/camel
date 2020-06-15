@@ -56,6 +56,8 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxytype":
+        case "proxyType": target.getConfiguration().setProxyType(property(camelContext, org.apache.camel.component.telegram.TelegramProxyType.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -102,6 +104,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);
+        answer.put("proxyType", org.apache.camel.component.telegram.TelegramProxyType.class);
         answer.put("repeatCount", long.class);
         answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
@@ -157,6 +160,8 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
         case "proxyPort": return target.getConfiguration().getProxyPort();
+        case "proxytype":
+        case "proxyType": return target.getConfiguration().getProxyType();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.telegram;
 
+import org.apache.camel.PropertyBindingException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,7 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
 
         TelegramEndpoint ep1 = (TelegramEndpoint) component.createEndpoint("telegram:bots");
         assertEquals("DEFAULT", ep1.getConfiguration().getAuthorizationToken());
+        assertEquals(TelegramProxyType.HTTP, ep1.getConfiguration().getProxyType());
 
         TelegramEndpoint ep2 = (TelegramEndpoint) component.createEndpoint("telegram:bots?authorizationToken=CUSTOM");
         assertEquals("CUSTOM", ep2.getConfiguration().getAuthorizationToken());
@@ -65,6 +68,15 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
             TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
             component.setAuthorizationToken("ANY");
             component.createEndpoint("telegram:bots/token/s");
+        });
+    }
+
+    @Test
+    public void testWrongURI3() {
+        assertThrows(PropertyBindingException.class, () -> {
+            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            component.setAuthorizationToken("ANY");
+            component.createEndpoint("telegram:bots?proxyType=ANY");
         });
     }
 
