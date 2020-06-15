@@ -224,7 +224,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
                 return ProxyType.SOCKS_V4;
             case SOCKS5:
                 return ProxyType.SOCKS_V5;
+            default:
+                throw new IllegalArgumentException("Unknown proxy type: " + type);
         }
-        throw new IllegalArgumentException("Unknown proxy type: " + type);
     }
 }
