@@ -79,6 +79,8 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public Producer createProducer() throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
             return new Jt400DataQueueProducer(this);
+        } else if (Jt400Type.MSGQ == configuration.getType()) {
+            return new Jt400MsgQueueProducer(this);
         } else {
             return new Jt400PgmProducer(this);
         }
@@ -88,6 +90,10 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public Consumer createConsumer(Processor processor) throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
             Consumer consumer = new Jt400DataQueueConsumer(this, processor);
+            configureConsumer(consumer);
+            return consumer;
+        } else if (Jt400Type.MSGQ == configuration.getType()) {
+            Consumer consumer = new Jt400MsgQueueConsumer(this, processor);
             configureConsumer(consumer);
             return consumer;
         } else {
