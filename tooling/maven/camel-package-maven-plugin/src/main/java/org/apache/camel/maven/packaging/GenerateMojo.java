@@ -48,6 +48,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(PrepareComponentMojo.class);
         // prepare-main
         invoke(PrepareCamelMainMojo.class);
+        // prepare-main-doc
+        invoke(PrepareCamelMainDocMojo.class);
         // generate-xml-parser
         invoke(ModelXmlParserGeneratorMojo.class);
         // generate-legal

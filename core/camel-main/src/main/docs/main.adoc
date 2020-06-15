@@ -11,3 +11,17 @@
 *Since Camel {since}*
 
 This module is used for running Camel standalone via a main class extended from `camel-main`.
+
+== Configuration options
+
+When running Camel via `camel-main` you can configure Camel in the `application.properties` file.
+
+The following table lists all the options:
+
+// main options: START
+// main options: END
+
+== Examples
+
+You can find a set of examples using `camel-main` in [Camel Examples](https://github.com/apache/camel-examples)
+which demonstrate running Camel in standalone with `camel-main`.

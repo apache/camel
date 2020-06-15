@@ -46,13 +46,13 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * Prepares camel-main by generating Camel Main configuration metadata for
  * tooling support.
  */
-@Mojo(name = "prepare-main", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "prepare-main-doc", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
 
     /**
      * The output directory for generated spring boot tooling file
      */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
+    @Parameter(defaultValue = "${project.basedir}/src/main/doc")
     protected File outFolder;
 
     /**
