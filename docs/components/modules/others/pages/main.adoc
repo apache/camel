@@ -1,0 +1,15 @@
+[[main-component]]
+= Main Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: core/camel-main/src/main/docs/main.adoc
+:docTitle: Main
+:artifactId: camel-main
+:description: Camel Main support
+:since: 3.0
+:supportLevel: Stable
+//Manually maintained attributes
+:group: Core
+
+*Since Camel {since}*
+
+This module is used for running Camel standalone via a main class extended from `camel-main`.

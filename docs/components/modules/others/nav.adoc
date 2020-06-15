@@ -12,6 +12,7 @@
 ** xref:jta.adoc[JTA]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:lra.adoc[LRA]
+** xref:main.adoc[Main]
 ** xref:microprofile-config.adoc[Microprofile Config]
 ** xref:microprofile-fault-tolerance.adoc[Microprofile Fault Tolerance]
 ** xref:microprofile-health.adoc[Microprofile Health]
