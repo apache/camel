@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.workday;
 
+import org.apache.camel.Category;
 import org.apache.camel.component.workday.producer.WorkdayCommonAPIProducer;
 import org.apache.camel.component.workday.producer.WorkdayReportProducer;
 
@@ -27,9 +28,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents a Workday endpoint.
+ * Detect and parse documents using Workday.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true, label = "hcm")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true, category = {Category.CLOUD, Category.API, Category.HCM})
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriParam
