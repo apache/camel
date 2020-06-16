@@ -25,7 +25,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Strategy interface for implementing binding between Resteasy and Camel
- *
  */
 public interface ResteasyHttpBinding {
 

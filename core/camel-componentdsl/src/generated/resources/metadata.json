@@ -5727,6 +5727,7 @@
     "title": "Resteasy",
     "description": "Expose REST endpoints and access external REST servers.",
     "deprecated": false,
+    "deprecationNote": "",
     "firstVersion": "3.4.0",
     "label": "rest",
     "javaType": "org.apache.camel.component.resteasy.ResteasyComponent",

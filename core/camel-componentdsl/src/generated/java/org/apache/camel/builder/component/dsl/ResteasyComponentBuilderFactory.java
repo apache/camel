@@ -49,31 +49,6 @@ public interface ResteasyComponentBuilderFactory {
             extends
                 ComponentBuilder<ResteasyComponent> {
         /**
-         * Sets httpRegistry which can be externalized to be used by camel.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpRegistry</code> type.
-         * 
-         * Group: common
-         */
-        default ResteasyComponentBuilder httpRegistry(
-                org.apache.camel.http.common.HttpRegistry httpRegistry) {
-            doSetProperty("httpRegistry", httpRegistry);
-            return this;
-        }
-        /**
-         * Sets the proxy class for consumer enpoints.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ResteasyComponentBuilder proxyConsumersClasses(
-                java.lang.String proxyConsumersClasses) {
-            doSetProperty("proxyConsumersClasses", proxyConsumersClasses);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -93,20 +68,16 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom org.apache.http.client.CookieStore. By default the
-         * org.apache.http.impl.client.BasicCookieStore is used which is an
-         * in-memory only cookie store. Notice if bridgeEndpoint=true then the
-         * cookie store is forced to be a noop cookie store as cookie shouldn't
-         * be stored as we are just bridging (eg acting as a proxy).
+         * Proxy classes for consumer endpoints. Multiple classes can be
+         * separated by comma.
          * 
-         * The option is a: <code>org.apache.http.client.CookieStore</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: consumer
          */
-        default ResteasyComponentBuilder cookieStore(
-                org.apache.http.client.CookieStore cookieStore) {
-            doSetProperty("cookieStore", cookieStore);
+        default ResteasyComponentBuilder proxyConsumersClasses(
+                java.lang.String proxyConsumersClasses) {
+            doSetProperty("proxyConsumersClasses", proxyConsumersClasses);
             return this;
         }
         /**
@@ -162,113 +133,17 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom and shared HttpClientConnectionManager to manage
-         * connections. If this has been configured then this is always used for
-         * all endpoints created by this component.
+         * To use a custom ResteasyHttpBinding.
          * 
          * The option is a:
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder clientConnectionManager(
-                org.apache.http.conn.HttpClientConnectionManager clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder connectionsPerRoute(
-                int connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
-         * The time for connection to live, the time unit is millisecond, the
-         * default value is always keep alive.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder connectionTimeToLive(
-                long connectionTimeToLive) {
-            doSetProperty("connectionTimeToLive", connectionTimeToLive);
-            return this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder httpBinding(
-                org.apache.camel.http.common.HttpBinding httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
-         * To use the custom HttpClientConfigurer to perform configuration of
-         * the HttpClient that will be used.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
+         * <code>org.apache.camel.component.resteasy.ResteasyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
-        default ResteasyComponentBuilder httpClientConfigurer(
-                org.apache.camel.component.http.HttpClientConfigurer httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
-         * To use the shared HttpConfiguration as base configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder httpConfiguration(
-                org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
-            doSetProperty("httpConfiguration", httpConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.http.protocol.HttpContext when executing
-         * requests.
-         * 
-         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder httpContext(
-                org.apache.http.protocol.HttpContext httpContext) {
-            doSetProperty("httpContext", httpContext);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default ResteasyComponentBuilder maxTotalConnections(
-                int maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
+        default ResteasyComponentBuilder resteasyHttpBinding(
+                org.apache.camel.component.resteasy.ResteasyHttpBinding resteasyHttpBinding) {
+            doSetProperty("resteasyHttpBinding", resteasyHttpBinding);
             return this;
         }
         /**
@@ -328,55 +203,6 @@ public interface ResteasyComponentBuilderFactory {
             doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
-        /**
-         * The timeout in milliseconds used when requesting a connection from
-         * the connection manager. A timeout value of zero is interpreted as an
-         * infinite timeout. A timeout value of zero is interpreted as an
-         * infinite timeout. A negative value is interpreted as undefined
-         * (system default).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: timeout
-         */
-        default ResteasyComponentBuilder connectionRequestTimeout(
-                int connectionRequestTimeout) {
-            doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
-            return this;
-        }
-        /**
-         * Determines the timeout in milliseconds until a connection is
-         * established. A timeout value of zero is interpreted as an infinite
-         * timeout. A timeout value of zero is interpreted as an infinite
-         * timeout. A negative value is interpreted as undefined (system
-         * default).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: timeout
-         */
-        default ResteasyComponentBuilder connectTimeout(int connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Defines the socket timeout in milliseconds, which is the timeout for
-         * waiting for data or, put differently, a maximum period inactivity
-         * between two consecutive data packets). A timeout value of zero is
-         * interpreted as an infinite timeout. A negative value is interpreted
-         * as undefined (system default).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: timeout
-         */
-        default ResteasyComponentBuilder socketTimeout(int socketTimeout) {
-            doSetProperty("socketTimeout", socketTimeout);
-            return this;
-        }
     }
 
     class ResteasyComponentBuilderImpl
@@ -394,28 +220,16 @@ public interface ResteasyComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "httpRegistry": ((ResteasyComponent) component).setHttpRegistry((org.apache.camel.http.common.HttpRegistry) value); return true;
-            case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((ResteasyComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "cookieStore": ((ResteasyComponent) component).setCookieStore((org.apache.http.client.CookieStore) value); return true;
+            case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "basicPropertyBinding": ((ResteasyComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "clientConnectionManager": ((ResteasyComponent) component).setClientConnectionManager((org.apache.http.conn.HttpClientConnectionManager) value); return true;
-            case "connectionsPerRoute": ((ResteasyComponent) component).setConnectionsPerRoute((int) value); return true;
-            case "connectionTimeToLive": ((ResteasyComponent) component).setConnectionTimeToLive((long) value); return true;
-            case "httpBinding": ((ResteasyComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
-            case "httpClientConfigurer": ((ResteasyComponent) component).setHttpClientConfigurer((org.apache.camel.component.http.HttpClientConfigurer) value); return true;
-            case "httpConfiguration": ((ResteasyComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
-            case "httpContext": ((ResteasyComponent) component).setHttpContext((org.apache.http.protocol.HttpContext) value); return true;
-            case "maxTotalConnections": ((ResteasyComponent) component).setMaxTotalConnections((int) value); return true;
+            case "resteasyHttpBinding": ((ResteasyComponent) component).setResteasyHttpBinding((org.apache.camel.component.resteasy.ResteasyHttpBinding) value); return true;
             case "headerFilterStrategy": ((ResteasyComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "sslContextParameters": ((ResteasyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ResteasyComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "x509HostnameVerifier": ((ResteasyComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;
-            case "connectionRequestTimeout": ((ResteasyComponent) component).setConnectionRequestTimeout((int) value); return true;
-            case "connectTimeout": ((ResteasyComponent) component).setConnectTimeout((int) value); return true;
-            case "socketTimeout": ((ResteasyComponent) component).setSocketTimeout((int) value); return true;
             default: return false;
             }
         }

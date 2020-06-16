@@ -27,6 +27,7 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -37,6 +38,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "resteasy",  extendsScheme = "http",
         title = "Resteasy", syntax = "resteasy:httpUri", category = {Category.REST})
+@Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
+        + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
+        + "connectTimeout,socketTimeout,cookieStore")
 public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrategyAware {
 
     private String protocol;
@@ -67,11 +71,8 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new ResteasyHeaderFilterStrategy();
 
-    public ResteasyEndpoint(String endPointURI, ResteasyComponent component, URI httpUri, HttpClientConnectionManager httpConnectionManager,
-                            HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component, httpUri,
-                HttpClientBuilder.create(),
-                httpConnectionManager, clientConfigurer);
+    public ResteasyEndpoint(String endPointURI, ResteasyComponent component, URI httpUri) throws URISyntaxException {
+        super(endPointURI, component, httpUri, null, null, null);
     }
 
     @Override
@@ -250,6 +251,5 @@ public class ResteasyEndpoint extends HttpEndpoint implements HeaderFilterStrate
     public void setRestEasyHttpBindingRef(ResteasyHttpBinding restEasyHttpBinding) {
         this.restEasyHttpBindingRef = restEasyHttpBinding;
     }
-
 
 }
