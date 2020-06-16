@@ -37,12 +37,15 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
      */
     private final Jt400MsgQueueService queueService;
 
+    private byte[] messageKey;
+
     /**
      * Creates a new consumer instance
      */
     public Jt400MsgQueueConsumer(Jt400Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.queueService = new Jt400MsgQueueService(endpoint);
+        this.messageKey = null;
     }
 
     @Override
@@ -95,17 +98,25 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         }
     }
 
-    private Exchange receive(MessageQueue queue, long timeout) throws Exception {
+    private synchronized Exchange receive(MessageQueue queue, long timeout) throws Exception {
         QueuedMessage entry;
         int seconds = (timeout >= 0) ? (int) timeout / 1000 : -1;
         LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(), -1 == seconds ? "infinite" : seconds);
-        entry = queue.receive(null, 
-                              seconds,
-                              MessageQueue.OLD,  // message action    //TODO: make configurable
-                              MessageQueue.ANY); // types of messages //TODO: make configurable
+
+        Jt400Configuration.MessageAction messageAction = getEndpoint().getMessageAction();
+
+        entry = queue.receive(messageKey, //message key
+                              seconds,    //timeout
+                              messageAction.getJt400Value(),  // message action
+                              null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages //TODO: make configurable
+
         if (null == entry) {
             return null;
         }
+        // Need to tuck away the message key in case the message action is SAME, otherwise
+        // we'll just keep retrieving the same message over and over
+        this.messageKey = entry.getKey();
+
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
         final String messageId = entry.getID();

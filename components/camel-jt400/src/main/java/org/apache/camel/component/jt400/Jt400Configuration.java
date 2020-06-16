@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;
+import com.ibm.as400.access.MessageQueue;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -56,6 +57,29 @@ public class Jt400Configuration {
          * Using <code>byte[]</code> for transferring data
          */
         binary
+    }
+
+    public enum MessageAction {
+        /**
+         * Keep the message in the message queue and mark it as an old message
+         */
+        OLD(MessageQueue.OLD),
+        /**
+         * Remove the message from the message queue
+         */
+        REMOVE(MessageQueue.REMOVE),
+        /**
+         * Keep the message in the message queue without changing its new or old designation
+         */
+        SAME(MessageQueue.SAME);
+
+        private String jt400Value;
+        private MessageAction(final String jt400Value) {
+            this.jt400Value = jt400Value;
+        }
+        public String getJt400Value() {
+            return jt400Value;
+        }
     }
 
     /**
@@ -118,6 +142,9 @@ public class Jt400Configuration {
 
     @UriParam(label = "producer")
     private String procedureName;
+
+    @UriParam(label = "consumer", defaultValue = "OLD")
+    private MessageAction messageAction = MessageAction.OLD;
 
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
@@ -329,6 +356,18 @@ public class Jt400Configuration {
         this.procedureName = procedureName;
     }
 
+    public MessageAction getMessageAction() {
+        return messageAction;
+    }
+
+    /**
+     * Whether or not messages are removed from a message
+     * queue when read.
+     */
+    public void setMessageAction(MessageAction messageAction) {
+        this.messageAction = messageAction;
+    }
+
     public void setOutputFieldsIdx(String outputFieldsIdx) {
         if (outputFieldsIdx != null) {
             String[] outputArray = outputFieldsIdx.split(",");
@@ -350,6 +389,7 @@ public class Jt400Configuration {
             }
         }
     }
+
 
     // AS400 connections
     

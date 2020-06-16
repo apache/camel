@@ -280,6 +280,14 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
         return configuration.getProcedureName();
     }
 
+    public void setMessageAction(Jt400Configuration.MessageAction messageAction) {
+        configuration.setMessageAction(messageAction);
+    }
+
+    public Jt400Configuration.MessageAction getMessageAction() {
+        return configuration.getMessageAction();
+    }
+
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
