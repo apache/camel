@@ -125,7 +125,6 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Endpoint.MESSAGE_ID, entry.getID());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Endpoint.MESSAGE_FILE, entry.getFileName());
-        setHeaderIfValueNotNull(exchange.getIn(), Jt400Endpoint.MESSAGE_KEY, entry.getKey());
         setHeaderIfValueNotNull(exchange.getIn(), Jt400Endpoint.MESSAGE_TYPE, entry.getType());
         exchange.getIn().setBody(entry.getText());
         return exchange;
