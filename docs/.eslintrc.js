@@ -21,7 +21,7 @@ module.exports = {
       },
     ],
     'spaced-comment': 'off',
-    'no-eq-null': 'error',
+    eqeqeq: ['error', 'always'],
     semi: ['error', 'never'],
   },
 }
