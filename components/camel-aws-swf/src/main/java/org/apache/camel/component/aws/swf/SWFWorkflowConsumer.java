@@ -52,8 +52,8 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
         return endpoint.getResult(exchange);
     }
 
-    public void signalRecieved(Object[] parameters) throws Exception {
-        LOGGER.debug("signalRecieved: " + Arrays.toString(parameters));
+    public void signalReceived(Object[] parameters) throws Exception {
+        LOGGER.debug("signalReceived: " + Arrays.toString(parameters));
 
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.SIGNAL_RECEIVED_ACTION);
         exchange.setPattern(InOnly);

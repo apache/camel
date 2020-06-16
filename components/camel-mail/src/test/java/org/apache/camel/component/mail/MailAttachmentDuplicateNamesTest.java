@@ -37,7 +37,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
 
     @Test
-    public void testSendAndRecieveMailWithAttachmentsWithDuplicateNames() throws Exception {
+    public void testSendAndReceiveMailWithAttachmentsWithDuplicateNames() throws Exception {
         // clear mailbox
         Mailbox.clearAll();
 

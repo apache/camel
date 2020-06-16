@@ -25,7 +25,7 @@ import org.junit.Test;
 @Ignore("run manually since it requires a running local splunk server")
 public class SplunkProducerTest extends SplunkTest {
 
-    // Splunk tcp reciever port configured in Splunk
+    // Splunk tcp receiver port configured in Splunk
     private static final String TCP_RECIEVER_PORT = "9997";
 
     @Test

@@ -662,7 +662,7 @@ public class AS2MessageTest {
         assertEquals(extensionFields, mdnEntity.getExtensionFields(), "Unexpected value for Extension Fields");
         ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request, null);
         ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
-        assertEquals(expectedMic.getEncodedMessageDigest(), mdnMic.getEncodedMessageDigest(), "Unexpected value for Recieved Content Mic");
+        assertEquals(expectedMic.getEncodedMessageDigest(), mdnMic.getEncodedMessageDigest(), "Unexpected value for Received Content Mic");
         LOG.debug("\r\n" + AS2Utils.printMessage(mndRequest));
     }
     

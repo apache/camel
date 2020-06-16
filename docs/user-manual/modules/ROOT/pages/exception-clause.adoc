@@ -747,7 +747,7 @@ from("jms:queue:order:input")
     .to("bean:handleOrder");
 ----
 
-Then the message has been enriched with a header named application after the original message was recieved in the JMS endpoint. And in case of an error then the `onException`
+Then the message has been enriched with a header named application after the original message was received in the JMS endpoint. And in case of an error then the `onException`
 will handle the exception and use the original message body and the headers from the current message as-is, which means the headers will include the application header.
 
 [[ExceptionClause-AdvancedUsageofExceptionClause]]

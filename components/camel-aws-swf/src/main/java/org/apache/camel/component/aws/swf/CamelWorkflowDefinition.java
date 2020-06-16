@@ -96,9 +96,9 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
     public void signalRecieved(String signalName, String input) throws WorkflowException {
         Object[] parameters = dataConverter.fromData(input, Object[].class);
         try {
-            LOGGER.debug("Processing workflow signalRecieved");
+            LOGGER.debug("Processing workflow signalReceived");
 
-            swfWorkflowConsumer.signalRecieved(parameters);
+            swfWorkflowConsumer.signalReceived(parameters);
         } catch (Throwable e) {
             throwWorkflowException(dataConverter, e);
             throw new IllegalStateException("Unreacheable");
