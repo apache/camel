@@ -14787,9 +14787,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Workday (camel-workday)
-     * Detect and parse documents using Workday.
+     * Represents a Workday endpoint.
      * 
-     * Category: cloud,api,hcm
+     * Category: hcm
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      * 
@@ -14797,7 +14797,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
-     * The value can be one of: report
+     * The value can be one of: report, commonAPI
      * 
      * Path parameter: path (required)
      * The API path to access an entity structure.
@@ -14810,9 +14810,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Workday (camel-workday)
-     * Detect and parse documents using Workday.
+     * Represents a Workday endpoint.
      * 
-     * Category: cloud,api,hcm
+     * Category: hcm
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      * 
@@ -14820,7 +14820,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
-     * The value can be one of: report
+     * The value can be one of: report, commonAPI
      * 
      * Path parameter: path (required)
      * The API path to access an entity structure.

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.workday;
 
-import org.apache.camel.Category;
+import org.apache.camel.component.workday.producer.WorkdayCommonAPIProducer;
+import org.apache.camel.component.workday.producer.WorkdayReportProducer;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -25,9 +27,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Detect and parse documents using Workday.
+ * Represents a Workday endpoint.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true, category = {Category.CLOUD, Category.API, Category.HCM})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true, label = "hcm")
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -43,10 +45,12 @@ public class WorkdayEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         switch (workdayConfiguration.getEntity()) {
-            case report:
-                return new WorkdayReportProducer(this);
-            default:
-                throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
+        case report:
+            return new WorkdayReportProducer(this);
+        case commonAPI:
+            return new WorkdayCommonAPIProducer(this);
+        default:
+            throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
         }
     }
 

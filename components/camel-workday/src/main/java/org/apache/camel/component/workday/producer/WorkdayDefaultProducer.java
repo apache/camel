@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.workday;
+package org.apache.camel.component.workday.producer;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,13 +32,16 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.camel.component.workday.WorkdayEndpoint;
+import org.apache.camel.component.workday.WorkdayConfiguration;
+
+
 /**
- * The Workday Report producer.
+ * The Workday Default producer.
  */
-public class WorkdayReportProducer extends DefaultProducer {
+public abstract class WorkdayDefaultProducer extends DefaultProducer {
 
     public static final String WORKDAY_URL_HEADER = "CamelWorkdayURL";
-    public static final String WORKDAY_RASS_URL_TEMPALTE = "https://%s/ccx/service/customreport2/%s%s";
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
 
@@ -46,7 +49,7 @@ public class WorkdayReportProducer extends DefaultProducer {
 
     private AutheticationClient autheticationClient;
 
-    public WorkdayReportProducer(WorkdayEndpoint endpoint) {
+    public WorkdayDefaultProducer(WorkdayEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.autheticationClient = new AuthClientForIntegration(this.endpoint.getWorkdayConfiguration());
@@ -81,21 +84,6 @@ public class WorkdayReportProducer extends DefaultProducer {
         exchange.getIn().setHeader(WORKDAY_URL_HEADER, workdayUri);
     }
 
-    public String prepareUri(WorkdayConfiguration configuration) {
-        Map<String, Object> parameters = configuration.getParameters();
-        StringBuilder stringBuilder = new StringBuilder(configuration.getPath());
-        stringBuilder.append("?");
-        if (parameters.size() > 0) {
-            String params = parameters.keySet().stream().map(k -> k + "=" + parameters.get(k)).collect(Collectors.joining("&"));
-            stringBuilder.append(params);
-            stringBuilder.append("&");
-        }
-
-        stringBuilder.append("format=");
-        stringBuilder.append(configuration.getReportFormat());
-        String uriString = String.format(WORKDAY_RASS_URL_TEMPALTE, configuration.getHost(), configuration.getTenant(), stringBuilder.toString());
-
-        return uriString;
-    }
+    public abstract String prepareUri(WorkdayConfiguration configuration) throws Exception;
 
 }

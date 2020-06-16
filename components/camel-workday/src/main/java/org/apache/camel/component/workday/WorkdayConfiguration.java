@@ -32,10 +32,11 @@ public class WorkdayConfiguration {
 
     // Implemented entities
     public enum Entity {
-        report
+        report,
+        commonAPI
     }
 
-    @UriPath(description = "The entity to be requested or subscribed via API.", enums = "report")
+    @UriPath(description = "The entity to be requested or subscribed via API.", enums = "report,commonAPI")
     @Metadata(required = true)
     private Entity entity;
 
@@ -159,7 +160,7 @@ public class WorkdayConfiguration {
             entity = u.getScheme();
             path = u.getPath();
         } catch (Exception e) {
-            throw new MalformedURLException(String.format("An invalid workday remaining uri: '%s' was provided. Error: '%s'", remaining, e.getMessage()));
+            throw new MalformedURLException(String.format("An invalid workday remaining uri: '%s' was provided. Error: ", remaining, e.getMessage()));
         }
         ObjectHelper.notNull(entity, "Entity");
 
