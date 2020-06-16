@@ -17,9 +17,9 @@
 package org.apache.camel.component.ignite;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
@@ -46,17 +46,14 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
         USER_MANAGED, COMPONENT_MANAGED
     }
 
-    /** Ignite configuration. */
-    private IgniteConfiguration igniteConfiguration;
-
-    /** Resource from where to load configuration. */
-    private Object configurationResource;
-
-    /** Ignite instance. */
-    private Ignite ignite;
-
-    /** How the Ignite lifecycle is managed. */
     private IgniteLifecycleMode lifecycleMode = IgniteLifecycleMode.COMPONENT_MANAGED;
+
+    @Metadata
+    private IgniteConfiguration igniteConfiguration;
+    @Metadata
+    private Object configurationResource;
+    @Metadata
+    private Ignite ignite;
 
     @Override
     protected void doStart() throws Exception {
@@ -97,46 +94,35 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
         }
     }
 
-    /**
-     * Returns the {@link Ignite} instance.
-     */
     public Ignite getIgnite() {
         return ignite;
     }
 
     /**
-     * Sets the {@link Ignite} instance.
+     * To use an existing Ignite instance.
      */
     public void setIgnite(Ignite ignite) {
         this.ignite = ignite;
         lifecycleMode = IgniteLifecycleMode.USER_MANAGED;
     }
 
-    /**
-     * Gets the resource from where to load the configuration. It can be a: {@link URI}, {@link String} (URI) 
-     * or an {@link InputStream}.
-     */
     public Object getConfigurationResource() {
         return configurationResource;
     }
 
     /**
-     * Sets the resource from where to load the configuration. It can be a: {@link URI}, {@link String} (URI) 
-     * or an {@link InputStream}.
+     * The resource from where to load the configuration. It can be a: URL, String or InputStream type.
      */
     public void setConfigurationResource(Object configurationResource) {
         this.configurationResource = configurationResource;
     }
 
-    /**
-     * Gets the {@link IgniteConfiguration} if the user set it explicitly.
-     */
     public IgniteConfiguration getIgniteConfiguration() {
         return igniteConfiguration;
     }
 
     /**
-     * Allows the user to set a programmatic {@link IgniteConfiguration}.
+     * Allows the user to set a programmatic ignite configuration.
      */
     public void setIgniteConfiguration(IgniteConfiguration igniteConfiguration) {
         this.igniteConfiguration = igniteConfiguration;

@@ -19,6 +19,7 @@ package org.apache.camel.component.influxdb;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
@@ -27,6 +28,7 @@ import org.influxdb.InfluxDB;
 @Component("influxdb")
 public class InfluxDbComponent extends DefaultComponent {
 
+    @Metadata
     private InfluxDB influxDB;
 
     public InfluxDbComponent() {
