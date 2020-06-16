@@ -23,6 +23,7 @@ import com.jcraft.jsch.JSch;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 /**
@@ -31,6 +32,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("scp")
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
+    @Metadata
     private boolean verboseLogging;
 
     public ScpComponent() {
@@ -52,17 +54,9 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    protected void doInit() throws Exception {
+        super.doInit();
         initJsch();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        // noop
     }
 
     public boolean isVerboseLogging() {

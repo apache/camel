@@ -83,7 +83,7 @@ public class SqlComponent extends DefaultComponent {
             if (dataSources.size() > 1) {
                 throw new IllegalArgumentException("Multiple DataSources found in the registry and no explicit configuration provided");
             } else if (dataSources.size() == 1) {
-                target = dataSources.stream().findFirst().orElse(null);
+                target = dataSources.iterator().next();
             }
         }
         if (target == null) {

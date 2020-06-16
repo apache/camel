@@ -47,17 +47,6 @@ public interface SlackComponentBuilderFactory {
      */
     interface SlackComponentBuilder extends ComponentBuilder<SlackComponent> {
         /**
-         * The incoming webhook URL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SlackComponentBuilder webhookUrl(java.lang.String webhookUrl) {
-            doSetProperty("webhookUrl", webhookUrl);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -111,6 +100,17 @@ public interface SlackComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * The incoming webhook URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: webhook
+         */
+        default SlackComponentBuilder webhookUrl(java.lang.String webhookUrl) {
+            doSetProperty("webhookUrl", webhookUrl);
+            return this;
+        }
     }
 
     class SlackComponentBuilderImpl
@@ -128,10 +128,10 @@ public interface SlackComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "webhookUrl": ((SlackComponent) component).setWebhookUrl((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((SlackComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SlackComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((SlackComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "webhookUrl": ((SlackComponent) component).setWebhookUrl((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -19,6 +19,7 @@ package org.apache.camel.component.spark;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.spark.api.java.JavaRDDLike;
@@ -26,7 +27,9 @@ import org.apache.spark.api.java.JavaRDDLike;
 @Component("spark")
 public class SparkComponent extends DefaultComponent {
 
+    @Metadata
     private JavaRDDLike rdd;
+    @Metadata
     private RddCallback rddCallback;
 
     public SparkComponent() {
@@ -35,7 +38,12 @@ public class SparkComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         EndpointType type = getCamelContext().getTypeConverter().mandatoryConvertTo(EndpointType.class, remaining);
-        return new SparkEndpoint(uri, this, type);
+
+        SparkEndpoint answer = new SparkEndpoint(uri, this, type);
+        answer.setRdd(rdd);
+        answer.setRddCallback(rddCallback);
+        setProperties(answer, parameters);
+        return answer;
     }
 
     public JavaRDDLike getRdd() {
