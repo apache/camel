@@ -49,7 +49,8 @@ public interface MongodbComponentBuilderFactory {
             extends
                 ComponentBuilder<MongoDbComponent> {
         /**
-         * A connection client provided externally.
+         * Shared client used for connection. All endpoints generated from the
+         * component will share this connection client.
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
