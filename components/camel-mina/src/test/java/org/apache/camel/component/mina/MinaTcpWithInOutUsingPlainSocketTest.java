@@ -53,16 +53,16 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNull() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull("no data should be received", out);
     }
 
     @Test
     public void testReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
         String out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull("no data should be received", out);
 
         out = sendAndReceive("force-null-out-body");
-        assertNull("no data should be recieved", out);
+        assertNull("no data should be received", out);
     }
 
     @Test

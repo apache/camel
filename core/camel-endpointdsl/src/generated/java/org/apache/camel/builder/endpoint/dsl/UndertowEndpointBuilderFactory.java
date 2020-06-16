@@ -478,7 +478,7 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which Undertow AccessLogReciever should be used Will use
+         * Which Undertow AccessLogReceiver should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
          * 
          * The option is a:
@@ -493,7 +493,7 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which Undertow AccessLogReciever should be used Will use
+         * Which Undertow AccessLogReceiver should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
          * 
          * The option will be converted to a
@@ -1122,7 +1122,7 @@ public interface UndertowEndpointBuilderFactory {
             return (UndertowEndpointProducerBuilder) this;
         }
         /**
-         * Which Undertow AccessLogReciever should be used Will use
+         * Which Undertow AccessLogReceiver should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
          * 
          * The option is a:
@@ -1137,7 +1137,7 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which Undertow AccessLogReciever should be used Will use
+         * Which Undertow AccessLogReceiver should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
          * 
          * The option will be converted to a
@@ -1422,7 +1422,7 @@ public interface UndertowEndpointBuilderFactory {
             return (UndertowEndpointBuilder) this;
         }
         /**
-         * Which Undertow AccessLogReciever should be used Will use
+         * Which Undertow AccessLogReceiver should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
          * 
          * The option is a:
@@ -1437,7 +1437,7 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which Undertow AccessLogReciever should be used Will use
+         * Which Undertow AccessLogReceiver should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
          * 
          * The option will be converted to a

@@ -114,10 +114,10 @@ public class MailRouteTest extends CamelTestSupport {
                 from("pop3://route-test-james@localhost?initialDelay=100&delay=100").to("direct:a");
 
                 // must use fixed to option to send the mail to the given
-                // reciever, as we have polled
+                // receiver, as we have polled
                 // a mail from a mailbox where it already has the 'old' To as
                 // header value
-                // here we send the mail to 2 recievers. notice we can use a
+                // here we send the mail to 2 receivers. notice we can use a
                 // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
