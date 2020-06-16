@@ -591,6 +591,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     fields.stream().anyMatch(f -> f.getAnnotation(Metadata.class) != null)
                     || methods.stream().anyMatch(m -> m.getAnnotation(Metadata.class) != null);
 
+            if (methods.size() > 0 && !annotationBasedOptions) {
+                getLog().warn("Component class " + classElement.getName() + " has not been marked up with @Metadata for " + methods.size() + " options.");
+            }
+
             for (Method method : methods) {
                 String methodName = method.getName();
                 Metadata metadata = method.getAnnotation(Metadata.class);
