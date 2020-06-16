@@ -49,7 +49,8 @@ public interface IgniteMessagingComponentBuilderFactory {
             extends
                 ComponentBuilder<IgniteMessagingComponent> {
         /**
-         * Resource from where to load configuration.
+         * The resource from where to load the configuration. It can be a: URL,
+         * String or InputStream type.
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
@@ -61,7 +62,7 @@ public interface IgniteMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * Ignite instance.
+         * To use an existing Ignite instance.
          * 
          * The option is a: <code>org.apache.ignite.Ignite</code> type.
          * 
@@ -73,7 +74,7 @@ public interface IgniteMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * Ignite configuration.
+         * Allows the user to set a programmatic ignite configuration.
          * 
          * The option is a:
          * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
