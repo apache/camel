@@ -21,8 +21,6 @@ public class FlinkComponentConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "dataset":
-        case "dataSet": target.setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
         case "datasetcallback":
         case "dataSetCallback": target.setDataSetCallback(property(camelContext, org.apache.camel.component.flink.DataSetCallback.class, value)); return true;
         case "datastream":
@@ -39,7 +37,6 @@ public class FlinkComponentConfigurer extends PropertyConfigurerSupport implemen
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("basicPropertyBinding", boolean.class);
-        answer.put("dataSet", org.apache.flink.api.java.DataSet.class);
         answer.put("dataSetCallback", org.apache.camel.component.flink.DataSetCallback.class);
         answer.put("dataStream", org.apache.flink.streaming.api.datastream.DataStream.class);
         answer.put("dataStreamCallback", org.apache.camel.component.flink.DataStreamCallback.class);
@@ -53,8 +50,6 @@ public class FlinkComponentConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
-        case "dataset":
-        case "dataSet": return target.getDataSet();
         case "datasetcallback":
         case "dataSetCallback": return target.getDataSetCallback();
         case "datastream":

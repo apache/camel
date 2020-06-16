@@ -62,22 +62,6 @@ public interface GuavaEventbusComponentBuilderFactory {
             return this;
         }
         /**
-         * The interface with method(s) marked with the Subscribe annotation.
-         * Dynamic proxy will be created over the interface so it could be
-         * registered as the EventBus listener. Particularly useful when
-         * creating multi-event listeners and for handling DeadEvent properly.
-         * This option cannot be used together with eventClass option.
-         * 
-         * The option is a: <code>java.lang.Class<java.lang.Object></code> type.
-         * 
-         * Group: common
-         */
-        default GuavaEventbusComponentBuilder listenerInterface(
-                java.lang.Class<java.lang.Object> listenerInterface) {
-            doSetProperty("listenerInterface", listenerInterface);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -94,6 +78,22 @@ public interface GuavaEventbusComponentBuilderFactory {
         default GuavaEventbusComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The interface with method(s) marked with the Subscribe annotation.
+         * Dynamic proxy will be created over the interface so it could be
+         * registered as the EventBus listener. Particularly useful when
+         * creating multi-event listeners and for handling DeadEvent properly.
+         * This option cannot be used together with eventClass option.
+         * 
+         * The option is a: <code>java.lang.Class<java.lang.Object></code> type.
+         * 
+         * Group: consumer
+         */
+        default GuavaEventbusComponentBuilder listenerInterface(
+                java.lang.Class<java.lang.Object> listenerInterface) {
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
         /**
@@ -149,8 +149,8 @@ public interface GuavaEventbusComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "eventBus": ((GuavaEventBusComponent) component).setEventBus((com.google.common.eventbus.EventBus) value); return true;
-            case "listenerInterface": ((GuavaEventBusComponent) component).setListenerInterface((java.lang.Class) value); return true;
             case "bridgeErrorHandler": ((GuavaEventBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "listenerInterface": ((GuavaEventBusComponent) component).setListenerInterface((java.lang.Class) value); return true;
             case "lazyStartProducer": ((GuavaEventBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GuavaEventBusComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
