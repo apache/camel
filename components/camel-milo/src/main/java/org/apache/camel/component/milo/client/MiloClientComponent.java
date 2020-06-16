@@ -56,7 +56,7 @@ public class MiloClientComponent extends DefaultComponent {
         final String cacheId = configuration.toCacheId();
         MiloClientConnection connection = this.cache.get(cacheId);
         if (connection == null) {
-            LOG.info("Cache miss - creating new connection instance: {}", cacheId);
+            LOG.debug("Cache miss - creating new connection instance: {}", cacheId);
             connection = new MiloClientConnection(configuration);
             this.cache.put(cacheId, connection);
         }

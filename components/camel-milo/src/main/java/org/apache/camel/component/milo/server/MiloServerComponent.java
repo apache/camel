@@ -38,6 +38,7 @@ import java.util.Set;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
@@ -82,26 +83,44 @@ public class MiloServerComponent extends DefaultComponent {
 
     private final List<Runnable> runOnStop = new LinkedList<>();
 
-    private int port;
-    private String namespaceUri = DEFAULT_NAMESPACE_URI;
     private OpcUaServerConfigBuilder opcServerConfig;
     private OpcUaServer server;
     private CamelNamespace namespace;
-    private Boolean enableAnonymousAuthentication;
-    private CertificateManager certificateManager;
-    private String securityPoliciesById;
-    private Set<SecurityPolicy> securityPolicies;
-    private String userAuthenticationCredentials;
-    private String usernameSecurityPolicyUri = OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME.getSecurityPolicyUri();
+
+    @Metadata
+    private int port;
+    @Metadata
     private List<String> bindAddresses;
-    private String defaultCertificateValidator;
-    private CertificateValidator certificateValidator;
-    private X509Certificate certificate;
+    @Metadata(defaultValue = "" + DEFAULT_NAMESPACE_URI)
+    private String namespaceUri = DEFAULT_NAMESPACE_URI;
+    @Metadata
     private String productUri;
+    @Metadata
     private String applicationUri;
+    @Metadata
     private String applicationName;
+    @Metadata
     private String path;
+    @Metadata
     private BuildInfo buildInfo;
+    @Metadata(label = "security")
+    private Boolean enableAnonymousAuthentication;
+    @Metadata(label = "security")
+    private CertificateManager certificateManager;
+    @Metadata(label = "security")
+    private String securityPoliciesById;
+    @Metadata(label = "security")
+    private Set<SecurityPolicy> securityPolicies;
+    @Metadata(label = "security", secret = true)
+    private String userAuthenticationCredentials;
+    @Metadata(label = "security")
+    private String usernameSecurityPolicyUri = OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME.getSecurityPolicyUri();
+    @Metadata(label = "security")
+    private String defaultCertificateValidator;
+    @Metadata(label = "security")
+    private CertificateValidator certificateValidator;
+    @Metadata(label = "security")
+    private X509Certificate certificate;
 
     public MiloServerComponent() {
         this.opcServerConfig = null;

@@ -26,12 +26,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mongodb.meta.MongoDBMetaExtension;
 import org.apache.camel.component.mongodb.verifier.MongoComponentVerifierExtension;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link MongoDbEndpoint}.
- */
 @Component("mongodb")
 public class MongoDbComponent extends DefaultComponent {
 
@@ -41,9 +39,7 @@ public class MongoDbComponent extends DefaultComponent {
             MongoDbOperation.update,
             MongoDbOperation.remove));
 
-    /**
-     * A connection client provided externally
-     */
+    @Metadata
     private MongoClient mongoConnection;
 
     public MongoDbComponent() {
@@ -68,26 +64,17 @@ public class MongoDbComponent extends DefaultComponent {
 
     /**
      * Get the connection bean client used for connection.
-     *
-     * @return the client used for connection to db
      */
     public MongoClient getMongoConnection() {
         return mongoConnection;
     }
 
     /**
-     * Set a client used for connection: all endpoints generated from the component
-     * will share this connection bean.
-     *
-     * @param mongoConnection the connection bean used as client
+     * Shared client used for connection.
+     * All endpoints generated from the component will share this connection client.
      */
     public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
     }
 
     public static CamelMongoDbException wrapInCamelMongoDbException(Throwable t) {
