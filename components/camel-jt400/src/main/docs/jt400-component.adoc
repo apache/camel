@@ -140,11 +140,11 @@ with the following path and query parameters:
 
 == Usage
 
-When configured as a consumer endpoint, the endpoint will poll a data
-queue or message queue on a remote system. For every entry on the queue, 
-a new `Exchange` is sent with the entry's data in the _In_ message's body. 
-For message queues, the data is always formatted as a `String`. For data
-queues, it is formatted either as a `String` or a `byte[]`, depending on
+When configured as a data queue consumer endpoint, the endpoint will poll
+a data queue or message queue on a remote system. For every entry on the
+queue, a new `Exchange` is sent with the entry's data in the _In_ message's
+body. For message queues, the data is always formatted as a `String`. For
+data queues, it is formatted either as a `String` or a `byte[]`, depending on
 the format.
 
 For a message queue provider endpoint, the _In_ message body contents are
@@ -169,6 +169,31 @@ support it). After the program execution the endpoint returns either a
 String array or byte[] array with the values as they were returned by
 the program (the input only parameters will contain the same data as the
 beginning of the invocation). This endpoint does not implement a provider endpoint!
+
+== Message headers
+
+=== Consumer headers when consuming from data queues
+
+The following headers are potentially available. If the values could not
+be determined, the headers will not be set
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|===
+| Header constant                          | Header value                      | Type    | Description
+| Jt400Endpoint.SENDER_INFORMATION         | "SENDER_INFORMATION"              | String  | Returns the sender information for this data queue entry, or an empty string if not available
+|===
+
+=== Consumer headers when consuming from message queues
+
+The following headers are potentially available. If the values could not
+be determined, the headers will not be set
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|===
+| Header constant                          | Header value                      | Type    | Description
+| Jt400Endpoint.MESSAGE_ID                 | "jt400.MESSAGE_ID"                | String  | The message identifier
+| Jt400Endpoint.MESSAGE_FILE               | "jt400.MESSAGE_FILE"              | String  | The message file name
+| Jt400Endpoint.MESSAGE_TYPE               | "jt400.MESSAGE_TYPE               | Integer | The message type (corresponds to constants defined in the AS400Message class)
+| Jt400Endpoint.SENDER_INFORMATION         | "SENDER_INFORMATION"              | String  | The job identifier of the sending job
+|===
 
 == Example
 
