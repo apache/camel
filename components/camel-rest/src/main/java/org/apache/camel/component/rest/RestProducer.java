@@ -206,7 +206,7 @@ public class RestProducer extends DefaultAsyncProducer {
         // method
         String method = getEndpoint().getMethod();
         if (method != null) {
-            // the method should be in upper case 
+            // the method should be in upper case
             String upper = method.toUpperCase(Locale.US);
             inMessage.setHeader(Exchange.HTTP_METHOD, upper);
         }
@@ -357,7 +357,7 @@ public class RestProducer extends DefaultAsyncProducer {
         if (jaxb != null) {
             // to setup JAXB we need to use camel-jaxb
             camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
-                    .setupJaxb(camelContext, configuration, type, outType, jaxb, outJaxb);
+                    .setupJaxb(camelContext, configuration, type, null, outType, null, jaxb, outJaxb);
         }
 
         return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);

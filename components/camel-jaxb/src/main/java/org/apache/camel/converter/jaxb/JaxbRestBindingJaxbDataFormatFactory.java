@@ -27,49 +27,72 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.StringHelper;
 
 /**
  * JAXB based {@link RestBindingJaxbDataFormatFactory}.
  */
 @JdkService(RestBindingJaxbDataFormatFactory.FACTORY)
 public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbDataFormatFactory {
-
     @Override
-    public void setupJaxb(CamelContext camelContext, RestConfiguration config, String type, String outType, DataFormat jaxb, DataFormat outJaxb) throws Exception {
+    public void setupJaxb(CamelContext camelContext, RestConfiguration config,
+                          String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
+                          DataFormat jaxb, DataFormat outJaxb) throws Exception {
         // lookup configurer
         PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
         if (configurer == null) {
             throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");
         }
 
+        //
+        // IN
+        //
+
         PropertyBindingSupport.Builder builder = PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
                 .withConfigurer(configurer)
                 .withTarget(jaxb);
-        if (type != null) {
-            String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+
+        String typeName = null;
+        if (typeClass != null) {
+            typeName = typeClass.isArray() ? typeClass.getComponentType().getName() : typeClass.getName();
+        } else if (type != null) {
+            typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+        }
+        if (typeName != null) {
             builder.withProperty("contextPath", typeName);
             builder.withProperty("contextPathIsClassName", "true");
         }
+
         setAdditionalConfiguration(config, "xml.in.", builder);
         builder.bind();
 
-        builder = PropertyBindingSupport.build()
+        //
+        // OUT
+        //
+
+        PropertyBindingSupport.Builder outBuilder = PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
                 .withConfigurer(configurer)
                 .withTarget(outJaxb);
-        if (outType != null) {
-            String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-            builder.withProperty("contextPath", typeName);
-            builder.withProperty("contextPathIsClassName", "true");
-        } else if (type != null) {
+
+        String outTypeName = null;
+        if (outTypeClass != null) {
+            outTypeName = outTypeClass.isArray() ? outTypeClass.getComponentType().getName() : outTypeClass.getName();
+        } else if (outType != null) {
+            outTypeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+        } else if (typeName != null) {
             // fallback and use the context from the input
-            String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-            builder.withProperty("contextPath", typeName);
-            builder.withProperty("contextPathIsClassName", "true");
+            outTypeName = typeName;
         }
-        setAdditionalConfiguration(config, "xml.out.", builder);
-        builder.bind();
+
+        if (outTypeName != null) {
+            outBuilder.withProperty("contextPath", outTypeName);
+            outBuilder.withProperty("contextPathIsClassName", "true");
+        }
+
+        setAdditionalConfiguration(config, "xml.out.", outBuilder);
+        outBuilder.bind();
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) throws Exception {
