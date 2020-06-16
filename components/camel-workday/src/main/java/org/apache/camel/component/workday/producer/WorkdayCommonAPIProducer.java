@@ -90,9 +90,6 @@ public class WorkdayCommonAPIProducer extends WorkdayDefaultProducer {
 
 		String genericPath = pathString.replaceAll(WORKDAY_ID_PATTERN, WORKDAY_GENERIC_ID);
 
-		System.out.println(genericPath);
-		System.out.println(!this.workdayValidEndpointSet.contains(genericPath));
-
 		if(!this.workdayValidEndpointSet.contains(genericPath))	
 			throw new MalformedURLException(String.format("An invalid Workday Common endpoint: '%s' was provided.", genericPath));
 
