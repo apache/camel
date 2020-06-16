@@ -17,8 +17,12 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringMainStartFailedIssueTest extends CamelTestSupport {
 
@@ -34,6 +38,6 @@ public class SpringMainStartFailedIssueTest extends CamelTestSupport {
             assertIsInstanceOf(FailedToCreateRouteException.class, e);
         }
 
-        assertNull("Spring application context should NOT be created", main.getApplicationContext());
+        assertNull(main.getApplicationContext(), "Spring application context should NOT be created");
     }
 }
