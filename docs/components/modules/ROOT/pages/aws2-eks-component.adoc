@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The AWS2 EKS component supports create, delete, describe and list
+The AWS2 EKS component supports create, delete, describe and list clusters
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.
 
 Prerequisites
