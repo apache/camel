@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The AWS2 ECS component supports create, delete, describe and list
+The AWS2 ECS component supports create, delete, describe and list clusters
 https://aws.amazon.com/ecs/[AWS ECS] clusters instances.
 
 Prerequisites
