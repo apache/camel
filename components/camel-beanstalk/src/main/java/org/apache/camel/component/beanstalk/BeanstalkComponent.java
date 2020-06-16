@@ -19,6 +19,7 @@ package org.apache.camel.component.beanstalk;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -79,6 +80,7 @@ public class BeanstalkComponent extends DefaultComponent {
      * @param connFactory the connection factory
      * @see ConnectionSettingsFactory
      */
+    @Metadata(label = "advanced")
     public static void setConnectionSettingsFactory(ConnectionSettingsFactory connFactory) {
         BeanstalkComponent.connectionSettingsFactory = connFactory;
     }
