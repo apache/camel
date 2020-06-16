@@ -19,6 +19,7 @@ package org.apache.camel.component.jt400;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ScheduledPollConsumer;
@@ -119,15 +120,15 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
 
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
-        final String messageId = entry.getID();
-        if (null != messageId) {
-            exchange.getIn().setHeader(Jt400Endpoint.MESSAGE_ID, messageId);
-        }
-        final String messageFile = entry.getFileName();
-        if (null != messageFile) {
-            exchange.getIn().setHeader(Jt400Endpoint.MESSAGE_FILE, messageFile);
-        }
+        setHeaderIfValueNotNull(exchange.getIn(), Jt400Endpoint.MESSAGE_ID, entry.getID());
+        setHeaderIfValueNotNull(exchange.getIn(), Jt400Endpoint.MESSAGE_FILE, entry.getFileName());
         exchange.getIn().setBody(entry.getText());
         return exchange;
+    }
+    private static void setHeaderIfValueNotNull(final Message message, final String header, final Object value) {
+        if (null == value) {
+            return;
+        }
+        message.setHeader(header, value);
     }
 }
