@@ -91,7 +91,11 @@ public class RestBindingReifier extends AbstractReifier {
             outJson = camelContext.resolveDataFormat(name);
 
             if (json != null) {
-                setupJson(config, parseString(definition.getType()), parseString(definition.getOutType()), json, outJson);
+                setupJson(
+                    config,
+                    parseString(definition.getType()), definition.getTypeClass(),
+                    parseString(definition.getOutType()), definition.getOutTypeClass(),
+                    json, outJson);
             }
         }
 
@@ -121,8 +125,11 @@ public class RestBindingReifier extends AbstractReifier {
 
             if (jaxb != null) {
                 // to setup JAXB we need to use camel-jaxb
-                camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
-                        .setupJaxb(camelContext, config, parseString(definition.getType()), parseString(definition.getOutType()), jaxb, outJaxb);
+                camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory().setupJaxb(
+                    camelContext, config,
+                    parseString(definition.getType()), definition.getTypeClass(),
+                    parseString(definition.getOutType()), definition.getOutTypeClass(),
+                    jaxb, outJaxb);
             }
         }
 
@@ -133,27 +140,42 @@ public class RestBindingReifier extends AbstractReifier {
                                      definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
     }
 
-    protected void setupJson(RestConfiguration config, String type, String outType, DataFormat json, DataFormat outJson) throws Exception {
+    protected void setupJson(RestConfiguration config, String type, Class<?> typeClass, String outType, Class<?> outTypeClass, DataFormat json, DataFormat outJson) throws Exception {
         Class<?> clazz = null;
-        if (type != null) {
-            String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+        boolean useList = false;
+
+        if (typeClass != null) {
+            useList = typeClass.isArray();
+            clazz = useList ? typeClass.getComponentType() : typeClass;
+        } else if (type != null) {
+            useList = type.endsWith("[]");
+            String typeName = useList ? type.substring(0, type.length() - 2) : type;
             clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
         if (clazz != null) {
             camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json, "unmarshalType", clazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json, "useList", type.endsWith("[]"));
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json, "useList", useList);
         }
+
         setAdditionalConfiguration(config, json, "json.in.");
 
         Class<?> outClazz = null;
-        if (outType != null) {
-            String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+        boolean outUseList = false;
+
+        if (outTypeClass != null) {
+            outUseList = outTypeClass.isArray();
+            outClazz = outUseList ? outTypeClass.getComponentType() : outTypeClass;
+        } else if (outType != null) {
+            outUseList = outType.endsWith("[]");
+            String typeName = outUseList ? outType.substring(0, outType.length() - 2) : outType;
             outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
+
         if (outClazz != null) {
             camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson, "unmarshalType", outClazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson, "useList", outType.endsWith("[]"));
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson, "useList", outUseList);
         }
+
         setAdditionalConfiguration(config, outJson, "json.out.");
     }
 
