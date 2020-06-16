@@ -44,6 +44,10 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public static final String KEY = "KEY";
     public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
 
+    // Used only for message queue support
+    public static final String MESSAGE_ID = "MESSAGE_ID";
+    public static final String MESSAGE_FILE = "MESSAGE_FILE";
+
     @UriParam
     private final Jt400Configuration configuration;
 

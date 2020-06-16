@@ -108,7 +108,15 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         }
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getFromJobName() + "/" + entry.getUser()); //TODO: make sure this is the right order
-        exchange.getIn().setBody(entry.toString());
+        final String messageId = entry.getID();
+        if (null != messageId) {
+            exchange.getIn().setHeader(Jt400Endpoint.MESSAGE_ID, messageId);
+        }
+        final String messageFile = entry.getFileName();
+        if (null != messageFile) {
+            exchange.getIn().setHeader(Jt400Endpoint.MESSAGE_FILE, messageFile);
+        }
+        exchange.getIn().setBody(entry.getText());
         return exchange;
     }
 }
