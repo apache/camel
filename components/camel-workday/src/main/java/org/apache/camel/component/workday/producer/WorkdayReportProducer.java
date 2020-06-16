@@ -19,28 +19,27 @@ package org.apache.camel.component.workday.producer;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.camel.component.workday.WorkdayEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Workday Report producer.
  */
 public class WorkdayReportProducer extends WorkdayDefaultProducer {
 
-	public static final String WORKDAY_RASS_URL_TEMPLATE = "https://%s/ccx/service/customreport2/%s%s";
+    public static final String WORKDAY_RASS_URL_TEMPLATE = "https://%s/ccx/service/customreport2/%s%s";
 
-	private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
 
-	public WorkdayReportProducer(WorkdayEndpoint endpoint) {
-		super(endpoint);
-	}
+    public WorkdayReportProducer(WorkdayEndpoint endpoint) {
+        super(endpoint);
+    }
 
 
-	@Override
-	public String prepareUri(WorkdayConfiguration configuration) {
+    @Override
+    public String prepareUri(WorkdayConfiguration configuration) {
         Map<String, Object> parameters = configuration.getParameters();
         StringBuilder stringBuilder = new StringBuilder(configuration.getPath());
         stringBuilder.append("?");

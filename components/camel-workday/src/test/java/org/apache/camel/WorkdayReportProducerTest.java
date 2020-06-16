@@ -20,7 +20,6 @@ import org.apache.camel.component.workday.WorkdayComponent;
 import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.camel.component.workday.WorkdayEndpoint;
 import org.apache.camel.component.workday.producer.WorkdayReportProducer;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

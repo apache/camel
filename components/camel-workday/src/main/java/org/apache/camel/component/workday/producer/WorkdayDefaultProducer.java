@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.workday.producer;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.component.workday.WorkdayConfiguration;
+import org.apache.camel.component.workday.WorkdayEndpoint;
 import org.apache.camel.component.workday.auth.AuthClientForIntegration;
 import org.apache.camel.component.workday.auth.AutheticationClient;
 import org.apache.camel.support.DefaultProducer;
@@ -31,10 +30,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.camel.component.workday.WorkdayEndpoint;
-import org.apache.camel.component.workday.WorkdayConfiguration;
-
 
 /**
  * The Workday Default producer.
