@@ -109,16 +109,16 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
     private Exchange receive(MessageQueue queue, long timeout) throws Exception {
         QueuedMessage entry;
         int seconds = (timeout >= 0) ? (int) timeout / 1000 : -1;
-        LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(), -1 == seconds? "infinite" : seconds);
+        LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(), -1 == seconds ? "infinite" : seconds);
         entry = queue.receive(null, 
                               seconds,
                               MessageQueue.OLD,  // message action    //TODO: make configurable
                               MessageQueue.ANY); // types of messages //TODO: make configurable
-        if(null == entry) {
+        if (null == entry) {
             return null;
         }
         Exchange exchange = getEndpoint().createExchange();
-        exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber()+"/"+entry.getFromJobName()+"/"+entry.getUser()); //TODO: make sure this is the right order
+        exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getFromJobName() + "/" + entry.getUser()); //TODO: make sure this is the right order
         exchange.getIn().setBody(entry.toString());
         return exchange;
     }
