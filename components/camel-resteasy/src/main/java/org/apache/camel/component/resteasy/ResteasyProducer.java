@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * ResteasyProducer binds a Camel exchange to a Http Request, acts as a Resteasy
  * client, and sends the request to a server.  Any response will
  * be bound to Camel exchange.
- *
  */
 public class ResteasyProducer extends DefaultProducer {
 
@@ -71,7 +70,6 @@ public class ResteasyProducer extends DefaultProducer {
 
             response.close();
         }
-
     }
 
 

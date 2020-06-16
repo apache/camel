@@ -519,34 +519,6 @@ public interface ResteasyEndpointBuilderFactory {
             return (ResteasyEndpointConsumerBuilder) this;
         }
         /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpBinding(
-                Object httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpBinding(
-                String httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
          * Whether to eager check whether the HTTP requests has content if the
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
@@ -748,58 +720,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClientConnectionManager to manage connections.
-         * 
-         * The option is a:
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder clientConnectionManager(
-                Object clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * To use a custom HttpClientConnectionManager to manage connections.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder clientConnectionManager(
-                String clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder connectionsPerRoute(
-                int connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder connectionsPerRoute(
-                String connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -853,38 +773,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Register a custom configuration strategy for new HttpClient instances
-         * created by producers or consumers such as to configure authentication
-         * mechanisms etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClientConfigurer(
-                Object httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
-         * Register a custom configuration strategy for new HttpClient instances
-         * created by producers or consumers such as to configure authentication
-         * mechanisms etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpClientConfigurer(
-                String httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
          * To configure the HttpClient using the key/values from the Map.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -915,32 +803,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointConsumerBuilder httpClientOptions(
                 Map values) {
             doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
-            return this;
-        }
-        /**
-         * To use a custom HttpContext instance.
-         * 
-         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpContext(
-                Object httpContext) {
-            doSetProperty("httpContext", httpContext);
-            return this;
-        }
-        /**
-         * To use a custom HttpContext instance.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.protocol.HttpContext</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder httpContext(
-                String httpContext) {
-            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -1031,32 +893,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointConsumerBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder maxTotalConnections(
-                int maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointConsumerBuilder maxTotalConnections(
-                String maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -2020,34 +1856,6 @@ public interface ResteasyEndpointBuilderFactory {
             return (ResteasyEndpointProducerBuilder) this;
         }
         /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpBinding(
-                Object httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpBinding(
-                String httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
@@ -2071,44 +1879,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
-            return this;
-        }
-        /**
-         * To use a custom CookieStore. By default the BasicCookieStore is used
-         * which is an in-memory only cookie store. Notice if
-         * bridgeEndpoint=true then the cookie store is forced to be a noop
-         * cookie store as cookie shouldn't be stored as we are just bridging
-         * (eg acting as a proxy). If a cookieHandler is set then the cookie
-         * store is also forced to be a noop cookie store as cookie handling is
-         * then performed by the cookieHandler.
-         * 
-         * The option is a: <code>org.apache.http.client.CookieStore</code>
-         * type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedResteasyEndpointProducerBuilder cookieStore(
-                Object cookieStore) {
-            doSetProperty("cookieStore", cookieStore);
-            return this;
-        }
-        /**
-         * To use a custom CookieStore. By default the BasicCookieStore is used
-         * which is an in-memory only cookie store. Notice if
-         * bridgeEndpoint=true then the cookie store is forced to be a noop
-         * cookie store as cookie shouldn't be stored as we are just bridging
-         * (eg acting as a proxy). If a cookieHandler is set then the cookie
-         * store is also forced to be a noop cookie store as cookie handling is
-         * then performed by the cookieHandler.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.client.CookieStore</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedResteasyEndpointProducerBuilder cookieStore(
-                String cookieStore) {
-            doSetProperty("cookieStore", cookieStore);
             return this;
         }
         /**
@@ -2246,58 +2016,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClientConnectionManager to manage connections.
-         * 
-         * The option is a:
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder clientConnectionManager(
-                Object clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * To use a custom HttpClientConnectionManager to manage connections.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder clientConnectionManager(
-                String clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder connectionsPerRoute(
-                int connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder connectionsPerRoute(
-                String connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -2351,38 +2069,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Register a custom configuration strategy for new HttpClient instances
-         * created by producers or consumers such as to configure authentication
-         * mechanisms etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClientConfigurer(
-                Object httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
-         * Register a custom configuration strategy for new HttpClient instances
-         * created by producers or consumers such as to configure authentication
-         * mechanisms etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpClientConfigurer(
-                String httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
          * To configure the HttpClient using the key/values from the Map.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -2413,32 +2099,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointProducerBuilder httpClientOptions(
                 Map values) {
             doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
-            return this;
-        }
-        /**
-         * To use a custom HttpContext instance.
-         * 
-         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpContext(
-                Object httpContext) {
-            doSetProperty("httpContext", httpContext);
-            return this;
-        }
-        /**
-         * To use a custom HttpContext instance.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.protocol.HttpContext</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder httpContext(
-                String httpContext) {
-            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -2529,32 +2189,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointProducerBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder maxTotalConnections(
-                int maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointProducerBuilder maxTotalConnections(
-                String maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -2997,32 +2631,6 @@ public interface ResteasyEndpointBuilderFactory {
             return (ResteasyEndpointBuilder) this;
         }
         /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedResteasyEndpointBuilder httpBinding(Object httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedResteasyEndpointBuilder httpBinding(String httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -3081,58 +2689,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClientConnectionManager to manage connections.
-         * 
-         * The option is a:
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder clientConnectionManager(
-                Object clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * To use a custom HttpClientConnectionManager to manage connections.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder clientConnectionManager(
-                String clientConnectionManager) {
-            doSetProperty("clientConnectionManager", clientConnectionManager);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder connectionsPerRoute(
-                int connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
-         * The maximum number of connections per route.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder connectionsPerRoute(
-                String connectionsPerRoute) {
-            doSetProperty("connectionsPerRoute", connectionsPerRoute);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -3184,38 +2740,6 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Register a custom configuration strategy for new HttpClient instances
-         * created by producers or consumers such as to configure authentication
-         * mechanisms etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClientConfigurer(
-                Object httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
-         * Register a custom configuration strategy for new HttpClient instances
-         * created by producers or consumers such as to configure authentication
-         * mechanisms etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpClientConfigurer(
-                String httpClientConfigurer) {
-            doSetProperty("httpClientConfigurer", httpClientConfigurer);
-            return this;
-        }
-        /**
          * To configure the HttpClient using the key/values from the Map.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
@@ -3245,30 +2769,6 @@ public interface ResteasyEndpointBuilderFactory {
          */
         default AdvancedResteasyEndpointBuilder httpClientOptions(Map values) {
             doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
-            return this;
-        }
-        /**
-         * To use a custom HttpContext instance.
-         * 
-         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpContext(Object httpContext) {
-            doSetProperty("httpContext", httpContext);
-            return this;
-        }
-        /**
-         * To use a custom HttpContext instance.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.protocol.HttpContext</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder httpContext(String httpContext) {
-            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -3359,32 +2859,6 @@ public interface ResteasyEndpointBuilderFactory {
         default AdvancedResteasyEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder maxTotalConnections(
-                int maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
-            return this;
-        }
-        /**
-         * The maximum number of connections.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 200
-         * Group: advanced
-         */
-        default AdvancedResteasyEndpointBuilder maxTotalConnections(
-                String maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**

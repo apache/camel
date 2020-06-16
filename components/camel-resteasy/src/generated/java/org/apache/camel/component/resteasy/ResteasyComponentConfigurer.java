@@ -21,10 +21,10 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpregistry":
-        case "httpRegistry": target.setHttpRegistry(property(camelContext, org.apache.camel.http.common.HttpRegistry.class, value)); return true;
         case "proxyconsumersclasses":
         case "proxyConsumersClasses": target.setProxyConsumersClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "resteasyhttpbinding":
+        case "resteasyHttpBinding": target.setResteasyHttpBinding(property(camelContext, org.apache.camel.component.resteasy.ResteasyHttpBinding.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }
@@ -33,8 +33,8 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = super.getAllOptions(target);
         answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("httpRegistry", org.apache.camel.http.common.HttpRegistry.class);
         answer.put("proxyConsumersClasses", java.lang.String.class);
+        answer.put("resteasyHttpBinding", org.apache.camel.component.resteasy.ResteasyHttpBinding.class);
         return answer;
     }
 
@@ -44,10 +44,10 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "httpregistry":
-        case "httpRegistry": return target.getHttpRegistry();
         case "proxyconsumersclasses":
         case "proxyConsumersClasses": return target.getProxyConsumersClasses();
+        case "resteasyhttpbinding":
+        case "resteasyHttpBinding": return target.getResteasyHttpBinding();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }
