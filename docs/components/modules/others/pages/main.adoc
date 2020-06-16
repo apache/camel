@@ -219,5 +219,5 @@ The following table lists all the options:
 
 == Examples
 
-You can find a set of examples using `camel-main` in [Camel Examples](https://github.com/apache/camel-examples)
+You can find a set of examples using `camel-main` in https://github.com/apache/camel-examples[Camel Examples]
 which demonstrate running Camel in standalone with `camel-main`.
