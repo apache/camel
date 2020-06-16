@@ -108,14 +108,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             // allow for HTTP 1.1 continue
             HttpHandler httpHandler = new EagerFormParsingHandler().setNext(UndertowConsumer.this);
             if (endpoint.getAccessLog()) {
-                AccessLogReceiver accessLogReciever = null;
+                AccessLogReceiver accessLogReceiver = null;
                 if (endpoint.getAccessLogReceiver() != null) {
-                    accessLogReciever = endpoint.getAccessLogReceiver();
+                    accessLogReceiver = endpoint.getAccessLogReceiver();
                 } else {
-                    accessLogReciever = new JBossLoggingAccessLogReceiver();
+                    accessLogReceiver = new JBossLoggingAccessLogReceiver();
                 }
                 httpHandler = new AccessLogHandler(httpHandler,
-                        accessLogReciever,
+                        accessLogReceiver,
                         "common",
                         AccessLogHandler.class.getClassLoader());
             }

@@ -99,7 +99,7 @@ We can now inspect the received exchanges from within the Java code:
 ----
 private CamelContext context;
 
-public void inspectRecievedOrders() {
+public void inspectReceivedOrders() {
     BrowsableEndpoint browse = context.getEndpoint("browse:orderReceived", BrowsableEndpoint.class);
     List<Exchange> exchanges = browse.getExchanges();
 

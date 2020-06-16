@@ -56,9 +56,9 @@ public class ConsumerTest extends SplunkMockTestSupport {
         when(jobMock.getResults(any())).thenReturn(stream);
 
         assertMockEndpointsSatisfied();
-        SplunkEvent recieved = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
-        assertNotNull(recieved);
-        Map<String, String> data = recieved.getEventData();
+        SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
+        assertNotNull(received);
+        Map<String, String> data = received.getEventData();
         assertEquals("indexertpool", data.get("name"));
         assertEquals(true, searchMock.getReceivedExchanges().get(2).getProperty(Exchange.BATCH_COMPLETE, Boolean.class));
         stream.close();

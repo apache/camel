@@ -101,7 +101,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testRightAlignedNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Right aligned, padding not trimmed", data.field1, Is.is("!!!f1"));
     }
@@ -109,7 +109,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testLeftAlignedNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Left aligned, padding not trimmed", data.field2, Is.is("f2!!!"));
     }
@@ -117,7 +117,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testRightAlignedTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Right aligned, padding trimmed", data.field3, Is.is("f3"));
     }
@@ -125,7 +125,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testLeftAlignedTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Left aligned, padding trimmed", data.field4, Is.is("f4"));
     }
@@ -133,7 +133,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testRightAlignedRecordPaddingNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Right aligned, padding not trimmed", data.field5, Is.is("###f5"));
     }
@@ -141,7 +141,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testLeftAlignedRecordPaddingNotTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Left aligned, padding not trimmed", data.field6, Is.is("f6###"));
     }
@@ -149,7 +149,7 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testRightAlignedRecordPaddingTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Right aligned, padding trimmed", data.field7, Is.is("f7"));
     }
@@ -157,12 +157,12 @@ public class BindyConverterTest extends CamelTestSupport {
     @Test
     @DirtiesContext
     public void testLeftAlignedRecordPaddingTrimmed() throws Exception {
-        AllCombinations data = sendAndRecieveAllCombinations();
+        AllCombinations data = sendAndReceiveAllCombinations();
 
         assertThat("Left aligned, padding trimmed", data.field8, Is.is("f8"));
     }
 
-    private AllCombinations sendAndRecieveAllCombinations() throws InterruptedException {
+    private AllCombinations sendAndReceiveAllCombinations() throws InterruptedException {
         AllCombinations all = new AllCombinations();
         all.field1 = "f1";
         all.field2 = "f2";

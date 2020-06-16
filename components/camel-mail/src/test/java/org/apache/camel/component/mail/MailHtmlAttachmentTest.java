@@ -37,7 +37,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailHtmlAttachmentTest extends CamelTestSupport {
 
     @Test
-    public void testSendAndRecieveMailWithAttachments() throws Exception {
+    public void testSendAndReceiveMailWithAttachments() throws Exception {
         // clear mailbox
         Mailbox.clearAll();
 
