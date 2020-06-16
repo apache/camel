@@ -17,10 +17,12 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainDummyTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class MainDummyTest {
 
     @Test
     public void testMain() throws Exception {
@@ -29,7 +31,7 @@ public class MainDummyTest extends Assert {
 
         // should also be a Camel
         CamelContext camel = main.getApplicationContext().getBean(CamelContext.class);
-        assertNotNull("Camel should be in Spring", camel);
+        assertNotNull(camel, "Camel should be in Spring");
 
         DummyBean dummy = (DummyBean) main.getApplicationContext().getBean("dummy");
         assertNotNull(dummy);

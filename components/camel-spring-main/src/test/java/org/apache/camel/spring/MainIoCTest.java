@@ -18,10 +18,9 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainIoCTest extends Assert {
+public class MainIoCTest {
 
     @Test
     public void testMain() throws Exception {
