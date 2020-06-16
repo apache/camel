@@ -61,6 +61,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
@@ -113,6 +114,58 @@ public abstract class BaseMainSupport extends BaseService {
         // as we ignore case for property names we should use keys in same case and without dashes
         key = StringHelper.dashToCamelCase(key);
         return key;
+    }
+
+    protected static boolean setPropertiesOnTarget(CamelContext context, Object target, Object source) throws Exception {
+        ObjectHelper.notNull(context, "context");
+        ObjectHelper.notNull(target, "target");
+
+        boolean rc = false;
+
+        PropertyConfigurer targetConfigurer = null;
+        if (target instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(target);
+            targetConfigurer = ((Component) target).getComponentPropertyConfigurer();
+        }
+        if (targetConfigurer == null) {
+            String name = target.getClass().getSimpleName();
+            if (target instanceof ExtendedCamelContext) {
+                // special for camel context itself as we have an extended configurer
+                name = "ExtendedCamelContext";
+            }
+            // see if there is a configurer for it
+            targetConfigurer = context.adapt(ExtendedCamelContext.class)
+                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
+        }
+
+        PropertyConfigurer sourceConfigurer = null;
+        if (source instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(source);
+            sourceConfigurer = ((Component) source).getComponentPropertyConfigurer();
+        }
+        if (sourceConfigurer == null) {
+            String name = source.getClass().getSimpleName();
+            if (source instanceof ExtendedCamelContext) {
+                // special for camel context itself as we have an extended configurer
+                name = "ExtendedCamelContext";
+            }
+            // see if there is a configurer for it
+            sourceConfigurer = context.adapt(ExtendedCamelContext.class)
+                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
+        }
+
+        if (targetConfigurer != null && sourceConfigurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) sourceConfigurer;
+            for (String key : getter.getAllOptions(source).keySet()) {
+                Object value = getter.getOptionValue(source, key, true);
+                if (value != null) {
+                    rc |= targetConfigurer.configure(context, target, key, value, true);
+                }
+            }
+        }
+        return rc;
     }
 
     protected static boolean setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties,
@@ -750,6 +803,8 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
+        ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+
         // create beans first as they may be used later
         if (!beansProperties.isEmpty()) {
             LOG.debug("Creating and binding beans to registry from loaded properties: {}", beansProperties.size());
@@ -761,49 +816,54 @@ public abstract class BaseMainSupport extends BaseService {
             setPropertiesOnTarget(camelContext, camelContext, contextProperties, "camel.context.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
+
+        HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
         if (!hystrixProperties.isEmpty()) {
             LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
-            if (hystrix == null) {
-                hystrix = new HystrixConfigurationDefinition();
-                model.setHystrixConfiguration(hystrix);
-            }
             setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
+        HystrixConfigurationDefinition hystrixModel = model.getHystrixConfiguration(null);
+        if (hystrixModel == null) {
+            hystrixModel = new HystrixConfigurationDefinition();
+            model.setHystrixConfiguration(hystrixModel);
+        }
+        setPropertiesOnTarget(camelContext, hystrixModel, hystrix);
+
+        Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
         if (!resilience4jProperties.isEmpty()) {
             LOG.debug("Auto-configuring Resilience4j Circuit Breaker EIP from loaded properties: {}", resilience4jProperties.size());
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            Resilience4jConfigurationDefinition resilience4j = model.getResilience4jConfiguration(null);
-            if (resilience4j == null) {
-                resilience4j = new Resilience4jConfigurationDefinition();
-                model.setResilience4jConfiguration(resilience4j);
-            }
             setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, "camel.resilience4j.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
+        Resilience4jConfigurationDefinition resilience4jModel = model.getResilience4jConfiguration(null);
+        if (resilience4jModel == null) {
+            resilience4jModel = new Resilience4jConfigurationDefinition();
+            model.setResilience4jConfiguration(resilience4jModel);
+        }
+        setPropertiesOnTarget(camelContext, resilience4jModel, resilience4j);
+
+        FaultToleranceConfigurationProperties faultTolerance = mainConfigurationProperties.faultTolerance();
         if (!faultToleranceProperties.isEmpty()) {
             LOG.debug("Auto-configuring MicroProfile Fault Tolerance Circuit Breaker EIP from loaded properties: {}", faultToleranceProperties.size());
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            FaultToleranceConfigurationDefinition faultTolerance = model.getFaultToleranceConfiguration(null);
-            if (faultTolerance == null) {
-                faultTolerance = new FaultToleranceConfigurationDefinition();
-                model.setFaultToleranceConfiguration(faultTolerance);
-            }
             setPropertiesOnTarget(camelContext, faultTolerance, faultToleranceProperties, "camel.faulttolerance.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
+        FaultToleranceConfigurationDefinition faultToleranceModel = model.getFaultToleranceConfiguration(null);
+        if (faultToleranceModel == null) {
+            faultToleranceModel = new FaultToleranceConfigurationDefinition();
+            model.setFaultToleranceConfiguration(faultToleranceModel);
+        }
+        setPropertiesOnTarget(camelContext, faultToleranceModel, faultTolerance);
+
+        RestConfigurationProperties rest = mainConfigurationProperties.rest();
         if (!restProperties.isEmpty()) {
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
-            RestConfiguration rest = camelContext.getRestConfiguration();
-            if (rest == null) {
-                rest = new RestConfiguration();
-                camelContext.setRestConfiguration(rest);
-            }
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
+        camelContext.setRestConfiguration(rest);
+
         if (!threadPoolProperties.isEmpty()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             setThreadPoolProperties(camelContext, threadPoolProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
@@ -829,28 +889,21 @@ public abstract class BaseMainSupport extends BaseService {
             });
         }
         if (!hystrixProperties.isEmpty()) {
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
             hystrixProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.hystrix.{}={} on bean: {}", k, v, hystrix);
             });
         }
         if (!resilience4jProperties.isEmpty()) {
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            Resilience4jConfigurationDefinition resilience4j = model.getResilience4jConfiguration(null);
             resilience4jProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.resilience4j.{}={} on bean: {}", k, v, resilience4j);
             });
         }
         if (!faultToleranceProperties.isEmpty()) {
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            FaultToleranceConfigurationDefinition faulttolerance = model.getFaultToleranceConfiguration(null);
             faultToleranceProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.faulttolerance.{}={} on bean: {}", k, v, faulttolerance);
+                LOG.warn("Property not auto-configured: camel.faulttolerance.{}={} on bean: {}", k, v, faultTolerance);
             });
         }
         if (!restProperties.isEmpty()) {
-            RestConfiguration rest = camelContext.getRestConfiguration();
             restProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.rest.{}={} on bean: {}", k, v, rest);
             });
