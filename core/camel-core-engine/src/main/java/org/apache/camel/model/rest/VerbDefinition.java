@@ -79,8 +79,14 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String type;
 
+    @XmlTransient
+    private Class<?> typeClass;
+
     @XmlAttribute
     private String outType;
+
+    @XmlTransient
+    private Class<?> outTypeClass;
 
     // used by XML DSL to either select a <to>, <toD>, or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
@@ -271,11 +277,24 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * incoming data This option will override what may be configured on a
      * parent level.
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end
-     * of the canonical name if you want the input to be an array type.
+     * The name of the class of the input data. Append a [] to the end
+     * of the name if you want the input to be an array type.
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Class<?> getTypeClass() {
+        return typeClass;
+    }
+
+    /**
+     * Sets the class to use for binding from input to POJO for the
+     * incoming data This option will override what may be configured on a
+     * parent level.
+     */
+    public void setTypeClass(Class<?> typeClass) {
+        this.typeClass = typeClass;
     }
 
     public String getOutType() {
@@ -287,11 +306,24 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * outgoing data This option will override what may be configured on a
      * parent level
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end
-     * of the canonical name if you want the input to be an array type.
+     * The name of the class of the input data. Append a [] to the end
+     * of the name if you want the input to be an array type.
      */
     public void setOutType(String outType) {
         this.outType = outType;
+    }
+
+    public Class<?> getOutTypeClass() {
+        return outTypeClass;
+    }
+
+    /**
+     * Sets the class to use for binding from POJO to output for the
+     * outgoing data This option will override what may be configured on a
+     * parent level.
+     */
+    public void setOutTypeClass(Class<?> outTypeClass) {
+        this.outTypeClass = outTypeClass;
     }
 
     public String getRouteId() {

@@ -63,8 +63,14 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @XmlAttribute
     private String type;
 
+    @XmlTransient
+    private Class<?> typeClass;
+
     @XmlAttribute
     private String outType;
+
+    @XmlTransient
+    private Class<?> outTypeClass;
 
     @XmlAttribute
     private String skipBindingOnErrorCode;
@@ -202,11 +208,23 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      * Sets the class name to use for binding from input to POJO for the
      * incoming data
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end
-     * of the canonical name if you want the input to be an array type.
+     * The name of the class of the input data. Append a [] to the end
+     * of the name if you want the input to be an array type.
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Class<?> getTypeClass() {
+        return typeClass;
+    }
+
+    /**
+     * Sets the class to use for binding from input to POJO for the
+     * incoming data
+     */
+    public void setTypeClass(Class<?> typeClass) {
+        this.typeClass = typeClass;
     }
 
     public String getOutType() {
@@ -217,11 +235,23 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      * Sets the class name to use for binding from POJO to output for the
      * outgoing data
      * <p/>
-     * The canonical name of the class of the input data. Append a [] to the end
-     * of the canonical name if you want the input to be an array type.
+     * The name of the class of the input data. Append a [] to the end
+     * of the name if you want the input to be an array type.
      */
     public void setOutType(String outType) {
         this.outType = outType;
+    }
+
+    public Class<?> getOutTypeClass() {
+        return outTypeClass;
+    }
+
+    /**
+     * Sets the class name to use for binding from POJO to output for the
+     * outgoing data
+     */
+    public void setOutTypeClass(Class<?> outTypeClass) {
+        this.outTypeClass = outTypeClass;
     }
 
     public String getSkipBindingOnErrorCode() {
