@@ -90,7 +90,6 @@ with the following path and query parameters:
 | *password* | *Required* Returns the password of the AS/400 user. |  | String
 | *systemName* | *Required* Returns the name of the AS/400 system. |  | String
 | *objectPath* | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint. |  | String
-| *type* | *Required* Whether to work with data queues or remote program call. The value can be one of: DTAQ, PGM, SRVPGM, MSGQ |  | Jt400Type
 |===
 
 
