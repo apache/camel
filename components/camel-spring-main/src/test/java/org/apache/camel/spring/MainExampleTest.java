@@ -17,10 +17,9 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainExampleTest extends Assert {
+public class MainExampleTest {
 
     @Test
     public void testMain() throws Exception {

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainVetoTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MainVetoTest {
 
     @Test
     public void testMain() throws Exception {

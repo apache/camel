@@ -18,12 +18,13 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.RuntimeCamelException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit4.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class MisspelledRouteRefTest extends Assert {
+public class MisspelledRouteRefTest {
 
     @Test
     public void testApplicationContextFailed() throws Exception {
