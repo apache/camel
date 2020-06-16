@@ -77,6 +77,12 @@ public class Jt400Configuration {
         private MessageAction(final String jt400Value) {
             this.jt400Value = jt400Value;
         }
+        /**
+         * Returns the string literal value that can be used for
+         * APIs from the JTOpen (jt400) libraries
+         *
+         * @return a value suitable for use with jt400 libraries
+         */
         public String getJt400Value() {
             return jt400Value;
         }
@@ -389,7 +395,6 @@ public class Jt400Configuration {
             }
         }
     }
-
 
     // AS400 connections
     

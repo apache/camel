@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Pseudo-abstract class that encapsulates Service logic common to
- * {@link Jt400DataQueueConsumer} and {@link Jt400DataQueueProducer}.
+ * {@link Jt400MsgQueueConsumer} and {@link Jt400MsgQueueProducer}.
  */
 class Jt400MsgQueueService implements Service {
     
@@ -88,7 +88,7 @@ class Jt400MsgQueueService implements Service {
      * Returns the message queue object that this service connects to. Returns
      * {@code null} if the service is stopped.
      * 
-     * @return the data queue object that this service connects to, or
+     * @return the message queue object that this service connects to, or
      *         {@code null} if stopped
      */
     public MessageQueue getMsgQueue() {
