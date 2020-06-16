@@ -47,19 +47,6 @@ public interface As2ComponentBuilderFactory {
      */
     interface As2ComponentBuilder extends ComponentBuilder<AS2Component> {
         /**
-         * To use the shared configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.as2.AS2Configuration</code> type.
-         * 
-         * Group: common
-         */
-        default As2ComponentBuilder configuration(
-                org.apache.camel.component.as2.AS2Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -112,6 +99,19 @@ public interface As2ComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.as2.AS2Configuration</code> type.
+         * 
+         * Group: advanced
+         */
+        default As2ComponentBuilder configuration(
+                org.apache.camel.component.as2.AS2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class As2ComponentBuilderImpl
@@ -129,10 +129,10 @@ public interface As2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AS2Component) component).setConfiguration((org.apache.camel.component.as2.AS2Configuration) value); return true;
             case "bridgeErrorHandler": ((AS2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((AS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((AS2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((AS2Component) component).setConfiguration((org.apache.camel.component.as2.AS2Configuration) value); return true;
             default: return false;
             }
         }

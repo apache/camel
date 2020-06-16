@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -76,5 +77,6 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
 
     public abstract C getConfiguration();
 
+    @Metadata(description = "Component configuration")
     public abstract void setConfiguration(C configuration);
 }

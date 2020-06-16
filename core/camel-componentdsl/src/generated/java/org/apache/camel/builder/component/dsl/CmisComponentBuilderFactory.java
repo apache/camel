@@ -47,21 +47,6 @@ public interface CmisComponentBuilderFactory {
      */
     interface CmisComponentBuilder extends ComponentBuilder<CMISComponent> {
         /**
-         * To use a custom CMISSessionFacadeFactory to create the
-         * CMISSessionFacade instances.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CmisComponentBuilder sessionFacadeFactory(
-                org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
-            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -114,6 +99,21 @@ public interface CmisComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * To use a custom CMISSessionFacadeFactory to create the
+         * CMISSessionFacade instances.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default CmisComponentBuilder sessionFacadeFactory(
+                org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
+            return this;
+        }
     }
 
     class CmisComponentBuilderImpl
@@ -131,10 +131,10 @@ public interface CmisComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "sessionFacadeFactory": ((CMISComponent) component).setSessionFacadeFactory((org.apache.camel.component.cmis.CMISSessionFacadeFactory) value); return true;
             case "bridgeErrorHandler": ((CMISComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CMISComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((CMISComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "sessionFacadeFactory": ((CMISComponent) component).setSessionFacadeFactory((org.apache.camel.component.cmis.CMISSessionFacadeFactory) value); return true;
             default: return false;
             }
         }

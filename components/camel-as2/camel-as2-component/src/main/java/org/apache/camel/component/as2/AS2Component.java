@@ -57,14 +57,6 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
         return new AS2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    /**
-     * To use the shared configuration
-     */
-    @Override
-    public void setConfiguration(AS2Configuration configuration) {
-        super.setConfiguration(configuration);
-    }
-    
     @Override
     protected void doStart() throws Exception {
         super.doStart();

@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
@@ -110,6 +111,7 @@ public class AMQPComponent extends JmsComponent {
      * Due to limitations in Apache Qpid JMS API, currently delivery annotations
      * are ignored.
      */
+    @Metadata(displayName = "Include AMQP Annotations")
     public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
         if (getConfiguration() instanceof AMQPConfiguration) {
             ((AMQPConfiguration) getConfiguration()).setIncludeAmqpAnnotations(includeAmqpAnnotations);

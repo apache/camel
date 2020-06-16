@@ -49,22 +49,6 @@ public interface BeanstalkComponentBuilderFactory {
             extends
                 ComponentBuilder<BeanstalkComponent> {
         /**
-         * Custom ConnectionSettingsFactory. Specify which
-         * ConnectionSettingsFactory to use to make connections to Beanstalkd.
-         * Especially useful for unit testing without beanstalkd daemon (you can
-         * mock ConnectionSettings).
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.beanstalk.ConnectionSettingsFactory</code> type.
-         * 
-         * Group: common
-         */
-        default BeanstalkComponentBuilder connectionSettingsFactory(
-                org.apache.camel.component.beanstalk.ConnectionSettingsFactory connectionSettingsFactory) {
-            doSetProperty("connectionSettingsFactory", connectionSettingsFactory);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -118,6 +102,22 @@ public interface BeanstalkComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * Custom ConnectionSettingsFactory. Specify which
+         * ConnectionSettingsFactory to use to make connections to Beanstalkd.
+         * Especially useful for unit testing without beanstalkd daemon (you can
+         * mock ConnectionSettings).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.beanstalk.ConnectionSettingsFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default BeanstalkComponentBuilder connectionSettingsFactory(
+                org.apache.camel.component.beanstalk.ConnectionSettingsFactory connectionSettingsFactory) {
+            doSetProperty("connectionSettingsFactory", connectionSettingsFactory);
+            return this;
+        }
     }
 
     class BeanstalkComponentBuilderImpl
@@ -135,10 +135,10 @@ public interface BeanstalkComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionSettingsFactory": ((BeanstalkComponent) component).setConnectionSettingsFactory((org.apache.camel.component.beanstalk.ConnectionSettingsFactory) value); return true;
             case "bridgeErrorHandler": ((BeanstalkComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BeanstalkComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((BeanstalkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "connectionSettingsFactory": ((BeanstalkComponent) component).setConnectionSettingsFactory((org.apache.camel.component.beanstalk.ConnectionSettingsFactory) value); return true;
             default: return false;
             }
         }
