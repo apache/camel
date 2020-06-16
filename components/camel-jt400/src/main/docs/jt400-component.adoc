@@ -140,17 +140,26 @@ with the following path and query parameters:
 
 == Usage
 
-When configured as a data queue consumer endpoint, the endpoint will poll
-a data queue or message queue on a remote system. For every entry on the
-queue, a new `Exchange` is sent with the entry's data in the _In_ message's
-body. For message queues, the data is always formatted as a `String`. For
-data queues, it is formatted either as a `String` or a `byte[]`, depending on
-the format.
+When configured as a data queue consumer endpoint, the endpoint will poll a data
+queue on a remote system. For every entry on the data queue, a new
+`Exchange` is sent with the entry's data in the _In_ message's body,
+formatted either as a `String` or a `byte[]`, depending on the format.
+For a provider endpoint, the _In_ message body contents will be put on
+the data queue as either raw bytes or text.
+
+When configured as a message queue consumer endpoint, the endpoint will poll
+a message queue on a remote system. For every entry on the queue, a new
+`Exchange` is sent with the entry's data in the _In_ message's body. The
+data is always formatted as a `String`. Note that only new messages will
+be processed. That is, any existing messages on the queue that have already
+been handled by another program will not be processed by this endpoint.
+
+For a data queue provider endpoint, the _In_ message body contents will be
+put on the data queue as either raw bytes or text.
 
 For a message queue provider endpoint, the _In_ message body contents are
-presumed to be text and sent to the queue as an impromptu message. For a
-data queue provider endpoint, the _In_ message body contents will be put on
-the data queue as either raw bytes or text.
+presumed to be text and sent to the queue as an informational message.
+Inquiry messages or messages requiring a message ID are not supported.
 
 == Connection pool
 
