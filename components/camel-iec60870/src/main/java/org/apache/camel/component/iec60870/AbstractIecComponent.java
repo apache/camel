@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.iec60870.client.ClientOptions;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 import org.slf4j.Logger;
@@ -55,27 +56,19 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     /**
      * Default connection options
-     *
-     * @param defaultConnectionOptions the new default connection options, must
-     *            not be {@code null}
      */
+    @Metadata
     protected void setDefaultConnectionOptions(final T2 defaultConnectionOptions) {
         this.defaultConnectionOptions = requireNonNull(defaultConnectionOptions);
     }
 
-    /**
-     * Get the default connection options
-     *
-     * @return the default connect options, never returns {@code null}
-     */
     protected T2 getDefaultConnectionOptions() {
         return this.defaultConnectionOptions;
     }
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-
-        LOG.info("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
+        LOG.debug("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
 
         final T1 connection = lookupConnection(uri, parameters);
         final ObjectAddress address = parseAddress(uri);

@@ -23,6 +23,7 @@ import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hdfs.kerberos.KerberosConfigurationBuilder;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
@@ -70,6 +71,7 @@ public class HdfsComponent extends DefaultComponent {
     /**
      * To use the given configuration for security with JAAS.
      */
+    @Metadata(label = "security")
     public static void setJAASConfiguration(Configuration auth) {
         if (auth != null) {
             LOG.trace("Restoring existing JAAS Configuration {}", auth);
@@ -89,6 +91,7 @@ public class HdfsComponent extends DefaultComponent {
      *
      * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
+    @Metadata(label = "security")
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
         HdfsComponent.kerberosConfigFileLocation = kerberosConfigFileLocation;
         KerberosConfigurationBuilder.setKerberosConfigFile(kerberosConfigFileLocation);

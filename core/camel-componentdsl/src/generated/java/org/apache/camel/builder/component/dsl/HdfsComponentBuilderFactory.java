@@ -47,34 +47,6 @@ public interface HdfsComponentBuilderFactory {
      */
     interface HdfsComponentBuilder extends ComponentBuilder<HdfsComponent> {
         /**
-         * To use the given configuration for security with JAAS.
-         * 
-         * The option is a: <code>javax.security.auth.login.Configuration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default HdfsComponentBuilder jAASConfiguration(
-                javax.security.auth.login.Configuration jAASConfiguration) {
-            doSetProperty("jAASConfiguration", jAASConfiguration);
-            return this;
-        }
-        /**
-         * To use kerberos authentication, set the value of the
-         * 'java.security.krb5.conf' environment variable to an existing file.
-         * If the environment variable is already set, warn if different than
-         * the specified parameter.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsComponentBuilder kerberosConfigFile(
-                java.lang.String kerberosConfigFile) {
-            doSetProperty("kerberosConfigFile", kerberosConfigFile);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -127,6 +99,34 @@ public interface HdfsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * To use the given configuration for security with JAAS.
+         * 
+         * The option is a: <code>javax.security.auth.login.Configuration</code>
+         * type.
+         * 
+         * Group: security
+         */
+        default HdfsComponentBuilder jAASConfiguration(
+                javax.security.auth.login.Configuration jAASConfiguration) {
+            doSetProperty("jAASConfiguration", jAASConfiguration);
+            return this;
+        }
+        /**
+         * To use kerberos authentication, set the value of the
+         * 'java.security.krb5.conf' environment variable to an existing file.
+         * If the environment variable is already set, warn if different than
+         * the specified parameter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HdfsComponentBuilder kerberosConfigFile(
+                java.lang.String kerberosConfigFile) {
+            doSetProperty("kerberosConfigFile", kerberosConfigFile);
+            return this;
+        }
     }
 
     class HdfsComponentBuilderImpl
@@ -144,11 +144,11 @@ public interface HdfsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "jAASConfiguration": ((HdfsComponent) component).setJAASConfiguration((javax.security.auth.login.Configuration) value); return true;
-            case "kerberosConfigFile": ((HdfsComponent) component).setKerberosConfigFile((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((HdfsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HdfsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((HdfsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "jAASConfiguration": ((HdfsComponent) component).setJAASConfiguration((javax.security.auth.login.Configuration) value); return true;
+            case "kerberosConfigFile": ((HdfsComponent) component).setKerberosConfigFile((java.lang.String) value); return true;
             default: return false;
             }
         }

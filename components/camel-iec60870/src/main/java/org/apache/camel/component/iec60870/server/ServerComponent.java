@@ -25,6 +25,7 @@ import org.apache.camel.component.iec60870.AbstractIecComponent;
 import org.apache.camel.component.iec60870.ConnectionId;
 import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.eclipse.neoscada.protocol.iec60870.server.data.DataModuleOptions;
 
@@ -62,11 +63,9 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
 
     /**
      * Default connection options
-     *
-     * @param defaultConnectionOptions the new default connection options, must
-     *            not be {@code null}
      */
     @Override
+    @Metadata
     public void setDefaultConnectionOptions(final ServerOptions defaultConnectionOptions) {
         super.setDefaultConnectionOptions(defaultConnectionOptions);
     }
