@@ -73,17 +73,6 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         queueService.stop();
     }
 
-    @Deprecated
-    public Exchange receive() {
-        // -1 to indicate an infinite wait time
-        return receive(-1);
-    }
-
-    @Deprecated
-    public Exchange receiveNoWait() {
-        return receive(0);
-    }
-
     /**
      * Receives an entry from a message queue and returns an {@link Exchange} to
      * send this data, which will be received/sent as
