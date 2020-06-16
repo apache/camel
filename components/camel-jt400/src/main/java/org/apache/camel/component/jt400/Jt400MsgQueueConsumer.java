@@ -26,6 +26,8 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  * A scheduled {@link org.apache.camel.Consumer} that polls a message queue for new messages
  */
@@ -105,7 +107,6 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(), -1 == seconds ? "infinite" : seconds);
 
         Jt400Configuration.MessageAction messageAction = getEndpoint().getMessageAction();
-
         entry = queue.receive(messageKey, //message key
                               seconds,    //timeout
                               messageAction.getJt400Value(),  // message action
@@ -114,9 +115,11 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         if (null == entry) {
             return null;
         }
-        // Need to tuck away the message key in case the message action is SAME, otherwise
+        // Need to tuck away the message key if the message action is SAME, otherwise
         // we'll just keep retrieving the same message over and over
-        this.messageKey = entry.getKey();
+        if (Jt400Configuration.MessageAction.SAME == messageAction) {
+            this.messageKey = entry.getKey();
+        }
 
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
