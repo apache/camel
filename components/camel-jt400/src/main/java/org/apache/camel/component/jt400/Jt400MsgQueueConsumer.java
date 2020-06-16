@@ -26,8 +26,6 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
 /**
  * A scheduled {@link org.apache.camel.Consumer} that polls a message queue for new messages
  */
@@ -87,6 +85,9 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
      * The following message headers may be set by the receiver
      * <ul>
      * <li>SENDER_INFORMATION: The Sender Information from the message</li>
+     * <li>jt400.MESSAGE_ID: The message identifier</li>
+     * <li>jt400.MESSAGE_FILE: The message file</li>
+     * <li>jt400.MESSAGE_TYPE: The message type (corresponds to constants defined in the AS400Message class)</li>
      * </ul>
      *
      * @param timeout time to wait when reading from message queue. A value of -1
@@ -110,7 +111,7 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         entry = queue.receive(messageKey, //message key
                               seconds,    //timeout
                               messageAction.getJt400Value(),  // message action
-                              null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages //TODO: make configurable
+                              null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages
 
         if (null == entry) {
             return null;

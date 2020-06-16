@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Exchanges messages with an AS/400 system using data queues or program call.
+ * Exchanges messages with an AS/400 system using data queues, message queues, or program call.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", category = {Category.MESSAGING})
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {

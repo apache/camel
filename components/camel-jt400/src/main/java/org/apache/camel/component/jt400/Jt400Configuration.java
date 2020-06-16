@@ -110,7 +110,6 @@ public class Jt400Configuration {
     @UriPath @Metadata(required = true)
     private String objectPath;
 
-    @UriPath @Metadata(required = true)
     private Jt400Type type;
 
     @UriParam
@@ -361,8 +360,9 @@ public class Jt400Configuration {
     }
 
     /**
-     * Whether or not messages are removed from a message
-     * queue when read.
+     * Action to be taken on messages when read from a message queue.
+     * Messages can be marked as old ("OLD"), removed from the queue
+     * ("REMOVE"), or neither ("SAME").
      */
     public void setMessageAction(MessageAction messageAction) {
         this.messageAction = messageAction;
