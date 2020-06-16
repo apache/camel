@@ -23,6 +23,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+import org.apache.camel.component.workday.producer.*;
+
 /**
  * Represents a Workday endpoint.
  */
@@ -44,6 +46,8 @@ public class WorkdayEndpoint extends DefaultEndpoint {
         switch (workdayConfiguration.getEntity()) {
         case report:
             return new WorkdayReportProducer(this);
+        case commonAPI:
+            return new WorkdayCommonAPIProducer(this);
         default:
             throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
         }
