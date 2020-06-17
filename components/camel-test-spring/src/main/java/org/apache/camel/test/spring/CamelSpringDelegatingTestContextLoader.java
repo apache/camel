@@ -63,7 +63,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
             System.clearProperty("skipStartingCamelContext");
             return loadContext(context, testClass);
         } finally {
-            cleanup(testClass);
+            CamelAnnotationsHandler.cleanup(testClass);
         }
     }
 
@@ -93,25 +93,6 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);
         
         return context;
-    }
-    
-    /**
-     * Cleanup/restore global state to defaults / pre-test values after the test setup
-     * is complete. 
-     * 
-     * @param testClass the test class being executed
-     */
-    protected void cleanup(Class<?> testClass) {
-        SpringCamelContext.setNoStart(false);
-        
-        if (testClass.isAnnotationPresent(DisableJmx.class)) {
-            if (CamelSpringTestHelper.getOriginalJmxDisabled() == null) {
-                System.clearProperty(JmxSystemPropertyKeys.DISABLED);
-            } else {
-                System.setProperty(JmxSystemPropertyKeys.DISABLED,
-                    CamelSpringTestHelper.getOriginalJmxDisabled());
-            }
-        }
     }
 
     /**
