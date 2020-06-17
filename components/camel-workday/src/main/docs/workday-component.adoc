@@ -59,7 +59,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *entity* | *Required* The entity to be requested or subscribed via API. The value can be one of: report |  | Entity
+| *entity* | *Required* The entity to be requested or subscribed via API. The value can be one of: report, commonAPI |  | Entity
 | *path* | *Required* The API path to access an entity structure. |  | String
 |===
 
