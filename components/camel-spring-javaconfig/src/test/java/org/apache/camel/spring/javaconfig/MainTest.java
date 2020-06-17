@@ -19,7 +19,7 @@ package org.apache.camel.spring.javaconfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
 public class MainTest {
@@ -32,7 +32,7 @@ public class MainTest {
         context.stop();
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void testOptionBP() throws Exception {
         CamelContext context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig.config"});
         context.start();
