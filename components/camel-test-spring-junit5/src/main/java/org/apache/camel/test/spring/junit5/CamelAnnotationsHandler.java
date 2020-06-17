@@ -40,10 +40,9 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
-
-import static org.apache.camel.test.spring.junit5.CamelSpringTestHelper.getAllMethods;
 
 public final class CamelAnnotationsHandler {
 
@@ -53,11 +52,37 @@ public final class CamelAnnotationsHandler {
     }
 
     /**
-     * Handles @ExcludeRoutes to make it easier to exclude other routes when testing with Spring Boot.
+     * Cleanup/restore global state to defaults / pre-test values after the test setup
+     * is complete.
      *
      * @param testClass the test class being executed
      */
-    public static void handleExcludeRoutesForSpringBoot(Class<?> testClass) {
+    public static void cleanup(Class<?> testClass) {
+        SpringCamelContext.setNoStart(false);
+
+        if (CamelSpringTestHelper.getOriginalJmxDisabled() == null) {
+            System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+        } else {
+            System.setProperty(JmxSystemPropertyKeys.DISABLED,
+                    CamelSpringTestHelper.getOriginalJmxDisabled());
+        }
+        if (CamelSpringTestHelper.getOriginalExcludeRoutes() == null) {
+            System.clearProperty(SpringCamelContext.EXCLUDE_ROUTES);
+        } else {
+            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES,
+                    CamelSpringTestHelper.getOriginalExcludeRoutes());
+        }
+    }
+
+    /**
+     * Handles @ExcludeRoutes to make it easier to exclude other routes when testing with Spring.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    public static void handleExcludeRoutes(ConfigurableApplicationContext context, Class<?> testClass) {
+        CamelSpringTestHelper.setOriginalExcludeRoutesValue(System.getProperty(SpringCamelContext.EXCLUDE_ROUTES));
+
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
             Class[] routes = testClass.getAnnotation(ExcludeRoutes.class).value();
             // need to setup this as a JVM system property
@@ -65,7 +90,7 @@ public final class CamelAnnotationsHandler {
             for (Class clazz : routes) {
                 csb.append(clazz.getName());
             }
-            String key = "CamelTestSpringExcludeRoutes";
+            String key = SpringCamelContext.EXCLUDE_ROUTES;
             String value = csb.toString();
 
             String exists = System.getProperty(key);
@@ -91,14 +116,17 @@ public final class CamelAnnotationsHandler {
             if (testClass.getAnnotation(DisableJmx.class).value()) {
                 LOGGER.info("Disabling Camel JMX globally as DisableJmx annotation was found and disableJmx is set to true.");
                 System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
-
             } else {
                 LOGGER.info("Enabling Camel JMX as DisableJmx annotation was found and disableJmx is set to false.");
                 System.clearProperty(JmxSystemPropertyKeys.DISABLED);
             }
-        } else {
-            LOGGER.info("Disabling Camel JMX globally for tests by default. Use the DisableJMX annotation to override the default setting.");
+        } else if (!testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
+            // route coverage need JMX so do not disable it by default
+            LOGGER.info("Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting.");
             System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+        } else {
+            LOGGER.info("Enabling Camel JMX as EnableRouteCoverage is used.");
+            System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
         }
     }
 
@@ -156,7 +184,7 @@ public final class CamelAnnotationsHandler {
     }
 
     public static void handleProvidesBreakpoint(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
-        Collection<Method> methods = getAllMethods(testClass);
+        Collection<Method> methods = CamelSpringTestHelper.getAllMethods(testClass);
         final List<Breakpoint> breakpoints = new LinkedList<>();
 
         for (Method method : methods) {
@@ -283,7 +311,7 @@ public final class CamelAnnotationsHandler {
      * @param testClass the test class being executed
      */
     public static void handleUseOverridePropertiesWithPropertiesComponent(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
-        Collection<Method> methods = getAllMethods(testClass);
+        Collection<Method> methods = CamelSpringTestHelper.getAllMethods(testClass);
         final List<Properties> properties = new LinkedList<>();
 
         for (Method method : methods) {
@@ -312,20 +340,23 @@ public final class CamelAnnotationsHandler {
             }
         }
 
-        if (properties.size() != 0) {
-            CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
-                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
-                    PropertiesComponent pc = camelContext.getPropertiesComponent();
-                    Properties extra = new Properties();
-                    for (Properties prop : properties) {
-                        extra.putAll(prop);
-                    }
-                    if (!extra.isEmpty()) {
-                        LOGGER.info("Using {} properties to override any existing properties on the PropertiesComponent on CamelContext with name [{}].", extra.size(), contextName);
+        Properties extra = new Properties();
+        for (Properties prop : properties) {
+            extra.putAll(prop);
+        }
+
+        if (!extra.isEmpty()) {
+            context.addBeanFactoryPostProcessor(beanFactory -> beanFactory.addBeanPostProcessor(new BeanPostProcessor() {
+                @Override
+                public Object postProcessBeforeInitialization(Object bean, String beanName) {
+                    if (bean instanceof PropertiesComponent) {
+                        PropertiesComponent pc = (PropertiesComponent) bean;
+                        LOGGER.info("Using {} properties to override any existing properties on the PropertiesComponent", extra.size());
                         pc.setOverrideProperties(extra);
                     }
+                    return bean;
                 }
-            });
+            }));
         }
     }
 

@@ -16,21 +16,28 @@
  */
 package org.apache.camel.spring;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
+import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextBeanRepository;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +64,8 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 public class SpringCamelContext extends DefaultCamelContext implements Lifecycle, ApplicationContextAware, Phased,
         ApplicationListener<ApplicationEvent>, Ordered {
+
+    public static final String EXCLUDE_ROUTES = "CamelTestSpringExcludeRoutes";
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<>();
@@ -144,7 +153,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
 
         if (event instanceof ContextRefreshedEvent && ((ContextRefreshedEvent) event).getApplicationContext() == this.applicationContext) {
             // nominally we would prefer to use Lifecycle interface that
-            // would invoke start() method, but in order to do that 
+            // would invoke start() method, but in order to do that
             // SpringCamelContext needs to implement SmartLifecycle
             // (look at DefaultLifecycleProcessor::startBeans), but it
             // cannot implement it as it already implements
@@ -294,6 +303,19 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     @Override
     public boolean isRunning() {
         return !isStopping() && !isStopped();
+    }
+
+    protected PackageScanClassResolver createPackageScanClassResolver() {
+        PackageScanClassResolver resolver = super.createPackageScanClassResolver();
+        String excluded = System.getProperty(EXCLUDE_ROUTES);
+        if (ObjectHelper.isNotEmpty(excluded)) {
+            Set<Class<?>> excludedClasses = new HashSet<>();
+            for (String str : excluded.split(",")) {
+                excludedClasses.add(getClassResolver().resolveClass(str));
+            }
+            resolver.addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
+        }
+        return resolver;
     }
 
 }

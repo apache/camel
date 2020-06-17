@@ -28,6 +28,7 @@ import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,14 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
         System.setProperty("CamelSedaPollTimeout", "10");
         System.setProperty(JmxSystemPropertyKeys.DISABLED, Boolean.toString(!useJmx()));
+        Class<?>[] excluded = excludeRoutes();
+        if (excluded != null && excluded.length > 0) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (Class<?> clazz : excluded) {
+                csb.append(clazz.getName());
+            }
+            System.setProperty(SpringCamelContext.EXCLUDE_ROUTES, csb.toString());
+        }
 
         applicationContext = createApplicationContext();
         assertNotNull(applicationContext, "Should have created a valid spring context");

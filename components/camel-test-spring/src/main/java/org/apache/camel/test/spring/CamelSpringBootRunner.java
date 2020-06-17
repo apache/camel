@@ -29,59 +29,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * for their Spring Boot based applications/routes using the typical Spring Test conventions
  * for test development.
  */
-public class CamelSpringBootRunner extends SpringJUnit4ClassRunner {
+public class CamelSpringBootRunner extends CamelSpringRunner {
 
     public CamelSpringBootRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
-    }
-
-    /**
-     * Returns the specialized manager instance that provides tight integration between Camel testing
-     * features and Spring.
-     *
-     * @return a new instance of {@link CamelTestContextManager}.
-     */
-    @Override
-    protected TestContextManager createTestContextManager(Class<?> clazz) {
-        return new CamelTestContextManager(clazz);
-    }
-
-    /**
-     * An implementation providing additional integration between Spring Test and Camel
-     * testing features.
-     */
-    public static final class CamelTestContextManager extends TestContextManager {
-
-        public CamelTestContextManager(Class<?> testClass) {
-            super(testClass);
-
-            // turn off auto starting spring as we need to do this later
-            System.setProperty("skipStartingCamelContext", "true");
-
-            // is Camel already registered
-            if (!alreadyRegistered()) {
-                // inject Camel first, and then disable jmx and add the stop-watch
-                List<TestExecutionListener> list = getTestExecutionListeners();
-                list.add(0, new CamelSpringTestContextLoaderTestExecutionListener());
-                list.add(1, new DisableJmxTestExecutionListener());
-                list.add(2, new CamelSpringBootExecutionListener());
-                list.add(3, new StopWatchTestExecutionListener());
-            }
-        }
-
-        private boolean alreadyRegistered() {
-            List<TestExecutionListener> list = getTestExecutionListeners();
-            if (list != null) {
-                for (TestExecutionListener listener : list) {
-                    if (listener instanceof CamelSpringTestContextLoaderTestExecutionListener) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
     }
 
 }

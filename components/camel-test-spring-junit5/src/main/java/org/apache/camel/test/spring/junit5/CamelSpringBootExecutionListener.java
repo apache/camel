@@ -32,7 +32,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
     /**
      * Returns the precedence that is used by Spring to choose the appropriate
      * execution order of test listeners.
-     * 
+     *
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */
     @Override
@@ -47,7 +47,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         Class<?> testClass = testContext.getTestClass();
 
         // need to prepare this before we load spring application context
-        CamelAnnotationsHandler.handleExcludeRoutesForSpringBoot(testClass);
+        CamelAnnotationsHandler.handleDisableJmx(null, testClass);
+        CamelAnnotationsHandler.handleExcludeRoutes(null, testClass);
 
         // we are customizing the Camel context with
         // CamelAnnotationsHandler so we do not want to start it
@@ -56,7 +57,9 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         // not to start it just yet
         SpringCamelContext.setNoStart(true);
         System.setProperty("skipStartingCamelContext", "true");
-        ConfigurableApplicationContext context = (ConfigurableApplicationContext)testContext.getApplicationContext();
+        ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
+
+        CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start
         // setup
@@ -64,7 +67,6 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
         CamelAnnotationsHandler.handleMockEndpointsAndSkip(context, testClass);
-        CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
 
         System.clearProperty("skipStartingCamelContext");
         SpringCamelContext.setNoStart(false);
