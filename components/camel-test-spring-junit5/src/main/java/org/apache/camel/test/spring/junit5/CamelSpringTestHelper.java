@@ -40,6 +40,7 @@ import org.springframework.test.context.TestContext;
 public final class CamelSpringTestHelper {
     
     private static ThreadLocal<String> originalJmxDisabledValue = new ThreadLocal<>();
+    private static ThreadLocal<String> originalExcludeRoutesValue = new ThreadLocal<>();
     private static ThreadLocal<Class<?>> testClazz = new ThreadLocal<>();
     private static ThreadLocal<TestContext> testContext = new ThreadLocal<>();
 
@@ -53,7 +54,15 @@ public final class CamelSpringTestHelper {
     public static void setOriginalJmxDisabledValue(String originalValue) {
         originalJmxDisabledValue.set(originalValue);
     }
-    
+
+    public static String getOriginalExcludeRoutes() {
+        return originalExcludeRoutesValue.get();
+    }
+
+    public static void setOriginalExcludeRoutesValue(String originalValue) {
+        originalExcludeRoutesValue.set(originalValue);
+    }
+
     public static Class<?> getTestClass() {
         return testClazz.get();
     }
