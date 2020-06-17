@@ -19,11 +19,10 @@ package org.apache.camel.spring.javaconfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
-public class MainTest extends Assert {
+public class MainTest {
 
     @Test
     public void  testOptions() throws Exception {

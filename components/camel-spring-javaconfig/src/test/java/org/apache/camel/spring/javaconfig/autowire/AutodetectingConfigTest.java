@@ -22,12 +22,13 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelSpringRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 @ContextConfiguration(classes = {AutowiringContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class AutodetectingConfigTest extends AbstractJUnit4SpringContextTests {
 

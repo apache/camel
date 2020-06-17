@@ -18,6 +18,7 @@ package org.apache.camel.spring.javaconfig.test;
 
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelSpringRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 @ContextConfiguration(classes = {JavaConfigWithNestedConfigClassTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 @Component
 public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringContextTests implements Cheese {

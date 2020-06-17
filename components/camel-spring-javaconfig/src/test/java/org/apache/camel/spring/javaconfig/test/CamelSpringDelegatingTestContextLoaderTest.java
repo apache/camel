@@ -37,11 +37,7 @@ import org.springframework.test.context.ContextConfiguration;
 //START SNIPPET: example
 // tag::example[]
 @RunWith(CamelSpringRunner.class)
-@ContextConfiguration(
-        classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
-        // Since Camel 2.11.0 
-        loader = CamelSpringDelegatingTestContextLoader.class
-    )
+@ContextConfiguration(classes = CamelSpringDelegatingTestContextLoaderTest.TestConfig.class)
 @MockEndpoints
 public class CamelSpringDelegatingTestContextLoaderTest {
     @EndpointInject("mock:direct:end")
