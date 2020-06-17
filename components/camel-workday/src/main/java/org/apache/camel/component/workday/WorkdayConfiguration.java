@@ -32,10 +32,11 @@ public class WorkdayConfiguration {
 
     // Implemented entities
     public enum Entity {
-        report
+        report,
+        commonAPI
     }
 
-    @UriPath(description = "The entity to be requested or subscribed via API.", enums = "report")
+    @UriPath(description = "The entity to be requested or subscribed via API.", enums = "report,commonAPI")
     @Metadata(required = true)
     private Entity entity;
 

@@ -3820,9 +3820,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Workday (camel-workday)
-     * Detect and parse documents using Workday.
+     * Represents a Workday endpoint.
      * 
-     * Category: cloud,api,hcm
+     * Category: hcm
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      */

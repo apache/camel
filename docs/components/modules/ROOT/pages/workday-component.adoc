@@ -4,7 +4,7 @@
 :page-source: components/camel-workday/src/main/docs/workday-component.adoc
 :docTitle: Workday
 :artifactId: camel-workday
-:description: Detect and parse documents using Workday.
+:description: Represents a Workday endpoint.
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
@@ -61,7 +61,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *entity* | *Required* The entity to be requested or subscribed via API. The value can be one of: report |  | Entity
+| *entity* | *Required* The entity to be requested or subscribed via API. The value can be one of: report, commonAPI |  | Entity
 | *path* | *Required* The API path to access an entity structure. |  | String
 |===
 
