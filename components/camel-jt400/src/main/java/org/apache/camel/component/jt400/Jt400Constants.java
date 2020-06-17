@@ -25,8 +25,7 @@ public interface Jt400Constants {
     public static final String KEY = "KEY";
 
     // Used only for message queue support
-    public static final String MESSAGE_ID = "jt400.MESSAGE_ID";
-    public static final String MESSAGE_FILE = "jt400.MESSAGE_FILE";
-    public static final String MESSAGE_KEY = "jt400.MESSAGE_KEY";
-    public static final String MESSAGE_TYPE = "jt400.MESSAGE_TYPE";
+    public static final String MESSAGE_ID = "CamelJt400MessageID";
+    public static final String MESSAGE_FILE = "CamelJt400MessageFile";
+    public static final String MESSAGE_TYPE = "CamelJt400MessageType";
 }
