@@ -109,14 +109,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             config.timeBetweenEvictionRunsMillis = 30 * 1000L;
             config.minEvictableIdleTimeMillis = configuration.getProducerPoolMinEvictableIdle();
             config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
-            pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(), config);
+            pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(this), config);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
                         config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool);
             }
         } else {
-            pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory());
+            pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory(this));
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Created NettyProducer shared singleton pool -> {}", pool);
             }
@@ -555,6 +555,11 @@ public class NettyProducer extends DefaultAsyncProducer {
      * Object factory to create {@link Channel} used by the pool.
      */
     private final class NettyProducerPoolableObjectFactory implements PoolableObjectFactory<ChannelFuture> {
+        private NettyProducer producer;
+
+        public NettyProducerPoolableObjectFactory(NettyProducer producer) {
+            this.producer = producer;
+        }
 
         @Override
         public ChannelFuture makeObject() throws Exception {
@@ -603,8 +608,18 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         @Override
         public void activateObject(ChannelFuture channelFuture) {
-            // noop
             LOG.trace("activateObject channel request: {}", channelFuture);
+
+            if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
+                LOG.trace("reset the request timeout as we activate the channel");
+                Channel channel = channelFuture.channel();
+
+                ChannelHandler handler = channel.pipeline().get("timeout");
+                if (handler == null) {
+                    ChannelHandler timeout = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+                    channel.pipeline().addBefore("handler", "timeout", timeout);
+                }
+            }
         }
 
         @Override
