@@ -47,22 +47,22 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *applicationUri* (common) | The application URI |  | String
 | *bindAddresses* (common) | Set the addresses of the local addresses the server should bind to |  | String
 | *buildInfo* (common) | Server build info |  | BuildInfo
-| *certificate* (common) | Server certificate |  | X509Certificate
-| *certificateManager* (common) | Server certificate manager |  | CertificateManager
-| *certificateValidator* (common) | Validator for client certificates |  | CertificateValidator
-| *defaultCertificateValidator* (common) | Validator for client certificates using default file based approach |  | String
-| *enableAnonymousAuthentication* (common) | Enable anonymous authentication, disabled by default | false | boolean
-| *namespaceUri* (common) | The URI of the namespace, defaults to urn:org:apache:camel |  | String
+| *namespaceUri* (common) | The URI of the namespace, defaults to urn:org:apache:camel | urn:org:apache:camel | String
 | *path* (common) | The path to be appended to the end of the endpoint url. (doesn't need to start with '/') |  | String
 | *port* (common) | The TCP port the server binds to |  | int
 | *productUri* (common) | The product URI |  | String
-| *securityPolicies* (common) | Security policies |  | Set
-| *securityPoliciesById* (common) | Security policies by URI or name. Multiple policies can be separated by comma. |  | String
-| *userAuthenticationCredentials* (common) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
-| *usernameSecurityPolicyUri* (common) | Set the UserTokenPolicy used when. The value can be one of: None, Basic128Rsa15, Basic256, Basic256Sha256, Aes128_Sha256_RsaOaep, Aes256_Sha256_RsaPss |  | SecurityPolicy
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *certificate* (security) | Server certificate |  | X509Certificate
+| *certificateManager* (security) | Server certificate manager |  | CertificateManager
+| *certificateValidator* (security) | Validator for client certificates |  | CertificateValidator
+| *defaultCertificateValidator* (security) | Validator for client certificates using default file based approach |  | String
+| *enableAnonymousAuthentication* (security) | Enable anonymous authentication, disabled by default | false | boolean
+| *securityPolicies* (security) | Security policies |  | Set
+| *securityPoliciesById* (security) | Security policies by URI or name. Multiple policies can be separated by comma. |  | String
+| *userAuthenticationCredentials* (security) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
+| *usernameSecurityPolicyUri* (security) | Set the UserTokenPolicy used when. The value can be one of: None, Basic128Rsa15, Basic256, Basic256Sha256, Aes128_Sha256_RsaOaep, Aes256_Sha256_RsaPss |  | SecurityPolicy
 |===
 // component options: END
 
