@@ -248,47 +248,13 @@ If the you don't like the content of the repository, right click your repository
 You can then rollback your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
 
-[[ReleaseGuide-PublishingTheRelease-Camel]]
-== Publishing the Release
-
-. Once the release has been voted:
+. Once the release has been voted
 
 * Login to https://repository.apache.org using your Apache LDAP credentials.
 Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
-your username and IP.
+your username and ip.
 Click "Release" on the tool bar above.
 This will release the artifacts.
-
-. Perform a release in JIRA:
-
-* Release the version in JIRA: https://issues.apache.org/jira/plugins/servlet/project-config/CAMEL/versions
-
-. Copy distribution to Apache website:
-
-  cd ${CAMEL_ROOT_DIR}/etc/scripts
-  ./release-distro.sh <Camel version>
-
-. Remove the old distribution version from the Apache webstie:
-
-  svn rm https://dist.apache.org/repos/dist/release/camel/apache-camel/OLD_CAMEL_VERSION -m "Removed the old release"
-
-. Upload the new schema files (and the manual):
-
-  cd ${CAMEL_ROOT_DIR}/etc/scripts
-  ./release-website.sh <Camel version>
-
-. Merge the release branch back into the corresponding base branch (e.g. merge `release/3.2.0` into `camel-3.2.x`)
-
-  git checkout BASE_BRANCH
-  git pull
-  git merge --no-ff release/VERSION
-  git push
-
-. Delete the local and remote release branch:
-
-  git branch -D release/VERSION
-  git push origin --delete release/VERSION
-
 
 [[ReleaseGuide-CreatingTheRelease-Camel-karaf]]
 == Creating the Release for camel-karaf
@@ -379,6 +345,47 @@ Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list 
 your username and ip.
 Click "Release" on the tool bar above.
 This will release the artifacts.
+
+[[ReleaseGuide-PublishingTheRelease-Camel]]
+== Publishing the Release
+
+. Once the release has been voted:
+
+* Login to https://repository.apache.org using your Apache LDAP credentials.
+Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
+your username and IP.
+Click "Release" on the tool bar above.
+This will release the artifacts.
+
+. Perform a release in JIRA:
+
+* Release the version in JIRA: https://issues.apache.org/jira/plugins/servlet/project-config/CAMEL/versions
+
+. Copy distribution to Apache website:
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-distro.sh <Camel version>
+
+. Remove the old distribution version from the Apache webstie:
+
+  svn rm https://dist.apache.org/repos/dist/release/camel/apache-camel/OLD_CAMEL_VERSION -m "Removed the old release"
+
+. Upload the new schema files (and the manual):
+
+  cd ${CAMEL_ROOT_DIR}/etc/scripts
+  ./release-website.sh <Camel version>
+
+. Merge the release branch back into the corresponding base branch (e.g. merge `release/3.2.0` into `camel-3.2.x`)
+
+  git checkout BASE_BRANCH
+  git pull
+  git merge --no-ff release/VERSION
+  git push
+
+. Delete the local and remote release branch:
+
+  git branch -D release/VERSION
+  git push origin --delete release/VERSION
 
 [[Publish-xsd-schemas]]
 == Publish xsd schemas
