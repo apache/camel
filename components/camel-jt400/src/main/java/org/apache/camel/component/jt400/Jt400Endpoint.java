@@ -41,14 +41,8 @@ import org.apache.camel.util.URISupport;
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", category = {Category.MESSAGING})
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
 
-    public static final String KEY = "KEY";
-    public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
-
-    // Used only for message queue support
-    public static final String MESSAGE_ID = "jt400.MESSAGE_ID";
-    public static final String MESSAGE_FILE = "jt400.MESSAGE_FILE";
-    public static final String MESSAGE_KEY = "jt400.MESSAGE_KEY";
-    public static final String MESSAGE_TYPE = "jt400.MESSAGE_TYPE";
+    public static final String KEY = Jt400Constants.KEY;
+    public static final String SENDER_INFORMATION = Jt400Constants.SENDER_INFORMATION;
 
     @UriParam
     private final Jt400Configuration configuration;
