@@ -14787,9 +14787,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Workday (camel-workday)
-     * Represents a Workday endpoint.
+     * Detect and parse documents using Workday.
      * 
-     * Category: hcm
+     * Category: cloud,api,hcm
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      * 
@@ -14810,9 +14810,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Workday (camel-workday)
-     * Represents a Workday endpoint.
+     * Detect and parse documents using Workday.
      * 
-     * Category: hcm
+     * Category: cloud,api,hcm
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      * 

@@ -97,14 +97,13 @@ with the following path and query parameters:
 
 
 // component options: START
-The Flink component supports 6 options, which are listed below.
+The Flink component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dataSet* (producer) | DataSet to compute against. |  | DataSet
 | *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
 | *dataStream* (producer) | DataStream to compute against. |  | DataStream
 | *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
