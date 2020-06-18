@@ -4,7 +4,7 @@
 :artifactId: camel-azure-storage-blob
 :description: Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
 :since: 3.3
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
