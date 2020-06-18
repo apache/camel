@@ -4,7 +4,7 @@
 :artifactId: camel-azure-storage-queue
 :description: The azure-storage-queue component is used for storing and retrieving the messages to/from Azure Storage Queue using Azure SDK v12.
 :since: 3.3
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
