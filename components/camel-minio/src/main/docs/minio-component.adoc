@@ -15,8 +15,6 @@
 // component options: START
 The Minio component supports 21 options, which are listed below.
 
-
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -55,7 +53,6 @@ with the following path and query parameters:
 
 === Path Parameters (2 parameters):
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -63,9 +60,7 @@ with the following path and query parameters:
 | *bucketNameOrArn* | *Required* Bucket name or ARN |  | String
 |===
 
-
 === Query Parameters (39 parameters):
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
