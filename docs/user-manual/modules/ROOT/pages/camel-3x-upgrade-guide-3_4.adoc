@@ -63,6 +63,30 @@ If using, then the `language` method now requires a static import as shown below
 import static org.apache.camel.builder.Builder.language;
 ----
 
+=== Using custom type converters
+
+If you are using custom type converters and they have not source code generated a loader class (by `@Converter(generateLoader = true)`)
+then Camel needs to be instructed to scan for custom converters. This can be done as shown:
+
+[source,java]
+----
+context.setLoadTypeConverters(true);
+----
+
+And in XML:
+[source,xml]
+----
+<camelContext loadTypeConverters="true">
+
+</camelContext>
+----
+
+If you are using Camel on Spring Boot, Quarkus or via Camel Main this can also be configured in the `application.properties`:
+[source,properties]
+----
+camel.main.loadTypeConverters=true
+----
+
 === camel-spring-boot
 
 The `/actuator/camelroutes` HTTP endpoint has been removed from provided Spring Boot actuators in `camel-spring-boot`.
