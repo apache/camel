@@ -18,18 +18,14 @@ package org.apache.camel.component.servlet.rest;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.HeaderOnlyWebRequest;
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.PutMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
@@ -118,7 +114,8 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("servlet");
+                restConfiguration().component("servlet")
+                        .endpointProperty("eagerCheckContentAvailable", "true");
 
                 rest()
                     .get("/users").route().transform().constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()

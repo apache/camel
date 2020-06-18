@@ -18,17 +18,18 @@ package org.apache.camel.component.servlet.rest;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class RestServletBindingModeOffWithContractTest extends ServletCamelRouterTestSupport {
 
@@ -45,7 +46,7 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
         WebResponse response = client.getResponse(req);
         assertEquals(200, response.getResponseCode());
         String answer = response.getText();
-        assertTrue("Unexpected response: " + answer, answer.contains("\"active\":true"));
+        assertTrue(answer.contains("\"active\":true"), "Unexpected response: " + answer);
 
         assertMockEndpointsSatisfied();
 
