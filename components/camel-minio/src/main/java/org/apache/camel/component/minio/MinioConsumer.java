@@ -18,20 +18,24 @@ package org.apache.camel.component.minio;
 
 import java.util.Date;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.support.ScheduledPollConsumer;
+
 /**
  * The Minio consumer.
  */
-public class MinioConsumer extends org.apache.camel.support.ScheduledPollConsumer {
+public class MinioConsumer extends ScheduledPollConsumer {
     private final MinioEndpoint endpoint;
 
-    public MinioConsumer(MinioEndpoint endpoint, org.apache.camel.Processor processor) {
+    public MinioConsumer(MinioEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
 
     @Override
     protected int poll() throws Exception {
-        org.apache.camel.Exchange exchange = endpoint.createExchange();
+        Exchange exchange = endpoint.createExchange();
 
         // create a message body
         Date now = new Date();
