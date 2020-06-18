@@ -114,6 +114,10 @@ Change the keys from `camel.service.lra` to `camel.lra`, eg `camel.service.lra.c
 
 The `camel-archetype-java8` has been removed, as you can just use `camel-archetype-java` instead.
 
+=== Maven Plugins
+
+A new maven plugin called `camel-component-maven-plugin` has been added which intents to help third party component developers to generate all required metadata and configurations Java files. For more info on how to use it in your project, please take a look at plugin's documentation xref:camel-component-maven-plugin.adoc[here].
+
 === Camel-Kafka
 
 From a lot of time, the headerFilterStrategy application in consumer and producer was done in an interchanged way.
