@@ -16,18 +16,28 @@
  */
 package org.apache.camel.component.servlet;
 
+import java.text.MessageFormat;
+
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.context.ContextLoaderListener;
 
-public class HttpClientRouteSpringTest extends HttpClientRouteTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        startCamelContext = false;
-        super.setUp();
+public class ServletAsyncTest extends ServletCamelRouterTestSupport {
+
+    @Test
+    public void testHello() throws Exception {
+        final String name = "Arnaud";
+
+        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
+        req.setParameter("name", name);
+        ServletUnitClient client = newClient();
+        WebResponse response = client.getResponse(req);
+
+        assertEquals(200, response.getResponseCode());
+        assertEquals(MessageFormat.format("Hello {0} how are you?", name), response.getText(), "The response message is wrong");
     }
 
     @Override
@@ -36,10 +46,12 @@ public class HttpClientRouteSpringTest extends HttpClientRouteTest {
                 .setClassLoader(getClass().getClassLoader())
                 .setContextPath(CONTEXT)
                 .setDeploymentName(getClass().getName())
-                .addInitParameter("contextConfigLocation", "classpath:org/apache/camel/component/servlet/camelContext.xml")
+                .addInitParameter("contextConfigLocation", "classpath:org/apache/camel/component/servlet/example-camelContext.xml")
                 .addListener(Servlets.listener(ContextLoaderListener.class))
                 .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
-                        .addInitParam("matchOnUriPrefix", "true")
+                        .addInitParam("async", "true")
+                        .setLoadOnStartup(1)
+                        .setAsyncSupported(true)
                         .addMapping("/services/*"));
     }
 

@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.HttpNotFoundException;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
 
@@ -37,7 +35,7 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
         WebResponse response = client.getResponse(req);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals("The response message is wrong ", "Client is Donald Duck", response.getText());
+        assertEquals("Client is Donald Duck", response.getText(), "The response message is wrong");
 
         assertMockEndpointsSatisfied();
     }

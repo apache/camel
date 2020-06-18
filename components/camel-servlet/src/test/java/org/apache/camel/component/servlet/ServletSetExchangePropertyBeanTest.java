@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.servlet;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSupport {
 
@@ -32,7 +30,7 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
         WebResponse response = client.getResponse(req);
 
         assertEquals(204, response.getResponseCode());
-        assertEquals("The response message is wrong ", "", response.getText());
+        assertEquals("", response.getText(), "The response message is wrong");
     }
     
     @Override
@@ -43,7 +41,7 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
                 onException(Exception.class)
                     .handled(true);
 
-                from("servlet:/hello")
+                from("servlet:/hello?httpBinding.eagerCheckContentAvailable=true")
                     .setProperty("myProperty").method(ServletSetExchangePropertyBeanTest.class, "throwException");
             }
         };
