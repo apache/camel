@@ -15,16 +15,53 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MinioComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.minio.MinioConfiguration getOrCreateConfiguration(MinioComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.minio.MinioConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MinioComponent target = (MinioComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autoclosebody":
+        case "autocloseBody": getOrCreateConfiguration(target).setAutocloseBody(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.minio.MinioConfiguration.class, value)); return true;
+        case "deleteafterread":
+        case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": getOrCreateConfiguration(target).setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
+        case "filename":
+        case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "includebody":
+        case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "multipartupload":
+        case "multiPartUpload": getOrCreateConfiguration(target).setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.minio.MinioOperations.class, value)); return true;
+        case "partsize":
+        case "partSize": getOrCreateConfiguration(target).setPartSize(property(camelContext, long.class, value)); return true;
+        case "pathstyleaccess":
+        case "pathStyleAccess": getOrCreateConfiguration(target).setPathStyleAccess(property(camelContext, boolean.class, value)); return true;
+        case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
+        case "serversideencryption":
+        case "serverSideEncryption": getOrCreateConfiguration(target).setServerSideEncryption(property(camelContext, java.lang.String.class, value)); return true;
+        case "storageclass":
+        case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -32,9 +69,27 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("accessKey", java.lang.String.class);
+        answer.put("autocloseBody", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
+        answer.put("configuration", org.apache.camel.component.minio.MinioConfiguration.class);
+        answer.put("deleteAfterRead", boolean.class);
+        answer.put("deleteAfterWrite", boolean.class);
+        answer.put("fileName", java.lang.String.class);
+        answer.put("includeBody", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("multiPartUpload", boolean.class);
+        answer.put("operation", org.apache.camel.component.minio.MinioOperations.class);
+        answer.put("partSize", long.class);
+        answer.put("pathStyleAccess", boolean.class);
+        answer.put("policy", java.lang.String.class);
+        answer.put("prefix", java.lang.String.class);
+        answer.put("region", java.lang.String.class);
+        answer.put("secretKey", java.lang.String.class);
+        answer.put("secure", boolean.class);
+        answer.put("serverSideEncryption", java.lang.String.class);
+        answer.put("storageClass", java.lang.String.class);
         return answer;
     }
 
@@ -42,12 +97,42 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MinioComponent target = (MinioComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
+        case "autoclosebody":
+        case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
+        case "deleteafterread":
+        case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return getOrCreateConfiguration(target).isDeleteAfterWrite();
+        case "filename":
+        case "fileName": return getOrCreateConfiguration(target).getFileName();
+        case "includebody":
+        case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "multipartupload":
+        case "multiPartUpload": return getOrCreateConfiguration(target).isMultiPartUpload();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "partsize":
+        case "partSize": return getOrCreateConfiguration(target).getPartSize();
+        case "pathstyleaccess":
+        case "pathStyleAccess": return getOrCreateConfiguration(target).isPathStyleAccess();
+        case "policy": return getOrCreateConfiguration(target).getPolicy();
+        case "prefix": return getOrCreateConfiguration(target).getPrefix();
+        case "region": return getOrCreateConfiguration(target).getRegion();
+        case "secretkey":
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "secure": return getOrCreateConfiguration(target).isSecure();
+        case "serversideencryption":
+        case "serverSideEncryption": return getOrCreateConfiguration(target).getServerSideEncryption();
+        case "storageclass":
+        case "storageClass": return getOrCreateConfiguration(target).getStorageClass();
         default: return null;
         }
     }

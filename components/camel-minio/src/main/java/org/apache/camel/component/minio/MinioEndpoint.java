@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.minio;
 
-import java.util.concurrent.ExecutorService;
-
+import io.minio.MinioClient;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -25,27 +26,31 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * Minio component which does bla bla.
- * <p>
- * TODO: Update one line description above what the component does.
+ * Represents a Minio endpoint.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:name",
-        consumerClass = MinioConsumer.class, label = "custom")
-public class MinioEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:url", consumerClass = MinioConsumer.class, label = "storage,cloud,file")
+public class MinioEndpoint extends ScheduledPollEndpoint {
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(MinioEndpoint.class);
+
     @UriPath
     @Metadata(required = true)
     private String name;
-    @UriParam(defaultValue = "10")
-    private int option = 10;
+    @UriPath(description = "Bucket name or ARN")
+    @Metadata(required = true)
+    private String bucketNameOrArn;
+    @UriParam
+    private MinioConfiguration configuration;
 
     public MinioEndpoint() {
     }
 
-    public MinioEndpoint(String uri, MinioComponent component) {
+    public MinioEndpoint(final String uri, final String remaining, final MinioComponent component,
+                         final MinioConfiguration configuration) {
         super(uri, component);
+        this.configuration = configuration;
     }
 
     public Producer createProducer() throws Exception {
@@ -53,9 +58,11 @@ public class MinioEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer = new MinioConsumer(this, processor);
-        configureConsumer(consumer);
-        return consumer;
+        return new MinioConsumer(this, processor);
+    }
+
+    public boolean isSingleton() {
+        return true;
     }
 
     public String getName() {
@@ -69,19 +76,19 @@ public class MinioEndpoint extends DefaultEndpoint {
         this.name = name;
     }
 
-    public int getOption() {
-        return option;
+    public MinioConfiguration getConfiguration() {
+        return configuration;
     }
 
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setOption(int option) {
-        this.option = option;
+    public void setConfiguration(MinioConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    public ExecutorService createExecutor() {
-        // TODO: Delete me when you implementy your custom component
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "MinioConsumer");
+    private MinioClient createClient() throws InvalidPortException, InvalidEndpointException {
+        final MinioClient minioClient = new MinioClient("https://play.minio.io:9000", this.configuration.getAccessKey(),
+                this.configuration.getSecretKey());
+        return minioClient;
+
     }
+
 }

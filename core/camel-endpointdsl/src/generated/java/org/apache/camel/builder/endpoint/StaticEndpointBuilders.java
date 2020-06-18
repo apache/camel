@@ -10074,18 +10074,21 @@ public class StaticEndpointBuilders {
     }
     /**
      * Minio (camel-minio)
-     * Minio component which does bla bla.
+     * Represents a Minio endpoint.
      * 
-     * Category: custom
+     * Category: storage,cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      * 
-     * Syntax: <code>minio:name</code>
+     * Syntax: <code>minio:url</code>
      * 
      * Path parameter: name (required)
      * Some description of this option, and what it does
      * 
-     * @param path name
+     * Path parameter: bucketNameOrArn (required)
+     * Bucket name or ARN
+     * 
+     * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
             String path) {
@@ -10093,20 +10096,23 @@ public class StaticEndpointBuilders {
     }
     /**
      * Minio (camel-minio)
-     * Minio component which does bla bla.
+     * Represents a Minio endpoint.
      * 
-     * Category: custom
+     * Category: storage,cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      * 
-     * Syntax: <code>minio:name</code>
+     * Syntax: <code>minio:url</code>
      * 
      * Path parameter: name (required)
      * Some description of this option, and what it does
      * 
+     * Path parameter: bucketNameOrArn (required)
+     * Bucket name or ARN
+     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path name
+     * @param path url
      */
     static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
             String componentName,

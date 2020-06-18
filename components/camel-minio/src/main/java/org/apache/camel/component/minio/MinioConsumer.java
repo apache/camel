@@ -16,57 +16,33 @@
  */
 package org.apache.camel.component.minio;
 
-import java.util.concurrent.ExecutorService;
+import java.util.Date;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.support.DefaultConsumer;
-
-public class MinioConsumer extends DefaultConsumer {
+/**
+ * The Minio consumer.
+ */
+public class MinioConsumer extends org.apache.camel.support.ScheduledPollConsumer {
     private final MinioEndpoint endpoint;
-    private final EventBusHelper eventBusHelper;
 
-    private ExecutorService executorService;
-
-    public MinioConsumer(MinioEndpoint endpoint, Processor processor) {
+    public MinioConsumer(MinioEndpoint endpoint, org.apache.camel.Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        eventBusHelper = EventBusHelper.getInstance();
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected int poll() throws Exception {
+        org.apache.camel.Exchange exchange = endpoint.createExchange();
 
-        // start a single threaded pool to monitor events
-        executorService = endpoint.createExecutor();
-
-        // submit task to the thread pool
-        executorService.submit(() -> {
-            // subscribe to an event
-            eventBusHelper.subscribe(this::onEventListener);
-        });
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        // shutdown the thread pool gracefully
-        getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
-    }
-
-    private void onEventListener(final Object event) {
-        final Exchange exchange = endpoint.createExchange();
-
-        exchange.getIn().setBody("Hello World! The time is " + event);
+        // create a message body
+        Date now = new Date();
+        exchange.getIn().setBody("Hello World! The time is " + now);
 
         try {
             // send message to next processor in the route
             getProcessor().process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
+            return 1; // number of messages polled
         } finally {
+            // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }

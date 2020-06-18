@@ -2616,9 +2616,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Minio (camel-minio)
-     * Minio component which does bla bla.
+     * Represents a Minio endpoint.
      * 
-     * Category: custom
+     * Category: storage,cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
      */

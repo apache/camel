@@ -2,7 +2,7 @@
 = Minio Component
 :docTitle: Minio
 :artifactId: camel-minio
-:description: Minio component which does bla bla.
+:description: Represents a Minio endpoint.
 :since: 3.5
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
@@ -11,16 +11,35 @@
 
 *{component-header}*
 
+
 // component options: START
-The Minio component supports 3 options, which are listed below.
+The Minio component supports 21 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessKey* (common) | Some description of this option(getAccessKey), and what it does |  | String
+| *configuration* (common) | The component configuration |  | MinioConfiguration
+| *pathStyleAccess* (common) | Some description of this option(isPathStyleAccess), and what it does | false | boolean
+| *policy* (common) | Some description of this option(getPolicy), and what it does |  | String
+| *secretKey* (common) | Some description of this option(getSecretKey), and what it does |  | String
+| *secure* (common) | Some description of this option(isSecure), and what it does | false | boolean
+| *autocloseBody* (consumer) | Some description of this option(isAutocloseBody), and what it does | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *deleteAfterRead* (consumer) | Some description of this option(isDeleteAfterRead), and what it does | true | boolean
+| *fileName* (consumer) | Some description of this option(getFileName), and what it does |  | String
+| *includeBody* (consumer) | Some description of this option(isIncludeBody), and what it does | true | boolean
+| *prefix* (consumer) | Some description of this option(getPrefix), and what it does |  | String
+| *deleteAfterWrite* (producer) | Some description of this option(isDeleteAfterWrite), and what it does | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *multiPartUpload* (producer) | Some description of this option(isMultiPartUpload), and what it does | false | boolean
+| *operation* (producer) | Some description of this option(getOperation), and what it does. The value can be one of: copyObject, deleteBucket, listBuckets |  | MinioOperations
+| *partSize* (producer) | Some description of this option(getPartSize), and what it does | 26214400 | long
+| *region* (producer) | Some description of this option(getRegion), and what it does |  | String
+| *serverSideEncryption* (producer) | Some description of this option(getServerSideEncryption), and what it does |  | String
+| *storageClass* (producer) | Some description of this option(getStorageClass), and what it does |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -29,33 +48,66 @@ The Minio component supports 3 options, which are listed below.
 The Minio endpoint is configured using URI syntax:
 
 ----
-minio:name
+minio:url
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *name* | *Required* Some description of this option, and what it does |  | String
+| *bucketNameOrArn* | *Required* Bucket name or ARN |  | String
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (39 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *option* (common) | Some description of this option, and what it does | 10 | int
+| *accessKey* (common) | Some description of this option(getAccessKey), and what it does |  | String
+| *pathStyleAccess* (common) | Some description of this option(isPathStyleAccess), and what it does | false | boolean
+| *policy* (common) | Some description of this option(getPolicy), and what it does |  | String
+| *secretKey* (common) | Some description of this option(getSecretKey), and what it does |  | String
+| *secure* (common) | Some description of this option(isSecure), and what it does | false | boolean
+| *autocloseBody* (consumer) | Some description of this option(isAutocloseBody), and what it does | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *deleteAfterRead* (consumer) | Some description of this option(isDeleteAfterRead), and what it does | true | boolean
+| *fileName* (consumer) | Some description of this option(getFileName), and what it does |  | String
+| *includeBody* (consumer) | Some description of this option(isIncludeBody), and what it does | true | boolean
+| *prefix* (consumer) | Some description of this option(getPrefix), and what it does |  | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *deleteAfterWrite* (producer) | Some description of this option(isDeleteAfterWrite), and what it does | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *multiPartUpload* (producer) | Some description of this option(isMultiPartUpload), and what it does | false | boolean
+| *operation* (producer) | Some description of this option(getOperation), and what it does. The value can be one of: copyObject, deleteBucket, listBuckets |  | MinioOperations
+| *partSize* (producer) | Some description of this option(getPartSize), and what it does | 26214400 | long
+| *region* (producer) | Some description of this option(getRegion), and what it does |  | String
+| *serverSideEncryption* (producer) | Some description of this option(getServerSideEncryption), and what it does |  | String
+| *storageClass* (producer) | Some description of this option(getStorageClass), and what it does |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. The value can be one of: none, spring, quartz | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END

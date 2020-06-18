@@ -16,18 +16,54 @@
  */
 package org.apache.camel.component.minio;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+/**
+ * Represents the component that manages {@link MinioEndpoint}.
+ */
 @Component("minio")
 public class MinioComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new MinioEndpoint(uri, this);
+    @Metadata
+    private MinioConfiguration configuration = new MinioConfiguration();
+
+    public MinioComponent() {
+        super();
+    }
+
+    public MinioComponent(CamelContext context) {
+        super(context);
+    }
+
+    @Override
+    protected MinioEndpoint createEndpoint(String uri, String remaining, java.util.Map<String, Object> parameters)
+            throws Exception {
+        setProperties(configuration, parameters);
+        if (remaining == null || remaining.trim().length() == 0) {
+            throw new IllegalArgumentException("Bucket name must be specified.");
+        }
+        if (remaining.startsWith("arn:")) {
+            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+        }
+        configuration.setBucketName(remaining);
+
+        final MinioEndpoint endpoint = new MinioEndpoint(uri, remaining, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
+
+    public MinioConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The component configuration
+     */
+    public void setConfiguration(MinioConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
 }

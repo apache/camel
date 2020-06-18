@@ -16,22 +16,8 @@
  */
 package org.apache.camel.component.minio;
 
-import org.apache.camel.support.DefaultProducer;
-
-/**
- * The Minio producer.
- */
-public class MinioProducer extends DefaultProducer {
-    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(MinioProducer.class);
-    private MinioEndpoint endpoint;
-
-    public MinioProducer(final MinioEndpoint endpoint) {
-        super(endpoint);
-        this.endpoint = endpoint;
-    }
-
-    public void process(org.apache.camel.Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());
-    }
-
+public enum MinioOperations {
+    copyObject,
+    deleteBucket,
+    listBuckets
 }
