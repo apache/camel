@@ -8504,6 +8504,10 @@ public class StaticEndpointBuilders {
      * Returns the fully qualified integrated file system path name of the
      * target object of this endpoint.
      * 
+     * Path parameter: type (required)
+     * Whether to work with data queues or remote program call
+     * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+     * 
      * @param path userID:password/systemName/objectPath.type
      */
     static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
@@ -8533,6 +8537,10 @@ public class StaticEndpointBuilders {
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
      * target object of this endpoint.
+     * 
+     * Path parameter: type (required)
+     * Whether to work with data queues or remote program call
+     * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

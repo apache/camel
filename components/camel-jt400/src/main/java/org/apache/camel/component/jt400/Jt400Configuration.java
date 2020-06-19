@@ -116,6 +116,7 @@ public class Jt400Configuration {
     @UriPath @Metadata(required = true)
     private String objectPath;
 
+    @UriPath @Metadata(required = true)
     private Jt400Type type;
 
     @UriParam
