@@ -933,6 +933,10 @@ public abstract class AbstractCamelCatalog {
         } else if (key.startsWith("main.")
                 || key.startsWith("hystrix.")
                 || key.startsWith("resilience4j.")
+                || key.startsWith("faulttolerance.")
+                || key.startsWith("threadpool.")
+                || key.startsWith("lra.")
+                || key.startsWith("health.")
                 || key.startsWith("rest.")) {
             int idx = key.indexOf('.');
             String name = key.substring(0, idx);
@@ -1103,6 +1107,10 @@ public abstract class AbstractCamelCatalog {
             || key.startsWith("camel.main.")
             || key.startsWith("camel.hystrix.")
             || key.startsWith("camel.resilience4j.")
+            || key.startsWith("camel.faulttolerance.")
+            || key.startsWith("camel.threadpool.")
+            || key.startsWith("camel.health.")
+            || key.startsWith("camel.lra.")
             || key.startsWith("camel.rest.");
     }
 
