@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.util.concurrent.ForkJoinPool;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Global configuration for Resilience EIP circuit breaker.
@@ -30,22 +31,34 @@ public class Resilience4jConfigurationProperties {
 
     private String circuitBreakerRef;
     private String configRef;
+    @Metadata(defaultValue = "50")
     private Float failureRateThreshold;
+    @Metadata(defaultValue = "10")
     private Integer permittedNumberOfCallsInHalfOpenState;
+    @Metadata(defaultValue = "100")
     private Integer slidingWindowSize;
+    @Metadata(defaultValue = "COUNT_BASED", enums = "COUNT_BASED,TIME_BASED")
     private String slidingWindowType;
+    @Metadata(defaultValue = "100")
     private Integer minimumNumberOfCalls;
     private Boolean writableStackTraceEnabled;
+    @Metadata(defaultValue = "60")
     private Integer waitDurationInOpenState;
     private Boolean automaticTransitionFromOpenToHalfOpenEnabled;
+    @Metadata(defaultValue = "100")
     private Float slowCallRateThreshold;
+    @Metadata(defaultValue = "60")
     private Integer slowCallDurationThreshold;
+    @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
     private Integer bulkheadMaxConcurrentCalls;
     private Integer bulkheadMaxWaitDuration;
+    @Metadata(defaultValue = "false")
     private Boolean timeoutEnabled;
     private String timeoutExecutorServiceRef;
+    @Metadata(defaultValue = "1000")
     private Integer timeoutDuration;
+    @Metadata(defaultValue = "true")
     private Boolean timeoutCancelRunningFuture;
 
     public Resilience4jConfigurationProperties(MainConfigurationProperties parent) {

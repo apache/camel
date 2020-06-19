@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Global configuration for Saga LRA
@@ -27,8 +28,10 @@ public class LraConfigurationProperties {
     private final MainConfigurationProperties parent;
 
     private String coordinatorUrl;
+    @Metadata(defaultValue = "/lra-coordinator")
     private String coordinatorContextPath = "/lra-coordinator";
     private String localParticipantUrl;
+    @Metadata(defaultValue = "/lra-participant")
     private String localParticipantContextPath = "/lra-participant";
 
     public LraConfigurationProperties(MainConfigurationProperties parent) {
@@ -97,8 +100,6 @@ public class LraConfigurationProperties {
 
     /**
      * The context-path for the LRA coordinator.
-     *
-     * Is default /lra-coordinator
      */
     public LraConfigurationProperties withCoordinatorContextPath(String coordinatorContextPath) {
         this.coordinatorContextPath = coordinatorContextPath;
@@ -115,8 +116,6 @@ public class LraConfigurationProperties {
 
     /**
      * The context-path for the local participant.
-     *
-     * Is default /lra-participant
      */
     public LraConfigurationProperties withLocalParticipantContextPath(String localParticipantContextPath) {
         this.localParticipantContextPath = localParticipantContextPath;

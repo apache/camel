@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import org.apache.camel.Experimental;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.PatternHelper;
 
 /**
@@ -67,6 +68,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
+    @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean useMdcLogging;
@@ -83,7 +85,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String xmlRests = "classpath:camel-rest/*.xml";
     private boolean lightweight;
     // route controller
-    private LoggingLevel routeControllerRouteStartupLoggingLevel;
+    @Metadata(defaultValue = "INFO")
+    private LoggingLevel routeControllerRouteStartupLoggingLevel = LoggingLevel.INFO;
     private boolean routeControllerSuperviseEnabled;
     private String routeControllerIncludeRoutes;
     private String routeControllerExcludeRoutes;

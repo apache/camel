@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Global configuration for MicroProfile Fault Tolerance EIP circuit breaker.
@@ -27,16 +28,26 @@ public class FaultToleranceConfigurationProperties {
     private final MainConfigurationProperties parent;
 
     private String circuitBreakerRef;
+    @Metadata(defaultValue = "5")
     private Long delay;
+    @Metadata(defaultValue = "1")
     private Integer successThreshold;
+    @Metadata(defaultValue = "20")
     private Integer requestVolumeThreshold;
+    @Metadata(defaultValue = "50")
     private Integer failureRatio;
+    @Metadata(defaultValue = "false")
     private Boolean timeoutEnabled;
+    @Metadata(defaultValue = "1000")
     private Long timeoutDuration;
+    @Metadata(defaultValue = "10")
     private Integer timeoutPoolSize;
     private String timeoutScheduledExecutorServiceRef;
+    @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
+    @Metadata(defaultValue = "10")
     private Integer bulkheadMaxConcurrentCalls;
+    @Metadata(defaultValue = "10")
     private Integer bulkheadWaitingTaskQueue;
     private String bulkheadExecutorServiceRef;
 
