@@ -36,24 +36,24 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DdbStreamConsumerTest {
 
     private DdbStreamConsumer undertest;
@@ -70,7 +70,7 @@ public class DdbStreamConsumerTest {
     private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, new DdbStreamConfiguration(), component);
     private GetRecordsAnswer recordsAnswer;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         endpoint.getConfiguration().setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
         endpoint.start();
@@ -90,7 +90,7 @@ public class DdbStreamConsumerTest {
         answers.put("shard_iterator_d_000", createRecords("21", "25"));
         answers.put("shard_iterator_d_001", createRecords("30", "35", "40"));
         recordsAnswer = new GetRecordsAnswer(shardIterators, answers);
-        when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class))).thenAnswer(recordsAnswer);
+        lenient().when(amazonDynamoDBStreams.getRecords(any(GetRecordsRequest.class))).thenAnswer(recordsAnswer);
     }
 
     String pad(String num, int to) {
@@ -122,9 +122,9 @@ public class DdbStreamConsumerTest {
         verify(processor, times(3)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
         verify(shardIteratorHandler, times(2)).getShardIterator(null); // first poll. Second poll, getRecords fails with an expired shard.
         verify(shardIteratorHandler).getShardIterator("9"); // second poll, with a resumeFrom.
-        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("9"));
-        assertThat(exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("11"));
-        assertThat(exchangeCaptor.getAllValues().get(2).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("13"));
+        assertEquals("9", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("11", exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("13", exchangeCaptor.getAllValues().get(2).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
     }
 
     @Test
@@ -140,8 +140,8 @@ public class DdbStreamConsumerTest {
         ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
         verify(processor, times(2)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
 
-        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("35"));
-        assertThat(exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("40"));
+        assertEquals("35", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
+        assertEquals("40", exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
     }
 
     @Test
@@ -157,7 +157,7 @@ public class DdbStreamConsumerTest {
         ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
         verify(processor, times(1)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
 
-        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber(), is("40"));
+        assertEquals("40", exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).getDynamodb().getSequenceNumber());
     }
 
     private static Collection<Record> createRecords(String... sequenceNumbers) {

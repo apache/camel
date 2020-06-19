@@ -18,8 +18,10 @@ package org.apache.camel.component.aws.kinesis;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KinesisComponentConfigurationTest extends CamelTestSupport {
     

@@ -29,11 +29,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.sdb.SdbConstants;
 import org.apache.camel.component.aws.sdb.SdbOperations;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SdbComponentIntegrationTest extends CamelTestSupport {
     
     @Test

@@ -26,24 +26,23 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SqsProducerTest {
     private static final String SAMPLE_MESSAGE_BODY = "this is a body";
     private static final String MESSAGE_MD5 = "00000000000000000000000000000000";
@@ -73,21 +72,21 @@ public class SqsProducerTest {
     private SqsConfiguration sqsConfiguration;
     private SqsProducer underTest;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         sqsConfiguration = new SqsConfiguration();
         sqsConfiguration.setDelaySeconds(0);
         sqsConfiguration.setQueueName("queueName");
         SendMessageResult sendMessageResult = new SendMessageResult().withMD5OfMessageBody(MESSAGE_MD5).withMessageId(MESSAGE_ID);
-        when(amazonSQSClient.sendMessage(any(SendMessageRequest.class))).thenReturn(sendMessageResult);
-        when(sqsEndpoint.getClient()).thenReturn(amazonSQSClient);
-        when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
-        when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
-        when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(new SqsHeaderFilterStrategy());
-        when(exchange.getMessage()).thenReturn(inMessage);
-        when(exchange.getIn()).thenReturn(inMessage);
-        when(exchange.getExchangeId()).thenReturn(SAMPLE_EXCHANGE_ID);
-        when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
+        lenient().when(amazonSQSClient.sendMessage(any(SendMessageRequest.class))).thenReturn(sendMessageResult);
+        lenient().when(sqsEndpoint.getClient()).thenReturn(amazonSQSClient);
+        lenient().when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
+        lenient().when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
+        lenient().when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(new SqsHeaderFilterStrategy());
+        lenient().when(exchange.getMessage()).thenReturn(inMessage);
+        lenient().when(exchange.getIn()).thenReturn(inMessage);
+        lenient().when(exchange.getExchangeId()).thenReturn(SAMPLE_EXCHANGE_ID);
+        lenient().when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
         underTest = new SqsProducer(sqsEndpoint);
     }
 
@@ -100,9 +99,9 @@ public class SqsProducerTest {
 
         Map<String, MessageAttributeValue> translateAttributes = underTest.translateAttributes(headers, exchange);
 
-        assertThat(translateAttributes.size(), is(1));
-        assertThat(translateAttributes.get("key3").getDataType(), is("String"));
-        assertThat(translateAttributes.get("key3").getStringValue(), is("value3"));
+        assertEquals(1, translateAttributes.size());
+        assertEquals("String", translateAttributes.get("key3").getDataType());
+        assertEquals("value3", translateAttributes.get("key3").getStringValue());
     }
 
     @Test
@@ -135,7 +134,7 @@ public class SqsProducerTest {
 
     @Test
     public void itSetsTheDelayFromMessageHeaderOnTheRequest() throws Exception {
-        when(inMessage.getHeader(SqsConstants.DELAY_HEADER, Integer.class)).thenReturn(Integer.valueOf(2000));
+        lenient().when(inMessage.getHeader(SqsConstants.DELAY_HEADER, Integer.class)).thenReturn(Integer.valueOf(2000));
         underTest.process(exchange);
 
         ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
@@ -223,7 +222,7 @@ public class SqsProducerTest {
 
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertTrue("Bad error message: " + e.getMessage(), e.getMessage().startsWith("messageGroupIdStrategy must be set for FIFO queues"));
+            assertTrue(e.getMessage().startsWith("messageGroupIdStrategy must be set for FIFO queues"), "Bad error message: " + e.getMessage());
         }
     }
 

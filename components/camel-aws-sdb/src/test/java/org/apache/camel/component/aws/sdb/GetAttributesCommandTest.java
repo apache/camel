@@ -23,11 +23,12 @@ import com.amazonaws.services.simpledb.model.Attribute;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GetAttributesCommandTest {
 
@@ -36,7 +37,7 @@ public class GetAttributesCommandTest {
     private SdbConfiguration configuration;
     private Exchange exchange;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
@@ -70,13 +71,14 @@ public class GetAttributesCommandTest {
         assertEquals("Value Two", attributes.get(1).getValue());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeWithoutItemName() {
         List<String> attributeNames = new ArrayList<>();
         attributeNames.add("ATTRIBUTE1");
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTE_NAMES, attributeNames);
-        
-        command.execute();
+
+        assertThrows(IllegalArgumentException.class,
+            () -> command.execute());
     }
     
     @Test

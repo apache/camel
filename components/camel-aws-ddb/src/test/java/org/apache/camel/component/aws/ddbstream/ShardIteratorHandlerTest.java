@@ -28,20 +28,24 @@ import com.amazonaws.services.dynamodbv2.model.Stream;
 import com.amazonaws.services.dynamodbv2.model.StreamDescription;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ShardIteratorHandlerTest {
 
     private ShardIteratorHandler undertest;
@@ -52,20 +56,20 @@ public class ShardIteratorHandlerTest {
     private final DdbStreamComponent component = new DdbStreamComponent(context);
     private final DdbStreamEndpoint endpoint = new DdbStreamEndpoint(null, new DdbStreamConfiguration(), component);
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         endpoint.getConfiguration().setAmazonDynamoDbStreamsClient(amazonDynamoDBStreams);
         endpoint.start();
         undertest = new ShardIteratorHandler(endpoint);
 
-        when(amazonDynamoDBStreams.listStreams(any(ListStreamsRequest.class))).thenReturn(
+        lenient().when(amazonDynamoDBStreams.listStreams(any(ListStreamsRequest.class))).thenReturn(
             new ListStreamsResult()
                 .withStreams(new Stream()
                         .withStreamArn("arn:aws:dynamodb:region:12345:table/table_name/stream/timestamp")
                 )
         );
 
-        when(amazonDynamoDBStreams.describeStream(any(DescribeStreamRequest.class))).thenReturn(
+        lenient().when(amazonDynamoDBStreams.describeStream(any(DescribeStreamRequest.class))).thenReturn(
             new DescribeStreamResult()
                 .withStreamDescription(
                         new StreamDescription()
@@ -81,7 +85,7 @@ public class ShardIteratorHandlerTest {
                 )
         );
 
-        when(amazonDynamoDBStreams.getShardIterator(any(GetShardIteratorRequest.class))).thenAnswer(new Answer<GetShardIteratorResult>() {
+        lenient().when(amazonDynamoDBStreams.getShardIterator(any(GetShardIteratorRequest.class))).thenAnswer(new Answer<GetShardIteratorResult>() {
             @Override
             public GetShardIteratorResult answer(InvocationOnMock invocation) throws Throwable {
                 return new GetShardIteratorResult()
@@ -100,8 +104,8 @@ public class ShardIteratorHandlerTest {
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
-        assertThat(getIteratorCaptor.getValue().getShardId(), is("d"));
-        assertThat(shardIterator, is("shard_iterator_d_000"));
+        assertEquals("d", getIteratorCaptor.getValue().getShardId());
+        assertEquals("shard_iterator_d_000", shardIterator);
     }
 
     @Test
@@ -112,7 +116,7 @@ public class ShardIteratorHandlerTest {
         String shardIterator = undertest.getShardIterator(null);
 
         verify(amazonDynamoDBStreams, times(0)).getShardIterator(any(GetShardIteratorRequest.class));
-        assertThat(shardIterator, is("bar"));
+        assertEquals("bar", shardIterator);
     }
 
     @Test
@@ -123,8 +127,8 @@ public class ShardIteratorHandlerTest {
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
-        assertThat(getIteratorCaptor.getValue().getShardId(), is("a"));
-        assertThat(shardIterator, is("shard_iterator_a_000"));
+        assertEquals("a", getIteratorCaptor.getValue().getShardId());
+        assertEquals("shard_iterator_a_000", shardIterator);
     }
 
     @Test
@@ -142,9 +146,9 @@ public class ShardIteratorHandlerTest {
         verify(amazonDynamoDBStreams, times(4)).getShardIterator(getIteratorCaptor.capture());
         String[] shards = new String[]{"a", "b", "c", "d"};
         for (int i = 0; i < shards.length; ++i) {
-            assertThat(getIteratorCaptor.getAllValues().get(i).getShardId(), is(shards[i]));
+            assertEquals(shards[i], getIteratorCaptor.getAllValues().get(i).getShardId());
         }
-        assertThat(shardIterators, is(new String[]{"shard_iterator_a_000", "shard_iterator_b_000", "shard_iterator_c_000", "shard_iterator_d_000"}));
+        assertArrayEquals(new String[]{"shard_iterator_a_000", "shard_iterator_b_000", "shard_iterator_c_000", "shard_iterator_d_000"}, shardIterators);
 
     }
 
@@ -157,8 +161,8 @@ public class ShardIteratorHandlerTest {
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
-        assertThat(getIteratorCaptor.getValue().getShardId(), is("b"));
-        assertThat(shardIterator, is("shard_iterator_b_000"));
+        assertEquals("b", getIteratorCaptor.getValue().getShardId());
+        assertEquals("shard_iterator_b_000", shardIterator);
     }
 
     @Test
@@ -170,8 +174,8 @@ public class ShardIteratorHandlerTest {
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
-        assertThat(getIteratorCaptor.getValue().getShardId(), is("d"));
-        assertThat(shardIterator, is("shard_iterator_d_000"));
+        assertEquals("d", getIteratorCaptor.getValue().getShardId());
+        assertEquals("shard_iterator_d_000", shardIterator);
     }
 
     @Test
@@ -182,9 +186,9 @@ public class ShardIteratorHandlerTest {
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams).getShardIterator(getIteratorCaptor.capture());
-        assertThat(getIteratorCaptor.getValue().getShardId(), is("b"));
-        assertThat(shardIterator, is("shard_iterator_b_000"));
-        assertThat(getIteratorCaptor.getValue().getShardIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER.name()));
-        assertThat(getIteratorCaptor.getValue().getSequenceNumber(), is("12"));
+        assertEquals("b", getIteratorCaptor.getValue().getShardId());
+        assertEquals("shard_iterator_b_000", shardIterator);
+        assertEquals(ShardIteratorType.AFTER_SEQUENCE_NUMBER.name(), getIteratorCaptor.getValue().getShardIteratorType());
+        assertEquals("12", getIteratorCaptor.getValue().getSequenceNumber());
     }
 }

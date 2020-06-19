@@ -24,11 +24,13 @@ import org.apache.camel.component.aws.translate.TranslateConstants;
 import org.apache.camel.component.aws.translate.TranslateLanguageEnum;
 import org.apache.camel.component.aws.translate.TranslateOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("This test must be manually started, you need to specify AWS Credentials")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("This test must be manually started, you need to specify AWS Credentials")
 public class TranslateProducerIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")

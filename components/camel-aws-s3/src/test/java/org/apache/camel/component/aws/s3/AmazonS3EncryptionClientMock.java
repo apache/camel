@@ -75,7 +75,8 @@ import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
 
@@ -407,8 +408,8 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
 
     @Override
     public void setBucketPolicy(String bucketName, String policyText) throws AmazonClientException, AmazonServiceException {
-        Assert.assertEquals("nonExistingBucket", bucketName);
-        Assert.assertEquals("xxx", policyText);
+        assertEquals("nonExistingBucket", bucketName);
+        assertEquals("xxx", policyText);
     }
 
     @Override

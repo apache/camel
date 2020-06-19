@@ -20,10 +20,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import com.amazonaws.services.kinesis.model.Record;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class RecordStringConverterTest {
 
@@ -34,6 +34,6 @@ public class RecordStringConverterTest {
                 .withData(ByteBuffer.wrap("this is a String".getBytes(Charset.forName("UTF-8"))));
 
         String result = RecordStringConverter.toString(record);
-        assertThat(result, is("this is a String"));
+        assertEquals("this is a String", result);
     }
 }

@@ -17,8 +17,16 @@
 package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.Protocol;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SdbComponentConfigurationTest extends CamelTestSupport {
     
@@ -95,28 +103,32 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         assertEquals(new Integer(5), endpoint.getConfiguration().getMaxNumberOfDomains());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutDomainName() throws Exception {
         SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
-        component.createEndpoint("aws-sdb:// ");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-sdb:// "));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAmazonSDBClientConfiguration() throws Exception {
         SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
-        component.createEndpoint("aws-sdb://TestDomain");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-sdb://TestDomain"));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
-        component.createEndpoint("aws-sdb://TestDomain?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-sdb://TestDomain?secretKey=yyy"));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
-        component.createEndpoint("aws-sdb://TestDomain?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-sdb://TestDomain?accessKey=xxx"));
     }
     
     @Test

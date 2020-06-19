@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws.ses;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SESComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,11 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalSESClientMisconfiguration() throws Exception {
 
         SesComponent component = new SesComponent(context);
-        SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-ses://from@example.com"));
     }
 }

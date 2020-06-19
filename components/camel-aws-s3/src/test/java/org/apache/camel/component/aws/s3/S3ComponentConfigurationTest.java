@@ -18,8 +18,16 @@ package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3ComponentConfigurationTest extends CamelTestSupport {
 
@@ -115,22 +123,25 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertFalse(endpoint.getConfiguration().isIncludeBody());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutBucketName() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.createEndpoint("aws-s3:// ");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3:// "));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.createEndpoint("aws-s3://MyTopic?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3://MyTopic?secretKey=yyy"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        component.createEndpoint("aws-s3://MyTopic?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3://MyTopic?accessKey=xxx"));
     }
 
     @Test

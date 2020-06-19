@@ -28,13 +28,14 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@Ignore("TODO: investigate for Camel 3.0")
+@Disabled("TODO: investigate for Camel 3.0")
 public class EIPTracingTest extends CamelAwsXRayTestSupport {
 
     public EIPTracingTest() {

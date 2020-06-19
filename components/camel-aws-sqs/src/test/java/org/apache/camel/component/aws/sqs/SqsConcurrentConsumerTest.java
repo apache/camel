@@ -26,8 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SqsConcurrentConsumerTest extends CamelTestSupport {
     private static final int NUM_CONCURRENT = 10;
@@ -41,7 +45,7 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         // test
 
         NotifyBuilder notifier = new NotifyBuilder(context).whenCompleted(NUM_MESSAGES).create();
-        assertTrue("We didn't process " + NUM_MESSAGES + " messages as we expected!", notifier.matches(5, TimeUnit.SECONDS));
+        assertTrue(notifier.matches(5, TimeUnit.SECONDS), "We didn't process " + NUM_MESSAGES + " messages as we expected!");
 
         if (isPlatform("windows")) {
             // threading is different on windows
