@@ -473,7 +473,7 @@
     <protobuf-version>3.11.1</protobuf-version>
     <protonpack-version>1.8</protonpack-version>
     <pubnub-version>4.25.0</pubnub-version>
-    <pulsar-version>2.5.2</pulsar-version>
+    <pulsar-version>2.6.0</pulsar-version>
     <qpid-broker-version>8.0.0</qpid-broker-version>
     <qpid-jms-client-version>0.52.0</qpid-jms-client-version>
     <qpid-proton-j-version>0.33.5</qpid-proton-j-version>
