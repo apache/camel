@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -39,10 +45,11 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         assertTrue(endpoint.getConfiguration().isIncludeBody());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
 
         S3Component component = context.getComponent("aws-s3", S3Component.class);
-        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-s3://MyBucket"));
     }
 }

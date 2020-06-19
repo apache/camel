@@ -22,10 +22,11 @@ import org.apache.camel.Handler;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.xray.bean.SomeBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ComprehensiveTrackingTest extends CamelAwsXRayTestSupport {
 

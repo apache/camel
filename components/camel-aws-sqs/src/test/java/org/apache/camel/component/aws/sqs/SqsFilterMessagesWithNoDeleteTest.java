@@ -23,14 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Ignore("Test fails occationally on CI servers")
-public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
+@Disabled("Test fails occationally on CI servers")
+public class SqsFilterMessagesWithNoDeleteTest {
 
     // put some test messages onto the 'queue'
     private void populateMessages(AmazonSQSClientMock clientMock) {

@@ -38,8 +38,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EC2ProducerTest extends CamelTestSupport {
     
@@ -118,8 +122,8 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        assertTrue("Should be failed", exchange.isFailed());
-        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertTrue(exchange.isFailed(), "Should be failed");
+        assertTrue(exchange.getException() instanceof IllegalArgumentException, "Should be IllegalArgumentException");
         assertEquals("AMI must be specified", exchange.getException().getMessage());
     }
     
@@ -139,8 +143,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         
-        assertTrue("Should be failed", exchange.isFailed());
-        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertTrue(exchange.isFailed(), "Should be failed");
+        assertTrue(exchange.getException() instanceof IllegalArgumentException, "Should be IllegalArgumentException");
         assertEquals("Instance Type must be specified", exchange.getException().getMessage());
     }
     
@@ -160,8 +164,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         
-        assertTrue("Should be failed", exchange.isFailed());
-        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertTrue(exchange.isFailed(), "Should be failed");
+        assertTrue(exchange.getException() instanceof IllegalArgumentException, "Should be IllegalArgumentException");
         assertEquals("Min instances count must be specified", exchange.getException().getMessage());
     }
     
@@ -181,8 +185,8 @@ public class EC2ProducerTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         
-        assertTrue("Should be failed", exchange.isFailed());
-        assertTrue("Should be IllegalArgumentException", exchange.getException() instanceof IllegalArgumentException);
+        assertTrue(exchange.isFailed(), "Should be failed");
+        assertTrue(exchange.getException() instanceof IllegalArgumentException, "Should be IllegalArgumentException");
         assertEquals("Max instances count must be specified", exchange.getException().getMessage());
     }
     

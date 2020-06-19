@@ -31,11 +31,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -125,7 +125,7 @@ public class CwComponentTest extends CamelTestSupport {
 
         List<Dimension> dimensions = argument.getValue().getMetricData().get(0).getDimensions();
         Dimension dimension = dimensions.get(0);
-        assertThat(dimensions.size(), is(2));
+        assertEquals(2, dimensions.size());
         assertEquals("keyOne", dimension.getName());
         assertEquals("valueOne", dimension.getValue());
     }

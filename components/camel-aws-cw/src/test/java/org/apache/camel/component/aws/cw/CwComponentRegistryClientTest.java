@@ -20,9 +20,11 @@ import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class CwComponentRegistryClientTest extends CamelTestSupport {
@@ -44,9 +46,10 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
         assertEquals(NOW, endpoint.getConfiguration().getTimestamp());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws-cw://camel.apache.org/test");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-cw://camel.apache.org/test"));
     }
 }

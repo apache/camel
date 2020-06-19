@@ -22,9 +22,11 @@ import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class CwComponentConfigurationTest extends CamelTestSupport {
@@ -46,22 +48,25 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         assertEquals(NOW, endpoint.getConfiguration().getTimestamp());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        component.createEndpoint("aws-cw://camel.apache.org/test?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-cw://camel.apache.org/test?secretKey=yyy"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx"));
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-cw://camel.apache.org/test"));
     }
     
     @Test

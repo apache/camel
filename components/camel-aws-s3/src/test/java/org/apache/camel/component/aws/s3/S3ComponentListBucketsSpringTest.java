@@ -24,9 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3ComponentListBucketsSpringTest extends CamelSpringTestSupport {
 

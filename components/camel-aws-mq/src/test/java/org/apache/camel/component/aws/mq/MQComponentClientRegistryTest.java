@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws.mq;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MQComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,11 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonMqClient());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalMQClientMisconfiguration() throws Exception {
 
         MQComponent component = context.getComponent("aws-mq", MQComponent.class);
-        MQEndpoint endpoint = (MQEndpoint) component.createEndpoint("aws-mq://MyQueue");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-mq://MyQueue"));
     }
 }

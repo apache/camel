@@ -28,18 +28,22 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SdbComponentSpringTest extends CamelSpringTestSupport {
     
     private AmazonSDBClientMock amazonSDBClient;
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         

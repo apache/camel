@@ -18,9 +18,11 @@ package org.apache.camel.component.aws.lambda;
 
 import com.amazonaws.services.lambda.AWSLambdaClient;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class LambdaComponentClientRegistryTest extends CamelTestSupport {
@@ -37,11 +39,12 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
     
-    @Test(expected = PropertyBindingException.class)
+    @Test
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
-        LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
-                "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        assertThrows(PropertyBindingException.class,
+            () -> component.createEndpoint(
+                "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy"));
     }
 }
