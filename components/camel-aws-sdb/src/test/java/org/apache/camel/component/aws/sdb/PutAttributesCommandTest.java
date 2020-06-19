@@ -24,11 +24,12 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PutAttributesCommandTest {
 
@@ -37,7 +38,7 @@ public class PutAttributesCommandTest {
     private SdbConfiguration configuration;
     private Exchange exchange;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
@@ -64,15 +65,16 @@ public class PutAttributesCommandTest {
         assertEquals(replaceableAttributes, sdbClient.putAttributesRequest.getAttributes());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeWithoutItemName() {
         List<ReplaceableAttribute> replaceableAttributes = new ArrayList<>();
         replaceableAttributes.add(new ReplaceableAttribute("NAME1", "VALUE1", true));
         exchange.getIn().setHeader(SdbConstants.REPLACEABLE_ATTRIBUTES, replaceableAttributes);
         UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, updateCondition);
-        
-        command.execute();
+
+        assertThrows(IllegalArgumentException.class,
+            () -> command.execute());
     }
 
     @Test

@@ -24,10 +24,12 @@ import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 
 public class DeleteItemCommandTest {
 
@@ -36,7 +38,7 @@ public class DeleteItemCommandTest {
     private DdbConfiguration configuration;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new DdbConfiguration();

@@ -51,7 +51,8 @@ import com.amazonaws.services.sns.model.SubscribeResult;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
 import com.amazonaws.services.sns.model.UnsubscribeResult;
-import org.junit.Assert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AmazonSNSClientMock extends AbstractAmazonSNS {
     
@@ -87,9 +88,9 @@ public class AmazonSNSClientMock extends AbstractAmazonSNS {
 
     @Override
     public SetTopicAttributesResult setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) throws AmazonServiceException, AmazonClientException {
-        Assert.assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.getTopicArn());
-        Assert.assertEquals("Policy", setTopicAttributesRequest.getAttributeName());
-        Assert.assertEquals("XXX", setTopicAttributesRequest.getAttributeValue());
+        assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.getTopicArn());
+        assertEquals("Policy", setTopicAttributesRequest.getAttributeName());
+        assertEquals("XXX", setTopicAttributesRequest.getAttributeValue());
         return new SetTopicAttributesResult();
     }
 

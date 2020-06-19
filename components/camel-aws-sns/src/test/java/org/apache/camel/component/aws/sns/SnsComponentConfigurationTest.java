@@ -19,8 +19,13 @@ package org.apache.camel.component.aws.sns;
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
 import org.apache.camel.component.aws.sqs.AmazonSQSClientMock;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SnsComponentConfigurationTest extends CamelTestSupport {
     
@@ -136,7 +141,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPolicy());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithSQSSubscriptionIllegalArgument() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
         AmazonSQSClientMock mockSQS = new AmazonSQSClientMock();
@@ -156,20 +161,23 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getTopicArn());
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getPolicy());
-        
-        endpoint.start();
+
+        assertThrows(IllegalArgumentException.class,
+            () -> endpoint.start());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
-        component.createEndpoint("aws-sns://MyTopic?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-sns://MyTopic?secretKey=yyy"));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SnsComponent component = new SnsComponent(context);
-        component.createEndpoint("aws-sns://MyTopic?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class,
+            () -> component.createEndpoint("aws-sns://MyTopic?accessKey=xxx"));
     }
     
     @Test

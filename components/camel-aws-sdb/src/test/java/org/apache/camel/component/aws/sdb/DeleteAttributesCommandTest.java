@@ -24,11 +24,12 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteAttributesCommandTest {
 
@@ -37,7 +38,7 @@ public class DeleteAttributesCommandTest {
     private SdbConfiguration configuration;
     private Exchange exchange;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
@@ -64,15 +65,16 @@ public class DeleteAttributesCommandTest {
         assertEquals(attributes, sdbClient.deleteAttributesRequest.getAttributes());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeWithoutItemName() {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("NAME1", "VALUE1"));
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
         UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, condition);
-        
-        command.execute();
+
+        assertThrows(IllegalArgumentException.class,
+            () -> command.execute());
     }
 
     @Test

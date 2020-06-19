@@ -24,13 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.xray.bean.ProcessingCamelBean;
 import org.apache.camel.component.aws.xray.component.CommonEndpoints;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.aws.xray.TestDataBuilder.createSegment;
 import static org.apache.camel.component.aws.xray.TestDataBuilder.createSubsegment;
 import static org.apache.camel.component.aws.xray.TestDataBuilder.createTrace;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
 /**

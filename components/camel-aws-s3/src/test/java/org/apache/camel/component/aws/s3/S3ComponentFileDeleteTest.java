@@ -20,7 +20,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3ComponentFileDeleteTest extends S3ComponentFileTest {
 

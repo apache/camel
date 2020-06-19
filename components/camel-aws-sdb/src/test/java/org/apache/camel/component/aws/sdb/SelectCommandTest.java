@@ -22,11 +22,11 @@ import com.amazonaws.services.simpledb.model.Item;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SelectCommandTest {
 
@@ -35,7 +35,7 @@ public class SelectCommandTest {
     private SdbConfiguration configuration;
     private Exchange exchange;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
