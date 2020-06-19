@@ -8,7 +8,7 @@
 *Deprecated*
 
 WARNING: This component is deprecated as the Apache Mina 1.x project is EOL.
-Instead use xref:mina2-component.adoc[Mina 2] or xref:mina2-component.adoc[Mina 2] instead.
+Instead use xref:mina2-component.adoc[Mina 2] or xref:netty-component.adoc[Netty] instead.
 
 The *mina:* component is a transport for working with
 http://mina.apache.org/[Apache MINA]
