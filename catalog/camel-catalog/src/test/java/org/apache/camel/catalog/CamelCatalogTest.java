@@ -1161,6 +1161,18 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointTimerDuration() throws Exception {
+        String uri = "timer:foo?period=5s";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "timer:foo?period=5p";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("5p", result.getInvalidDuration().get("period"));
+    }
+
+    @Test
     public void testValidateEndpointHttpPropertyPlaceholder() throws Exception {
         String uri = "http://api.openweathermap.org/data/2.5/weather?{{property.weatherUri}}";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
