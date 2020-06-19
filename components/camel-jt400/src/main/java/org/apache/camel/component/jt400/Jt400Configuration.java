@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;
+import com.ibm.as400.access.MessageQueue;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -58,6 +59,35 @@ public class Jt400Configuration {
         binary
     }
 
+    public enum MessageAction {
+        /**
+         * Keep the message in the message queue and mark it as an old message
+         */
+        OLD(MessageQueue.OLD),
+        /**
+         * Remove the message from the message queue
+         */
+        REMOVE(MessageQueue.REMOVE),
+        /**
+         * Keep the message in the message queue without changing its new or old designation
+         */
+        SAME(MessageQueue.SAME);
+
+        private String jt400Value;
+        private MessageAction(final String jt400Value) {
+            this.jt400Value = jt400Value;
+        }
+        /**
+         * Returns the string literal value that can be used for
+         * APIs from the JTOpen (jt400) libraries
+         *
+         * @return a value suitable for use with jt400 libraries
+         */
+        public String getJt400Value() {
+            return jt400Value;
+        }
+    }
+
     /**
      * Logging tool.
      */
@@ -86,7 +116,6 @@ public class Jt400Configuration {
     @UriPath @Metadata(required = true)
     private String objectPath;
 
-    @UriPath @Metadata(required = true)
     private Jt400Type type;
 
     @UriParam
@@ -118,6 +147,9 @@ public class Jt400Configuration {
 
     @UriParam(label = "producer")
     private String procedureName;
+
+    @UriParam(label = "consumer", defaultValue = "OLD")
+    private MessageAction messageAction = MessageAction.OLD;
 
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
@@ -327,6 +359,19 @@ public class Jt400Configuration {
      */
     public void setProcedureName(String procedureName) {
         this.procedureName = procedureName;
+    }
+
+    public MessageAction getMessageAction() {
+        return messageAction;
+    }
+
+    /**
+     * Action to be taken on messages when read from a message queue.
+     * Messages can be marked as old ("OLD"), removed from the queue
+     * ("REMOVE"), or neither ("SAME").
+     */
+    public void setMessageAction(MessageAction messageAction) {
+        this.messageAction = messageAction;
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {

@@ -36,13 +36,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Exchanges messages with an AS/400 system using data queues or program call.
+ * Exchanges messages with an AS/400 system using data queues, message queues, or program call.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", category = {Category.MESSAGING})
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
 
-    public static final String KEY = "KEY";
-    public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
+    public static final String KEY = Jt400Constants.KEY;
+    public static final String SENDER_INFORMATION = Jt400Constants.SENDER_INFORMATION;
 
     @UriParam
     private final Jt400Configuration configuration;
@@ -79,6 +79,8 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public Producer createProducer() throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
             return new Jt400DataQueueProducer(this);
+        } else if (Jt400Type.MSGQ == configuration.getType()) {
+            return new Jt400MsgQueueProducer(this);
         } else {
             return new Jt400PgmProducer(this);
         }
@@ -88,6 +90,10 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     public Consumer createConsumer(Processor processor) throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
             Consumer consumer = new Jt400DataQueueConsumer(this, processor);
+            configureConsumer(consumer);
+            return consumer;
+        } else if (Jt400Type.MSGQ == configuration.getType()) {
+            Consumer consumer = new Jt400MsgQueueConsumer(this, processor);
             configureConsumer(consumer);
             return consumer;
         } else {
@@ -268,6 +274,14 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
 
     public String getProcedureName() {
         return configuration.getProcedureName();
+    }
+
+    public void setMessageAction(Jt400Configuration.MessageAction messageAction) {
+        configuration.setMessageAction(messageAction);
+    }
+
+    public Jt400Configuration.MessageAction getMessageAction() {
+        return configuration.getMessageAction();
     }
 
     @Override

@@ -16,7 +16,16 @@
  */
 package org.apache.camel.component.jt400;
 
-public enum Jt400Type {
+public interface Jt400Constants {
 
-    DTAQ, PGM, SRVPGM, MSGQ
+    //header names
+    public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
+
+    // Used only for keyed data queue support
+    public static final String KEY = "KEY";
+
+    // Used only for message queue support
+    public static final String MESSAGE_ID = "CamelJt400MessageID";
+    public static final String MESSAGE_FILE = "CamelJt400MessageFile";
+    public static final String MESSAGE_TYPE = "CamelJt400MessageType";
 }
