@@ -178,7 +178,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the name of the AS/400 system.
+     * Returns the name of the IBM i system.
      */
     public String getSystemName() {
         return systemName;
@@ -189,7 +189,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the ID of the AS/400 user.
+     * Returns the ID of the IBM i user.
      */
     public String getUserID() {
         return userID;
@@ -200,7 +200,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the password of the AS/400 user.
+     * Returns the password of the IBM i user.
      */
     public String getPassword() {
         return password;
@@ -225,7 +225,7 @@ public class Jt400Configuration {
     // Options
     
     /**
-     * Returns the CCSID to use for the connection with the AS/400 system.
+     * Returns the CCSID to use for the connection with the IBM i system.
      * Returns -1 if the CCSID to use is the default system CCSID.
      */
     public int getCssid() {
@@ -233,7 +233,7 @@ public class Jt400Configuration {
     }
     
     /**
-     * Sets the CCSID to use for the connection with the AS/400 system.
+     * Sets the CCSID to use for the connection with the IBM i system.
      */
     public void setCcsid(int ccsid) {
         this.ccsid = (ccsid < 0) ? DEFAULT_SYSTEM_CCSID : ccsid;
@@ -255,7 +255,7 @@ public class Jt400Configuration {
     }
     
     /**
-     * Returns whether AS/400 prompting is enabled in the environment running
+     * Returns whether IBM i prompting is enabled in the environment running
      * Camel.
      */
     public boolean isGuiAvailable() {
@@ -263,7 +263,7 @@ public class Jt400Configuration {
     }
     
     /**
-     * Sets whether AS/400 prompting is enabled in the environment running
+     * Sets whether IBM i prompting is enabled in the environment running
      * Camel.
      */
     public void setGuiAvailable(boolean guiAvailable) {
@@ -316,7 +316,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Whether connections to AS/400 are secured with SSL.
+     * Whether connections to IBM i are secured with SSL.
      */
     public void setSecured(boolean secured) {
         this.secured = secured;
@@ -334,7 +334,7 @@ public class Jt400Configuration {
     }
 
     /**
-     * Specifies the fields (program parameters) length as in the AS/400 program definition.
+     * Specifies the fields (program parameters) length as in the IBM i program definition.
      */
     public void setOutputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
         this.outputFieldsLengthArray = outputFieldsLengthArray;
@@ -426,11 +426,11 @@ public class Jt400Configuration {
             try {
                 system.setGuiAvailable(guiAvailable);
             } catch (PropertyVetoException e) {
-                LOG.warn("Failed to disable AS/400 prompting in the environment running Camel. This exception will be ignored.", e);
+                LOG.warn("Failed to disable IBM i prompting in the environment running Camel. This exception will be ignored.", e);
             }
             return system; // Not null here.
         } catch (ConnectionPoolException e) {
-            throw new RuntimeCamelException(String.format("Unable to obtain an AS/400 connection for system name '%s' and user ID '%s'", systemName, userID), e);
+            throw new RuntimeCamelException(String.format("Unable to obtain an IBM i connection for system name '%s' and user ID '%s'", systemName, userID), e);
         } catch (PropertyVetoException e) {
             throw new RuntimeCamelException("Unable to set the CSSID to use with " + system, e);
         }
