@@ -25,6 +25,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
+
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
@@ -45,13 +46,19 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * A support class that builds up and tears down an ActiveMQ Artemis instance to be used
  * for unit testing.
  */
 public class BaseJms2TestSupport extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseJms2TestSupport.class);
 
     @Produce
     protected ProducerTemplate template;
@@ -104,7 +111,7 @@ public class BaseJms2TestSupport extends CamelTestSupport {
 
     private void startBroker() throws Exception {
         broker.start();
-        log.info("Started Embedded JMS Server");
+        LOG.info("Started Embedded JMS Server");
     }
 
     @Override
@@ -112,19 +119,19 @@ public class BaseJms2TestSupport extends CamelTestSupport {
         super.tearDown();
         DefaultCamelContext dcc = (DefaultCamelContext)context;
         while (!dcc.isStopped()) {
-            log.info("Waiting on the Camel Context to stop");
+            LOG.info("Waiting on the Camel Context to stop");
         }
-        log.info("Closing JMS Session");
+        LOG.info("Closing JMS Session");
         if (getSession() != null) {
             getSession().close();
             setSession(null);
         }
-        log.info("Closing JMS Connection");
+        LOG.info("Closing JMS Connection");
         if (connection != null) {
             connection.stop();
             connection = null;
         }
-        log.info("Stopping the ActiveMQ Broker");
+        LOG.info("Stopping the ActiveMQ Broker");
         if (broker != null) {
             broker.stop();
             broker = null;
