@@ -19,7 +19,7 @@ package org.apache.camel.itest.jmh;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.URISupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Mode;
