@@ -44,6 +44,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "keyed": target.getConfiguration().setKeyed(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messageaction":
+        case "messageAction": target.getConfiguration().setMessageAction(property(camelContext, org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class, value)); return true;
         case "outputfieldsidxarray":
         case "outputFieldsIdxArray": target.getConfiguration().setOutputFieldsIdxArray(property(camelContext, java.lang.Integer[].class, value)); return true;
         case "outputfieldslengtharray":
@@ -99,6 +101,7 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         answer.put("initialDelay", long.class);
         answer.put("keyed", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("messageAction", org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class);
         answer.put("outputFieldsIdxArray", java.lang.Integer[].class);
         answer.put("outputFieldsLengthArray", java.lang.Integer[].class);
         answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
@@ -149,6 +152,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "keyed": return target.getConfiguration().isKeyed();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "messageaction":
+        case "messageAction": return target.getConfiguration().getMessageAction();
         case "outputfieldsidxarray":
         case "outputFieldsIdxArray": return target.getConfiguration().getOutputFieldsIdxArray();
         case "outputfieldslengtharray":

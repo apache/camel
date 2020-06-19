@@ -8482,8 +8482,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JT400 (camel-jt400)
-     * Exchanges messages with an AS/400 system using data queues or program
-     * call.
+     * Exchanges messages with an AS/400 system using data queues, message
+     * queues, or program call.
      * 
      * Category: messaging
      * Since: 1.5
@@ -8503,10 +8503,6 @@ public class StaticEndpointBuilders {
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
      * target object of this endpoint.
-     * 
-     * Path parameter: type (required)
-     * Whether to work with data queues or remote program call
-     * The value can be one of: DTAQ, PGM, SRVPGM
      * 
      * @param path userID:password/systemName/objectPath.type
      */
@@ -8516,8 +8512,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JT400 (camel-jt400)
-     * Exchanges messages with an AS/400 system using data queues or program
-     * call.
+     * Exchanges messages with an AS/400 system using data queues, message
+     * queues, or program call.
      * 
      * Category: messaging
      * Since: 1.5
@@ -8537,10 +8533,6 @@ public class StaticEndpointBuilders {
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
      * target object of this endpoint.
-     * 
-     * Path parameter: type (required)
-     * Whether to work with data queues or remote program call
-     * The value can be one of: DTAQ, PGM, SRVPGM
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
