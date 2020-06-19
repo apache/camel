@@ -42,10 +42,9 @@
 
     <dependencies>
 
-        <!-- needs camel-core due to stax converter -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
+            <artifactId>camel-xml-jaxb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
