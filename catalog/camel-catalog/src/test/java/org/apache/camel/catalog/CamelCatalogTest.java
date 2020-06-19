@@ -1448,6 +1448,28 @@ public class CamelCatalogTest {
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
         assertEquals("12x5", result.getInvalidNumber().get("camel.resilience4j.slow-call-rate-threshold"));
+
+        text = "camel.faulttolerance.timeoutPoolSize=5";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.lra.coordinatorUrl=foobar";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.threadpool.maxQueueSize=123";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.threadpool.maxQueueSize=12x5";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("12x5", result.getInvalidInteger().get("camel.threadpool.maxQueueSize"));
+
+        text = "camel.health.routesEnabled=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidBoolean().get("camel.health.routesEnabled"));
     }
 
     @Test
