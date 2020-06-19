@@ -1,0 +1,17 @@
+[[Change-Data-Capture]]
+= Change Data Capture
+
+Camel supports the https://en.wikipedia.org/wiki/Change_data_capture[Change Data Capture] pattern.
+
+This patterns allows to track changes in databases, and then let applications listen to change events,
+and react accordingly. For example this can be used as a xref:messaging-bridge.adoc[Messaging Bridge] to
+bridge two systems.
+
+image::eip/CDC-Debezium.png[image]
+
+Camel integrates with https://debezium.io/[Debezium] which is a CDC system. There are a number of Camel Debezium
+components that works with different databases such as MySQL, Postgres, and MongoDB.
+
+== Sample
+
+See the https://github.com/apache/camel-examples/tree/master/examples/camel-example-debezium[Camel Debezium Example] for more details.

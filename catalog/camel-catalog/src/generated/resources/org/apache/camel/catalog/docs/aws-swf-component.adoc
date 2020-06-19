@@ -1,0 +1,288 @@
+[[aws-swf-component]]
+= AWS Simple Workflow (SWF) Component
+:docTitle: AWS Simple Workflow (SWF)
+:artifactId: camel-aws-swf
+:description: Manage workflows in the AWS Simple Workflow service.
+:since: 2.13
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: AWS
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Simple Workflow component supports managing workflows from
+https://aws.amazon.com/swf/[Amazon's Simple Workflow] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Simple Workflow. More information are available
+at https://aws.amazon.com/swf/[Amazon Simple Workflow].
+
+== URI Format
+
+[source,java]
+---------------------------------------
+aws-swf://<workflow|activity>[?options]
+---------------------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS Simple Workflow (SWF) component supports 30 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
+| *configuration* (common) | The component configuration |  | SWFConfiguration
+| *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
+| *domainName* (common) | The workflow domain to use. |  | String
+| *eventName* (common) | The workflow or activity event name to use. |  | String
+| *region* (common) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *version* (common) | The workflow or activity event version to use. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *activityList* (activity) | The list name to consume activities from. |  | String
+| *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
+| *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
+| *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
+| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
+| *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
+| *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
+| *accessKey* (security) | Amazon AWS Access Key. |  | String
+| *secretKey* (security) | Amazon AWS Secret Key. |  | String
+| *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
+| *executionStartToCloseTimeout* (workflow) | Set the execution start to close timeout. | 3600 | String
+| *operation* (workflow) | Workflow operation. The value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
+| *signalName* (workflow) | The name of the signal to send to the workflow. |  | String
+| *stateResultType* (workflow) | The type of the result when a workflow state is queried. |  | String
+| *taskStartToCloseTimeout* (workflow) | Set the task start to close timeout. | 600 | String
+| *terminationDetails* (workflow) | Details for terminating a workflow. |  | String
+| *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
+| *workflowList* (workflow) | The list name to consume workflows from. |  | String
+| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS Simple Workflow (SWF) endpoint is configured using URI syntax:
+
+----
+aws-swf:type
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *type* | *Required* Activity or workflow. The value can be one of: activity, workflow |  | String
+|===
+
+
+=== Query Parameters (32 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
+| *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
+| *domainName* (common) | The workflow domain to use. |  | String
+| *eventName* (common) | The workflow or activity event name to use. |  | String
+| *region* (common) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *version* (common) | The workflow or activity event version to use. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *activityList* (activity) | The list name to consume activities from. |  | String
+| *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
+| *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
+| *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
+| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
+| *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
+| *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key. |  | String
+| *secretKey* (security) | Amazon AWS Secret Key. |  | String
+| *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
+| *executionStartToCloseTimeout* (workflow) | Set the execution start to close timeout. | 3600 | String
+| *operation* (workflow) | Workflow operation. The value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
+| *signalName* (workflow) | The name of the signal to send to the workflow. |  | String
+| *stateResultType* (workflow) | The type of the result when a workflow state is queried. |  | String
+| *taskStartToCloseTimeout* (workflow) | Set the task start to close timeout. | 600 | String
+| *terminationDetails* (workflow) | Details for terminating a workflow. |  | String
+| *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
+| *workflowList* (workflow) | The list name to consume workflows from. |  | String
+| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
+|===
+// endpoint options: END
+
+
+
+
+Required SWF component options
+
+You have to provide the amazonSWClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/swf[Amazon SWF].
+
+== Usage
+
+=== Message headers evaluated by the SWF Workflow Producer
+
+A workflow producer allows interacting with a workflow. It can start a
+new workflow execution, query its state, send signals to a running
+workflow, or terminate and cancel it.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelSWFOperation` |`String` |The operation to perform on the workflow. Supported operations are:  +
+ SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY.
+
+|`CamelSWFWorkflowId` |`String` |A workflow ID to use.
+
+|`CamelAwsDdbKeyCamelSWFRunId` |`String` |A worfklow run ID to use.
+
+|`CamelSWFStateResultType` |`String` |The type of the result when a workflow state is queried.
+
+|`CamelSWFEventName` |`String` |The workflow or activity event name to use.
+
+|`CamelSWFVersion` |`String` |The workflow or activity event version to use.
+
+|`CamelSWFReason` |`String` |The reason for terminating a workflow.
+
+|`CamelSWFDetails` |`String` |Details for terminating a workflow.
+
+|`CamelSWFChildPolicy` |`String` |The policy to use on child workflows when terminating a workflow.
+|=======================================================================
+
+=== Message headers set by the SWF Workflow Producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelSWFWorkflowId` |`String` |The worfklow ID used or newly generated.
+
+|`CamelAwsDdbKeyCamelSWFRunId` |`String` |The worfklow run ID used or generated.
+|=======================================================================
+
+=== Message headers set by the SWF Workflow Consumer
+
+A workflow consumer represents the workflow logic. When it is started,
+it will start polling workflow decision tasks and process them. In
+addition to processing decision tasks, a workflow consumer route, will
+also receive signals (send from a workflow producer) or state queries.
+The primary purpose of a workflow consumer is to schedule activity tasks
+for execution using activity producers. Actually activity tasks can be
+scheduled only from a thread started by a workflow consumer.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelSWFAction` |`String` |Indicates what type is the current event: CamelSWFActionExecute,
+CamelSWFSignalReceivedAction or CamelSWFGetStateAction.
+
+|`CamelSWFWorkflowReplaying` |`boolean` |Indicates whether the current decision task is a replay or not.
+
+|`CamelSWFWorkflowStartTime` |`long` |The time of the start event for this decision task.
+|=======================================================================
+
+=== Message headers set by the SWF Activity Producer
+
+An activity producer allows scheduling activity tasks. An activity
+producer can be used only from a thread started by a workflow consumer
+ie, it can process synchronous exchanges started by a workflow consumer.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelSWFEventName` |`String` |The activity name to schedule.
+
+|`CamelSWFVersion` |`String` |The activity version to schedule.
+|=======================================================================
+
+=== Message headers set by the SWF Activity Consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelSWFTaskToken` |`String` |The task token that is required to report task completion for manually
+completed tasks.
+|=======================================================================
+
+=== Advanced amazonSWClient configuration
+
+If you need more control over the AmazonSimpleWorkflowClient instance
+configuration you can create your own instance and refer to it from the
+URI:
+
+The `#client` refers to a AmazonSimpleWorkflowClient in the
+Registry.
+
+For example if your Camel Application is running behind a firewall:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+AmazonSimpleWorkflowClient client = new AmazonSimpleWorkflowClient(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+--------------------------------------------------------------------------------------------------------
+
+== Automatic detection of AmazonSimpleWorkflow client in registry
+
+The component is capable of detecting the presence of an AmazonSimpleWorkflow bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-swf</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+
+include::camel-spring-boot::page$aws-swf-starter.adoc[]

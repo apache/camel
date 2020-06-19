@@ -1,0 +1,50 @@
+[[Durable-Subscriber]]
+= Durable Subscriber
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/DurableSubscription.html[Durable Subscriber]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+Camel supports the Durable Subscriber from the EIP patterns using components such as the JMS or Kafka component which supports publish & subscribe using topics with support for non-durable and durable subscribers.
+
+image::eip/DurableSubscriberSolution.gif[image]
+
+== Sample
+
+Here is a simple example of creating durable subscribers to a JMS topic
+
+Using Java DSL
+
+[source,java]
+----
+from("direct:start")
+  .to("activemq:topic:foo");
+
+from("activemq:topic:foo?clientId=1&durableSubscriptionName=bar1")
+  .to("mock:result1");
+
+from("activemq:topic:foo?clientId=2&durableSubscriptionName=bar2")
+  .to("mock:result2");
+----
+
+Using XML DSL
+
+[source,xml]
+----
+<routes>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="activemq:topic:foo"/>
+    </route>
+
+    <route>
+        <from uri="activemq:topic:foo?clientId=1&amp;durableSubscriptionName=bar1"/>
+        <to uri="mock:result1"/>
+    </route>
+
+    <route>
+        <from uri="activemq:topic:foo?clientId=2&amp;durableSubscriptionName=bar2"/>
+        <to uri="mock:result2"/>
+    </route>
+</routes>
+----

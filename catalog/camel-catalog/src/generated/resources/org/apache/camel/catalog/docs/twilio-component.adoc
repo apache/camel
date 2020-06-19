@@ -1,0 +1,230 @@
+[[twilio-component]]
+= Twilio Component
+:docTitle: Twilio
+:artifactId: camel-twilio
+:description: Interact with Twilio REST APIs using Twilio Java SDK.
+:since: 2.20
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Twilio component provides access to Version 2010-04-01 of Twilio REST APIs accessible
+using https://github.com/twilio/twilio-java[Twilio Java SDK].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+-------------------------------------------------
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-twilio</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+-------------------------------------------------
+
+
+== Twilio Options
+
+// component options: START
+The Twilio component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | To use the shared configuration |  | TwilioConfiguration
+| *restClient* (advanced) | To use the shared REST client |  | TwilioRestClient
+| *accountSid* (security) | The account SID to use. |  | String
+| *password* (security) | Auth token for the account. |  | String
+| *username* (security) | The account to use. |  | String
+|===
+// component options: END
+
+// endpoint options: START
+The Twilio endpoint is configured using URI syntax:
+
+----
+twilio:apiName/methodName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform. The value can be one of: ACCOUNT, ADDRESS, APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE, CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY, NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING, SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST, ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL, AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE, AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK, CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING, CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL, INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE, MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT, RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD, SIP_CREDENTIAL_LIST, SIP_DOMAIN, SIP_IP_ACCESS_CONTROL_LIST, SIP_CREDENTIAL_LIST_CREDENTIAL, SIP_DOMAIN_CREDENTIAL_LIST_MAPPING, SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING, SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER, USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH, USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY, USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY |  | TwilioApiName
+| *methodName* | *Required* What sub operation to use for the selected operation. The value can be one of: create, delete, fetch, read, update |  | String
+|===
+
+
+=== Query Parameters (23 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. The value can be one of: none, spring, quartz | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+
+
+
+== URI format
+
+[source,java]
+-------------------------------------------------
+    twilio://endpoint-prefix/endpoint?[options]
+-------------------------------------------------
+
+Endpoint prefix can be one of:
+
+* account
+* address
+* address-dependent-phone-number
+* application
+* available-phone-number-country
+* available-phone-number-country-local
+* available-phone-number-country-mobile
+* available-phone-number-country-toll-free
+* call
+* call-feedback
+* call-feedback-summary
+* call-notification
+* call-recording
+* conference
+* conference-participant
+* connect-app
+* incoming-phone-number
+* incoming-phone-number-local
+* incoming-phone-number-mobile
+* incoming-phone-number-toll-free
+* key
+* message
+* message-feedback
+* message-media
+* new-key
+* new-signing-key
+* notification
+* outgoing-caller-id
+* queue
+* queue-member
+* recording
+* recording-add-on-result
+* recording-add-on-result-payload
+* recording-transcription
+* short-code
+* signing-key
+* sip-credential-list
+* sip-credential-list-credential
+* sip-domain
+* sip-domain-credential-list-mapping
+* sip-domain-ip-access-control-list-mapping
+* sip-ip-access-control-list
+* sip-ip-access-control-list-ip-address
+* token
+* transcription
+* usage-record
+* usage-record-all-time
+* usage-record-daily
+* usage-record-last-month
+* usage-record-monthly
+* usage-record-this-month
+* usage-record-today
+* usage-record-yearly
+* usage-record-yesterday
+* usage-trigger
+* validation-request
+
+
+== Producer Endpoints:
+
+Producer endpoints can use endpoint prefixes followed by endpoint names
+and associated options described next. A shorthand alias can be used for
+all of the endpoints. The endpoint URI MUST contain a prefix.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelTwilio.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint option *`inBody=option`*
+would override a *`CamelTwilio.option`* header.
+
+Endpoint can be one of:
+
+[width="100%",cols="20%,20%,60%",options="header"]
+|=======================================================================
+| Endpoint  | Shorthand Alias | Description
+| *creator* | create          | Make the request to the Twilio API to perform the create
+| *deleter* | delete          | Make the request to the Twilio API to perform the delete
+| *fetcher* | fetch           | Make the request to the Twilio API to perform the fetch
+| *reader*  | read            | Make the request to the Twilio API to perform the read
+| *updater* | update          | Make the request to the Twilio API to perform the update
+|=======================================================================
+
+Available endpoints differ depending on the endpoint prefixes.
+
+For more information on the endpoints and options see API documentation at:
+https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
+
+
+== Consumer Endpoints:
+
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use
+http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] to schedule endpoint invocation.
+Consumer endpoints that return an array or collection will
+generate one exchange per element, and their routes will be executed
+once for each exchange.
+
+If you want to receive calls or messages from Twilio and respond to them
+using a Camel consumer endpoint, you can use other HTTP-based components
+such as *camel-servlet*, *camel-undertow*, *camel-jetty*, and *camel-netty-http*
+to respond with https://www.twilio.com/docs/api/twiml[TwiML].
+
+
+== Message header
+
+Any of the options can be provided in a message header for producer
+endpoints with *CamelTwilio.* prefix.
+
+
+== Message body
+
+All result message bodies utilize objects provided by the Twilio Java SDK.
+Producer endpoints can specify the option name for incoming message body
+in the *inBody* endpoint parameter.
+
+include::camel-spring-boot::page$twilio-starter.adoc[]

@@ -1,0 +1,44 @@
+[[message-eip]]
+= Message
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/Message.html[Message] from
+the xref:enterprise-integration-patterns.adoc[EIP patterns] using the
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html[Message]
+interface.
+
+image::eip/MessageSolution.gif[image]
+
+To support various message xref:latest@manual:ROOT:exchange-pattern.adoc[exchange patterns]
+like one way xref:event-message.adoc[Event Message] and
+xref:request-reply.adoc[Request Reply] messages Camel uses an
+xref:latest@manual:ROOT:exchange.adoc[Exchange] interface which has a *pattern* property
+which can be set to *InOnly* for an xref:event-message.adoc[Event
+Message] which has a single inbound Message, or *InOut* for a
+xref:request-reply.adoc[Request Reply] where there is an inbound and
+outbound message.
+
+Here is a basic example of sending a Message to a route in *InOnly* and
+*InOut* modes using a `ProducerTemplate`
+
+[source,java]
+----
+//InOnly
+getContext().createProducerTemplate().sendBody("direct:startInOnly", "Hello World");
+
+//InOut
+Object result = getContext().createProducerTemplate().requestBody("direct:startInOut", "Hello World");
+----
+
+And an example with routes:
+
+[source,java]
+----
+from("direct:startInOnly")
+  .inOnly("bean:process");
+
+from("direct:startInOut")
+  .inOut("bean:process");
+----
+
+See xref:to-eip.adoc[to-eip with pattern]

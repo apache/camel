@@ -1,0 +1,196 @@
+[[azure-queue-component]]
+= Azure Storage Queue Service (Legacy) Component
+:docTitle: Azure Storage Queue Service (Legacy)
+:artifactId: camel-azure
+:description: Store and retrieve messages from Azure Storage Queue Service.
+:since: 2.19
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Azure
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Azure Queue component supports storing and retrieving the messages to/from
+https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service.
+
+*Note:* This component uses the legacy https://github.com/azure/azure-storage-java/tree/legacy-master[Azure SDK v8]. There is another component
+xref:components::azure-storage-queue-component.adoc[Azure Storage Queue Component] that uses the latest *12+* Azure SDK version.
+
+Prerequisites
+
+You must have a valid Microsoft Azure account. More information is available at
+https://azure.microsoft.com/en-us/free/[Azure Portal].
+
+== URI Format
+
+[source,java]
+------------------------------
+azure-queue://accountName/queueName[?options]
+------------------------------
+
+The queue will be created if it does not already exist. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+For example in order to get a message content from the queue `messageQueue` 
+in the `camelazure` storage account and, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-queue:/camelazure/messageQueue").
+to("file://queuedirectory");
+--------------------------------------------------------------------------------
+
+== URI Options
+
+
+// component options: START
+The Azure Storage Queue Service (Legacy) component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *azureQueueClient* (common) | The queue service client |  | CloudQueue
+| *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
+| *validateClientURI* (common) | Whether to validate the Azure client URI | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageTimeToLive* (producer) | Message Time To Live in seconds |  | int
+| *messageVisibilityDelay* (producer) | Message Visibility Delay in seconds |  | int
+| *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, addMessage, retrieveMessage, peekMessage, updateMessage, deleteMessage | listQueues | QueueServiceOperations
+| *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | The Queue Service configuration |  | QueueServiceConfiguration
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
+|===
+// component options: END
+
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Azure Storage Queue Service (Legacy) endpoint is configured using URI syntax:
+
+----
+azure-queue:containerAndQueueUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *containerAndQueueUri* | *Required* Container Queue compact Uri |  | String
+|===
+
+
+=== Query Parameters (15 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *azureQueueClient* (common) | The queue service client |  | CloudQueue
+| *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
+| *validateClientURI* (common) | Whether to validate the Azure client URI | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageTimeToLive* (producer) | Message Time To Live in seconds |  | int
+| *messageVisibilityDelay* (producer) | Message Visibility Delay in seconds |  | int
+| *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, addMessage, retrieveMessage, peekMessage, updateMessage, deleteMessage | listQueues | QueueServiceOperations
+| *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
+|===
+// endpoint options: END
+
+
+
+
+Required Azure Storage Queue Service component options
+
+You have to provide the containerAndQueue URI  and the credentials.
+
+== Usage
+
+=== Azure Queue Service operations
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`listQueues`  |List the queues.
+|`createQueue`  |Create the queue.
+|`deleteQueue`  |Delete the queue.
+|`addMessage`  |Add a message to the queue.
+|`retrieveMessage`  |Retrieve a message from the queue.
+|`peekMessage`  |View the message inside the queue, for example, to determine whether the message arrived at the correct queue.
+|`updateMessage`  |Update the message in the queue.
+|`deleteMessage`  |Delete the message in the queue.
+
+|===
+
+
+
+=== Azure Queue Client configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the Azure Queue Client configuration, you can
+create your own instance:
+
+[source,java]
+--------------------------------------------------------------------------------------
+StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", "thekey");
+
+CloudQueue client = new CloudQueue("camelazure", credentials);
+
+registry.bind("azureQueueClient", client);
+--------------------------------------------------------------------------------------
+
+and refer to it in your Camel azure-queue component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-queue:/camelazure/messageQueue?azureQueueClient=#client")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.
+
+
+include::camel-spring-boot::page$azure-starter.adoc[]

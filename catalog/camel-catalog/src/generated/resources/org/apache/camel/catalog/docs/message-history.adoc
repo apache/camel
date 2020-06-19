@@ -1,0 +1,156 @@
+[[Message-History]]
+= Message History
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageHistory.html[Message History]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+The Message History from the EIP patterns allows for analyzing and debugging the flow of messages in a loosely coupled system.
+
+image::eip/MessageHistory.gif[image]
+
+Attaching a Message History to the message will provide a list of all applications that the message passed through since its origination.
+
+The message history is disabled by default (to optimize for lower footprint out of the box). You should only enable message history
+if needed, such as during development, where Camel can report route stack-traces when a message failed with an exception.
+But for production usage, then message history should only be enabled if you have monitoring systems that rely on gather these
+fine grained details.
+
+== Enabling or disabling Message History
+
+The Message History can be enabled or disabled per CamelContext or per route (disabled by default).
+For example you can turn it on with
+
+[source,java]
+----
+camelContext.setMessageHistory(true);
+----
+
+Or in XML
+
+[source,xml]
+----
+<camelContext messageHistory="true">
+
+</camelContext>
+----
+
+You can also do this per route. Then a route level configuration overrides the CamelContext level configuration.
+
+== Route stack-trace in exceptions logged by error handler
+
+If Message History is enabled, then Camel will leverage this information,
+when the Error Handler logs exhausted exceptions. Then in addition to the caused exception with its stacktrace,
+you can see the message history; you may think this as a "route stacktrace".
+
+And example is provided below:
+
+[source,text]
+----
+2020-01-15 11:58:34,834 [read #3 - Delay] ERROR DefaultErrorHandler            - Failed delivery for (MessageId: ID-davsclaus-pro-local-1579085914402-0-2 on ExchangeId: ID-davsclaus-pro-local-1579085914402-0-3). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: Forced to dump message history
+
+Message History
+---------------------------------------------------------------------------------------------------------------------------------------
+RouteId              ProcessorId          Processor                                                                        Elapsed (ms)
+[route1            ] [route1            ] [from[seda://start]                                                            ] [       432]
+[route1            ] [to1               ] [log:foo                                                                       ] [         5]
+[route1            ] [to2               ] [direct:bar                                                                    ] [       111]
+[route2            ] [to5               ] [log:bar                                                                       ] [         0]
+[route2            ] [delay2            ] [delay[100]                                                                    ] [       110]
+[route2            ] [to6               ] [mock:bar                                                                      ] [         0]
+[route1            ] [delay1            ] [delay[300]                                                                    ] [       305]
+[route1            ] [to3               ] [log:baz                                                                       ] [         2]
+[route1            ] [process1          ] [Processor@0x5e600dd5                                                          ] [         0]
+
+Stacktrace
+---------------------------------------------------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Forced to dump message history
+	at org.apache.camel.processor.MessageHistoryDumpRoutingTest$1$1.process(MessageHistoryDumpRoutingTest.java:52) ~[test-classes/:?]
+	at org.apache.camel.support.processor.DelegateSyncProcessor.process(DelegateSyncProcessor.java:64) ~[classes/:?]
+	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.run(RedeliveryErrorHandler.java:477) ~[classes/:?]
+	at org.apache.camel.impl.engine.DefaultReactiveExecutor$Worker.schedule(DefaultReactiveExecutor.java:186) ~[classes/:?]
+	at org.apache.camel.impl.engine.DefaultReactiveExecutor.schedule(DefaultReactiveExecutor.java:56) ~[classes/:?]
+	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.lambda$run$1(RedeliveryErrorHandler.java:481) ~[classes/:?]
+	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall$1.done(DelayProcessorSupport.java:77) [classes/:?]
+	at org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process(AsyncProcessorConverterHelper.java:63) [classes/:?]
+	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall.run(DelayProcessorSupport.java:70) [classes/:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_201]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [?:1.8.0_201]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_201]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) [?:1.8.0_201]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_201]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_201]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_201]
+----
+
+When message history is enabled then the full history is logged as shown above. Here we can see the full path
+the message has been routed, where it started from route1, called route2 and returned to route1 again, and so on.
+
+When message history is disabled (by default) then the error handler logs a brief history with the last node
+where the exception occurred as shown below:
+
+[source,text]
+----
+2020-01-15 11:59:33,238 [read #3 - Delay] ERROR DefaultErrorHandler            - Failed delivery for (MessageId: ID-davsclaus-pro-local-1579085972821-0-2 on ExchangeId: ID-davsclaus-pro-local-1579085972821-0-3). Exhausted after delivery attempt: 1 caught: java.lang.IllegalArgumentException: Forced to dump message history
+
+Message History (complete message history is disabled)
+---------------------------------------------------------------------------------------------------------------------------------------
+RouteId              ProcessorId          Processor                                                                        Elapsed (ms)
+[route1            ] [route1            ] [from[seda://start]                                                            ] [       419]
+	...
+[route1            ] [process1          ] [Processor@0x229c6181                                                          ] [         0]
+
+Stacktrace
+---------------------------------------------------------------------------------------------------------------------------------------
+java.lang.IllegalArgumentException: Forced to dump message history
+	at org.apache.camel.processor.MessageHistoryDumpRoutingTest$1$1.process(MessageHistoryDumpRoutingTest.java:52) ~[test-classes/:?]
+	at org.apache.camel.support.processor.DelegateSyncProcessor.process(DelegateSyncProcessor.java:64) ~[classes/:?]
+	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.run(RedeliveryErrorHandler.java:477) ~[classes/:?]
+	at org.apache.camel.impl.engine.DefaultReactiveExecutor$Worker.schedule(DefaultReactiveExecutor.java:186) ~[classes/:?]
+	at org.apache.camel.impl.engine.DefaultReactiveExecutor.schedule(DefaultReactiveExecutor.java:56) ~[classes/:?]
+	at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryState.lambda$run$1(RedeliveryErrorHandler.java:481) ~[classes/:?]
+	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall$1.done(DelayProcessorSupport.java:77) [classes/:?]
+	at org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process(AsyncProcessorConverterHelper.java:63) [classes/:?]
+	at org.apache.camel.processor.DelayProcessorSupport$ProcessCall.run(DelayProcessorSupport.java:70) [classes/:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_201]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [?:1.8.0_201]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_201]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) [?:1.8.0_201]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_201]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_201]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_201]
+----
+
+
+=== Configuring route stack-trace from error handler
+
+You can turn off logging message history from the Error Handler using
+
+[source,java]
+----
+errorHandler(defaultErrorHandler().logExhaustedMessageHistory(false));
+----
+
+The Error Handler does not log the message body/header details (to avoid logging sensitive message body details).
+You can enable this on the error handler as shown:
+
+[source,java]
+----
+errorHandler(defaultErrorHandler().logExhaustedMessageBody(true));
+----
+
+== MessageHistory API
+
+When message history is enabled during routing Camel captures how the Exchange is routed, as a `org.apache.camel.MessageHistory` entity
+that is stored on the Exchange. On the `org.apache.camel.MessageHistory` there is information abut the
+route id, processor id, timestamp, and elapsed time it took to process the Exchange by the processor.
+
+You can access the message history from Java code:
+
+[source,java]
+----
+List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+for (MessageHistory history : list) {
+    System.out.println("Routed at id: " + history.getNode().getId());
+}
+----
