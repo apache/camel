@@ -31,10 +31,9 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
 
     @Test
     public void testTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/hello", new ByteArrayInputStream("".getBytes()), "text/plain");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/hello",
+                new ByteArrayInputStream("".getBytes()), "text/plain");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, response.getContentType());

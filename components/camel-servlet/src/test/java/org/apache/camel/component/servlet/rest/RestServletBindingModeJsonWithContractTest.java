@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class RestServletBindingModeJsonWithContractTest extends ServletCamelRouterTestSupport {
 
     @Test
@@ -40,10 +39,9 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
         assertEquals(200, response.getResponseCode());
         String answer = response.getText();
         assertTrue(answer.contains("\"active\":true"), "Unexpected response: " + answer);
@@ -52,7 +50,7 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());

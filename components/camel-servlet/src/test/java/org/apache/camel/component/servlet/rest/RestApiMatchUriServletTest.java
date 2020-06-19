@@ -23,16 +23,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testApiDocGet() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/api-doc");
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/api-doc");
         req.setHeaderField("Accept", "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 

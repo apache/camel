@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class RestServletGetTest extends ServletCamelRouterTestSupport {
 
     @BindToRegistry("myBinding")
@@ -32,10 +31,8 @@ public class RestServletGetTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testServletProducerGet() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users/123/basic");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users/123/basic");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
