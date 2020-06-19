@@ -129,7 +129,7 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     @Override
     public IrcProducer createProducer() throws Exception {
-        return new IrcProducer(this, component.getIRCConnection(configuration));
+        return new IrcProducer(this);
     }
 
     @Override

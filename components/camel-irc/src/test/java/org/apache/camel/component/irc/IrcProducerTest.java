@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 
 public class IrcProducerTest {
 
+    private IrcComponent component;
     private IRCConnection connection;
     private IrcEndpoint endpoint;
     private IrcConfiguration configuration;
@@ -43,6 +44,7 @@ public class IrcProducerTest {
 
     @Before
     public void doSetup() {
+        component = mock(IrcComponent.class);
         connection = mock(IRCConnection.class);
         endpoint = mock(IrcEndpoint.class);
         configuration = mock(IrcConfiguration.class);
@@ -56,14 +58,17 @@ public class IrcProducerTest {
 
         when(configuration.getChannelList()).thenReturn(channels);
         when(endpoint.getConfiguration()).thenReturn(configuration);
+        when(endpoint.getComponent()).thenReturn(component);
+        when(component.getIRCConnection(configuration)).thenReturn(connection);
 
-        producer = new IrcProducer(endpoint, connection);
+        producer = new IrcProducer(endpoint);
         producer.setListener(listener);
+        producer.start();
     }
 
     @Test
     public void doStopTest() throws Exception {
-        producer.doStop();
+        producer.stop();
         verify(connection).doPart("#chan1");
         verify(connection).doPart("#chan2");
         verify(connection).removeIRCEventListener(listener);
@@ -71,7 +76,7 @@ public class IrcProducerTest {
 
     @Test
     public void doStartTest() throws Exception {
-        producer.doStart();
+        producer.start();
 
         verify(connection).addIRCEventListener(listener);
         verify(endpoint).joinChannels();

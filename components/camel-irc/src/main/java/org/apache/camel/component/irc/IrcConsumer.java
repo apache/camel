@@ -34,7 +34,7 @@ public class IrcConsumer extends DefaultConsumer {
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;
     private final IRCConnection connection;
-    private  IRCEventAdapter listener;
+    private IRCEventAdapter listener = new FilteredIRCEventAdapter();
 
     public IrcConsumer(IrcEndpoint endpoint, Processor processor, IRCConnection connection) {
         super(endpoint, processor);
@@ -83,9 +83,6 @@ public class IrcConsumer extends DefaultConsumer {
     }
 
     public IRCEventAdapter getListener() {
-        if (listener == null) {
-            listener = new FilteredIRCEventAdapter();
-        }
         return listener;
     }
 

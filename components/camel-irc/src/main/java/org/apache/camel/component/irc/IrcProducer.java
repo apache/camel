@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.irc;
 
+import java.io.IOException;
+
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
@@ -32,16 +35,16 @@ public class IrcProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
 
-    private final IrcConfiguration configuration;
-    private IRCConnection connection;
-    private IrcEndpoint endpoint;
-    private IRCEventAdapter listener;
+    private transient IRCConnection connection;
+    private IRCEventAdapter listener = new FilteredIRCEventAdapter();
 
-    public IrcProducer(IrcEndpoint endpoint, IRCConnection connection) {
+    public IrcProducer(IrcEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
-        this.connection = connection;
-        this.configuration = endpoint.getConfiguration();
+    }
+
+    @Override
+    public IrcEndpoint getEndpoint() {
+        return (IrcEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -49,7 +52,10 @@ public class IrcProducer extends DefaultProducer {
         final String msg = exchange.getIn().getBody(String.class);
         final String sendTo = exchange.getIn().getHeader(IrcConstants.IRC_SEND_TO, String.class);
 
-        if (!connection.isConnected()) {
+        if (connection == null || !connection.isConnected()) {
+            reconnect();
+        }
+        if (connection == null || !connection.isConnected()) {
             throw new RuntimeCamelException("Lost connection to " + connection.getHost());
         }
 
@@ -61,7 +67,7 @@ public class IrcProducer extends DefaultProducer {
                 LOG.debug("Sending to: {} message: {}", sendTo, msg);
                 connection.doPrivmsg(sendTo, msg);
             } else {
-                for (IrcChannel channel : endpoint.getConfiguration().getChannelList()) {
+                for (IrcChannel channel : getEndpoint().getConfiguration().getChannelList()) {
                     LOG.debug("Sending to: {} message: {}", channel, msg);
                     connection.doPrivmsg(channel.getName(), msg);
                 }
@@ -72,22 +78,36 @@ public class IrcProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        listener = getListener();
+        reconnect();
+    }
+
+    protected void reconnect() {
+        // create new connection
+        if (connection == null || connection.isConnected()) {
+            connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
+        } else {
+            // reconnecting
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reconnecting to {}:{}", getEndpoint().getConfiguration().getHostname(), getEndpoint().getConfiguration().getNickname());
+            }
+            getEndpoint().getComponent().closeConnection(getEndpoint().getConfiguration().getCacheKey(), connection);
+            connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
+        }
         connection.addIRCEventListener(listener);
-        LOG.debug("Sleeping for {} seconds before sending commands.", configuration.getCommandTimeout() / 1000);
+        LOG.debug("Sleeping for {} seconds before sending commands.", getEndpoint().getConfiguration().getCommandTimeout() / 1000);
         // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
         try {
-            Thread.sleep(configuration.getCommandTimeout());
+            Thread.sleep(getEndpoint().getConfiguration().getCommandTimeout());
         } catch (InterruptedException ex) {
             // ignore
         }
-        endpoint.joinChannels();
+        getEndpoint().joinChannels();
     }
 
     @Override
     protected void doStop() throws Exception {
         if (connection != null) {
-            for (IrcChannel channel : endpoint.getConfiguration().getChannelList()) {
+            for (IrcChannel channel : getEndpoint().getConfiguration().getChannelList()) {
                 LOG.debug("Parting: {}", channel);
                 connection.doPart(channel.getName());
             }
@@ -106,9 +126,6 @@ public class IrcProducer extends DefaultProducer {
     }
 
     public IRCEventAdapter getListener() {
-        if (listener == null) {
-            listener = new FilteredIRCEventAdapter();
-        }
         return listener;
     }
 
@@ -122,15 +139,15 @@ public class IrcProducer extends DefaultProducer {
         public void onKick(String channel, IRCUser user, String passiveNick, String msg) {
 
             // check to see if I got kick and if so rejoin if autoRejoin is on
-            if (passiveNick.equals(connection.getNick()) && endpoint.getConfiguration().isAutoRejoin()) {
-                endpoint.joinChannel(channel);
+            if (passiveNick.equals(connection.getNick()) && getEndpoint().getConfiguration().isAutoRejoin()) {
+                getEndpoint().joinChannel(channel);
             }
         }
 
 
         @Override
         public void onError(int num, String msg) {
-            IrcProducer.this.endpoint.handleIrcError(num, msg);
+            IrcProducer.this.getEndpoint().handleIrcError(num, msg);
         }
 
     }

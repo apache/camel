@@ -72,6 +72,14 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         return connection;
     }
 
+    public synchronized void closeIRCConnection(IrcConfiguration configuration) {
+        IRCConnection connection = connectionCache.get(configuration.getCacheKey());
+        if (connection != null) {
+            closeConnection(configuration.getCacheKey(),connection);
+            connectionCache.remove(configuration.getCacheKey());
+        }
+    }
+
     protected IRCConnection createConnection(IrcConfiguration configuration) {
         IRCConnection conn = null;
         IRCEventListener ircLogger;
