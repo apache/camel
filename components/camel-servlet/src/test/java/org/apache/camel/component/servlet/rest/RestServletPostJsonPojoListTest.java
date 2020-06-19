@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSupport {
 
     @Test
@@ -37,10 +36,9 @@ public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSuppo
         mock.expectedMessageCount(1);
 
         String body = "[ {\"id\": 123, \"name\": \"Donald Duck\"}, {\"id\": 456, \"name\": \"John Doe\"} ]";
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
         assertEquals("application/json", response.getContentType());

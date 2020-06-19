@@ -25,13 +25,12 @@ public class ServletRootPathTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testRootPath() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/");
+        WebResponse response = query(req);
 
         assertEquals("Bye World", response.getText(), "The response message is wrong");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

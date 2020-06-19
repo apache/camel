@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 public class RestServletBindingModeAutoWithXmlTest extends ServletCamelRouterTestSupport {
 
     @Test
@@ -38,10 +37,9 @@ public class RestServletBindingModeAutoWithXmlTest extends ServletCamelRouterTes
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
 
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/xml");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+                new ByteArrayInputStream(body.getBytes()), "application/xml");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 

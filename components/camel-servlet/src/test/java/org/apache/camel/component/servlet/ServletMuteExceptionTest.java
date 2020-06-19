@@ -27,23 +27,20 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/mute", new ByteArrayInputStream("".getBytes()), "text/plain");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/mute",
+                new ByteArrayInputStream("".getBytes()), "text/plain");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
         assertEquals("Exception", response.getText());
     }
 
-
     @Test
     public void testMuteWithTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/muteWithTransfer", new ByteArrayInputStream("".getBytes()), "text/plain");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/muteWithTransfer",
+                new ByteArrayInputStream("".getBytes()), "text/plain");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());

@@ -29,10 +29,9 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
     public void testClient() throws Exception {
         getMockEndpoint("mock:bean").expectedMessageCount(1);
 
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
         req.setParameter("id", "123");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebResponse response = query(req);
 
         assertEquals(200, response.getResponseCode());
         assertEquals("Client is Donald Duck", response.getText(), "The response message is wrong");
@@ -44,10 +43,9 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
     public void testNoClient() throws Exception {
         getMockEndpoint("mock:bean").expectedMessageCount(1);
 
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        ServletUnitClient client = newClient();
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
         try {
-            client.getResponse(req);
+            query(req);
             fail("Should throw exception");
         } catch (HttpNotFoundException e) {
             assertEquals(404, e.getResponseCode());

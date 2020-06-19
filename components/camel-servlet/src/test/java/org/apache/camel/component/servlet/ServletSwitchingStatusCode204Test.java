@@ -26,9 +26,8 @@ public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSup
 
     @Test
     public void testSwitchingNoBodyTo204() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/bar");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/bar");
+        WebResponse response = query(req);
 
         assertEquals(204, response.getResponseCode());
         assertEquals("", response.getText());
@@ -36,9 +35,8 @@ public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSup
 
     @Test
     public void testNoSwitchingNoCode() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/foo");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/foo");
+        WebResponse response = query(req);
 
         assertEquals(200, response.getResponseCode());
         assertEquals("No Content", response.getText());
@@ -46,9 +44,8 @@ public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSup
 
     @Test
     public void testNoSwitchingNoBody() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/foobar");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/foobar");
+        WebResponse response = query(req);
 
         assertEquals(200, response.getResponseCode());
         assertEquals("", response.getText());

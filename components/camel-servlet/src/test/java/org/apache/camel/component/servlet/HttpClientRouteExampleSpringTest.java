@@ -27,17 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupport {
     @Test
     public void testHttpRestricMethod() throws Exception {
-        
-        ServletUnitClient client = newClient();
+
         // Send a web get method request
-        WebRequest  req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        WebResponse response = client.getResponse(req);
-        
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
+        WebResponse response = query(req);
+
         assertEquals("OK", response.getResponseMessage(), "Get a wrong response message.");
         assertEquals("Add a name parameter to uri, eg ?name=foo", response.getText(), "Get a wrong response text.");
-        
-        req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello?name=Willem");
-        response = client.getResponse(req);
+
+        req = new GetMethodWebRequest(contextUrl + "/services/hello?name=Willem");
+        response = query(req);
         assertEquals("Hello Willem how are you?", response.getText(), "Get a wrong response text.");
     }
 

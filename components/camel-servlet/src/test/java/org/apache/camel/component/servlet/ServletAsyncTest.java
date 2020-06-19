@@ -31,13 +31,13 @@ public class ServletAsyncTest extends ServletCamelRouterTestSupport {
     public void testHello() throws Exception {
         final String name = "Arnaud";
 
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
         req.setParameter("name", name);
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebResponse response = query(req);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals(MessageFormat.format("Hello {0} how are you?", name), response.getText(), "The response message is wrong");
+        assertEquals(MessageFormat.format("Hello {0} how are you?", name), response.getText(),
+                "The response message is wrong");
     }
 
     @Override
