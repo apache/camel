@@ -88,55 +88,55 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The output directory for components catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/components")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/components")
     protected File componentsOutDir;
 
     /**
      * The output directory for dataformats catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/dataformats")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/dataformats")
     protected File dataFormatsOutDir;
 
     /**
      * The output directory for languages catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/languages")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/languages")
     protected File languagesOutDir;
 
     /**
      * The output directory for others catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/others")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/others")
     protected File othersOutDir;
 
     /**
      * The output directory for documents catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/docs")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/docs")
     protected File documentsOutDir;
 
     /**
      * The output directory for models catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/models")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/models")
     protected File modelsOutDir;
 
     /**
      * The output directory for archetypes catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/archetypes")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/archetypes")
     protected File archetypesOutDir;
 
     /**
      * The output directory for XML schemas catalog
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/schemas")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/schemas")
     protected File schemasOutDir;
 
     /**
      * The output directory for main
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/main")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/main")
     protected File mainOutDir;
 
     /**
