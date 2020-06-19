@@ -16,14 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
-public class MyFooBean implements FooService {
+public interface FooService {
 
-    public String hello(String s) {
-        return "Hello " + s;
-    }
+    String hello(String s);
 
-    @Override
-    public String toString() {
-        return "MyFooBean";
-    }
 }
