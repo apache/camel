@@ -66,4 +66,7 @@
     <suppress checks="LineLength"
               files=".*/resources/.*request.xml"
               />
+    <suppress checks=".*"
+              files=".*/camel-catalog/src/generated/.*"
+              />
 </suppressions>
