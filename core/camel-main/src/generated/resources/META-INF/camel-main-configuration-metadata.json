@@ -198,7 +198,7 @@
     { "name": "camel.threadpool.maxPoolSize", "description": "Sets the default maximum pool size", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "integer", "javaType": "java.lang.Integer" },
     { "name": "camel.threadpool.maxQueueSize", "description": "Sets the default maximum number of tasks in the work queue. Use -1 or an unbounded queue", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "integer", "javaType": "java.lang.Integer" },
     { "name": "camel.threadpool.poolSize", "description": "Sets the default core pool size (threads to keep minimum in pool)", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "integer", "javaType": "java.lang.Integer" },
-    { "name": "camel.threadpool.rejectedPolicy", "description": "Sets the default handler for tasks which cannot be executed by the thread pool.", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy" },
+    { "name": "camel.threadpool.rejectedPolicy", "description": "Sets the default handler for tasks which cannot be executed by the thread pool.", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", "enum": [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ] },
     { "name": "camel.threadpool.timeUnit", "description": "Sets the default time unit used for keep alive time", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "java.util.concurrent.TimeUnit" }
   ]
 }
