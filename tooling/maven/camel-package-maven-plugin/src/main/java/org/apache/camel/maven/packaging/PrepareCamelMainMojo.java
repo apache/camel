@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.MainModel.MainGroupModel;
@@ -37,6 +38,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -73,12 +75,16 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
         fields.forEach(f -> {
+            AnnotationSource as = f.getAnnotation(Metadata.class);
             String name = f.getName();
             String javaType = f.getType().getQualifiedName();
             String sourceType = clazz.getQualifiedName();
             String defaultValue = f.getStringInitializer();
-            // skip constructors
+            if (as != null) {
+                defaultValue = as.getStringValue("defaultValue");
+            }
             if (defaultValue != null && defaultValue.startsWith("new ")) {
+                // skip constructors
                 defaultValue = null;
             }
 
@@ -109,6 +115,12 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     enums = Arrays.asList("allLocalIp,localIp,localHostName".split(","));
                 } else if ("org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy".equals(javaType)) {
                     enums = Arrays.asList("Abort,CallerRuns,DiscardOldest,Discard".split(","));
+                }
+                if (enums == null && as != null) {
+                    String text = as.getStringValue("enums");
+                    if (text != null) {
+                        enums = Arrays.asList(text.split(","));
+                    }
                 }
                 model.setEnums(enums);
                 answer.add(model);

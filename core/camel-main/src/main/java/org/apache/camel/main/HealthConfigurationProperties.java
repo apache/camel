@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Global configuration for Health Check
@@ -29,9 +30,13 @@ public class HealthConfigurationProperties {
 
     private final MainConfigurationProperties parent;
 
+    @Metadata(defaultValue = "true")
     private Boolean enabled;
+    @Metadata(defaultValue = "true")
     private Boolean contextEnabled;
+    @Metadata(defaultValue = "true")
     private Boolean routesEnabled;
+    @Metadata(defaultValue = "true")
     private Boolean registryEnabled;
     private Map<String, HealthCheckConfigurationProperties> config = new HashMap<>();
 
@@ -60,8 +65,6 @@ public class HealthConfigurationProperties {
 
     /**
      * Whether context health check is enabled
-     *
-     * Is default enabled
      */
     public void setContextEnabled(Boolean contextEnabled) {
         this.contextEnabled = contextEnabled;
@@ -73,8 +76,6 @@ public class HealthConfigurationProperties {
 
     /**
      * Whether routes health check is enabled
-     *
-     * Is default enabled
      */
     public void setRoutesEnabled(Boolean routesEnabled) {
         this.routesEnabled = routesEnabled;
@@ -86,8 +87,6 @@ public class HealthConfigurationProperties {
 
     /**
      * Whether registry health check is enabled
-     *
-     * Is default enabled
      */
     public void setRegistryEnabled(Boolean registryEnabled) {
         this.registryEnabled = registryEnabled;
@@ -114,8 +113,6 @@ public class HealthConfigurationProperties {
 
     /**
      * Whether context health check is enabled
-     *
-     * Is default enabled
      */
     public HealthConfigurationProperties withContextEnabled(boolean contextEnabled) {
         this.contextEnabled = contextEnabled;
@@ -124,8 +121,6 @@ public class HealthConfigurationProperties {
 
     /**
      * Whether routes health check is enabled
-     *
-     * Is default enabled
      */
     public HealthConfigurationProperties withRoutesEnabled(boolean routesEnabled) {
         this.routesEnabled = routesEnabled;
@@ -134,8 +129,6 @@ public class HealthConfigurationProperties {
 
     /**
      * Whether registry health check is enabled
-     *
-     * Is default enabled
      */
     public HealthConfigurationProperties withRegistryEnabled(boolean registryEnabled) {
         this.registryEnabled = registryEnabled;
