@@ -1,0 +1,31 @@
+[[Message-Expiration]]
+= Message Expiration
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageExpiration.html[Message Expiration]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns].
+
+How can a sender indicate when a message should be considered stale and thus shouldn’t be processed?
+
+image::eip/MessageExpirationSolution.gif[image]
+
+Set the Message Expiration to specify a time limit how long the message is viable.
+
+Message expiration is supported by some Camel components such as xref:components::jms-component.adoc[JMS]
+or which allows to set a time-to-live value on messages sent to the broker.
+The xref:components::aws-sqs-component.adoc[AWS SQS] supports message expiration using its _message visibility_ settings.
+
+TIP: When using message expiration then mind about keeping clock's synchronized among the systems.
+
+== Sample
+
+A message should expire after 5 seconds, if a consumer is not available to receive and process the message.
+
+[source,java]
+----
+  from("direct:cheese")
+    .to("jms:queueu:cheese?timeToLive=5000");
+----
+
+
+

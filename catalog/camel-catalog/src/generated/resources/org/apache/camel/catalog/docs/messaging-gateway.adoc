@@ -1,0 +1,20 @@
+[[Messaging-Gateway]]
+= Messaging Gateway
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingGateway.html[Messaging Gateway]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+How do you encapsulate access to the messaging system from the rest of the application?
+
+image::eip/MessagingGatewaySolution.gif[image]
+
+Use a Messaging Gateway, a class than wraps messaging-specific method calls and exposes domain-specific methods to the application.
+
+Camel has several endpoint components that support the Messaging Gateway from the EIP patterns.
+Components like xref:components::bean-component.adoc[Bean] and xref:components::bean-component.adoc[CXF] provide a a way
+to bind a Java interface to the message exchange.
+
+Another approach is to use `@Produce` annotations which you can read about in xref:latest@manual:ROOT:pojo-producing.adoc[POJO Producing]
+which also can be used as a Messaging Gateway EIP solution.
+

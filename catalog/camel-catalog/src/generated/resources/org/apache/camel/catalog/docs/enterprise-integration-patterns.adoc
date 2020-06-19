@@ -1,0 +1,337 @@
+[[EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns]]
+= Enterprise Integration Patterns
+
+Camel supports most of the
+http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
+from the excellent book by Gregor Hohpe and Bobby Woolf.
+
+If you are new to Camel you might want to try the xref:latest@manual:ROOT:getting-started.adoc[Getting Started] in the
+User Guide before attempting to implement these patterns.
+
+[[EnterpriseIntegrationPatterns-MessagingSystems]]
+== Messaging Systems
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+a|image::eip/ChannelIcon.gif[image]
+|xref:message-channel.adoc[Message Channel] |How does one application
+communicate with another using messaging?
+
+a|image::eip/MessageIcon.gif[image]
+|xref:message.adoc[Message] |How can two applications connected by a
+message channel exchange a piece of information?
+
+a|image::eip/PipesAndFiltersIcon.gif[image]
+|xref:pipeline-eip.adoc[Pipes and Filters] |How can we perform
+complex processing on a message while maintaining independence and
+flexibility?
+
+a|image::eip/ContentBasedRouterIcon.gif[image]
+|xref:message-router.adoc[Message Router] |How can you decouple
+individual processing steps so that messages can be passed to different
+filters depending on a set of conditions?
+
+a|image::eip/MessageTranslatorIcon.gif[image]
+|xref:message-translator.adoc[Message Translator] |How can systems using
+different data formats communicate with each other using messaging?
+
+a|image::eip/MessageEndpointIcon.gif[image]
+|xref:message-endpoint.adoc[Message Endpoint] |How does an application
+connect to a messaging channel to send and receive messages?
+|=======================================================================
+
+[[EnterpriseIntegrationPatterns-MessagingChannels]]
+== Messaging Channels
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+a|image::eip/PointToPointIcon.gif[image]
+|xref:point-to-point-channel.adoc[Point to Point Channel] |How can the
+caller be sure that exactly one receiver will receive the document or
+perform the call?
+
+a|image::eip/PublishSubscribeIcon.gif[image]
+|xref:publish-subscribe-channel.adoc[Publish Subscribe Channel] |How can
+the sender broadcast an event to all interested receivers?
+
+a|image::eip/DeadLetterChannelIcon.gif[image]
+|xref:dead-letter-channel.adoc[Dead Letter Channel] |What will the
+messaging system do with a message it cannot deliver?
+
+a|image::eip/GuaranteedMessagingIcon.gif[image]
+|xref:guaranteed-delivery.adoc[Guaranteed Delivery] |How can the sender
+make sure that a message will be delivered, even if the messaging system
+fails?
+
+a|image::eip/ChannelAdapterIcon.gif[image]
+|xref:channel-adapter.adoc[Channel Adapter] |How can you connect an
+application to the messaging system so that it can send and receive messages?
+
+a|image::eip/MessagingBridgeIcon.gif[image]
+|xref:messaging-bridge.adoc[Messaging Bridge] |How can multiple messaging systems
+be connected so that messages available on one are also available on the others??
+
+a|image::eip/MessageBusIcon.gif[image]
+|xref:message-bus.adoc[Message Bus] |What is an architecture that
+enables separate applications to work together, but in a de-coupled
+fashion such that applications can be easily added or removed without
+affecting the others?
+
+a|image::eip/MessagingBridgeIcon.gif[image]
+|xref:change-data-capture.adoc[Change Data Capture] | Data synchronization by capturing
+changes made to a database, and apply those changes to another system.
+|=======================================================================
+
+[[EnterpriseIntegrationPatterns-MessageConstruction]]
+== Message Construction
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+a|image::eip/EventMessageIcon.gif[image]
+|xref:event-message.adoc[Event Message] |How can messaging be used to
+transmit events from one application to another?
+
+a|image::eip/RequestReplyIcon.gif[image]
+|xref:request-reply.adoc[Request Reply] |When an application sends a
+message, how can it get a response from the receiver?
+
+a|image::eip/ReturnAddressIcon.gif[image]
+|xref:return-address.adoc[Return Address] |How does a replier know where
+to send the reply?
+
+a|image::eip/CorrelationIdentifierIcon.gif[image]
+|xref:correlation-identifier.adoc[Correlation Identifier] |How does a
+requestor that has received a reply know which request this is the reply
+for?
+
+a|image::eip/MessageExpirationIcon.gif[image]
+|xref:message-expiration.adoc[Message Expiration] |How can a sender indicate
+when a message should be considered stale and thus shouldn’t be processed?
+
+|=======================================================================
+
+[[EnterpriseIntegrationPatterns-MessageRouting]]
+== Message Routing
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+a|image::eip/ContentBasedRouterIcon.gif[image]
+|xref:content-based-router-eip.adoc[Content Based Router] |How do we handle
+a situation where the implementation of a single logical function (e.g.,
+inventory check) is spread across multiple physical systems?
+
+a|image::eip/MessageFilterIcon.gif[image]
+|xref:filter-eip.adoc[Message Filter] |How can a component avoid
+receiving uninteresting messages?
+
+a|image::eip/DynamicRouterIcon.gif[image]
+|xref:dynamicRouter-eip.adoc[Dynamic Router] |How can you avoid the
+dependency of the router on all possible destinations while maintaining
+its efficiency?
+
+a|image::eip/RecipientListIcon.gif[image]
+|xref:recipientList-eip.adoc[Recipient List] |How do we route a message to
+a list of (static or dynamically) specified recipients?
+
+a|image::eip/SplitterIcon.gif[image]
+|xref:split-eip.adoc[Splitter] |How can we process a message if it
+contains multiple elements, each of which may have to be processed in a
+different way?
+
+a|image::eip/AggregatorIcon.gif[image]
+|xref:aggregate-eip.adoc[Aggregator] |How do we combine the results of
+individual, but related messages so that they can be processed as a
+whole?
+
+a|image::eip/ResequencerIcon.gif[image]
+|xref:resequence-eip.adoc[Resequencer] |How can we get a stream of related
+but out-of-sequence messages back into the correct order?
+
+a|image::eip/DistributionAggregateIcon.gif[image]
+|xref:composed-message-processor.adoc[Composed Message Processor] |How
+can you maintain the overall message flow when processing a message
+consisting of multiple elements, each of which may require different
+processing?
+
+|
+|xref:scatter-gather.adoc[Scatter-Gather] |How do you maintain the
+overall message flow when a message needs to be sent to multiple
+recipients, each of which may send a reply?
+
+a|image::eip/RoutingTableIcon.gif[image]
+|xref:routingSlip-eip.adoc[Routing Slip] |How do we route a message
+consecutively through a series of processing steps when the sequence of
+steps is not known at design-time and may vary for each message?
+
+a|image::eip/ProcessManagerIcon.gif[image]
+|xref:process-manager.adoc[Process Manager] |How do we route a message
+through multiple processing steps when the required steps may not be known
+at design-time and may not be sequential?
+
+a|image::eip/MessageBrokerIcon.gif[image]
+|xref:message-broker.adoc[Message Broker] |How can you decouple the
+destination of a message from the sender and maintain central control
+over the flow of messages?
+
+|
+|xref:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
+that a specific endpoint does not get overloaded, or we don't exceed an
+agreed SLA with some external service?
+
+|
+|xref:sample-eip.adoc[Sampling] |How can I sample one message out of many
+in a given period to avoid downstream route does not get overloaded?
+
+|
+|xref:delay-eip.adoc[Delayer] |How can I delay the sending of a message?
+
+|
+|xref:loadBalance-eip.adoc[Load Balancer] |How can I balance load across a
+number of endpoints?
+
+|
+|xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
+
+|
+|xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
+where the service is looked up from a service registry of some sorts?
+
+|
+|xref:saga-eip.adoc[Saga] |How can I define a series of related actions in a Camel route
+that should be either completed successfully (all of them) or not-executed/compensated?
+
+|
+|xref:multicast-eip.adoc[Multicast] |How can I route a message to a number
+of endpoints at the same time?
+
+|
+|xref:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
+|=======================================================================
+
+[[EnterpriseIntegrationPatterns-MessageTransformation]]
+== Message Transformation
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+a|image::eip/DataEnricherIcon.gif[image]
+|xref:content-enricher.adoc[Content Enricher] |How do we communicate
+with another system if the message originator does not have all the
+required data items available?
+
+a|image::eip/ContentFilterIcon.gif[image]
+|xref:content-filter-eip.adoc[Content Filter] |How do you simplify dealing
+with a large message, when you are interested only in a few data items?
+
+a|image::eip/StoreInLibraryIcon.gif[image]
+|xref:claimCheck-eip.adoc[Claim Check] |How can we reduce the data volume
+of message sent across the system without sacrificing information
+content?
+
+a|image::eip/NormalizerIcon.gif[image]
+|xref:normalizer.adoc[Normalizer] |How do you process messages that are
+semantically equivalent, but arrive in a different format?
+
+|
+|xref:sort-eip.adoc[Sort] |How can I sort the body of a message?
+
+|
+|xref:script-eip.adoc[Script] |How do I execute a script which may not change the message?
+
+|
+|xref:validate-eip.adoc[Validate] |How can I validate a message?
+|=======================================================================
+
+[[EnterpriseIntegrationPatterns-MessagingEndpoints]]
+== Messaging Endpoints
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+|
+|xref:messaging-mapper.adoc[Messaging Mapper] |How do you move data
+between domain objects and the messaging infrastructure while keeping
+the two independent of each other?
+
+a|image::eip/EventDrivenConsumerIcon.gif[image]
+|xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer] |How can an
+application automatically consume messages as they become available?
+
+a|image::eip/PollingConsumerIcon.gif[image]
+|xref:polling-consumer.adoc[Polling Consumer] |How can an application
+consume a message when the application is ready?
+
+a|image::eip/CompetingConsumersIcon.gif[image]
+|xref:competing-consumers.adoc[Competing Consumers] |How can a messaging
+client process multiple messages concurrently?
+
+a|image::eip/MessageDispatcherIcon.gif[image]
+|xref:message-dispatcher.adoc[Message Dispatcher] |How can multiple
+consumers on a single channel coordinate their message processing?
+
+a|image::eip/MessageSelectorIcon.gif[image]
+|xref:selective-consumer.adoc[Selective Consumer] |How can a message
+consumer select which messages it wishes to receive?
+
+a|image::eip/DurableSubscriptionIcon.gif[image]
+|xref:durable-subscriber.adoc[Durable Subscriber] |How can a subscriber
+avoid missing messages while it's not listening for them?
+
+|
+|xref:idempotentConsumer-eip.adoc[Idempotent Consumer] |How can a message
+receiver deal with duplicate messages?
+
+a|image::eip/TransactionalClientIcon.gif[image]
+|xref:transactional-client.adoc[Transactional Client] |How can a client
+control its transactions with the messaging system?
+
+a|image::eip/MessagingGatewayIcon.gif[image]
+|xref:messaging-gateway.adoc[Messaging Gateway] |How do you encapsulate
+access to the messaging system from the rest of the application?
+
+a|image::eip/MessagingAdapterIcon.gif[image]
+|xref:service-activator.adoc[Service Activator] |How can an application
+design a service to be invoked both via various messaging technologies
+and via non-messaging techniques?
+|=======================================================================
+
+[[EnterpriseIntegrationPatterns-SystemManagement]]
+== System Management
+
+[width="100%",cols="10%,10%,80%",]
+|=======================================================================
+a|image::eip/ControlBusIcon.gif[image]
+|xref:components::controlbus-component.adoc[ControlBus] |How can we effectively administer a
+messaging system that is distributed across multiple platforms and a
+wide geographic area?
+
+a|image::eip/DetourIcon.gif[image]
+|xref:intercept.adoc[Detour] |How can you route a message through
+intermediate steps to perform validation, testing or debugging
+functions?
+
+a|image::eip/WireTapIcon.gif[image]
+|xref:wireTap-eip.adoc[Wire Tap] |How do you inspect messages that travel
+on a point-to-point channel?
+
+|
+|xref:message-history.adoc[Message History] |How can we effectively
+analyze and debug the flow of messages in a loosely coupled system?
+
+|
+|xref:log-eip.adoc[Log] |How can I log processing a message?
+
+|
+|xref:step-eip.adoc[Step] | Steps groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
+
+|=======================================================================
+
+=== EIP Icons
+
+The EIP icons library is available as a Visio stencil file adapted to
+render the icons with the Camel color. Download it
+link:{attachmentsdir}/Hohpe_EIP_camel_20150622.zip[here]
+for your presentation, functional and technical analysis documents.
+
+The original EIP stencil is also available in
+link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice 3.x Draw],
+http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft Visio],
+or http://www.graffletopia.com/stencils/137[Omnigraffle].

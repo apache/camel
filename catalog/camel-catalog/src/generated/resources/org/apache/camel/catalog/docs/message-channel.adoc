@@ -1,0 +1,43 @@
+[[MessageChannel-MessageChannel]]
+= Message Channel
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
+Channel] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns]. The Message Channel is an internal implementation detail of
+the `Endpoint` interface and all interactions with the Message Channel are via the
+Endpoint interfaces.
+
+image::eip/MessageChannelSolution.gif[image]
+
+== Samples
+
+In JMS, Message Channels are represented by topics and queues such as
+the following
+
+[source,text]
+-------------
+jms:queue:foo
+-------------
+
+This message channel can be then used within the
+xref:components::jms-component.adoc[JMS] component
+
+And the following shows a little Java route snippet:
+
+[source,java]
+----
+from("direct:foo")
+    .to("jms:queue:foo")
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:foo">
+  <to uri="jms:queue:foo"/>
+</route>
+----
+
