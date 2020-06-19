@@ -2225,8 +2225,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JT400 (camel-jt400)
-     * Exchanges messages with an AS/400 system using data queues or program
-     * call.
+     * Exchanges messages with an AS/400 system using data queues, message
+     * queues, or program call.
      * 
      * Category: messaging
      * Since: 1.5
