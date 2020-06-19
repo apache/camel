@@ -41,7 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     public static final String CONTEXT = "/mycontext";
-    protected String CONTEXT_URL;
+    protected String contextUrl;
     protected boolean startCamelContext = true;
     protected int port;
     protected DeploymentManager manager;
@@ -59,7 +59,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         server = Undertow.builder().addHttpListener(port, "localhost")
                 .setHandler(path).build();
         server.start();
-        CONTEXT_URL = "http://localhost:" + port + CONTEXT;
+        contextUrl = "http://localhost:" + port + CONTEXT;
         if (startCamelContext) {
             super.setUp();
         }
@@ -85,11 +85,37 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
                         .addMapping("/services/*"));
     }
 
-    protected ServletUnitClient newClient() {
-        return new ServletUnitClient();
+    protected WebResponse query(WebRequest req) throws IOException {
+        return query(req, true);
     }
 
-    protected static abstract class WebRequest {
+    protected WebResponse query(WebRequest req, boolean exceptionsThrownOnErrorStatus) throws IOException {
+        String params = req.params.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining("&"));
+        String urlStr = params.isEmpty() ? req.url : req.url + "?" + params;
+        URL url = new URL(urlStr);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setUseCaches(false);
+        req.headers.forEach(con::addRequestProperty);
+        con.setRequestMethod(req.getMethod());
+        if (req instanceof PostMethodWebRequest) {
+            con.setDoOutput(true);
+            InputStream is = ((PostMethodWebRequest) req).content;
+            if (is != null) {
+                IOHelper.copy(is, con.getOutputStream());
+            }
+        }
+        int code = con.getResponseCode();
+        if (exceptionsThrownOnErrorStatus && code >= HttpURLConnection.HTTP_BAD_REQUEST) {
+            if (code == HttpURLConnection.HTTP_NOT_FOUND) {
+                throw new HttpNotFoundException(code, con.getResponseMessage(), url);
+            }
+            throw new HttpException(code, con.getResponseMessage(), url);
+        }
+        return new WebResponse(con);
+    }
+
+    protected abstract static class WebRequest {
         protected String url;
         protected Map<String, String> headers = new HashMap<>();
         protected Map<String, String> params = new HashMap<>();
@@ -114,6 +140,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
             super(url);
             headers.put("Content-Length", "0");
         }
+
         public String getMethod() {
             return "GET";
         }
@@ -121,14 +148,17 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     protected static class PostMethodWebRequest extends WebRequest {
         protected InputStream content;
+
         public PostMethodWebRequest(String url) {
             super(url);
         }
+
         public PostMethodWebRequest(String url, InputStream content, String contentType) {
             super(url);
             this.content = content;
             headers.put("Content-Type", contentType);
         }
+
         public String getMethod() {
             return "POST";
         }
@@ -138,9 +168,11 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         public PutMethodWebRequest(String url) {
             super(url);
         }
+
         public PutMethodWebRequest(String url, InputStream content, String contentType) {
             super(url, content, contentType);
         }
+
         public String getMethod() {
             return "PUT";
         }
@@ -150,12 +182,13 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         public OptionsMethodWebRequest(String url) {
             super(url);
         }
+
         public String getMethod() {
             return "OPTIONS";
         }
     }
 
-    protected static abstract class HeaderOnlyWebRequest extends WebRequest {
+    protected abstract static class HeaderOnlyWebRequest extends WebRequest {
         public HeaderOnlyWebRequest(String url) {
             super(url);
         }
@@ -215,7 +248,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
         public String getCharacterSet() {
             String content = con.getContentType();
-            return content != null  && content.contains(";charset=")
+            return content != null && content.contains(";charset=")
                     ? content.substring(content.lastIndexOf(";charset=") + ";charset=".length())
                     : con.getContentEncoding();
         }
@@ -225,45 +258,10 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         }
     }
 
-    protected static class ServletUnitClient {
-
-        protected boolean exceptionsThrownOnErrorStatus = true;
-
-        public WebResponse getResponse(WebRequest req) throws IOException {
-            String params = req.params.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-                    .collect(Collectors.joining("&"));
-            String urlStr = params.isEmpty() ? req.url : req.url + "?" + params;
-            URL url = new URL(urlStr);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setUseCaches(false);
-            req.headers.forEach(con::addRequestProperty);
-            con.setRequestMethod(req.getMethod());
-            if (req instanceof PostMethodWebRequest) {
-                con.setDoOutput(true);
-                InputStream is = ((PostMethodWebRequest) req).content;
-                if (is != null) {
-                    IOHelper.copy(is, con.getOutputStream());
-                }
-            }
-            int code = con.getResponseCode();
-            if (exceptionsThrownOnErrorStatus && code >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                if (code == HttpURLConnection.HTTP_NOT_FOUND) {
-                    throw new HttpNotFoundException(code, con.getResponseMessage(), url);
-                }
-                throw new HttpException(code, con.getResponseMessage(), url);
-            }
-            return new WebResponse(con);
-        }
-
-        public void setExceptionsThrownOnErrorStatus(boolean val) {
-            this.exceptionsThrownOnErrorStatus = val;
-        }
-    }
-
     protected static class HttpException extends RuntimeException {
-        private int code;
-        private String message;
-        private URL url;
+        private final int code;
+        private final String message;
+        private final URL url;
 
         public HttpException(int code, String message, URL url) {
             this.code = code;

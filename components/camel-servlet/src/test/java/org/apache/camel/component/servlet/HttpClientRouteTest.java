@@ -39,70 +39,67 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testHttpClient() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/hello", new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/hello",
+                new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
+        WebResponse response = query(req);
 
         assertEquals("text/xml", response.getContentType(), "Get wrong content type");
         assertTrue("UTF-8".equalsIgnoreCase(response.getCharacterSet()));
         assertEquals("/hello", response.getHeaderField("PATH"), "Get a wrong message header");
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
 
-        req = new PostMethodWebRequest(CONTEXT_URL + "/services/helloworld", new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
-        response = client.getResponse(req);
+        req = new PostMethodWebRequest(contextUrl + "/services/helloworld",
+                new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
+        response = query(req);
 
         assertEquals("text/xml", response.getContentType(), "Get wrong content type");
         assertTrue("UTF-8".equalsIgnoreCase(response.getCharacterSet()));
         assertEquals("/helloworld", response.getHeaderField("PATH"), "Get a wrong message header");
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
-        client.setExceptionsThrownOnErrorStatus(false);
     }
-    
+
     @Test
     public void testHttpRestricMethod() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testHttpMethodRestrict", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testHttpMethodRestrict",
+                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        WebResponse response = query(req);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals(POST_DATA, response.getText(), "The response body is wrong");
-        
+
         // Send other web method request
-        req = new GetMethodWebRequest(CONTEXT_URL + "/services/testHttpMethodRestrict");
+        req = new GetMethodWebRequest(contextUrl + "/services/testHttpMethodRestrict");
         try {
-            response = client.getResponse(req);
+            response = query(req);
             fail("Expect the exception here");
         } catch (Exception ex) {
-            HttpException httpException = (HttpException)ex;
+            HttpException httpException = (HttpException) ex;
             assertEquals(405, httpException.getResponseCode(), "Get a wrong response code");
         }
     }
 
     @Test
     public void testHttpConverter() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testConverter", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testConverter",
+                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals("Bye World", response.getText(), "The response body is wrong");
     }
 
     @Test
     public void testHttpUnicodeResponseWithStringResponse() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testUnicodeWithStringResponse", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testUnicodeWithStringResponse",
+                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals(UNICODE_TEXT, response.getText(), "The response body is wrong");
     }
 
     @Test
     public void testHttpUnicodeResponseWithObjectResponse() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testUnicodeWithObjectResponse", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/testUnicodeWithObjectResponse",
+                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals(UNICODE_TEXT, response.getText(), "The response body is wrong");
     }
@@ -123,7 +120,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             fail("Excepts exception here");
         } catch (Exception ex) {
             assertTrue(ex instanceof FailedToStartRouteException, "Get a wrong exception.");
-            assertTrue(ex.getCause().getCause() instanceof UnsupportedOperationException, "Get a wrong cause of exception.");
+            assertTrue(ex.getCause().getCause() instanceof UnsupportedOperationException,
+                    "Get a wrong cause of exception.");
         }
     }
 
@@ -143,13 +141,14 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
                 assertEquals(charsetEncoding, "UTF-8", "Get a wrong charset name from the message header");
                 // assert exchange charset
-                assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME), "Get a wrong charset naem from the exchange property");
+                assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME),
+                        "Get a wrong charset naem from the exchange property");
                 exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
                 exchange.getMessage().setHeader("PATH", path);
                 exchange.getMessage().setBody("<b>Hello World</b>");
             });
             // END SNIPPET: route
-            
+
             from("servlet:testHttpMethodRestrict?httpMethodRestrict=POST").process(exchange -> {
                 String request = exchange.getIn().getBody(String.class);
                 exchange.getMessage().setBody(request);

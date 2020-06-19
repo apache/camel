@@ -25,14 +25,13 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
 
     @Test
     public void testSetProperty() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/hello");
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
+        WebResponse response = query(req);
 
         assertEquals(204, response.getResponseCode());
         assertEquals("", response.getText(), "The response message is wrong");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

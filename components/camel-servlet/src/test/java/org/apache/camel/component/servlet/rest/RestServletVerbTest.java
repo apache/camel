@@ -26,15 +26,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testGetAll() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
         assertEquals("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]", response.getText());
@@ -42,10 +39,8 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testGetOne() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/users/1");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/users/1");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
         assertEquals("{ \"id\":\"1\", \"name\":\"Scott\" }", response.getText());
@@ -59,10 +54,9 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedBodiesReceived(body);
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
@@ -78,10 +72,9 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "PUT");
 
-        WebRequest req = new PutMethodWebRequest(CONTEXT_URL + "/services/users/1", new ByteArrayInputStream(body.getBytes()), "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PutMethodWebRequest(contextUrl + "/services/users/1",
+                new ByteArrayInputStream(body.getBytes()), "application/json");
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
@@ -94,15 +87,13 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "DELETE");
 
-        WebRequest req = new HeaderOnlyWebRequest(CONTEXT_URL + "/services/users/1") {
+        WebRequest req = new HeaderOnlyWebRequest(contextUrl + "/services/users/1") {
             @Override
             public String getMethod() {
                 return "DELETE";
             }
         };
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebResponse response = query(req, false);
 
         assertEquals(204, response.getResponseCode());
 

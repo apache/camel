@@ -53,9 +53,8 @@ public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
     }
 
     public String getService(String path) throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + path);
-        ServletUnitClient client = newClient();
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new GetMethodWebRequest(contextUrl + path);
+        WebResponse response = query(req);
 
         return response.getText();
     }

@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class RestServletMethodNotAllowedTest extends ServletCamelRouterTestSupport {
 
     @BindToRegistry("myBinding")
@@ -32,10 +31,8 @@ public class RestServletMethodNotAllowedTest extends ServletCamelRouterTestSuppo
 
     @Test
     public void testServletMethodNotAllowed() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/users/123/basic");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/123/basic");
+        WebResponse response = query(req, false);
 
         assertEquals(405, response.getResponseCode());
     }
