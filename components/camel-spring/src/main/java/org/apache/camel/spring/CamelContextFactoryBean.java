@@ -687,6 +687,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return camelRouteController;
     }
 
+    /**
+     * Configuration of route controller.
+     */
     public void setCamelRouteController(CamelRouteControllerDefinition camelRouteController) {
         this.camelRouteController = camelRouteController;
     }
