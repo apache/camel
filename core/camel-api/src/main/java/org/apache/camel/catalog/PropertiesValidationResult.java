@@ -50,6 +50,7 @@ abstract class PropertiesValidationResult implements Serializable {
     Map<String, String> invalidBoolean;
     Map<String, String> invalidInteger;
     Map<String, String> invalidNumber;
+    Map<String, String> invalidDuration;
     Map<String, String> defaultValues;
 
     public boolean hasErrors() {
@@ -72,7 +73,8 @@ abstract class PropertiesValidationResult implements Serializable {
         boolean ok = syntaxError == null && unknown == null && required == null;
         if (ok) {
             ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
-                    && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+                    && invalidBoolean == null && invalidInteger == null && invalidNumber == null
+                    && invalidDuration == null;
         }
         if (ok) {
             ok = invalidMap == null && invalidArray == null;
@@ -215,6 +217,16 @@ abstract class PropertiesValidationResult implements Serializable {
         }
     }
 
+    public void addInvalidDuration(String name, String value) {
+        if (invalidDuration == null) {
+            invalidDuration = new LinkedHashMap<>();
+        }
+        if (!invalidDuration.containsKey(name)) {
+            invalidDuration.put(name, value);
+            errors++;
+        }
+    }
+
     public void addDefaultValue(String name, String value)  {
         if (defaultValues == null) {
             defaultValues = new LinkedHashMap<>();
@@ -291,6 +303,10 @@ abstract class PropertiesValidationResult implements Serializable {
 
     public Map<String, String> getInvalidNumber() {
         return invalidNumber;
+    }
+
+    public Map<String, String> getInvalidDuration() {
+        return invalidDuration;
     }
 
     public Map<String, String> getDefaultValues() {
