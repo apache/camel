@@ -107,6 +107,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     enums = Arrays.asList("auto,off,json,xml,json_xml".split(","));
                 } else if ("org.apache.camel.spi.RestHostNameResolver".equals(javaType)) {
                     enums = Arrays.asList("allLocalIp,localIp,localHostName".split(","));
+                } else if ("org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy".equals(javaType)) {
+                    enums = Arrays.asList("Abort,CallerRuns,DiscardOldest,Discard".split(","));
                 }
                 model.setEnums(enums);
                 answer.add(model);
