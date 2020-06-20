@@ -605,7 +605,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
 
     /**
      * Which Undertow AccessLogReceiver should be used
-     * Will use JBossLoggingAccessLogReceiver if not specifid
+     * Will use JBossLoggingAccessLogReceiver if not specified
      */
     public void setAccessLogReceiver(AccessLogReceiver accessLogReceiver) {
         this.accessLogReceiver = accessLogReceiver;

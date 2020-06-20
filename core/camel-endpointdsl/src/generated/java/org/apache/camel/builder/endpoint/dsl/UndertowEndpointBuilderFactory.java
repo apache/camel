@@ -479,7 +479,7 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Which Undertow AccessLogReceiver should be used Will use
-         * JBossLoggingAccessLogReceiver if not specifid.
+         * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option is a:
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
@@ -494,7 +494,7 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Which Undertow AccessLogReceiver should be used Will use
-         * JBossLoggingAccessLogReceiver if not specifid.
+         * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option will be converted to a
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
@@ -1123,7 +1123,7 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Which Undertow AccessLogReceiver should be used Will use
-         * JBossLoggingAccessLogReceiver if not specifid.
+         * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option is a:
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
@@ -1138,7 +1138,7 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Which Undertow AccessLogReceiver should be used Will use
-         * JBossLoggingAccessLogReceiver if not specifid.
+         * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option will be converted to a
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
@@ -1423,7 +1423,7 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Which Undertow AccessLogReceiver should be used Will use
-         * JBossLoggingAccessLogReceiver if not specifid.
+         * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option is a:
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
@@ -1438,7 +1438,7 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Which Undertow AccessLogReceiver should be used Will use
-         * JBossLoggingAccessLogReceiver if not specifid.
+         * JBossLoggingAccessLogReceiver if not specified.
          * 
          * The option will be converted to a
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
