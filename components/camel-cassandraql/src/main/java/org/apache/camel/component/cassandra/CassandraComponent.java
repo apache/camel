@@ -76,11 +76,6 @@ public class CassandraComponent extends DefaultComponent {
             }
         }
 
-        ResultSetConversionStrategy rs = null;
-        String strategy = getAndRemoveParameter(parameters, "resultSetConversionStrategy", String.class);
-        if (strategy != null) {
-            rs = ResultSetConversionStrategies.fromName(strategy);
-        }
         CassandraEndpoint endpoint = new CassandraEndpoint(uri, this);
         endpoint.setBean(beanRef);
         endpoint.setHosts(hosts);
@@ -89,8 +84,16 @@ public class CassandraComponent extends DefaultComponent {
             endpoint.setPort(num);
         }
         endpoint.setKeyspace(keyspace);
-        if (rs != null) {
-            endpoint.setResultSetConversionStrategy(rs);
+
+        // special in some use-cases
+        Object strategy = parameters.get("resultSetConversionStrategy");
+        if (strategy != null) {
+            String text = CamelContextHelper.parseText(getCamelContext(), strategy.toString());
+            if (text.equalsIgnoreCase("ALL") || text.equalsIgnoreCase("ONE") || text.startsWith("LIMIT_")) {
+                ResultSetConversionStrategy rs = ResultSetConversionStrategies.fromName(text);
+                endpoint.setResultSetConversionStrategy(rs);
+                parameters.remove("resultSetConversionStrategy");
+            }
         }
         setProperties(endpoint, parameters);
         return endpoint;
