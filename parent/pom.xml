@@ -147,8 +147,10 @@
         <directory-watcher-version>0.9.10</directory-watcher-version>
         <disruptor-version>3.4.2</disruptor-version>
         <dnsjava-version>3.1.0</dnsjava-version>
-        <djl-version>0.4.0</djl-version>
-        <djl-mxnet-native-version>1.6.0</djl-mxnet-native-version>
+        <djl-version>0.5.0</djl-version>
+        <djl-mxnet-native-version>1.7.0-a</djl-mxnet-native-version>
+        <djl-pytorch-native-version>1.5.0</djl-pytorch-native-version>
+        <djl-tensorflow-native-version>2.1.0</djl-tensorflow-native-version>
         <docker-java-version>3.2.1</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
         <drools-version>7.38.0.Final</drools-version>

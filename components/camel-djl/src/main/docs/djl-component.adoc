@@ -120,7 +120,7 @@ You can pull the MXNet engine from the central Maven repository by including the
 <dependency>
     <groupId>ai.djl.mxnet</groupId>
     <artifactId>mxnet-engine</artifactId>
-    <version>0.4.0</version>
+    <version>x.x.x</version>
     <scope>runtime</scope>
 </dependency>
 ----
@@ -133,7 +133,7 @@ It will automatically determine the appropriate jars for your system based on th
     <dependency>
       <groupId>ai.djl.mxnet</groupId>
       <artifactId>mxnet-native-auto</artifactId>
-      <version>1.6.0</version>
+      <version>1.7.0-a</version>
       <scope>runtime</scope>
     </dependency>
 ----
@@ -147,9 +147,9 @@ You can pull the PyTorch engine from the central Maven repository by including t
 [source,xml]
 ----
 <dependency>
-    <groupId>ai.djl.mxnet</groupId>
+    <groupId>ai.djl.pytorch</groupId>
     <artifactId>pytorch-engine</artifactId>
-    <version>0.4.0</version>
+    <version>x.x.x</version>
     <scope>runtime</scope>
 </dependency>
 ----
@@ -160,9 +160,9 @@ It will automatically determine the appropriate jars for your system based on th
 [source,xml]
 ----
     <dependency>
-      <groupId>ai.djl.mxnet</groupId>
+      <groupId>ai.djl.pytorch</groupId>
       <artifactId>pytorch-native-auto</artifactId>
-      <version>1.4.0</version>
+      <version>1.5.0</version>
       <scope>runtime</scope>
     </dependency>
 ----
@@ -171,7 +171,33 @@ More information about https://github.com/awslabs/djl/blob/master/pytorch/pytorc
 
 === Tensorflow engine
 
-Right now, the TensorFlow Engine is still experimental.
+You can pull the Tensorflow engine from the central Maven repository by including the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>ai.djl.tensorflow</groupId>
+    <artifactId>tensorflow-engine</artifactId>
+    <version>x.x.x</version>
+    <scope>runtime</scope>
+</dependency>
+----
+
+DJL offers an automatic option that will download the jars the first time you run DJL.
+It will automatically determine the appropriate jars for your system based on the platform and GPU support.
+
+[source,xml]
+----
+    <dependency>
+      <groupId>ai.djl.tensorflow</groupId>
+      <artifactId>tensorflow-native-auto</artifactId>
+      <version>2.1.0</version>
+      <scope>runtime</scope>
+    </dependency>
+----
+
+More information about https://github.com/awslabs/djl/tree/master/tensorflow#installation[Tensorflow engine installation]
+
 
 
 == Examples
