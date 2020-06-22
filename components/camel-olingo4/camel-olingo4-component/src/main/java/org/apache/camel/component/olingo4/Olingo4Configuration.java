@@ -19,6 +19,7 @@ package org.apache.camel.component.olingo4;
 import java.util.Map;
 
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,6 +35,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
  * Component configuration for Olingo4 component.
  */
 @UriParams
+@Configurer
 public class Olingo4Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();

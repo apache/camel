@@ -44,7 +44,7 @@ public class ApiMethodPropertiesHelperTest {
     private static final String VALUE_4 = "true";
     private static final String VALUE_5 = "CamelCaseValue";
 
-    private static ApiMethodPropertiesHelper<TestComponentConfiguration> propertiesHelper = new ApiMethodPropertiesHelper<TestComponentConfiguration>(TestComponentConfiguration.class,
+    private static ApiMethodPropertiesHelper<TestComponentConfiguration> propertiesHelper = new ApiMethodPropertiesHelper<TestComponentConfiguration>(new DefaultCamelContext(), TestComponentConfiguration.class,
                                                                                                                                                       TEST_PREFIX) {
     };
 
@@ -86,7 +86,7 @@ public class ApiMethodPropertiesHelperTest {
 
     @Test
     public void testGetValidEndpointProperties() throws Exception {
-        assertEquals(2, propertiesHelper.getValidEndpointProperties(new TestEndpointConfiguration()).size());
+        assertEquals(2, propertiesHelper.getValidEndpointProperties(new DefaultCamelContext(), new TestEndpointConfiguration()).size());
     }
 
     @SuppressWarnings("unused")

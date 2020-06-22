@@ -41,7 +41,7 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
     private Olingo4Index resultIndex;
 
     public Olingo4Producer(Olingo4Endpoint endpoint) {
-        super(endpoint, Olingo4PropertiesHelper.getHelper());
+        super(endpoint, Olingo4PropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override
