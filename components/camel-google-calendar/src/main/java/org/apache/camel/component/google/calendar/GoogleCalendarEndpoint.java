@@ -70,7 +70,7 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
 
     @Override
     protected ApiMethodPropertiesHelper<GoogleCalendarConfiguration> getPropertiesHelper() {
-        return GoogleCalendarPropertiesHelper.getHelper();
+        return GoogleCalendarPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

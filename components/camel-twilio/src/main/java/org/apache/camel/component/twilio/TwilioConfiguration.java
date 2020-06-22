@@ -18,6 +18,7 @@ package org.apache.camel.component.twilio;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -26,6 +27,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for Twilio component.
  */
 @UriParams
+@Configurer
 public class TwilioConfiguration implements Cloneable {
 
     @UriPath

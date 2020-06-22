@@ -34,7 +34,7 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         case "destinationfolderid":
         case "DestinationFolderId": target.setDestinationFolderId(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "fields":
@@ -95,7 +95,7 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         answer.put("ClientId", java.lang.String.class);
         answer.put("ClientSecret", java.lang.String.class);
         answer.put("DestinationFolderId", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        answer.put("EncryptionAlgorithm", java.lang.String.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("Fields", java.lang.String[].class);
         answer.put("FolderId", java.lang.String.class);

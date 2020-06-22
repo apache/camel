@@ -68,7 +68,7 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     @Override
     protected ApiMethodPropertiesHelper<GoogleSheetsConfiguration> getPropertiesHelper() {
-        return GoogleSheetsPropertiesHelper.getHelper();
+        return GoogleSheetsPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

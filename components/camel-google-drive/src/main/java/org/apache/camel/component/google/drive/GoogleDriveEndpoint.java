@@ -72,7 +72,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
 
     @Override
     protected ApiMethodPropertiesHelper<GoogleDriveConfiguration> getPropertiesHelper() {
-        return GoogleDrivePropertiesHelper.getHelper();
+        return GoogleDrivePropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

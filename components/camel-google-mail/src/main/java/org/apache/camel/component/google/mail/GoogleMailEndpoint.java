@@ -75,7 +75,7 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
 
     @Override
     protected ApiMethodPropertiesHelper<GoogleMailConfiguration> getPropertiesHelper() {
-        return GoogleMailPropertiesHelper.getHelper();
+        return GoogleMailPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

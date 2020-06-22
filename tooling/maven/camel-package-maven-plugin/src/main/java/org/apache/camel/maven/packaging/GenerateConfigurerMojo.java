@@ -109,7 +109,13 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         public Option(String name, Class type, String getter) {
             // we just use name, type
             setName(name);
-            if (type.isArray()) {
+            if (byte[].class == type) {
+                // special for byte array
+                setJavaType("byte[]");
+            } else if (long[].class == type) {
+                // special for long array
+                setJavaType("long[]");
+            } else if (type.isArray()) {
                 // special for array
                 String arrType = between(type.getName(), "[L", ";") + "[]";
                 setJavaType(arrType);

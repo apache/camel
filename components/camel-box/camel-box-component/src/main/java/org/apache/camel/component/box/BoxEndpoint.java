@@ -99,7 +99,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     @Override
     protected ApiMethodPropertiesHelper<BoxConfiguration> getPropertiesHelper() {
-        return BoxPropertiesHelper.getHelper();
+        return BoxPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

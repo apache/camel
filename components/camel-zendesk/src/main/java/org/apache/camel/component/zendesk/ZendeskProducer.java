@@ -26,6 +26,6 @@ import org.apache.camel.support.component.AbstractApiProducer;
 public class ZendeskProducer extends AbstractApiProducer<ZendeskApiName, ZendeskConfiguration> {
 
     public ZendeskProducer(ZendeskEndpoint endpoint) {
-        super(endpoint, ZendeskPropertiesHelper.getHelper());
+        super(endpoint, ZendeskPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 }

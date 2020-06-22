@@ -224,7 +224,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     @Override
     protected ApiMethodPropertiesHelper<AS2Configuration> getPropertiesHelper() {
-        return AS2PropertiesHelper.getHelper();
+        return AS2PropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override
