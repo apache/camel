@@ -21,22 +21,24 @@ import java.util.List;
 import com.braintreegateway.Plan;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.PlanGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PlanGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PlanGatewayIntegrationTest.class);
     private static final String PATH_PREFIX = getApiNameAsString(PlanGatewayApiMethod.class);
 
-    @Ignore
+    @Disabled
     @Test
     public void testAll() throws Exception {
         final List<Plan> result = requestBody("direct://ALL", null, List.class);
 
-        assertNotNull("all result", result);
+        assertNotNull(result, "all result");
         LOG.debug("all: " + result);
     }
 
