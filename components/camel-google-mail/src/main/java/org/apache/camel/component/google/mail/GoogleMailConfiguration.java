@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.mail;
 
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,6 +27,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleMail component.
  */
 @UriParams
+@Configurer
 public class GoogleMailConfiguration {
     @UriPath @Metadata(required = true)
     private GoogleMailApiName apiName;
