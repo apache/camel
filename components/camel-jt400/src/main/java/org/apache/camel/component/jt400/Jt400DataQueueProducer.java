@@ -24,7 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * {@link Producer} to send data to an AS/400 data queue.
+ * {@link Producer} to send data to an IBM i data queue.
  */
 public class Jt400DataQueueProducer extends DefaultProducer {
 
@@ -39,7 +39,7 @@ public class Jt400DataQueueProducer extends DefaultProducer {
     }
 
     /**
-     * Sends the {@link Exchange}'s in body to the AS/400 data queue. If the
+     * Sends the {@link Exchange}'s in body to the IBM i data queue. If the
      * endpoint's format is set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary}, the data queue entry's
      * data will be sent as a <code>byte[]</code>. If the endpoint's format is
      * set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be sent as a
