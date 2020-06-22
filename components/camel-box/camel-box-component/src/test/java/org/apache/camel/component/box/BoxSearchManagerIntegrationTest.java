@@ -23,9 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxSearchManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxSearchManagerApiMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link BoxSearchManager}
@@ -45,7 +47,7 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
      *
      * To test search of real data, change query string from '*' to real name of file.
      */
-    @Test(expected = Test.None.class /* no exception expected */)
+    @Test
     public void testSearchFolder() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -56,7 +58,7 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBodyAndHeaders("direct://SEARCHFOLDER", null, headers);
 
-        assertNotNull("searchFolder result", result);
+        assertNotNull(result, "searchFolder result");
         LOG.debug("searchFolder: " + result);
     }
 
