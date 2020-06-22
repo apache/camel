@@ -18,6 +18,7 @@ package org.apache.camel.component.olingo4;
 
 import java.util.Iterator;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
@@ -80,6 +81,11 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
                 assertEquals("russellwhyte", nameProp.getValue().toString());
             }
         }
+
+        // should be reflection free
+        // TODO: Fix me
+        // long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        // assertEquals(0, counter);
     }
 
     /**
