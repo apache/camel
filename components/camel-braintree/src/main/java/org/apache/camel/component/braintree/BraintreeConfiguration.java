@@ -24,6 +24,7 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for Braintree component.
  */
 @UriParams
+@Configurer
 public class BraintreeConfiguration {
     private static final String ENVIRONMENT = "environment";
     private static final String MERCHANT_ID = "merchant_id";
@@ -64,8 +66,8 @@ public class BraintreeConfiguration {
     @UriParam(label = "proxy")
     private Integer proxyPort;
 
-    @UriParam(label = "logging", javaType = "java.lang.String")
-    private Level httpLogLevel;
+    @UriParam(label = "logging", enums = "OFF,SEVERE,WARNING,INFO,CONFIG,FINE,FINER,FINEST,ALL")
+    private String httpLogLevel;
     @UriParam(label = "logging", defaultValue = "Braintree")
     private String httpLogName;
     @UriParam(label = "logging", defaultValue = "true")
@@ -174,7 +176,7 @@ public class BraintreeConfiguration {
         this.proxyPort = proxyPort;
     }
 
-    public Level getHttpLogLevel() {
+    public String getHttpLogLevel() {
         return httpLogLevel;
     }
 
@@ -182,13 +184,6 @@ public class BraintreeConfiguration {
      * Set logging level for http calls, @see java.util.logging.Level
      */
     public void setHttpLogLevel(String httpLogLevel) {
-        this.httpLogLevel = Level.parse(httpLogLevel);
-    }
-
-    /**
-     * Set logging level for http calls, @see java.util.logging.Level
-     */
-    public void setHttpLogLevel(Level httpLogLevel) {
         this.httpLogLevel = httpLogLevel;
     }
 
@@ -291,7 +286,7 @@ public class BraintreeConfiguration {
         }
 
         if (httpLogLevel != null) {
-            logger.setLevel(httpLogLevel);
+            logger.setLevel(Level.parse(httpLogLevel));
         }
 
         gateway.getConfiguration().setLogger(logger);

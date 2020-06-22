@@ -32,7 +32,7 @@ public class BraintreeComponentTest {
     @Test
     public void testLoggerConfiguration() {
         BraintreeConfiguration configuration = createBraintreeConfiguration();
-        configuration.setHttpLogLevel(Level.WARNING);
+        configuration.setHttpLogLevel(Level.WARNING.getName());
 
         BraintreeComponent component = new BraintreeComponent();
         component.createEndpoint("braintree:clientToken", "generate", BraintreeApiName.CLIENTTOKEN, configuration);

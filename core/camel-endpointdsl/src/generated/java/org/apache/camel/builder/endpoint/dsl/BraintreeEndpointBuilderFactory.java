@@ -19,7 +19,6 @@ package org.apache.camel.builder.endpoint.dsl;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -149,19 +148,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder httpLogLevel(Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: logging
          */
@@ -927,19 +914,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointProducerBuilder httpLogLevel(Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: logging
          */
@@ -1201,19 +1176,7 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: logging
          */
