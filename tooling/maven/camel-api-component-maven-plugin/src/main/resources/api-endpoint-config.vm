@@ -36,6 +36,7 @@
  */
 package ${componentPackage};
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -43,6 +44,7 @@ import org.apache.camel.spi.UriParams;
  * Camel EndpointConfiguration for $proxyType.Name
  */
 @UriParams
+@Configurer
 public final class $configName extends ${componentName}Configuration {
 #foreach( $parameter in $parameters.entrySet() )
 
