@@ -87,7 +87,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
 
     @Override
     protected ApiMethodPropertiesHelper<FhirConfiguration> getPropertiesHelper() {
-        return FhirPropertiesHelper.getHelper();
+        return FhirPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

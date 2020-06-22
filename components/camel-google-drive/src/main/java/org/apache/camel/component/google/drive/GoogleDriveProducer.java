@@ -35,7 +35,7 @@ import org.apache.camel.support.component.ApiMethod;
 public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName, GoogleDriveConfiguration> {
 
     public GoogleDriveProducer(GoogleDriveEndpoint endpoint) {
-        super(endpoint, GoogleDrivePropertiesHelper.getHelper());
+        super(endpoint, GoogleDrivePropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override

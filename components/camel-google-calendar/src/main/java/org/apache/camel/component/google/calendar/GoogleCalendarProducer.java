@@ -34,7 +34,7 @@ import org.apache.camel.support.component.ApiMethod;
 public class GoogleCalendarProducer extends AbstractApiProducer<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
     public GoogleCalendarProducer(GoogleCalendarEndpoint endpoint) {
-        super(endpoint, GoogleCalendarPropertiesHelper.getHelper());
+        super(endpoint, GoogleCalendarPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
     
     @Override

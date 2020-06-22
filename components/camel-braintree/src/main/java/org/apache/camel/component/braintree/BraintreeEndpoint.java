@@ -77,7 +77,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     protected ApiMethodPropertiesHelper<BraintreeConfiguration> getPropertiesHelper() {
-        return BraintreePropertiesHelper.getHelper();
+        return BraintreePropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

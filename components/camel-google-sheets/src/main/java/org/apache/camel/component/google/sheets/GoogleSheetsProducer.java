@@ -34,7 +34,7 @@ import org.apache.camel.support.component.ApiMethod;
 public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     public GoogleSheetsProducer(GoogleSheetsEndpoint endpoint) {
-        super(endpoint, GoogleSheetsPropertiesHelper.getHelper());
+        super(endpoint, GoogleSheetsPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 
     @Override

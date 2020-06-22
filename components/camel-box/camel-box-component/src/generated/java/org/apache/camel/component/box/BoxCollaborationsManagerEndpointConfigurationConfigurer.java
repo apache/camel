@@ -36,7 +36,7 @@ public class BoxCollaborationsManagerEndpointConfigurationConfigurer extends org
         case "email":
         case "Email": target.setEmail(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "folderid":
@@ -80,7 +80,7 @@ public class BoxCollaborationsManagerEndpointConfigurationConfigurer extends org
         answer.put("CollaborationId", java.lang.String.class);
         answer.put("Collaborator", com.box.sdk.BoxCollaborator.class);
         answer.put("Email", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        answer.put("EncryptionAlgorithm", java.lang.String.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("FolderId", java.lang.String.class);
         answer.put("HttpParams", java.util.Map.class);

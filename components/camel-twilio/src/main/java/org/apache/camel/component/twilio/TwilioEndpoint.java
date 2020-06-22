@@ -122,7 +122,7 @@ public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioCon
 
     @Override
     protected ApiMethodPropertiesHelper<TwilioConfiguration> getPropertiesHelper() {
-        return TwilioPropertiesHelper.getHelper();
+        return TwilioPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

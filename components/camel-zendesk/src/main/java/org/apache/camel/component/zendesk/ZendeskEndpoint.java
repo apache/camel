@@ -91,7 +91,7 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
 
     @Override
     protected ApiMethodPropertiesHelper<ZendeskConfiguration> getPropertiesHelper() {
-        return ZendeskPropertiesHelper.getHelper();
+        return ZendeskPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override
