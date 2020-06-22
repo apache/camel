@@ -203,6 +203,32 @@ And in XML DSL `<hystrix>` should be `<circuitBreaker>`.
 
 Endpoints with `consumer.` prefix such as `consumer.delay=5000` are no longer supported (deprecated in latest Camel 2.x) and you should just use the option without the `consumer.` prefix, eg `delay=5000`.
 
+=== Calling a processor as an endpoint
+
+Calling a processor as an endpoint from a route such as:
+
+[source,java]
+----
+from("jms:cheese")
+  .to("myProcessor");
+----
+
+Is no longer supported. Instead either use the bean component to call the processor or use `process`:
+
+[source,java]
+----
+from("jms:cheese")
+  .to("bean:myProcessor");
+----
+
+Or
+
+[source,java]
+----
+from("jms:cheese")
+  .process("myProcessor");
+----
+
 === Tracing
 
 A new tracer has been implemented and the old tracer has been removed.
