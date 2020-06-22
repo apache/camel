@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Exchanges messages with an AS/400 system using data queues, message queues, or program call.
+ * Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement for AS/400 and iSeries servers.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", category = {Category.MESSAGING})
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
@@ -48,7 +48,7 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     private final Jt400Configuration configuration;
 
     /**
-     * Creates a new AS/400 data queue endpoint using a default connection pool
+     * Creates a new IBM i data queue endpoint using a default connection pool
      * provided by the component.
      *
      * @throws NullPointerException if {@code component} is null
@@ -58,7 +58,7 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     }
 
     /**
-     * Creates a new AS/400 data queue endpoint using the specified connection
+     * Creates a new IBM i data queue endpoint using the specified connection
      * pool.
      */
     protected Jt400Endpoint(String endpointUri, Jt400Component component, AS400ConnectionPool connectionPool) throws CamelException {
