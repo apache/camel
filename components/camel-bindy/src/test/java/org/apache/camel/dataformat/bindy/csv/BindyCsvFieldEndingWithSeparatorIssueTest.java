@@ -23,9 +23,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.csv.MyCsvRecord;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * The parsing issue when field ends with separator is fixed by updating BindyCvsDataFormat.unquoteTokens(..)<br>
@@ -83,7 +83,7 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
     }
 
     @Test
-    @Ignore("This issue will be revisit when we have chance to rewrite bindy parser")
+    @Disabled("This issue will be revisit when we have chance to rewrite bindy parser")
     public void testBindySeparatorsAround() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(createRoute()); // new ReconciliationRoute()

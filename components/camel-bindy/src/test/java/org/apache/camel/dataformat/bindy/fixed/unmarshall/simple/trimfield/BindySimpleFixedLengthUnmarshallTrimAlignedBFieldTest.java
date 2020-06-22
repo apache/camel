@@ -27,14 +27,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -61,12 +63,12 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest extends Abstr
         // check the model
         
         BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest.Order.class);
-        Assert.assertEquals(10, order.getOrderNr());
+        assertEquals(10, order.getOrderNr());
         // the field is not trimmed
-        Assert.assertEquals("Pauline", order.getFirstName());
-        Assert.assertEquals("M    ", order.getLastName()); // no trim
-        Assert.assertEquals("  Hello", order.getComment());
-        Assert.assertEquals("TEST123", order.getCommentBAligned());
+        assertEquals("Pauline", order.getFirstName());
+        assertEquals("M    ", order.getLastName()); // no trim
+        assertEquals("  Hello", order.getComment());
+        assertEquals("TEST123", order.getCommentBAligned());
     }
 
     public static class ContextConfig extends RouteBuilder {

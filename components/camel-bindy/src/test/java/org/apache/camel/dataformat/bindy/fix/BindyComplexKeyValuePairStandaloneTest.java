@@ -30,11 +30,12 @@ import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BindyComplexKeyValuePairStandaloneTest {
 
@@ -45,7 +46,7 @@ public class BindyComplexKeyValuePairStandaloneTest {
     BindyAbstractFactory factory;
     int counter;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
 
         // Set factory
@@ -83,7 +84,7 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         LOG.info(">>> Model : " + model.toString());
 
-        Assert.assertNotNull(model);
+        assertNotNull(model);
 
     }
 
@@ -102,7 +103,7 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         LOG.info(">>> Model : " + model.toString());
 
-        Assert.assertNotNull(model);
+        assertNotNull(model);
 
     }
 
@@ -121,7 +122,7 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         LOG.info(">>> Model : " + model.toString());
 
-        Assert.assertNotNull(model);
+        assertNotNull(model);
 
     }
 

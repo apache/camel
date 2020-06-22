@@ -28,14 +28,16 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyImpliedTest {
 
     public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
     public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
@@ -93,12 +95,12 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
         Exchange exc  = uresult.getReceivedExchanges().get(0);
         Record   data = exc.getIn().getBody(Record.class);
 
-        Assert.assertEquals(123.45D, data.getField1(), 0D);
-        Assert.assertEquals(67.89D, data.getField2(), 0D);
-        Assert.assertEquals(11.24F, data.getField3(), 0.001);
-        Assert.assertEquals(33.45F, data.getField4(), 0.001);
-        Assert.assertEquals(60.52D, data.getField5().doubleValue(), 0.001);
-        Assert.assertEquals(70.62D, data.getField6().doubleValue(), 0.001);
+        assertEquals(123.45D, data.getField1(), 0D);
+        assertEquals(67.89D, data.getField2(), 0D);
+        assertEquals(11.24F, data.getField3(), 0.001);
+        assertEquals(33.45F, data.getField4(), 0.001);
+        assertEquals(60.52D, data.getField5().doubleValue(), 0.001);
+        assertEquals(70.62D, data.getField6().doubleValue(), 0.001);
     }
 
     // *************************************************************************

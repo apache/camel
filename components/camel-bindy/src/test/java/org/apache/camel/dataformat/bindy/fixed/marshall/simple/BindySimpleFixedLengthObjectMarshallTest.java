@@ -33,21 +33,17 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {
-                BindySimpleFixedLengthObjectMarshallTest.Configuration.class},
-        loader = CamelSpringDelegatingTestContextLoader.class)
-public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4SpringContextTests {
+                BindySimpleFixedLengthObjectMarshallTest.Configuration.class})
+@CamelSpringTest
+public class BindySimpleFixedLengthObjectMarshallTest {
     
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";

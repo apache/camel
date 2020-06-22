@@ -26,14 +26,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyDoubleQuotesInFieldCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyDoubleQuotesInFieldCsvUnmarshallTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -58,7 +60,7 @@ public class BindyDoubleQuotesInFieldCsvUnmarshallTest extends AbstractJUnit4Spr
         result.assertIsSatisfied();
         
         Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
-        Assert.assertEquals("Pauline de \"Quotes\"", order.getFirstName());
+        assertEquals("Pauline de \"Quotes\"", order.getFirstName());
     }
 
     public static class ContextConfig extends RouteBuilder {
