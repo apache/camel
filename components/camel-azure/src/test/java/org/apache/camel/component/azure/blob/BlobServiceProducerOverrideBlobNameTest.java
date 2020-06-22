@@ -20,8 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.azure.blob.BlobHeadersConstants.OVERRIDE_BLOB_NAME;
 
@@ -30,7 +30,7 @@ public class BlobServiceProducerOverrideBlobNameTest {
     private Exchange exchange;
     private BlobServiceProducer producer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         CamelContext context = new DefaultCamelContext();
         BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?credentialsAccountKey=aKey&credentialsAccountName=name");

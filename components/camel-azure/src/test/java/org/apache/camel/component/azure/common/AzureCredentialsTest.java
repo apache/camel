@@ -26,8 +26,8 @@ import org.apache.camel.component.azure.blob.BlobServiceUtil;
 import org.apache.camel.component.azure.queue.QueueServiceConfiguration;
 import org.apache.camel.component.azure.queue.QueueServiceEndpoint;
 import org.apache.camel.component.azure.queue.QueueServiceUtil;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.ACCOUNT_NAME;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.BLOB_NAME;
@@ -42,6 +42,8 @@ import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerBlockBlobClient;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerQueueClient;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AzureCredentialsTest extends CamelTestSupport {
 
