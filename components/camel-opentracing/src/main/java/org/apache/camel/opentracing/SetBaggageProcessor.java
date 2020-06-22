@@ -13,21 +13,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A processor which adds a tag on the active {@link io.opentracing.Span} with an {@link org.apache.camel.Expression}
+ * A processor which adds a baggage item on the active {@link Span} with an {@link Expression}
  */
-public class TagProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetBaggageProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TagProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetBaggageProcessor.class);
 
     private String id;
     private String routeId;
-    private final String tagName;
+    private final String baggageName;
     private final Expression expression;
 
-    public TagProcessor(String tagName, Expression expression) {
-        this.tagName = tagName;
+    public SetBaggageProcessor(String baggageName, Expression expression) {
+        this.baggageName = baggageName;
         this.expression = expression;
-        ObjectHelper.notNull(tagName, "tagName");
+        ObjectHelper.notNull(baggageName, "baggageName");
         ObjectHelper.notNull(expression, "expression");
     }
 
@@ -36,8 +36,8 @@ public class TagProcessor extends AsyncProcessorSupport implements Traceable, Id
         try {
             Span span = ActiveSpanManager.getSpan(exchange);
             if (span != null) {
-                String tag = expression.evaluate(exchange, String.class);
-                span.setTag(tagName, tag);
+                String item = expression.evaluate(exchange, String.class);
+                span.setBaggageItem(baggageName, item);
             } else {
                 LOG.warn("OpenTracing: could not find managed span for exchange={}", exchange);
             }
@@ -58,7 +58,7 @@ public class TagProcessor extends AsyncProcessorSupport implements Traceable, Id
 
     @Override
     public String getTraceLabel() {
-        return "tag[" + tagName + ", " + expression + "]";
+        return "setBaggage[" + baggageName + ", " + expression + "]";
     }
 
     @Override
@@ -81,8 +81,8 @@ public class TagProcessor extends AsyncProcessorSupport implements Traceable, Id
         this.routeId = routeId;
     }
 
-    public String getTagName() {
-        return tagName;
+    public String getBaggageName() {
+        return baggageName.toString();
     }
 
     public Expression getExpression() {
