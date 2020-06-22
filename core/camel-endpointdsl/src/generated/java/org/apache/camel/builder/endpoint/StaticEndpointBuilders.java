@@ -8482,8 +8482,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * JT400 (camel-jt400)
-     * Exchanges messages with an AS/400 system using data queues, message
-     * queues, or program call.
+     * Exchanges messages with an IBM i system using data queues, message
+     * queues, or program call. IBM i is the replacement for AS/400 and iSeries
+     * servers.
      * 
      * Category: messaging
      * Since: 1.5
@@ -8492,13 +8493,13 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
      * 
      * Path parameter: userID (required)
-     * Returns the ID of the AS/400 user.
+     * Returns the ID of the IBM i user.
      * 
      * Path parameter: password (required)
-     * Returns the password of the AS/400 user.
+     * Returns the password of the IBM i user.
      * 
      * Path parameter: systemName (required)
-     * Returns the name of the AS/400 system.
+     * Returns the name of the IBM i system.
      * 
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
@@ -8516,8 +8517,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * JT400 (camel-jt400)
-     * Exchanges messages with an AS/400 system using data queues, message
-     * queues, or program call.
+     * Exchanges messages with an IBM i system using data queues, message
+     * queues, or program call. IBM i is the replacement for AS/400 and iSeries
+     * servers.
      * 
      * Category: messaging
      * Since: 1.5
@@ -8526,13 +8528,13 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
      * 
      * Path parameter: userID (required)
-     * Returns the ID of the AS/400 user.
+     * Returns the ID of the IBM i user.
      * 
      * Path parameter: password (required)
-     * Returns the password of the AS/400 user.
+     * Returns the password of the IBM i user.
      * 
      * Path parameter: systemName (required)
-     * Returns the name of the AS/400 system.
+     * Returns the name of the IBM i system.
      * 
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
