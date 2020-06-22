@@ -24,7 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.AtmosTestSupport;
 import org.apache.camel.component.atmos.util.AtmosResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosConsumerGetSingleTest extends AtmosTestSupport {
 
