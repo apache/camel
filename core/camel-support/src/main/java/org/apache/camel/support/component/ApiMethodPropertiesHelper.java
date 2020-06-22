@@ -99,6 +99,14 @@ public abstract class ApiMethodPropertiesHelper<C> {
         if (configurer instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
             names = getter.getAllOptions(endpointConfiguration).keySet();
+            for (String name : names) {
+                Object value = getter.getOptionValue(endpointConfiguration, name, true);
+                if (value != null) {
+                    // lower case the first letter which is what the properties map expects
+                    String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                    properties.put(key, value);
+                }
+            }
         } else {
             context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false);
             names = properties.keySet();
