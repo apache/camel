@@ -245,7 +245,7 @@ exchange. For example, the following route enables sessions:
 ----
 <route>
     <from uri="jetty:http://0.0.0.0/myapp/myservice/?sessionSupport=true"/>
-    <processRef ref="myCode"/>
+    <process ref="myCode"/>
 </route>
 ----
 
