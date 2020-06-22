@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -315,6 +316,22 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
                 if (names.add(t)) {
                     // filter out duplicates by using a names set that has already added
                     answer.add(new Option(t, type, getter));
+                } else {
+                    boolean replace = false;
+                    try {
+                        // try to find out what the real type is of the correspondent field so we chose among the clash
+                        Field field = clazz.getDeclaredField(Character.toLowerCase(t.charAt(0)) + t.substring(1));
+                        if (field.getType() == type) {
+                            // this is the correct type for the new option
+                            replace = true;
+                        }
+                    } catch (NoSuchFieldException e) {
+                        // ignore
+                    }
+                    if (replace) {
+                        answer.removeIf(o -> o.getName().equals(t));
+                        answer.add(new Option(t, type, getter));
+                    }
                 }
             }
         });
