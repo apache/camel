@@ -26,9 +26,12 @@ import com.braintreegateway.TransactionLevelFeeReportRow;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.ReportGatewayApiMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.braintreegateway.ReportGateway} APIs.
@@ -56,10 +59,10 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
                 request
         );
 
-        assertNotNull("transactionLevelFees result", result);
-        assertTrue("transactionLevelFees success", result.isSuccess());
+        assertNotNull(result, "transactionLevelFees result");
+        assertTrue(result.isSuccess(), "transactionLevelFees success");
         List<TransactionLevelFeeReportRow> rows = result.getTarget().getRows();
-        assertTrue("transactionLevelFeeRows found", rows.size() > 0);
+        assertTrue(rows.size() > 0, "transactionLevelFeeRows found");
 
         LOG.debug("transactionLevelFees: " + result);
     }

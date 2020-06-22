@@ -31,11 +31,14 @@ import com.braintreegateway.TransactionRequest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
@@ -60,7 +63,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.transactionIds) {
@@ -76,7 +79,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
     @Test
     public void testSale() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> result = requestBody(
             "direct://SALE",
@@ -88,7 +91,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .done(),
             Result.class);
 
-        assertNotNull("sale result", result);
+        assertNotNull(result, "sale result");
         assertTrue(result.isSuccess());
 
         LOG.info("Transaction done - id={}", result.getTarget().getId());
@@ -97,7 +100,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
     @Test
     public void testCloneTransaction() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
             "direct://SALE",
@@ -109,7 +112,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .done(),
             Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         LOG.info("Transaction done - id={}", createResult.getTarget().getId());
@@ -128,7 +131,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .build(),
             Result.class);
 
-        assertNotNull("clone result", cloneResult);
+        assertNotNull(cloneResult, "clone result");
         assertTrue(cloneResult.isSuccess());
 
         LOG.info("Clone Transaction done - clonedId={}, id={}",
@@ -139,7 +142,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
     @Test
     public void testFind() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
             "direct://SALE",
@@ -151,7 +154,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .done(),
             Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         LOG.info("Transaction done - id={}", createResult.getTarget().getId());
@@ -161,13 +164,13 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
         // using String message body for single parameter "id"
         final Transaction result = requestBody("direct://FIND", createResult.getTarget().getId());
 
-        assertNotNull("find result", result);
+        assertNotNull(result, "find result");
         LOG.info("Transaction found - id={}", result.getId());
     }
 
     @Test
     public void testSubmitForSettlementWithId() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
             "direct://SALE",
@@ -179,7 +182,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .done(),
             Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         LOG.info("Transaction done - id={}", createResult.getTarget().getId());
@@ -190,13 +193,13 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             createResult.getTarget().getId(),
             Result.class);
 
-        assertNotNull("Submit For Settlement result", result);
+        assertNotNull(result, "Submit For Settlement result");
         LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
     public void testSubmitForSettlementWithIdAndAmount() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
             "direct://SALE",
@@ -208,7 +211,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .done(),
             Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         LOG.info("Transaction done - id={}", createResult.getTarget().getId());
@@ -223,13 +226,13 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .build(),
             Result.class);
 
-        assertNotNull("Submit For Settlement result", result);
+        assertNotNull(result, "Submit For Settlement result");
         LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
     public void testSubmitForSettlementWithRequest() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
             "direct://SALE",
@@ -241,7 +244,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .done(),
             Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         LOG.info("Transaction done - id={}", createResult.getTarget().getId());
@@ -257,13 +260,13 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 .build(),
             Result.class);
 
-        assertNotNull("Submit For Settlement result", result);
+        assertNotNull(result, "Submit For Settlement result");
         LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
     public void testRefund() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
@@ -276,13 +279,13 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 Result.class
         );
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         String createId = createResult.getTarget().getId();
 
         final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
-        assertNotNull("settle result", settleResult);
+        assertNotNull(settleResult, "settle result");
         assertTrue(settleResult.isSuccess());
 
         final Result<Transaction> result = requestBody(
@@ -291,14 +294,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 Result.class
         );
 
-        assertNotNull("Request Refund result", result);
+        assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
         LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
     }
 
     @Test
     public void testRefundWithAmount() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
@@ -306,18 +309,18 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .amount(new BigDecimal("100.00"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
-                        .submitForSettlement(true)
+                            .submitForSettlement(true)
                         .done(),
                 Result.class
         );
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         String createId = createResult.getTarget().getId();
 
         final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
-        assertNotNull("settle result", settleResult);
+        assertNotNull(settleResult, "settle result");
         assertTrue(settleResult.isSuccess());
 
         final Result<Transaction> result = requestBodyAndHeaders(
@@ -330,14 +333,14 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 Result.class
         );
 
-        assertNotNull("Request Refund result", result);
+        assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
         LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
     }
 
     @Test
-    public void testRefundWithRequest() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+    public void     testRefundWithRequest() throws Exception {
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
@@ -345,18 +348,18 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .amount(new BigDecimal("100.00"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
-                        .submitForSettlement(true)
+                            .submitForSettlement(true)
                         .done(),
                 Result.class
         );
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         String createId = createResult.getTarget().getId();
 
         final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
-        assertNotNull("settle result", settleResult);
+        assertNotNull(settleResult, "settle result");
         assertTrue(settleResult.isSuccess());
 
         final Result<Transaction> result = requestBodyAndHeaders(
@@ -365,12 +368,12 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                 new BraintreeHeaderBuilder()
                         .add("id", createId)
                         .add("refundRequest", new TransactionRefundRequest()
-                                .amount(new BigDecimal("100.00")))
+                            .amount(new BigDecimal("100.00")))
                         .build(),
                 Result.class
         );
 
-        assertNotNull("Request Refund result", result);
+        assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
         LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
     }
@@ -380,62 +383,62 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     // *************************************************************************
 
     // TODO provide parameter values for cancelRelease
-    @Ignore
+    @Disabled
     @Test
     public void testCancelRelease() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://CANCELRELEASE", null);
 
-        assertNotNull("cancelRelease result", result);
+        assertNotNull(result, "cancelRelease result");
         LOG.debug("cancelRelease: " + result);
     }
 
     // TODO provide parameter values for credit
-    @Ignore
+    @Disabled
     @Test
     public void testCredit() throws Exception {
         // using com.braintreegateway.TransactionRequest message body for single parameter "request"
         final com.braintreegateway.Result result = requestBody("direct://CREDIT", null);
 
-        assertNotNull("credit result", result);
+        assertNotNull(result, "credit result");
         LOG.debug("credit: " + result);
     }
 
     // TODO provide parameter values for holdInEscrow
-    @Ignore
+    @Disabled
     @Test
     public void testHoldInEscrow() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://HOLDINESCROW", null);
 
-        assertNotNull("holdInEscrow result", result);
+        assertNotNull(result, "holdInEscrow result");
         LOG.debug("holdInEscrow: " + result);
     }
 
     // TODO provide parameter values for releaseFromEscrow
-    @Ignore
+    @Disabled
     @Test
     public void testReleaseFromEscrow() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://RELEASEFROMESCROW", null);
 
-        assertNotNull("releaseFromEscrow result", result);
+        assertNotNull(result, "releaseFromEscrow result");
         LOG.debug("releaseFromEscrow: " + result);
     }
 
     // TODO provide parameter values for search
-    @Ignore
+    @Disabled
     @Test
     public void testSearch() throws Exception {
         // using com.braintreegateway.TransactionSearchRequest message body for single parameter "query"
         final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
 
-        assertNotNull("search result", result);
+        assertNotNull(result, "search result");
         LOG.debug("search: " + result);
     }
 
     // TODO provide parameter values for submitForPartialSettlement
-    @Ignore
+    @Disabled
     @Test
     public void testSubmitForPartialSettlement() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -446,18 +449,18 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://SUBMITFORPARTIALSETTLEMENT", null, headers);
 
-        assertNotNull("submitForPartialSettlement result", result);
+        assertNotNull(result, "submitForPartialSettlement result");
         LOG.debug("submitForPartialSettlement: " + result);
     }
 
     // TODO provide parameter values for voidTransaction
-    @Ignore
+    @Disabled
     @Test
     public void testVoidTransaction() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://VOIDTRANSACTION", null);
 
-        assertNotNull("voidTransaction result", result);
+        assertNotNull(result, "voidTransaction result");
         LOG.debug("voidTransaction: " + result);
     }
 

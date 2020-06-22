@@ -28,10 +28,13 @@ import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
@@ -67,7 +70,7 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.paymentMethodsTokens) {
@@ -94,7 +97,7 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
                 .customerId(this.customer.getId())
                 .paymentMethodNonce("fake-valid-payroll-nonce"));
 
-        assertNotNull("create result", result);
+        assertNotNull(result, "create result");
         assertTrue(result.isSuccess());
 
         LOG.info("PaymentMethod created - token={}", result.getTarget().getToken());
@@ -108,8 +111,8 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
 
     @Test
     public void testCreate() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final Result<PaymentMethod> result = requestBody("direct://CREATE",
             new PaymentMethodRequest()
@@ -117,7 +120,7 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
                 .paymentMethodNonce("fake-valid-payroll-nonce"),
             Result.class);
 
-        assertNotNull("create result", result);
+        assertNotNull(result, "create result");
         assertTrue(result.isSuccess());
 
         LOG.info("PaymentMethod created - token={}", result.getTarget().getToken());
@@ -126,14 +129,14 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
 
     @Test
     public void testDelete() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final PaymentMethod paymentMethod = createPaymentMethod();
         final Result<PaymentMethod> deleteResult = requestBody(
             "direct://DELETE", paymentMethod.getToken(), Result.class);
 
-        assertNotNull("create result", deleteResult);
+        assertNotNull(deleteResult, "create result");
         assertTrue(deleteResult.isSuccess());
 
         LOG.info("PaymentMethod deleted - token={}", paymentMethod.getToken());
@@ -141,8 +144,8 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
 
     @Test
     public void testFind() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final PaymentMethod paymentMethod = createPaymentMethod();
         this.paymentMethodsTokens.add(paymentMethod.getToken());
@@ -151,14 +154,14 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
             "direct://FIND", paymentMethod.getToken(), PaymentMethod.class
         );
 
-        assertNotNull("find result", method);
+        assertNotNull(method, "find result");
         LOG.info("PaymentMethod found - token={}", method.getToken());
     }
 
     @Test
     public void testUpdate() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-        assertNotNull("Customer can't be null", this.customer);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+        assertNotNull(this.customer, "Customer can't be null");
 
         final PaymentMethod paymentMethod = createPaymentMethod();
         this.paymentMethodsTokens.add(paymentMethod.getToken());
@@ -175,7 +178,7 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
                 .build(),
             Result.class);
 
-        assertNotNull("update result", result);
+        assertNotNull(result, "update result");
         assertTrue(result.isSuccess());
 
         LOG.info("PaymentMethod updated - token={}", result.getTarget().getToken());
