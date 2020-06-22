@@ -108,7 +108,6 @@ public class LogComponent extends DefaultComponent {
 
     /**
      * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging.
-     * <p />
      * If not specified, we default to {@link DefaultExchangeFormatter}.
      */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
