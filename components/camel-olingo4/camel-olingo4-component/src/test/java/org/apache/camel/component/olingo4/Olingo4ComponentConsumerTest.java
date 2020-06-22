@@ -83,7 +83,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         }
 
         // should be reflection free
-        // TODO: Fix me
+        // TODO: We are down to 10 calls now
         // long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
         // assertEquals(0, counter);
     }
