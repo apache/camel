@@ -26,6 +26,8 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,12 +92,19 @@ public abstract class ApiMethodPropertiesHelper<C> {
     }
 
     public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
-        Set<String> names = null;
-        if (context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false)) {
+        Set<String> names;
+
+        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
+        // use reflection free configurer (if possible)
+        if (configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) endpointConfiguration;
+            names = getter.getAllOptions(endpointConfiguration).keySet();
+        } else {
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false);
             names = properties.keySet();
-            // remove component config properties so we only have endpoint properties
-            names.removeAll(componentConfigFields);
         }
+        // remove component config properties so we only have endpoint properties
+        names.removeAll(componentConfigFields);
         LOG.debug("Found endpoint properties {}", names);
     }
 
