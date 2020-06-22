@@ -20,8 +20,11 @@ import com.notnoop.apns.ApnsService;
 import org.apache.camel.component.apns.model.ConnectionStrategy;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.component.apns.util.TestConstants;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApnsServiceFactoryTest {
 
@@ -33,12 +36,11 @@ public class ApnsServiceFactoryTest {
         doBasicAsserts(apnsService);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testApnsServiceFactoryAsPool0() throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificatesAsPool(0);
-        ApnsService apnsService = apnsServiceFactory.getApnsService();
-
-        doBasicAsserts(apnsService);
+        assertThrows(IllegalArgumentException.class,
+            () -> apnsServiceFactory.getApnsService());
     }
 
     @Test
@@ -50,8 +52,8 @@ public class ApnsServiceFactoryTest {
     }
 
     private void doBasicAsserts(Object apnsService) {
-        Assert.assertNotNull(apnsService);
-        Assert.assertTrue(apnsService instanceof ApnsService);
+        assertNotNull(apnsService);
+        assertTrue(apnsService instanceof ApnsService);
     }
 
     public static ApnsServiceFactory createApnsServiceFactoryWithFixedCertificates() 

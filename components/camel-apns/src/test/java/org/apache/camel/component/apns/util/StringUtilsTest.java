@@ -16,38 +16,41 @@
  */
 package org.apache.camel.component.apns.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StringUtilsTest {
 
     @Test
     public void testIsEmpty() {
-        Assert.assertFalse(StringUtils.isEmpty("test"));
-        Assert.assertFalse(StringUtils.isEmpty("a"));
-        Assert.assertTrue(StringUtils.isEmpty(""));
-        Assert.assertTrue(StringUtils.isEmpty(null));
+        assertFalse(StringUtils.isEmpty("test"));
+        assertFalse(StringUtils.isEmpty("a"));
+        assertTrue(StringUtils.isEmpty(""));
+        assertTrue(StringUtils.isEmpty(null));
     }
 
     @Test
     public void testIsNotEmpty() {
-        Assert.assertTrue(StringUtils.isNotEmpty("test"));
-        Assert.assertTrue(StringUtils.isNotEmpty("a"));
-        Assert.assertFalse(StringUtils.isNotEmpty(""));
-        Assert.assertFalse(StringUtils.isNotEmpty(null));
+        assertTrue(StringUtils.isNotEmpty("test"));
+        assertTrue(StringUtils.isNotEmpty("a"));
+        assertFalse(StringUtils.isNotEmpty(""));
+        assertFalse(StringUtils.isNotEmpty(null));
     }
 
     @Test
     public void testTrim() {
-        Assert.assertEquals("", StringUtils.trim(""));
-        Assert.assertEquals("", StringUtils.trim(" "));
+        assertEquals("", StringUtils.trim(""));
+        assertEquals("", StringUtils.trim(" "));
 
-        Assert.assertEquals("test", StringUtils.trim("test"));
-        Assert.assertEquals("test", StringUtils.trim("test "));
-        Assert.assertEquals("test", StringUtils.trim(" test"));
-        Assert.assertEquals("test", StringUtils.trim(" test "));
+        assertEquals("test", StringUtils.trim("test"));
+        assertEquals("test", StringUtils.trim("test "));
+        assertEquals("test", StringUtils.trim(" test"));
+        assertEquals("test", StringUtils.trim(" test "));
 
-        Assert.assertEquals(null, StringUtils.trim(null));
+        assertEquals(null, StringUtils.trim(null));
     }
 
 }
