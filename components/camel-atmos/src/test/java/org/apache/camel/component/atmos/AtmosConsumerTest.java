@@ -21,9 +21,12 @@ import java.util.Base64;
 import org.apache.camel.Consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.consumer.AtmosScheduledPollGetConsumer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosConsumerTest extends CamelTestSupport {
 
@@ -46,7 +49,7 @@ public class AtmosConsumerTest extends CamelTestSupport {
         assertNotNull(endpoint);
 
         Consumer consumer = endpoint.createConsumer(null);
-        Assert.assertTrue(consumer instanceof AtmosScheduledPollGetConsumer);
+        assertIsInstanceOf(AtmosScheduledPollGetConsumer.class, consumer);
         assertEquals("foo", endpoint.getConfiguration().getName());
     }
 
