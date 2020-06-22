@@ -4,6 +4,7 @@
  */
 package org.apache.camel.component.google.drive;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -11,6 +12,7 @@ import org.apache.camel.spi.UriParams;
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Changes
  */
 @UriParams
+@Configurer
 public final class DriveChangesEndpointConfiguration extends GoogleDriveConfiguration {
 
     @UriParam
