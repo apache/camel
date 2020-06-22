@@ -105,16 +105,12 @@ public abstract class ApiMethodPropertiesHelper<C> {
     }
 
     public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
-        Set<String> names;
-
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
         // use reflection free configurer (if possible)
-        // TODO: fix me
-        boolean useConfigurer = false;
-        if (useConfigurer && configurer instanceof PropertyConfigurerGetter) {
+        if (configurer instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
-            names = getter.getAllOptions(endpointConfiguration).keySet();
-            for (String name : names) {
+            Set<String> all = getter.getAllOptions(endpointConfiguration).keySet();
+            for (String name : all) {
                 Object value = getter.getOptionValue(endpointConfiguration, name, true);
                 if (value != null) {
                     // lower case the first letter which is what the properties map expects
@@ -124,11 +120,14 @@ public abstract class ApiMethodPropertiesHelper<C> {
             }
         } else {
             context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false);
-            names = properties.keySet();
         }
         // remove component config properties so we only have endpoint properties
-        names.removeAll(componentConfigFields);
-        LOG.debug("Found endpoint properties {}", names);
+        for (String key : componentConfigFields) {
+            properties.remove(key);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found endpoint properties {}", properties.keySet());
+        }
     }
 
     public Set<String> getEndpointPropertyNames(CamelContext context, Object endpointConfiguration) {
