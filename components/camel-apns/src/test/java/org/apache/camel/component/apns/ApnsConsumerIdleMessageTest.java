@@ -24,27 +24,29 @@ import org.apache.camel.component.apns.factory.ApnsServiceFactory;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
  */
-@Ignore // TODO Figure out why this test is failing and fix it.
+@Disabled // TODO Figure out why this test is failing and fix it.
 public class ApnsConsumerIdleMessageTest extends CamelTestSupport {
     
     ApnsServerStub server;
 
-    @Before
+    @BeforeEach
     public void startup() throws InterruptedException {
         server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
-    @After
+    @AfterEach
     public void stop() {
         server.stop();
     }
