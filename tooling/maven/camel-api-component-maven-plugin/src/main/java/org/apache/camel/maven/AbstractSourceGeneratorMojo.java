@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo {
 
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel-component")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File generatedSrcDir;
 
     @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel-component")
