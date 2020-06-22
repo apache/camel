@@ -18,6 +18,7 @@ package org.apache.camel.component.google.calendar;
 
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -27,6 +28,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleCalendar component.
  */
 @UriParams
+@Configurer
 public class GoogleCalendarConfiguration {
 
     @UriPath
