@@ -47,7 +47,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
     private final int prefixLength;
     private final String camelCasePrefix;
 
-    protected ApiMethodPropertiesHelper(Class<C> componentConfiguration, String propertyPrefix) {
+    protected ApiMethodPropertiesHelper(CamelContext context, Class<C> componentConfiguration, String propertyPrefix) {
 
         this.componentConfigClass = componentConfiguration;
         this.propertyPrefix = propertyPrefix;
@@ -59,8 +59,21 @@ public abstract class ApiMethodPropertiesHelper<C> {
             this.camelCasePrefix = null;
         }
 
-        for (Field field : componentConfiguration.getDeclaredFields()) {
-            componentConfigFields.add(field.getName());
+        // use reflection free configurer (if possible)
+        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(componentConfiguration.getSimpleName(), context);
+        if (configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            Set<String> names = getter.getAllOptions(null).keySet();
+            for (String name : names) {
+                 // lower case the first letter which is what the properties map expects
+                String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                componentConfigFields.add(key);
+            }
+        } else {
+            // fallback to be reflection based
+            for (Field field : componentConfiguration.getDeclaredFields()) {
+                componentConfigFields.add(field.getName());
+            }
         }
     }
 
@@ -94,23 +107,24 @@ public abstract class ApiMethodPropertiesHelper<C> {
     public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
         Set<String> names;
 
+        // TODO: Make this work
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
         // use reflection free configurer (if possible)
-        if (configurer instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
-            names = getter.getAllOptions(endpointConfiguration).keySet();
-            for (String name : names) {
-                Object value = getter.getOptionValue(endpointConfiguration, name, true);
-                if (value != null) {
-                    // lower case the first letter which is what the properties map expects
-                    String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-                    properties.put(key, value);
-                }
-            }
-        } else {
+//        if (configurer instanceof PropertyConfigurerGetter) {
+//            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+//            names = getter.getAllOptions(endpointConfiguration).keySet();
+//            for (String name : names) {
+//                Object value = getter.getOptionValue(endpointConfiguration, name, true);
+//                if (value != null) {
+//                     lower case the first letter which is what the properties map expects
+//                    String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+//                    properties.put(key, value);
+//                }
+//            }
+//        } else {
             context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false);
             names = properties.keySet();
-        }
+//        }
         // remove component config properties so we only have endpoint properties
         names.removeAll(componentConfigFields);
         LOG.debug("Found endpoint properties {}", names);
@@ -122,10 +136,24 @@ public abstract class ApiMethodPropertiesHelper<C> {
         return Collections.unmodifiableSet(properties.keySet());
     }
 
-    public Set<String> getValidEndpointProperties(Object endpointConfiguration) {
+    public Set<String> getValidEndpointProperties(CamelContext context, Object endpointConfiguration) {
         Set<String> fields = new HashSet<>();
-        for (Field field : endpointConfiguration.getClass().getDeclaredFields()) {
-            fields.add(field.getName());
+
+        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
+        // use reflection free configurer (if possible)
+        if (configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            Set<String> names = getter.getAllOptions(endpointConfiguration).keySet();
+            for (String name : names) {
+                // lower case the first letter which is what the properties map expects
+                String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                fields.add(key);
+            }
+        } else {
+            // fallback to use reflection
+            for (Field field : endpointConfiguration.getClass().getDeclaredFields()) {
+                fields.add(field.getName());
+            }
         }
         return Collections.unmodifiableSet(fields);
     }

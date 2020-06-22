@@ -72,7 +72,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
         this.configuration = endpointConfiguration;
 
         // get all endpoint property names
-        endpointPropertyNames = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(configuration));
+        endpointPropertyNames = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(component.getCamelContext(), configuration));
         // avoid adding edm as queryParam
         endpointPropertyNames.add(EDM_PROPERTY);
         endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
@@ -103,7 +103,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     @Override
     protected ApiMethodPropertiesHelper<Olingo4Configuration> getPropertiesHelper() {
-        return Olingo4PropertiesHelper.getHelper();
+        return Olingo4PropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override

@@ -220,7 +220,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     public final void setInBody(String inBody) throws IllegalArgumentException {
         // validate property name
         ObjectHelper.notNull(inBody, "inBody");
-        if (!getPropertiesHelper().getValidEndpointProperties(getConfiguration()).contains(inBody)) {
+        if (!getPropertiesHelper().getValidEndpointProperties(getCamelContext(), getConfiguration()).contains(inBody)) {
             throw new IllegalArgumentException("Unknown property " + inBody);
         }
         this.inBody = inBody;
