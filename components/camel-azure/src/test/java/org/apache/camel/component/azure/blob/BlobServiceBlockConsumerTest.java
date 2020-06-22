@@ -27,17 +27,20 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BlobServiceBlockConsumerTest extends CamelTestSupport {
     @EndpointInject("direct:start")
     ProducerTemplate templateStart;
     
     @Test
-    @Ignore
+    @Disabled
     public void testGetBlockBlob() throws Exception {
         templateStart.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Block Blob"));
         
@@ -46,7 +49,7 @@ public class BlobServiceBlockConsumerTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         File f = mock.getExchanges().get(0).getIn().getBody(File.class);
-        assertNotNull("File must be set", f);
+        assertNotNull(f, "File must be set");
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
             IOHelper.copy(new FileInputStream(f), bos);

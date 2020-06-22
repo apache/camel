@@ -26,9 +26,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
@@ -40,7 +40,7 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
     private MockEndpoint result;
     
     @Test
-    @Ignore
+    @Disabled
     public void testUpdateBlockBlob() throws Exception {
         result.expectedMessageCount(1);
         
@@ -52,7 +52,7 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void testUploadBlobBlocks() throws Exception {
         result.expectedMessageCount(1);
         final BlobBlock st = new BlobBlock(new ByteArrayInputStream("Block Blob List".getBytes()));
@@ -64,7 +64,7 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testGetBlockBlob() throws Exception {
         result.expectedMessageCount(1);
         OutputStream os = new ByteArrayOutputStream();
@@ -76,7 +76,7 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void testUpdateAppendBlob() throws Exception {
         result.expectedMessageCount(1);
         
@@ -88,7 +88,7 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void testUpdatePageBlob() throws Exception {
         result.expectedMessageCount(1);
         final byte[] data = new byte[512];
