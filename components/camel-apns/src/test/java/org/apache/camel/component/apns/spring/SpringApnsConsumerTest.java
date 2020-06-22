@@ -23,19 +23,24 @@ import org.apache.camel.component.apns.model.InactiveDevice;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test that we can produce JMS message from files
  */
 @ContextConfiguration
-public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class SpringApnsConsumerTest {
 
     @Autowired
     protected CamelContext camelContext;
@@ -45,17 +50,17 @@ public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
 
     private ApnsServerStub server;
 
-    @Before
+    @BeforeEach
     public void startup() throws InterruptedException {
         server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
-    @After
+    @AfterEach
     public void stop() {
         server.stop();
     }
 
-    @Test(timeout = 5000)
+    @Test @Timeout(5)
     public void testConsumer() throws Exception {
 
         byte[] deviceTokenBytes = ApnsUtils.createRandomDeviceTokenBytes();
@@ -72,10 +77,10 @@ public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
         mock.assertIsSatisfied();
 
         InactiveDevice inactiveDevice = (InactiveDevice)mock.getExchanges().get(0).getIn().getBody();
-        Assert.assertNotNull(inactiveDevice);
-        Assert.assertNotNull(inactiveDevice.getDate());
-        Assert.assertNotNull(inactiveDevice.getDeviceToken());
-        Assert.assertEquals(deviceToken, inactiveDevice.getDeviceToken());
+        assertNotNull(inactiveDevice);
+        assertNotNull(inactiveDevice.getDate());
+        assertNotNull(inactiveDevice.getDeviceToken());
+        assertEquals(deviceToken, inactiveDevice.getDeviceToken());
     }
 
 }
