@@ -30,12 +30,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxCollaborationsManagerApiMethod;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for
@@ -68,11 +71,11 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATIONBYEMAIL",
                 testFolder.getID(), headers);
 
-        assertNotNull("addFolderCollaboration result", result);
+        assertNotNull(result, "addFolderCollaboration result");
         LOG.debug("addFolderCollaboration: " + result);
     }
 
-    @Ignore //creation of app users could be used only with JWT authentication, which is not possible in this time
+    @Disabled //creation of app users could be used only with JWT authentication, which is not possible in this time
     @Test
     public void testAddFolderCollaboration() throws Exception {
         // delete collaborator created by setupTest
@@ -94,7 +97,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
 
             final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATION",
                     testFolder.getID(), headers);
-            assertNotNull("addFolderCollaboration result", result);
+            assertNotNull(result, "addFolderCollaboration result");
             LOG.debug("addFolderCollaboration: " + result);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
@@ -112,7 +115,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         final com.box.sdk.BoxCollaboration.Info result = requestBody("direct://GETCOLLABORATIONINFO",
                 testCollaboration.getID());
 
-        assertNotNull("getCollaborationInfo result", result);
+        assertNotNull(result, "getCollaborationInfo result");
         LOG.debug("getCollaborationInfo: " + result);
     }
 
@@ -122,7 +125,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBody("direct://GETFOLDERCOLLABORATIONS", testFolder.getID());
 
-        assertNotNull("getFolderCollaborations result", result);
+        assertNotNull(result, "getFolderCollaborations result");
         LOG.debug("getFolderCollaborations: " + result);
     }
 
@@ -131,7 +134,7 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
     public void testGetPendingCollaborations() throws Exception {
         final java.util.Collection result = requestBody("direct://GETPENDINGCOLLABORATIONS", null);
 
-        assertNotNull("getPendingCollaborations result", result);
+        assertNotNull(result, "getPendingCollaborations result");
         LOG.debug("getPendingCollaborations: " + result);
     }
 
@@ -149,9 +152,9 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://UPDATECOLLABORATIONINFO", null,
                 headers);
 
-        assertNotNull("updateCollaborationInfo result", result);
-        assertNotNull("updateCollaborationInfo info", result.getInfo());
-        assertEquals("updateCollaborationInfo info", BoxCollaboration.Role.PREVIEWER, result.getInfo().getRole());
+        assertNotNull(result, "updateCollaborationInfo result");
+        assertNotNull(result.getInfo(), "updateCollaborationInfo info");
+        assertEquals(BoxCollaboration.Role.PREVIEWER, result.getInfo().getRole(), "updateCollaborationInfo info");
         LOG.debug("updateCollaborationInfo: " + result);
     }
 
@@ -189,13 +192,13 @@ public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupp
         };
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() throws Exception {
         createTestFolder();
         createTestCollaborator();
     }
 
-    @After
+    @AfterEach
     public void teardownTest() {
         deleteTestCollaborator();
         deleteTestFolder();

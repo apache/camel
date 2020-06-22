@@ -28,11 +28,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFoldersManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxFoldersManagerApiMethod;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link BoxFoldersManager}
@@ -66,8 +70,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         testFolder = requestBodyAndHeaders("direct://CREATEFOLDER", null, headers);
 
-        assertNotNull("createFolder result", testFolder);
-        assertEquals("createFolder folder name", CAMEL_TEST_FOLDER, testFolder.getInfo().getName());
+        assertNotNull(testFolder, "createFolder result");
+        assertEquals(CAMEL_TEST_FOLDER, testFolder.getInfo().getName(), "createFolder folder name");
         LOG.debug("createFolder: " + testFolder);
     }
 
@@ -85,8 +89,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         testFolder = requestBodyAndHeaders("direct://CREATEFOLDER", null, headers);
 
-        assertNotNull("createFolder result", testFolder);
-        assertEquals("createFolder folder name", CAMEL_TEST_FOLDER, testFolder.getInfo().getName());
+        assertNotNull(testFolder, "createFolder result");
+        assertEquals(CAMEL_TEST_FOLDER, testFolder.getInfo().getName(), "createFolder folder name");
         LOG.debug("createFolder: " + testFolder);
     }
 
@@ -98,9 +102,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         Iterable<BoxItem.Info> it = rootFolder.search("^" + CAMEL_TEST_FOLDER + "$");
         int searchResults = sizeOfIterable(it);
-        boolean exists = searchResults > 0 ? true : false;
-        assertEquals("deleteFolder exists", false, exists);
-        LOG.debug("deleteFolder: exists? " + exists);
+        assertFalse(searchResults > 0, "deleteFolder exists");
     }
 
     @Test
@@ -115,8 +117,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.newName", CAMEL_TEST_COPY_FOLDER);
             result = requestBodyAndHeaders("direct://COPYFOLDER", null, headers);
-            assertNotNull("copyFolder result", result);
-            assertEquals("copyFolder folder name", CAMEL_TEST_COPY_FOLDER, result.getInfo().getName());
+            assertNotNull(result, "copyFolder result");
+            assertEquals(CAMEL_TEST_COPY_FOLDER, result.getInfo().getName(), "copyFolder folder name");
             LOG.debug("copyFolder: " + result);
         } finally {
             if (result != null) {
@@ -143,7 +145,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         final com.box.sdk.BoxSharedLink result = requestBodyAndHeaders("direct://CREATEFOLDERSHAREDLINK", null,
                 headers);
 
-        assertNotNull("createFolderSharedLink result", result);
+        assertNotNull(result, "createFolderSharedLink result");
         LOG.debug("createFolderSharedLink: " + result);
     }
 
@@ -152,8 +154,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         // using String[] message body for single parameter "path"
         final com.box.sdk.BoxFolder result = requestBody("direct://GETFOLDER", new String[] {CAMEL_TEST_FOLDER});
 
-        assertNotNull("getFolder result", result);
-        assertEquals("getFolder folder id", testFolder.getID(), result.getID());
+        assertNotNull(result, "getFolder result");
+        assertEquals(testFolder.getID(), result.getID(), "getFolder folder id");
         LOG.debug("getFolder: " + result);
     }
 
@@ -167,9 +169,9 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFolder.Info result = requestBodyAndHeaders("direct://GETFOLDERINFO", null, headers);
 
-        assertNotNull("getFolderInfo result", result);
-        assertNotNull("getFolderInfo result.getName()", result.getName());
-        assertEquals("getFolderInfo info name", CAMEL_TEST_FOLDER, result.getName());
+        assertNotNull(result, "getFolderInfo result");
+        assertNotNull(result.getName(), "getFolderInfo result.getName()");
+        assertEquals(CAMEL_TEST_FOLDER, result.getName(), "getFolderInfo info name");
         LOG.debug("getFolderInfo: " + result);
     }
 
@@ -188,7 +190,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBodyAndHeaders("direct://GETFOLDERITEMS", null, headers);
 
-        assertNotNull("getFolderItems result", result);
+        assertNotNull(result, "getFolderItems result");
         LOG.debug("getFolderItems: " + result);
     }
 
@@ -196,7 +198,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testGetRootFolder() throws Exception {
         final com.box.sdk.BoxFolder result = requestBody("direct://GETROOTFOLDER", null);
 
-        assertNotNull("getRootFolder result", result);
+        assertNotNull(result, "getRootFolder result");
         LOG.debug("getRootFolder: " + result);
     }
 
@@ -212,8 +214,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFolder result = requestBodyAndHeaders("direct://MOVEFOLDER", null, headers);
 
-        assertNotNull("moveFolder result", result);
-        assertEquals("moveFolder folder name", CAMEL_TEST_MOVE_FOLDER, result.getInfo().getName());
+        assertNotNull(result, "moveFolder result");
+        assertEquals(CAMEL_TEST_MOVE_FOLDER, result.getInfo().getName(), "moveFolder folder name");
         LOG.debug("moveFolder: " + result);
     }
 
@@ -227,8 +229,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFolder result = requestBodyAndHeaders("direct://RENAMEFOLDER", null, headers);
 
-        assertNotNull("renameFolder result", result);
-        assertEquals("moveFolder folder name", CAMEL_TEST_RENAME_FOLDER, result.getInfo().getName());
+        assertNotNull(result, "renameFolder result");
+        assertEquals(CAMEL_TEST_RENAME_FOLDER, result.getInfo().getName(), "moveFolder folder name");
         LOG.debug("renameFolder: " + result);
     }
 
@@ -245,9 +247,8 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         final com.box.sdk.BoxFolder result = requestBodyAndHeaders("direct://UPDATEFOLDERINFO", null, headers);
 
-        assertNotNull("updateInfo result", result);
-        assertEquals("update folder info description", CAMEL_TEST_FOLDER_DESCRIPTION,
-                result.getInfo().getDescription());
+        assertNotNull(result, "updateInfo result");
+        assertEquals(CAMEL_TEST_FOLDER_DESCRIPTION, result.getInfo().getDescription(), "update folder info description");
         LOG.debug("updateInfo: " + result);
     }
 
@@ -292,12 +293,12 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() throws Exception {
         createTestFolder();
     }
 
-    @After
+    @AfterEach
     public void teardownTest() {
         deleteTestFolder();
     }
