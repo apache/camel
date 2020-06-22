@@ -23,14 +23,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyDoNotRemoveQuotesCsvUnmarshallTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -56,9 +58,9 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4Sprin
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         BindyDoNotRemoveQuotesCsvUnmarshallTest.Product product = result.getReceivedExchanges().get(0).getIn().getBody(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
-        Assert.assertEquals("apple", product.getName());
-        Assert.assertEquals("\"bright red\" apple", product.getDescription1());
-        Assert.assertEquals("a fruit", product.getDescription2());
+        assertEquals("apple", product.getName());
+        assertEquals("\"bright red\" apple", product.getDescription1());
+        assertEquals("a fruit", product.getDescription2());
     }
 
     public static class ContextConfig extends RouteBuilder {

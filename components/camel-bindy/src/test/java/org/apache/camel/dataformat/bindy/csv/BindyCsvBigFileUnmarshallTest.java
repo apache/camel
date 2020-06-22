@@ -22,14 +22,15 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyCsvBigFileUnmarshallTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;

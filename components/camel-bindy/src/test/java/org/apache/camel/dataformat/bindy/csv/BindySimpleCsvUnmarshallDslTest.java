@@ -17,7 +17,7 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 

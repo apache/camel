@@ -34,13 +34,14 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FormatFactories;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.dataformat.bindy.format.factories.AbstractFormatFactory;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindyDatePatternCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyDatePatternCsvUnmarshallTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";

@@ -22,16 +22,17 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.unicode.LocationRecord;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
-public class BindySimpleCsvUnmarshallUnicodeNextLineTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleCsvUnmarshallUnicodeNextLineTest {
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
 
@@ -54,8 +55,8 @@ public class BindySimpleCsvUnmarshallUnicodeNextLineTest extends AbstractJUnit4S
         result.assertIsSatisfied();
         LocationRecord data = result.getExchanges().get(0).getIn().getBody(LocationRecord.class);
         assertNotNull(data);
-        assertEquals("Parsing error with unicode next line", "123\u0085 Anywhere Lane", data.getAddress());
-        assertEquals("Parsing error with unicode next line", "United States", data.getNation());
+        assertEquals("123\u0085 Anywhere Lane", data.getAddress(), "Parsing error with unicode next line");
+        assertEquals("United States", data.getNation(), "Parsing error with unicode next line");
     }
 
     public static class ContextConfig extends RouteBuilder {

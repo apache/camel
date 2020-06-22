@@ -21,21 +21,21 @@ import java.util.Locale;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.padding.Unity;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class BindyPatternLocaleTest extends CamelTestSupport {
     private Locale origLocale;
 
-    @Before
+    @BeforeEach
     public void setLanguage() {
         origLocale = Locale.getDefault();
         Locale.setDefault(Locale.US);
     }
 
-    @After
+    @AfterEach
     public void restoreLanguage() {
         Locale.setDefault(origLocale);
     }

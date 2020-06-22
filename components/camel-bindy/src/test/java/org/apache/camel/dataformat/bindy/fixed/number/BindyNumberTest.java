@@ -28,14 +28,16 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyNumberTest {
 
     public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
     public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
@@ -91,11 +93,11 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
         Exchange  exc  = uresult.getReceivedExchanges().get(0);
         DataModel data = exc.getIn().getBody(DataModel.class);
 
-        Assert.assertEquals(123.45D, data.field1.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field2.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field3.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field4.doubleValue(), 0D);
-        Assert.assertEquals(10.00D, data.field5.doubleValue(), 0D);
+        assertEquals(123.45D, data.field1.doubleValue(), 0D);
+        assertEquals(10.00D, data.field2.doubleValue(), 0D);
+        assertEquals(10.00D, data.field3.doubleValue(), 0D);
+        assertEquals(10.00D, data.field4.doubleValue(), 0D);
+        assertEquals(10.00D, data.field5.doubleValue(), 0D);
     }
 
     // *************************************************************************

@@ -34,13 +34,14 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleFixedLengthMarshallTest {
     
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
