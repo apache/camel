@@ -30,13 +30,14 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleKeyValuePairNullMarshallTest {
 
     @Produce("direct:start")
     private ProducerTemplate template;

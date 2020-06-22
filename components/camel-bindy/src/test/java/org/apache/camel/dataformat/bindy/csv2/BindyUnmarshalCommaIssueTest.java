@@ -22,9 +22,11 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -83,7 +85,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore("To fix CAMEL-5871. doesn't support the signle quote test case any more")
+    @Disabled("To fix CAMEL-5871. doesn't support the signle quote test case any more")
     public void testBindyUnmarshalSingleQuoteCommaIssueTwo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -29,13 +29,14 @@ import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.spi.DataFormat;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleKeyValuePairFixTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleKeyValuePairFixTest {
     private static final String[] FIX_REQUESTS = new String[] {
         "8=FIX.4.1 37=1 38=1 40=butter",
         "8=FIX.4.1 37=2 38=2 40=milk",

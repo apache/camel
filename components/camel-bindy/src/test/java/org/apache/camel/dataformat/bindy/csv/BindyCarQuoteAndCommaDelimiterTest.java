@@ -22,9 +22,11 @@ import org.apache.camel.dataformat.bindy.format.factories.DefaultFactoryRegistry
 import org.apache.camel.dataformat.bindy.model.car.Car;
 import org.apache.camel.dataformat.bindy.model.car.Car.Colour;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
@@ -39,7 +41,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             + " Engine Immobiliser, Limited Slip Differential, Power Mirrors, Power Steering, Power Windows, Radio CD with 6 Speakers"
             + " CV GOOD KLMS AUTO POWER OPTIONS GOOD KLMS   \";\"Used\";\"0.0\";\"EZR05I\"\n";
 
-    @Before
+    @BeforeEach
     public void setup() {
         context.getRegistry().bind("defaultFactoryRegistry", new DefaultFactoryRegistry());
     }

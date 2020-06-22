@@ -32,12 +32,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.complex.generateheader.Client;
 import org.apache.camel.dataformat.bindy.model.complex.generateheader.Order;
 import org.apache.camel.dataformat.bindy.model.complex.generateheader.Security;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindyComplexCsvGenerateHeaderMarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyComplexCsvGenerateHeaderMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"

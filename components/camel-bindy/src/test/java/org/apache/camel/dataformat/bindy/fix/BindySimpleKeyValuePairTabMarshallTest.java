@@ -27,7 +27,7 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.tab.Header;
 import org.apache.camel.dataformat.bindy.model.fix.tab.Order;
 import org.apache.camel.dataformat.bindy.model.fix.tab.Trailer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 

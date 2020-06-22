@@ -22,10 +22,11 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dataformat.bindy.UnicodeHelper.Method;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("javadoc")
 public class UnicodeHelperTest {
@@ -43,150 +44,150 @@ public class UnicodeHelperTest {
     @Test
     public void testLengthCPs() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
-        Assert.assertEquals(1, lh.length());
+        assertEquals(1, lh.length());
         
         final UnicodeHelper lh2 = new UnicodeHelper(new String(Character.toChars(0x1f600)), Method.CODEPOINTS);
-        Assert.assertEquals(1, lh2.length());
+        assertEquals(1, lh2.length());
 
         final UnicodeHelper lh3 = new UnicodeHelper(UCSTR, Method.CODEPOINTS);
-        Assert.assertEquals(5, lh3.length());
+        assertEquals(5, lh3.length());
 
         final UnicodeHelper lh4 = new UnicodeHelper("a" + UCSTR + "A", Method.CODEPOINTS);
-        Assert.assertEquals(7, lh4.length());
+        assertEquals(7, lh4.length());
         
         final UnicodeHelper lh5 = new UnicodeHelper("k\u035fh", Method.CODEPOINTS);
-        Assert.assertEquals(3, lh5.length());
+        assertEquals(3, lh5.length());
     }    
 
     @Test
     public void testLengthGrapheme() {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
-        Assert.assertEquals(1, lh.length());
+        assertEquals(1, lh.length());
         
         final UnicodeHelper lh2 = new UnicodeHelper(new String(Character.toChars(0x1f600)), Method.GRAPHEME);
-        Assert.assertEquals(1, lh2.length());
+        assertEquals(1, lh2.length());
 
         final UnicodeHelper lh3 = new UnicodeHelper(UCSTR, Method.GRAPHEME);
-        Assert.assertEquals(1, lh3.length());
+        assertEquals(1, lh3.length());
 
         final UnicodeHelper lh4 = new UnicodeHelper("a" + UCSTR + "A", Method.GRAPHEME);
-        Assert.assertEquals(3, lh4.length());
+        assertEquals(3, lh4.length());
         
         final UnicodeHelper lh5 = new UnicodeHelper("k\u035fh", Method.GRAPHEME);
-        Assert.assertEquals(2, lh5.length());
+        assertEquals(2, lh5.length());
     }
     
     @Test
     public void testSubstringCPs() throws FileNotFoundException, IOException {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
-        Assert.assertEquals("a", lh.substring(0));
+        assertEquals("a", lh.substring(0));
 
         final UnicodeHelper lh2 = new UnicodeHelper(new String(Character.toChars(0x1f600)), Method.CODEPOINTS);
-        Assert.assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0));
+        assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0));
 
         final UnicodeHelper lh3 = new UnicodeHelper(UCSTR, Method.CODEPOINTS);
-        Assert.assertEquals(UCSTR, lh3.substring(0));
+        assertEquals(UCSTR, lh3.substring(0));
 
         final UnicodeHelper lh4 = new UnicodeHelper("a" + UCSTR + "A", Method.CODEPOINTS);
-        Assert.assertEquals(UCSTR + "A", lh4.substring(1));
-        Assert.assertEquals(new String(Character.toChars(0x1f3ff)) + "\u200d\u2642\ufe0fA", lh4.substring(2));
+        assertEquals(UCSTR + "A", lh4.substring(1));
+        assertEquals(new String(Character.toChars(0x1f3ff)) + "\u200d\u2642\ufe0fA", lh4.substring(2));
         
         final UnicodeHelper lh5 = new UnicodeHelper("k\u035fh", Method.CODEPOINTS);
-        Assert.assertEquals("\u035fh", lh5.substring(1));
+        assertEquals("\u035fh", lh5.substring(1));
     }    
 
     @Test
     public void testSubstringGrapheme() throws FileNotFoundException, IOException {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
-        Assert.assertEquals("a", lh.substring(0));
+        assertEquals("a", lh.substring(0));
 
         final UnicodeHelper lh2 = new UnicodeHelper(new String(Character.toChars(0x1f600)), Method.GRAPHEME);
-        Assert.assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0));
+        assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0));
 
         final UnicodeHelper lh3 = new UnicodeHelper(UCSTR, Method.GRAPHEME);
-        Assert.assertEquals(UCSTR, lh3.substring(0));
+        assertEquals(UCSTR, lh3.substring(0));
 
         final UnicodeHelper lh4 = new UnicodeHelper("a" + UCSTR + "A", Method.GRAPHEME);
-        Assert.assertEquals(UCSTR + "A", lh4.substring(1));
-        Assert.assertEquals("A", lh4.substring(2));
+        assertEquals(UCSTR + "A", lh4.substring(1));
+        assertEquals("A", lh4.substring(2));
         
         final UnicodeHelper lh5 = new UnicodeHelper("k\u035fh", Method.GRAPHEME);
-        Assert.assertEquals("h", lh5.substring(1));
+        assertEquals("h", lh5.substring(1));
     }    
     
     @Test
     public void testSubstringCPs2() {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
-        Assert.assertEquals("a", lh.substring(0, 1));
+        assertEquals("a", lh.substring(0, 1));
         
         final UnicodeHelper lh2 = new UnicodeHelper(new String(Character.toChars(0x1f600)), Method.CODEPOINTS);
-        Assert.assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0, 1));    
+        assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0, 1));    
 
         final UnicodeHelper lh3 = new UnicodeHelper(UCSTR, Method.CODEPOINTS);
-        Assert.assertEquals(new String(Character.toChars(0x1f645)), lh3.substring(0, 1));
+        assertEquals(new String(Character.toChars(0x1f645)), lh3.substring(0, 1));
 
         final UnicodeHelper lh4 = new UnicodeHelper("a" + UCSTR + "A", Method.CODEPOINTS);
-        Assert.assertEquals("a", lh4.substring(0, 1));
-        Assert.assertEquals(new String(Character.toChars(0x1f645)), lh4.substring(1, 2));
-        Assert.assertEquals(new String(Character.toChars(0x1f3ff)), lh4.substring(2, 3));
-        Assert.assertEquals("a" + new String(Character.toChars(0x1f645)), lh4.substring(0, 2));
+        assertEquals("a", lh4.substring(0, 1));
+        assertEquals(new String(Character.toChars(0x1f645)), lh4.substring(1, 2));
+        assertEquals(new String(Character.toChars(0x1f3ff)), lh4.substring(2, 3));
+        assertEquals("a" + new String(Character.toChars(0x1f645)), lh4.substring(0, 2));
         
         final UnicodeHelper lh5 = new UnicodeHelper("k\u035fh", Method.CODEPOINTS);
-        Assert.assertEquals("k", lh5.substring(0, 1));
-        Assert.assertEquals("\u035f", lh5.substring(1, 2));        
+        assertEquals("k", lh5.substring(0, 1));
+        assertEquals("\u035f", lh5.substring(1, 2));        
     }        
     
     @Test
     public void testSubstringGrapheme2() {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
-        Assert.assertEquals("a", lh.substring(0, 1));
+        assertEquals("a", lh.substring(0, 1));
         
         final UnicodeHelper lh2 = new UnicodeHelper(new String(Character.toChars(0x1f600)), Method.GRAPHEME);
-        Assert.assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0, 1));    
+        assertEquals(new String(Character.toChars(0x1f600)), lh2.substring(0, 1));    
 
         final UnicodeHelper lh3 = new UnicodeHelper(UCSTR, Method.GRAPHEME);
-        Assert.assertEquals(UCSTR, lh3.substring(0, 1));
+        assertEquals(UCSTR, lh3.substring(0, 1));
 
         final UnicodeHelper lh4 = new UnicodeHelper("a" + UCSTR + "A", Method.GRAPHEME);
-        Assert.assertEquals("a", lh4.substring(0, 1));
-        Assert.assertEquals(UCSTR, lh4.substring(1, 2));
-        Assert.assertEquals("A", lh4.substring(2, 3));
-        Assert.assertEquals("a" + UCSTR, lh4.substring(0, 2));
+        assertEquals("a", lh4.substring(0, 1));
+        assertEquals(UCSTR, lh4.substring(1, 2));
+        assertEquals("A", lh4.substring(2, 3));
+        assertEquals("a" + UCSTR, lh4.substring(0, 2));
         
         final UnicodeHelper lh5 = new UnicodeHelper("k\u035fh", Method.GRAPHEME);
-        Assert.assertEquals("k\u035f", lh5.substring(0, 1));
-        Assert.assertEquals("h", lh5.substring(1, 2));        
+        assertEquals("k\u035f", lh5.substring(0, 1));
+        assertEquals("h", lh5.substring(1, 2));        
     }
     
     @Test
     public void testIndexOf() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
-        Assert.assertEquals(-1, lh.indexOf("b"));
+        assertEquals(-1, lh.indexOf("b"));
 
         final UnicodeHelper lh2 = new UnicodeHelper(
             "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
             + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z", 
             Method.CODEPOINTS);
 
-        Assert.assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
-        Assert.assertEquals(14, lh2.indexOf(new String(Character.toChars(0x1f600)), 13));
+        assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
+        assertEquals(14, lh2.indexOf(new String(Character.toChars(0x1f600)), 13));
         
-        Assert.assertEquals(3, lh2.indexOf(UCSTR));
-        Assert.assertEquals(16, lh2.indexOf(UCSTR, 13));
+        assertEquals(3, lh2.indexOf(UCSTR));
+        assertEquals(16, lh2.indexOf(UCSTR, 13));
 
-        Assert.assertEquals(10, lh2.indexOf("\u035f"));
-        Assert.assertEquals(23, lh2.indexOf("\u035f", 13));
+        assertEquals(10, lh2.indexOf("\u035f"));
+        assertEquals(23, lh2.indexOf("\u035f", 13));
     }
 
     @Test
     public void testIndexOf2() {
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
-        Assert.assertEquals(-1, lh.indexOf("b"));
+        assertEquals(-1, lh.indexOf("b"));
 
         final UnicodeHelper lh2 = new UnicodeHelper(
             "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
@@ -194,16 +195,16 @@ public class UnicodeHelperTest {
             Method.GRAPHEME
         );
 
-        Assert.assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
-        Assert.assertEquals(9, lh2.indexOf(new String(Character.toChars(0x1f600)), 8));
+        assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
+        assertEquals(9, lh2.indexOf(new String(Character.toChars(0x1f600)), 8));
 
-        Assert.assertEquals(3, lh2.indexOf(UCSTR));
-        Assert.assertEquals(11, lh2.indexOf(UCSTR), 8);
+        assertEquals(3, lh2.indexOf(UCSTR));
+        assertEquals(11, lh2.indexOf(UCSTR), 8);
         
         final UnicodeHelper lh3 = new UnicodeHelper("mm̂mm̂m", Method.GRAPHEME);
-        Assert.assertEquals(0, lh3.indexOf("m"));
-        Assert.assertEquals(2, lh3.indexOf("m", 1));
-        Assert.assertEquals(3, lh3.indexOf("m̂", 2));
+        assertEquals(0, lh3.indexOf("m"));
+        assertEquals(2, lh3.indexOf("m", 1));
+        assertEquals(3, lh3.indexOf("m̂", 2));
     }
     
     private static String cps2String(final int... cps) {

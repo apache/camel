@@ -27,9 +27,10 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
 
@@ -56,7 +57,7 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
         result.assertIsSatisfied();
 
         NumberModel bd = (NumberModel)result.getExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(bigDecimal, bd.getGrouping().toString());
+        assertEquals(bigDecimal, bd.getGrouping().toString());
     }
 
     @Override
