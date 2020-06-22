@@ -23,20 +23,35 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.AnnotationValue;
@@ -46,14 +61,21 @@ import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
 
 import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
+import static org.apache.camel.tooling.util.Strings.between;
 
 /**
  * Generate configurer classes from @Configuer annotated classes.
  */
-@Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "generate-configurer", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
+// must include runtime dependencies to generate configurer source
 public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
     public static final DotName CONFIGURER = DotName.createSimple("org.apache.camel.spi.Configurer");
+
+    @Component
+    private ArtifactFactory artifactFactory;
 
     /**
      * The output directory for generated java source code
@@ -86,7 +108,13 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         public Option(String name, Class type, String getter) {
             // we just use name, type
             setName(name);
-            setJavaType(type.getName());
+            if (type.isArray()) {
+                // special for array
+                String arrType = between(type.getName(), "[L", ";") + "[]";
+                setJavaType(arrType);
+            } else {
+                setJavaType(type.getName());
+            }
             setGetterMethod(getter);
         }
     }
@@ -107,14 +135,10 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
             resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
         }
 
-        List<String> cp = new ArrayList<>();
-        cp.add(0, project.getBuild().getOutputDirectory());
-        project.getDependencyArtifacts().forEach(a -> {
-            if (a.isResolved() && a.getFile() != null) {
-                cp.add(a.getFile().getPath());
-            }
-        });
-        projectClassLoader = DynamicClassLoader.createDynamicClassLoader(cp);
+        List<URL> urls = new ArrayList<>();
+        // need to include project compile dependencies (code similar to camel-maven-plugin)
+        addRelevantProjectDependenciesToClasspath(urls);
+        projectClassLoader = DynamicClassLoader.createDynamicClassLoaderFromUrls(urls);
 
         Set<String> set = new LinkedHashSet<>();
 
@@ -165,8 +189,109 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
         }
     }
 
+    /**
+     * Add any relevant project dependencies to the classpath. Takes
+     * includeProjectDependencies into consideration.
+     *
+     * @param path classpath of {@link java.net.URL} objects
+     * @throws MojoExecutionException
+     */
+    private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+        try {
+            getLog().debug("Project Dependencies will be included.");
+
+            URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
+            getLog().debug("Adding to classpath : " + mainClasses);
+            path.add(mainClasses);
+
+            Set<Artifact> dependencies = project.getArtifacts();
+
+            // system scope dependencies are not returned by maven 2.0. See
+            // MEXEC-17
+            dependencies.addAll(getAllNonTestScopedDependencies());
+
+            Iterator<Artifact> iter = dependencies.iterator();
+            while (iter.hasNext()) {
+                Artifact classPathElement = iter.next();
+                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                        + " to classpath");
+                File file = classPathElement.getFile();
+                if (file != null) {
+                    path.add(file.toURI().toURL());
+                }
+            }
+
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Error during setting up classpath", e);
+        }
+    }
+
+    private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
+        List<Artifact> answer = new ArrayList<>();
+
+        for (Artifact artifact : getAllDependencies()) {
+
+            // do not add test artifacts
+            if (!artifact.getScope().equals(Artifact.SCOPE_TEST)) {
+                answer.add(artifact);
+            }
+        }
+        return answer;
+    }
+
+    // generic method to retrieve all the transitive dependencies
+    private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
+        List<Artifact> artifacts = new ArrayList<>();
+
+        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
+            Dependency dependency = (Dependency)dependencies.next();
+
+            String groupId = dependency.getGroupId();
+            String artifactId = dependency.getArtifactId();
+
+            VersionRange versionRange;
+            try {
+                versionRange = VersionRange.createFromVersionSpec(dependency.getVersion());
+            } catch (InvalidVersionSpecificationException e) {
+                throw new MojoExecutionException("unable to parse version", e);
+            }
+
+            String type = dependency.getType();
+            if (type == null) {
+                type = "jar";
+            }
+            String classifier = dependency.getClassifier();
+            boolean optional = dependency.isOptional();
+            String scope = dependency.getScope();
+            if (scope == null) {
+                scope = Artifact.SCOPE_COMPILE;
+            }
+
+            Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
+                    type, classifier, scope, null, optional);
+
+            if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
+                art.setFile(new File(dependency.getSystemPath()));
+            }
+
+            List<String> exclusions = new ArrayList<>();
+            for (Exclusion exclusion : dependency.getExclusions()) {
+                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
+            }
+
+            ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
+
+            art.setDependencyFilter(newFilter);
+
+            artifacts.add(art);
+        }
+
+        return artifacts;
+    }
+
     private List<Option> processClass(String fqn) throws ClassNotFoundException {
         List<Option> answer = new ArrayList<>();
+        Set<String> names = new HashSet<>();
 
         Class clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
@@ -187,7 +312,10 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
                     }
                 }
                 String t = Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
-                answer.add(new Option(t, type, getter));
+                if (names.add(t)) {
+                    // filter out duplicates by using a names set that has already added
+                    answer.add(new Option(t, type, getter));
+                }
             }
         });
 
