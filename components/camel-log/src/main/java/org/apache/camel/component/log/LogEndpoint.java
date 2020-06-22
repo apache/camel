@@ -125,22 +125,22 @@ public class LogEndpoint extends ProcessorEndpoint {
         this.localFormatter = exchangeFormatter;
         if (this.localFormatter == null) {
             DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-            def.setShowExchangeId(showExchangeId);
-            def.setShowExchangePattern(showExchangePattern);
-            def.setShowProperties(showProperties);
-            def.setShowHeaders(showHeaders);
-            def.setSkipBodyLineSeparator(skipBodyLineSeparator);
+            def.setShowAll(showAll);
             def.setShowBody(showBody);
             def.setShowBodyType(showBodyType);
-            def.setShowException(showException);
             def.setShowCaughtException(showCaughtException);
-            def.setShowStackTrace(showStackTrace);
-            def.setShowAll(showAll);
-            def.setMultiline(multiline);
-            def.setShowFuture(showFuture);
-            def.setShowStreams(showStreams);
+            def.setShowException(showException);
+            def.setShowExchangeId(showExchangeId);
+            def.setShowExchangePattern(showExchangePattern);
             def.setShowFiles(showFiles);
+            def.setShowFuture(showFuture);
+            def.setShowHeaders(showHeaders);
+            def.setShowProperties(showProperties);
+            def.setShowStackTrace(showStackTrace);
+            def.setShowStreams(showStreams);
             def.setMaxChars(maxChars);
+            def.setMultiline(multiline);
+            def.setSkipBodyLineSeparator(skipBodyLineSeparator);
             def.setStyle(style);
             this.localFormatter = def;
         }
