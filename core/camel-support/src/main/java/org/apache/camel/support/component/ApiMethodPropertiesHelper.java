@@ -107,24 +107,25 @@ public abstract class ApiMethodPropertiesHelper<C> {
     public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
         Set<String> names;
 
-        // TODO: Make this work
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
         // use reflection free configurer (if possible)
-//        if (configurer instanceof PropertyConfigurerGetter) {
-//            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
-//            names = getter.getAllOptions(endpointConfiguration).keySet();
-//            for (String name : names) {
-//                Object value = getter.getOptionValue(endpointConfiguration, name, true);
-//                if (value != null) {
-//                     lower case the first letter which is what the properties map expects
-//                    String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-//                    properties.put(key, value);
-//                }
-//            }
-//        } else {
+        // TODO: fix me
+        boolean useConfigurer = false;
+        if (useConfigurer && configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            names = getter.getAllOptions(endpointConfiguration).keySet();
+            for (String name : names) {
+                Object value = getter.getOptionValue(endpointConfiguration, name, true);
+                if (value != null) {
+                    // lower case the first letter which is what the properties map expects
+                    String key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+                    properties.put(key, value);
+                }
+            }
+        } else {
             context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false);
             names = properties.keySet();
-//        }
+        }
         // remove component config properties so we only have endpoint properties
         names.removeAll(componentConfigFields);
         LOG.debug("Found endpoint properties {}", names);
