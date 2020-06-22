@@ -22,10 +22,12 @@ import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.impl.GenericClient;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,6 +79,9 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         assertEquals(SummaryEnum.TEXT, client.getSummary());
         List<Object> interceptors = client.getInterceptorService().getAllRegisteredInterceptors();
         assertEquals(5, interceptors.size());
+
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        Assert.assertEquals("Should not use reflection", 0, counter);
     }
 
     @Override

@@ -97,7 +97,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) endpointConfiguration;
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
             names = getter.getAllOptions(endpointConfiguration).keySet();
         } else {
             context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false);

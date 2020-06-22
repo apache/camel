@@ -24,6 +24,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import org.apache.camel.component.fhir.internal.FhirApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for FHIR component.
  */
 @UriParams
+@Configurer
 public class FhirConfiguration {
 
     @UriPath(enums = "capabilities,create,delete,history,load-page,meta,patch,read,search,transaction,update,validate")
