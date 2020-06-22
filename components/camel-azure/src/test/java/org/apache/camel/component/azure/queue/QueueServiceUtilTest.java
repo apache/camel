@@ -19,11 +19,14 @@ package org.apache.camel.component.azure.queue;
 import java.net.URI;
 
 import com.microsoft.azure.storage.queue.CloudQueue;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.newAccountKeyCredentials;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueServiceUtilTest extends CamelTestSupport {
 
