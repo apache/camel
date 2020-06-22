@@ -111,7 +111,7 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
         }
 
         final BraintreeConfiguration configuration = new BraintreeConfiguration();
-        configuration.setHttpLogLevel(BraintreeLogHandler.DEFAULT_LOGGER_VERSION);
+        configuration.setHttpLogLevel(BraintreeLogHandler.DEFAULT_LOGGER_LEVEL.getName());
         configuration.setHttpLogName(BraintreeLogHandler.DEFAULT_LOGGER_NAME);
         PropertyBindingSupport.bindProperties(context, configuration, options);
 

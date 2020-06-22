@@ -31,7 +31,7 @@ public class BraintreeConfigurationTest {
     @Test
     public void testLoggerConfiguration() {
         BraintreeConfiguration configuration = createBraintreeConfiguration();
-        configuration.setHttpLogLevel(Level.WARNING);
+        configuration.setHttpLogLevel(Level.WARNING.getName());
 
         BraintreeGateway braintreeGateway = configuration.newBraintreeGateway();
         Logger logger = braintreeGateway.getConfiguration().getLogger();
