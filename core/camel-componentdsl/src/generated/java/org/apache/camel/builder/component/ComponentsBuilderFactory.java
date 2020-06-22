@@ -2225,8 +2225,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JT400 (camel-jt400)
-     * Exchanges messages with an AS/400 system using data queues, message
-     * queues, or program call.
+     * Exchanges messages with an IBM i system using data queues, message
+     * queues, or program call. IBM i is the replacement for AS/400 and iSeries
+     * servers.
      * 
      * Category: messaging
      * Since: 1.5
