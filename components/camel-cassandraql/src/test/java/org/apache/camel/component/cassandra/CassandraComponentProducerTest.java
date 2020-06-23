@@ -29,23 +29,25 @@ import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.cassandraunit.CassandraCQLUnit;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CassandraComponentProducerTest extends BaseCassandraTest {
 
-    private static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
-    private static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
-    private static final String NOT_CONSISTENT_URI = "cql://localhost/camel_ks?cql=" + CQL + "&consistencyLevel=ANY";
+    static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
+    static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
+    static final String NOT_CONSISTENT_URI = "cql://localhost/camel_ks?cql=" + CQL + "&consistencyLevel=ANY";
 
-    @Rule
-    public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
+    @RegisterExtension
+    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
     @Produce("direct:input")
     ProducerTemplate producerTemplate;
@@ -78,10 +80,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
     @Test
     public void testRequestUriCql() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
@@ -97,10 +95,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
     @Test
     public void testRequestNoParameterNull() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -109,10 +103,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
     @Test
     public void testRequestNoParameterEmpty() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         Object response = noParameterProducerTemplate.requestBody(Collections.emptyList());
 
         assertNotNull(response);
@@ -121,10 +111,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
     @Test
     public void testRequestMessageCql() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY,
                                               "update camel_user set first_name=?, last_name=? where login=?");
 
@@ -141,10 +127,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
     @Test
     public void testLoadBalancing() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         loadBalancingPolicyTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY,
                                                          "update camel_user set first_name=?, last_name=? where login=?");
 
@@ -164,10 +146,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
      */
     @Test
     public void testRequestMessageStatement() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         Update.Where update = update("camel_user").with(set("first_name", bindMarker())).and(set("last_name", bindMarker())).where(eq("login", bindMarker()));
         producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY, update);
 
@@ -189,10 +167,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
      */
     @Test
     public void testEndpointNoCqlParameter() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         Update.Where updateFirstName = update("camel_user").with(set("first_name", bindMarker())).where(eq("login", bindMarker()));
         producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[] {"Claus 2", "c_ibsen"}, CassandraConstants.CQL_QUERY, updateFirstName);
 
@@ -219,10 +193,6 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
 
     @Test
     public void testRequestNotConsistent() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         CassandraEndpoint endpoint = getMandatoryEndpoint(NOT_CONSISTENT_URI, CassandraEndpoint.class);
         assertEquals(ConsistencyLevel.ANY, endpoint.getConsistencyLevel());
 

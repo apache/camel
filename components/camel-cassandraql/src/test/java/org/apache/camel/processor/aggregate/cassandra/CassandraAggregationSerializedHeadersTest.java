@@ -16,36 +16,31 @@
  */
 package org.apache.camel.processor.aggregate.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cassandra.BaseCassandraTest;
+import org.apache.camel.component.cassandra.CassandraCQLUnit;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.util.HeaderDto;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
-
-import static org.junit.Assume.assumeTrue;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unite test for {@link CassandraAggregationRepository}
  */
-public class CassandraAggregationSerializedHeadersTest extends CamelTestSupport {
-    private Cluster cluster;
+public class CassandraAggregationSerializedHeadersTest extends BaseCassandraTest {
+
+    @RegisterExtension
+    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit("NamedAggregationDataSet.cql");
+
     private CassandraAggregationRepository aggregationRepository;
 
     @Override
     protected void doPreSetup() throws Exception {
-        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
-        CassandraUnitUtils.startEmbeddedCassandra();
-        cluster = CassandraUnitUtils.cassandraCluster();
-        Session rootSession = cluster.connect();
-        CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedAggregationDataSet.cql");
-        rootSession.close();
-        aggregationRepository = new NamedCassandraAggregationRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
+        aggregationRepository = new NamedCassandraAggregationRepository(cassandra.cluster, CassandraUnitUtils.KEYSPACE, "ID");
         aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.setAllowSerializedHeaders(true);
         aggregationRepository.start();
@@ -53,16 +48,10 @@ public class CassandraAggregationSerializedHeadersTest extends CamelTestSupport 
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         aggregationRepository.stop();
-        cluster.close();
-        try {
-            CassandraUnitUtils.cleanEmbeddedCassandra();
-        } catch (Throwable e) {
-            // ignore shutdown errors
-        }
     }
 
     @Override

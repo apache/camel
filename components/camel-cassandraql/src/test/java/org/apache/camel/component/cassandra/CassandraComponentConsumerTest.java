@@ -24,23 +24,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.cassandraunit.CassandraCQLUnit;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
-    private static final String CQL = "select login, first_name, last_name from camel_user";
+    static final String CQL = "select login, first_name, last_name from camel_user";
 
-    @Rule
-    public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
+    @RegisterExtension
+    static CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
     @Test
     public void testConsumeAll() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:resultAll");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -56,10 +53,6 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
     @Test
     public void testConsumeUnprepared() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:resultUnprepared");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -75,10 +68,6 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
     @Test
     public void testConsumeOne() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:resultOne");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
