@@ -75,9 +75,6 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
     public static final DotName CONFIGURER = DotName.createSimple("org.apache.camel.spi.Configurer");
 
-    @Component
-    private ArtifactFactory artifactFactory;
-
     /**
      * The output directory for generated java source code
      */
@@ -101,6 +98,9 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
      */
     @Parameter
     protected List<String> classes;
+
+    @Component
+    private ArtifactFactory artifactFactory;
 
     private DynamicClassLoader projectClassLoader;
 
