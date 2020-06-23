@@ -25,14 +25,15 @@ with the purpose of restoring the status that was present before the flow execut
 Compensating actions can be declared in Camel routes using the Java or XML DSL and will be invoked by Camel only when needed (if the saga is cancelled due to an error).
 
 // eip options: START
-The Saga EIP supports 7 options which are listed below:
+The Saga EIP supports 8 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *propagation* | Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER). | REQUIRED | SagaPropagation
 | *completionMode* | Determine how the saga should be considered complete. When set to AUTO, the saga is completed when the exchange that initiates the saga is processed successfully, or compensated when it completes exceptionally. When set to MANUAL, the user must complete or compensate the saga using the saga:complete or saga:compensate endpoints. | AUTO | SagaCompletionMode
-| *timeoutInMilliseconds* | Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated automatically (unless a different decision has been taken in the meantime). |  | Long
+| *timeoutInMilliseconds* | *Deprecated* Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated automatically (unless a different decision has been taken in the meantime). Deprecation note: Use timeout instead |  | Long
+| *timeout* | Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated automatically (unless a different decision has been taken in the meantime). |  | String
 | *compensation* | The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry. |  | SagaActionUriDefinition
 | *completion* | The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry. |  | SagaActionUriDefinition
 | *option* | Allows to save properties of the current exchange in order to re-use them in a compensation/completion callback route. Options are usually helpful e.g. to store and retrieve identifiers of objects that should be deleted in compensating actions. Option values will be transformed into input headers of the compensation/completion exchange. |  | List
