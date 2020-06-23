@@ -33,6 +33,7 @@ import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.component.olingo4.internal.Olingo4Constants;
 import org.apache.camel.component.olingo4.internal.Olingo4PropertiesHelper;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -119,8 +120,20 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
             }
         });
         options.keySet().removeIf(known::containsKey);
+
+        // configure endpoint first (from the known options) and then specialized configuration class afterwards
+        PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
+        if (configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            for (String name : getter.getAllOptions(this).keySet()) {
+                if (known.containsKey(name)) {
+                    Object value = known.remove(name);
+                    configurer.configure(getCamelContext(), this, name, value, true);
+                }
+            };
+        }
         // configure on configuration first to be reflection free
-        PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+        configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
         if (configurer != null) {
             PropertyBindingSupport.build()
                     .withConfigurer(configurer)
