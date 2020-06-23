@@ -274,23 +274,25 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
                 scope = Artifact.SCOPE_COMPILE;
             }
 
-            Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
-                    type, classifier, scope, null, optional);
+            if (this.artifactFactory != null) {
+                Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
+                        type, classifier, scope, null, optional);
 
-            if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
-                art.setFile(new File(dependency.getSystemPath()));
+                if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
+                    art.setFile(new File(dependency.getSystemPath()));
+                }
+
+                List<String> exclusions = new ArrayList<>();
+                for (Exclusion exclusion : dependency.getExclusions()) {
+                    exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
+                }
+
+                ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
+
+                art.setDependencyFilter(newFilter);
+
+                artifacts.add(art);
             }
-
-            List<String> exclusions = new ArrayList<>();
-            for (Exclusion exclusion : dependency.getExclusions()) {
-                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
-            }
-
-            ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
-
-            art.setDependencyFilter(newFilter);
-
-            artifacts.add(art);
         }
 
         return artifacts;
