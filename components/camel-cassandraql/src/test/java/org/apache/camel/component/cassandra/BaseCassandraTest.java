@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.cassandra;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public abstract class BaseCassandraTest extends CamelTestSupport {
 
@@ -27,21 +26,13 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
         return System.getenv("BUILD_ID") == null;
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        if (canTest()) {
-            CassandraUnitUtils.startEmbeddedCassandra();
-        }
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        if (canTest()) {
-            try {
-                CassandraUnitUtils.cleanEmbeddedCassandra();
-            } catch (Throwable e) {
-                // ignore shutdown errors
-            }
+    @Override
+    public void afterAll(ExtensionContext context) {
+        super.afterAll(context);
+        try {
+            CassandraUnitUtils.cleanEmbeddedCassandra();
+        } catch (Throwable e) {
+            // ignore shutdown errors
         }
     }
 
