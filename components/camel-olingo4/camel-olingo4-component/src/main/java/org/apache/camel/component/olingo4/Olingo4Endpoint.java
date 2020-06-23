@@ -130,7 +130,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
                     Object value = known.remove(name);
                     configurer.configure(getCamelContext(), this, name, value, true);
                 }
-            };
+            }
         }
         // configure on configuration first to be reflection free
         configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
