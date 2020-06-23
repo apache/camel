@@ -32,7 +32,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "externalsyncidentifier":
@@ -50,7 +50,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         case "invitabilitylevel":
         case "InvitabilityLevel": target.setInvitabilityLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "memberviewabilitylevel":
         case "MemberViewabilityLevel": target.setMemberViewabilityLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -88,7 +88,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("ClientId", java.lang.String.class);
         answer.put("ClientSecret", java.lang.String.class);
         answer.put("Description", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", java.lang.String.class);
+        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("ExternalSyncIdentifier", java.lang.String.class);
         answer.put("GroupId", java.lang.String.class);
@@ -97,7 +97,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxGroupMembership.Info.class);
         answer.put("InvitabilityLevel", java.lang.String.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MemberViewabilityLevel", java.lang.String.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("Name", java.lang.String.class);

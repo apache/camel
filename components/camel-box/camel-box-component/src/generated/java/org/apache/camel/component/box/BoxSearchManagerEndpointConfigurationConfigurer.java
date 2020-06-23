@@ -30,7 +30,7 @@ public class BoxSearchManagerEndpointConfigurationConfigurer extends org.apache.
         case "clientsecret":
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "folderid":
@@ -38,7 +38,7 @@ public class BoxSearchManagerEndpointConfigurationConfigurer extends org.apache.
         case "httpparams":
         case "HttpParams": target.setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekeyfile":
@@ -69,11 +69,11 @@ public class BoxSearchManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("AuthenticationType", java.lang.String.class);
         answer.put("ClientId", java.lang.String.class);
         answer.put("ClientSecret", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", java.lang.String.class);
+        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("FolderId", java.lang.String.class);
         answer.put("HttpParams", java.util.Map.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("PrivateKeyFile", java.lang.String.class);
         answer.put("PrivateKeyPassword", java.lang.String.class);
