@@ -39,6 +39,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             } else {
                 properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
             }
+            properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
         }
         if (definition.getLibrary() != JsonLibrary.XStream) {
             if (definition.getUnmarshalType() != null) {
