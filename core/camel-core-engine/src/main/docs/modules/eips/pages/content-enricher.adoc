@@ -45,7 +45,9 @@ transform the message
 
 [source,java]
 ----
-include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[tags=example]
+from("direct:start")
+    .setBody(body().append(" World!"))
+    .to("mock:result");
 ----
 
 In this example we add our own xref:latest@manual:ROOT:processor.adoc[Processor] using
@@ -53,7 +55,14 @@ explicit Java
 
 [source,java]
 ----
-include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[tags=example]
+from("direct:start")
+    .process(new Processor() {
+        public void process(Exchange exchange) {
+            Message in = exchange.getIn();
+            in.setBody(in.getBody(String.class) + " World!");
+        }
+    })
+    .to("mock:result");
 ----
 
 we can use xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to use any Java
