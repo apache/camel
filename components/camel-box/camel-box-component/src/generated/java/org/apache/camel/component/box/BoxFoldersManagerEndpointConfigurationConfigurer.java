@@ -34,7 +34,7 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         case "destinationfolderid":
         case "DestinationFolderId": target.setDestinationFolderId(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "fields":
@@ -50,7 +50,7 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         case "limit":
         case "Limit": target.setLimit(property(camelContext, java.lang.Long.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "newfoldername":
@@ -95,7 +95,7 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         answer.put("ClientId", java.lang.String.class);
         answer.put("ClientSecret", java.lang.String.class);
         answer.put("DestinationFolderId", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", java.lang.String.class);
+        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("Fields", java.lang.String[].class);
         answer.put("FolderId", java.lang.String.class);
@@ -103,7 +103,7 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxFolder.Info.class);
         answer.put("Limit", java.lang.Long.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("NewFolderName", java.lang.String.class);
         answer.put("NewName", java.lang.String.class);

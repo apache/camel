@@ -40,7 +40,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "destinationfolderid":
         case "DestinationFolderId": target.setDestinationFolderId(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "fields":
@@ -62,7 +62,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "listener":
         case "Listener": target.setListener(property(camelContext, com.box.sdk.ProgressListener.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "maxheight":
         case "MaxHeight": target.setMaxHeight(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxwidth":
@@ -130,7 +130,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         answer.put("Content", java.io.InputStream.class);
         answer.put("Created", java.util.Date.class);
         answer.put("DestinationFolderId", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", java.lang.String.class);
+        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("Fields", java.lang.String[].class);
         answer.put("FileContent", java.io.InputStream.class);
@@ -141,7 +141,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxFile.Info.class);
         answer.put("Listener", com.box.sdk.ProgressListener.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MaxHeight", java.lang.Integer.class);
         answer.put("MaxWidth", java.lang.Integer.class);
         answer.put("Metadata", com.box.sdk.Metadata.class);
