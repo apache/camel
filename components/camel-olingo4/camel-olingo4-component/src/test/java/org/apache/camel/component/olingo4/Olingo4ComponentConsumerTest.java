@@ -18,7 +18,9 @@ package org.apache.camel.component.olingo4;
 
 import java.util.Iterator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
@@ -52,6 +54,14 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         startCamelContext();
     }
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        return context;
+    }
+
     @Test
     public void testConsumerQueryWithExpand() throws Exception {
         int expectedMsgCount = 1;
@@ -83,9 +93,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         }
 
         // should be reflection free
-        // TODO: We are down to 10 calls now
-        // long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
-        // assertEquals(0, counter);
+        // TODO: We are down to 2 calls now (from unit test itself)
+//        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+//        assertEquals(0, counter);
     }
 
     /**
