@@ -93,9 +93,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         }
 
         // should be reflection free
-        // TODO: We are down to 2 calls now (from unit test itself)
-//        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
-//        assertEquals(0, counter);
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        assertEquals(0, counter);
     }
 
     /**
@@ -280,6 +279,10 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         ClientProperty nameProp = ksfoEntity.getProperty("Name");
         assertNotNull(nameProp);
         assertEquals("San Francisco International Airport", nameProp.getValue().toString());
+
+        // should be reflection free
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        assertEquals(0, counter);
     }
 
     /**

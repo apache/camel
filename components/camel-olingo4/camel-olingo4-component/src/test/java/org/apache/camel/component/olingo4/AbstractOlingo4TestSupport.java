@@ -17,12 +17,10 @@
 package org.apache.camel.component.olingo4;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
@@ -50,15 +48,11 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-
         final CamelContext context = super.createCamelContext();
 
-        Map<String, Object> options = new HashMap<>();
-        options.put("serviceUri", getRealServiceUrl(TEST_SERVICE_BASE_URL));
-        options.put("contentType", "application/json;charset=utf-8");
-
         final Olingo4Configuration configuration = new Olingo4Configuration();
-        PropertyBindingSupport.bindProperties(context, configuration, options);
+        configuration.setServiceUri(getRealServiceUrl(TEST_SERVICE_BASE_URL));
+        configuration.setContentType("application/json;charset=utf-8");
 
         // add OlingoComponent to Camel context
         final Olingo4Component component = new Olingo4Component(context);
