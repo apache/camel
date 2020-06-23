@@ -19,19 +19,24 @@ package org.apache.camel.component.olingo2;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -59,7 +64,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     // unparsed variants
     private static final String UREAD_METHOD = "uread";
 
-    private final Set<String> endpointPropertyNames;
+    private Set<String> olingo2endpointPropertyNames;
 
     @UriParam
     private Olingo2Configuration configuration;
@@ -68,16 +73,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     public Olingo2Endpoint(String uri, Olingo2Component component, Olingo2ApiName apiName, String methodName, Olingo2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, Olingo2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
         this.configuration = endpointConfiguration;
-
-        // get all endpoint property names
-        endpointPropertyNames = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(component.getCamelContext(), configuration));
-        // avoid adding edm as queryParam
-        endpointPropertyNames.add(EDM_PROPERTY);
-        endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
-        endpointPropertyNames.add(SERVICE_URI_PROPERTY);
-        endpointPropertyNames.add(FILTER_ALREADY_SEEN);
     }
 
     @Override
@@ -113,13 +109,62 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
-        // handle individual query params
-        parseQueryParams(options);
+        // filter out options that are with $ as they are for query
+        Map<String, Object> query = new LinkedHashMap<>();
+        Map<String, Object> known = new LinkedHashMap<>();
+        options.forEach((k, v) -> {
+            if (k.startsWith("$")) {
+                query.put(k, v);
+            } else {
+                known.put(k, v);
+            }
+        });
+        options.keySet().removeIf(known::containsKey);
+
+        // configure endpoint first (from the known options) and then specialized configuration class afterwards
+        PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
+        if (configurer instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            for (String name : getter.getAllOptions(this).keySet()) {
+                if (known.containsKey(name)) {
+                    Object value = known.remove(name);
+                    configurer.configure(getCamelContext(), this, name, value, true);
+                }
+            };
+        }
+        // configure on configuration first to be reflection free
+        configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+        if (configurer != null) {
+            PropertyBindingSupport.build()
+                    .withConfigurer(configurer)
+                    .withIgnoreCase(true)
+                    .withTarget(configuration)
+                    .withCamelContext(getCamelContext())
+                    .withProperties(known)
+                    .withRemoveParameters(true)
+                    .bind();
+        }
+        super.configureProperties(known);
+        if (!known.isEmpty()) {
+            // handle individual query params
+            query.putAll(known);
+        }
+        // and remove from original options as it was used by query
+        options.keySet().removeIf(query::containsKey);
+        // this will parse query and expand these $ keys into the actual query keys
+        parseQueryParams(query);
+        // and restore back to options
+        options.putAll(query);
     }
 
     @Override
     protected void afterConfigureProperties() {
+        olingo2endpointPropertyNames = new HashSet<>(getEndpointPropertyNames());
+        olingo2endpointPropertyNames.add(EDM_PROPERTY);
+        olingo2endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
+        olingo2endpointPropertyNames.add(SERVICE_URI_PROPERTY);
+        olingo2endpointPropertyNames.add(FILTER_ALREADY_SEEN);
+
         // set default inBody
         if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName)) && inBody == null) {
             inBody = DATA_PROPERTY;
@@ -210,7 +255,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
                 continue;
             }
 
-            if (!endpointPropertyNames.contains(paramName)) {
+            if (!olingo2endpointPropertyNames.contains(paramName)) {
 
                 // add to query params
                 final Object value = entry.getValue();

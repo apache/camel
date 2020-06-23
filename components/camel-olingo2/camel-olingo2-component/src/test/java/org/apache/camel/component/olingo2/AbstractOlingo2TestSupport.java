@@ -53,13 +53,9 @@ public class AbstractOlingo2TestSupport extends CamelTestSupport {
             throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
         }
 
-        Map<String, Object> options = new HashMap<>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            options.put(entry.getKey().toString(), entry.getValue());
-        }
-
         final Olingo2Configuration configuration = new Olingo2Configuration();
-        PropertyBindingSupport.bindProperties(context, configuration, options);
+        configuration.setServiceUri(properties.getProperty("serviceUri"));
+        configuration.setContentType(properties.getProperty("contentType"));
 
         // add OlingoComponent to Camel context
         final Olingo2Component component = new Olingo2Component(context);
