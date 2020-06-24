@@ -25,10 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
@@ -42,7 +46,7 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
         documents.add(document2);
 
         List<?> indexIds = template.requestBody("direct:bulk_index", documents, List.class);
-        assertNotNull("indexIds should be set", indexIds);
+        assertNotNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
 

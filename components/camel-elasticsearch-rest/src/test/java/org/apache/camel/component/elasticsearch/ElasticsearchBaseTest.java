@@ -16,30 +16,30 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.TestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.utility.Base58;
 
-public class ElasticsearchBaseTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
+
     public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.3.2";
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
-
-    @ClassRule
+    
     public static GenericContainer elasticsearch = new GenericContainer<>(ELASTICSEARCH_IMAGE)
         .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
         .withEnv("discovery.type", "single-node")
@@ -53,25 +53,27 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     protected static RestClient restClient;
     protected static RestHighLevelClient client;
 
-    @BeforeClass
-    public static void setUpOnce() throws Exception {
-        HttpHost host = new HttpHost(elasticsearch.getContainerIpAddress(),  elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBaseTest.class);
 
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return elasticsearch;
+    }
+
+    @Override
+    protected void setupResources() throws Exception {
+        super.setupResources();
+        HttpHost host = new HttpHost(elasticsearch.getContainerIpAddress(),  elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
         client = new RestHighLevelClient(RestClient.builder(host));
         restClient = client.getLowLevelClient();
     }
 
-    @AfterClass
-    public static void teardownOnce() throws IOException {
+    @Override
+    protected void cleanupResources() throws Exception {
+        super.cleanupResources();
         if (client != null) {
             client.close();
         }
-    }
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        // let's speed up the tests using the same context
-        return true;
     }
 
     @Override
@@ -105,7 +107,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
         String key = prefix + "key";
         String value = prefix + "value";
-        log.info("Creating indexed data using the key/value pair {} => {}", key, value);
+        LOG.info("Creating indexed data using the key/value pair {} => {}", key, value);
 
         Map<String, String> map = new HashMap<>();
         map.put(key, value);
@@ -114,7 +116,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
     String createPrefix() {
         // make use of the test method name to avoid collision
-        return getTestMethodName().toLowerCase() + "-";
+        return getCurrentTestName().toLowerCase() + "-";
     }
 
     RestClient getClient() {
