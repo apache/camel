@@ -40,7 +40,7 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
         case "httpparams":
         case "HttpParams": target.setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
         case "message":
         case "Message": target.setMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -76,7 +76,7 @@ public class BoxCommentsManagerEndpointConfigurationConfigurer extends org.apach
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("FileId", java.lang.String.class);
         answer.put("HttpParams", java.util.Map.class);
-        answer.put("MaxCacheEntries", int.class);
+        answer.put("MaxCacheEntries", java.lang.String.class);
         answer.put("Message", java.lang.String.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("PrivateKeyFile", java.lang.String.class);

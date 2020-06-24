@@ -437,7 +437,7 @@
     <mongo-java-driver-version>4.0.4</mongo-java-driver-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.6</mustache-java-version>
-    <mvel-version>2.4.7.Final</mvel-version>
+    <mvel-version>2.4.8.Final</mvel-version>
     <mybatis-version>3.5.4</mybatis-version>
     <narayana-version>5.10.5.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>

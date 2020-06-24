@@ -50,7 +50,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         case "invitabilitylevel":
         case "InvitabilityLevel": target.setInvitabilityLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
         case "memberviewabilitylevel":
         case "MemberViewabilityLevel": target.setMemberViewabilityLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -97,7 +97,7 @@ public class BoxGroupsManagerEndpointConfigurationConfigurer extends org.apache.
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxGroupMembership.Info.class);
         answer.put("InvitabilityLevel", java.lang.String.class);
-        answer.put("MaxCacheEntries", int.class);
+        answer.put("MaxCacheEntries", java.lang.String.class);
         answer.put("MemberViewabilityLevel", java.lang.String.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("Name", java.lang.String.class);

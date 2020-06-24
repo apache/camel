@@ -62,7 +62,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         case "listener":
         case "Listener": target.setListener(property(camelContext, com.box.sdk.ProgressListener.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
         case "maxheight":
         case "MaxHeight": target.setMaxHeight(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxwidth":
@@ -141,7 +141,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxFile.Info.class);
         answer.put("Listener", com.box.sdk.ProgressListener.class);
-        answer.put("MaxCacheEntries", int.class);
+        answer.put("MaxCacheEntries", java.lang.String.class);
         answer.put("MaxHeight", java.lang.Integer.class);
         answer.put("MaxWidth", java.lang.Integer.class);
         answer.put("Metadata", com.box.sdk.Metadata.class);
