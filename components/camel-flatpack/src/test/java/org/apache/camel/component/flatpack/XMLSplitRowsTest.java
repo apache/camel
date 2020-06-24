@@ -26,21 +26,22 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify that splitRows=true option works with XML Conversion.
  */
+@CamelSpringTest
 @ContextConfiguration
-public class XMLSplitRowsTest extends AbstractJUnit4SpringContextTests {
+public class XMLSplitRowsTest {
     private static final Logger LOG = LoggerFactory.getLogger(XMLSplitRowsTest.class);
 
     @EndpointInject("mock:results")

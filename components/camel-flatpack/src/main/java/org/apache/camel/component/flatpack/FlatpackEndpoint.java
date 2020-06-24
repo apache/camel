@@ -154,8 +154,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         return parser;
     }
 
-
-    // Properties
+// Properties
     //-------------------------------------------------------------------------
 
     public String getResourceUri() {
