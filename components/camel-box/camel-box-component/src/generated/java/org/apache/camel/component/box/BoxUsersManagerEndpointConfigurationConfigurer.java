@@ -50,7 +50,7 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
         case "login":
         case "Login": target.setLogin(property(camelContext, java.lang.String.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "name":
@@ -97,7 +97,7 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxUser.Info.class);
         answer.put("Login", java.lang.String.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("Name", java.lang.String.class);
         answer.put("NotifyUser", java.lang.Boolean.class);

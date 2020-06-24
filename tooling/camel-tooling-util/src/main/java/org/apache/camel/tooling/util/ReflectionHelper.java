@@ -178,6 +178,30 @@ public final class ReflectionHelper {
         return null;
     }
 
+    /**
+     * Attempt to find a {@link Field} on the supplied class with the supplied name.
+     * Searches all superclasses up to {@code Object}.
+     * <p>Returns {@code null} if no {@link Method} can be found.
+     * @param clazz the class to introspect
+     * @param name the name of the field
+     * @return the field object, or {@code null} if none found
+     */
+    public static Field findField(Class<?> clazz, String name) {
+        Objects.requireNonNull(clazz, "Class must not be null");
+        Objects.requireNonNull(name, "Field name must not be null");
+        Class<?> searchType = clazz;
+        while (searchType != null) {
+            Field[] fields = searchType.getDeclaredFields();
+            for (Field field : fields) {
+                if (name.equals(field.getName())) {
+                    return field;
+                }
+            }
+            searchType = searchType.getSuperclass();
+        }
+        return null;
+    }
+
     public static void setField(Field f, Object instance, Object value) {
         try {
             boolean oldAccessible = f.isAccessible();
