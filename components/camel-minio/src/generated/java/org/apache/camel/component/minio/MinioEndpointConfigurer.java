@@ -43,7 +43,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filename":
-        case "fileName": target.getConfiguration().setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileName": target.getConfiguration().setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
@@ -165,7 +165,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "filename":
-        case "fileName": return target.getConfiguration().getFileName();
+        case "fileName": return target.getConfiguration().getObjectName();
         case "greedy": return target.isGreedy();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();

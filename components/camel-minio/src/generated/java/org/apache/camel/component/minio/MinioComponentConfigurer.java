@@ -40,7 +40,7 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": getOrCreateConfiguration(target).setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "filename":
-        case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileName": getOrCreateConfiguration(target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -111,7 +111,7 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "deleteafterwrite":
         case "deleteAfterWrite": return getOrCreateConfiguration(target).isDeleteAfterWrite();
         case "filename":
-        case "fileName": return getOrCreateConfiguration(target).getFileName();
+        case "fileName": return getOrCreateConfiguration(target).getObjectName();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "lazystartproducer":

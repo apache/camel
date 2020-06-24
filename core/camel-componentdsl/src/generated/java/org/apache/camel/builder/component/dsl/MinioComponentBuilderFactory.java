@@ -347,7 +347,7 @@ public interface MinioComponentBuilderFactory {
             case "autocloseBody": getOrCreateConfiguration((MinioComponent) component).setAutocloseBody((boolean) value); return true;
             case "bridgeErrorHandler": ((MinioComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((MinioComponent) component).setDeleteAfterRead((boolean) value); return true;
-            case "fileName": getOrCreateConfiguration((MinioComponent) component).setFileName((java.lang.String) value); return true;
+            case "fileName": getOrCreateConfiguration((MinioComponent) component).setObjectName((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((MinioComponent) component).setIncludeBody((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((MinioComponent) component).setPrefix((java.lang.String) value); return true;
             case "deleteAfterWrite": getOrCreateConfiguration((MinioComponent) component).setDeleteAfterWrite((boolean) value); return true;

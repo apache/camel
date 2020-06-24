@@ -16,27 +16,44 @@
  */
 package org.apache.camel.component.minio;
 
+import io.minio.MinioClient;
+import io.minio.ServerSideEncryption;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
 public class MinioConfiguration implements Cloneable {
 
-    @UriParam(defaultValue = "false")
-    boolean secure;
     private String bucketName;
     @UriParam
+    private MinioClient minioClient;
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(defaultValue = "false")
+    private boolean useAWSIAMCredentials;
+    @UriParam
+    private String region;
     @UriParam(label = "consumer")
-    private String fileName;
+    private String objectName;
     @UriParam(label = "consumer")
     private String prefix;
-    @UriParam(label = "producer")
-    private String region;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean recursive;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean useVersion1;
+    @UriParam(label = "consumer")
+    private long offset;
+    @UriParam(label = "consumer")
+    private long length;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean includeBody = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autocloseBody = true;
+
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
     @UriParam(label = "producer")
@@ -48,208 +65,287 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String storageClass;
     @UriParam(label = "producer")
-    private String serverSideEncryption;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean includeBody = true;
+    private ServerSideEncryption serverSideEncryption;
+    @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
+    private MinioOperations operation;
     @UriParam
     private boolean pathStyleAccess;
-    @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
-    private MinioOperations operation;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean autocloseBody = true;
-
-    /**
-     * Some description of this option(isSecure), and what it does
-     */
-    public boolean isSecure() {
-        return secure;
-    }
-
-    public void setSecure(boolean secure) {
-        this.secure = secure;
-    }
 
     public String getBucketName() {
         return bucketName;
     }
 
+    /**
+     * Name of the bucket. The bucket will be created if it doesn't already
+     * exists.
+     */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
     }
 
+    public MinioClient getMinioClient() {
+        return minioClient;
+    }
+
     /**
-     * Some description of this option(getAccessKey), and what it does
+     * Reference to a Minio Client object in the registry.
      */
+    public void setMinioClient(MinioClient minioClient) {
+        this.minioClient = minioClient;
+    }
+
     public String getAccessKey() {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Secret Access Key or Minio Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
 
-    /**
-     * Some description of this option(getSecretKey), and what it does
-     */
     public String getSecretKey() {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Access Key Id or Minio Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
 
-    /**
-     * Some description of this option(getFileName), and what it does
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public boolean isUseAWSIAMCredentials() {
+        return useAWSIAMCredentials;
     }
 
     /**
-     * Some description of this option(getPrefix), and what it does
+     * Set this flag true if you use AWS IAM Credentials to create MinIO client object
      */
-    public String getPrefix() {
-        return prefix;
+    public void setUseAWSIAMCredentials(boolean useAWSIAMCredentials) {
+        this.useAWSIAMCredentials = useAWSIAMCredentials;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    /**
-     * Some description of this option(getRegion), and what it does
-     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * The region in which Minio client needs to work. When using this parameter,
+     * the configuration will expect the lowercase name of the region (for
+     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
+     */
     public void setRegion(String region) {
         this.region = region;
     }
 
+    public String getObjectName() {
+        return objectName;
+    }
+
     /**
-     * Some description of this option(isDeleteAfterRead), and what it does
+     * To get the object from the bucket with the given object name
      */
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
+     * Object name starts with prefix.
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public boolean isRecursive() {
+        return recursive;
+    }
+
+    /**
+     * List recursively than directory structure emulation.
+     */
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
+    }
+
+    public boolean isUseVersion1() {
+        return useVersion1;
+    }
+
+    /**
+     * when true, version 1 of REST API is used.
+     */
+    public void setUseVersion1(boolean useVersion1) {
+        this.useVersion1 = useVersion1;
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    /**
+     * Start byte position of object data.
+     */
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    /**
+     *  Number of bytes of object data from offset.
+     */
+    public long getLength() {
+        return length;
+    }
+
+    public void setLength(long length) {
+        this.length = length;
+    }
+
     public boolean isDeleteAfterRead() {
         return deleteAfterRead;
     }
 
+    /**
+     * Delete objects from Minio after they have been retrieved. The delete is only
+     * performed if the Exchange is committed. If a rollback occurs, the object
+     * is not deleted.
+     * <p/>
+     * If this option is false, then the same objects will be retrieve over and
+     * over again on the polls. Therefore you need to use the Idempotent
+     * Consumer EIP in the route to filter out duplicates. You can filter using
+     * the {@link MinioConstants#BUCKET_NAME} and {@link MinioConstants#KEY}
+     * headers, or only the {@link MinioConstants#KEY} header.
+     */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
     }
 
-    /**
-     * Some description of this option(isDeleteAfterWrite), and what it does
-     */
-    public boolean isDeleteAfterWrite() {
-        return deleteAfterWrite;
-    }
-
-    public void setDeleteAfterWrite(boolean deleteAfterWrite) {
-        this.deleteAfterWrite = deleteAfterWrite;
-    }
-
-    /**
-     * Some description of this option(isMultiPartUpload), and what it does
-     */
-    public boolean isMultiPartUpload() {
-        return multiPartUpload;
-    }
-
-    public void setMultiPartUpload(boolean multiPartUpload) {
-        this.multiPartUpload = multiPartUpload;
-    }
-
-    /**
-     * Some description of this option(getPartSize), and what it does
-     */
-    public long getPartSize() {
-        return partSize;
-    }
-
-    public void setPartSize(long partSize) {
-        this.partSize = partSize;
-    }
-
-    /**
-     * Some description of this option(getPolicy), and what it does
-     */
-    public String getPolicy() {
-        return policy;
-    }
-
-    public void setPolicy(String policy) {
-        this.policy = policy;
-    }
-
-    /**
-     * Some description of this option(getStorageClass), and what it does
-     */
-    public String getStorageClass() {
-        return storageClass;
-    }
-
-    public void setStorageClass(String storageClass) {
-        this.storageClass = storageClass;
-    }
-
-    /**
-     * Some description of this option(getServerSideEncryption), and what it does
-     */
-    public String getServerSideEncryption() {
-        return serverSideEncryption;
-    }
-
-    public void setServerSideEncryption(String serverSideEncryption) {
-        this.serverSideEncryption = serverSideEncryption;
-    }
-
-    /**
-     * Some description of this option(isIncludeBody), and what it does
-     */
     public boolean isIncludeBody() {
         return includeBody;
     }
 
+    /**
+     * If it is true, the exchange body will be set to a stream to the contents
+     * of the file. If false, the headers will be set with the Minio object
+     * metadata, but the body will be null. This option is strongly related to
+     * autocloseBody option. In case of setting includeBody to true and
+     * autocloseBody to false, it will be up to the caller to close the MinioObject
+     * stream. Setting autocloseBody to true, will close the MinioObject stream
+     * automatically.
+     */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
+    }
+
+    public boolean isAutocloseBody() {
+        return autocloseBody;
+    }
+
+    /**
+     * If this option is true and includeBody is true, then the MinioObject.close()
+     * method will be called on exchange completion. This option is strongly
+     * related to includeBody option. In case of setting includeBody to true and
+     * autocloseBody to false, it will be up to the caller to close the MinioObject
+     * stream. Setting autocloseBody to true, will close the MinioObject stream
+     * automatically.
+     */
+    public void setAutocloseBody(boolean autocloseBody) {
+        this.autocloseBody = autocloseBody;
+    }
+
+    public boolean isDeleteAfterWrite() {
+        return deleteAfterWrite;
+    }
+
+    /**
+     * Delete file object after the Minio file has been uploaded
+     */
+    public void setDeleteAfterWrite(boolean deleteAfterWrite) {
+        this.deleteAfterWrite = deleteAfterWrite;
+    }
+
+    public boolean isMultiPartUpload() {
+        return multiPartUpload;
+    }
+
+    /**
+     * If it is true, camel will upload the file with multi part format, the
+     * part size is decided by the option of `partSize`
+     */
+    public void setMultiPartUpload(boolean multiPartUpload) {
+        this.multiPartUpload = multiPartUpload;
+    }
+
+    public long getPartSize() {
+        return partSize;
+    }
+
+    /**
+     * Setup the partSize which is used in multi part upload, the default size
+     * is 25M.
+     */
+    public void setPartSize(long partSize) {
+        this.partSize = partSize;
+    }
+
+    public String getPolicy() {
+        return policy;
+    }
+
+    /**
+     * The policy for this queue to set in the method.
+     */
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public String getStorageClass() {
+        return storageClass;
+    }
+
+    /**
+     * The storage class to set in the request.
+     */
+    public void setStorageClass(String storageClass) {
+        this.storageClass = storageClass;
+    }
+
+    public ServerSideEncryption getServerSideEncryption() {
+        return serverSideEncryption;
+    }
+
+    /**
+     *  (Optional) Server-side encryption.
+     */
+    public void setServerSideEncryption(ServerSideEncryption serverSideEncryption) {
+        this.serverSideEncryption = serverSideEncryption;
+    }
+
+    public MinioOperations getOperation() {
+        return operation;
+    }
+
+    /**
+     * The operation to do in case the user don't want to do only an upload
+     */
+    public void setOperation(MinioOperations operation) {
+        this.operation = operation;
+    }
+
+    public boolean isPathStyleAccess() {
+        return pathStyleAccess;
     }
 
     /**
      * Some description of this option(isPathStyleAccess), and what it does
      */
-    public boolean isPathStyleAccess() {
-        return pathStyleAccess;
-    }
-
     public void setPathStyleAccess(boolean pathStyleAccess) {
         this.pathStyleAccess = pathStyleAccess;
     }
 
-    /**
-     * Some description of this option(getOperation), and what it does
-     */
-    public MinioOperations getOperation() {
-        return operation;
-    }
-
-    public void setOperation(MinioOperations operation) {
-        this.operation = operation;
-    }
-
-    /**
-     * Some description of this option(isAutocloseBody), and what it does
-     */
-    public boolean isAutocloseBody() {
-        return autocloseBody;
-    }
-
-    public void setAutocloseBody(boolean autocloseBody) {
-        this.autocloseBody = autocloseBody;
-    }
 }

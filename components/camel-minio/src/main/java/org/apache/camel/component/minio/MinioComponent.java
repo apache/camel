@@ -16,16 +16,25 @@
  */
 package org.apache.camel.component.minio;
 
+import java.util.Set;
+
+import io.minio.MinioClient;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.aws2.s3.AWS2S3ComponentVerifierExtension;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link MinioEndpoint}.
  */
 @Component("minio")
 public class MinioComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MinioComponent.class);
 
     @Metadata
     private MinioConfiguration configuration = new MinioConfiguration();
@@ -36,22 +45,29 @@ public class MinioComponent extends DefaultComponent {
 
     public MinioComponent(CamelContext context) {
         super(context);
+
+        if (configuration.isUseAWSIAMCredentials()) {
+            registerExtension(new AWS2S3ComponentVerifierExtension());
+        }
     }
 
     @Override
     protected MinioEndpoint createEndpoint(String uri, String remaining, java.util.Map<String, Object> parameters)
             throws Exception {
-        setProperties(configuration, parameters);
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
         if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
         configuration.setBucketName(remaining);
-
-        final MinioEndpoint endpoint = new MinioEndpoint(uri, remaining, this, configuration);
+        MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        checkAndSetRegistryClient(configuration, endpoint);
+        if (!configuration.isUseAWSIAMCredentials() && configuration.getMinioClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+            throw new IllegalArgumentException("useAWSIAMCredentials is set to false, MinioClient or accessKeyId and secretAccessKey must be specified");
+        }
+
         return endpoint;
     }
 
@@ -64,6 +80,21 @@ public class MinioComponent extends DefaultComponent {
      */
     public void setConfiguration(MinioConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    private void checkAndSetRegistryClient(MinioConfiguration configuration, MinioEndpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getMinioClient())) {
+            LOG.debug("Looking for an MinioClient instance in the registry");
+            Set<MinioClient> clients = getCamelContext().getRegistry().findByType(MinioClient.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one MinioClient instance in the registry");
+                configuration.setMinioClient(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No MinioClient instance in the registry");
+            }
+        } else {
+            LOG.debug("MinioClient instance is already set at endpoint level: skipping the check in the registry");
+        }
     }
 
 }

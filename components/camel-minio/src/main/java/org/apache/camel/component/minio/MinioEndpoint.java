@@ -43,11 +43,12 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     private String bucketNameOrArn;
     @UriParam
     private MinioConfiguration configuration;
+    private MinioClient minioClient;
 
     public MinioEndpoint() {
     }
 
-    public MinioEndpoint(final String uri, final String remaining, final MinioComponent component,
+    public MinioEndpoint(final String uri, final MinioComponent component,
                          final MinioConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -84,8 +85,16 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    public void setMinioClient(MinioClient minioClient) {
+        this.minioClient = minioClient;
+    }
+
+    public MinioClient getMinioClient() {
+        return minioClient;
+    }
+
     private MinioClient createClient() throws InvalidPortException, InvalidEndpointException {
-        final MinioClient minioClient = new MinioClient("https://play.minio.io:9000", this.configuration.getAccessKey(),
+        final MinioClient minioClient = new MinioClient("https://play.minio.io/minio", this.configuration.getAccessKey(),
                 this.configuration.getSecretKey());
         return minioClient;
 
