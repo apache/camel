@@ -20,10 +20,10 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
 public class CordaTestSupport extends CamelTestSupport {
@@ -50,16 +50,16 @@ public class CordaTestSupport extends CamelTestSupport {
         return exchange;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws Exception {
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() throws Exception {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         super.setUp();

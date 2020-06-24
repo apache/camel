@@ -18,17 +18,15 @@ package org.apache.camel.component.corda;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.corda.CordaConstants.NETWORK_MAP_FEED;
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
+import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK;
 
-@Ignore("This integration test requires a locally running corda node such cordapp-template-java")
-public class CordaConsumerNetworkMapFeedTest extends CordaConsumerTestSupport {
+public class CordaConsumerVaultTrackIntegrationTest extends CordaConsumerTestSupport {
 
     @Test
-    public void networkMapFeedTest() throws Exception {
+    public void vaultTrackTest() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
         mockError.expectedMessageCount(0);
         MockEndpoint.assertIsSatisfied(context);
@@ -40,7 +38,8 @@ public class CordaConsumerNetworkMapFeedTest extends CordaConsumerTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + NETWORK_MAP_FEED)
+                from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK
+                        + "&contractStateClass=#contractStateClass")
                         .to("mock:result");
             }
         };
