@@ -34,7 +34,7 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
         case "emailaliasid":
         case "EmailAliasId": target.setEmailAliasId(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptionalgorithm":
-        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "EncryptionAlgorithm": target.setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
         case "enterpriseid":
         case "EnterpriseId": target.setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
         case "fields":
@@ -89,7 +89,7 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
         answer.put("ClientSecret", java.lang.String.class);
         answer.put("Email", java.lang.String.class);
         answer.put("EmailAliasId", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", java.lang.String.class);
+        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("Fields", java.lang.String[].class);
         answer.put("FilterTerm", java.lang.String.class);
