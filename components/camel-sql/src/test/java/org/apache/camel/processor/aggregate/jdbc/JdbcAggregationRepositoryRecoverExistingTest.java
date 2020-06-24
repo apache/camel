@@ -19,7 +19,11 @@ package org.apache.camel.processor.aggregate.jdbc;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JdbcAggregationRepositoryRecoverExistingTest extends AbstractJdbcAggregationTestSupport {
 

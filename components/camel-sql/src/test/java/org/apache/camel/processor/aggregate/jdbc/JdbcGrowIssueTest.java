@@ -18,10 +18,17 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcGrowIssueTest.class);
+    
     private static final int SIZE = 1024;
 
     @Test
@@ -39,16 +46,16 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
 
         // we update using the same key, which means we should be able to do this within the file size limit
         for (int i = 0; i < SIZE; i++) {
-            log.debug("Updating " + i);
+            LOG.debug("Updating " + i);
             exchange = repoAddAndGet(key, exchange);
         }
 
         // get the last
         Exchange data = repo.get(context, key);
-        log.info(data.toString());
+        LOG.info(data.toString());
 
-        assertTrue("Should start with 'XXX'", data.getIn().getBody(String.class).startsWith("XXX"));
+        assertTrue(data.getIn().getBody(String.class).startsWith("XXX"), "Should start with 'XXX'");
         int length = data.getIn().getBody(String.class).length();
-        assertEquals("Length should be 1024, was " + length, 1024, length);
+        assertEquals(1024, length, "Length should be 1024, was " + length);
     }
 }
