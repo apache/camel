@@ -82,6 +82,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptiontype":
         case "subscriptionType": target.getPulsarConfiguration().setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "topicspattern":
+        case "topicsPattern": target.getPulsarConfiguration().setTopicsPattern(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -121,6 +123,7 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("subscriptionName", java.lang.String.class);
         answer.put("subscriptionType", org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class);
         answer.put("synchronous", boolean.class);
+        answer.put("topicsPattern", boolean.class);
         return answer;
     }
 
@@ -191,6 +194,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptiontype":
         case "subscriptionType": return target.getPulsarConfiguration().getSubscriptionType();
         case "synchronous": return target.isSynchronous();
+        case "topicspattern":
+        case "topicsPattern": return target.getPulsarConfiguration().isTopicsPattern();
         default: return null;
         }
     }

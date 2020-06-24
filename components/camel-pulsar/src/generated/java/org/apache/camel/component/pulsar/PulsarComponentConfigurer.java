@@ -91,6 +91,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionName": getOrCreateConfiguration(target).setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptiontype":
         case "subscriptionType": getOrCreateConfiguration(target).setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
+        case "topicspattern":
+        case "topicsPattern": getOrCreateConfiguration(target).setTopicsPattern(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -131,6 +133,7 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("subscriptionInitialPosition", org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class);
         answer.put("subscriptionName", java.lang.String.class);
         answer.put("subscriptionType", org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class);
+        answer.put("topicsPattern", boolean.class);
         return answer;
     }
 
@@ -203,6 +206,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "subscriptionName": return getOrCreateConfiguration(target).getSubscriptionName();
         case "subscriptiontype":
         case "subscriptionType": return getOrCreateConfiguration(target).getSubscriptionType();
+        case "topicspattern":
+        case "topicsPattern": return getOrCreateConfiguration(target).isTopicsPattern();
         default: return null;
         }
     }

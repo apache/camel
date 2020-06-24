@@ -34,6 +34,8 @@ import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType
 @UriParams
 public class PulsarConfiguration implements Cloneable {
 
+    @UriParam(label = "consumer")
+    private boolean topicsPattern;
     @UriParam(label = "consumer", defaultValue = "subs")
     private String subscriptionName = "subs";
     @UriParam(label = "consumer", defaultValue = "EXCLUSIVE")
@@ -98,6 +100,17 @@ public class PulsarConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public boolean isTopicsPattern() {
+        return topicsPattern;
+    }
+
+    /**
+     * Whether the topic is a pattern (regular expression) that allows the consumer to subscribe to all matching topics in the namespace
+     */
+    public void setTopicsPattern(boolean topicsPattern) {
+        this.topicsPattern = topicsPattern;
     }
 
     public String getSubscriptionName() {

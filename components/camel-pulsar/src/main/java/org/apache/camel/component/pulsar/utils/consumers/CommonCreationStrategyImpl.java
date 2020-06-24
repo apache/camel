@@ -34,7 +34,13 @@ public final class CommonCreationStrategyImpl {
     public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
-        ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getUri()).subscriptionName(endpointConfiguration.getSubscriptionName())
+        ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer();
+        if (endpointConfiguration.isTopicsPattern()) {
+            builder.topicsPattern(pulsarEndpoint.getUri());
+        } else {
+            builder.topic(pulsarEndpoint.getUri());
+        }
+        builder.subscriptionName(endpointConfiguration.getSubscriptionName())
             .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name).ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
             .subscriptionInitialPosition(endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
             .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
