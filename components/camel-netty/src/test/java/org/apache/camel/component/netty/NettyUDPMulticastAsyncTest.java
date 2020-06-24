@@ -22,12 +22,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
- * To run this test manually through Maven first remove the {@link Ignore}
+ * To run this test manually through Maven first remove the {@link Disabled}
  * annotation below, then make sure you've got a network interface with the name
  * <code>en0</code> as given by the route below. If this is not the case run
  * your OS specific command to find out which network interfaces you've got
@@ -43,14 +43,14 @@ import org.junit.Test;
  *   mvn test -Djava.net.preferIPv4Stack=true -Dtest=NettyUDPMulticastAsyncTest
  * </pre>
  *
- * Please note that using the JUnit {@link BeforeClass} annotation together with
+ * Please note that using the JUnit {@link BeforeAll} annotation together with
  * the corresponding {@link System#setProperty(String, String) Java API} to set
  * the {@code java.net.preferIPv4Stack} system property would not work here as
  * at that moment it would be too <b>late</b> to set this system property. On
  * the other hand setting such a system property through the surefire-plugin
  * would cause side effect by the other tests of this component.
  */
-@Ignore("See the Javadoc")
+@Disabled("See the Javadoc")
 public class NettyUDPMulticastAsyncTest extends BaseNettyTest {
 
     private void sendFile(String uri) throws Exception {

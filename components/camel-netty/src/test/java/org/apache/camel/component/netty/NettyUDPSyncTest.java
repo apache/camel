@@ -19,7 +19,9 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPSyncTest extends BaseNettyTest {
     private static final String RESPONSE = "Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.";
