@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 
 /**
  * {@link IoHandler} implementation of reverser server protocol.
@@ -43,7 +44,7 @@ public class MinaReverseProtocolHandler extends IoHandlerAdapter {
             buf.append(str.charAt(i));
         }
 
-        if (TestSupport.isPlatform("windows")) {
+        if (isPlatform("windows")) {
             // seems to be only required on windows to make it work!
             buf.append(System.lineSeparator());
         }
