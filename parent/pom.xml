@@ -439,7 +439,7 @@
         <!-- should be in-sync with deltaspike -->
         <openwebbeans1-version>1.2.7</openwebbeans1-version>
         <openwebbeans-version>1.7.3</openwebbeans-version>
-        <okclient-version>3.14.7</okclient-version>
+        <okclient-version>3.14.9</okclient-version>
         <olingo2-version>2.0.11</olingo2-version>
         <olingo4-version>4.7.1</olingo4-version>
         <ognl-version>3.1.12</ognl-version>
