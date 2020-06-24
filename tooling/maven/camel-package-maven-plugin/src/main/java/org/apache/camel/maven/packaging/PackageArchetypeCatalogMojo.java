@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.tooling.util.PackageHelper;
@@ -151,6 +153,9 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
                 models.add(model);
             }
         }
+
+        // sort the models by artifact id so its generated in same order
+        Collections.sort(models, (o1, o2) -> o1.getArtifactId().compareToIgnoreCase(o2.getArtifactId()));
 
         log.info("Found " + models.size() + " archetypes");
 
