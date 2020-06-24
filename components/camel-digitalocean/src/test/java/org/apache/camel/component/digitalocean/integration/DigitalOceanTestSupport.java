@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 public class DigitalOceanTestSupport extends CamelTestSupport {
 

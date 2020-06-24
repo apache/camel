@@ -25,8 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DigitalOceanComponentTest extends CamelTestSupport {
     
