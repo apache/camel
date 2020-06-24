@@ -30,8 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ComponentTest extends CamelTestSupport {
 
@@ -160,9 +163,10 @@ public class ComponentTest extends CamelTestSupport {
         };
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void wrongOperation() throws Exception {
         CryptoCmsComponent c = new CryptoCmsComponent(new DefaultCamelContext());
-        c.createEndpoint("uri", "wrongoperation", null);
+        assertThrows(IllegalStateException.class,
+            () -> c.createEndpoint("uri", "wrongoperation", null));
     }
 }
