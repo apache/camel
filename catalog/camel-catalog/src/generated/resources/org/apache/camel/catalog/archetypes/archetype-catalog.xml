@@ -39,9 +39,9 @@
     </archetype>
     <archetype>
       <groupId>org.apache.camel.archetypes</groupId>
-      <artifactId>camel-archetype-spring-boot</artifactId>
+      <artifactId>camel-archetype-main</artifactId>
       <version>3.5.0-SNAPSHOT</version>
-      <description>Creates a new Camel project using Spring Boot.</description>
+      <description>Creates a new Camel project using standalone Camel Main.</description>
     </archetype>
     <archetype>
       <groupId>org.apache.camel.archetypes</groupId>
@@ -51,9 +51,9 @@
     </archetype>
     <archetype>
       <groupId>org.apache.camel.archetypes</groupId>
-      <artifactId>camel-archetype-main</artifactId>
+      <artifactId>camel-archetype-spring-boot</artifactId>
       <version>3.5.0-SNAPSHOT</version>
-      <description>Creates a new Camel project using standalone Camel Main.</description>
+      <description>Creates a new Camel project using Spring Boot.</description>
     </archetype>
   </archetypes>
 </archetype-catalog>
