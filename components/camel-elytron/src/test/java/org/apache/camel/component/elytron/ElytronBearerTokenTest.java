@@ -30,7 +30,7 @@ import io.undertow.util.Headers;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wildfly.security.WildFlyElytronBaseProvider;
@@ -39,6 +39,11 @@ import org.wildfly.security.auth.realm.token.validator.JwtValidator;
 import org.wildfly.security.authz.RoleDecoder;
 import org.wildfly.security.http.HttpConstants;
 import org.wildfly.security.http.bearer.WildFlyElytronHttpBearerProvider;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ElytronBearerTokenTest extends BaseElytronTest {
     private static final Logger LOG = LoggerFactory.getLogger(ElytronBearerTokenTest.class);
