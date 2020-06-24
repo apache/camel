@@ -40,7 +40,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
         case "httpparams":
         case "HttpParams": target.setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "position":
@@ -78,7 +78,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
         answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
         answer.put("EnterpriseId", java.lang.String.class);
         answer.put("HttpParams", java.util.Map.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("Position", java.lang.String.class);
         answer.put("PrivateKeyFile", java.lang.String.class);

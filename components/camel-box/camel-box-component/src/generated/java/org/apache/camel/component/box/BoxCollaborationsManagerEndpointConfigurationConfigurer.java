@@ -46,7 +46,7 @@ public class BoxCollaborationsManagerEndpointConfigurationConfigurer extends org
         case "info":
         case "Info": target.setInfo(property(camelContext, com.box.sdk.BoxCollaboration.Info.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekeyfile":
@@ -85,7 +85,7 @@ public class BoxCollaborationsManagerEndpointConfigurationConfigurer extends org
         answer.put("FolderId", java.lang.String.class);
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxCollaboration.Info.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("PrivateKeyFile", java.lang.String.class);
         answer.put("PrivateKeyPassword", java.lang.String.class);

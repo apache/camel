@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.util.ReflectionHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -300,6 +301,7 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
 
     private List<Option> processClass(String fqn) throws ClassNotFoundException {
         List<Option> answer = new ArrayList<>();
+        // filter out duplicates by using a names set that has already added
         Set<String> names = new HashSet<>();
 
         Class clazz = projectClassLoader.loadClass(fqn);
@@ -322,19 +324,14 @@ public class GenerateConfigurerMojo extends AbstractGeneratorMojo {
                 }
                 String t = Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
                 if (names.add(t)) {
-                    // filter out duplicates by using a names set that has already added
                     answer.add(new Option(t, type, getter));
                 } else {
                     boolean replace = false;
-                    try {
-                        // try to find out what the real type is of the correspondent field so we chose among the clash
-                        Field field = clazz.getDeclaredField(Character.toLowerCase(t.charAt(0)) + t.substring(1));
-                        if (field.getType() == type) {
-                            // this is the correct type for the new option
-                            replace = true;
-                        }
-                    } catch (NoSuchFieldException e) {
-                        // ignore
+                    // try to find out what the real type is of the correspondent field so we chose among the clash
+                    Field field = ReflectionHelper.findField(clazz, Character.toLowerCase(t.charAt(0)) + t.substring(1));
+                    if (field != null && field.getType().equals(type)) {
+                        // this is the correct type for the new option
+                        replace = true;
                     }
                     if (replace) {
                         answer.removeIf(o -> o.getName().equals(t));

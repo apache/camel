@@ -46,7 +46,7 @@ public class BoxTasksManagerEndpointConfigurationConfigurer extends org.apache.c
         case "info":
         case "Info": target.setInfo(property(camelContext, com.box.sdk.BoxTask.Info.class, value)); return true;
         case "maxcacheentries":
-        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, java.lang.String.class, value)); return true;
+        case "MaxCacheEntries": target.setMaxCacheEntries(property(camelContext, int.class, value)); return true;
         case "message":
         case "Message": target.setMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -89,7 +89,7 @@ public class BoxTasksManagerEndpointConfigurationConfigurer extends org.apache.c
         answer.put("FileId", java.lang.String.class);
         answer.put("HttpParams", java.util.Map.class);
         answer.put("Info", com.box.sdk.BoxTask.Info.class);
-        answer.put("MaxCacheEntries", java.lang.String.class);
+        answer.put("MaxCacheEntries", int.class);
         answer.put("Message", java.lang.String.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("PrivateKeyFile", java.lang.String.class);
