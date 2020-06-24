@@ -18,14 +18,16 @@ package org.apache.camel.component.sql;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -36,7 +38,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
             .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
@@ -47,7 +49,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -70,7 +72,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
                 break;
             }
         }
-        assertEquals("Should have deleted all 3 rows", new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class), "Should have deleted all 3 rows");
     }
 
     @Override

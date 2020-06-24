@@ -29,9 +29,11 @@ import org.apache.camel.component.sql.stored.template.ast.OutParameter;
 import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ParserTest extends CamelTestSupport {
 
@@ -48,8 +50,8 @@ public class ParserTest extends CamelTestSupport {
         Template template = parser.parseTemplate("addnumbers(INTEGER ${header.header1},VARCHAR ${exchangeProperty.property1},"
                 + "BIGINT ${header.header2},INOUT INTEGER ${header.header3} inout1,OUT INTEGER out1)");
 
-        Assert.assertEquals("addnumbers", template.getProcedureName());
-        Assert.assertEquals(5, template.getParameterList().size());
+        assertEquals("addnumbers", template.getProcedureName());
+        assertEquals(5, template.getParameterList().size());
 
         Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader("header1", 1);
@@ -58,40 +60,42 @@ public class ParserTest extends CamelTestSupport {
         exchange.getIn().setHeader("header3", BigInteger.valueOf(3));
 
         InParameter param1 = (InParameter) template.getParameterList().get(0);
-        Assert.assertEquals("_0", param1.getName());
-        Assert.assertEquals(Types.INTEGER, param1.getSqlType());
-        Assert.assertEquals(1, param1.getValueExtractor().eval(exchange, null));
+        assertEquals("_0", param1.getName());
+        assertEquals(Types.INTEGER, param1.getSqlType());
+        assertEquals(1, param1.getValueExtractor().eval(exchange, null));
 
         InParameter param2 = (InParameter) template.getParameterList().get(1);
-        Assert.assertEquals("_1", param2.getName());
-        Assert.assertEquals(Types.VARCHAR, param2.getSqlType());
-        Assert.assertEquals("constant string", param2.getValueExtractor().eval(exchange, null));
+        assertEquals("_1", param2.getName());
+        assertEquals(Types.VARCHAR, param2.getSqlType());
+        assertEquals("constant string", param2.getValueExtractor().eval(exchange, null));
 
         InParameter param3 = (InParameter) template.getParameterList().get(2);
-        Assert.assertEquals("_2", param3.getName());
-        Assert.assertEquals(Types.BIGINT, param3.getSqlType());
-        Assert.assertEquals(BigInteger.valueOf(2L), param3.getValueExtractor().eval(exchange, null));
+        assertEquals("_2", param3.getName());
+        assertEquals(Types.BIGINT, param3.getSqlType());
+        assertEquals(BigInteger.valueOf(2L), param3.getValueExtractor().eval(exchange, null));
 
         InOutParameter inOutNode = (InOutParameter) template.getParameterList().get(3);
-        Assert.assertEquals(Types.INTEGER, inOutNode.getSqlType());
-        Assert.assertEquals("inout1", inOutNode.getOutValueMapKey());
-        Assert.assertEquals(BigInteger.valueOf(3L), inOutNode.getValueExtractor().eval(exchange, null));
+        assertEquals(Types.INTEGER, inOutNode.getSqlType());
+        assertEquals("inout1", inOutNode.getOutValueMapKey());
+        assertEquals(BigInteger.valueOf(3L), inOutNode.getValueExtractor().eval(exchange, null));
 
         OutParameter outNode = (OutParameter) template.getParameterList().get(4);
-        Assert.assertEquals(Types.INTEGER, outNode.getSqlType());
-        Assert.assertEquals("out1", outNode.getOutValueMapKey());
+        assertEquals(Types.INTEGER, outNode.getSqlType());
+        assertEquals("out1", outNode.getOutValueMapKey());
     }
 
-    @Test(expected = ParseRuntimeException.class)
+    @Test
     public void noOutputParameterShouldFail() {
-        parser.parseTemplate("ADDNUMBERS2"
-                + "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
+        assertThrows(ParseRuntimeException.class,
+            () -> parser.parseTemplate("ADDNUMBERS2"
+                + "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})"));
     }
 
-    @Test(expected = ParseRuntimeException.class)
+    @Test
     public void unexistingTypeShouldFail() {
-        parser.parseTemplate("ADDNUMBERS2"
-                + "(XML VALUE1 ${header.v1},OUT INTEGER VALUE2 ${header.v2})");
+        assertThrows(ParseRuntimeException.class,
+            () -> parser.parseTemplate("ADDNUMBERS2"
+                + "(XML VALUE1 ${header.v1},OUT INTEGER VALUE2 ${header.v2})"));
     }
 
     @Test
@@ -157,10 +161,11 @@ public class ParserTest extends CamelTestSupport {
         assertEquals("IBS.\"Z$IMS_INTERFACE_WS\".TEST_STR", template.getProcedureName());
     }
 
-    @Test(expected = ParseRuntimeException.class)
+    @Test
     public void unmappedTypeShouldFaild() {
-        parser.parseTemplate("ADDNUMBERS2"
-                + "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
+        assertThrows(ParseRuntimeException.class,
+            () -> parser.parseTemplate("ADDNUMBERS2"
+                + "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})"));
     }
 
     @Test

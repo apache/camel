@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * To test CAMEL-4118 support for completing all aggregation groups with a signal message

@@ -26,10 +26,10 @@ import java.util.Set;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.UncategorizedSQLException;
@@ -37,6 +37,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SqlRouteTest extends CamelTestSupport {
 
@@ -92,7 +97,7 @@ public class SqlRouteTest extends CamelTestSupport {
         // unlikely to have accidental ordering with 3 rows x 3 columns
         for (Object obj : received) {
             Map<?, ?> row = assertIsInstanceOf(Map.class, obj);
-            assertTrue("not preserving key ordering for a given row keys: " + row.keySet(), isOrdered(row.keySet()));
+            assertTrue(isOrdered(row.keySet()), "not preserving key ordering for a given row keys: " + row.keySet());
         }
     }
 
@@ -103,7 +108,7 @@ public class SqlRouteTest extends CamelTestSupport {
             fail();
         } catch (RuntimeCamelException e) {
             // should have DataAccessException thrown
-            assertTrue("Exception thrown is wrong", e.getCause() instanceof DataAccessException);
+            assertTrue(e.getCause() instanceof DataAccessException, "Exception thrown is wrong");
         }
     }
 
@@ -114,7 +119,7 @@ public class SqlRouteTest extends CamelTestSupport {
             fail();
         } catch (RuntimeCamelException e) {
             // should have DataAccessException thrown
-            assertTrue("Exception thrown is wrong", e.getCause() instanceof DataAccessException);
+            assertTrue(e.getCause() instanceof DataAccessException, "Exception thrown is wrong");
         }
     }
 
@@ -228,8 +233,8 @@ public class SqlRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof UncategorizedSQLException);
         }
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
     
     @Test
@@ -241,12 +246,12 @@ public class SqlRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof UncategorizedSQLException);
         }
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
     
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
             .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
@@ -257,7 +262,7 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         
@@ -297,9 +302,9 @@ public class SqlRouteTest extends CamelTestSupport {
     }
     
     private boolean isOrdered(Set<?> keySet) {
-        assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("id"));
-        assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("project"));
-        assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("license"));
+        assertTrue(keySet.contains("id"), "isOrdered() requires the following keys: id, project, license");
+        assertTrue(keySet.contains("project"), "isOrdered() requires the following keys: id, project, license");
+        assertTrue(keySet.contains("license"), "isOrdered() requires the following keys: id, project, license");
         
         // the implementation uses a case insensitive Map
         final Iterator<?> it = keySet.iterator();
