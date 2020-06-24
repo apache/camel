@@ -36,10 +36,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyConcurrentTest extends BaseNettyTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConcurrentTest.class);
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -57,7 +63,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testLargeConcurrentProducers() throws Exception {
         doSendMessages(250000, 100);
     }
@@ -75,7 +81,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
                     String reply = template.requestBody("netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder", index, String.class);
-                    log.debug("Sent {} received {}", index, reply);
+                    LOG.debug("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;
                 }
@@ -84,7 +90,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
         }
 
         notify.matches(60, TimeUnit.SECONDS);
-        log.info("Took " + watch.taken() + " millis to process " + files + " messages using " + poolSize + " client threads.");
+        LOG.info("Took " + watch.taken() + " millis to process " + files + " messages using " + poolSize + " client threads.");
         assertEquals(files, responses.size());
 
         // get all responses
@@ -94,7 +100,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
         }
 
         // should be 'files' unique responses
-        assertEquals("Should be " + files + " unique responses", files, unique.size());
+        assertEquals(files, unique.size(), "Should be " + files + " unique responses");
         executor.shutdownNow();
     }
 

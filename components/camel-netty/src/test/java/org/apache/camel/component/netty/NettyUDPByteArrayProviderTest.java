@@ -31,7 +31,10 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
     private static final String SEND_STRING = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
@@ -73,7 +76,7 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
             template.sendBody("direct:in", fromHexString(SEND_STRING));
         }
         stop();
-        assertTrue("We should have received some datagrams", receivedCount > 0);
+        assertTrue(receivedCount > 0, "We should have received some datagrams");
     }
 
     @Override

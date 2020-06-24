@@ -27,14 +27,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
-    static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 4096 bytes
+    private static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 4096 bytes
+
+    private static final Logger LOG = LoggerFactory.getLogger(UnsharableCodecsConflictsTest.class);
 
     private Processor processor = new P();
 
@@ -67,7 +71,7 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
             sendSopBuffer(bodyPort1, server1);
             sendSopBuffer(new String("9").getBytes(), server2);
         } catch (Exception e) {
-            log.error("", e);
+            LOG.error("", e);
         } finally {
             server1.close();
             server2.close();

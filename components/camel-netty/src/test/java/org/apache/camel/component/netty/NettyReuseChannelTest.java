@@ -24,7 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyReuseChannelTest extends BaseNettyTest {
 
@@ -45,9 +50,9 @@ public class NettyReuseChannelTest extends BaseNettyTest {
         assertTrue(notify.matchesWaitTime());
 
         assertEquals(2, channels.size());
-        assertSame("Should reuse channel", channels.get(0), channels.get(1));
-        assertFalse("And closed when routing done", channels.get(0).isOpen());
-        assertFalse("And closed when routing done", channels.get(1).isOpen());
+        assertSame(channels.get(0), channels.get(1), "Should reuse channel");
+        assertFalse(channels.get(0).isOpen(), "And closed when routing done");
+        assertFalse(channels.get(1).isOpen(), "And closed when routing done");
     }
 
     @Override
@@ -62,7 +67,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
                         public void process(Exchange exchange) throws Exception {
                             Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                             channels.add(channel);
-                            assertTrue("Should be active", channel.isActive());
+                            assertTrue(channel.isActive(), "Should be active");
                         }
                     })
                     .to("mock:a")
@@ -72,7 +77,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
                         public void process(Exchange exchange) throws Exception {
                             Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                             channels.add(channel);
-                            assertTrue("Should be active", channel.isActive());
+                            assertTrue(channel.isActive(), "Should be active");
                         }
                     })
                     .to("mock:b");

@@ -21,7 +21,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
 
@@ -51,9 +53,9 @@ public class NettyUDPByteArrayConsumerTest extends BaseNettyTest {
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 
         for (int i = 0; i < in.length; i++) {
-            assertEquals("The bytes should be the same", in[i], out[i]);
+            assertEquals(in[i], out[i], "The bytes should be the same");
         }
-        assertEquals("The strings should be the same", toSend, byteArrayToHex(out));
+        assertEquals(toSend, byteArrayToHex(out), "The strings should be the same");
     }
 
     @Override

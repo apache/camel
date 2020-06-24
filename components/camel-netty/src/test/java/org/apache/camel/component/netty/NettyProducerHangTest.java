@@ -22,12 +22,18 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 
 public class NettyProducerHangTest extends CamelTestSupport {
 
     private static final int PORT = 4093;
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyProducerHangTest.class);
 
     @Test
     public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() throws Exception {
@@ -38,13 +44,13 @@ public class NettyProducerHangTest extends CamelTestSupport {
                     acceptReplyAcceptClose();
                     acceptReplyAcceptClose();
                 } catch (IOException e) {
-                    log.error("Exception occured: " + e.getMessage(), e);
+                    LOG.error("Exception occured: " + e.getMessage(), e);
                 }
             }
         }).start();
 
         String response1 = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
-        log.info("Received first response <" + response1 + ">");
+        LOG.info("Received first response <" + response1 + ">");
 
         try {
             // our test server will close the socket now so we should get an error
@@ -54,7 +60,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
         }
 
         String response2 = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
-        log.info("Received 2nd response <" + response2 + ">");
+        LOG.info("Received 2nd response <" + response2 + ">");
 
         try {
             // our test server will close the socket now so we should get an error
@@ -70,7 +76,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
         ServerSocket serverSocket = new ServerSocket(PORT);
         Socket soc = serverSocket.accept();
 
-        log.info("Open socket and accept data");
+        LOG.info("Open socket and accept data");
         try (InputStream is = soc.getInputStream();
                 OutputStream os = soc.getOutputStream()) {
             // read first message
@@ -87,7 +93,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
             soc.close();
             serverSocket.close();
         }
-        log.info("Close socket");
+        LOG.info("Close socket");
     }
 
 }
