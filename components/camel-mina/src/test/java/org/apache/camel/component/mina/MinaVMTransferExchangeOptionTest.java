@@ -24,7 +24,12 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
@@ -70,7 +75,7 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
             Message fault = exchange.getMessage();
             assertNotNull(fault);
             assertNotNull(fault.getBody());
-            assertTrue("Should get the InterruptedException exception", fault.getBody() instanceof InterruptedException);
+            assertTrue(fault.getBody() instanceof InterruptedException, "Should get the InterruptedException exception");
             assertEquals("nihao", fault.getHeader("hello"));
         }
 

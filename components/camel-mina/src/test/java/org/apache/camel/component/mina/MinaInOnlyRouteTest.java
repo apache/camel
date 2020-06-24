@@ -18,7 +18,7 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to verify that MINA can be used with an InOnly MEP but still use sync to send and receive data

@@ -24,10 +24,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("TODO: investigate for Camel 3.0")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("TODO: investigate for Camel 3.0")
 public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
 
     @Test

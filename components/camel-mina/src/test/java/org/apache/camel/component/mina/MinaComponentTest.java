@@ -17,8 +17,12 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * For testing various minor holes that hasn't been covered by other unit tests.
@@ -31,7 +35,7 @@ public class MinaComponentTest extends CamelTestSupport {
             template.sendBody("mina:xxx://localhost:8080", "mina:xxx://localhost:8080");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertTrue("Should be an IAE exception", e.getCause() instanceof IllegalArgumentException);
+            assertTrue(e.getCause() instanceof IllegalArgumentException, "Should be an IAE exception");
             assertEquals("Unrecognised MINA protocol: xxx for uri: mina://xxx://localhost:8080", e.getCause().getMessage());
         }
     }
@@ -43,7 +47,7 @@ public class MinaComponentTest extends CamelTestSupport {
             template.sendBody("mina:tcp//localhost:8080", "mina:tcp//localhost:8080");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertTrue("Should be an IAE exception", e.getCause() instanceof IllegalArgumentException);
+            assertTrue(e.getCause() instanceof IllegalArgumentException, "Should be an IAE exception");
             assertEquals("Unrecognised MINA protocol: null for uri: mina://tcp//localhost:8080", e.getCause().getMessage());
         }
     }
