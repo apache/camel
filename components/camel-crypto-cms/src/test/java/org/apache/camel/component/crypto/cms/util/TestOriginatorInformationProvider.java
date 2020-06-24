@@ -26,7 +26,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.OriginatorInfoGenerator;
 import org.bouncycastle.cms.OriginatorInformation;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestOriginatorInformationProvider implements OriginatorInformationProvider {
 
