@@ -35,16 +35,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ProcessorsTest extends CamelTestSupport {
 
     private SimpleRegistry simpleReg;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpProvider() {
         Security.addProvider(new BouncyCastleProvider());
     }
