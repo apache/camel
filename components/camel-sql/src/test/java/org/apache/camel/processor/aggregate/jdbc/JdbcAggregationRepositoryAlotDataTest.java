@@ -18,7 +18,10 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JdbcAggregationRepositoryAlotDataTest extends AbstractJdbcAggregationTestSupport {
 
@@ -36,14 +39,16 @@ public class JdbcAggregationRepositoryAlotDataTest extends AbstractJdbcAggregati
         assertEquals("counter:99", actual.getIn().getBody());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testWithAlotOfDataTwoKeys() {
-        for (int i = 0; i < 10; i++) {
-            Exchange exchange = new DefaultExchange(context);
-            exchange.getIn().setBody("counter:" + i);
-            String key = i % 2 == 0 ? "foo" : "bar";
-            repoAddAndGet(key, exchange);
-        }
+        assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < 10; i++) {
+                Exchange exchange = new DefaultExchange(context);
+                exchange.getIn().setBody("counter:" + i);
+                String key = i % 2 == 0 ? "foo" : "bar";
+                repoAddAndGet(key, exchange);
+            }
+        });
     }
 
     @Test
