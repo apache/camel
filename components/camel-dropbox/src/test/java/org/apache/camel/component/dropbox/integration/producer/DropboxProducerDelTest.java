@@ -23,14 +23,14 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DropboxProducerDelTest extends DropboxTestSupport {
 
     public static final String FILE_NAME = "file.txt";
 
-    @Before
+    @BeforeEach
     public void createFile() throws IOException {
         createFile(FILE_NAME, "content");
     }

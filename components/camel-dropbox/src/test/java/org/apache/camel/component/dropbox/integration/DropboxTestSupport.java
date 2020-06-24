@@ -27,11 +27,14 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DropboxTestSupport extends CamelTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DropboxTestSupport.class);
 
     protected final Properties properties;
     protected String workdir;
@@ -55,7 +58,7 @@ public class DropboxTestSupport extends CamelTestSupport {
 
     }
 
-    @Before
+    @BeforeEach
     public void setUpWorkingFolder() throws DbxException {
         createDir(workdir);
     }
@@ -78,9 +81,9 @@ public class DropboxTestSupport extends CamelTestSupport {
             //wait some time for synchronization
             Thread.sleep(1000);
         } catch (DbxException e) {
-            log.info("folder is already created");
+            LOG.info("folder is already created");
         } catch (InterruptedException e) {
-            log.debug("Waiting for synchronization interrupted.");
+            LOG.debug("Waiting for synchronization interrupted.");
         }
     }
 
